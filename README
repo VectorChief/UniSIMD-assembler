@@ -1,0 +1,4 @@
+UniSIMD-assembler is a low-level macro assembler framework unified across
+both ARM and x86 architectures. It defines a subset of both core and SIMD
+instruction sets in a way that single assembler code would work everywhere.
+Initially Intel SSE (1 and 2) and ARM MPE (aka NEON) are primary targets.
