@@ -404,7 +404,7 @@
         EMITW(0xE1A00000 | MRM(TIxx,    0x00,    0x00) |                    \
                            TYP(IM))                                         \
         AUX(EMPTY,   EMPTY,   CMD(IM))                                      \
-        EMITW(0xE0100090 | REG(RG) << 16 | REG(RG) << 8 |                   \
+        EMITW(0xE0100090 | REG(RM) << 16 | REG(RM) << 8 |                   \
                            TIxx)
 
 #define mulxn_rr(RG, RM)                                                    \
