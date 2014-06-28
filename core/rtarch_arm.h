@@ -1,11 +1,62 @@
 /******************************************************************************/
-/* Copyright (c) 2013 VectorChief (at github, bitbucket, sourceforge)         */
+/* Copyright (c) 2013-2014 VectorChief (at github, bitbucket, sourceforge)    */
 /* Distributed under the MIT software license, see the accompanying           */
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
 #ifndef RT_RTARCH_ARM_H
 #define RT_RTARCH_ARM_H
+
+/******************************************************************************/
+/*********************************   LEGEND   *********************************/
+/******************************************************************************/
+
+/*
+ * rtarch_arm.h: Implementation of ARM core instructions.
+ *
+ * This file is a part of the unified SIMD assembler framework (rtarch.h)
+ * designed to be compatible with different processor architectures,
+ * while maintaining strictly defined common API.
+ *
+ * Recommended naming scheme for instructions:
+ *
+ * cmdxx_ri - applies [cmd] to [r]egister from [i]mmediate
+ * cmdxx_mi - applies [cmd] to [m]emory   from [i]mmediate
+ *
+ * cmdxx_rm - applies [cmd] to [r]egister from [m]emory
+ * cmdxx_ld - applies [cmd] as above
+ * cmdxx_mr - applies [cmd] to [m]emory   from [r]egister
+ * cmdxx_st - applies [cmd] as above (arg list as cmdxx_ld)
+ *
+ * cmdxx_rr - applies [cmd] to [r]egister from [r]egister
+ * cmdxx_mm - applies [cmd] to [m]emory   from [m]emory
+ * cmdxx_rr - applies [cmd] to [r]egister (one operand cmd)
+ * cmdxx_mm - applies [cmd] to [m]emory   (one operand cmd)
+ *
+ * cmdxx_rx - applies [cmd] to [r]egister from * register
+ * cmdxx_mx - applies [cmd] to [m]emory   from * register
+ * cmdxx_xr - applies [cmd] to * register from [r]egister
+ * cmdxx_xm - applies [cmd] to * register from [m]emory
+ *
+ * cmdxx_rl - applies [cmd] to [r]egister from [l]abel
+ * cmdxx_xl - applies [cmd] to * register from [l]abel
+ * cmdxx_lb - applies [cmd] as above
+ * label_ld - applies [adr] as above
+ *
+ * stack_st - applies [mov] to stack from register (push)
+ * stack_ld - applies [mov] to register from stack (pop)
+ * stack_sa - applies [mov] to stack from all registers
+ * stack_la - applies [mov] to all registers from stack
+ *
+ * cmd*x_** - applies [cmd] to unsigned integer argument(s)
+ * cmd*n_** - applies [cmd] to   signed integer argument(s)
+ * cmdx*_** - applies [cmd] in default  mode
+ * cmde*_** - applies [cmd] in extended mode (takes DH, DW)
+ *
+ * Argument * register is fixed by the implementation.
+ * Some formal definitions are not given below to encourage
+ * the use of friendly aliases for better code readability.
+ */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
@@ -111,50 +162,9 @@
 
 #define PLAIN   DP(0)
 
-/* wrappers */
+/* triplet pass-through wrapper */
 
 #define W(p1, p2, p3)       p1,  p2,  p3
-
-/******************************************************************************/
-/*********************************   LEGEND   *********************************/
-/******************************************************************************/
-
-/* cmdxx_ri - applies [cmd] to [r]egister from [i]mmediate  */
-/* cmdxx_mi - applies [cmd] to [m]emory   from [i]mmediate  */
-
-/* cmdxx_rm - applies [cmd] to [r]egister from [m]emory     */
-/* cmdxx_ld - applies [cmd] as above                        */
-/* cmdxx_mr - applies [cmd] to [m]emory   from [r]egister   */
-/* cmdxx_st - applies [cmd] as above (arg list as cmdxx_ld) */
-
-/* cmdxx_rr - applies [cmd] to [r]egister from [r]egister   */
-/* cmdxx_mm - applies [cmd] to [m]emory   from [m]emory     */
-/* cmdxx_rr - applies [cmd] to [r]egister (one operand cmd) */
-/* cmdxx_mm - applies [cmd] to [m]emory   (one operand cmd) */
-
-/* cmdxx_rx - applies [cmd] to [r]egister from * register   */
-/* cmdxx_mx - applies [cmd] to [m]emory   from * register   */
-/* cmdxx_xr - applies [cmd] to * register from [r]egister   */
-/* cmdxx_xm - applies [cmd] to * register from [m]emory     */
-
-/* cmdxx_rl - applies [cmd] to [r]egister from [l]abel      */
-/* cmdxx_xl - applies [cmd] to * register from [l]abel      */
-/* cmdxx_lb - applies [cmd] as above                        */
-/* label_ld - applies [adr] as above                        */
-
-/* stack_st - applies [mov] to stack from register (push)   */
-/* stack_ld - applies [mov] to register from stack (pop)    */
-/* stack_sa - applies [mov] to stack from all registers     */
-/* stack_la - applies [mov] to all registers from stack     */
-
-/* cmd*x_** - applies [cmd] to unsigned integer argument(s) */
-/* cmd*n_** - applies [cmd] to   signed integer argument(s) */
-/* cmdx*_** - applies [cmd] in default  mode                */
-/* cmde*_** - applies [cmd] in extended mode (takes DH, DW) */
-
-/* Argument [* register] is fixed by the implementation.    */
-/* Some formal definitions are not given below to encourage */
-/* the use of friendly aliases for better code readability. */
 
 /******************************************************************************/
 /**********************************   ARM   ***********************************/

@@ -1,5 +1,5 @@
 /******************************************************************************/
-/* Copyright (c) 2013 VectorChief (at github, bitbucket, sourceforge)         */
+/* Copyright (c) 2013-2014 VectorChief (at github, bitbucket, sourceforge)    */
 /* Distributed under the MIT software license, see the accompanying           */
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
@@ -7,13 +7,49 @@
 #ifndef RT_RTBASE_H
 #define RT_RTBASE_H
 
-/* Generic includes */
-
 #include <math.h>
 #include <float.h>
+#include <stdlib.h>
 
-/* Generic types */
+/******************************************************************************/
+/*********************************   LEGEND   *********************************/
+/******************************************************************************/
 
+/*
+ * rtbase.h: Base type definitions file.
+ *
+ * Recommended naming scheme for C++ types and definitions:
+ *
+ * - All scalar type names start with rt_ followed by type's specific name
+ *   in lower case in a form of rt_****. For example: rt_cell or rt_vec4.
+ *
+ * - All structure names start with rt_ followed by structure's specific name
+ *   in upper case with _ used as separator for complex names.
+ *   All SIMD-aligned structures used in backend start with rt_SIMD_ prefix.
+ *   For example: rt_ELEM or rt_SIMD_INFOX.
+ *
+ * - All class names start with rt_ followed by class's specific name
+ *   in camel case without separator. For example: rt_Scene or rt_SceneThread.
+ *
+ * - All function names including class methods are in lower case with _ used
+ *   as separator for complex names. For example: update_slice or render_fps.
+ *
+ * - All function type names start with rt_FUNC_ followed by function type's
+ *   specific name in upper case with _ used as separator for complex names.
+ *   For example: rt_FUNC_INIT or rt_FUNC_UPDATE.
+ *
+ * - All preprocessor definition names and macros start with RT_ followed by
+ *   specific name in upper case with _ used as separator for complex names.
+ *   For example: RT_ALIGN or RT_ARR_SIZE.
+ */
+
+/******************************************************************************/
+/*******************************   DEFINITIONS   ******************************/
+/******************************************************************************/
+
+/*
+ * Generic types
+ */
 typedef float               rt_real;
 
 typedef float               rt_vec2[2];
@@ -41,54 +77,27 @@ typedef void               *rt_pntr;
 typedef const char          rt_astr[];
 typedef const char         *rt_pstr;
 
-/* Complex types */
-
-struct rt_SIMD_INFO
-{
-    /* general purpose constants */
-
-    rt_real gpc01[4];       /* +1.0 */
-#define inf_GPC01           DP(0x000)
-
-    rt_real gpc02[4];       /* -0.5 */
-#define inf_GPC02           DP(0x010)
-
-    rt_real gpc03[4];       /* +3.0 */
-#define inf_GPC03           DP(0x020)
-
-    rt_real pad01[28];      /* reserved, do not use! */
-#define inf_PAD01           DP(0x030)
-
-    /* internal variables */
-
-    rt_word fctrl;
-#define inf_FCTRL           DP(0x0A0)
-
-    rt_word pad02[23];      /* reserved, do not use! */
-#define inf_PAD02           DP(0x0A4)
-
-};
-
-typedef rt_pntr (*rt_FUNC_ALLOC)(rt_word size);
-typedef rt_void (*rt_FUNC_FREE)(rt_pntr ptr);
-
-/* Generic definitions */
-
+/*
+ * Generic definitions
+ */
 #define RT_NULL             0
 #define RT_ALIGN            4
+#define RT_QUAD_ALIGN       16 /* not dependent on SIMD align */
 
 #define RT_FALSE            0
 #define RT_TRUE             1
 
-/* Generic macros */
-
+/*
+ * Generic macros
+ */
 #define RT_ARR_SIZE(a)      (sizeof(a) / sizeof(a[0]))
 
 #define RT_MIN(a, b)        ((a) < (b) ? (a) : (b))
 #define RT_MAX(a, b)        ((a) > (b) ? (a) : (b))
 
-/* Vector components */
-
+/*
+ * Vector components
+ */
 #define RT_X                0
 #define RT_Y                1
 #define RT_Z                2
@@ -104,29 +113,44 @@ typedef rt_void (*rt_FUNC_FREE)(rt_pntr ptr);
 #define RT_B                2
 #define RT_A                3   /* A - Alpha channel */
 
-/* Math definitions */
+/*
+ * For surface's UV coords
+ *  to texture's XY coords mapping
+ */
+#define RT_U                0
+#define RT_V                1
 
+/*
+ * Math definitions
+ */
 #define RT_INF              FLT_MAX
 
 #define RT_PI               3.14159265358
 #define RT_2_PI             (2.0 * RT_PI)
 #define RT_PI_2             (RT_PI / 2.0)
 
+/*
+ * Math macros
+ */
+#define RT_ABS(a)           (abs((rt_cell)(a)))
+
+#define RT_FABS(a)          (fabsf(a))
+
+#define RT_FLOOR(a)         ((rt_cell)floorf(a))
+
 #define RT_SIGN(a)          ((a)  <    0.0f ? -1 :                          \
                              (a)  >    0.0f ? +1 :                          \
                               0)
 
-#define RT_FABS(a)          (fabsf(a))
-
-#define RT_SQRT(a)          ((a)  <    0.0f ?  0.0f :                       \
+#define RT_SQRT(a)          ((a)  <=   0.0f ?  0.0f :                       \
                              sqrtf(a))
 
-#define RT_ASIN(a)          ((a)  <   -1.0f ? -(rt_real)RT_PI_2 :           \
-                             (a)  >   +1.0f ? +(rt_real)RT_PI_2 :           \
+#define RT_ASIN(a)          ((a)  <=  -1.0f ? -(rt_real)RT_PI_2 :           \
+                             (a)  >=  +1.0f ? +(rt_real)RT_PI_2 :           \
                              asinf(a))
 
-#define RT_ACOS(a)          ((a)  <   -1.0f ? +(rt_real)RT_PI :             \
-                             (a)  >   +1.0f ?  0.0f :                       \
+#define RT_ACOS(a)          ((a)  <=  -1.0f ? +(rt_real)RT_PI :             \
+                             (a)  >=  +1.0f ?  0.0f :                       \
                              acosf(a))
 
 #define RT_SINA(a)          ((a) == -270.0f ? +1.0f :                       \

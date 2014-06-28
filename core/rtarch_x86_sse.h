@@ -1,5 +1,5 @@
 /******************************************************************************/
-/* Copyright (c) 2013 VectorChief (at github, bitbucket, sourceforge)         */
+/* Copyright (c) 2013-2014 VectorChief (at github, bitbucket, sourceforge)    */
 /* Distributed under the MIT software license, see the accompanying           */
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
@@ -9,8 +9,36 @@
 
 #include "rtarch_x86.h"
 
+#define RT_SIMD_WIDTH       4
 #define RT_SIMD_ALIGN       16
-#define RT_SIMD_SET(a, v)   a[0] = v; a[1] = v; a[2] = v; a[3] = v
+#define RT_SIMD_SET(s, v)   s[0]=s[1]=s[2]=s[3]=v
+
+/******************************************************************************/
+/*********************************   LEGEND   *********************************/
+/******************************************************************************/
+
+/*
+ * rtarch_x86_sse.h: Implementation of x86 SIMD instructions.
+ *
+ * This file is a part of the unified SIMD assembler framework (rtarch.h)
+ * designed to be compatible with different processor architectures,
+ * while maintaining strictly defined common API.
+ *
+ * Recommended naming scheme for instructions:
+ *
+ * cmdpx_ri - applies [cmd] to [r]egister from [i]mmediate
+ * cmdpx_rr - applies [cmd] to [r]egister from [r]egister
+ *
+ * cmdpx_rm - applies [cmd] to [r]egister from [m]emory
+ * cmdpx_ld - applies [cmd] as above
+ * cmdpx_mr - applies [cmd] to [m]emory   from [r]egister
+ * cmdpx_st - applies [cmd] as above (arg list as cmdxx_ld)
+ *
+ * cmdpx_** - applies [cmd] to packed unsigned integer args
+ * cmdpn_** - applies [cmd] to packed   signed integer args
+ * cmdps_** - applies [cmd] to packed single precision args
+ * cmdpd_** - applies [cmd] to packed double precision args
+ */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
@@ -30,23 +58,6 @@
 #define Xmm5    0x05, 0x03, EMPTY
 #define Xmm6    0x06, 0x03, EMPTY
 #define Xmm7    0x07, 0x03, EMPTY
-
-/******************************************************************************/
-/*********************************   LEGEND   *********************************/
-/******************************************************************************/
-
-/* cmdpx_ri - applies [cmd] to [r]egister from [i]mmediate  */
-/* cmdpx_rr - applies [cmd] to [r]egister from [r]egister   */
-
-/* cmdpx_rm - applies [cmd] to [r]egister from [m]emory     */
-/* cmdpx_ld - applies [cmd] as above                        */
-/* cmdpx_mr - applies [cmd] to [m]emory   from [r]egister   */
-/* cmdpx_st - applies [cmd] as above (arg list as cmdxx_ld) */
-
-/* cmdpx_** - applies [cmd] to packed unsigned integer args */
-/* cmdpn_** - applies [cmd] to packed   signed integer args */
-/* cmdps_** - applies [cmd] to packed single precision args */
-/* cmdpd_** - applies [cmd] to packed double precision args */
 
 /******************************************************************************/
 /**********************************   SSE   ***********************************/
@@ -176,18 +187,25 @@
             MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
+/* cbr */
+
+        /* cbe, cbs, cbr defined in rtarch.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
 /* rcp */
 
 #define rceps_rr(RG, RM)                                                    \
         EMITB(0x0F) EMITB(0x53)                                             \
             MRM(REG(RG), MOD(RM), REG(RM))
 
-#define rcpps_rr(RG, RM) /* destroys value in RM */                         \
-        rceps_rr(W(RG), W(RM))                                              \
+#define rcsps_rr(RG, RM) /* destroys RM */                                  \
         mulps_rr(W(RM), W(RG))                                              \
         mulps_rr(W(RM), W(RG))                                              \
         addps_rr(W(RG), W(RG))                                              \
         subps_rr(W(RG), W(RM))
+
+        /* rcp defined in rtarch.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rsq */
 
@@ -195,13 +213,15 @@
         EMITB(0x0F) EMITB(0x52)                                             \
             MRM(REG(RG), MOD(RM), REG(RM))
 
-#define rsqps_rr(RG, RM) /* destroys value in RM */                         \
-        rseps_rr(W(RG), W(RM))                                              \
+#define rssps_rr(RG, RM) /* destroys RM */                                  \
         mulps_rr(W(RM), W(RG))                                              \
         mulps_rr(W(RM), W(RG))                                              \
         subps_ld(W(RM), Mebp, inf_GPC03)                                    \
-        mulps_rr(W(RG), W(RM))                                              \
-        mulps_ld(W(RG), Mebp, inf_GPC02)
+        mulps_ld(W(RM), Mebp, inf_GPC02)                                    \
+        mulps_rr(W(RG), W(RM))
+
+        /* rsq defined in rtarch.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* min */
 
@@ -376,7 +396,7 @@
         EMITB(0x0F) EMITB(0x50)                                             \
             MRM(REG(RG), MOD(RM), REG(RM))
 
-#define CHECK_MASK(lb, mask, RG) /* destroys value in Reax */               \
+#define CHECK_MASK(lb, mask, RG) /* destroys Reax */                        \
         movsn_rr(Reax, W(RG))                                               \
         cmpxx_ri(Reax, IB(RT_SIMD_MASK_##mask))                             \
         jeqxx_lb(lb)
@@ -398,14 +418,14 @@
             MRM(0x03,    MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define FCTRL_ENTER(mode) /* destroys value in Reax */                      \
+#define FCTRL_ENTER(mode) /* destroys Reax */                               \
         mxcsr_st(Mebp, inf_FCTRL)                                           \
         movxx_ld(Reax, Mebp, inf_FCTRL)                                     \
         orrxx_mi(Mebp, inf_FCTRL, IH(RT_SIMD_MODE_##mode << 13))            \
         mxcsr_ld(Mebp, inf_FCTRL)                                           \
         movxx_st(Reax, Mebp, inf_FCTRL)
 
-#define FCTRL_LEAVE(mode) /* destroys value in Reax (in ARM) */             \
+#define FCTRL_LEAVE(mode) /* destroys Reax (in ARM) */                      \
         mxcsr_ld(Mebp, inf_FCTRL)
 
 #endif /* RT_RTARCH_X86_SSE_H */
