@@ -1,11 +1,20 @@
-To build SIMD test framework on Linux go to the "test" subfolder and run:
+================================================================================
+
+To build SIMD test framework on Linux open terminal window,
+go to the "test" subfolder and
+run for x86 architecture:
     make -f simd_make_x86.mk
-for x86 architecture or
+run for ARM architecture:
     make -f simd_make_arm.mk
-for ARM architecture (Maemo/scratchbox cross-compilation environment was used).
+Maemo/scratchbox cross-compilation environment and N900 was used for ARM.
     http://wiki.maemo.org/Documentation/Maemo_5_Final_SDK_Installation
 
-To build SIMD test framework on Windows go to the "test" subfolder and open:
+================================================================================
+
+To build SIMD test framework on Windows
+go to the "test" subfolder and open:
     simd_workspace.dsw
 in Visual C++ 6.0 or later, then press F5. In newer versions of VC++ agree to
 convert workspace files, then exit and open newly created solution file.
+
+================================================================================
