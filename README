@@ -2,7 +2,7 @@ UniSIMD assembler is a low-level macro assembler framework unified across
 ARM and x86 architectures. It establishes a subset of both core and SIMD
 instruction sets with strictly defined common API, so that application logic
 can be written and maintained in one place without code replication.
-At present, Intel SSE (1 and 2) and ARM MPE (aka NEON) operating in 32-bit mode
+At present, Intel SSE (1 and 2) and ARM MPE (aka NEON) with 32-bit addressing
 are two primary targets, although wider SIMD can be supported by design.
 
 The project comes with a test framework, which can be compiled in Linux/GCC,
