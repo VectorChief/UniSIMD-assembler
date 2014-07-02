@@ -2,6 +2,8 @@ v0.5: Unified SIMD Assembler, API freeze for the engine
   - instructions naming scheme finalized
   - change ARM instructions to set flags
   - added framework for internal constants (used by reciprocals)
+  - added SIMD instruction for cube root, reciprocal steps redesigned
+  - additional SIMD tests, run level 14
 
 v0.4: SIMD test framework, macro assembler overhaul
   - macro expansion reworked for better compiler compatibility
