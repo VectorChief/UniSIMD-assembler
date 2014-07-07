@@ -50,9 +50,12 @@
 /*
  * Generic types
  */
+
+/* fixed-size floating point types */
 typedef float               rt_fp32;
 typedef double              rt_fp64;
 
+/* adjustable floating point types */
 typedef rt_fp32             rt_real;
 
 typedef rt_fp32             rt_vec2[2];
@@ -64,16 +67,33 @@ typedef rt_fp32             rt_mat3[3][3];
 typedef rt_fp32             rt_vec4[4];
 typedef rt_fp32             rt_mat4[4][4];
 
+/* fixed-size integer types */
 typedef char                rt_si08;
-typedef short               rt_si16;
-typedef int                 rt_si32;
-typedef long                rt_si64; /* not on Windows */
-
 typedef unsigned char       rt_ui08;
-typedef unsigned short      rt_ui16;
-typedef unsigned int        rt_ui32;
-typedef unsigned long       rt_ui64; /* not on Windows */
 
+typedef short               rt_si16;
+typedef unsigned short      rt_ui16;
+
+typedef int                 rt_si32;
+typedef unsigned int        rt_ui32;
+
+#if   defined (RT_WIN32) /* Win32, MSVC -------- for older versions --------- */
+
+typedef __int64             rt_si64;
+typedef unsigned __int64    rt_ui64;
+
+#define RT_PR64 /*printf*/  "I64"
+
+#elif defined (RT_LINUX) /* Linux, GCC --------- for newer versions --------- */
+
+typedef long long           rt_si64;
+typedef unsigned long long  rt_ui64;
+
+#define RT_PR64 /*printf*/  "ll"
+
+#endif /* ------------- OS specific ----------------------------------------- */
+
+/* adjustable integer types */
 typedef rt_si08             rt_bool;
 typedef rt_si64             rt_size;
 typedef rt_si64             rt_time;

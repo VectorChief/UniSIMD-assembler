@@ -38,6 +38,7 @@
  * cmdpn_** - applies [cmd] to packed   signed integer args
  * cmdps_** - applies [cmd] to packed single precision args
  * cmdpd_** - applies [cmd] to packed double precision args
+ * cmdpf_** - adjustable alias for packed single or double
  */
 
 /******************************************************************************/
