@@ -14,7 +14,8 @@ header files, that applications need to include directly in order to use.
 Instructions for resolving dependencies and building the binaries
 for supported platforms can be found in the accompanying INSTALL file.
 
-Preliminary naming scheme for potential future extensions is given below.
+================================================================================
+Preliminary naming scheme for potential future extensions.
 
 Current 32-bit targets:
  - rtarch_arm.h         - 32-bit ARMv7 ISA, 16 core registers, 8 + temps used
@@ -25,30 +26,44 @@ Current 32-bit targets:
 Future 32-bit targets:
  - rtarch_a32.h         - 32-bit ARMv8 ISA, 16 core registers, new features
  - rtarch_a32_128.h     - 32-bit ARMv8 ISA, 16 SIMD registers, new features
- - rtarch_x32.h         - 32-bit x32 ABI, 16 core registers
+ - rtarch_x32.h         - 32-bit x32 ABI, 16 core registers, 32-bit pointers
  - rtarch_x32_128.h     - 32-bit x32 ABI, 16 SIMD registers, SSE 128-bit
  - rtarch_x32_256.h     - 32-bit x32 ABI, 16 SIMD registers, AVX 256-bit
  - rtarch_x32_512.h     - 32-bit x32 ABI, 32 SIMD registers, AVX 512-bit
- - rtarch_x32_1kb.h     - 32-bit x32 ABI, 32 SIMD registers, AVX kilobit?
+ - rtarch_x32_1kb.h     - 32-bit x32 ABI, 32 SIMD registers, AVX 1024-bit?
 
 Future 64-bit targets:
- - rtarch_a64.h         - 64-bit ARMv8 ISA, 32 core registers
- - rtarch_a64_128.h     - 64-bit ARMv8 ISA, 32 SIMD registers
- - rtarch_x64.h         - 64-bit x64 ABI, 16 core registers
+ - rtarch_a64.h         - 64-bit ARMv8 ISA, 32 core registers, new features
+ - rtarch_a64_128.h     - 64-bit ARMv8 ISA, 32 SIMD registers, new features
+ - rtarch_x64.h         - 64-bit x64 ABI, 16 core registers, 64-bit pointers
  - rtarch_x64_128.h     - 64-bit x64 ABI, 16 SIMD registers, SSE 128-bit
  - rtarch_x64_256.h     - 64-bit x64 ABI, 16 SIMD registers, AVX 256-bit
  - rtarch_x64_512.h     - 64-bit x64 ABI, 32 SIMD registers, AVX 512-bit
- - rtarch_x64_1kb.h     - 64-bit x64 ABI, 32 SIMD registers, AVX kilobit?
+ - rtarch_x64_1kb.h     - 64-bit x64 ABI, 32 SIMD registers, AVX 1024-bit?
 
 Reserved 32-bit targets:
  - rtarch_m32.h         - 32-bit MIPS ISA, ?? core registers
  - rtarch_m32_128.h     - 32-bit MIPS ISA, ?? SIMD registers
- - rtarch_p32.h         - 32-bit PowerPC ISA, ?? core registers
- - rtarch_p32_128.h     - 32-bit PowerPC ISA, ?? SIMD registers
+ - rtarch_p32.h         - 32-bit Power ISA, ?? core registers
+ - rtarch_p32_128.h     - 32-bit Power ISA, ?? SIMD registers
 
 Reserved 64-bit targets:
  - rtarch_m64.h         - 64-bit MIPS ISA, ?? core registers
  - rtarch_m64_128.h     - 64-bit MIPS ISA, ?? SIMD registers
- - rtarch_p64.h         - 64-bit PowerPC ISA, ?? core registers
- - rtarch_p64_128.h     - 64-bit PowerPC ISA, ?? SIMD registers
+ - rtarch_p64.h         - 64-bit Power ISA, ?? core registers
+ - rtarch_p64_128.h     - 64-bit Power ISA, ?? SIMD registers
 
+================================================================================
+Preliminary naming scheme for extended core and SIMD registers.
+
+Current 8 core and 8 SIMD registers:
+ - Reax, Rebx, Recx, Redx, Resp, Rebp, Resi, Redi
+ - Xmm0, Xmm1, Xmm2, Xmm3, Xmm4, Xmm5, Xmm6, Xmm7
+
+Future 16 core and 16 SIMD registers:
+ - Reax, ... , Redi, Reg8, Reg9, RegA, RegB, RegC, RegD, RegE, RegF
+ - Xmm0, ... , Xmm7, Xmm8, Xmm9, XmmA, XmmB, XmmC, XmmD, XmmE, XmmF
+
+Future 32 core and 32 SIMD registers:
+ - Reax, ... , Redi, Reg8, Reg9, RegA, ... , RegF, RegG, ... , RegV
+ - Xmm0, ... , Xmm7, Xmm8, Xmm9, XmmA, ... , XmmF, XmmG, ... , XmmV
