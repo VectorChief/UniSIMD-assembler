@@ -2,10 +2,53 @@ UniSIMD assembler is a low-level macro assembler framework unified across
 ARM and x86 architectures. It establishes a subset of both core and SIMD
 instruction sets with strictly defined common API, so that application logic
 can be written and maintained in one place without code replication.
-At present, Intel SSE (1 and 2) and ARM MPE (aka NEON) with 32-bit addressing
-are two primary targets, although wider SIMD can be supported by design.
+
+At present, Intel SSE2 (32-bit x86 ISA) and ARM NEON (32-bit ARMv7 ISA)
+are two primary targets, although wider SIMD, 64-bit addressing along with
+more available registers, and other architectures can be supported by design.
 
 The project comes with a test framework, which can be compiled in Linux/GCC,
 Maemo/scratchbox (ARM version) as well as Windows/VC++ 6.0 or later.
 The assembler itself isn't a separate tool, but rather a collection of C/C++
 header files, that applications need to include directly in order to use.
+Instructions for resolving dependencies and building the binaries
+for supported platforms can be found in the accompanying INSTALL file.
+
+Preliminary naming scheme for potential future extensions is given below.
+
+Current 32-bit targets:
+ - rtarch_arm.h         - 32-bit ARMv7 ISA, 16 core registers, 8 + temps used
+ - rtarch_arm_mpe.h     - 32-bit ARMv7 ISA, 16 SIMD registers, 8 + temps used
+ - rtarch_x86.h         - 32-bit x86 ISA, 8 core registers, 6 + esp, ebp used
+ - rtarch_x86_sse.h     - 32-bit x86 ISA, 8 SIMD registers, 8 used
+
+Future 32-bit targets:
+ - rtarch_a32.h         - 32-bit ARMv8 ISA, 16 core registers, new features
+ - rtarch_a32_128.h     - 32-bit ARMv8 ISA, 16 SIMD registers, new features
+ - rtarch_x32.h         - 32-bit x32 ABI, 16 core registers
+ - rtarch_x32_128.h     - 32-bit x32 ABI, 16 SIMD registers, SSE 128-bit
+ - rtarch_x32_256.h     - 32-bit x32 ABI, 16 SIMD registers, AVX 256-bit
+ - rtarch_x32_512.h     - 32-bit x32 ABI, 32 SIMD registers, AVX 512-bit
+ - rtarch_x32_1kb.h     - 32-bit x32 ABI, 32 SIMD registers, AVX kilobit?
+
+Future 64-bit targets:
+ - rtarch_a64.h         - 64-bit ARMv8 ISA, 32 core registers
+ - rtarch_a64_128.h     - 64-bit ARMv8 ISA, 32 SIMD registers
+ - rtarch_x64.h         - 64-bit x64 ABI, 16 core registers
+ - rtarch_x64_128.h     - 64-bit x64 ABI, 16 SIMD registers, SSE 128-bit
+ - rtarch_x64_256.h     - 64-bit x64 ABI, 16 SIMD registers, AVX 256-bit
+ - rtarch_x64_512.h     - 64-bit x64 ABI, 32 SIMD registers, AVX 512-bit
+ - rtarch_x64_1kb.h     - 64-bit x64 ABI, 32 SIMD registers, AVX kilobit?
+
+Reserved 32-bit targets:
+ - rtarch_m32.h         - 32-bit MIPS ISA, ?? core registers
+ - rtarch_m32_128.h     - 32-bit MIPS ISA, ?? SIMD registers
+ - rtarch_p32.h         - 32-bit PowerPC ISA, ?? core registers
+ - rtarch_p32_128.h     - 32-bit PowerPC ISA, ?? SIMD registers
+
+Reserved 64-bit targets:
+ - rtarch_m64.h         - 64-bit MIPS ISA, ?? core registers
+ - rtarch_m64_128.h     - 64-bit MIPS ISA, ?? SIMD registers
+ - rtarch_p64.h         - 64-bit PowerPC ISA, ?? core registers
+ - rtarch_p64_128.h     - 64-bit PowerPC ISA, ?? SIMD registers
+
