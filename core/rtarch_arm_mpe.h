@@ -359,16 +359,16 @@
 /* cvt */
 
 #define cvtps_rr(RG, RM)     /* fallback to VFP for float-to-integer cvt */ \
-        EMITW(0xEEBD0A40 | MTM(REG(RG)+0, 0x00,  REG(RM)+0))                \
-        EMITW(0xEEFD0A60 | MTM(REG(RG)+0, 0x00,  REG(RM)+0))                \
-        EMITW(0xEEBD0A40 | MTM(REG(RG)+1, 0x00,  REG(RM)+1))                \
-        EMITW(0xEEFD0A60 | MTM(REG(RG)+1, 0x00,  REG(RM)+1))
+        EMITW(0xEEBD0A40 | MTM(REG(RG)+0, 0x00,  REG(RM)+0)) /* due to */   \
+        EMITW(0xEEFD0A60 | MTM(REG(RG)+0, 0x00,  REG(RM)+0)) /* lack of */  \
+        EMITW(0xEEBD0A40 | MTM(REG(RG)+1, 0x00,  REG(RM)+1)) /* rounding */ \
+        EMITW(0xEEFD0A60 | MTM(REG(RG)+1, 0x00,  REG(RM)+1)) /* modes */
 
 #define cvtps_ld(RG, RM, DP) /* fallback to VFP for float-to-integer cvt */ \
-        AUX(SIB(RM), CMD(DP), EMPTY)                                        \
-        EMITW(0xE0800000 | MRM(TPxx,    MOD(RM), 0x00) |                    \
-                           TYP(DP))                                         \
-        EMITW(0xF4200AAF | MTM(REG(RG), TPxx,    0x00))                     \
+        AUX(SIB(RM), CMD(DP), EMPTY)                         /* due to */   \
+        EMITW(0xE0800000 | MRM(TPxx,    MOD(RM), 0x00) |     /* lack of */  \
+                           TYP(DP))                          /* rounding */ \
+        EMITW(0xF4200AAF | MTM(REG(RG), TPxx,    0x00))      /* modes */    \
         EMITW(0xEEBD0A40 | MTM(REG(RG)+0, 0x00,  REG(RG)+0))                \
         EMITW(0xEEFD0A60 | MTM(REG(RG)+0, 0x00,  REG(RG)+0))                \
         EMITW(0xEEBD0A40 | MTM(REG(RG)+1, 0x00,  REG(RG)+1))                \
