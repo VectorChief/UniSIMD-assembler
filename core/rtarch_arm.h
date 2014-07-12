@@ -441,9 +441,9 @@
         EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |                    \
              (0x00000FFF & VAL(DP))) /* leftmost 0x00 in MRM is Reax */     \
         EMITW(0xEC400B10 | MRM(0x00,    TMxx,    Tmm0+0)) /* limited */     \
-        EMITW(0xF3BB0680 | MRM(Tmm0+1,  0x00,    Tmm0+0)) /* precision */   \
+        EMITW(0xF3BB0600 | MRM(Tmm0+1,  0x00,    Tmm0+0)) /* precision */   \
         EMITW(0xEE800A20 | MRM(Tmm0+1,  Tmm0+1,  Tmm0+1)) /* <- fp div */   \
-        EMITW(0xF3BB0780 | MRM(Tmm0+0,  0x00,    Tmm0+1))                   \
+        EMITW(0xF3BB0700 | MRM(Tmm0+0,  0x00,    Tmm0+1))                   \
         EMITW(0xEE100B10 | MRM(0x00,    Tmm0+0,  0x00))
 
 /* cmp */
