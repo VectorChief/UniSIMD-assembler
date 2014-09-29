@@ -82,10 +82,10 @@
             MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define adrpx_ld(RG, RM, DP) /* only for SIMD-aligned displacements */      \
+#define adrpx_ld(RG, RM, DP) /* RG is a core reg, DP is SIMD-aligned */     \
         EMITB(0x8D)                                                         \
             MRM(REG(RG), MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), EMITW(VAL(DP) & 0xFFFFFFF0), EMPTY)
+            AUX(SIB(RM), EMITW(VAL(DP) & ~(RT_SIMD_ALIGN - 1)), EMPTY)
 
 /* and */
 
@@ -357,7 +357,7 @@
 #define shlpx_ri(RM, IM)                                                    \
         EMITB(0x66) EMITB(0x0F) EMITB(0x72)                                 \
             MRM(0x06,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   EMITB(VAL(IM)))
+            AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
 #define shlpx_ld(RG, RM, DP)                                                \
         EMITB(0x66) EMITB(0x0F) EMITB(0xF2)                                 \
@@ -369,7 +369,7 @@
 #define shrpx_ri(RM, IM)                                                    \
         EMITB(0x66) EMITB(0x0F) EMITB(0x72)                                 \
             MRM(0x02,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   EMITB(VAL(IM)))
+            AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
 #define shrpx_ld(RG, RM, DP)                                                \
         EMITB(0x66) EMITB(0x0F) EMITB(0xD2)                                 \
@@ -379,7 +379,7 @@
 #define shrpn_ri(RM, IM)                                                    \
         EMITB(0x66) EMITB(0x0F) EMITB(0x72)                                 \
             MRM(0x04,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   EMITB(VAL(IM)))
+            AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
 #define shrpn_ld(RG, RM, DP)                                                \
         EMITB(0x66) EMITB(0x0F) EMITB(0xE2)                                 \

@@ -132,8 +132,8 @@
 
 /* immediate    VAL,  TYP,  CMD */
 
-#define IB(im)  (im), 0x02000000 | ((im) & 0xFF),                           \
-                EMPTY
+#define IB(im)  (im), 0x02000000 | ((im) & 0x7F),/* drop sign-ext in x86 */ \
+                EMPTY          /* for compatibility with zero-ext in ARM */
 
 #define IH(im)  (im), 0x00000000 | TIxx,                                    \
                 EMITW(0xE3000000 | MRM(TIxx,    0x00,    0x00) |            \

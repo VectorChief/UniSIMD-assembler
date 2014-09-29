@@ -124,7 +124,7 @@
 
 /* immediate    VAL,  TYP,  CMD */
 
-#define IB(im)  (im), 0x02, EMITB((im) & 0xFF)
+#define IB(im)  (im), 0x02, EMITB((im) & 0x7F) /* drop sign-ext (zero in ARM) */
 #define IH(im)  (im), 0x00, EMITW((im) & 0xFFFF)
 #define IW(im)  (im), 0x00, EMITW((im) & 0xFFFFFFFF)
 
@@ -148,13 +148,13 @@
 
 #define movxx_ri(RM, IM)                                                    \
         EMITB(0xC7)                                                         \
-            MRM(0x00,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   EMITW(VAL(IM)))
+            MRM(0x00,    MOD(RM), REG(RM)) /* truncate IB with TYP below */ \
+            AUX(EMPTY,   EMPTY,   EMITW(VAL(IM) & ((TYP(IM) << 6) - 1)))
 
 #define movxx_mi(RM, DP, IM)                                                \
         EMITB(0xC7)                                                         \
-            MRM(0x00,    MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMITW(VAL(IM)))
+            MRM(0x00,    MOD(RM), REG(RM)) /* truncate IB with TYP below */ \
+            AUX(SIB(RM), CMD(DP), EMITW(VAL(IM) & ((TYP(IM) << 6) - 1)))
 
 #define movxx_rr(RG, RM)                                                    \
         EMITB(0x8B)                                                         \
@@ -315,34 +315,34 @@
 #define shlxx_ri(RM, IM)                                                    \
         EMITB(0xC1)                                                         \
             MRM(0x04,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   EMITB(VAL(IM)))
+            AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
 #define shlxx_mi(RM, DP, IM)                                                \
         EMITB(0xC1)                                                         \
             MRM(0x04,    MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMITB(VAL(IM)))
+            AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
 /* shr */
 
 #define shrxx_ri(RM, IM)                                                    \
         EMITB(0xC1)                                                         \
             MRM(0x05,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   EMITB(VAL(IM)))
+            AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
 #define shrxx_mi(RM, DP, IM)                                                \
         EMITB(0xC1)                                                         \
             MRM(0x05,    MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMITB(VAL(IM)))
+            AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
 #define shrxn_ri(RM, IM)                                                    \
         EMITB(0xC1)                                                         \
             MRM(0x07,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   EMITB(VAL(IM)))
+            AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
 #define shrxn_mi(RM, DP, IM)                                                \
         EMITB(0xC1)                                                         \
             MRM(0x07,    MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMITB(VAL(IM)))
+            AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
 /* mul */
 

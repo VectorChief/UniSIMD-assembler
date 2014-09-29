@@ -97,7 +97,7 @@
                            TYP(DP))                                         \
         EMITW(0xF4000AAF | MTM(REG(RG), TPxx,    0x00))
 
-#define adrpx_ld(RG, RM, DP) /* only for SIMD-aligned displacements */      \
+#define adrpx_ld(RG, RM, DP) /* RG is a core reg, DP is SIMD-aligned */     \
         AUX(SIB(RM), CMD(DP), EMPTY)                                        \
         EMITW(0xE0800000 | MTM(REG(RG), MOD(RM), 0x00) |                    \
                            TYP(DP))
