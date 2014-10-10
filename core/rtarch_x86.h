@@ -20,27 +20,27 @@
  *
  * Recommended naming scheme for instructions:
  *
- * cmdxx_ri - applies [cmd] to [r]egister from [i]mmediate
- * cmdxx_mi - applies [cmd] to [m]emory   from [i]mmediate
+ * cmdx*_ri - applies [cmd] to [r]egister from [i]mmediate
+ * cmdx*_mi - applies [cmd] to [m]emory   from [i]mmediate
  *
- * cmdxx_rm - applies [cmd] to [r]egister from [m]emory
- * cmdxx_ld - applies [cmd] as above
- * cmdxx_mr - applies [cmd] to [m]emory   from [r]egister
- * cmdxx_st - applies [cmd] as above (arg list as cmdxx_ld)
+ * cmdx*_rm - applies [cmd] to [r]egister from [m]emory
+ * cmdx*_ld - applies [cmd] as above
+ * cmdx*_mr - applies [cmd] to [m]emory   from [r]egister
+ * cmdx*_st - applies [cmd] as above (arg list as cmdxx_ld)
  *
- * cmdxx_rr - applies [cmd] to [r]egister from [r]egister
- * cmdxx_mm - applies [cmd] to [m]emory   from [m]emory
- * cmdxx_rr - applies [cmd] to [r]egister (one operand cmd)
- * cmdxx_mm - applies [cmd] to [m]emory   (one operand cmd)
+ * cmdx*_rr - applies [cmd] to [r]egister from [r]egister
+ * cmdx*_mm - applies [cmd] to [m]emory   from [m]emory
+ * cmdx*_rr - applies [cmd] to [r]egister (one operand cmd)
+ * cmdx*_mm - applies [cmd] to [m]emory   (one operand cmd)
  *
- * cmdxx_rx - applies [cmd] to [r]egister from * register
- * cmdxx_mx - applies [cmd] to [m]emory   from * register
- * cmdxx_xr - applies [cmd] to * register from [r]egister
- * cmdxx_xm - applies [cmd] to * register from [m]emory
+ * cmdx*_rx - applies [cmd] to [r]egister from * register
+ * cmdx*_mx - applies [cmd] to [m]emory   from * register
+ * cmdx*_xr - applies [cmd] to * register from [r]egister
+ * cmdx*_xm - applies [cmd] to * register from [m]emory
  *
- * cmdxx_rl - applies [cmd] to [r]egister from [l]abel
- * cmdxx_xl - applies [cmd] to * register from [l]abel
- * cmdxx_lb - applies [cmd] as above
+ * cmdx*_rl - applies [cmd] to [r]egister from [l]abel
+ * cmdx*_xl - applies [cmd] to * register from [l]abel
+ * cmdx*_lb - applies [cmd] as above
  * label_ld - applies [adr] as above
  *
  * stack_st - applies [mov] to stack from register (push)
@@ -48,14 +48,14 @@
  * stack_sa - applies [mov] to stack from all registers
  * stack_la - applies [mov] to all registers from stack
  *
- * cmd*x_** - applies [cmd] to unsigned integer argument(s)
- * cmd*n_** - applies [cmd] to   signed integer argument(s)
- * cmdx*_** - applies [cmd] in default  mode
+ * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
+ * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
+ * cmdx*_** - applies [cmd] in  default mode
  * cmde*_** - applies [cmd] in extended mode (takes DH, DW)
  *
  * Argument * register is fixed by the implementation.
  * Some formal definitions are not given below to encourage
- * the use of friendly aliases for better code readability.
+ * use of friendly aliases for better code readability.
  */
 
 /******************************************************************************/

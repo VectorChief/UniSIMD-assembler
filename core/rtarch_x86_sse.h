@@ -26,17 +26,30 @@
  *
  * Recommended naming scheme for instructions:
  *
- * cmdpx_ri - applies [cmd] to [r]egister from [i]mmediate
- * cmdpx_rr - applies [cmd] to [r]egister from [r]egister
+ * cmdp*_ri - applies [cmd] to [p]acked: [r]egister from [i]mmediate
+ * cmdp*_rr - applies [cmd] to [p]acked: [r]egister from [r]egister
  *
- * cmdpx_rm - applies [cmd] to [r]egister from [m]emory
- * cmdpx_ld - applies [cmd] as above
- * cmdpx_mr - applies [cmd] to [m]emory   from [r]egister
- * cmdpx_st - applies [cmd] as above (arg list as cmdxx_ld)
+ * cmdp*_rm - applies [cmd] to [p]acked: [r]egister from [m]emory
+ * cmdp*_ld - applies [cmd] to [p]acked: as above
+ * cmdp*_mr - applies [cmd] to [p]acked: [m]emory   from [r]egister
+ * cmdp*_st - applies [cmd] to [p]acked: as above (arg list as cmdp*_ld)
  *
- * cmdpx_** - applies [cmd] to [p]acked unsigned int32 args, [x] - default
- * cmdpn_** - applies [cmd] to [p]acked   signed int32 args, [n] - signed, neg
- * cmdps_** - applies [cmd] to [p]acked [s]ingle precision fp args
+ * cmdp*_ru - applies [cmd] to [p]acked: [r]egister from [u]naligned memory
+ * cmdp*_lu - applies [cmd] to [p]acked: as above
+ * cmdp*_ur - applies [cmd] to [p]acked: [u]naligned memory from [r]egister
+ * cmdp*_su - applies [cmd] to [p]acked: as above (arg list as cmdp*_lu)
+ *
+ * cmdp*_** - applies [cmd] to [p]acked data type size configured per target
+ * cmdpx_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
+ * cmdpn_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
+ * cmdps_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
+ *
+ * The following explicit data type sizes can be used with any target:
+ *
+ * cmdb*_** - applies [cmd] to packed [b]yte-sized (1 byte) elements
+ * cmdh*_** - applies [cmd] to packed [h]alf-sized (2 byte) elements
+ * cmdw*_** - applies [cmd] to packed [w]ord-sized (4 byte) elements
+ * cmdf*_** - applies [cmd] to packed [f]ull-sized (8 byte) elements
  */
 
 /******************************************************************************/
