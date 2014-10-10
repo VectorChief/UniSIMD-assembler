@@ -33,19 +33,10 @@
  * cmdpx_ld - applies [cmd] as above
  * cmdpx_mr - applies [cmd] to [m]emory   from [r]egister
  * cmdpx_st - applies [cmd] as above (arg list as cmdxx_ld)
- * cmdux_** - applies [cmd] with [u]naligned memory access
  *
  * cmdpx_** - applies [cmd] to [p]acked unsigned int32 args, [x] - default
- * cmdpn_** - applies [cmd] to [p]acked   signed int32 args, [n] - sigNed, neg
- * cmdpb_** - applies [cmd] to [p]acked unsigned int08 args, [b] - byte
- * cmdpc_** - applies [cmd] to [p]acked   signed int08 args, [c] - char
- * cmdph_** - applies [cmd] to [p]acked unsigned int16 args, [h] - half
- * cmdpg_** - applies [cmd] to [p]acked   signed int16 args, [g] - siGned half
- * cmdpt_** - applies [cmd] to [p]acked unsigned int64 args, [t] - ocTo, eighT
- * cmdpl_** - applies [cmd] to [p]acked   signed int64 args, [l] - long
+ * cmdpn_** - applies [cmd] to [p]acked   signed int32 args, [n] - signed, neg
  * cmdps_** - applies [cmd] to [p]acked [s]ingle precision fp args
- * cmdpd_** - applies [cmd] to [p]acked [d]ouble precision fp args
- * cmdpf_** - adjustable alias for [p]acked [f]p single or double args
  */
 
 /******************************************************************************/
