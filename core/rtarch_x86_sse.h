@@ -34,22 +34,30 @@
  * cmdp*_mr - applies [cmd] to [p]acked: [m]emory   from [r]egister
  * cmdp*_st - applies [cmd] to [p]acked: as above (arg list as cmdp*_ld)
  *
+ * cmdp*_** - applies [cmd] to [p]acked data-type size configurable per target
+ * cmdpx_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
+ * cmdpn_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
+ * cmdps_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
+ *
+ * The cmdp*_** set of instructions together with CHECK_MASK macro
+ * are intended for SPMD programming model and can be configured per target
+ * to work with 32-bit/64-bit SIMD-elements (integers/pointers, fp).
+ *
+ * The following explicit data-type sizes are fixed regardless of the target:
+ *
+ * cmdb*_** - applies [cmd] to packed [b]yte-sized (1 byte) SIMD-elements
+ * cmdh*_** - applies [cmd] to packed [h]alf-sized (2 byte) SIMD-elements
+ * cmdw*_** - applies [cmd] to packed [w]ord-sized (4 byte) SIMD-elements
+ * cmdf*_** - applies [cmd] to packed [f]ull-sized (8 byte) SIMD-elements
+ *
  * cmdp*_ru - applies [cmd] to [p]acked: [r]egister from [u]naligned memory
  * cmdp*_lu - applies [cmd] to [p]acked: as above
  * cmdp*_ur - applies [cmd] to [p]acked: [u]naligned memory from [r]egister
  * cmdp*_su - applies [cmd] to [p]acked: as above (arg list as cmdp*_lu)
  *
- * cmdp*_** - applies [cmd] to [p]acked data type size configured per target
- * cmdpx_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
- * cmdpn_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
- * cmdps_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
- *
- * The following explicit data type sizes can be used with any target:
- *
- * cmdb*_** - applies [cmd] to packed [b]yte-sized (1 byte) elements
- * cmdh*_** - applies [cmd] to packed [h]alf-sized (2 byte) elements
- * cmdw*_** - applies [cmd] to packed [w]ord-sized (4 byte) elements
- * cmdf*_** - applies [cmd] to packed [f]ull-sized (8 byte) elements
+ * The sub-word data-types together with unaligned memory access instructions
+ * are intended for stream processing applications (like color conversion)
+ * and might be generally limited in scope.
  */
 
 /******************************************************************************/

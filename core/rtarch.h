@@ -33,8 +33,8 @@
  * Preliminary naming scheme for potential future targets.
  *
  * Current 32-bit targets:
- *  - rtarch_arm.h         - 32-bit ARMv7 ISA, 16 core registers, 8 + temps used
- *  - rtarch_arm_mpe.h     - 32-bit ARMv7 ISA, 16 SIMD registers, 8 + temps used
+ *  - rtarch_arm.h         - 32-bit ARMv7 ISA, 16 core registers, 8 + 3 tmp used
+ *  - rtarch_arm_mpe.h     - 32-bit ARMv7 ISA, 16 SIMD registers, 8 + 3 tmp used
  *  - rtarch_x86.h         - 32-bit x86 ISA, 8 core registers, 6 + esp, ebp used
  *  - rtarch_x86_sse.h     - 32-bit x86 ISA, 8 SIMD registers, 8 used
  *
@@ -79,6 +79,13 @@
  * Future 32 core and 32 SIMD registers:
  *  - Reax, ... , Redi, Reg8, Reg9, RegA, ... , RegV
  *  - Xmm0, ... , Xmm7, Xmm8, Xmm9, XmmA, ... , XmmV
+ *
+ * Note that while register names are fixed, register sizes are not and depend
+ * on the chosen target.
+ * Core registers can be 32-bit/64-bit wide and their SIMD counterparts depend
+ * on the architecture and the version of SIMD used in the target.
+ * The fractional registers don't have names and are not architecturally
+ * visible in the assembler as it would complicate SPMD programming model.
  */
 
 /******************************************************************************/
@@ -216,12 +223,10 @@
 #define S                   RT_SIMD_WIDTH
 
 /*
- * Wider SIMD are supported in backend structs (S = 8, 16 were tested),
- * although there are some places in the code (tracer.cpp, engine.cpp),
- * which still rely on S = 4 for proper operation.
+ * Wider SIMD are supported in backend structs (S = 8, 16 were tested).
  */
 #if Q != RT_SIMD_QUADS || S != RT_SIMD_WIDTH || S % 4 != 0
-#error "SIMD width must be divisible by 4 for QuadRay engine"
+#error "SIMD width must be divisible by 4"
 #endif /* in case S is not expressed in quads */
 
 /*
