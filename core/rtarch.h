@@ -59,12 +59,20 @@
  *  - rtarch_m32_128.h     - 32-bit MIPS ISA, ?? SIMD registers
  *  - rtarch_p32.h         - 32-bit Power ISA, ?? core registers
  *  - rtarch_p32_128.h     - 32-bit Power ISA, ?? SIMD registers
+ *  - rtarch_r32.h         - 32-bit RISC-V ISA, 31 core registers
+ *  - rtarch_r32_128.h     - 32-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
+ *  - rtarch_r32_256.h     - 32-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
+ *  - rtarch_r32_512.h     - 32-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
  *
  * Reserved 64-bit targets:
  *  - rtarch_m64.h         - 64-bit MIPS ISA, ?? core registers
  *  - rtarch_m64_128.h     - 64-bit MIPS ISA, ?? SIMD registers
  *  - rtarch_p64.h         - 64-bit Power ISA, ?? core registers
  *  - rtarch_p64_128.h     - 64-bit Power ISA, ?? SIMD registers
+ *  - rtarch_r64.h         - 64-bit RISC-V ISA, 31 core registers
+ *  - rtarch_r64_128.h     - 64-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
+ *  - rtarch_r64_256.h     - 64-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
+ *  - rtarch_r64_512.h     - 64-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
  *
  * Preliminary naming scheme for extended core and SIMD register files.
  *
@@ -84,7 +92,7 @@
  * on the chosen target.
  * Core registers can be 32-bit/64-bit wide and their SIMD counterparts depend
  * on the architecture and the version of SIMD used in the target.
- * The fractional registers don't have names and are not architecturally
+ * The fractional sub-registers don't have names and are not architecturally
  * visible in the assembler as it would complicate SPMD programming model.
  */
 
@@ -210,7 +218,7 @@
  */
 #ifdef Q
 #undef Q
-#endif /* in case Q is defined outside of the engine */
+#endif /* in case Q is defined outside */
 #define Q                   RT_SIMD_QUADS
 
 /*
@@ -219,7 +227,7 @@
  */
 #ifdef S
 #undef S
-#endif /* in case S is defined outside of the engine */
+#endif /* in case S is defined outside */
 #define S                   RT_SIMD_WIDTH
 
 /*
