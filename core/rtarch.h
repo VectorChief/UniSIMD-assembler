@@ -59,7 +59,7 @@
  *  - rtarch_m32_128.h     - 32-bit MIPS ISA, ?? SIMD registers
  *  - rtarch_p32.h         - 32-bit Power ISA, ?? core registers
  *  - rtarch_p32_128.h     - 32-bit Power ISA, ?? SIMD registers
- *  - rtarch_r32.h         - 32-bit RISC-V ISA, 31 core registers
+ *  - rtarch_r32.h         - 32-bit RISC-V ISA, 31 core registers, shakti/rocket
  *  - rtarch_r32_128.h     - 32-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
  *  - rtarch_r32_256.h     - 32-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
  *  - rtarch_r32_512.h     - 32-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
@@ -69,10 +69,23 @@
  *  - rtarch_m64_128.h     - 64-bit MIPS ISA, ?? SIMD registers
  *  - rtarch_p64.h         - 64-bit Power ISA, ?? core registers
  *  - rtarch_p64_128.h     - 64-bit Power ISA, ?? SIMD registers
- *  - rtarch_r64.h         - 64-bit RISC-V ISA, 31 core registers
+ *  - rtarch_r64.h         - 64-bit RISC-V ISA, 31 core registers, shakti/rocket
  *  - rtarch_r64_128.h     - 64-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
  *  - rtarch_r64_256.h     - 64-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
  *  - rtarch_r64_512.h     - 64-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
+ *
+ * In case floating point SIMD element size needs to be different from core
+ * target size, the following scheme is reserved for SPMD programming model:
+ *
+ *  - rtarch_*32.h         - 32-bit core ISA, 32-bit integers and pointers
+ *  - rtarch_*32_***_f64.h - 32-bit core ISA, 64-bit floating point elements
+ *  - rtarch_*64.h         - 64-bit core ISA, 64-bit integers and pointers
+ *  - rtarch_*64_***_f32.h - 64-bit core ISA, 32-bit floating point elements
+ *
+ * Another approach for target management might be considered in the future
+ * to avoid combinatorial explosion. Multiple compatible targets per rtarch file
+ * as well as multiple compatible targets with runtime selection per binary
+ * should be a possibility. This will be decided as development progresses.
  *
  * Preliminary naming scheme for extended core and SIMD register files.
  *
