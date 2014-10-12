@@ -34,7 +34,7 @@
  * cmdp*_mr - applies [cmd] to [p]acked: [m]emory   from [r]egister
  * cmdp*_st - applies [cmd] to [p]acked: as above (arg list as cmdp*_ld)
  *
- * cmdp*_** - applies [cmd] to [p]acked data-type size configurable per target
+ * cmdp*_** - applies [cmd] to [p]acked args (size configurable per target)
  * cmdpx_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
  * cmdpn_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
  * cmdps_** - applies [cmd] to [p]acked floating point   args, [s] - scalable

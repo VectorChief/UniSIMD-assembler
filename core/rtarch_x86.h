@@ -26,7 +26,7 @@
  * cmdx*_rm - applies [cmd] to [r]egister from [m]emory
  * cmdx*_ld - applies [cmd] as above
  * cmdx*_mr - applies [cmd] to [m]emory   from [r]egister
- * cmdx*_st - applies [cmd] as above (arg list as cmdxx_ld)
+ * cmdx*_st - applies [cmd] as above (arg list as cmdx*_ld)
  *
  * cmdx*_rr - applies [cmd] to [r]egister from [r]egister
  * cmdx*_mm - applies [cmd] to [m]emory   from [m]emory
@@ -50,8 +50,17 @@
  *
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
- * cmdx*_** - applies [cmd] in  default mode
- * cmde*_** - applies [cmd] in extended mode (takes DH, DW)
+ * cmd*s_** - applies [cmd] to floating point   args, [s] - scalable
+ * cmdx*_** - applies [cmd] in  default mode (args size depends on the target)
+ * cmde*_** - applies [cmd] in extended mode (takes DH, DW), single channel SIMD
+ *
+ * The cmdex_** and cmden_** instructions work with core registers, use
+ * [r] for register arguments and accept extended displacement types (DH, DW).
+ * The cmdes_** instructions are intended for scalar floating point [cmd],
+ * work with singl[e] channel of Xmm* multimedia registers defined in SIMD, use
+ * [r] for register arguments and accept extended displacement types (DH, DW).
+ * The movx*_re and movx*_er instructions are intended for [mov]ing data between
+ * [x] default mode [r]egister and singl[e] channel of Xmm* multimedia register.
  *
  * Argument * register is fixed by the implementation.
  * Some formal definitions are not given below to encourage
