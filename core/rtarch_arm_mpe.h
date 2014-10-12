@@ -34,7 +34,7 @@
  * cmdp*_mr - applies [cmd] to [p]acked: [m]emory   from [r]egister
  * cmdp*_st - applies [cmd] to [p]acked: as above (arg list as cmdp*_ld)
  *
- * cmdp*_** - applies [cmd] to [p]acked args (size configurable per target)
+ * cmdp*_** - applies [cmd] to [p]acked args (elem size adjustable per target)
  * cmdpx_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
  * cmdpn_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
  * cmdps_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
@@ -43,7 +43,8 @@
  * are intended for SPMD programming model and can be configured per target
  * to work with 32-bit/64-bit SIMD-elements (integers/pointers, fp).
  *
- * The following explicit data-type sizes are fixed regardless of the target:
+ * The following explicit SIMD-element sizes are fixed for all targets
+ * and can be used in place of target-adjustable [p]acked specifier.
  *
  * cmdb*_** - applies [cmd] to packed [b]yte-sized (1 byte) SIMD-elements
  * cmdh*_** - applies [cmd] to packed [h]alf-sized (2 byte) SIMD-elements
@@ -58,6 +59,20 @@
  * The sub-word data-types together with unaligned memory access instructions
  * are intended for stream processing applications (like color conversion)
  * and might be generally limited in scope.
+ *
+ * The following instructions accept [p]acked register arguments, but only work
+ * with single SIMD-element, memory args are not required to be SIMD-aligned:
+ *
+ * cmdp*_ei - applies [cmd] to [p]acked: reg-[e]lem from [i]mmediate
+ * cmdp*_ee - applies [cmd] to [p]acked: reg-[e]lem from reg-[e]lem
+ *
+ * cmdp*_em - applies [cmd] to [p]acked: reg-[e]lem from [m]emory
+ * cmdp*_le - applies [cmd] to [p]acked: as above
+ * cmdp*_me - applies [cmd] to [p]acked: [m]emory   from reg-[e]lem
+ * cmdp*_se - applies [cmd] to [p]acked: as above (arg list as cmdp*_le)
+ *
+ * The movx*_re and movx*_er instructions are intended for [mov]ing data between
+ * [x] default mode core [r]egister and single SIMD reg-[e]lem.
  */
 
 /******************************************************************************/
