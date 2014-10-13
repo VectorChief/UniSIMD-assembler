@@ -39,11 +39,13 @@
  * cmdpn_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
  * cmdps_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
  *
- * The cmdp*_** set of instructions together with CHECK_MASK macro
+ * The cmdp*_** together with core cmdx*_** and cmde*_** set of instructions
  * are intended for SPMD programming model and can be configured per target
- * to work with 32-bit/64-bit SIMD-elements (integers/pointers, fp).
+ * to work with 32-bit/64-bit data-elements (integers/pointers, fp).
+ * In this model data paths are fixed, core and SIMD data-elements are
+ * interchangeable, code path divergence is handled via CHECK_MASK macro.
  *
- * The following explicit SIMD-element sizes are fixed for all targets
+ * The following size-explicit instructions are fixed for all targets
  * and can be used in place of target-adjustable [p]acked specifier.
  *
  * cmdb*_** - applies [cmd] to packed [b]yte-sized (1 byte) SIMD-elements
@@ -58,21 +60,24 @@
  *
  * The sub-word data-types together with unaligned memory access instructions
  * are intended for stream processing applications (like color conversion)
- * and might be generally limited in scope.
+ * and might be generally limited in scope due to differences in architectures.
  *
  * The following instructions accept [p]acked register arguments, but only work
  * with single SIMD-element, memory args are not required to be SIMD-aligned:
  *
  * cmdp*_ei - applies [cmd] to [p]acked: reg-[e]lem from [i]mmediate
  * cmdp*_ee - applies [cmd] to [p]acked: reg-[e]lem from reg-[e]lem
+ * movp*_oe - applies [mov] to [p]acked: c[o]re-reg from reg-[e]lem
+ * movp*_eo - applies [mov] to [p]acked: reg-[e]lem from c[o]re-reg
  *
  * cmdp*_em - applies [cmd] to [p]acked: reg-[e]lem from [m]emory
  * cmdp*_le - applies [cmd] to [p]acked: as above
  * cmdp*_me - applies [cmd] to [p]acked: [m]emory   from reg-[e]lem
  * cmdp*_se - applies [cmd] to [p]acked: as above (arg list as cmdp*_le)
  *
- * The movx*_re and movx*_er instructions are intended for [mov]ing data between
- * [x] default mode core [r]egister and single SIMD reg-[e]lem.
+ * The single SIMD-element instructions are provided to complement
+ * general purpose programming outside of more strict SPMD programming model
+ * and might be generally limited in scope due to differences in architectures.
  */
 
 /******************************************************************************/

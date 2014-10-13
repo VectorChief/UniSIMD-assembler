@@ -43,6 +43,8 @@
  * cmdx*_lb - applies [cmd] as above
  * label_ld - applies [adr] as above
  *
+ * Argument * register above is fixed by the implementation.
+ *
  * stack_st - applies [mov] to stack from register (push)
  * stack_ld - applies [mov] to register from stack (pop)
  * stack_sa - applies [mov] to stack from all registers
@@ -53,18 +55,31 @@
  * cmdx*_** - applies [cmd] in  default mode (args size depends on the target)
  * cmde*_** - applies [cmd] in extended mode (takes DH, DW), otherwise as above
  *
- * The following size-explicit partial load/store instructions
- * allow to operate with sub-word memory arguments. The first [*] symbol
+ * The cmdx*_** and cmde*_** together with SIMD cmdp*_** set of instructions
+ * are intended for SPMD programming model and can be configured per target
+ * to work with 32-bit/64-bit data-elements (integers/pointers, fp).
+ * In this model data paths are fixed, core and SIMD data-elements are
+ * interchangeable, code path divergence is handled via CHECK_MASK macro.
+ *
+ * The following size-explicit partial arithmetic/load/store instructions
+ * allow to operate with sub-word register/memory arguments. The first [*]
  * controls the size [b - byte, h - half, w - word, f - full], the second [*]
  * controls the expansion [x - zero. n - sign]. In order to distinguish from
  * packed size-explicit instructions, [o] is used for core register arguments.
+ *
+ * cmd**_oi - applies [cmd] to c[o]re-reg from [i]mmediate
+ * cmd**_mi - applies [cmd] to [m]emory   from [i]mmediate
+ * cmd**_oo - applies [cmd] to c[o]re-reg from c[o]re-reg
  *
  * cmd**_om - applies [cmd] to c[o]re-reg from [m]emory
  * cmd**_lo - applies [cmd] to as above
  * cmd**_mo - applies [cmd] to [m]emory   from c[o]re-reg
  * cmd**_so - applies [cmd] to as above (arg list as cmd**_lo)
  *
- * Argument * register is fixed by the implementation.
+ * The sub-word arithmetic/load/store instructions are provided to complement
+ * general purpose programming outside of more strict SPMD programming model
+ * and might be generally limited in scope due to differences in architectures.
+ *
  * Some formal definitions are not given below to encourage
  * use of friendly aliases for better code readability.
  */
