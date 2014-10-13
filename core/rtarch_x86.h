@@ -53,6 +53,17 @@
  * cmdx*_** - applies [cmd] in  default mode (args size depends on the target)
  * cmde*_** - applies [cmd] in extended mode (takes DH, DW), otherwise as above
  *
+ * The following size-explicit partial load/store instructions
+ * allow to operate with sub-word memory arguments. The first [*] symbol
+ * controls the size [b - byte, h - half, w - word, f - full], the second [*]
+ * controls the expansion [x - zero. n - sign]. In order to distinguish from
+ * packed size-explicit instructions, [o] is used for core register arguments.
+ *
+ * cmd**_om - applies [cmd] to c[o]re-reg from [m]emory
+ * cmd**_lo - applies [cmd] to as above
+ * cmd**_mo - applies [cmd] to [m]emory   from c[o]re-reg
+ * cmd**_so - applies [cmd] to as above (arg list as cmd**_lo)
+ *
  * Argument * register is fixed by the implementation.
  * Some formal definitions are not given below to encourage
  * use of friendly aliases for better code readability.
