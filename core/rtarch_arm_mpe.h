@@ -34,13 +34,13 @@
  * cmdp*_mr - applies [cmd] to [p]acked: [m]emory   from [r]egister
  * cmdp*_st - applies [cmd] to [p]acked: as above (arg list as cmdp*_ld)
  *
- * Default [m]emory args accept DP, DH, DW offsets in conjunction
- * with SIMD regs and single SIMD-elements.
+ * Default [m]emory args accept DP, DH, DW offsets for SIMD-registers
+ * and SIMD-elements. DP offsets in this case need to be SIMD-aligned.
  *
  * cmdp*_** - applies [cmd] to [p]acked args (elem size adjustable per target)
- * cmdpx_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
- * cmdpn_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
- * cmdps_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
+ * cmd*x_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
+ * cmd*n_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
+ * cmd*s_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
  *
  * The cmdp*_** instructions together with core cmdx*_** instructions
  * are intended for SPMD programming model and can be configured per target
@@ -56,34 +56,34 @@
  * cmdw*_** - applies [cmd] to packed [w]ord-sized (4 byte) SIMD-elements
  * cmdf*_** - applies [cmd] to packed [f]ull-sized (8 byte) SIMD-elements
  *
- * cmdp*_ru - applies [cmd] to [p]acked: [r]egister from [u]naligned memory
- * cmdp*_lu - applies [cmd] to [p]acked: as above
- * cmdp*_ur - applies [cmd] to [p]acked: [u]naligned memory from [r]egister
- * cmdp*_su - applies [cmd] to [p]acked: as above (arg list as cmdp*_lu)
+ * cmd**_ru - applies [cmd] to packed: [r]egister from [u]naligned memory
+ * cmd**_lu - applies [cmd] to packed: as above
+ * cmd**_ur - applies [cmd] to packed: [u]naligned memory from [r]egister
+ * cmd**_su - applies [cmd] to packed: as above (arg list as cmd**_lu)
  *
  * DP offsets cannot be used with [u]naligned memory args, use DH, DW instead.
- * Unaligned access is only applicable to SIMD regs and single SIMD-elements.
+ * Unaligned access is only applicable to SIMD-registers and SIMD-elements.
  * TODO: new byte-sized DB offset might need to be introduced to handle this.
  *
  * The sub-word data-types together with unaligned memory access instructions
  * are intended for stream processing applications (like color conversion)
  * and might be generally limited in scope due to differences in architectures.
  *
- * The following instructions accept [p]acked register arguments,
+ * The following instructions accept packed SIMD-register arguments,
  * but only work with single SIMD-element:
  *
- * cmdp*_ei - applies [cmd] to [p]acked: reg-[e]lem from [i]mmediate
- * cmdp*_ee - applies [cmd] to [p]acked: reg-[e]lem from reg-[e]lem
- * movp*_oe - applies [mov] to [p]acked: c[o]re-reg from reg-[e]lem
- * movp*_eo - applies [mov] to [p]acked: reg-[e]lem from c[o]re-reg
+ * cmd**_ei - applies [cmd] to packed: reg-[e]lem from [i]mmediate
+ * cmd**_ee - applies [cmd] to packed: reg-[e]lem from reg-[e]lem
+ * mov**_oe - applies [mov] to packed: c[o]re-reg from reg-[e]lem
+ * mov**_eo - applies [mov] to packed: reg-[e]lem from c[o]re-reg
  *
- * cmdp*_eu - applies [cmd] to [p]acked: reg-[e]lem from [u]naligned memory
- * cmdp*_le - applies [cmd] to [p]acked: as above
- * cmdp*_ue - applies [cmd] to [p]acked: [u]naligned memory from reg-[e]lem
- * cmdp*_se - applies [cmd] to [p]acked: as above (arg list as cmdp*_le)
+ * cmd**_eu - applies [cmd] to packed: reg-[e]lem from [u]naligned memory
+ * cmd**_le - applies [cmd] to packed: as above
+ * cmd**_ue - applies [cmd] to packed: [u]naligned memory from reg-[e]lem
+ * cmd**_se - applies [cmd] to packed: as above (arg list as cmd**_le)
  *
- * Memory args used in conjunction with single SIMD-elements are not required
- * to be SIMD-aligned in which case DP offsets cannot be used (see above).
+ * Memory args used in conjunction with single SIMD-elements are implied
+ * to be [u]naligned in which case DP offsets cannot be used (see above).
  *
  * The single SIMD-element instructions are provided to complement
  * general purpose programming outside of more strict SPMD programming model

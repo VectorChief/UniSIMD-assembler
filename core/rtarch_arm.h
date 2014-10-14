@@ -38,28 +38,28 @@
  * cmdx*_xr - applies [cmd] to x-register from [r]egister
  * cmdx*_xm - applies [cmd] to x-register from [m]emory
  *
+ * Default [m]emory args only accept DP offsets (no alignment restrictions)
+ * for core registers, use [w]ide-offset memory args below for DH, DW.
+ * Argument x-register is fixed by the implementation.
+ *
  * cmdx*_*w - applies [cmd] to [*] from [w]ide-offset memory
  * cmdx*_lw - applies [cmd] as above
  * cmdx*_w* - applies [cmd] to [w]ide-offset memory from [*]
- * cmdx*_sw - applies [cmd] as above (arg list as cmd**_lw)
+ * cmdx*_sw - applies [cmd] as above (arg list as cmdx*_lw)
  *
  * cmdx*_rl - applies [cmd] to [r]egister from [l]abel
  * cmdx*_xl - applies [cmd] to x-register from [l]abel
  * cmdx*_lb - applies [cmd] as above
  * label_ld - applies [adr] as above
  *
- * Default [m]emory args only accept DP offsets in conjunction
- * with core regs, use [w]ide-offset memory args for DH, DW.
- * Argument x-register is fixed by the implementation.
- *
  * stack_st - applies [mov] to stack from register (push)
  * stack_ld - applies [mov] to register from stack (pop)
  * stack_sa - applies [mov] to stack from all registers
  * stack_la - applies [mov] to all registers from stack
  *
+ * cmdx*_** - applies [cmd] in  default mode (args size adjustable per target)
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
- * cmdx*_** - applies [cmd] in  default mode (args size depends on the target)
  *
  * The cmdx*_** instructions together with SIMD cmdp*_** instructions
  * are intended for SPMD programming model and can be configured per target
