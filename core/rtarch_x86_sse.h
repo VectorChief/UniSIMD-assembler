@@ -34,12 +34,15 @@
  * cmdp*_mr - applies [cmd] to [p]acked: [m]emory   from [r]egister
  * cmdp*_st - applies [cmd] to [p]acked: as above (arg list as cmdp*_ld)
  *
+ * Default [m]emory args accept DP, DH, DW offsets in conjunction
+ * with SIMD regs and single SIMD-elements.
+ *
  * cmdp*_** - applies [cmd] to [p]acked args (elem size adjustable per target)
  * cmdpx_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
  * cmdpn_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
  * cmdps_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
  *
- * The cmdp*_** together with core cmdx*_** and cmde*_** set of instructions
+ * The cmdp*_** instructions together with core cmdx*_** instructions
  * are intended for SPMD programming model and can be configured per target
  * to work with 32-bit/64-bit data-elements (integers/pointers, fp).
  * In this model data paths are fixed, core and SIMD data-elements are
@@ -58,22 +61,29 @@
  * cmdp*_ur - applies [cmd] to [p]acked: [u]naligned memory from [r]egister
  * cmdp*_su - applies [cmd] to [p]acked: as above (arg list as cmdp*_lu)
  *
+ * DP offsets cannot be used with [u]naligned memory args, use DH, DW instead.
+ * Unaligned access is only applicable to SIMD regs and single SIMD-elements.
+ * TODO: new byte-sized DB offset might need to be introduced to handle this.
+ *
  * The sub-word data-types together with unaligned memory access instructions
  * are intended for stream processing applications (like color conversion)
  * and might be generally limited in scope due to differences in architectures.
  *
- * The following instructions accept [p]acked register arguments, but only work
- * with single SIMD-element, memory args are not required to be SIMD-aligned:
+ * The following instructions accept [p]acked register arguments,
+ * but only work with single SIMD-element:
  *
  * cmdp*_ei - applies [cmd] to [p]acked: reg-[e]lem from [i]mmediate
  * cmdp*_ee - applies [cmd] to [p]acked: reg-[e]lem from reg-[e]lem
  * movp*_oe - applies [mov] to [p]acked: c[o]re-reg from reg-[e]lem
  * movp*_eo - applies [mov] to [p]acked: reg-[e]lem from c[o]re-reg
  *
- * cmdp*_em - applies [cmd] to [p]acked: reg-[e]lem from [m]emory
+ * cmdp*_eu - applies [cmd] to [p]acked: reg-[e]lem from [u]naligned memory
  * cmdp*_le - applies [cmd] to [p]acked: as above
- * cmdp*_me - applies [cmd] to [p]acked: [m]emory   from reg-[e]lem
+ * cmdp*_ue - applies [cmd] to [p]acked: [u]naligned memory from reg-[e]lem
  * cmdp*_se - applies [cmd] to [p]acked: as above (arg list as cmdp*_le)
+ *
+ * Memory args used in conjunction with single SIMD-elements are not required
+ * to be SIMD-aligned in which case DP offsets cannot be used (see above).
  *
  * The single SIMD-element instructions are provided to complement
  * general purpose programming outside of more strict SPMD programming model

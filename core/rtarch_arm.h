@@ -33,17 +33,24 @@
  * cmdx*_rr - applies [cmd] to [r]egister (one operand cmd)
  * cmdx*_mm - applies [cmd] to [m]emory   (one operand cmd)
  *
- * cmdx*_rx - applies [cmd] to [r]egister from * register
- * cmdx*_mx - applies [cmd] to [m]emory   from * register
- * cmdx*_xr - applies [cmd] to * register from [r]egister
- * cmdx*_xm - applies [cmd] to * register from [m]emory
+ * cmdx*_rx - applies [cmd] to [r]egister from x-register
+ * cmdx*_mx - applies [cmd] to [m]emory   from x-register
+ * cmdx*_xr - applies [cmd] to x-register from [r]egister
+ * cmdx*_xm - applies [cmd] to x-register from [m]emory
+ *
+ * cmdx*_*w - applies [cmd] to [*] from [w]ide-offset memory
+ * cmdx*_lw - applies [cmd] as above
+ * cmdx*_w* - applies [cmd] to [w]ide-offset memory from [*]
+ * cmdx*_sw - applies [cmd] as above (arg list as cmd**_lw)
  *
  * cmdx*_rl - applies [cmd] to [r]egister from [l]abel
- * cmdx*_xl - applies [cmd] to * register from [l]abel
+ * cmdx*_xl - applies [cmd] to x-register from [l]abel
  * cmdx*_lb - applies [cmd] as above
  * label_ld - applies [adr] as above
  *
- * Argument * register above is fixed by the implementation.
+ * Default [m]emory args only accept DP offsets in conjunction
+ * with core regs, use [w]ide-offset memory args for DH, DW.
+ * Argument x-register is fixed by the implementation.
  *
  * stack_st - applies [mov] to stack from register (push)
  * stack_ld - applies [mov] to register from stack (pop)
@@ -53,9 +60,8 @@
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
  * cmdx*_** - applies [cmd] in  default mode (args size depends on the target)
- * cmde*_** - applies [cmd] in extended mode (takes DH, DW), otherwise as above
  *
- * The cmdx*_** and cmde*_** together with SIMD cmdp*_** set of instructions
+ * The cmdx*_** instructions together with SIMD cmdp*_** instructions
  * are intended for SPMD programming model and can be configured per target
  * to work with 32-bit/64-bit data-elements (integers/pointers, fp).
  * In this model data paths are fixed, core and SIMD data-elements are
@@ -72,9 +78,14 @@
  * cmd**_oo - applies [cmd] to c[o]re-reg from c[o]re-reg
  *
  * cmd**_om - applies [cmd] to c[o]re-reg from [m]emory
- * cmd**_lo - applies [cmd] to as above
- * cmd**_mo - applies [cmd] to [m]emory   from c[o]re-reg
+ * cmd**_lo - applies [cmd] as above
+ * cmd**_mo - applies [cmd] to [m]emory from c[o]re-reg
  * cmd**_so - applies [cmd] to as above (arg list as cmd**_lo)
+ *
+ * cmd**_ow - applies [cmd] to c[o]re-reg from [w]ide-offset memory
+ * cmd**_lw - applies [cmd] as above, [w] is only used with core regs
+ * cmd**_wo - applies [cmd] to [w]ide-offset memory from c[o]re-reg
+ * cmd**_sw - applies [cmd] as above (arg list as cmd**_lw)
  *
  * The sub-word arithmetic/load/store instructions are provided to complement
  * general purpose programming outside of more strict SPMD programming model
