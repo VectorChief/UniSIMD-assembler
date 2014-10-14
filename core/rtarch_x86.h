@@ -39,8 +39,8 @@
  * cmdx*_xm - applies [cmd] to x-register from [m]emory
  *
  * Default [m]emory args for core registers only accept DP offsets,
- * use [w]ide-offset memory args below for DH, DW. There is no alignment
- * restrictions for any offset values in conjunction with core registers.
+ * use [w]ide-offset memory args below for DH, DW. There are no alignment
+ * restrictions on any offset values in conjunction with core registers.
  * Argument x-register is fixed by the implementation.
  *
  * cmdx*_*w - applies [cmd] to [*] from [w]ide-offset memory
@@ -162,15 +162,17 @@
 
 /* immediate    VAL,  TYP,  CMD */
 
-#define IB(im)  (im), 0x02, EMITB((im) & 0x7F) /* drop sign-ext (zero in ARM) */
-#define IH(im)  (im), 0x00, EMITW((im) & 0xFFFF)
-#define IW(im)  (im), 0x00, EMITW((im) & 0xFFFFFFFF)
+#define IB(im)  ((im) & 0x7F),   0x02, EMITB((im) & 0x7F)  /* erase sign-bit */
+#define IP(im)  ((im) & 0xFF),   0x00, EMITW((im) & 0xFF)  /* P: padded-byte */
+#define IH(im)  ((im) & 0xFFFF), 0x00, EMITW((im) & 0xFFFF)
+#define IW(im)  ((im)),          0x00, EMITW((im))
 
 /* displacement VAL,  TYP,  CMD */
 
-#define DP(im)  (im), 0x00, EMITW((im) & 0xFFF)
-#define DH(im)  (im), 0x00, EMITW((im) & 0xFFFF)        /* SIMD-only (in ARM) */
-#define DW(im)  (im), 0x00, EMITW((im) & 0xFFFFFFFF)    /* SIMD-only (in ARM) */
+#define DB(im)  ((im) & 0xFF),   0x00, EMITW((im) & 0xFF)
+#define DP(im)  ((im) & 0xFFF),  0x00, EMITW((im) & 0xFFF) /* P: partial-half */
+#define DH(im)  ((im) & 0xFFFF), 0x00, EMITW((im) & 0xFFFF)/* core/wide, SIMD */
+#define DW(im)  ((im)),          0x00, EMITW((im))         /* core/wide, SIMD */
 
 #define PLAIN   0x00, 0x00, EMPTY
 
@@ -186,13 +188,13 @@
 
 #define movxx_ri(RM, IM)                                                    \
         EMITB(0xC7)                                                         \
-            MRM(0x00,    MOD(RM), REG(RM)) /* truncate IB with TYP below */ \
-            AUX(EMPTY,   EMPTY,   EMITW(VAL(IM) & ((TYP(IM) << 6) - 1)))
+            MRM(0x00,    MOD(RM), REG(RM))                                  \
+            AUX(EMPTY,   EMPTY,   EMITW(VAL(IM)))
 
 #define movxx_mi(RM, DP, IM)                                                \
         EMITB(0xC7)                                                         \
-            MRM(0x00,    MOD(RM), REG(RM)) /* truncate IB with TYP below */ \
-            AUX(SIB(RM), CMD(DP), EMITW(VAL(IM) & ((TYP(IM) << 6) - 1)))
+            MRM(0x00,    MOD(RM), REG(RM))                                  \
+            AUX(SIB(RM), CMD(DP), EMITW(VAL(IM)))
 
 #define movxx_rr(RG, RM)                                                    \
         EMITB(0x8B)                                                         \

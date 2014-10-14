@@ -39,8 +39,8 @@
  * cmdx*_xm - applies [cmd] to x-register from [m]emory
  *
  * Default [m]emory args for core registers only accept DP offsets,
- * use [w]ide-offset memory args below for DH, DW. There is no alignment
- * restrictions for any offset values in conjunction with core registers.
+ * use [w]ide-offset memory args below for DH, DW. There are no alignment
+ * restrictions on any offset values in conjunction with core registers.
  * Argument x-register is fixed by the implementation.
  *
  * cmdx*_*w - applies [cmd] to [*] from [w]ide-offset memory
@@ -170,8 +170,11 @@
 
 /* immediate    VAL,  TYP,  CMD */
 
-#define IB(im)  (im), 0x02000000 | ((im) & 0x7F),/* drop sign-ext in x86 */ \
-                EMPTY          /* for compatibility with zero-ext in ARM */
+#define IB(im)  (im), 0x02000000 | ((im) & 0x7F),      /* erase sign-bit */ \
+                EMPTY                     /* to cancel sign-ext (in x86) */
+
+#define IP(im)  (im), 0x02000000 | ((im) & 0xFF),      /* P: padded-byte */ \
+                EMPTY                     /* zero-ext'd to word (in x86) */
 
 #define IH(im)  (im), 0x00000000 | TIxx,                                    \
                 EMITW(0xE3000000 | MRM(TIxx,    0x00,    0x00) |            \
@@ -185,14 +188,17 @@
 
 /* displacement VAL,  TYP,  CMD */
 
-#define DP(im)  (im), 0x02000E00 | ((im) >> 4 & 0xFF),                      \
+#define DB(im)  (im), 0x02000000 | ((im) >> 0 & 0xFF),                      \
                 EMPTY
 
-#define DH(im)  (im), 0x00000000 | TDxx,  /* only for SIMD instructions */  \
+#define DP(im)  (im), 0x02000E00 | ((im) >> 4 & 0xFF),/* P: partial-half */ \
+                EMPTY
+
+#define DH(im)  (im), 0x00000000 | TDxx, /* core/wide, SIMD instructions */ \
                 EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |            \
                      (0x000F0000 & (im) <<  4) | (0xFFF & (im)))
 
-#define DW(im)  (im), 0x00000000 | TDxx,  /* only for SIMD instructions */  \
+#define DW(im)  (im), 0x00000000 | TDxx, /* core/wide, SIMD instructions */ \
                 EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |            \
                      (0x000F0000 & (im) <<  4) | (0xFFF & (im)))            \
                 EMITW(0xE3400000 | MRM(TDxx,    0x00,    0x00) |            \
