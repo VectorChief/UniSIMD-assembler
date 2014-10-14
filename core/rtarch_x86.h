@@ -38,7 +38,7 @@
  * cmdx*_xr - applies [cmd] to x-register from [r]egister
  * cmdx*_xm - applies [cmd] to x-register from [m]emory
  *
- * Default [m]emory args for core registers only accept DP offsets,
+ * Default [m]emory args for core registers only accept DB, DP offsets,
  * use [w]ide-offset memory args below for DH, DW. There are no alignment
  * restrictions on any offset values in conjunction with core registers.
  * Argument x-register is fixed by the implementation.
