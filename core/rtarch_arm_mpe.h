@@ -35,7 +35,7 @@
  * cmdp*_st - applies [cmd] to [p]acked: as above (arg list as cmdp*_ld)
  *
  * Default [m]emory args accept DP, DH, DW offsets for SIMD-registers
- * and SIMD-elements. DP offsets in this case need to be SIMD-aligned.
+ * and SIMD-elements. All offset values in this case need to be SIMD-aligned.
  *
  * cmdp*_** - applies [cmd] to [p]acked args (elem size adjustable per target)
  * cmd*x_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
