@@ -34,8 +34,8 @@
  * cmdp*_mr - applies [cmd] to [p]acked: [m]emory   from [r]egister
  * cmdp*_st - applies [cmd] to [p]acked: as above (arg list as cmdp*_ld)
  *
- * Default [m]emory args accept DP, DH, DW offsets for SIMD-registers
- * and SIMD-elements. All offset values in this case need to be SIMD-aligned.
+ * Default [m]emory args for SIMD-registers accept DP, DH, DW offsets.
+ * All offset values in this case need to be SIMD-aligned.
  *
  * cmdp*_** - applies [cmd] to [p]acked args (elem size adjustable per target)
  * cmd*x_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
@@ -61,8 +61,9 @@
  * cmd**_ur - applies [cmd] to packed: [u]naligned memory from [r]egister
  * cmd**_su - applies [cmd] to packed: as above (arg list as cmd**_lu)
  *
- * DP offsets cannot be used with [u]naligned memory args, use DH, DW instead.
- * Unaligned access is only applicable to SIMD-registers and SIMD-elements.
+ * DP cannot be used with unaligned offset values for SIMD, use DH, DW instead.
+ * Unaligned access is only applicable to SIMD-registers and SIMD-elements and
+ * can work with both aligned (DP allowed) and unaligned (no DP) offset values.
  * TODO: new byte-sized DB offset might need to be introduced to handle this.
  *
  * The sub-word data-types together with unaligned memory access instructions
@@ -83,7 +84,8 @@
  * cmd**_se - applies [cmd] to packed: as above (arg list as cmd**_le)
  *
  * Memory args used in conjunction with single SIMD-elements are implied
- * to be [u]naligned in which case DP offsets cannot be used (see above).
+ * to be [u]naligned, in which case unaligned DP offsets cannot be used.
+ * Use aligned offset values with DP or any offset values with DH, DW.
  *
  * The single SIMD-element instructions are provided to complement
  * general purpose programming outside of more strict SPMD programming model
