@@ -168,6 +168,27 @@
 #define Iesi    0x06, TPxx, EMITW(0xE0800000 | MRM(TPxx,    0x06,    0x00))
 #define Iedi    0x07, TPxx, EMITW(0xE0800000 | MRM(TPxx,    0x07,    0x00))
 
+#define Decx    0x01, TPxx, EMITW(0xE0800080 | MRM(TPxx,    0x01,    0x00))
+#define Dedx    0x02, TPxx, EMITW(0xE0800080 | MRM(TPxx,    0x02,    0x00))
+#define Debx    0x03, TPxx, EMITW(0xE0800080 | MRM(TPxx,    0x03,    0x00))
+#define Debp    0x05, TPxx, EMITW(0xE0800080 | MRM(TPxx,    0x05,    0x00))
+#define Desi    0x06, TPxx, EMITW(0xE0800080 | MRM(TPxx,    0x06,    0x00))
+#define Dedi    0x07, TPxx, EMITW(0xE0800080 | MRM(TPxx,    0x07,    0x00))
+
+#define Qecx    0x01, TPxx, EMITW(0xE0800100 | MRM(TPxx,    0x01,    0x00))
+#define Qedx    0x02, TPxx, EMITW(0xE0800100 | MRM(TPxx,    0x02,    0x00))
+#define Qebx    0x03, TPxx, EMITW(0xE0800100 | MRM(TPxx,    0x03,    0x00))
+#define Qebp    0x05, TPxx, EMITW(0xE0800100 | MRM(TPxx,    0x05,    0x00))
+#define Qesi    0x06, TPxx, EMITW(0xE0800100 | MRM(TPxx,    0x06,    0x00))
+#define Qedi    0x07, TPxx, EMITW(0xE0800100 | MRM(TPxx,    0x07,    0x00))
+
+#define Secx    0x01, TPxx, EMITW(0xE0800180 | MRM(TPxx,    0x01,    0x00))
+#define Sedx    0x02, TPxx, EMITW(0xE0800180 | MRM(TPxx,    0x02,    0x00))
+#define Sebx    0x03, TPxx, EMITW(0xE0800180 | MRM(TPxx,    0x03,    0x00))
+#define Sebp    0x05, TPxx, EMITW(0xE0800180 | MRM(TPxx,    0x05,    0x00))
+#define Sesi    0x06, TPxx, EMITW(0xE0800180 | MRM(TPxx,    0x06,    0x00))
+#define Sedi    0x07, TPxx, EMITW(0xE0800180 | MRM(TPxx,    0x07,    0x00))
+
 /* immediate    VAL,  TYP,  CMD */
 
 #define IB(im)  (im), 0x02000000 | ((im) & 0x7F),      /* erase sign-bit */ \
