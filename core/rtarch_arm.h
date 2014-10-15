@@ -191,17 +191,21 @@
 
 /* immediate    VAL,  TYP,  CMD */
 
-#define IB(im)  (im), 0x02000000 | ((im) & 0x7F),      /* erase sign-bit */ \
+#define IB(im)  ((im) & 0x7F),                         /* erase sign-bit */ \
+                      0x02000000 | ((im) & 0x7F),                           \
                 EMPTY                     /* to cancel sign-ext (in x86) */
 
-#define IP(im)  (im), 0x02000000 | ((im) & 0xFF),      /* P: padded-byte */ \
+#define IP(im)  ((im) & 0xFF),                         /* P: padded-byte */ \
+                      0x02000000 | ((im) & 0xFF),                           \
                 EMPTY                     /* zero-ext'd to word (in x86) */
 
-#define IH(im)  (im), 0x00000000 | TIxx,                                    \
+#define IH(im)  ((im) & 0xFFFF),                                            \
+                      0x00000000 | TIxx,                                    \
                 EMITW(0xE3000000 | MRM(TIxx,    0x00,    0x00) |            \
                      (0x000F0000 & (im) <<  4) | (0xFFF & (im)))
 
-#define IW(im)  (im), 0x00000000 | TIxx,                                    \
+#define IW(im)  ((im)),                                                     \
+                      0x00000000 | TIxx,                                    \
                 EMITW(0xE3000000 | MRM(TIxx,    0x00,    0x00) |            \
                      (0x000F0000 & (im) <<  4) | (0xFFF & (im)))            \
                 EMITW(0xE3400000 | MRM(TIxx,    0x00,    0x00) |            \
@@ -209,17 +213,21 @@
 
 /* displacement VAL,  TYP,  CMD */
 
-#define DB(im)  (im), 0x02000000 | ((im) >> 0 & 0xFF),                      \
-                EMPTY
+#define DB(im)  ((im) & 0x7F),                         /* erase sign-bit */ \
+                      0x02000000 | ((im) >> 0 & 0x7F),                      \
+                EMPTY                     /* to cancel sign-ext (in x86) */
 
-#define DP(im)  (im), 0x02000E00 | ((im) >> 4 & 0xFF),/* P: partial-half */ \
-                EMPTY
+#define DP(im)  ((im) & 0xFFF),                       /* P: partial-half */ \
+                      0x02000E00 | ((im) >> 4 & 0xFF),                      \
+                EMPTY    /* full-12-bit for core, full-8+4-zero for SIMD */
 
-#define DH(im)  (im), 0x00000000 | TDxx, /* core/wide, SIMD instructions */ \
+#define DH(im)  ((im) & 0xFFFF),    /* only core/wide, SIMD instructions */ \
+                      0x00000000 | TDxx,                                    \
                 EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |            \
                      (0x000F0000 & (im) <<  4) | (0xFFF & (im)))
 
-#define DW(im)  (im), 0x00000000 | TDxx, /* core/wide, SIMD instructions */ \
+#define DW(im)  ((im)),             /* only core/wide, SIMD instructions */ \
+                      0x00000000 | TDxx,                                    \
                 EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |            \
                      (0x000F0000 & (im) <<  4) | (0xFFF & (im)))            \
                 EMITW(0xE3400000 | MRM(TDxx,    0x00,    0x00) |            \
