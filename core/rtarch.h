@@ -1,5 +1,5 @@
 /******************************************************************************/
-/* Copyright (c) 2013-2014 VectorChief (at github, bitbucket, sourceforge)    */
+/* Copyright (c) 2013-2015 VectorChief (at github, bitbucket, sourceforge)    */
 /* Distributed under the MIT software license, see the accompanying           */
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
@@ -79,6 +79,13 @@
  * Future 32 core and 32 SIMD registers:
  *  - Reax, ... , Redi, Reg8, Reg9, RegA, ... , RegV
  *  - Xmm0, ... , Xmm7, Xmm8, Xmm9, XmmA, ... , XmmV
+ *
+ * While register names are fixed, register sizes are not and depend on the
+ * chosen target (only 32-bit core and 128-bit SIMD are implemented for now).
+ * Core registers can be 32-bit/64-bit wide, while their SIMD counterparts
+ * depend on the architecture and SIMD version chosen for the target.
+ * Fractional sub-registers don't have names and aren't architecturally
+ * visible in the assembler as it would complicate SPMD programming model.
  */
 
 /******************************************************************************/
