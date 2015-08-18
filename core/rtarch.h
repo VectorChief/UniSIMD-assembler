@@ -33,8 +33,8 @@
  * Preliminary naming scheme for potential future targets.
  *
  * Current 32-bit targets:
- *  - rtarch_arm.h         - 32-bit ARMv7 ISA, 16 core registers, 8 + 3 tmp used
- *  - rtarch_arm_mpe.h     - 32-bit ARMv7 ISA, 16 SIMD registers, 8 + 3 tmp used
+ *  - rtarch_arm.h         - 32-bit ARMv7 ISA, 16 core registers, 8 + temps used
+ *  - rtarch_arm_mpe.h     - 32-bit ARMv7 ISA, 16 SIMD registers, 8 + temps used
  *  - rtarch_x86.h         - 32-bit x86 ISA, 8 core registers, 6 + esp, ebp used
  *  - rtarch_x86_sse.h     - 32-bit x86 ISA, 8 SIMD registers, 8 used
  *
@@ -59,33 +59,12 @@
  *  - rtarch_m32_128.h     - 32-bit MIPS ISA, ?? SIMD registers
  *  - rtarch_p32.h         - 32-bit Power ISA, ?? core registers
  *  - rtarch_p32_128.h     - 32-bit Power ISA, ?? SIMD registers
- *  - rtarch_r32.h         - 32-bit RISC-V ISA, 31 core registers, shakti/rocket
- *  - rtarch_r32_128.h     - 32-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
- *  - rtarch_r32_256.h     - 32-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
- *  - rtarch_r32_512.h     - 32-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
  *
  * Reserved 64-bit targets:
  *  - rtarch_m64.h         - 64-bit MIPS ISA, ?? core registers
  *  - rtarch_m64_128.h     - 64-bit MIPS ISA, ?? SIMD registers
  *  - rtarch_p64.h         - 64-bit Power ISA, ?? core registers
  *  - rtarch_p64_128.h     - 64-bit Power ISA, ?? SIMD registers
- *  - rtarch_r64.h         - 64-bit RISC-V ISA, 31 core registers, shakti/rocket
- *  - rtarch_r64_128.h     - 64-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
- *  - rtarch_r64_256.h     - 64-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
- *  - rtarch_r64_512.h     - 64-bit RISC-V ISA, 31 SIMD registers, shakti/hwacha
- *
- * In case floating point SIMD element size needs to be different from core
- * target size, the following scheme is reserved for SPMD programming model:
- *
- *  - rtarch_*32.h         - 32-bit core ISA, 32-bit integers and pointers
- *  - rtarch_*32_***_f64.h - 32-bit core ISA, 64-bit floating point elements
- *  - rtarch_*64.h         - 64-bit core ISA, 64-bit integers and pointers
- *  - rtarch_*64_***_f32.h - 64-bit core ISA, 32-bit floating point elements
- *
- * Another approach for target management might be considered in the future
- * to avoid combinatorial explosion. Multiple compatible targets per rtarch file
- * as well as multiple compatible targets with runtime selection per binary
- * should be a possibility. This will be decided as development progresses.
  *
  * Preliminary naming scheme for extended core and SIMD register files.
  *
@@ -101,11 +80,11 @@
  *  - Reax, ... , Redi, Reg8, Reg9, RegA, ... , RegV
  *  - Xmm0, ... , Xmm7, Xmm8, Xmm9, XmmA, ... , XmmV
  *
- * Note that while register names are fixed, register sizes are not and depend
- * on the chosen target.
- * Core registers can be 32-bit/64-bit wide and their SIMD counterparts depend
- * on the architecture and the version of SIMD used in the target.
- * The fractional sub-registers don't have names and are not architecturally
+ * While register names are fixed, register sizes are not and depend on the
+ * chosen target (only 32-bit core and 128-bit SIMD are implemented for now).
+ * Core registers can be 32-bit/64-bit wide, while their SIMD counterparts
+ * depend on the architecture and SIMD version chosen for the target.
+ * Fractional sub-registers don't have names and aren't architecturally
  * visible in the assembler as it would complicate SPMD programming model.
  */
 
@@ -255,7 +234,7 @@
  * and general purpose constants used internally by some instructions.
  * Note that DP offsets below accept only 12-bit values (0xFFF),
  * use DH and DW for 16-bit and 32-bit SIMD offsets respectively,
- * place packed scalar fields at the top of the structs to be within DP reach.
+ * place packed scalar fields at the top of the structs to be within DP's reach.
  * SIMD width is taken into account via S and Q defined above.
  * Structure is read-write in backend.
  */

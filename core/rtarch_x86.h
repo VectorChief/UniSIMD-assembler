@@ -20,37 +20,27 @@
  *
  * Recommended naming scheme for instructions:
  *
- * cmdx*_ri - applies [cmd] to [r]egister from [i]mmediate
- * cmdx*_mi - applies [cmd] to [m]emory   from [i]mmediate
+ * cmdxx_ri - applies [cmd] to [r]egister from [i]mmediate
+ * cmdxx_mi - applies [cmd] to [m]emory   from [i]mmediate
  *
- * cmdx*_rm - applies [cmd] to [r]egister from [m]emory
- * cmdx*_ld - applies [cmd] as above
- * cmdx*_mr - applies [cmd] to [m]emory   from [r]egister
- * cmdx*_st - applies [cmd] as above (arg list as cmdx*_ld)
+ * cmdxx_rm - applies [cmd] to [r]egister from [m]emory
+ * cmdxx_ld - applies [cmd] as above
+ * cmdxx_mr - applies [cmd] to [m]emory   from [r]egister
+ * cmdxx_st - applies [cmd] as above (arg list as cmdxx_ld)
  *
- * cmdx*_rr - applies [cmd] to [r]egister from [r]egister
- * cmdx*_mm - applies [cmd] to [m]emory   from [m]emory
- * cmdx*_rr - applies [cmd] to [r]egister (one operand cmd)
- * cmdx*_mm - applies [cmd] to [m]emory   (one operand cmd)
+ * cmdxx_rr - applies [cmd] to [r]egister from [r]egister
+ * cmdxx_mm - applies [cmd] to [m]emory   from [m]emory
+ * cmdxx_rr - applies [cmd] to [r]egister (one operand cmd)
+ * cmdxx_mm - applies [cmd] to [m]emory   (one operand cmd)
  *
- * cmdx*_rx - applies [cmd] to [r]egister from x-register
- * cmdx*_mx - applies [cmd] to [m]emory   from x-register
- * cmdx*_xr - applies [cmd] to x-register from [r]egister
- * cmdx*_xm - applies [cmd] to x-register from [m]emory
+ * cmdxx_rx - applies [cmd] to [r]egister from x-register
+ * cmdxx_mx - applies [cmd] to [m]emory   from x-register
+ * cmdxx_xr - applies [cmd] to x-register from [r]egister
+ * cmdxx_xm - applies [cmd] to x-register from [m]emory
  *
- * Default [m]emory args for core registers only accept DB, DP offsets,
- * use [w]ide-offset memory args below for DH, DW. There are no alignment
- * restrictions on any offset values in conjunction with core registers.
- * Argument x-register is fixed by the implementation.
- *
- * cmdx*_*w - applies [cmd] to [*] from [w]ide-offset memory
- * cmdx*_lw - applies [cmd] as above
- * cmdx*_w* - applies [cmd] to [w]ide-offset memory from [*]
- * cmdx*_sw - applies [cmd] as above (arg list as cmdx*_lw)
- *
- * cmdx*_rl - applies [cmd] to [r]egister from [l]abel
- * cmdx*_xl - applies [cmd] to x-register from [l]abel
- * cmdx*_lb - applies [cmd] as above
+ * cmdxx_rl - applies [cmd] to [r]egister from [l]abel
+ * cmdxx_xl - applies [cmd] to x-register from [l]abel
+ * cmdxx_lb - applies [cmd] as above
  * label_ld - applies [adr] as above
  *
  * stack_st - applies [mov] to stack from register (push)
@@ -58,40 +48,11 @@
  * stack_sa - applies [mov] to stack from all registers
  * stack_la - applies [mov] to all registers from stack
  *
- * cmdx*_** - applies [cmd] in  default mode (args size adjustable per target)
+ * cmdx*_** - applies [cmd] to core register/memory/immediate args
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
  *
- * The cmdx*_** instructions together with SIMD cmdp*_** instructions
- * are intended for SPMD programming model and can be configured per target
- * to work with 32-bit/64-bit data-elements (integers/pointers, fp).
- * In this model data paths are fixed, core and SIMD data-elements are
- * interchangeable, code path divergence is handled via CHECK_MASK macro.
- *
- * The following size-explicit partial arithmetic/load/store instructions
- * allow to operate with sub-word register/memory arguments. The first [*]
- * controls the size [b - byte, h - half, w - word, f - full], the second [*]
- * controls the expansion [x - zero. n - sign]. In order to distinguish from
- * packed size-explicit instructions, [o] is used for core register arguments.
- *
- * cmd**_oi - applies [cmd] to c[o]re-reg from [i]mmediate
- * cmd**_mi - applies [cmd] to [m]emory   from [i]mmediate
- * cmd**_oo - applies [cmd] to c[o]re-reg from c[o]re-reg
- *
- * cmd**_om - applies [cmd] to c[o]re-reg from [m]emory
- * cmd**_lo - applies [cmd] as above
- * cmd**_mo - applies [cmd] to [m]emory from c[o]re-reg
- * cmd**_so - applies [cmd] to as above (arg list as cmd**_lo)
- *
- * cmd**_ow - applies [cmd] to c[o]re-reg from [w]ide-offset memory
- * cmd**_lw - applies [cmd] as above, [w] is only used with core regs
- * cmd**_wo - applies [cmd] to [w]ide-offset memory from c[o]re-reg
- * cmd**_sw - applies [cmd] as above (arg list as cmd**_lw)
- *
- * The sub-word arithmetic/load/store instructions are provided to complement
- * general purpose programming outside of more strict SPMD programming model
- * and might be generally limited in scope due to differences in architectures.
- *
+ * Argument x-register is fixed by the implementation.
  * Some formal definitions are not given below to encourage
  * use of friendly aliases for better code readability.
  */
@@ -146,56 +107,33 @@
 
 #define Oeax    0x00, 0x00, EMPTY       /* [eax] */
 
-#define Mecx    0x01, 0x00, EMPTY       /* [ecx + DP] */
-#define Medx    0x02, 0x00, EMPTY       /* [edx + DP] */
-#define Mebx    0x03, 0x00, EMPTY       /* [ebx + DP] */
-#define Mebp    0x05, 0x00, EMPTY       /* [ebp + DP] */
-#define Mesi    0x06, 0x00, EMPTY       /* [esi + DP] */
-#define Medi    0x07, 0x00, EMPTY       /* [edi + DP] */
+#define Mecx    0x01, 0x02, EMPTY       /* [ecx + DP] */
+#define Medx    0x02, 0x02, EMPTY       /* [edx + DP] */
+#define Mebx    0x03, 0x02, EMPTY       /* [ebx + DP] */
+#define Mebp    0x05, 0x02, EMPTY       /* [ebp + DP] */
+#define Mesi    0x06, 0x02, EMPTY       /* [esi + DP] */
+#define Medi    0x07, 0x02, EMPTY       /* [edi + DP] */
 
-#define Iecx    0x04, 0x00, EMITB(0x01) /* [ecx + eax*1 + DP] */
-#define Iedx    0x04, 0x00, EMITB(0x02) /* [edx + eax*1 + DP] */
-#define Iebx    0x04, 0x00, EMITB(0x03) /* [ebx + eax*1 + DP] */
-#define Iebp    0x04, 0x00, EMITB(0x05) /* [ebp + eax*1 + DP] */
-#define Iesi    0x04, 0x00, EMITB(0x06) /* [esi + eax*1 + DP] */
-#define Iedi    0x04, 0x00, EMITB(0x07) /* [edi + eax*1 + DP] */
-
-#define Decx    0x04, 0x00, EMITB(0x41) /* [ecx + eax*2 + DP] */
-#define Dedx    0x04, 0x00, EMITB(0x42) /* [edx + eax*2 + DP] */
-#define Debx    0x04, 0x00, EMITB(0x43) /* [ebx + eax*2 + DP] */
-#define Debp    0x04, 0x00, EMITB(0x45) /* [ebp + eax*2 + DP] */
-#define Desi    0x04, 0x00, EMITB(0x46) /* [esi + eax*2 + DP] */
-#define Dedi    0x04, 0x00, EMITB(0x47) /* [edi + eax*2 + DP] */
-
-#define Qecx    0x04, 0x00, EMITB(0x81) /* [ecx + eax*4 + DP] */
-#define Qedx    0x04, 0x00, EMITB(0x82) /* [edx + eax*4 + DP] */
-#define Qebx    0x04, 0x00, EMITB(0x83) /* [ebx + eax*4 + DP] */
-#define Qebp    0x04, 0x00, EMITB(0x85) /* [ebp + eax*4 + DP] */
-#define Qesi    0x04, 0x00, EMITB(0x86) /* [esi + eax*4 + DP] */
-#define Qedi    0x04, 0x00, EMITB(0x87) /* [edi + eax*4 + DP] */
-
-#define Secx    0x04, 0x00, EMITB(0xC1) /* [ecx + eax*8 + DP] */
-#define Sedx    0x04, 0x00, EMITB(0xC2) /* [edx + eax*8 + DP] */
-#define Sebx    0x04, 0x00, EMITB(0xC3) /* [ebx + eax*8 + DP] */
-#define Sebp    0x04, 0x00, EMITB(0xC5) /* [ebp + eax*8 + DP] */
-#define Sesi    0x04, 0x00, EMITB(0xC6) /* [esi + eax*8 + DP] */
-#define Sedi    0x04, 0x00, EMITB(0xC7) /* [edi + eax*8 + DP] */
+#define Iecx    0x04, 0x02, EMITB(0x01) /* [ecx + eax + DP] */
+#define Iedx    0x04, 0x02, EMITB(0x02) /* [edx + eax + DP] */
+#define Iebx    0x04, 0x02, EMITB(0x03) /* [ebx + eax + DP] */
+#define Iebp    0x04, 0x02, EMITB(0x05) /* [ebp + eax + DP] */
+#define Iesi    0x04, 0x02, EMITB(0x06) /* [esi + eax + DP] */
+#define Iedi    0x04, 0x02, EMITB(0x07) /* [edi + eax + DP] */
 
 /* immediate    VAL,  TYP,  CMD */
 
-#define IB(im)  ((im) & 0x7F),   0x02, EMITB((im) & 0x7F)  /* erase sign-bit */
-#define IP(im)  ((im) & 0xFF),   0x00, EMITW((im) & 0xFF)  /* P: padded-byte */
-#define IH(im)  ((im) & 0xFFFF), 0x00, EMITW((im) & 0xFFFF)
-#define IW(im)  ((im)),          0x00, EMITW((im))
+#define IB(im)  (im), 0x02, EMITB((im) & 0x7F) /* drop sign-ext (zero in ARM) */
+#define IH(im)  (im), 0x00, EMITW((im) & 0xFFFF)
+#define IW(im)  (im), 0x00, EMITW((im) & 0xFFFFFFFF)
 
 /* displacement VAL,  TYP,  CMD */
 
-#define DB(im)  ((im) & 0x7F),   0x01, EMITB((im) & 0x7F)  /* erase sign-bit */
-#define DP(im)  ((im) & 0xFFF),  0x02, EMITW((im) & 0xFFF) /* P: partial-half */
-#define DH(im)  ((im) & 0xFFFF), 0x02, EMITW((im) & 0xFFFF)/* core/wide, SIMD */
-#define DW(im)  ((im)),          0x02, EMITW((im))         /* core/wide, SIMD */
+#define DP(im)  (im), 0x00, EMITW((im) & 0xFFF)
+#define DH(im)  (im), 0x00, EMITW((im) & 0xFFFF)        /* SIMD-only (in ARM) */
+#define DW(im)  (im), 0x00, EMITW((im) & 0xFFFFFFFF)    /* SIMD-only (in ARM) */
 
-#define PLAIN   0x00,            0x00, EMPTY
+#define PLAIN   0x00, 0x00, EMPTY
 
 /* triplet pass-through wrapper */
 
@@ -209,13 +147,13 @@
 
 #define movxx_ri(RM, IM)                                                    \
         EMITB(0xC7)                                                         \
-            MRM(0x00,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   EMITW(VAL(IM)))
+            MRM(0x00,    MOD(RM), REG(RM)) /* truncate IB with TYP below */ \
+            AUX(EMPTY,   EMPTY,   EMITW(VAL(IM) & ((TYP(IM) << 6) - 1)))
 
 #define movxx_mi(RM, DP, IM)                                                \
         EMITB(0xC7)                                                         \
-            MRM(0x00,    MOD(RM) | TYP(DP), REG(RM))                        \
-            AUX(SIB(RM), CMD(DP), EMITW(VAL(IM)))
+            MRM(0x00,    MOD(RM), REG(RM)) /* truncate IB with TYP below */ \
+            AUX(SIB(RM), CMD(DP), EMITW(VAL(IM) & ((TYP(IM) << 6) - 1)))
 
 #define movxx_rr(RG, RM)                                                    \
         EMITB(0x8B)                                                         \
@@ -223,17 +161,17 @@
 
 #define movxx_ld(RG, RM, DP)                                                \
         EMITB(0x8B)                                                         \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define movxx_st(RG, RM, DP)                                                \
         EMITB(0x89)                                                         \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define adrxx_ld(RG, RM, DP) /* only 10-bit offsets and 4-byte alignment */ \
         EMITB(0x8D)                                                         \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), EMITW(VAL(DP) & 0x3FC), EMPTY)
 
 #define adrxx_lb(lb) /* load label to Reax */                               \
@@ -262,7 +200,7 @@
 
 #define andxx_mi(RM, DP, IM)                                                \
         EMITB(0x81 | TYP(IM))                                               \
-            MRM(0x04,    MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(0x04,    MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), CMD(IM))
 
 #define andxx_rr(RG, RM)                                                    \
@@ -271,12 +209,12 @@
 
 #define andxx_ld(RG, RM, DP)                                                \
         EMITB(0x23)                                                         \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define andxx_st(RG, RM, DP)                                                \
         EMITB(0x21)                                                         \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* orr */
@@ -288,7 +226,7 @@
 
 #define orrxx_mi(RM, DP, IM)                                                \
         EMITB(0x81 | TYP(IM))                                               \
-            MRM(0x01,    MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(0x01,    MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), CMD(IM))
 
 #define orrxx_rr(RG, RM)                                                    \
@@ -297,12 +235,12 @@
 
 #define orrxx_ld(RG, RM, DP)                                                \
         EMITB(0x0B)                                                         \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define orrxx_st(RG, RM, DP)                                                \
         EMITB(0x09)                                                         \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* not */
@@ -313,7 +251,7 @@
 
 #define notxx_mm(RM, DP)                                                    \
         EMITB(0xF7)                                                         \
-            MRM(0x02,    MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(0x02,    MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* add */
@@ -325,7 +263,7 @@
 
 #define addxx_mi(RM, DP, IM)                                                \
         EMITB(0x81 | TYP(IM))                                               \
-            MRM(0x00,    MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(0x00,    MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), CMD(IM))
 
 #define addxx_rr(RG, RM)                                                    \
@@ -334,12 +272,12 @@
 
 #define addxx_ld(RG, RM, DP)                                                \
         EMITB(0x03)                                                         \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define addxx_st(RG, RM, DP)                                                \
         EMITB(0x01)                                                         \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* sub */
@@ -351,7 +289,7 @@
 
 #define subxx_mi(RM, DP, IM)                                                \
         EMITB(0x81 | TYP(IM))                                               \
-            MRM(0x05,    MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(0x05,    MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), CMD(IM))
 
 #define subxx_rr(RG, RM)                                                    \
@@ -360,12 +298,12 @@
 
 #define subxx_ld(RG, RM, DP)                                                \
         EMITB(0x2B)                                                         \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define subxx_st(RG, RM, DP)                                                \
         EMITB(0x29)                                                         \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define subxx_mr(RM, DP, RG)                                                \
@@ -380,7 +318,7 @@
 
 #define shlxx_mi(RM, DP, IM)                                                \
         EMITB(0xC1)                                                         \
-            MRM(0x04,    MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(0x04,    MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
 /* shr */
@@ -392,7 +330,7 @@
 
 #define shrxx_mi(RM, DP, IM)                                                \
         EMITB(0xC1)                                                         \
-            MRM(0x05,    MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(0x05,    MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
 #define shrxn_ri(RM, IM)                                                    \
@@ -402,7 +340,7 @@
 
 #define shrxn_mi(RM, DP, IM)                                                \
         EMITB(0xC1)                                                         \
-            MRM(0x07,    MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(0x07,    MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
 /* mul */
@@ -418,20 +356,20 @@
 
 #define mulxn_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0xAF)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define mulxn_xm(RM, DP) /* Reax is in/out, destroys Redx */                \
         EMITB(0xF7)                                                         \
-            MRM(0x05,    MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(0x05,    MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* div */
 
 #define divxn_xm(RM, DP) /* Reax is in/out, Redx is Reax-sign-extended */   \
         EMITB(0xF7)      /* destroys Xmm0 (in ARM) */                       \
-            MRM(0x07,    MOD(RM) | TYP(DP), REG(RM))/* limited precision */ \
-            AUX(SIB(RM), CMD(DP), EMPTY)            /* fp div (in ARM) */
+            MRM(0x07,    MOD(RM), REG(RM)) /* limited precision */          \
+            AUX(SIB(RM), CMD(DP), EMPTY)   /* fp div (in ARM) */
 
 /* cmp */
 
@@ -442,7 +380,7 @@
 
 #define cmpxx_mi(RM, DP, IM)                                                \
         EMITB(0x81 | TYP(IM))                                               \
-            MRM(0x07,    MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(0x07,    MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), CMD(IM))
 
 #define cmpxx_rr(RG, RM)                                                    \
@@ -451,19 +389,19 @@
 
 #define cmpxx_rm(RG, RM, DP)                                                \
         EMITB(0x3B)                                                         \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define cmpxx_mr(RM, DP, RG)                                                \
         EMITB(0x39)                                                         \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* jmp */
 
 #define jmpxx_mm(RM, DP)                                                    \
         EMITB(0xFF)                                                         \
-            MRM(0x04,    MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(0x04,    MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define jmpxx_lb(lb)                                                        \

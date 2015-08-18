@@ -32,63 +32,17 @@
  * cmdp*_rm - applies [cmd] to [p]acked: [r]egister from [m]emory
  * cmdp*_ld - applies [cmd] to [p]acked: as above
  * cmdp*_mr - applies [cmd] to [p]acked: [m]emory   from [r]egister
- * cmdp*_st - applies [cmd] to [p]acked: as above (arg list as cmdp*_ld)
+ * cmdp*_st - applies [cmd] to [p]acked: as above (arg list as cmdxx_ld)
  *
- * Default [m]emory args for SIMD-registers accept DB, DP, DH, DW offsets.
- * All offset values in this case need to be SIMD-aligned.
+ * cmdpx_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
+ * cmdpn_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
+ * cmdps_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
  *
- * cmdp*_** - applies [cmd] to [p]acked args (elem size adjustable per target)
- * cmd*x_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
- * cmd*n_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
- * cmd*s_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
- *
- * The cmdp*_** instructions together with core cmdx*_** instructions
- * are intended for SPMD programming model and can be configured per target
- * to work with 32-bit/64-bit data-elements (integers/pointers, fp).
- * In this model data paths are fixed, core and SIMD data-elements are
- * interchangeable, code path divergence is handled via CHECK_MASK macro.
- *
- * The following size-explicit instructions are fixed for all targets
- * and can be used in place of target-adjustable [p]acked specifier.
- *
- * cmdb*_** - applies [cmd] to packed [b]yte-sized (1 byte) SIMD-elements
- * cmdh*_** - applies [cmd] to packed [h]alf-sized (2 byte) SIMD-elements
- * cmdw*_** - applies [cmd] to packed [w]ord-sized (4 byte) SIMD-elements
- * cmdf*_** - applies [cmd] to packed [f]ull-sized (8 byte) SIMD-elements
- *
- * cmd**_ru - applies [cmd] to packed: [r]egister from [u]naligned memory
- * cmd**_lu - applies [cmd] to packed: as above
- * cmd**_ur - applies [cmd] to packed: [u]naligned memory from [r]egister
- * cmd**_su - applies [cmd] to packed: as above (arg list as cmd**_lu)
- *
- * DP cannot be used with unaligned offset values for SIMD, use DB, DH, DW.
- * Unaligned access is only applicable to SIMD-registers and SIMD-elements and
- * can work with both aligned (DP allowed) and unaligned (no DP) offset values.
- *
- * The sub-word data-types together with unaligned memory access instructions
- * are intended for stream processing applications (like color conversion)
- * and might be generally limited in scope due to differences in architectures.
- *
- * The following instructions accept packed SIMD-register arguments,
- * but only work with single SIMD-element:
- *
- * cmd**_ei - applies [cmd] to packed: reg-[e]lem from [i]mmediate
- * cmd**_ee - applies [cmd] to packed: reg-[e]lem from reg-[e]lem
- * mov**_oe - applies [mov] to packed: c[o]re-reg from reg-[e]lem
- * mov**_eo - applies [mov] to packed: reg-[e]lem from c[o]re-reg
- *
- * cmd**_eu - applies [cmd] to packed: reg-[e]lem from [u]naligned memory
- * cmd**_le - applies [cmd] to packed: as above
- * cmd**_ue - applies [cmd] to packed: [u]naligned memory from reg-[e]lem
- * cmd**_se - applies [cmd] to packed: as above (arg list as cmd**_le)
- *
- * Memory args used in conjunction with single SIMD-elements are implied
- * to be [u]naligned, in which case unaligned DP offsets cannot be used.
- * Use aligned offset values with DP or any offset values with DB, DH, DW.
- *
- * The single SIMD-element instructions are provided to complement
- * general purpose programming outside of more strict SPMD programming model
- * and might be generally limited in scope due to differences in architectures.
+ * The cmdp*_** instructions are intended for SPMD programming model
+ * and can potentially be configured per target to work with 32-bit/64-bit
+ * data-elements (integers/pointers, floating point).
+ * In this model data paths are fixed-width, core and SIMD data-elements are
+ * width-compatible, code path divergence is handled via CHECK_MASK macro.
  */
 
 /******************************************************************************/
@@ -124,17 +78,17 @@
 
 #define movpx_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0x28)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define movpx_st(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0x29)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define adrpx_ld(RG, RM, DP) /* RG is a core reg, DP is SIMD-aligned */     \
         EMITB(0x8D)                                                         \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), EMITW(VAL(DP) & ~(RT_SIMD_ALIGN - 1)), EMPTY)
 
 /* and */
@@ -145,7 +99,7 @@
 
 #define andpx_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0x54)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* ann */
@@ -156,7 +110,7 @@
 
 #define annpx_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0x55)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* orr */
@@ -167,7 +121,7 @@
 
 #define orrpx_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0x56)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* xor */
@@ -178,7 +132,7 @@
 
 #define xorpx_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0x57)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /**************   packed single precision floating point (SSE1)   *************/
@@ -191,7 +145,7 @@
 
 #define addps_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0x58)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* sub */
@@ -202,7 +156,7 @@
 
 #define subps_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0x5C)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* mul */
@@ -213,7 +167,7 @@
 
 #define mulps_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0x59)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* div */
@@ -224,7 +178,7 @@
 
 #define divps_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0x5E)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* sqr */
@@ -235,7 +189,7 @@
 
 #define sqrps_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0x51)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* cbr */
@@ -282,7 +236,7 @@
 
 #define minps_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0x5D)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* max */
@@ -293,7 +247,7 @@
 
 #define maxps_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0x5F)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* cmp */
@@ -305,7 +259,7 @@
 
 #define ceqps_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0xC2)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMITB(0x00))
 
 #define cneps_rr(RG, RM)                                                    \
@@ -315,7 +269,7 @@
 
 #define cneps_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0xC2)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMITB(0x04))
 
 #define cltps_rr(RG, RM)                                                    \
@@ -325,7 +279,7 @@
 
 #define cltps_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0xC2)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMITB(0x01))
 
 #define cleps_rr(RG, RM)                                                    \
@@ -335,7 +289,7 @@
 
 #define cleps_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0xC2)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMITB(0x02))
 
 #define cgtps_rr(RG, RM)                                                    \
@@ -345,7 +299,7 @@
 
 #define cgtps_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0xC2)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMITB(0x06))
 
 #define cgeps_rr(RG, RM)                                                    \
@@ -355,7 +309,7 @@
 
 #define cgeps_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0xC2)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMITB(0x05))
 
 /**************************   packed integer (SSE2)   *************************/
@@ -368,7 +322,7 @@
 
 #define cvtps_ld(RG, RM, DP)                                                \
         EMITB(0x66) EMITB(0x0F) EMITB(0x5B)                                 \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define cvtpn_rr(RG, RM)                                                    \
@@ -377,7 +331,7 @@
 
 #define cvtpn_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0x5B)                                             \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* add */
@@ -388,7 +342,7 @@
 
 #define addpx_ld(RG, RM, DP)                                                \
         EMITB(0x66) EMITB(0x0F) EMITB(0xFE)                                 \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* sub */
@@ -399,7 +353,7 @@
 
 #define subpx_ld(RG, RM, DP)                                                \
         EMITB(0x66) EMITB(0x0F) EMITB(0xFA)                                 \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* shl */
@@ -411,7 +365,7 @@
 
 #define shlpx_ld(RG, RM, DP)                                                \
         EMITB(0x66) EMITB(0x0F) EMITB(0xF2)                                 \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* shr */
@@ -423,7 +377,7 @@
 
 #define shrpx_ld(RG, RM, DP)                                                \
         EMITB(0x66) EMITB(0x0F) EMITB(0xD2)                                 \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define shrpn_ri(RM, IM)                                                    \
@@ -433,7 +387,7 @@
 
 #define shrpn_ld(RG, RM, DP)                                                \
         EMITB(0x66) EMITB(0x0F) EMITB(0xE2)                                 \
-            MRM(REG(RG), MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(REG(RG), MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 /*****************************   helper macros   ******************************/
@@ -461,12 +415,12 @@
 
 #define mxcsr_ld(RM, DP) /* not portable, do not use outside */             \
         EMITB(0x0F) EMITB(0xAE)                                             \
-            MRM(0x02,    MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(0x02,    MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define mxcsr_st(RM, DP) /* not portable, do not use outside */             \
         EMITB(0x0F) EMITB(0xAE)                                             \
-            MRM(0x03,    MOD(RM) | TYP(DP), REG(RM))                        \
+            MRM(0x03,    MOD(RM), REG(RM))                                  \
             AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define FCTRL_ENTER(mode) /* destroys Reax */                               \

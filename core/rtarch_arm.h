@@ -20,37 +20,27 @@
  *
  * Recommended naming scheme for instructions:
  *
- * cmdx*_ri - applies [cmd] to [r]egister from [i]mmediate
- * cmdx*_mi - applies [cmd] to [m]emory   from [i]mmediate
+ * cmdxx_ri - applies [cmd] to [r]egister from [i]mmediate
+ * cmdxx_mi - applies [cmd] to [m]emory   from [i]mmediate
  *
- * cmdx*_rm - applies [cmd] to [r]egister from [m]emory
- * cmdx*_ld - applies [cmd] as above
- * cmdx*_mr - applies [cmd] to [m]emory   from [r]egister
- * cmdx*_st - applies [cmd] as above (arg list as cmdx*_ld)
+ * cmdxx_rm - applies [cmd] to [r]egister from [m]emory
+ * cmdxx_ld - applies [cmd] as above
+ * cmdxx_mr - applies [cmd] to [m]emory   from [r]egister
+ * cmdxx_st - applies [cmd] as above (arg list as cmdxx_ld)
  *
- * cmdx*_rr - applies [cmd] to [r]egister from [r]egister
- * cmdx*_mm - applies [cmd] to [m]emory   from [m]emory
- * cmdx*_rr - applies [cmd] to [r]egister (one operand cmd)
- * cmdx*_mm - applies [cmd] to [m]emory   (one operand cmd)
+ * cmdxx_rr - applies [cmd] to [r]egister from [r]egister
+ * cmdxx_mm - applies [cmd] to [m]emory   from [m]emory
+ * cmdxx_rr - applies [cmd] to [r]egister (one operand cmd)
+ * cmdxx_mm - applies [cmd] to [m]emory   (one operand cmd)
  *
- * cmdx*_rx - applies [cmd] to [r]egister from x-register
- * cmdx*_mx - applies [cmd] to [m]emory   from x-register
- * cmdx*_xr - applies [cmd] to x-register from [r]egister
- * cmdx*_xm - applies [cmd] to x-register from [m]emory
+ * cmdxx_rx - applies [cmd] to [r]egister from x-register
+ * cmdxx_mx - applies [cmd] to [m]emory   from x-register
+ * cmdxx_xr - applies [cmd] to x-register from [r]egister
+ * cmdxx_xm - applies [cmd] to x-register from [m]emory
  *
- * Default [m]emory args for core registers only accept DB, DP offsets,
- * use [w]ide-offset memory args below for DH, DW. There are no alignment
- * restrictions on any offset values in conjunction with core registers.
- * Argument x-register is fixed by the implementation.
- *
- * cmdx*_*w - applies [cmd] to [*] from [w]ide-offset memory
- * cmdx*_lw - applies [cmd] as above
- * cmdx*_w* - applies [cmd] to [w]ide-offset memory from [*]
- * cmdx*_sw - applies [cmd] as above (arg list as cmdx*_lw)
- *
- * cmdx*_rl - applies [cmd] to [r]egister from [l]abel
- * cmdx*_xl - applies [cmd] to x-register from [l]abel
- * cmdx*_lb - applies [cmd] as above
+ * cmdxx_rl - applies [cmd] to [r]egister from [l]abel
+ * cmdxx_xl - applies [cmd] to x-register from [l]abel
+ * cmdxx_lb - applies [cmd] as above
  * label_ld - applies [adr] as above
  *
  * stack_st - applies [mov] to stack from register (push)
@@ -58,40 +48,11 @@
  * stack_sa - applies [mov] to stack from all registers
  * stack_la - applies [mov] to all registers from stack
  *
- * cmdx*_** - applies [cmd] in  default mode (args size adjustable per target)
+ * cmdx*_** - applies [cmd] to core register/memory/immediate args
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
  *
- * The cmdx*_** instructions together with SIMD cmdp*_** instructions
- * are intended for SPMD programming model and can be configured per target
- * to work with 32-bit/64-bit data-elements (integers/pointers, fp).
- * In this model data paths are fixed, core and SIMD data-elements are
- * interchangeable, code path divergence is handled via CHECK_MASK macro.
- *
- * The following size-explicit partial arithmetic/load/store instructions
- * allow to operate with sub-word register/memory arguments. The first [*]
- * controls the size [b - byte, h - half, w - word, f - full], the second [*]
- * controls the expansion [x - zero. n - sign]. In order to distinguish from
- * packed size-explicit instructions, [o] is used for core register arguments.
- *
- * cmd**_oi - applies [cmd] to c[o]re-reg from [i]mmediate
- * cmd**_mi - applies [cmd] to [m]emory   from [i]mmediate
- * cmd**_oo - applies [cmd] to c[o]re-reg from c[o]re-reg
- *
- * cmd**_om - applies [cmd] to c[o]re-reg from [m]emory
- * cmd**_lo - applies [cmd] as above
- * cmd**_mo - applies [cmd] to [m]emory from c[o]re-reg
- * cmd**_so - applies [cmd] to as above (arg list as cmd**_lo)
- *
- * cmd**_ow - applies [cmd] to c[o]re-reg from [w]ide-offset memory
- * cmd**_lw - applies [cmd] as above, [w] is only used with core regs
- * cmd**_wo - applies [cmd] to [w]ide-offset memory from c[o]re-reg
- * cmd**_sw - applies [cmd] as above (arg list as cmd**_lw)
- *
- * The sub-word arithmetic/load/store instructions are provided to complement
- * general purpose programming outside of more strict SPMD programming model
- * and might be generally limited in scope due to differences in architectures.
- *
+ * Argument x-register is fixed by the implementation.
  * Some formal definitions are not given below to encourage
  * use of friendly aliases for better code readability.
  */
@@ -168,44 +129,16 @@
 #define Iesi    0x06, TPxx, EMITW(0xE0800000 | MRM(TPxx,    0x06,    0x00))
 #define Iedi    0x07, TPxx, EMITW(0xE0800000 | MRM(TPxx,    0x07,    0x00))
 
-#define Decx    0x01, TPxx, EMITW(0xE0800080 | MRM(TPxx,    0x01,    0x00))
-#define Dedx    0x02, TPxx, EMITW(0xE0800080 | MRM(TPxx,    0x02,    0x00))
-#define Debx    0x03, TPxx, EMITW(0xE0800080 | MRM(TPxx,    0x03,    0x00))
-#define Debp    0x05, TPxx, EMITW(0xE0800080 | MRM(TPxx,    0x05,    0x00))
-#define Desi    0x06, TPxx, EMITW(0xE0800080 | MRM(TPxx,    0x06,    0x00))
-#define Dedi    0x07, TPxx, EMITW(0xE0800080 | MRM(TPxx,    0x07,    0x00))
-
-#define Qecx    0x01, TPxx, EMITW(0xE0800100 | MRM(TPxx,    0x01,    0x00))
-#define Qedx    0x02, TPxx, EMITW(0xE0800100 | MRM(TPxx,    0x02,    0x00))
-#define Qebx    0x03, TPxx, EMITW(0xE0800100 | MRM(TPxx,    0x03,    0x00))
-#define Qebp    0x05, TPxx, EMITW(0xE0800100 | MRM(TPxx,    0x05,    0x00))
-#define Qesi    0x06, TPxx, EMITW(0xE0800100 | MRM(TPxx,    0x06,    0x00))
-#define Qedi    0x07, TPxx, EMITW(0xE0800100 | MRM(TPxx,    0x07,    0x00))
-
-#define Secx    0x01, TPxx, EMITW(0xE0800180 | MRM(TPxx,    0x01,    0x00))
-#define Sedx    0x02, TPxx, EMITW(0xE0800180 | MRM(TPxx,    0x02,    0x00))
-#define Sebx    0x03, TPxx, EMITW(0xE0800180 | MRM(TPxx,    0x03,    0x00))
-#define Sebp    0x05, TPxx, EMITW(0xE0800180 | MRM(TPxx,    0x05,    0x00))
-#define Sesi    0x06, TPxx, EMITW(0xE0800180 | MRM(TPxx,    0x06,    0x00))
-#define Sedi    0x07, TPxx, EMITW(0xE0800180 | MRM(TPxx,    0x07,    0x00))
-
 /* immediate    VAL,  TYP,  CMD */
 
-#define IB(im)  ((im) & 0x7F),                         /* erase sign-bit */ \
-                      0x02000000 | ((im) & 0x7F),                           \
-                EMPTY                     /* to cancel sign-ext (in x86) */
+#define IB(im)  (im), 0x02000000 | ((im) & 0x7F),/* drop sign-ext in x86 */ \
+                EMPTY          /* for compatibility with zero-ext in ARM */
 
-#define IP(im)  ((im) & 0xFF),                         /* P: padded-byte */ \
-                      0x02000000 | ((im) & 0xFF),                           \
-                EMPTY                     /* zero-ext'd to word (in x86) */
-
-#define IH(im)  ((im) & 0xFFFF),                                            \
-                      0x00000000 | TIxx,                                    \
+#define IH(im)  (im), 0x00000000 | TIxx,                                    \
                 EMITW(0xE3000000 | MRM(TIxx,    0x00,    0x00) |            \
                      (0x000F0000 & (im) <<  4) | (0xFFF & (im)))
 
-#define IW(im)  ((im)),                                                     \
-                      0x00000000 | TIxx,                                    \
+#define IW(im)  (im), 0x00000000 | TIxx,                                    \
                 EMITW(0xE3000000 | MRM(TIxx,    0x00,    0x00) |            \
                      (0x000F0000 & (im) <<  4) | (0xFFF & (im)))            \
                 EMITW(0xE3400000 | MRM(TIxx,    0x00,    0x00) |            \
@@ -213,21 +146,14 @@
 
 /* displacement VAL,  TYP,  CMD */
 
-#define DB(im)  ((im) & 0x7F),                         /* erase sign-bit */ \
-                      0x02000000 | ((im) >> 0 & 0x7F),                      \
-                EMPTY                     /* to cancel sign-ext (in x86) */
+#define DP(im)  (im), 0x02000E00 | ((im) >> 4 & 0xFF),                      \
+                EMPTY
 
-#define DP(im)  ((im) & 0xFFF),                       /* P: partial-half */ \
-                      0x02000E00 | ((im) >> 4 & 0xFF),                      \
-                EMPTY    /* full-12-bit for core, full-8+4-zero for SIMD */
-
-#define DH(im)  ((im) & 0xFFFF),    /* only core/wide, SIMD instructions */ \
-                      0x00000000 | TDxx,                                    \
+#define DH(im)  (im), 0x00000000 | TDxx,  /* only for SIMD instructions */  \
                 EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |            \
                      (0x000F0000 & (im) <<  4) | (0xFFF & (im)))
 
-#define DW(im)  ((im)),             /* only core/wide, SIMD instructions */ \
-                      0x00000000 | TDxx,                                    \
+#define DW(im)  (im), 0x00000000 | TDxx,  /* only for SIMD instructions */  \
                 EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |            \
                      (0x000F0000 & (im) <<  4) | (0xFFF & (im)))            \
                 EMITW(0xE3400000 | MRM(TDxx,    0x00,    0x00) |            \
