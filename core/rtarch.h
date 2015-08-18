@@ -210,7 +210,7 @@
  */
 #ifdef Q
 #undef Q
-#endif /* in case Q is defined outside of the engine */
+#endif /* in case Q is defined outside */
 #define Q                   RT_SIMD_QUADS
 
 /*
@@ -219,16 +219,14 @@
  */
 #ifdef S
 #undef S
-#endif /* in case S is defined outside of the engine */
+#endif /* in case S is defined outside */
 #define S                   RT_SIMD_WIDTH
 
 /*
- * Wider SIMD are supported in backend structs (S = 8, 16 were tested),
- * although there are some places in the code (tracer.cpp, engine.cpp),
- * which still rely on S = 4 for proper operation.
+ * Wider SIMD are supported in backend structs (S = 8, 16 were tested).
  */
 #if Q != RT_SIMD_QUADS || S != RT_SIMD_WIDTH || S % 4 != 0
-#error "SIMD width must be divisible by 4 for QuadRay engine"
+#error "SIMD width must be divisible by 4"
 #endif /* in case S is not expressed in quads */
 
 /*
@@ -236,7 +234,7 @@
  * and general purpose constants used internally by some instructions.
  * Note that DP offsets below accept only 12-bit values (0xFFF),
  * use DH and DW for 16-bit and 32-bit SIMD offsets respectively,
- * place packed scalar fields at the top of the structs to be within DP reach.
+ * place packed scalar fields at the top of the structs to be within DP's reach.
  * SIMD width is taken into account via S and Q defined above.
  * Structure is read-write in backend.
  */
