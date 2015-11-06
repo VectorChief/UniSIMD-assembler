@@ -398,7 +398,7 @@
 /* simd mask */
 
 #define RT_SIMD_MASK_NONE       0x00    /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL       0x0F    /*  all satisfy the condition */
+#define RT_SIMD_MASK_FULL       0xFF    /*  all satisfy the condition */
 
 #define movsn_rr(RG, RM) /* not portable, do not use outside */             \
         VEX(0      , 0) EMITB(0x50)                                         \
