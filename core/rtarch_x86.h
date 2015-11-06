@@ -147,43 +147,43 @@
 
 #define movxx_ri(RM, IM)                                                    \
         EMITB(0xC7)                                                         \
-            MRM(0x00,    MOD(RM), REG(RM)) /* truncate IB with TYP below */ \
-            AUX(EMPTY,   EMPTY,   EMITW(VAL(IM) & ((TYP(IM) << 6) - 1)))
+        MRM(0x00,    MOD(RM), REG(RM)) /* truncate IB with TYP below */     \
+        AUX(EMPTY,   EMPTY,   EMITW(VAL(IM) & ((TYP(IM) << 6) - 1)))
 
 #define movxx_mi(RM, DP, IM)                                                \
         EMITB(0xC7)                                                         \
-            MRM(0x00,    MOD(RM), REG(RM)) /* truncate IB with TYP below */ \
-            AUX(SIB(RM), CMD(DP), EMITW(VAL(IM) & ((TYP(IM) << 6) - 1)))
+        MRM(0x00,    MOD(RM), REG(RM)) /* truncate IB with TYP below */     \
+        AUX(SIB(RM), CMD(DP), EMITW(VAL(IM) & ((TYP(IM) << 6) - 1)))
 
 #define movxx_rr(RG, RM)                                                    \
         EMITB(0x8B)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))
+        MRM(REG(RG), MOD(RM), REG(RM))
 
 #define movxx_ld(RG, RM, DP)                                                \
         EMITB(0x8B)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define movxx_st(RG, RM, DP)                                                \
         EMITB(0x89)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define adrxx_ld(RG, RM, DP) /* only 10-bit offsets and 4-byte alignment */ \
         EMITB(0x8D)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), EMITW(VAL(DP) & 0x3FC), EMPTY)
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), EMITW(VAL(DP) & 0x3FC), EMPTY)
 
 #define adrxx_lb(lb) /* load label to Reax */                               \
         label_ld(lb)
 
 #define stack_st(RM)                                                        \
         EMITB(0xFF)                                                         \
-            MRM(0x06,    MOD(RM), REG(RM))
+        MRM(0x06,    MOD(RM), REG(RM))
 
 #define stack_ld(RM)                                                        \
         EMITB(0x8F)                                                         \
-            MRM(0x00,    MOD(RM), REG(RM))
+        MRM(0x00,    MOD(RM), REG(RM))
 
 #define stack_sa() /* save all [EAX - EDI], 8 regs in total */              \
         EMITB(0x60)
@@ -195,116 +195,116 @@
 
 #define andxx_ri(RM, IM)                                                    \
         EMITB(0x81 | TYP(IM))                                               \
-            MRM(0x04,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   CMD(IM))
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   CMD(IM))
 
 #define andxx_mi(RM, DP, IM)                                                \
         EMITB(0x81 | TYP(IM))                                               \
-            MRM(0x04,    MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), CMD(IM))
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), CMD(IM))
 
 #define andxx_rr(RG, RM)                                                    \
         EMITB(0x23)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))
+        MRM(REG(RG), MOD(RM), REG(RM))
 
 #define andxx_ld(RG, RM, DP)                                                \
         EMITB(0x23)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define andxx_st(RG, RM, DP)                                                \
         EMITB(0x21)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* orr */
 
 #define orrxx_ri(RM, IM)                                                    \
         EMITB(0x81 | TYP(IM))                                               \
-            MRM(0x01,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   CMD(IM))
+        MRM(0x01,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   CMD(IM))
 
 #define orrxx_mi(RM, DP, IM)                                                \
         EMITB(0x81 | TYP(IM))                                               \
-            MRM(0x01,    MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), CMD(IM))
+        MRM(0x01,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), CMD(IM))
 
 #define orrxx_rr(RG, RM)                                                    \
         EMITB(0x0B)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))
+        MRM(REG(RG), MOD(RM), REG(RM))
 
 #define orrxx_ld(RG, RM, DP)                                                \
         EMITB(0x0B)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define orrxx_st(RG, RM, DP)                                                \
         EMITB(0x09)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* not */
 
 #define notxx_rr(RM)                                                        \
         EMITB(0xF7)                                                         \
-            MRM(0x02,    MOD(RM), REG(RM))
+        MRM(0x02,    MOD(RM), REG(RM))
 
 #define notxx_mm(RM, DP)                                                    \
         EMITB(0xF7)                                                         \
-            MRM(0x02,    MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(0x02,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* add */
 
 #define addxx_ri(RM, IM)                                                    \
         EMITB(0x81 | TYP(IM))                                               \
-            MRM(0x00,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   CMD(IM))
+        MRM(0x00,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   CMD(IM))
 
 #define addxx_mi(RM, DP, IM)                                                \
         EMITB(0x81 | TYP(IM))                                               \
-            MRM(0x00,    MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), CMD(IM))
+        MRM(0x00,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), CMD(IM))
 
 #define addxx_rr(RG, RM)                                                    \
         EMITB(0x03)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))
+        MRM(REG(RG), MOD(RM), REG(RM))
 
 #define addxx_ld(RG, RM, DP)                                                \
         EMITB(0x03)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define addxx_st(RG, RM, DP)                                                \
         EMITB(0x01)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* sub */
 
 #define subxx_ri(RM, IM)                                                    \
         EMITB(0x81 | TYP(IM))                                               \
-            MRM(0x05,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   CMD(IM))
+        MRM(0x05,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   CMD(IM))
 
 #define subxx_mi(RM, DP, IM)                                                \
         EMITB(0x81 | TYP(IM))                                               \
-            MRM(0x05,    MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), CMD(IM))
+        MRM(0x05,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), CMD(IM))
 
 #define subxx_rr(RG, RM)                                                    \
         EMITB(0x2B)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))
+        MRM(REG(RG), MOD(RM), REG(RM))
 
 #define subxx_ld(RG, RM, DP)                                                \
         EMITB(0x2B)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define subxx_st(RG, RM, DP)                                                \
         EMITB(0x29)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define subxx_mr(RM, DP, RG)                                                \
         subxx_st(W(RG), W(RM), W(DP))
@@ -313,96 +313,96 @@
 
 #define shlxx_ri(RM, IM)                                                    \
         EMITB(0xC1)                                                         \
-            MRM(0x04,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
 #define shlxx_mi(RM, DP, IM)                                                \
         EMITB(0xC1)                                                         \
-            MRM(0x04,    MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
 /* shr */
 
 #define shrxx_ri(RM, IM)                                                    \
         EMITB(0xC1)                                                         \
-            MRM(0x05,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+        MRM(0x05,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
 #define shrxx_mi(RM, DP, IM)                                                \
         EMITB(0xC1)                                                         \
-            MRM(0x05,    MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
+        MRM(0x05,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
 #define shrxn_ri(RM, IM)                                                    \
         EMITB(0xC1)                                                         \
-            MRM(0x07,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+        MRM(0x07,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
 #define shrxn_mi(RM, DP, IM)                                                \
         EMITB(0xC1)                                                         \
-            MRM(0x07,    MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
+        MRM(0x07,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
 /* mul */
 
 #define mulxn_ri(RM, IM)                                                    \
         EMITB(0x69 | TYP(IM))                                               \
-            MRM(0x00,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   CMD(IM))
+        MRM(0x00,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   CMD(IM))
 
 #define mulxn_rr(RG, RM)                                                    \
         EMITB(0x0F) EMITB(0xAF)                                             \
-            MRM(REG(RG), MOD(RM), REG(RM))
+        MRM(REG(RG), MOD(RM), REG(RM))
 
 #define mulxn_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0xAF)                                             \
-            MRM(REG(RG), MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define mulxn_xm(RM, DP) /* Reax is in/out, destroys Redx */                \
         EMITB(0xF7)                                                         \
-            MRM(0x05,    MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(0x05,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* div */
 
 #define divxn_xm(RM, DP) /* Reax is in/out, Redx is Reax-sign-extended */   \
         EMITB(0xF7)      /* destroys Xmm0 (in ARM) */                       \
-            MRM(0x07,    MOD(RM), REG(RM)) /* limited precision */          \
-            AUX(SIB(RM), CMD(DP), EMPTY)   /* fp div (in ARM) */
+        MRM(0x07,    MOD(RM), REG(RM)) /* limited precision */              \
+        AUX(SIB(RM), CMD(DP), EMPTY)   /* fp div (in ARM) */
 
 /* cmp */
 
 #define cmpxx_ri(RM, IM)                                                    \
         EMITB(0x81 | TYP(IM))                                               \
-            MRM(0x07,    MOD(RM), REG(RM))                                  \
-            AUX(EMPTY,   EMPTY,   CMD(IM))
+        MRM(0x07,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   CMD(IM))
 
 #define cmpxx_mi(RM, DP, IM)                                                \
         EMITB(0x81 | TYP(IM))                                               \
-            MRM(0x07,    MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), CMD(IM))
+        MRM(0x07,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), CMD(IM))
 
 #define cmpxx_rr(RG, RM)                                                    \
         EMITB(0x3B)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))
+        MRM(REG(RG), MOD(RM), REG(RM))
 
 #define cmpxx_rm(RG, RM, DP)                                                \
         EMITB(0x3B)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define cmpxx_mr(RM, DP, RG)                                                \
         EMITB(0x39)                                                         \
-            MRM(REG(RG), MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* jmp */
 
 #define jmpxx_mm(RM, DP)                                                    \
         EMITB(0xFF)                                                         \
-            MRM(0x04,    MOD(RM), REG(RM))                                  \
-            AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define jmpxx_lb(lb)                                                        \
         ASM_BEG ASM_OP1(jmp, lb) ASM_END
