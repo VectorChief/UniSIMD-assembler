@@ -390,7 +390,7 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/*****************************   helper macros   ******************************/
+/**************************   helper macros (SSE1)   **************************/
 
 /* simd mask */
 
