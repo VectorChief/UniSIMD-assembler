@@ -52,6 +52,9 @@
 #define VEX(reg, pfx)       EMITB(0xC5)                                     \
                             EMITB(0x84 | (0x0F - (reg)) << 3 | (pfx))
 
+#define VLZ(reg, pfx)       EMITB(0xC5)                                     \
+                            EMITB(0x80 | (0x0F - (reg)) << 3 | (pfx))
+
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -417,12 +420,12 @@
 #define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
 
 #define mxcsr_ld(RM, DP) /* not portable, do not use outside */             \
-        EMITB(0x0F) EMITB(0xAE)                                             \
+        VLZ(0      , 0) EMITB(0xAE)                                         \
         MRM(0x02,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define mxcsr_st(RM, DP) /* not portable, do not use outside */             \
-        EMITB(0x0F) EMITB(0xAE)                                             \
+        VLZ(0      , 0) EMITB(0xAE)                                         \
         MRM(0x03,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
