@@ -396,7 +396,7 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/*****************************   helper macros   ******************************/
+/**************************   helper macros (AVX1)   **************************/
 
 /* simd mask */
 
