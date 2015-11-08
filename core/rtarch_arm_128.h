@@ -4,8 +4,8 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_ARM_MPE_H
-#define RT_RTARCH_ARM_MPE_H
+#ifndef RT_RTARCH_ARM_128_H
+#define RT_RTARCH_ARM_128_H
 
 #include "rtarch_arm.h"
 
@@ -18,7 +18,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_arm_mpe.h: Implementation of ARM SIMD instructions.
+ * rtarch_arm_128.h: Implementation of ARM SIMD instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -32,7 +32,7 @@
  * cmdp*_rm - applies [cmd] to [p]acked: [r]egister from [m]emory
  * cmdp*_ld - applies [cmd] to [p]acked: as above
  * cmdp*_mr - applies [cmd] to [p]acked: [m]emory   from [r]egister
- * cmdp*_st - applies [cmd] to [p]acked: as above (arg list as cmdxx_ld)
+ * cmdp*_st - applies [cmd] to [p]acked: as above (arg list as cmdp*_ld)
  *
  * cmdpx_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
  * cmdpn_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
@@ -41,8 +41,8 @@
  * The cmdp*_** instructions are intended for SPMD programming model
  * and can potentially be configured per target to work with 32-bit/64-bit
  * data-elements (integers/pointers, floating point).
- * In this model data paths are fixed-width, core and SIMD data-elements are
- * width-compatible, code path divergence is handled via CHECK_MASK macro.
+ * In this model data-paths are fixed-width, core and SIMD data-elements are
+ * width-compatible, code-path divergence is handled via CHECK_MASK macro.
  */
 
 /******************************************************************************/
@@ -230,7 +230,7 @@
 
 /* cbr */
 
-        /* cbe, cbs, cbr defined in rtarch.h
+        /* cbe, cbs, cbr defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rcp */
@@ -242,7 +242,7 @@
         EMITW(0xF2000F50 | MTM(REG(RM), REG(RM), REG(RG)))                  \
         EMITW(0xF3000D50 | MTM(REG(RG), REG(RG), REG(RM)))
 
-        /* rcp defined in rtarch.h
+        /* rcp defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rsq */
@@ -255,7 +255,7 @@
         EMITW(0xF2200F50 | MTM(REG(RM), REG(RM), REG(RG)))                  \
         EMITW(0xF3000D50 | MTM(REG(RG), REG(RG), REG(RM)))
 
-        /* rsq defined in rtarch.h
+        /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* min */
@@ -469,7 +469,7 @@
         movxx_ld(Reax, Mebp, inf_FCTRL)                                     \
         fpscr_ld(Reax)
 
-#endif /* RT_RTARCH_ARM_MPE_H */
+#endif /* RT_RTARCH_ARM_128_H */
 
 /******************************************************************************/
 /******************************************************************************/
