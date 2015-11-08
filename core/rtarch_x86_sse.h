@@ -32,7 +32,7 @@
  * cmdp*_rm - applies [cmd] to [p]acked: [r]egister from [m]emory
  * cmdp*_ld - applies [cmd] to [p]acked: as above
  * cmdp*_mr - applies [cmd] to [p]acked: [m]emory   from [r]egister
- * cmdp*_st - applies [cmd] to [p]acked: as above (arg list as cmdxx_ld)
+ * cmdp*_st - applies [cmd] to [p]acked: as above (arg list as cmdp*_ld)
  *
  * cmdpx_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
  * cmdpn_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
@@ -41,8 +41,8 @@
  * The cmdp*_** instructions are intended for SPMD programming model
  * and can potentially be configured per target to work with 32-bit/64-bit
  * data-elements (integers/pointers, floating point).
- * In this model data paths are fixed-width, core and SIMD data-elements are
- * width-compatible, code path divergence is handled via CHECK_MASK macro.
+ * In this model data-paths are fixed-width, core and SIMD data-elements are
+ * width-compatible, code-path divergence is handled via CHECK_MASK macro.
  */
 
 /******************************************************************************/

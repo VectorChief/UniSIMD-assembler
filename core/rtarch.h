@@ -85,7 +85,7 @@
  * Core registers can be 32-bit/64-bit wide, while their SIMD counterparts
  * depend on the architecture and SIMD version chosen for the target.
  * Fractional sub-registers don't have names and aren't architecturally
- * visible in the assembler as it would complicate SPMD programming model.
+ * visible in the assembler in order to simplify SPMD programming model.
  */
 
 /******************************************************************************/
@@ -206,7 +206,6 @@
 
 /*
  * Short name Q for RT_SIMD_QUADS.
- * Not to be used outside backend headers.
  */
 #ifdef Q
 #undef Q
@@ -215,7 +214,6 @@
 
 /*
  * Short name S for RT_SIMD_WIDTH.
- * Not to be used outside backend headers.
  */
 #ifdef S
 #undef S
@@ -223,7 +221,7 @@
 #define S                   RT_SIMD_WIDTH
 
 /*
- * Wider SIMD are supported in backend structs (S = 8, 16 were tested).
+ * Check SIMD width correctness.
  */
 #if Q != RT_SIMD_QUADS || S != RT_SIMD_WIDTH || S % 4 != 0
 #error "SIMD width must be divisible by 4"
