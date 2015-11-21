@@ -13,6 +13,10 @@
 #define RT_SIMD_ALIGN       32
 #define RT_SIMD_SET(s, v)   s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=v
 
+#if defined (RT_SIMD_CODE)
+
+#if defined (RT_256) && (RT_256 != 0)
+
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
@@ -49,11 +53,17 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
+/* 2-byte VEX prefix with 256 mode set, leading 0x0F is implied */
 #define VEX(reg, pfx)       EMITB(0xC5)                                     \
                             EMITB(0x84 | (0x0F - (reg)) << 3 | (pfx))
 
+/* 2-byte VEX prefix with 128 mode set, leading 0x0F is implied */
 #define VLZ(reg, pfx)       EMITB(0xC5)                                     \
                             EMITB(0x80 | (0x0F - (reg)) << 3 | (pfx))
+
+/* 3-byte VEX prefix with 256 mode set, leading 0x0F is encoded */
+#define VX3(reg, pfx, aux)  EMITB(0xC4) EMITB(0xE0 | (aux))                 \
+                            EMITB(0x04 | (0x0F - (reg)) << 3 | (pfx))
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -338,7 +348,184 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
+/**************************   packed integer (AVX1)   *************************/
+
+#if (RT_256 < 2)
+
+#define prmpx_rr(RG, RM, IM) /* not portable, do not use outside */         \
+        VX3(REG(RG), 1, 3) EMITB(0x06)                                      \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM)))
+
+#define movlx_ld(RG, RM, DP) /* not portable, do not use outside */         \
+        VLZ(0      , 0) EMITB(0x28)                                         \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+#define movlx_st(RG, RM, DP) /* not portable, do not use outside */         \
+        VLZ(0      , 0) EMITB(0x29)                                         \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+/* add */
+
+#define addlx_rr(RG, RM)     /* not portable, do not use outside */         \
+        VLZ(REG(RG), 1) EMITB(0xFE)                                         \
+        MRM(REG(RG), MOD(RM), REG(RM))
+
+#define addpx_rr(RG, RM)                                                    \
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        addlx_rr(W(RG), W(RM))                                              \
+        movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
+        movlx_ld(W(RG), Mebp, inf_SCR01(0x10))                              \
+        prmpx_rr(W(RM), W(RM), IB(1))                                       \
+        addlx_rr(W(RG), W(RM))                                              \
+        prmpx_rr(W(RM), W(RM), IB(1))                                       \
+        movlx_st(W(RG), Mebp, inf_SCR01(0x10))                              \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
+#define addlx_ld(RG, RM, DP)                                                \
+        VLZ(REG(RG), 1) EMITB(0xFE)                                         \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+#define addpx_ld(RG, RM, DP)                                                \
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        movpx_ld(W(RG), W(RM), W(DP))                                       \
+        movpx_st(W(RG), Mebp, inf_SCR02(0))                                 \
+        movlx_ld(W(RG), Mebp, inf_SCR01(0x00))                              \
+        addlx_ld(W(RG), Mebp, inf_SCR02(0x00))                              \
+        movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
+        movlx_ld(W(RG), Mebp, inf_SCR01(0x10))                              \
+        addlx_ld(W(RG), Mebp, inf_SCR02(0x10))                              \
+        movlx_st(W(RG), Mebp, inf_SCR01(0x10))                              \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
+/* sub */
+
+#define sublx_rr(RG, RM)     /* not portable, do not use outside */         \
+        VLZ(REG(RG), 1) EMITB(0xFA)                                         \
+        MRM(REG(RG), MOD(RM), REG(RM))
+
+#define subpx_rr(RG, RM)                                                    \
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        sublx_rr(W(RG), W(RM))                                              \
+        movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
+        movlx_ld(W(RG), Mebp, inf_SCR01(0x10))                              \
+        prmpx_rr(W(RM), W(RM), IB(1))                                       \
+        sublx_rr(W(RG), W(RM))                                              \
+        prmpx_rr(W(RM), W(RM), IB(1))                                       \
+        movlx_st(W(RG), Mebp, inf_SCR01(0x10))                              \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
+#define sublx_ld(RG, RM, DP)                                                \
+        VLZ(REG(RG), 1) EMITB(0xFA)                                         \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+#define subpx_ld(RG, RM, DP)                                                \
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        movpx_ld(W(RG), W(RM), W(DP))                                       \
+        movpx_st(W(RG), Mebp, inf_SCR02(0))                                 \
+        movlx_ld(W(RG), Mebp, inf_SCR01(0x00))                              \
+        sublx_ld(W(RG), Mebp, inf_SCR02(0x00))                              \
+        movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
+        movlx_ld(W(RG), Mebp, inf_SCR01(0x10))                              \
+        sublx_ld(W(RG), Mebp, inf_SCR02(0x10))                              \
+        movlx_st(W(RG), Mebp, inf_SCR01(0x10))                              \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
+/* shl */
+
+#define shllx_ri(RM, IM)     /* not portable, do not use outside */         \
+        VLZ(REG(RM), 1) EMITB(0x72)                                         \
+        MRM(0x06,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+
+#define shlpx_ri(RM, IM)                                                    \
+        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
+        shllx_ri(W(RM), W(IM))                                              \
+        movlx_st(W(RM), Mebp, inf_SCR01(0x00))                              \
+        movlx_ld(W(RM), Mebp, inf_SCR01(0x10))                              \
+        shllx_ri(W(RM), W(IM))                                              \
+        movlx_st(W(RM), Mebp, inf_SCR01(0x10))                              \
+        movpx_ld(W(RM), Mebp, inf_SCR01(0))
+
+#define shllx_ld(RG, RM, DP)                                                \
+        VLZ(REG(RG), 1) EMITB(0xF2)                                         \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+#define shlpx_ld(RG, RM, DP)                                                \
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        shllx_ld(W(RG), W(RM), W(DP))                                       \
+        movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
+        movlx_ld(W(RG), Mebp, inf_SCR01(0x10))                              \
+        shllx_ld(W(RG), W(RM), W(DP))                                       \
+        movlx_st(W(RG), Mebp, inf_SCR01(0x10))                              \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
+/* shr */
+
+#define shrlx_ri(RM, IM)     /* not portable, do not use outside */         \
+        VLZ(REG(RM), 1) EMITB(0x72)                                         \
+        MRM(0x02,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+
+#define shrpx_ri(RM, IM)                                                    \
+        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
+        shrlx_ri(W(RM), W(IM))                                              \
+        movlx_st(W(RM), Mebp, inf_SCR01(0x00))                              \
+        movlx_ld(W(RM), Mebp, inf_SCR01(0x10))                              \
+        shrlx_ri(W(RM), W(IM))                                              \
+        movlx_st(W(RM), Mebp, inf_SCR01(0x10))                              \
+        movpx_ld(W(RM), Mebp, inf_SCR01(0))
+
+#define shrlx_ld(RG, RM, DP)                                                \
+        VLZ(REG(RG), 1) EMITB(0xD2)                                         \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+#define shrpx_ld(RG, RM, DP)                                                \
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        shrlx_ld(W(RG), W(RM), W(DP))                                       \
+        movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
+        movlx_ld(W(RG), Mebp, inf_SCR01(0x10))                              \
+        shrlx_ld(W(RG), W(RM), W(DP))                                       \
+        movlx_st(W(RG), Mebp, inf_SCR01(0x10))                              \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
+#define shrln_ri(RM, IM)     /* not portable, do not use outside */         \
+        VLZ(REG(RM), 1) EMITB(0x72)                                         \
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+
+#define shrpn_ri(RM, IM)                                                    \
+        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
+        shrln_ri(W(RM), W(IM))                                              \
+        movlx_st(W(RM), Mebp, inf_SCR01(0x00))                              \
+        movlx_ld(W(RM), Mebp, inf_SCR01(0x10))                              \
+        shrln_ri(W(RM), W(IM))                                              \
+        movlx_st(W(RM), Mebp, inf_SCR01(0x10))                              \
+        movpx_ld(W(RM), Mebp, inf_SCR01(0))
+
+#define shrln_ld(RG, RM, DP)                                                \
+        VLZ(REG(RG), 1) EMITB(0xE2)                                         \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+#define shrpn_ld(RG, RM, DP)                                                \
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        shrln_ld(W(RG), W(RM), W(DP))                                       \
+        movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
+        movlx_ld(W(RG), Mebp, inf_SCR01(0x10))                              \
+        shrln_ld(W(RG), W(RM), W(DP))                                       \
+        movlx_st(W(RG), Mebp, inf_SCR01(0x10))                              \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
 /**************************   packed integer (AVX2)   *************************/
+
+#else /* RT_256 >= 2 */
 
 /* add */
 
@@ -396,6 +583,8 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
+#endif /* RT_256 >= 2 */
+
 /**************************   helper macros (AVX1)   **************************/
 
 /* simd mask */
@@ -438,6 +627,21 @@
 
 #define FCTRL_LEAVE(mode) /* destroys Reax (in ARM) */                      \
         mxcsr_ld(Mebp, inf_FCTRL)
+
+/* cvr */
+
+#define rndps_rr(RG, RM, mode) /* not portable, do not use outside */       \
+        VX3(0      , 1, 3) EMITB(0x08)                                      \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode))
+
+#define cvrps_rr(RG, RM, mode)                                              \
+        rndps_rr(W(RG), W(RM), mode)                                        \
+        cvtps_rr(W(RG), W(RG))
+
+#endif /* RT_256 */
+
+#endif /* RT_SIMD_CODE */
 
 #endif /* RT_RTARCH_X86_256_H */
 

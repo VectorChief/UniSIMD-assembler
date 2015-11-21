@@ -91,6 +91,19 @@
 /***************************   OS, COMPILER, ARCH   ***************************/
 /******************************************************************************/
 
+/*
+ * Short names Q and S for RT_SIMD_QUADS and RT_SIMD_WIDTH respectively.
+ * Used independently for SIMD-fields' sizes and offsets in backend structures.
+ * Must be undef'd explicitly after use to avoid collisions with system headers.
+ */
+#ifdef Q
+#undef Q
+#endif /* in case Q is defined outside */
+
+#ifdef S
+#undef S
+#endif /* in case S is defined outside */
+
 /*******************************   WIN32, MSVC   ******************************/
 
 #if   defined (RT_WIN32)
@@ -109,9 +122,11 @@
 #define EMITB(b)                ASM_BEG ASM_OP1(_emit, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lea, eax, lb) ASM_END
 
-#if   defined (RT_256)
+#if   defined (RT_256) && (RT_256 != 0)
+#define S 8
 #include "rtarch_x86_256.h"
-#elif defined (RT_128)
+#elif defined (RT_128) && (RT_128 != 0)
+#define S 4
 #include "rtarch_x86_128.h"
 #endif /* RT_256, RT_128 */
 
@@ -127,7 +142,7 @@
 
 #elif defined (RT_ARM)
 
-
+#error "ARM native builds for Windows are not supported yet"
 
 #endif /* RT_X86, RT_ARM */
 
@@ -149,9 +164,11 @@
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
 
-#if   defined (RT_256)
+#if   defined (RT_256) && (RT_256 != 0)
+#define S 8
 #include "rtarch_x86_256.h"
-#elif defined (RT_128)
+#elif defined (RT_128) && (RT_128 != 0)
+#define S 4
 #include "rtarch_x86_128.h"
 #endif /* RT_256, RT_128 */
 
@@ -179,9 +196,11 @@
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(adr, r0, lb) ASM_END
 
-#if   defined (RT_256)
-#error "ARM doesn't support SIMD wider than 4"
-#elif defined (RT_128)
+#if   defined (RT_256) && (RT_256 != 0)
+#define S 8
+#error "ARM doesn't support SIMD wider than 4 at the moment"
+#elif defined (RT_128) && (RT_128 != 0)
+#define S 4
 #include "rtarch_arm_128.h"
 #endif /* RT_256, RT_128 */
 
@@ -214,28 +233,13 @@
  * SIMD quad-factor.
  */
 #define RT_SIMD_QUADS       (RT_SIMD_WIDTH / 4)
-
-/*
- * Short name Q for RT_SIMD_QUADS.
- */
-#ifdef Q
-#undef Q
-#endif /* in case Q is defined outside */
-#define Q                   RT_SIMD_QUADS
-
-/*
- * Short name S for RT_SIMD_WIDTH.
- */
-#ifdef S
-#undef S
-#endif /* in case S is defined outside */
-#define S                   RT_SIMD_WIDTH
+#define Q (S / 4)
 
 /*
  * Check SIMD width correctness.
  */
 #if Q != RT_SIMD_QUADS || S != RT_SIMD_WIDTH || S % 4 != 0
-#error "SIMD width must be divisible by 4"
+#error "SIMD width must be divisible by 4, check definitions"
 #endif /* in case S is not expressed in quads */
 
 #endif /* RT_RTARCH_H */

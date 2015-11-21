@@ -230,8 +230,14 @@ struct rt_SIMD_INFO
     rt_word fctrl;
 #define inf_FCTRL           DP(0x000)
 
-    rt_word pad01[S-1];     /* reserved, do not use! */
-#define inf_PAD01           DP(0x004)
+    rt_word ver;
+#define inf_VER             DP(0x004)
+
+    rt_word scr00;          /* scratchpad 00 */
+#define inf_SCR00           DP(0x008)
+
+    rt_word pad01[S-3];     /* reserved, do not use! */
+#define inf_PAD01           DP(0x00C)
 
     /* general purpose constants */
 
@@ -250,8 +256,14 @@ struct rt_SIMD_INFO
     rt_word gpc05[S];       /* 0x3F800000 */
 #define inf_GPC05           DP(Q*0x050)
 
-    rt_real pad02[S*10];    /* reserved, do not use! */
-#define inf_PAD02           DP(Q*0x060)
+    rt_word scr01[S];       /* scratchpad 01 */
+#define inf_SCR01(nx)       DP(Q*0x060 + nx)
+
+    rt_word scr02[S];       /* scratchpad 02 */
+#define inf_SCR02(nx)       DP(Q*0x070 + nx)
+
+    rt_real pad02[S*8];     /* reserved, do not use! */
+#define inf_PAD02           DP(Q*0x080)
 
 };
 

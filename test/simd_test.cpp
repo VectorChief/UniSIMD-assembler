@@ -8,6 +8,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#define RT_SIMD_CODE /* enable SIMD instructions definitions */
+
 #include "rtarch.h"
 #include "rtbase.h"
 
@@ -2060,6 +2062,31 @@ rt_cell main(rt_cell argc, rt_char *argv[])
     inf0->cyc  = CYC_SIZE;
     inf0->size = ARR_SIZE;
 
+    rt_cell run_level = RUN_LEVEL;
+    rt_cell simd = 0;
+
+    ASM_ENTER(inf0)
+        verxx_xx()
+    ASM_LEAVE(inf0)
+
+#if defined (RT_256) && (RT_256 != 0)
+    if ((inf0->ver & (RT_256 << 8)) == 0)
+    {
+        RT_LOGI("Chosen SIMD target not supported, check build flags\n");
+        run_level = 0;
+    }
+    simd = simd == 0 ? (RT_256 << 8) | 8 : simd;
+#endif /* RT_256 */
+
+#if defined (RT_128) && (RT_128 != 0)
+    if ((inf0->ver & (RT_128 << 0)) == 0)
+    {
+        RT_LOGI("Chosen SIMD target not supported, check build flags\n");
+        run_level = 0;
+    }
+    simd = simd == 0 ? (RT_128 << 8) | 4 : simd;
+#endif /* RT_128 */
+
     rt_time time1 = 0;
     rt_time time2 = 0;
     rt_time tC = 0;
@@ -2067,7 +2094,7 @@ rt_cell main(rt_cell argc, rt_char *argv[])
 
     rt_cell i;
 
-    for (i = 0; i < RUN_LEVEL; i++)
+    for (i = 0; i < run_level; i++)
     {
         RT_LOGI("-----------------  RUN LEVEL = %2d  -----------------\n", i+1);
 
@@ -2093,7 +2120,8 @@ rt_cell main(rt_cell argc, rt_char *argv[])
 
         p_test[i](inf0);
 
-        RT_LOGI("----------------------------------------------------\n");
+        RT_LOGI("----------------------------------- simd = %dv%d ---\n",
+                                                (simd & 0xFF) * 32, simd >> 8);
     }
 
     free(info);

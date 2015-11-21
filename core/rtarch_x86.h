@@ -321,6 +321,16 @@
         MRM(0x04,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
+#define shlxx_rx(RM)     /* reads Recx for shift value */                   \
+        EMITB(0xD3)                                                         \
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMPTY)
+
+#define shlxx_mx(RM, DP) /* reads Recx for shift value */                   \
+        EMITB(0xD3)                                                         \
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
 /* shr */
 
 #define shrxx_ri(RM, IM)                                                    \
@@ -333,6 +343,16 @@
         MRM(0x05,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
+#define shrxx_rx(RM)     /* reads Recx for shift value */                   \
+        EMITB(0xD3)                                                         \
+        MRM(0x05,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMPTY)
+
+#define shrxx_mx(RM, DP) /* reads Recx for shift value */                   \
+        EMITB(0xD3)                                                         \
+        MRM(0x05,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
 #define shrxn_ri(RM, IM)                                                    \
         EMITB(0xC1)                                                         \
         MRM(0x07,    MOD(RM), REG(RM))                                      \
@@ -342,6 +362,16 @@
         EMITB(0xC1)                                                         \
         MRM(0x07,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
+
+#define shrxn_rx(RM)     /* reads Recx for shift value */                   \
+        EMITB(0xD3)                                                         \
+        MRM(0x07,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMPTY)
+
+#define shrxn_mx(RM, DP) /* reads Recx for shift value */                   \
+        EMITB(0xD3)                                                         \
+        MRM(0x07,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* mul */
 
@@ -367,9 +397,9 @@
 /* div */
 
 #define divxn_xm(RM, DP) /* Reax is in/out, Redx is Reax-sign-extended */   \
-        EMITB(0xF7)      /* destroys Xmm0 (in ARM) */                       \
+        EMITB(0xF7)                                                         \
         MRM(0x07,    MOD(RM), REG(RM)) /* limited precision */              \
-        AUX(SIB(RM), CMD(DP), EMPTY)   /* fp div (in ARM) */
+        AUX(SIB(RM), CMD(DP), EMPTY)   /* fp div (in ARM, but not A32) */
 
 /* cmp */
 
@@ -442,6 +472,38 @@
 
 #define LBL(lb)                                                             \
         ASM_BEG ASM_OP0(lb:) ASM_END
+
+/* ver */
+
+#define cpuid_xx() /* destroys Reax, Recx, Rebx, Redx, reads Reax, Recx */  \
+        EMITB(0x0F) EMITB(0xA2)     /* not portable, do not use outside */
+
+#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
+        /* request cpuid:eax=1 */                                           \
+        movxx_ri(Reax, IB(1))                                               \
+        cpuid_xx()                                                          \
+        shrxx_ri(Redx, IB(25))  /* <- SSE1, SSE2 to bit0, bit1 */           \
+        andxx_ri(Redx, IB(0x03))                                            \
+        shrxx_ri(Recx, IB(20))  /* <- AVX1 to bit8 */                       \
+        andxx_ri(Recx, IH(0x0100))                                          \
+        movxx_rr(Resi, Redx)                                                \
+        orrxx_rr(Resi, Recx)                                                \
+        /* request cpuid:eax=0 to test input value eax=7 */                 \
+        movxx_ri(Reax, IB(0))                                               \
+        cpuid_xx()                                                          \
+        subxx_ri(Reax, IB(7))                                               \
+        shrxn_ri(Reax, IB(31))                                              \
+        movxx_rr(Redi, Reax)                                                \
+        notxx_rr(Redi)                                                      \
+        /* request cpuid:eax=7:ecx=0 */                                     \
+        movxx_ri(Reax, IB(7))                                               \
+        movxx_ri(Recx, IB(0))                                               \
+        cpuid_xx()                                                          \
+        shlxx_ri(Rebx, IB(4))   /* <- AVX2 to bit9 */                       \
+        andxx_ri(Rebx, IH(0x0200))                                          \
+        andxx_rr(Rebx, Redi)                                                \
+        orrxx_rr(Resi, Rebx)                                                \
+        movxx_st(Resi, Mebp, inf_VER)
 
 #endif /* RT_RTARCH_X86_H */
 

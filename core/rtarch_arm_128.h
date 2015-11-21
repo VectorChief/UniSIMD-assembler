@@ -13,6 +13,8 @@
 #define RT_SIMD_ALIGN       16
 #define RT_SIMD_SET(s, v)   s[0]=s[1]=s[2]=s[3]=v
 
+#if defined (RT_SIMD_CODE)
+
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
@@ -59,9 +61,9 @@
 /* registers    REG */
 
 #define Tmm0    0x00                    /* q0, for integer div VFP fallback */
-#define Tmm1    0x10                    /* q8 */
-#define Tmm2    0x12                    /* q9 */
-#define Tmm3    0x14                    /* q10 */
+#define Tmm1    0x12                    /* q9 */
+#define Tmm2    0x14                    /* q10 */
+#define Tmm3    0x16                    /* q11 */
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -69,14 +71,14 @@
 
 /* registers    REG,  MOD,  SIB */
 
-#define Xmm0    0x00, 0x00, EMPTY       /* q0 */
-#define Xmm1    0x02, 0x00, EMPTY       /* q1 */
-#define Xmm2    0x04, 0x00, EMPTY       /* q2 */
-#define Xmm3    0x06, 0x00, EMPTY       /* q3 */
-#define Xmm4    0x08, 0x00, EMPTY       /* q4 */
-#define Xmm5    0x0A, 0x00, EMPTY       /* q5 */
-#define Xmm6    0x0C, 0x00, EMPTY       /* q6 */
-#define Xmm7    0x0E, 0x00, EMPTY       /* q7 */
+#define Xmm0    0x02, 0x00, EMPTY       /* q1 */
+#define Xmm1    0x04, 0x00, EMPTY       /* q2 */
+#define Xmm2    0x06, 0x00, EMPTY       /* q3 */
+#define Xmm3    0x08, 0x00, EMPTY       /* q4 */
+#define Xmm4    0x0A, 0x00, EMPTY       /* q5 */
+#define Xmm5    0x0C, 0x00, EMPTY       /* q6 */
+#define Xmm6    0x0E, 0x00, EMPTY       /* q7 */
+#define Xmm7    0x10, 0x00, EMPTY       /* q8 */
 
 /******************************************************************************/
 /**********************************   MPE   ***********************************/
@@ -468,6 +470,25 @@
 #define FCTRL_LEAVE(mode) /* destroys Reax */                               \
         movxx_ld(Reax, Mebp, inf_FCTRL)                                     \
         fpscr_ld(Reax)
+
+/* cvr */
+
+#if (RT_128 < 2)
+
+#define cvrps_rr(RG, RM, mode)                                              \
+        FCTRL_ENTER(mode)                                                   \
+        cvtps_rr(W(RG), W(RM))                                              \
+        FCTRL_LEAVE(mode)
+
+#else /* RT_128 >= 2 */
+
+#define cvrps_rr(RG, RM, mode)                                              \
+        EMITW(0xF3BB0040 | MRM(REG(RG), 0x00,    REG(RM)) |                 \
+        (RT_SIMD_MODE_##mode+1 + 3*((RT_SIMD_MODE_##mode+1) >> 2)) << 8)
+
+#endif /* RT_128 >= 2 */
+
+#endif /* RT_SIMD_CODE */
 
 #endif /* RT_RTARCH_ARM_128_H */
 
