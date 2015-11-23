@@ -639,6 +639,18 @@
         rndps_rr(W(RG), W(RM), mode)                                        \
         cvtps_rr(W(RG), W(RG))
 
+/* mmv */
+
+#define mmvpx_ld(RG, RM, DP, R0)                                            \
+        VX3(REG(R0), 1, 2) EMITB(0x2C)                                      \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+#define mmvpx_st(RG, RM, DP, R0)                                            \
+        VX3(REG(R0), 1, 2) EMITB(0x2E)                                      \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
 #endif /* RT_256 */
 
 #endif /* RT_SIMD_CODE */
