@@ -641,12 +641,12 @@
 
 /* mmv */
 
-#define mmvpx_ld(RG, RM, DP, R0)                                            \
+#define mmvpx_ld(RG, RM, DP, R0) /* not portable, use conditionally */      \
         VX3(REG(R0), 1, 2) EMITB(0x2C)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define mmvpx_st(RG, RM, DP, R0)                                            \
+#define mmvpx_st(RG, RM, DP, R0) /* not portable, use conditionally */      \
         VX3(REG(R0), 1, 2) EMITB(0x2E)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
