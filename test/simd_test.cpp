@@ -17,7 +17,7 @@
 /*******************************   DEFINITIONS   ******************************/
 /******************************************************************************/
 
-#define RUN_LEVEL           15
+#define RUN_LEVEL           16
 #define CYC_SIZE            1000000
 
 #define ARR_SIZE            S*3 /* hardcoded in asm sections, S = SIMD width */
@@ -1724,6 +1724,139 @@ rt_void p_test15(rt_SIMD_INFOX *info)
 #endif /* RUN_LEVEL 15 */
 
 /******************************************************************************/
+/******************************   RUN LEVEL 16   ******************************/
+/******************************************************************************/
+
+#if RUN_LEVEL >= 16
+
+rt_void c_test16(rt_SIMD_INFOX *info)
+{
+    rt_cell i, j, n = info->size;
+    rt_cell *iar0 = info->iar0;
+    rt_cell *ico1 = info->ico1;
+    rt_cell *ico2 = info->ico2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            ico1[j] = iar0[j] >> (iar0[(j/S)*S] & 0x1F);
+            ico2[j] = iar0[j] << (iar0[(j/S)*S] & 0x1F);
+        }
+    }
+}
+
+rt_void s_test16(rt_SIMD_INFOX *info)
+{
+    rt_cell i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Resi, Mebp, inf_IAR0)
+        movxx_ld(Redx, Mebp, inf_ISO1)
+        movxx_ld(Rebx, Mebp, inf_ISO2)
+
+        movpx_ld(Xmm0, Mesi, AJ0)
+        movpx_rr(Xmm2, Xmm0)
+        movpx_rr(Xmm3, Xmm0)
+        movxx_ld(Recx, Mesi, AJ0)
+        andxx_ri(Recx, IB(0x1F))
+        xorpx_rr(Xmm1, Xmm1)
+        movpx_st(Xmm1, Mesi, AJ0)
+        movxx_st(Recx, Mesi, AJ0)
+        shrpx_ld(Xmm2, Mesi, AJ0)
+        shlpx_ld(Xmm3, Mesi, AJ0)
+        movpx_st(Xmm2, Medx, AJ0)
+        movpx_st(Xmm3, Mebx, AJ0)
+        movpx_st(Xmm0, Mesi, AJ0)
+        movxx_ld(Reax, Mesi, AJ0)
+        shrxx_rx(Reax)
+        movxx_st(Reax, Medx, AJ0)
+        movxx_ld(Reax, Mesi, AJ0)
+        shlxx_rx(Reax)
+        movxx_st(Reax, Mebx, AJ0)
+
+        movpx_ld(Xmm0, Mesi, AJ1)
+        movpx_rr(Xmm2, Xmm0)
+        movpx_rr(Xmm3, Xmm0)
+        movxx_ld(Recx, Mesi, AJ1)
+        andxx_ri(Recx, IB(0x1F))
+        xorpx_rr(Xmm1, Xmm1)
+        movpx_st(Xmm1, Mesi, AJ1)
+        movxx_st(Recx, Mesi, AJ1)
+        shrpx_ld(Xmm2, Mesi, AJ1)
+        shlpx_ld(Xmm3, Mesi, AJ1)
+        movpx_st(Xmm2, Medx, AJ1)
+        movpx_st(Xmm3, Mebx, AJ1)
+        movpx_st(Xmm0, Mesi, AJ1)
+        movxx_ld(Reax, Mesi, AJ1)
+        movxx_st(Reax, Medx, AJ1)
+        shrxx_mx(Medx, AJ1)
+        movxx_ld(Reax, Mesi, AJ1)
+        movxx_st(Reax, Mebx, AJ1)
+        shlxx_mx(Mebx, AJ1)
+
+        movpx_ld(Xmm0, Mesi, AJ2)
+        movpx_rr(Xmm2, Xmm0)
+        movpx_rr(Xmm3, Xmm0)
+        movxx_ld(Recx, Mesi, AJ2)
+        andxx_ri(Recx, IB(0x1F))
+        xorpx_rr(Xmm1, Xmm1)
+        movpx_st(Xmm1, Mesi, AJ2)
+        movxx_st(Recx, Mesi, AJ2)
+        shrpx_ld(Xmm2, Mesi, AJ2)
+        shlpx_ld(Xmm3, Mesi, AJ2)
+        movpx_st(Xmm2, Medx, AJ2)
+        movpx_st(Xmm3, Mebx, AJ2)
+        movpx_st(Xmm0, Mesi, AJ2)
+        movxx_ld(Reax, Mesi, AJ2)
+        shrxx_rx(Reax)
+        movxx_st(Reax, Medx, AJ2)
+        movxx_ld(Reax, Mesi, AJ2)
+        shlxx_rx(Reax)
+        movxx_st(Reax, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test16(rt_SIMD_INFOX *info)
+{
+    rt_cell j, n = info->size;
+
+    rt_cell *iar0 = info->iar0;
+    rt_cell *ico1 = info->ico1;
+    rt_cell *ico2 = info->ico2;
+    rt_cell *iso1 = info->iso1;
+    rt_cell *iso2 = info->iso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(ico1[j], iso1[j]) && IEQ(ico2[j], iso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("iarr[%d] = %d, iarr[%d] = %d\n",
+                j, iar0[j], (j/S)*S, iar0[(j/S)*S]);
+
+        RT_LOGI("C iarr[%d]>>iarr[%d] = %d, iarr[%d]<<iarr[%d] = %d\n",
+                j, (j/S)*S, ico1[j], j, (j/S)*S, ico2[j]);
+
+        RT_LOGI("S iarr[%d]>>iarr[%d] = %d, iarr[%d]<<iarr[%d] = %d\n",
+                j, (j/S)*S, iso1[j], j, (j/S)*S, iso2[j]);
+    }
+}
+
+#endif /* RUN_LEVEL 16 */
+
+/******************************************************************************/
 /*********************************   TABLES   *********************************/
 /******************************************************************************/
 
@@ -1790,6 +1923,10 @@ testXX c_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 15
     c_test15,
 #endif /* RUN_LEVEL 15 */
+
+#if RUN_LEVEL >= 16
+    c_test16,
+#endif /* RUN_LEVEL 16 */
 };
 
 testXX s_test[RUN_LEVEL] =
@@ -1853,6 +1990,10 @@ testXX s_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 15
     s_test15,
 #endif /* RUN_LEVEL 15 */
+
+#if RUN_LEVEL >= 16
+    s_test16,
+#endif /* RUN_LEVEL 16 */
 };
 
 testXX p_test[RUN_LEVEL] =
@@ -1916,6 +2057,10 @@ testXX p_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 15
     p_test15,
 #endif /* RUN_LEVEL 15 */
+
+#if RUN_LEVEL >= 16
+    p_test16,
+#endif /* RUN_LEVEL 16 */
 };
 
 /******************************************************************************/
