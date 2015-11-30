@@ -33,38 +33,39 @@
  * Preliminary naming scheme for potential future targets.
  *
  * Current 32-bit targets:
- *  - rtarch_arm.h         - 32-bit ARMv7 ISA, 16 core registers, 8 + temps used
- *  - rtarch_arm_mpe.h     - 32-bit ARMv7 ISA, 16 SIMD registers, 8 + temps used
- *  - rtarch_x86.h         - 32-bit x86 ISA, 8 core registers, 6 + esp, ebp used
- *  - rtarch_x86_sse.h     - 32-bit x86 ISA, 8 SIMD registers, 8 used
+ *  - rtarch_arm.h         - 32-bit ARMv7/8 ISA, 16 core regs, 8 + temps used
+ *  - rtarch_arm_128.h     - 32-bit ARMv7/8 ISA, 16 SIMD regs, 8 + temps used
+ *  - rtarch_x86.h         - 32-bit x86 ISA, 8 core regs, 6 + esp, ebp used
+ *  - rtarch_x86_128.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, SSE
+ *  - rtarch_x86_256.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, AVX
  *
  * Future 32-bit targets:
- *  - rtarch_a32.h         - 32-bit ARMv8 ISA, 16 core registers, new features
- *  - rtarch_a32_128.h     - 32-bit ARMv8 ISA, 16 SIMD registers, new features
- *  - rtarch_x32.h         - 32-bit x32 ABI, 16 core registers, 32-bit pointers
- *  - rtarch_x32_128.h     - 32-bit x32 ABI, 16 SIMD registers, SSE 128-bit
- *  - rtarch_x32_256.h     - 32-bit x32 ABI, 16 SIMD registers, AVX 256-bit
- *  - rtarch_x32_512.h     - 32-bit x32 ABI, 32 SIMD registers, AVX 512-bit
+ *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 core regs, int-div, fp-cvt-r
+ *  - rtarch_a32_128.h     - AArch64:ILP32 ABI, 32 SIMD regs, IEEE-fp, sqr, div
+ *  - rtarch_x32.h         - x86_64:x32 ABI, 16 core regs, 32-bit ptrs
+ *  - rtarch_x32_128.h     - x86_64:x32 ABI, 16 SIMD regs, SSE 128-bit
+ *  - rtarch_x32_256.h     - x86_64:x32 ABI, 16 SIMD regs, AVX 256-bit
+ *  - rtarch_x32_512.h     - x86_64:x32 ABI, 32 SIMD regs, AVX 512-bit
  *
  * Future 64-bit targets:
- *  - rtarch_a64.h         - 64-bit ARMv8 ISA, 32 core registers, new features
- *  - rtarch_a64_128.h     - 64-bit ARMv8 ISA, 32 SIMD registers, new features
- *  - rtarch_x64.h         - 64-bit x64 ABI, 16 core registers, 64-bit pointers
- *  - rtarch_x64_128.h     - 64-bit x64 ABI, 16 SIMD registers, SSE 128-bit
- *  - rtarch_x64_256.h     - 64-bit x64 ABI, 16 SIMD registers, AVX 256-bit
- *  - rtarch_x64_512.h     - 64-bit x64 ABI, 32 SIMD registers, AVX 512-bit
+ *  - rtarch_a64.h         - AArch64:ARMv8 ISA, 32 core regs, int-div, fp-cvt-r
+ *  - rtarch_a64_128.h     - AArch64:ARMv8 ISA, 32 SIMD regs, IEEE-fp, sqr, div
+ *  - rtarch_x64.h         - x86_64:x64 ISA, 16 core regs, 64-bit ptrs
+ *  - rtarch_x64_128.h     - x86_64:x64 ISA, 16 SIMD regs, SSE 128-bit
+ *  - rtarch_x64_256.h     - x86_64:x64 ISA, 16 SIMD regs, AVX 256-bit
+ *  - rtarch_x64_512.h     - x86_64:x64 ISA, 32 SIMD regs, AVX 512-bit
  *
  * Reserved 32-bit targets:
- *  - rtarch_m32.h         - 32-bit MIPS ISA, ?? core registers
- *  - rtarch_m32_128.h     - 32-bit MIPS ISA, ?? SIMD registers
- *  - rtarch_p32.h         - 32-bit Power ISA, ?? core registers
- *  - rtarch_p32_128.h     - 32-bit Power ISA, ?? SIMD registers
+ *  - rtarch_m32.h         - 32-bit MIPS ISA, ?? core regs
+ *  - rtarch_m32_128.h     - 32-bit MIPS ISA, ?? SIMD regs, MIPS3D
+ *  - rtarch_p32.h         - 32-bit PowerISA, ?? core regs
+ *  - rtarch_p32_128.h     - 32-bit PowerISA, ?? SIMD regs, AltiVec
  *
  * Reserved 64-bit targets:
- *  - rtarch_m64.h         - 64-bit MIPS ISA, ?? core registers
- *  - rtarch_m64_128.h     - 64-bit MIPS ISA, ?? SIMD registers
- *  - rtarch_p64.h         - 64-bit Power ISA, ?? core registers
- *  - rtarch_p64_128.h     - 64-bit Power ISA, ?? SIMD registers
+ *  - rtarch_m64.h         - 64-bit MIPS ISA, ?? core regs
+ *  - rtarch_m64_128.h     - 64-bit MIPS ISA, ?? SIMD regs, MIPS3D
+ *  - rtarch_p64.h         - 64-bit PowerISA, ?? core regs
+ *  - rtarch_p64_128.h     - 64-bit PowerISA, ?? SIMD regs, AltiVec
  *
  * Preliminary naming scheme for extended core and SIMD register files.
  *
