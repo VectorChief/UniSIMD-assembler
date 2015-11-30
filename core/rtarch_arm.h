@@ -106,7 +106,7 @@
 #define Recx    0x01, 0x00, EMPTY       /* r1 */
 #define Redx    0x02, 0x00, EMPTY       /* r2 */
 #define Rebx    0x03, 0x00, EMPTY       /* r3 */
-#define Resp    0x04, 0x00, EMPTY       /* r4 */
+#define Resp    0x0D, 0x00, EMPTY       /* r13 */
 #define Rebp    0x05, 0x00, EMPTY       /* r5 */
 #define Resi    0x06, 0x00, EMPTY       /* r6 */
 #define Redi    0x07, 0x00, EMPTY       /* r7 */
