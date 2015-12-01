@@ -262,6 +262,32 @@
         EMITW(0xE1900000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
         EMITW(0xE5800000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))
 
+/* xor */
+
+#define xorxx_ri(RM, IM)                                                    \
+        AUX(EMPTY,   EMPTY,   CMD(IM))                                      \
+        EMITW(0xE0300000 | MRM(REG(RM), REG(RM), 0x00) | TYP(IM))
+
+#define xorxx_mi(RM, DP, IM)                                                \
+        AUX(SIB(RM), EMPTY,   CMD(IM))                                      \
+        EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))  \
+        EMITW(0xE0300000 | MRM(TMxx,    TMxx,    0x00) | TYP(IM))           \
+        EMITW(0xE5800000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))
+
+#define xorxx_rr(RG, RM)                                                    \
+        EMITW(0xE0300000 | MRM(REG(RG), REG(RG), REG(RM)))
+
+#define xorxx_ld(RG, RM, DP)                                                \
+        AUX(SIB(RM), EMPTY,   EMPTY)                                        \
+        EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))  \
+        EMITW(0xE0300000 | MRM(REG(RG), REG(RG), TMxx))
+
+#define xorxx_st(RG, RM, DP)                                                \
+        AUX(SIB(RM), EMPTY,   EMPTY)                                        \
+        EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))  \
+        EMITW(0xE0300000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0xE5800000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))
+
 /* not */
 
 #define notxx_rr(RM)                                                        \
@@ -271,6 +297,17 @@
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))  \
         EMITW(0xE1F00000 | MRM(TMxx,    0x00,    TMxx))                     \
+        EMITW(0xE5800000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))
+
+/* neg */
+
+#define negxx_rr(RM)                                                        \
+        EMITW(0xE2700000 | MRM(REG(RM), REG(RM), 0x00))
+
+#define negxx_mm(RM, DP)                                                    \
+        AUX(SIB(RM), EMPTY,   EMPTY)                                        \
+        EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))  \
+        EMITW(0xE2700000 | MRM(TMxx,    TMxx,    0x00))                     \
         EMITW(0xE5800000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))
 
 /* add */
