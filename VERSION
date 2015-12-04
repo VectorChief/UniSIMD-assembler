@@ -1,10 +1,19 @@
 v0.6: Unified SIMD Assembler, additional SIMD targets
-  - add new SIMD targets for SSE1, AVX1, AVX2
+  - add new SIMD targets for SSE1, AVX1, AVX2 with corresponding build flags
+  - enable SIMD instructions definitions only if RT_SIMD_CODE is defined
   - add shifts by fixed core register instructions
-  - add float-to-integer convert with mode parameter (x86, ARM + A32)
-  - add signed-integer divide for ARM's A32 mode
+  - add float-to-integer convert with mode parameter (x86, ARM + AArch32)
+  - add signed-integer-divide native instruction for ARM's AArch32 mode
   - remap SIMD registers for ARM to avoid collision with div VFP fallback
   - add SIMD test for shifts by runtime value & core register, run level 16
+  - add ver (cpuid) instruction for runtime SIMD target selection (x86 only)
+  - add mmv (vmaskmov) to AVX backend for fast conditional loads/stores
+  - add core instructions sub-tests to SIMD test if RT_CORE_CODE is defined
+  - add xor & neg core instructions to rtarch and SIMD test
+  - clarify current and future targets in rtarch (from here backported down)
+  - make stack pointer register architecturally invisible
+  - replace non-standard malloc.h with stdlib.h for malloc/free
+  - clean up rtarch whitespace formatting
 
 v0.5: Unified SIMD Assembler, API freeze for the engine
   - instructions naming scheme finalized
