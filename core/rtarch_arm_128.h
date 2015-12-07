@@ -360,7 +360,7 @@
         EMITW(0xEEFD0A60 | MTM(REG(RG)+1, 0x00,  REG(RG)+1)) /* modes */
 
 #define cvtpn_rr(RG, RM)                                                    \
-        EMITW(0xF3BB0640 | MRM(REG(RG), 0x00,    REG(RM)))
+        EMITW(0xF3BB0640 | MTM(REG(RG), 0x00,    REG(RM)))
 
 #define cvtpn_ld(RG, RM, DP)                                                \
         AUX(SIB(RM), CMD(DP), EMPTY)                                        \
@@ -483,7 +483,7 @@
 #else /* RT_128 >= 2 */
 
 #define cvrps_rr(RG, RM, mode)                                              \
-        EMITW(0xF3BB0040 | MRM(REG(RG), 0x00,    REG(RM)) |                 \
+        EMITW(0xF3BB0040 | MTM(REG(RG), 0x00,    REG(RM)) |                 \
         (RT_SIMD_MODE_##mode+1 + 3*((RT_SIMD_MODE_##mode+1) >> 2)) << 8)
 
 #endif /* RT_128 >= 2 */
