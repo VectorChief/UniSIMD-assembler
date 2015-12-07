@@ -454,7 +454,7 @@
 #if (RT_128 < 2)
 
 #define divxn_xm(RM, DP) /* Reax is in/out, Redx is Reax-sign-extended */   \
-        AUX(SIB(RM), EMPTY,   EMPTY)                /* fallback to VFP */   \
+        AUX(SIB(RM), EMPTY,   EMPTY) /* destroys Xmm0, fallback to VFP */   \
         EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))  \
         EMITW(0xEC400B10 | MRM(0x00,    TMxx,    Tmm0+0)) /* limited */     \
         EMITW(0xF3BB0600 | MRM(Tmm0+1,  0x00,    Tmm0+0)) /* precision */   \

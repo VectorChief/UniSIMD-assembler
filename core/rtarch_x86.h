@@ -433,9 +433,9 @@
 /* div */
 
 #define divxn_xm(RM, DP) /* Reax is in/out, Redx is Reax-sign-extended */   \
-        EMITB(0xF7)                                                         \
+        EMITB(0xF7)      /* destroys Xmm0 (in ARM, not AArch32) */          \
         MRM(0x07,    MOD(RM), REG(RM)) /* limited precision */              \
-        AUX(SIB(RM), CMD(DP), EMPTY)   /* fp div (in ARM, but not A32) */
+        AUX(SIB(RM), CMD(DP), EMPTY)   /* fp div (in ARM, not AArch32) */
 
 /* cmp */
 

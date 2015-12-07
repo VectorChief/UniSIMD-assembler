@@ -61,9 +61,9 @@
 /* registers    REG */
 
 #define Tmm0    0x00                    /* q0, for integer div VFP fallback */
-#define Tmm1    0x12                    /* q9 */
-#define Tmm2    0x14                    /* q10 */
-#define Tmm3    0x16                    /* q11 */
+#define Tmm1    0x10                    /* q8 */
+#define Tmm2    0x12                    /* q9 */
+#define Tmm3    0x14                    /* q10 */
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -71,14 +71,14 @@
 
 /* registers    REG,  MOD,  SIB */
 
-#define Xmm0    0x02, 0x00, EMPTY       /* q1 */
-#define Xmm1    0x04, 0x00, EMPTY       /* q2 */
-#define Xmm2    0x06, 0x00, EMPTY       /* q3 */
-#define Xmm3    0x08, 0x00, EMPTY       /* q4 */
-#define Xmm4    0x0A, 0x00, EMPTY       /* q5 */
-#define Xmm5    0x0C, 0x00, EMPTY       /* q6 */
-#define Xmm6    0x0E, 0x00, EMPTY       /* q7 */
-#define Xmm7    0x10, 0x00, EMPTY       /* q8 */
+#define Xmm0    0x00, 0x00, EMPTY       /* q0 */
+#define Xmm1    0x02, 0x00, EMPTY       /* q1 */
+#define Xmm2    0x04, 0x00, EMPTY       /* q2 */
+#define Xmm3    0x06, 0x00, EMPTY       /* q3 */
+#define Xmm4    0x08, 0x00, EMPTY       /* q4 */
+#define Xmm5    0x0A, 0x00, EMPTY       /* q5 */
+#define Xmm6    0x0C, 0x00, EMPTY       /* q6 */
+#define Xmm7    0x0E, 0x00, EMPTY       /* q7 */
 
 /******************************************************************************/
 /**********************************   MPE   ***********************************/
