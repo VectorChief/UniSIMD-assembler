@@ -29,7 +29,7 @@
  * more available registers, and other architectures can be supported by design.
  *
  * Note that AArch32 mode of ARMv8 ISA is now part of the current ARM target,
- * which brings integer-divide and fp-convert with explicit round parameter,
+ * as it brings integer-divide and fp-convert with explicit round parameter,
  * while IEEE-compatible fp along with SIMD versions of square root and divide
  * are planned for (ILP32 ABI of) AArch64:ARMv8 ISA in (A32 and) A64 targets.
  *
@@ -223,7 +223,7 @@
                                   "d8",  "d9",  "d10", "d11",               \
                                   "d12", "d13", "d14", "d15",               \
                                   "d16", "d17", "d18", "d19",               \
-                                  "d20", "d21", "d22", "d23"                \
+                                  "d20", "d21"                              \
                             );
 
 #endif /* RT_X86, RT_ARM */
