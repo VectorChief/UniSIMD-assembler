@@ -4,7 +4,6 @@ v0.6: Unified SIMD Assembler, additional SIMD targets
   - add shifts by fixed core register instructions
   - add float-to-integer convert with mode parameter (x86, ARM + AArch32)
   - add signed-integer-divide native instruction for ARM's AArch32 mode
-  - remap SIMD registers for ARM to avoid collision with div VFP fallback
   - add SIMD test for shifts by runtime value & core register, run level 16
   - add ver (cpuid) instruction for runtime SIMD target selection (x86 only)
   - add mmv (vmaskmov) to AVX backend for fast conditional loads/stores
