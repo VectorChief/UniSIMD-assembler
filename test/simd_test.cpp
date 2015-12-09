@@ -2207,7 +2207,6 @@ testXX p_test[RUN_LEVEL] =
 /******************************************************************************/
 
 rt_time get_time();
-rt_SIMD_INFOX *s_inf;
 
 /*
  * info - info original pointer
@@ -2349,11 +2348,10 @@ rt_cell main(rt_cell argc, rt_char *argv[])
 
     rt_cell run_level = RUN_LEVEL;
     rt_cell simd = 0;
-    s_inf = inf0;
 
-    ASM_ENTER(s_inf)
+    ASM_ENTER(inf0)
         verxx_xx()
-    ASM_LEAVE(s_inf)
+    ASM_LEAVE(inf0)
 
 #if defined (RT_256) && (RT_256 != 0)
     if ((inf0->ver & (RT_256 << 8)) == 0)

@@ -126,6 +126,8 @@
 
 #define EMITB(b)                ASM_BEG ASM_OP1(_emit, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lea, eax, lb) ASM_END
+#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, eax, lb) ASM_END
+#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, eax) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -135,12 +137,16 @@
 #include "rtarch_x86_128.h"
 #endif /* RT_256, RT_128 */
 
-#define ASM_ENTER(info)     __asm                                           \
+/* use temp var to fix Release builds, where locals are referenced via esp,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(info)     int __eax; __asm                                \
                             {                                               \
-                                stack_sa()                                  \
+                                movlb_st(__eax)                             \
                                 label_ld(info)                              \
+                                stack_sa()                                  \
                                 movxx_ld(Rebp, Oeax, PLAIN)
 #define ASM_LEAVE(info)         stack_la()                                  \
+                                movlb_ld(__eax)                             \
                             }
 
 /* ---------------------------------   ARM   -------------------------------- */
@@ -168,6 +174,8 @@
 
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
+#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, %%eax, lb) ASM_END
+#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, lb, %%eax) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -200,6 +208,8 @@
 
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(adr, r0, lb) ASM_END
+#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, r0, lb) ASM_END
+#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, r0) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -212,7 +222,7 @@
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
                                 stack_sa()                                  \
-                                ASM_BEG ASM_OP2(mov, r0, %[info]) ASM_END   \
+                                movlb_ld(%[info])                           \
                                 movxx_ld(Rebp, Oeax, PLAIN)
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
