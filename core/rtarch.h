@@ -120,9 +120,9 @@
 #define ASM_ENTER(info)     int __eax; __asm                                \
                             {                                               \
                                 movlb_st(__eax)                             \
-                                label_ld(info)                              \
+                                movlb_ld(info)                              \
                                 stack_sa()                                  \
-                                movxx_ld(Rebp, Oeax, PLAIN)
+                                movxx_rr(Rebp, Reax)
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 movlb_ld(__eax)                             \
                             }
@@ -160,10 +160,10 @@
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
                                 stack_sa()                                  \
-                                movxx_ld(Rebp, Oeax, PLAIN)
+                                movxx_rr(Rebp, Reax)
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
-                                : "a" (&info)                               \
+                                : "a" (info)                                \
                                 : "cc",  "memory"                           \
                             );
 
@@ -189,10 +189,10 @@
                             (                                               \
                                 stack_sa()                                  \
                                 movlb_ld(%[info])                           \
-                                movxx_ld(Rebp, Oeax, PLAIN)
+                                movxx_rr(Rebp, Reax)
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
-                                : [info] "r" (&info)                        \
+                                : [info] "r" (info)                         \
                                 : "cc",  "memory",                          \
                                   "d0",  "d1",  "d2",  "d3",                \
                                   "d4",  "d5",  "d6",  "d7",                \
