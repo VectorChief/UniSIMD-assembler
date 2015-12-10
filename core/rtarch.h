@@ -137,16 +137,14 @@
 #include "rtarch_x86_128.h"
 #endif /* RT_256, RT_128 */
 
-/* use temp var to fix Release builds, where locals are referenced via esp,
- * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(info)     int __eax; __asm                                \
+/* use explicit asm versions of stack ops (instead of encoded ones)
+ * to let the optimizer handle stack offsets for locals properly */
+#define ASM_ENTER(info)     __asm                                           \
                             {                                               \
-                                movlb_st(__eax)                             \
+                                pushad  /* stack_sa() */                    \
                                 movlb_ld(info)                              \
-                                stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)
-#define ASM_LEAVE(info)         stack_la()                                  \
-                                movlb_ld(__eax)                             \
+#define ASM_LEAVE(info)         popad   /* stack_la() */                    \
                             }
 
 /* ---------------------------------   ARM   -------------------------------- */
