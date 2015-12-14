@@ -103,6 +103,9 @@ struct rt_SIMD_INFOX : public rt_SIMD_INFO
     rt_pntr label;
 #define inf_LABEL           DP(Q*0x100+0x038)
 
+    rt_pntr tail;
+#define inf_TAIL            DP(Q*0x100+0x03C)
+
 };
 
 /*
@@ -2345,6 +2348,7 @@ rt_cell main(rt_cell argc, rt_char *argv[])
 
     inf0->cyc  = CYC_SIZE;
     inf0->size = ARR_SIZE;
+    inf0->tail = (rt_pntr)0xABCDEF01;
 
     rt_cell run_level = RUN_LEVEL;
     rt_cell simd = 0;
