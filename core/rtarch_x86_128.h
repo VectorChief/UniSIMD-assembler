@@ -53,6 +53,14 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
+/* mandatory escape prefix for some opcodes */
+#define ESC                                                                 \
+        EMITB(0x66)
+
+/* fwait instruction for legacy processors (fix for fstcw) */
+#define FWT                                                                 \
+        EMITB(0x9B)
+
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -346,7 +354,7 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define fpucw_st(RM, DP) /* not portable, do not use outside */             \
-        EMITB(0x9B) EMITB(0xD9)                                             \
+    FWT EMITB(0xD9)                                                         \
         MRM(0x07,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
@@ -525,11 +533,11 @@
 /* cvt */
 
 #define cvtps_rr(RG, RM)                                                    \
-        EMITB(0x66) EMITB(0x0F) EMITB(0x5B)                                 \
+    ESC EMITB(0x0F) EMITB(0x5B)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define cvtps_ld(RG, RM, DP)                                                \
-        EMITB(0x66) EMITB(0x0F) EMITB(0x5B)                                 \
+    ESC EMITB(0x0F) EMITB(0x5B)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
@@ -545,56 +553,56 @@
 /* add */
 
 #define addpx_rr(RG, RM)                                                    \
-        EMITB(0x66) EMITB(0x0F) EMITB(0xFE)                                 \
+    ESC EMITB(0x0F) EMITB(0xFE)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define addpx_ld(RG, RM, DP)                                                \
-        EMITB(0x66) EMITB(0x0F) EMITB(0xFE)                                 \
+    ESC EMITB(0x0F) EMITB(0xFE)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* sub */
 
 #define subpx_rr(RG, RM)                                                    \
-        EMITB(0x66) EMITB(0x0F) EMITB(0xFA)                                 \
+    ESC EMITB(0x0F) EMITB(0xFA)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define subpx_ld(RG, RM, DP)                                                \
-        EMITB(0x66) EMITB(0x0F) EMITB(0xFA)                                 \
+    ESC EMITB(0x0F) EMITB(0xFA)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* shl */
 
 #define shlpx_ri(RM, IM)                                                    \
-        EMITB(0x66) EMITB(0x0F) EMITB(0x72)                                 \
+    ESC EMITB(0x0F) EMITB(0x72)                                             \
         MRM(0x06,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
 #define shlpx_ld(RG, RM, DP)                                                \
-        EMITB(0x66) EMITB(0x0F) EMITB(0xF2)                                 \
+    ESC EMITB(0x0F) EMITB(0xF2)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* shr */
 
 #define shrpx_ri(RM, IM)                                                    \
-        EMITB(0x66) EMITB(0x0F) EMITB(0x72)                                 \
+    ESC EMITB(0x0F) EMITB(0x72)                                             \
         MRM(0x02,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
 #define shrpx_ld(RG, RM, DP)                                                \
-        EMITB(0x66) EMITB(0x0F) EMITB(0xD2)                                 \
+    ESC EMITB(0x0F) EMITB(0xD2)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define shrpn_ri(RM, IM)                                                    \
-        EMITB(0x66) EMITB(0x0F) EMITB(0x72)                                 \
+    ESC EMITB(0x0F) EMITB(0x72)                                             \
         MRM(0x04,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
 #define shrpn_ld(RG, RM, DP)                                                \
-        EMITB(0x66) EMITB(0x0F) EMITB(0xE2)                                 \
+    ESC EMITB(0x0F) EMITB(0xE2)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 

@@ -53,17 +53,16 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
-/* 2-byte VEX prefix with 256 mode set, leading 0x0F is implied */
-#define VEX(reg, pfx)       EMITB(0xC5)                                     \
-                            EMITB(0x84 | (0x0F - (reg)) << 3 | (pfx))
+/* 2-byte VEX prefix, 128/256-bit mode in len, leading 0x0F is implied */
+#define VX2(ren, pfx, len)                                                  \
+        EMITB(0xC5)                                                         \
+        EMITB(0x80 | (len) << 2 | (0x0F - (ren)) << 3 | (pfx))
 
-/* 2-byte VEX prefix with 128 mode set, leading 0x0F is implied */
-#define VLZ(reg, pfx)       EMITB(0xC5)                                     \
-                            EMITB(0x80 | (0x0F - (reg)) << 3 | (pfx))
-
-/* 3-byte VEX prefix with 256 mode set, leading 0x0F is encoded */
-#define VX3(reg, pfx, aux)  EMITB(0xC4) EMITB(0xE0 | (aux))                 \
-                            EMITB(0x04 | (0x0F - (reg)) << 3 | (pfx))
+/* 3-byte VEX prefix, 256-bit mode is encoded, leading 0x0F(xx) in aux */
+#define VX3(ren, pfx, aux)                                                  \
+        EMITB(0xC4)                                                         \
+        EMITB(0xE0 | (aux))                                                 \
+        EMITB(0x04 | (0x0F - (ren)) << 3 | (pfx))
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -89,16 +88,16 @@
 /* mov */
 
 #define movpx_rr(RG, RM)                                                    \
-        VEX(0      , 0) EMITB(0x28)                                         \
+        VX2(0x0,     0, 1) EMITB(0x28)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define movpx_ld(RG, RM, DP)                                                \
-        VEX(0      , 0) EMITB(0x28)                                         \
+        VX2(0x0,     0, 1) EMITB(0x28)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define movpx_st(RG, RM, DP)                                                \
-        VEX(0      , 0) EMITB(0x29)                                         \
+        VX2(0x0,     0, 1) EMITB(0x29)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
@@ -110,44 +109,44 @@
 /* and */
 
 #define andpx_rr(RG, RM)                                                    \
-        VEX(REG(RG), 0) EMITB(0x54)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x54)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define andpx_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 0) EMITB(0x54)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x54)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* ann */
 
 #define annpx_rr(RG, RM)                                                    \
-        VEX(REG(RG), 0) EMITB(0x55)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x55)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define annpx_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 0) EMITB(0x55)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x55)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* orr */
 
 #define orrpx_rr(RG, RM)                                                    \
-        VEX(REG(RG), 0) EMITB(0x56)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x56)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define orrpx_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 0) EMITB(0x56)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x56)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* xor */
 
 #define xorpx_rr(RG, RM)                                                    \
-        VEX(REG(RG), 0) EMITB(0x57)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x57)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define xorpx_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 0) EMITB(0x57)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x57)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
@@ -156,55 +155,55 @@
 /* add */
 
 #define addps_rr(RG, RM)                                                    \
-        VEX(REG(RG), 0) EMITB(0x58)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x58)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define addps_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 0) EMITB(0x58)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x58)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* sub */
 
 #define subps_rr(RG, RM)                                                    \
-        VEX(REG(RG), 0) EMITB(0x5C)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x5C)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define subps_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 0) EMITB(0x5C)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x5C)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* mul */
 
 #define mulps_rr(RG, RM)                                                    \
-        VEX(REG(RG), 0) EMITB(0x59)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x59)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define mulps_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 0) EMITB(0x59)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x59)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* div */
 
 #define divps_rr(RG, RM)                                                    \
-        VEX(REG(RG), 0) EMITB(0x5E)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x5E)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define divps_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 0) EMITB(0x5E)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x5E)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* sqr */
 
 #define sqrps_rr(RG, RM)                                                    \
-        VEX(0      , 0) EMITB(0x51)                                         \
+        VX2(0x0,     0, 1) EMITB(0x51)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define sqrps_ld(RG, RM, DP)                                                \
-        VEX(0      , 0) EMITB(0x51)                                         \
+        VX2(0x0,     0, 1) EMITB(0x51)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
@@ -216,7 +215,7 @@
 /* rcp */
 
 #define rceps_rr(RG, RM)                                                    \
-        VEX(0      , 0) EMITB(0x53)                                         \
+        VX2(0x0,     0, 1) EMITB(0x53)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define rcsps_rr(RG, RM) /* destroys RM */                                  \
@@ -231,7 +230,7 @@
 /* rsq */
 
 #define rseps_rr(RG, RM)                                                    \
-        VEX(0      , 0) EMITB(0x52)                                         \
+        VX2(0x0,     0, 1) EMITB(0x52)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define rssps_rr(RG, RM) /* destroys RM */                                  \
@@ -247,104 +246,104 @@
 /* min */
 
 #define minps_rr(RG, RM)                                                    \
-        VEX(REG(RG), 0) EMITB(0x5D)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x5D)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define minps_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 0) EMITB(0x5D)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x5D)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* max */
 
 #define maxps_rr(RG, RM)                                                    \
-        VEX(REG(RG), 0) EMITB(0x5F)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x5F)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define maxps_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 0) EMITB(0x5F)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0x5F)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* cmp */
 
 #define ceqps_rr(RG, RM)                                                    \
-        VEX(REG(RG), 0) EMITB(0xC2)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))
 
 #define ceqps_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 0) EMITB(0xC2)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x00))
 
 #define cneps_rr(RG, RM)                                                    \
-        VEX(REG(RG), 0) EMITB(0xC2)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x04))
 
 #define cneps_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 0) EMITB(0xC2)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x04))
 
 #define cltps_rr(RG, RM)                                                    \
-        VEX(REG(RG), 0) EMITB(0xC2)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x01))
 
 #define cltps_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 0) EMITB(0xC2)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x01))
 
 #define cleps_rr(RG, RM)                                                    \
-        VEX(REG(RG), 0) EMITB(0xC2)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x02))
 
 #define cleps_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 0) EMITB(0xC2)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x02))
 
 #define cgtps_rr(RG, RM)                                                    \
-        VEX(REG(RG), 0) EMITB(0xC2)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x06))
 
 #define cgtps_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 0) EMITB(0xC2)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x06))
 
 #define cgeps_rr(RG, RM)                                                    \
-        VEX(REG(RG), 0) EMITB(0xC2)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x05))
 
 #define cgeps_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 0) EMITB(0xC2)                                         \
+        VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x05))
 
 /* cvt */
 
 #define cvtps_rr(RG, RM)                                                    \
-        VEX(0      , 1) EMITB(0x5B)                                         \
+        VX2(0x0,     1, 1) EMITB(0x5B)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define cvtps_ld(RG, RM, DP)                                                \
-        VEX(0      , 1) EMITB(0x5B)                                         \
+        VX2(0x0,     1, 1) EMITB(0x5B)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define cvtpn_rr(RG, RM)                                                    \
-        VEX(0      , 0) EMITB(0x5B)                                         \
+        VX2(0x0,     0, 1) EMITB(0x5B)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define cvtpn_ld(RG, RM, DP)                                                \
-        VEX(0      , 0) EMITB(0x5B)                                         \
+        VX2(0x0,     0, 1) EMITB(0x5B)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
@@ -358,19 +357,19 @@
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM)))
 
 #define movlx_ld(RG, RM, DP) /* not portable, do not use outside */         \
-        VLZ(0      , 0) EMITB(0x28)                                         \
+        VX2(0x0,     0, 0) EMITB(0x28)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define movlx_st(RG, RM, DP) /* not portable, do not use outside */         \
-        VLZ(0      , 0) EMITB(0x29)                                         \
+        VX2(0x0,     0, 0) EMITB(0x29)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* add */
 
 #define addlx_rr(RG, RM)     /* not portable, do not use outside */         \
-        VLZ(REG(RG), 1) EMITB(0xFE)                                         \
+        VX2(REG(RG), 1, 0) EMITB(0xFE)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define addpx_rr(RG, RM)                                                    \
@@ -385,7 +384,7 @@
         movpx_ld(W(RG), Mebp, inf_SCR01(0))
 
 #define addlx_ld(RG, RM, DP)                                                \
-        VLZ(REG(RG), 1) EMITB(0xFE)                                         \
+        VX2(REG(RG), 1, 0) EMITB(0xFE)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
@@ -404,7 +403,7 @@
 /* sub */
 
 #define sublx_rr(RG, RM)     /* not portable, do not use outside */         \
-        VLZ(REG(RG), 1) EMITB(0xFA)                                         \
+        VX2(REG(RG), 1, 0) EMITB(0xFA)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define subpx_rr(RG, RM)                                                    \
@@ -419,7 +418,7 @@
         movpx_ld(W(RG), Mebp, inf_SCR01(0))
 
 #define sublx_ld(RG, RM, DP)                                                \
-        VLZ(REG(RG), 1) EMITB(0xFA)                                         \
+        VX2(REG(RG), 1, 0) EMITB(0xFA)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
@@ -438,7 +437,7 @@
 /* shl */
 
 #define shllx_ri(RM, IM)     /* not portable, do not use outside */         \
-        VLZ(REG(RM), 1) EMITB(0x72)                                         \
+        VX2(REG(RM), 1, 0) EMITB(0x72)                                      \
         MRM(0x06,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
@@ -452,7 +451,7 @@
         movpx_ld(W(RM), Mebp, inf_SCR01(0))
 
 #define shllx_ld(RG, RM, DP)                                                \
-        VLZ(REG(RG), 1) EMITB(0xF2)                                         \
+        VX2(REG(RG), 1, 0) EMITB(0xF2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
@@ -468,7 +467,7 @@
 /* shr */
 
 #define shrlx_ri(RM, IM)     /* not portable, do not use outside */         \
-        VLZ(REG(RM), 1) EMITB(0x72)                                         \
+        VX2(REG(RM), 1, 0) EMITB(0x72)                                      \
         MRM(0x02,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
@@ -482,7 +481,7 @@
         movpx_ld(W(RM), Mebp, inf_SCR01(0))
 
 #define shrlx_ld(RG, RM, DP)                                                \
-        VLZ(REG(RG), 1) EMITB(0xD2)                                         \
+        VX2(REG(RG), 1, 0) EMITB(0xD2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
@@ -496,7 +495,7 @@
         movpx_ld(W(RG), Mebp, inf_SCR01(0))
 
 #define shrln_ri(RM, IM)     /* not portable, do not use outside */         \
-        VLZ(REG(RM), 1) EMITB(0x72)                                         \
+        VX2(REG(RM), 1, 0) EMITB(0x72)                                      \
         MRM(0x04,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
@@ -510,7 +509,7 @@
         movpx_ld(W(RM), Mebp, inf_SCR01(0))
 
 #define shrln_ld(RG, RM, DP)                                                \
-        VLZ(REG(RG), 1) EMITB(0xE2)                                         \
+        VX2(REG(RG), 1, 0) EMITB(0xE2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
@@ -530,56 +529,56 @@
 /* add */
 
 #define addpx_rr(RG, RM)                                                    \
-        VEX(REG(RG), 1) EMITB(0xFE)                                         \
+        VX2(REG(RG), 1, 1) EMITB(0xFE)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define addpx_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 1) EMITB(0xFE)                                         \
+        VX2(REG(RG), 1, 1) EMITB(0xFE)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* sub */
 
 #define subpx_rr(RG, RM)                                                    \
-        VEX(REG(RG), 1) EMITB(0xFA)                                         \
+        VX2(REG(RG), 1, 1) EMITB(0xFA)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define subpx_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 1) EMITB(0xFA)                                         \
+        VX2(REG(RG), 1, 1) EMITB(0xFA)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* shl */
 
 #define shlpx_ri(RM, IM)                                                    \
-        VEX(REG(RM), 1) EMITB(0x72)                                         \
+        VX2(REG(RM), 1, 1) EMITB(0x72)                                      \
         MRM(0x06,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
 #define shlpx_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 1) EMITB(0xF2)                                         \
+        VX2(REG(RG), 1, 1) EMITB(0xF2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* shr */
 
 #define shrpx_ri(RM, IM)                                                    \
-        VEX(REG(RM), 1) EMITB(0x72)                                         \
+        VX2(REG(RM), 1, 1) EMITB(0x72)                                      \
         MRM(0x02,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
 #define shrpx_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 1) EMITB(0xD2)                                         \
+        VX2(REG(RG), 1, 1) EMITB(0xD2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define shrpn_ri(RM, IM)                                                    \
-        VEX(REG(RM), 1) EMITB(0x72)                                         \
+        VX2(REG(RM), 1, 1) EMITB(0x72)                                      \
         MRM(0x04,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
 #define shrpn_ld(RG, RM, DP)                                                \
-        VEX(REG(RG), 1) EMITB(0xE2)                                         \
+        VX2(REG(RG), 1, 1) EMITB(0xE2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
@@ -593,7 +592,7 @@
 #define RT_SIMD_MASK_FULL       0xFF    /*  all satisfy the condition */
 
 #define movsn_rr(RG, RM) /* not portable, do not use outside */             \
-        VEX(0      , 0) EMITB(0x50)                                         \
+        VX2(0x0,     0, 1) EMITB(0x50)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
 #define CHECK_MASK(lb, mask, RG) /* destroys Reax */                        \
@@ -609,12 +608,12 @@
 #define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
 
 #define mxcsr_ld(RM, DP) /* not portable, do not use outside */             \
-        VLZ(0      , 0) EMITB(0xAE)                                         \
+        VX2(0x0,     0, 0) EMITB(0xAE)                                      \
         MRM(0x02,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define mxcsr_st(RM, DP) /* not portable, do not use outside */             \
-        VLZ(0      , 0) EMITB(0xAE)                                         \
+        VX2(0x0,     0, 0) EMITB(0xAE)                                      \
         MRM(0x03,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
@@ -631,7 +630,7 @@
 /* cvr */
 
 #define rndps_rr(RG, RM, mode) /* not portable, do not use outside */       \
-        VX3(0      , 1, 3) EMITB(0x08)                                      \
+        VX3(0x0,     1, 3) EMITB(0x08)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode))
 
@@ -641,13 +640,13 @@
 
 /* mmv */
 
-#define mmvpx_ld(RG, RM, DP, R0) /* not portable, use conditionally */      \
-        VX3(REG(R0), 1, 2) EMITB(0x2C)                                      \
+#define mmvpx_ld(RG, RM, DP, RN) /* not portable, use conditionally */      \
+        VX3(REG(RN), 1, 2) EMITB(0x2C)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define mmvpx_st(RG, RM, DP, R0) /* not portable, use conditionally */      \
-        VX3(REG(R0), 1, 2) EMITB(0x2E)                                      \
+#define mmvpx_st(RG, RM, DP, RN) /* not portable, use conditionally */      \
+        VX3(REG(RN), 1, 2) EMITB(0x2E)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
