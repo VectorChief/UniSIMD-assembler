@@ -327,7 +327,8 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x05))
 
-/* cvt */
+/* cvt
+ * rounding mode comes from fp control register (set in FCTRL blocks) */
 
 #define cvtps_rr(RG, RM)                                                    \
         VX2(0x0,     1, 1) EMITB(0x5B)                                      \
@@ -346,6 +347,15 @@
         VX2(0x0,     0, 1) EMITB(0x5B)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
+
+/* cvx
+ * rounding mode is encoded directly (not to be used in FCTRL blocks) */
+
+#define cvnpn_rr(RG, RM)     /* round to nearest */                         \
+        cvtpn_rr(W(RG), W(RM))
+
+#define cvnpn_ld(RG, RM, DP) /* round to nearest */                         \
+        cvtpn_ld(W(RG), W(RM), W(DP))
 
 /**************************   packed integer (AVX1)   *************************/
 
