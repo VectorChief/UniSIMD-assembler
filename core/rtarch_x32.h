@@ -210,7 +210,7 @@
         REX(0,       RXB(RM)) EMITB(0x8F)                                   \
         MRM(0x00,    MOD(RM), REG(RM))
 
-#define stack_sa() /* save all [Reax - RegF] w/o Resp, 15 regs in total */  \
+#define stack_sa() /* save all [rax - r15] w/o rsp, 15 regs in total */     \
         stack_st(Reax)                                                      \
         stack_st(Recx)                                                      \
         stack_st(Redx)                                                      \
@@ -228,7 +228,7 @@
         REX(0,             1) EMITB(0xFF)  /* <- save r15 or [RegF] */      \
         MRM(0x06,       0x03, 0x07)
 
-#define stack_la() /* load all [RegF - Reax] w/o Resp, 15 regs in total */  \
+#define stack_la() /* load all [r15 - rax] w/o rsp, 15 regs in total */     \
         REX(0,             1) EMITB(0x8F)  /* <- load r15 or [RegF] */      \
         MRM(0x00,       0x03, 0x07)                                         \
         stack_ld(RegE)                                                      \
@@ -468,8 +468,8 @@
 /* mul */
 
 #define mulxn_ri(RM, IM)                                                    \
-        REX(0,       RXB(RM)) EMITB(0x69 | TYP(IM))                         \
-        MRM(0x00,    MOD(RM), REG(RM))                                      \
+        REX(RXB(RM), RXB(RM)) EMITB(0x69 | TYP(IM))                         \
+        MRM(REG(RM), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   CMD(IM))
 
 #define mulxn_rr(RG, RM)                                                    \

@@ -182,10 +182,10 @@
         EMITB(0x8F)                                                         \
         MRM(0x00,    MOD(RM), REG(RM))
 
-#define stack_sa() /* save all [EAX - EDI], 8 regs in total */              \
+#define stack_sa() /* save all [eax - edi], 8 regs in total */              \
         EMITB(0x60)
 
-#define stack_la() /* load all [EAX - EDI], 8 regs in total */              \
+#define stack_la() /* load all [edi - eax], 8 regs in total */              \
         EMITB(0x61)
 
 /* and */
@@ -411,7 +411,7 @@
 
 #define mulxn_ri(RM, IM)                                                    \
         EMITB(0x69 | TYP(IM))                                               \
-        MRM(0x00,    MOD(RM), REG(RM))                                      \
+        MRM(REG(RM), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   CMD(IM))
 
 #define mulxn_rr(RG, RM)                                                    \
@@ -431,9 +431,9 @@
 /* div */
 
 #define divxn_xm(RM, DP) /* Reax is in/out, Redx is Reax-sign-extended */   \
-        EMITB(0xF7)      /* destroys Xmm0 (in ARM, not AArch32) */          \
-        MRM(0x07,    MOD(RM), REG(RM)) /* limited precision */              \
-        AUX(SIB(RM), CMD(DP), EMPTY)   /* fp div (in ARM, not AArch32) */
+        EMITB(0xF7)                        /* destroys Xmm0 (in ARMv7) */   \
+        MRM(0x07,    MOD(RM), REG(RM))     /* limited precision */          \
+        AUX(SIB(RM), CMD(DP), EMPTY)       /* fp div (in ARMv7) */
 
 /* cmp */
 
