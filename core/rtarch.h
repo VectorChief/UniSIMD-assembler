@@ -38,6 +38,8 @@
  * Current 32-bit targets:
  *  - rtarch_arm.h         - 32-bit ARMv7/8 ISA, 16 core regs, 8 + temps used
  *  - rtarch_arm_128.h     - 32-bit ARMv7/8 ISA, 16 SIMD regs, 8 + temps used
+ *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 core regs, int-div, fp-cvt-r
+ *  - rtarch_a32_128.h     - AArch64:ILP32 ABI, 32 SIMD regs, IEEE-fp, sqr, div
  *  - rtarch_x86.h         - 32-bit x86 ISA, 8 core regs, 6 + esp, ebp used
  *  - rtarch_x86_128.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, SSE
  *  - rtarch_x86_256.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, AVX
@@ -46,8 +48,7 @@
  *  - rtarch_x32_256.h     - x86_64:x32 ABI, 16 SIMD regs, AVX 256-bit
  *
  * Future 32-bit targets:
- *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 core regs, int-div, fp-cvt-r
- *  - rtarch_a32_128.h     - AArch64:ILP32 ABI, 32 SIMD regs, IEEE-fp, sqr, div
+ *  - rtarch_x86_512.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, AVX
  *  - rtarch_x32_512.h     - x86_64:x32 ABI, 32 SIMD regs, AVX 512-bit
  *
  * Future 64-bit targets:
@@ -269,7 +270,42 @@
                                   "d20", "d21"                              \
                             );
 
-#endif /* RT_X86, RT_X32, RT_ARM */
+/* ---------------------------------   A32   -------------------------------- */
+
+#elif defined (RT_A32)
+
+#define ASM_OP0(op)             #op
+#define ASM_OP1(op, p1)         #op"  "#p1
+#define ASM_OP2(op, p1, p2)     #op"  "#p1", "#p2
+
+#define ASM_BEG /*internal*/    ""
+#define ASM_END /*internal*/    "\n"
+
+#define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
+#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(adr, x0, lb) ASM_END
+#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, w0, lb) ASM_END
+#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, w0) ASM_END
+
+#if   defined (RT_256) && (RT_256 != 0)
+#define S 8
+#error "ARM doesn't support SIMD wider than 4 at the moment"
+#elif defined (RT_128) && (RT_128 != 0)
+#define S 4
+#include "rtarch_a32_128.h"
+#endif /* RT_256, RT_128 */
+
+#define ASM_ENTER(info)     asm volatile                                    \
+                            (                                               \
+                                stack_sa()                                  \
+                                movlb_ld(%[info])                           \
+                                movxx_rr(Rebp, Reax)
+#define ASM_LEAVE(info)         stack_la()                                  \
+                                :                                           \
+                                : [info] "r" (info)                         \
+                                : "cc",  "memory"                           \
+                            );
+
+#endif /* RT_X86, RT_X32, RT_ARM, RT_A32 */
 
 #endif /* OS, COMPILER, ARCH */
 
