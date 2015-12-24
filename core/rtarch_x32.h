@@ -151,6 +151,7 @@
 /* immediate    VAL,  TYP,  CMD */
 
 #define IB(im)  (im), 0x02, EMITB((im) & 0x7F) /* drop sign-ext (zero in ARM) */
+#define IM(im)  (im), 0x00, EMITW((im) & 0xFFF)
 #define IH(im)  (im), 0x00, EMITW((im) & 0xFFFF)
 #define IW(im)  (im), 0x00, EMITW((im) & 0xFFFFFFFF)
 

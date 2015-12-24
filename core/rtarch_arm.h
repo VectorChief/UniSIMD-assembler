@@ -133,6 +133,10 @@
 #define IB(im)  (im), 0x02000000 | ((im) & 0x7F),/* drop sign-ext in x86 */ \
                 EMPTY          /* for compatibility with zero-ext in ARM */
 
+#define IM(im)  (im), 0x00000000 | TIxx,                                    \
+                EMITW(0xE3000000 | MRM(TIxx,    0x00,    0x00) |            \
+                                               | (0xFFF & (im)))
+
 #define IH(im)  (im), 0x00000000 | TIxx,                                    \
                 EMITW(0xE3000000 | MRM(TIxx,    0x00,    0x00) |            \
                         (0xF0000 & (im) <<  4) | (0xFFF & (im)))
@@ -148,7 +152,7 @@
 #define DP(im)  (im), 0x02000E00 | ((im) >> 4 & 0xFF),                      \
                 EMPTY
 
-#define DH(im)  (im), 0x00000000 | TDxx,  /* only for SIMD instructions */  \
+#define DH(im)  (im), 0x00000000 | TDxx,   /* only for SIMD instructions */ \
                 EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |            \
                         (0xF0000 & (im) <<  4) | (0xFF0 & (im)))
 
