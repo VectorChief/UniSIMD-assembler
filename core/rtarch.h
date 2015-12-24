@@ -297,7 +297,7 @@
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
                                 stack_sa()                                  \
-                                movlb_ld(%[info])                           \
+                                movlb_ld(%w[info])                          \
                                 movxx_rr(Rebp, Reax)
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
