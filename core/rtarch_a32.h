@@ -149,15 +149,22 @@
 
 /* immediate    VAL,  TYP,  CMD */
 
-#define IB(im)  (im), TIxx,                                                 \
+#define IB(im)  (im),                            /* drop sign-ext in x86 */ \
+                EMPTY,         /* for compatibility with zero-ext in ARM */ \
                 EMITW(0x52800000 | MRM(TIxx,    0x00,    0x00) |            \
                            ((im) & 0x007F) << 5)
 
-#define IH(im)  (im), TIxx,                                                 \
+#define IH(im)  (im),                                                       \
+                EMITW(0x52800000 | MRM(TIxx,    0x00,    0x00) |            \
+                           ((im) & 0xFFFF) << 5),                           \
                 EMITW(0x52800000 | MRM(TIxx,    0x00,    0x00) |            \
                            ((im) & 0xFFFF) << 5)
 
-#define IW(im)  (im), TIxx,                                                 \
+#define IW(im)  (im),                                                       \
+                EMITW(0x52800000 | MRM(TIxx,    0x00,    0x00) |            \
+                           ((im) & 0xFFFF) << 5)                            \
+                EMITW(0x72A00000 | MRM(TIxx,    0x00,    0x00) |            \
+                           ((im) & 0xFFFF) << 5),                           \
                 EMITW(0x52800000 | MRM(TIxx,    0x00,    0x00) |            \
                            ((im) & 0xFFFF) << 5)                            \
                 EMITW(0x72A00000 | MRM(TIxx,    0x00,    0x00) |            \
@@ -165,11 +172,13 @@
 
 /* displacement VAL,  TYP,  CMD */
 
-#define DP(im)  (im), (((im) & 0x0FF0) << 6),                               \
+#define DP(im)  (im),                                                       \
+                (((im) & 0x0FF0) << 6),                                     \
                 EMPTY
 
-#define DH(im)  (im), (((im) & 0xFFF0) << 6),                               \
-                EMPTY /* only for SIMD instructions */ 
+#define DH(im)  (im),                      /* only for SIMD instructions */ \
+                (((im) & 0xFFF0) << 6),                                     \
+                EMPTY
 
 #define PLAIN   DP(0)
 
@@ -184,8 +193,11 @@
 /* mov */
 
 #define movxx_ri(RM, IM)     /* one unnecessary op for IH, IW */            \
-        AUX(EMPTY,   EMPTY,   CMD(IM))                                      \
-        EMITW(0x2A000000 | MRM(REG(RM), 0x1F,    TIxx))
+        AUX(EMPTY,   EMPTY,   TYP(IM))                                      \
+        EMITW(0x02000000 | MRM(REG(RM), 0x00,    0x00) |                    \
+        (+((VAL(IM) & 0xFFFFFF80) == 0) & (0x50800000  | VAL(IM) << 5)) |   \
+        (+((VAL(IM) & 0xFFFFFF80) != 0) & (0x280003E0  | TIxx << 16)))
+        /* equals to -1 (not 1) if ^ true */
 
 #define movxx_mi(RM, DP, IM)                                                \
         AUX(SIB(RM), EMPTY,   CMD(IM))                                      \
@@ -340,13 +352,19 @@
 /* add */
 
 #define addxx_ri(RM, IM)                                                    \
-        AUX(EMPTY,   EMPTY,   CMD(IM))                                      \
-        EMITW(0x2B000000 | MRM(REG(RM), REG(RM), TIxx))
+        AUX(EMPTY,   EMPTY,   TYP(IM))                                      \
+        EMITW(0x21000000 | MRM(REG(RM), REG(RM), 0x00) |                    \
+        (+((VAL(IM) & 0xFFFFFF80) == 0) & (0x10000000  | VAL(IM) << 10)) |  \
+        (+((VAL(IM) & 0xFFFFFF80) != 0) & (0x0A000000  | TIxx << 16)))
+        /* equals to -1 (not 1) if ^ true */
 
 #define addxx_mi(RM, DP, IM)                                                \
-        AUX(SIB(RM), EMPTY,   CMD(IM))                                      \
+        AUX(SIB(RM), EMPTY,   TYP(IM))                                      \
         EMITW(0xB9400000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8) \
-        EMITW(0x2B000000 | MRM(TMxx,    TMxx,    TIxx))                     \
+        EMITW(0x21000000 | MRM(TMxx,    TMxx,    0x00) |                    \
+        (+((VAL(IM) & 0xFFFFFF80) == 0) & (0x10000000  | VAL(IM) << 10)) |  \
+        (+((VAL(IM) & 0xFFFFFF80) != 0) & (0x0A000000  | TIxx << 16)))      \
+        /* equals to -1 (not 1) if ^ true */                                \
         EMITW(0xB9000000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8)
 
 #define addxx_rr(RG, RM)                                                    \
@@ -366,13 +384,19 @@
 /* sub */
 
 #define subxx_ri(RM, IM)                                                    \
-        AUX(EMPTY,   EMPTY,   CMD(IM))                                      \
-        EMITW(0x6B000000 | MRM(REG(RM), REG(RM), TIxx))
+        AUX(EMPTY,   EMPTY,   TYP(IM))                                      \
+        EMITW(0x61000000 | MRM(REG(RM), REG(RM), 0x00) |                    \
+        (+((VAL(IM) & 0xFFFFFF80) == 0) & (0x10000000  | VAL(IM) << 10)) |  \
+        (+((VAL(IM) & 0xFFFFFF80) != 0) & (0x0A000000  | TIxx << 16)))
+        /* equals to -1 (not 1) if ^ true */
 
 #define subxx_mi(RM, DP, IM)                                                \
-        AUX(SIB(RM), EMPTY,   CMD(IM))                                      \
+        AUX(SIB(RM), EMPTY,   TYP(IM))                                      \
         EMITW(0xB9400000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8) \
-        EMITW(0x6B000000 | MRM(TMxx,    TMxx,    TIxx))                     \
+        EMITW(0x61000000 | MRM(TMxx,    TMxx,    0x00) |                    \
+        (+((VAL(IM) & 0xFFFFFF80) == 0) & (0x10000000  | VAL(IM) << 10)) |  \
+        (+((VAL(IM) & 0xFFFFFF80) != 0) & (0x0A000000  | TIxx << 16)))      \
+        /* equals to -1 (not 1) if ^ true */                                \
         EMITW(0xB9000000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8)
 
 #define subxx_rr(RG, RM)                                                    \
@@ -481,13 +505,19 @@
 /* cmp */
 
 #define cmpxx_ri(RM, IM)                                                    \
-        AUX(EMPTY,   EMPTY,   CMD(IM))                                      \
-        EMITW(0x6B000000 | MRM(0x1F,    REG(RM), TIxx))
+        AUX(EMPTY,   EMPTY,   TYP(IM))                                      \
+        EMITW(0x61000000 | MRM(0x1F,    REG(RM), 0x00) |                    \
+        (+((VAL(IM) & 0xFFFFFF80) == 0) & (0x10000000  | VAL(IM) << 10)) |  \
+        (+((VAL(IM) & 0xFFFFFF80) != 0) & (0x0A000000  | TIxx << 16)))
+        /* equals to -1 (not 1) if ^ true */
 
 #define cmpxx_mi(RM, DP, IM)                                                \
-        AUX(SIB(RM), EMPTY,   CMD(IM))                                      \
+        AUX(SIB(RM), EMPTY,   TYP(IM))                                      \
         EMITW(0xB9400000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8) \
-        EMITW(0x6B000000 | MRM(0x1F,    TMxx,    TIxx))                     \
+        EMITW(0x61000000 | MRM(0x1F,    TMxx,    0x00) |                    \
+        (+((VAL(IM) & 0xFFFFFF80) == 0) & (0x10000000  | VAL(IM) << 10)) |  \
+        (+((VAL(IM) & 0xFFFFFF80) != 0) & (0x0A000000  | TIxx << 16)))
+        /* equals to -1 (not 1) if ^ true */
 
 #define cmpxx_rr(RG, RM)                                                    \
         EMITW(0x6B000000 | MRM(0x1F,    REG(RG), REG(RM)))
