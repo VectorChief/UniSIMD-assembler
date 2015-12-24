@@ -226,7 +226,11 @@
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
                                 : "a" (info)                                \
-                                : "cc",  "memory"                           \
+                                : "cc",  "memory",                          \
+                                  "xmm0",  "xmm1",  "xmm2",  "xmm3",        \
+                                  "xmm4",  "xmm5",  "xmm6",  "xmm7",        \
+                                  "xmm8",  "xmm9",  "xmm10", "xmm11",       \
+                                  "xmm12", "xmm13", "xmm14", "xmm15"        \
                             );
 
 /* ---------------------------------   ARM   -------------------------------- */
@@ -302,7 +306,11 @@
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
                                 : [info] "r" (info)                         \
-                                : "cc",  "memory"                           \
+                                : "cc",  "memory",                          \
+                                  "q0",  "q1",  "q2",  "q3",                \
+                                  "q4",  "q5",  "q6",  "q7",                \
+                                  "q8",  "q9",  "q10", "q11",               \
+                                  "q12", "q13", "q14", "q15", "q31"         \
                             );
 
 #endif /* RT_X86, RT_X32, RT_ARM, RT_A32 */
