@@ -195,7 +195,8 @@
 /**********************************   A32   ***********************************/
 /******************************************************************************/
 
-/* mov */
+/* mov
+ * set-flags: no */
 
 #define movxx_ri(RM, IM)     /* one unnecessary op for IH, IW */            \
         AUX(EMPTY,   EMPTY,   TYP(IM))                                      \
@@ -254,7 +255,8 @@
         EMITW(0xA8C80000 | MRM(0x02,    0x1F,    0x00) | 0x03 << 10)        \
         EMITW(0xA8C80000 | MRM(0x00,    0x1F,    0x00) | 0x01 << 10)
 
-/* and */
+/* and
+ * set-flags: yes */
 
 #define andxx_ri(RM, IM)                                                    \
         AUX(EMPTY,   EMPTY,   CMD(IM))                                      \
@@ -280,7 +282,8 @@
         EMITW(0x6A000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
         EMITW(0xB9000000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8)
 
-/* orr */
+/* orr
+ * set-flags: no */
 
 #define orrxx_ri(RM, IM)                                                    \
         AUX(EMPTY,   EMPTY,   CMD(IM))                                      \
@@ -306,7 +309,8 @@
         EMITW(0x2A000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
         EMITW(0xB9000000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8)
 
-/* xor */
+/* xor
+ * set-flags: no */
 
 #define xorxx_ri(RM, IM)                                                    \
         AUX(EMPTY,   EMPTY,   CMD(IM))                                      \
@@ -332,7 +336,8 @@
         EMITW(0x4A000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
         EMITW(0xB9000000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8)
 
-/* not */
+/* not
+ * set-flags: no */
 
 #define notxx_rr(RM)                                                        \
         EMITW(0x2A200000 | MRM(REG(RM), 0x1F,    REG(RM)))
@@ -343,7 +348,8 @@
         EMITW(0x2A200000 | MRM(TMxx,    0x1F,    TMxx))                     \
         EMITW(0xB9000000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8)
 
-/* neg */
+/* neg
+ * set-flags: yes */
 
 #define negxx_rr(RM)                                                        \
         EMITW(0x6B000000 | MRM(REG(RM), 0x1F,    REG(RM)))
@@ -354,7 +360,8 @@
         EMITW(0x6B000000 | MRM(TMxx,    0x1F,    TMxx))                     \
         EMITW(0xB9000000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8)
 
-/* add */
+/* add
+ * set-flags: yes */
 
 #define addxx_ri(RM, IM)                                                    \
         AUX(EMPTY,   EMPTY,   TYP(IM))                                      \
@@ -386,7 +393,8 @@
         EMITW(0x2B000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
         EMITW(0xB9000000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8)
 
-/* sub */
+/* sub
+ * set-flags: yes */
 
 #define subxx_ri(RM, IM)                                                    \
         AUX(EMPTY,   EMPTY,   TYP(IM))                                      \
@@ -421,7 +429,8 @@
 #define subxx_mr(RM, DP, RG)                                                \
         subxx_st(W(RG), W(RM), W(DP))
 
-/* shl */
+/* shl
+ * set-flags: no */
 
 #define shlxx_ri(RM, IM)                                                    \
         EMITW(0x53000000 | MRM(REG(RM), REG(RM), 0x00) |                    \
@@ -443,7 +452,8 @@
         EMITW(0x1AC02000 | MRM(TMxx,    TMxx,    0x01))                     \
         EMITW(0xB9000000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8)
 
-/* shr */
+/* shr
+ * set-flags: no */
 
 #define shrxx_ri(RM, IM)                                                    \
         EMITW(0x53007C00 | MRM(REG(RM), REG(RM), 0x00) |(VAL(IM)&0x1F)<<16)
@@ -481,7 +491,8 @@
         EMITW(0x1AC02800 | MRM(TMxx,    TMxx,    0x01))                     \
         EMITW(0xB9000000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8)
 
-/* mul */
+/* mul
+ * set-flags: no */
 
 #define mulxn_ri(RM, IM)                                                    \
         AUX(EMPTY,   EMPTY,   CMD(IM))                                      \
@@ -500,14 +511,16 @@
         EMITW(0xB9400000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8) \
         EMITW(0x1B007C00 | MRM(0x00,    0x00,    TMxx))
 
-/* div */
+/* div
+ * set-flags: no */
 
 #define divxn_xm(RM, DP) /* Reax is in/out, Redx is Reax-sign-extended */   \
         AUX(SIB(RM), EMPTY,   EMPTY) /* destroys Xmm0 (in ARMv7) */         \
         EMITW(0xB9400000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8) \
         EMITW(0x1AC00C00 | MRM(0x00,    0x00,    TMxx))
 
-/* cmp */
+/* cmp
+ * set-flags: yes */
 
 #define cmpxx_ri(RM, IM)                                                    \
         AUX(EMPTY,   EMPTY,   TYP(IM))                                      \
@@ -537,7 +550,8 @@
         EMITW(0xB9400000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8) \
         EMITW(0x6B000000 | MRM(0x1F,    TMxx,    REG(RG)))
 
-/* jmp */
+/* jmp
+ * set-flags: no */
 
 #define jmpxx_mm(RM, DP)                                                    \
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
@@ -583,7 +597,8 @@
 #define LBL(lb)                                                             \
         ASM_BEG ASM_OP0(lb:) ASM_END
 
-/* ver */
+/* ver
+ * set-flags: no */
 
 #define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
         movxx_mi(Mebp, inf_VER, IB(1)) /* <- NEON to bit0, without checks */

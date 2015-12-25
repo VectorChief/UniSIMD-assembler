@@ -141,7 +141,8 @@
 /**********************************   X86   ***********************************/
 /******************************************************************************/
 
-/* mov */
+/* mov
+ * set-flags: no */
 
 #define movxx_ri(RM, IM)                                                    \
         EMITB(0xC7)                                                         \
@@ -189,7 +190,8 @@
 #define stack_la() /* load all [edi - eax], 8 regs in total */              \
         EMITB(0x61)
 
-/* and */
+/* and
+ * set-flags: yes */
 
 #define andxx_ri(RM, IM)                                                    \
         EMITB(0x81 | TYP(IM))                                               \
@@ -215,7 +217,8 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* orr */
+/* orr
+ * set-flags: no (in ARM) */
 
 #define orrxx_ri(RM, IM)                                                    \
         EMITB(0x81 | TYP(IM))                                               \
@@ -241,7 +244,8 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* xor */
+/* xor
+ * set-flags: no (in ARM) */
 
 #define xorxx_ri(RM, IM)                                                    \
         EMITB(0x81 | TYP(IM))                                               \
@@ -267,7 +271,8 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* not */
+/* not
+ * set-flags: no */
 
 #define notxx_rr(RM)                                                        \
         EMITB(0xF7)                                                         \
@@ -278,7 +283,8 @@
         MRM(0x02,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* neg */
+/* neg
+ * set-flags: yes */
 
 #define negxx_rr(RM)                                                        \
         EMITB(0xF7)                                                         \
@@ -289,7 +295,8 @@
         MRM(0x03,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* add */
+/* add
+ * set-flags: yes */
 
 #define addxx_ri(RM, IM)                                                    \
         EMITB(0x81 | TYP(IM))                                               \
@@ -315,7 +322,8 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* sub */
+/* sub
+ * set-flags: yes */
 
 #define subxx_ri(RM, IM)                                                    \
         EMITB(0x81 | TYP(IM))                                               \
@@ -344,7 +352,8 @@
 #define subxx_mr(RM, DP, RG)                                                \
         subxx_st(W(RG), W(RM), W(DP))
 
-/* shl */
+/* shl
+ * set-flags: no (in ARM) */
 
 #define shlxx_ri(RM, IM)                                                    \
         EMITB(0xC1)                                                         \
@@ -366,7 +375,8 @@
         MRM(0x04,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* shr */
+/* shr
+ * set-flags: no (in ARM) */
 
 #define shrxx_ri(RM, IM)                                                    \
         EMITB(0xC1)                                                         \
@@ -408,7 +418,8 @@
         MRM(0x07,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* mul */
+/* mul
+ * set-flags: no (in ARM) */
 
 #define mulxn_ri(RM, IM)                                                    \
         EMITB(0x69 | TYP(IM))                                               \
@@ -429,14 +440,16 @@
         MRM(0x05,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* div */
+/* div
+ * set-flags: no (in ARM) */
 
 #define divxn_xm(RM, DP) /* Reax is in/out, Redx is Reax-sign-extended */   \
         EMITB(0xF7)                        /* destroys Xmm0 (in ARMv7) */   \
         MRM(0x07,    MOD(RM), REG(RM))     /* limited precision */          \
         AUX(SIB(RM), CMD(DP), EMPTY)       /* fp div (in ARMv7) */
 
-/* cmp */
+/* cmp
+ * set-flags: yes */
 
 #define cmpxx_ri(RM, IM)                                                    \
         EMITB(0x81 | TYP(IM))                                               \
@@ -462,7 +475,8 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* jmp */
+/* jmp
+ * set-flags: no */
 
 #define jmpxx_mm(RM, DP)                                                    \
         EMITB(0xFF)                                                         \
@@ -508,7 +522,8 @@
 #define LBL(lb)                                                             \
         ASM_BEG ASM_OP0(lb:) ASM_END
 
-/* ver */
+/* ver
+ * set-flags: no */
 
 #define cpuid_xx() /* destroys Reax, Recx, Rebx, Redx, reads Reax, Recx */  \
         EMITB(0x0F) EMITB(0xA2)     /* not portable, do not use outside */
