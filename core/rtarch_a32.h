@@ -220,9 +220,9 @@
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xB9000000 | MRM(REG(RG), MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8)
 
-#define adrxx_ld(RG, RM, DP) /* only 10-bit offsets and 4-byte alignment */ \
+#define adrxx_ld(RG, RM, DP)                                                \
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
-        EMITW(0x11000000 | MRM(REG(RG), MOD(RM), 0x00) |(VAL(DP)&0x3FC)<<10)
+        EMITW(0x11000000 | MRM(REG(RG), MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<10)
 
 #define adrxx_lb(lb) /* load label to Reax */                               \
         label_ld(lb)

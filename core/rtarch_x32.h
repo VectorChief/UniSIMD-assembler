@@ -196,10 +196,10 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define adrxx_ld(RG, RM, DP) /* only 10-bit offsets and 4-byte alignment */ \
+#define adrxx_ld(RG, RM, DP)                                                \
     ADR REX(RXB(RG), RXB(RM)) EMITB(0x8D)                                   \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), EMITW(VAL(DP) & 0x3FC), EMPTY)
+        AUX(SIB(RM), EMITW(VAL(DP) & 0xFFC), EMPTY)
 
 #define adrxx_lb(lb) /* load label to Reax */                               \
         label_ld(lb)

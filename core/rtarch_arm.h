@@ -135,7 +135,7 @@
 
 #define IM(im)  (im), 0x00000000 | TIxx,                                    \
                 EMITW(0xE3000000 | MRM(TIxx,    0x00,    0x00) |            \
-                                               | (0xFFF & (im)))
+                                                 (0xFFF & (im)))
 
 #define IH(im)  (im), 0x00000000 | TIxx,                                    \
                 EMITW(0xE3000000 | MRM(TIxx,    0x00,    0x00) |            \
@@ -189,10 +189,10 @@
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xE5800000 | MRM(REG(RG), MOD(RM), 0x00) |(VAL(DP) & 0xFFC))
 
-#define adrxx_ld(RG, RM, DP) /* only 10-bit offsets and 4-byte alignment */ \
+#define adrxx_ld(RG, RM, DP)                                                \
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
-        EMITW(0xE2800F00 | MRM(REG(RG), MOD(RM), 0x00) |                    \
-                                                 (0xFF & VAL(DP) >> 2))
+        EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |(VAL(DP) & 0xFFC))  \
+        EMITW(0xE0800000 | MRM(REG(RG), MOD(RM), TDxx))
 
 #define adrxx_lb(lb) /* load label to Reax */                               \
         label_ld(lb)
