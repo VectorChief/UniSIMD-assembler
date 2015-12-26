@@ -12,7 +12,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_a32.h: Implementation of A32 core instructions.
+ * rtarch_a32.h: Implementation of AArch64:ILP32 core instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -52,7 +52,7 @@
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
  *
- * Argument x-register is fixed by the implementation.
+ * Argument x-register (implied) is fixed by the implementation.
  * Some formal definitions are not given below to encourage
  * use of friendly aliases for better code readability.
  */

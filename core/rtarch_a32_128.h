@@ -20,7 +20,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_a32_128.h: Implementation of A32 SIMD instructions.
+ * rtarch_a32_128.h: Implementation of AArch64:ILP32 NEON-128 instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -33,8 +33,6 @@
  *
  * cmdp*_rm - applies [cmd] to [p]acked: [r]egister from [m]emory
  * cmdp*_ld - applies [cmd] to [p]acked: as above
- * cmdp*_mr - applies [cmd] to [p]acked: [m]emory   from [r]egister
- * cmdp*_st - applies [cmd] to [p]acked: as above (arg list as cmdp*_ld)
  *
  * cmdpx_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
  * cmdpn_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
