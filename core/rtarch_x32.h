@@ -544,6 +544,15 @@
 #define divxp_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
         divxn_xm(W(RM), W(DP))       /* part-range fp32 div (in ARMv7) */
 
+/* rem
+ * set-flags: no */
+
+#define remxx_xx()          /* to be placed immediately prior divx*_x* */
+
+#define remxx_xr(RM)        /* to be placed immediately after divx*_xr */
+
+#define remxx_xm(RM, DP)    /* to be placed immediately after divx*_xm */
+
 /* cmp
  * set-flags: yes */
 

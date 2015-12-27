@@ -561,6 +561,18 @@
 
 #endif /* RT_128 >= 2 */
 
+/* rem
+ * set-flags: no */
+
+#define remxx_xx()          /* to be placed immediately prior divx*_x* */   \
+        movxx_rr(Redx, Reax)
+
+#define remxx_xr(RM)        /* to be placed immediately after divx*_xr */   \
+        EMITW(0xE0600090 | MRM(0x02,    0x02,    REG(RM)))
+
+#define remxx_xm(RM, DP)    /* to be placed immediately after divx*_xm */   \
+        EMITW(0xE0600090 | MRM(0x02,    0x02,    TMxx))
+
 /* cmp
  * set-flags: yes */
 
