@@ -368,7 +368,6 @@
 #define shlxx_rx(RM)     /* reads Recx for shift value */                   \
         EMITB(0xD3)                                                         \
         MRM(0x04,    MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   EMPTY)
 
 #define shlxx_mx(RM, DP) /* reads Recx for shift value */                   \
         EMITB(0xD3)                                                         \
@@ -391,7 +390,6 @@
 #define shrxx_rx(RM)     /* reads Recx for shift value */                   \
         EMITB(0xD3)                                                         \
         MRM(0x05,    MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   EMPTY)
 
 #define shrxx_mx(RM, DP) /* reads Recx for shift value */                   \
         EMITB(0xD3)                                                         \
@@ -411,7 +409,6 @@
 #define shrxn_rx(RM)     /* reads Recx for shift value */                   \
         EMITB(0xD3)                                                         \
         MRM(0x07,    MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   EMPTY)
 
 #define shrxn_mx(RM, DP) /* reads Recx for shift value */                   \
         EMITB(0xD3)                                                         \
@@ -421,21 +418,43 @@
 /* mul
  * set-flags: no (in ARM) */
 
-#define mulxn_ri(RM, IM)                                                    \
+#define mulxx_ri(RM, IM)                                                    \
         EMITB(0x69 | TYP(IM))                                               \
         MRM(REG(RM), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   CMD(IM))
 
-#define mulxn_rr(RG, RM)                                                    \
+#define mulxx_rr(RG, RM)                                                    \
         EMITB(0x0F) EMITB(0xAF)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define mulxn_ld(RG, RM, DP)                                                \
+#define mulxx_ld(RG, RM, DP)                                                \
         EMITB(0x0F) EMITB(0xAF)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define mulxn_xm(RM, DP) /* Reax is in/out, destroys Redx */                \
+#define mulxn_ri(RM, IM)                                                    \
+        mulxx_ri(W(RM), W(IM))
+
+#define mulxn_rr(RG, RM)                                                    \
+        mulxx_rr(W(RG), W(RM))
+
+#define mulxn_ld(RG, RM, DP)                                                \
+        mulxx_ld(W(RG), W(RM), W(DP))
+
+#define mulxx_xr(RM)     /* Reax is in/out, Redx is zero-ext-out(high) */   \
+        EMITB(0xF7)                                                         \
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+
+#define mulxx_xm(RM, DP) /* Reax is in/out, Redx is zero-ext-out(high) */   \
+        EMITB(0xF7)                                                         \
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+#define mulxn_xr(RM)     /* Reax is in/out, Redx is sign-ext-out(high) */   \
+        EMITB(0xF7)                                                         \
+        MRM(0x05,    MOD(RM), REG(RM))                                      \
+
+#define mulxn_xm(RM, DP) /* Reax is in/out, Redx is sign-ext-out(high) */   \
         EMITB(0xF7)                                                         \
         MRM(0x05,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -443,10 +462,29 @@
 /* div
  * set-flags: no (in ARM) */
 
-#define divxn_xm(RM, DP) /* Reax is in/out, Redx is Reax-sign-extended */   \
+#define divxx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
         EMITB(0xF7)                        /* destroys Xmm0 (in ARMv7) */   \
-        MRM(0x07,    MOD(RM), REG(RM))     /* limited precision */          \
-        AUX(SIB(RM), CMD(DP), EMPTY)       /* fp div (in ARMv7) */
+        MRM(0x06,    MOD(RM), REG(RM))     /* destroys Redx (out:junk) */   \
+
+#define divxx_xm(RM, DP) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+        EMITB(0xF7)                        /* destroys Xmm0 (in ARMv7) */   \
+        MRM(0x06,    MOD(RM), REG(RM))     /* destroys Redx (out:junk) */   \
+        AUX(SIB(RM), CMD(DP), EMPTY) /* full-range fp64 div (in ARMv7) */
+
+#define divxn_xr(RM)     /* Reax is in/out, Redx is sign-ext-(Reax)-in */   \
+        EMITB(0xF7)                        /* destroys Xmm0 (in ARMv7) */   \
+        MRM(0x07,    MOD(RM), REG(RM))     /* destroys Redx (out:junk) */   \
+
+#define divxn_xm(RM, DP) /* Reax is in/out, Redx is sign-ext-(Reax)-in */   \
+        EMITB(0xF7)                        /* destroys Xmm0 (in ARMv7) */   \
+        MRM(0x07,    MOD(RM), REG(RM))     /* destroys Redx (out:junk) */   \
+        AUX(SIB(RM), CMD(DP), EMPTY) /* full-range fp64 div (in ARMv7) */
+
+#define divxp_xr(RM)     /* Reax is in/out, Redx is sign-ext-(Reax)-in */   \
+        divxn_xr(W(RM))              /* part-range fp32 div (in ARMv7) */
+
+#define divxp_xm(RM, DP) /* Reax is in/out, Redx is sign-ext-(Reax)-in */   \
+        divxn_xm(W(RM), W(DP))       /* part-range fp32 div (in ARMv7) */
 
 /* cmp
  * set-flags: yes */
