@@ -325,6 +325,18 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x05))
 
+/* cvz
+ * rounding mode is encoded directly    (can be used in FCTRL blocks) */
+
+#define cvzps_rr(RG, RM)     /* round towards zero */                       \
+        VX2(0x0,     2, 1) EMITB(0x5B)                                      \
+        MRM(REG(RG), MOD(RM), REG(RM))
+
+#define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
+        VX2(0x0,     2, 1) EMITB(0x5B)                                      \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
 /* cvt
  * rounding mode comes from fp control register (set in FCTRL blocks) */
 
@@ -346,8 +358,8 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* cvx
- * rounding mode is encoded directly (not to be used in FCTRL blocks) */
+/* cvn
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
 
 #define cvnpn_rr(RG, RM)     /* round to nearest */                         \
         cvtpn_rr(W(RG), W(RM))
@@ -637,7 +649,7 @@
         mxcsr_ld(Mebp, inf_FCTRL)
 
 /* cvr
- * rounding mode is encoded directly (not to be used in FCTRL blocks) */
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
 
 #define rndps_rr(RG, RM, mode) /* not portable, do not use outside */       \
         VX3(0x0,     1, 3) EMITB(0x08)                                      \

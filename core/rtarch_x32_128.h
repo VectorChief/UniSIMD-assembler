@@ -55,6 +55,10 @@
 #define ESC                                                                 \
         EMITB(0x66)
 
+/* mandatory escape prefix for some opcodes (must preceed rex) */
+#define xF3                                                                 \
+        EMITB(0xF3)
+
 /* fwait instruction for legacy processors (fix for fstcw) */
 #define FWT                                                                 \
         EMITB(0x9B)
@@ -364,6 +368,29 @@ FWT ADR REX(0,       RXB(RM)) EMITB(0xD9)                                   \
         MRM(0x07,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
+/* cvz
+ * rounding mode is encoded directly    (can be used in FCTRL blocks) */
+
+#define cvzps_rr(RG, RM)     /* round towards zero */                       \
+        fpucw_st(Mebp,  inf_SCR00)                                          \
+        movxx_mi(Mebp,  inf_SCR02(0), IH(0x0C7F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
+        fpuxs_ld(Mebp,  inf_SCR01(0x00))                                    \
+        fpuxn_st(Mebp,  inf_SCR01(0x00))                                    \
+        fpuxs_ld(Mebp,  inf_SCR01(0x04))                                    \
+        fpuxn_st(Mebp,  inf_SCR01(0x04))                                    \
+        fpuxs_ld(Mebp,  inf_SCR01(0x08))                                    \
+        fpuxn_st(Mebp,  inf_SCR01(0x08))                                    \
+        fpuxs_ld(Mebp,  inf_SCR01(0x0C))                                    \
+        fpuxn_st(Mebp,  inf_SCR01(0x0C))                                    \
+        fpucw_ld(Mebp,  inf_SCR00)                                          \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
+#define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
+        movpx_ld(W(RG), W(RM), W(DP))                                       \
+        cvzps_rr(W(RG), W(RG))
+
 /* cvt
  * rounding mode comes from fp control register (set in FCTRL blocks) */
 
@@ -406,8 +433,8 @@ FWT ADR REX(0,       RXB(RM)) EMITB(0xD9)                                   \
         movpx_ld(W(RG), W(RM), W(DP))                                       \
         cvtpn_rr(W(RG), W(RG))
 
-/* cvx
- * rounding mode is encoded directly (not to be used in FCTRL blocks) */
+/* cvn
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
 
 #define cvnpn_rr(RG, RM)     /* round to nearest */                         \
         cvtpn_rr(W(RG), W(RM))
@@ -546,6 +573,18 @@ FWT ADR REX(0,       RXB(RM)) EMITB(0xD9)                                   \
 
 #else /* RT_128 >= 2 */
 
+/* cvz
+ * rounding mode is encoded directly    (can be used in FCTRL blocks) */
+
+#define cvzps_rr(RG, RM)     /* round towards zero */                       \
+    xF3 REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x5B)                       \
+        MRM(REG(RG), MOD(RM), REG(RM))
+
+#define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
+ADR xF3 REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x5B)                       \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
 /* cvt
  * rounding mode comes from fp control register (set in FCTRL blocks) */
 
@@ -567,8 +606,8 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x5B)                       \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* cvx
- * rounding mode is encoded directly (not to be used in FCTRL blocks) */
+/* cvn
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
 
 #define cvnpn_rr(RG, RM)     /* round to nearest */                         \
         cvtpn_rr(W(RG), W(RM))
@@ -679,7 +718,7 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xE2)                       \
         mxcsr_ld(Mebp, inf_FCTRL)
 
 /* cvr
- * rounding mode is encoded directly (not to be used in FCTRL blocks) */
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
 
 #define cvrps_rr(RG, RM, mode)                                              \
         FCTRL_ENTER(mode)                                                   \

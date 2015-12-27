@@ -340,6 +340,18 @@
 
 /**************************   packed integer (NEON)   *************************/
 
+/* cvz
+ * rounding mode is encoded directly    (can be used in FCTRL blocks) */
+
+#define cvzps_rr(RG, RM)     /* round towards zero */                       \
+        EMITW(0xF3BB0740 | MTM(REG(RG), 0x00,    REG(RM)))
+
+#define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
+        AUX(SIB(RM), CMD(DP), EMPTY)                                        \
+        EMITW(0xE0800000 | MRM(TPxx,    MOD(RM), 0x00) | TYP(DP))           \
+        EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
+        EMITW(0xF3BB0740 | MTM(REG(RG), 0x00,    Tmm1))
+
 /* cvt
  * rounding mode comes from fp control register (set in FCTRL blocks) */
 
@@ -373,8 +385,8 @@
         EMITW(0xEEB80AC0 | MTM(REG(RG)+1, 0x00,  REG(RG)+1)) /* rounding */ \
         EMITW(0xEEF80AE0 | MTM(REG(RG)+1, 0x00,  REG(RG)+1)) /* modes */
 
-/* cvx
- * rounding mode is encoded directly (not to be used in FCTRL blocks) */
+/* cvn
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
 
 #define cvnpn_rr(RG, RM)     /* round to nearest */                         \
         EMITW(0xF3BB0640 | MTM(REG(RG), 0x00,    REG(RM)))
@@ -487,7 +499,7 @@
         fpscr_ld(Reax)
 
 /* cvr
- * rounding mode is encoded directly (not to be used in FCTRL blocks) */
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
 
 #if (RT_128 < 2)
 
