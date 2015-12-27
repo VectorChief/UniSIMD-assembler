@@ -515,21 +515,21 @@
 #define mulxn_ld(RG, RM, DP)                                                \
         mulxx_ld(W(RG), W(RM), W(DP))
 
-#define mulxx_xr(RM)     /* Reax is in/out, Redx is zero-ext-out(high) */   \
+#define mulxx_xr(RM)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
         EMITW(0x9BA07C00 | MRM(0x00,    0x00,    REG(RM)))                  \
         EMITW(0xD360FC00 | MRM(0x02,    0x00,    0x00))
 
-#define mulxx_xm(RM, DP) /* Reax is in/out, Redx is zero-ext-out(high) */   \
+#define mulxx_xm(RM, DP) /* Reax is in/out, Redx is out(high)-zero-ext */   \
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xB9400000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8) \
         EMITW(0x9BA07C00 | MRM(0x00,    0x00,    TMxx))                     \
         EMITW(0xD360FC00 | MRM(0x02,    0x00,    0x00))
 
-#define mulxn_xr(RM)     /* Reax is in/out, Redx is sign-ext-out(high) */   \
+#define mulxn_xr(RM)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
         EMITW(0x9B207C00 | MRM(0x00,    0x00,    REG(RM)))                  \
         EMITW(0xD360FC00 | MRM(0x02,    0x00,    0x00))
 
-#define mulxn_xm(RM, DP) /* Reax is in/out, Redx is sign-ext-out(high) */   \
+#define mulxn_xm(RM, DP) /* Reax is in/out, Redx is out(high)-sign-ext */   \
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xB9400000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8) \
         EMITW(0x9B207C00 | MRM(0x00,    0x00,    TMxx))                     \
@@ -546,18 +546,18 @@
         EMITW(0xB9400000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8) \
         EMITW(0x1AC00800 | MRM(0x00,    0x00,    TMxx))
 
-#define divxn_xr(RM)     /* Reax is in/out, Redx is sign-ext-(Reax)-in */   \
+#define divxn_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
         EMITW(0x1AC00C00 | MRM(0x00,    0x00,    REG(RM)))
 
-#define divxn_xm(RM, DP) /* Reax is in/out, Redx is sign-ext-(Reax)-in */   \
+#define divxn_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
         AUX(SIB(RM), EMPTY,   EMPTY) /* destroys Redx, Xmm0 (in ARMv7) */   \
         EMITW(0xB9400000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8) \
         EMITW(0x1AC00C00 | MRM(0x00,    0x00,    TMxx))
 
-#define divxp_xr(RM)     /* Reax is in/out, Redx is sign-ext-(Reax)-in */   \
+#define divxp_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
         divxn_xr(W(RM))              /* part-range fp32 div (in ARMv7) */
 
-#define divxp_xm(RM, DP) /* Reax is in/out, Redx is sign-ext-(Reax)-in */   \
+#define divxp_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
         divxn_xm(W(RM), W(DP))       /* part-range fp32 div (in ARMv7) */
 
 /* cmp
