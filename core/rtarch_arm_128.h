@@ -488,14 +488,13 @@
 #define fpscr_st(RG) /* not portable, do not use outside */                 \
         EMITW(0xEEF10A10 | MRM(REG(RG), 0x00,    0x00))
 
-#define FCTRL_ENTER(mode) /* destroys Reax */                               \
-        fpscr_st(Reax)                                                      \
-        movxx_st(Reax, Mebp, inf_FCTRL)                                     \
-        orrxx_ri(Reax, IW(RT_SIMD_MODE_##mode << 22))                       \
+#define FCTRL_ENTER(mode) /* destroys Reax, assumes default upon entry */   \
+        movxx_ri(Reax, IB(RT_SIMD_MODE_##mode))                             \
+        shlxx_ri(Reax, IB(22))                                              \
         fpscr_ld(Reax)
 
-#define FCTRL_LEAVE(mode) /* destroys Reax */                               \
-        movxx_ld(Reax, Mebp, inf_FCTRL)                                     \
+#define FCTRL_LEAVE(mode) /* destroys Reax, resumes default upon entry */   \
+        xorxx_rr(Reax, Reax)                                                \
         fpscr_ld(Reax)
 
 /* cvr
