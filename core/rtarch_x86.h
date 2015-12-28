@@ -463,37 +463,44 @@
  * set-flags: no (in ARM) */
 
 #define divxx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-        EMITB(0xF7)                        /* destroys Xmm0 (in ARMv7) */   \
-        MRM(0x06,    MOD(RM), REG(RM))     /* destroys Redx (out:junk) */   \
+        EMITB(0xF7)                        /* destroys Redx (out:junk) */   \
+        MRM(0x06,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
+        AUX(EMPTY,   EMPTY,   EMPTY) /* 32-bit int (fp64 div in ARMv7) */
 
 #define divxx_xm(RM, DP) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-        EMITB(0xF7)                        /* destroys Xmm0 (in ARMv7) */   \
-        MRM(0x06,    MOD(RM), REG(RM))     /* destroys Redx (out:junk) */   \
-        AUX(SIB(RM), CMD(DP), EMPTY) /* full-range fp64 div (in ARMv7) */
+        EMITB(0xF7)                        /* destroys Redx (out:junk) */   \
+        MRM(0x06,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
+        AUX(SIB(RM), CMD(DP), EMPTY) /* 32-bit int (fp64 div in ARMv7) */
 
 #define divxn_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        EMITB(0xF7)                        /* destroys Xmm0 (in ARMv7) */   \
-        MRM(0x07,    MOD(RM), REG(RM))     /* destroys Redx (out:junk) */   \
+        EMITB(0xF7)                        /* destroys Redx (out:junk) */   \
+        MRM(0x07,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
+        AUX(EMPTY,   EMPTY,   EMPTY) /* 32-bit int (fp64 div in ARMv7) */
 
 #define divxn_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        EMITB(0xF7)                        /* destroys Xmm0 (in ARMv7) */   \
-        MRM(0x07,    MOD(RM), REG(RM))     /* destroys Redx (out:junk) */   \
-        AUX(SIB(RM), CMD(DP), EMPTY) /* full-range fp64 div (in ARMv7) */
+        EMITB(0xF7)                        /* destroys Redx (out:junk) */   \
+        MRM(0x07,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
+        AUX(SIB(RM), CMD(DP), EMPTY) /* 32-bit int (fp64 div in ARMv7) */
 
 #define divxp_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divxn_xr(W(RM))              /* part-range fp32 div (in ARMv7) */
+        divxn_xr(W(RM))              /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
 
 #define divxp_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divxn_xm(W(RM), W(DP))       /* part-range fp32 div (in ARMv7) */
+        divxn_xm(W(RM), W(DP))       /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
 
 /* rem
  * set-flags: no */
 
-#define remxx_xx()          /* to be placed immediately prior divx*_x* */
+#define remxx_xx()          /* to be placed immediately prior divx*_x* */   \
+                            /* (in ARM) to prepare for rem calculation */
 
-#define remxx_xr(RM)        /* to be placed immediately after divx*_xr */
+#define remxx_xr(RM)        /* to be placed immediately after divx*_xr */   \
+                            /* (in ARM) to produce remainder Redx<-rem */
 
-#define remxx_xm(RM, DP)    /* to be placed immediately after divx*_xm */
+#define remxx_xm(RM, DP)    /* to be placed immediately after divx*_xm */   \
+                            /* (in ARM) to produce remainder Redx<-rem */
 
 /* cmp
  * set-flags: yes */

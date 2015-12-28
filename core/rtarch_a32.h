@@ -367,7 +367,7 @@
         AUX(EMPTY,   EMPTY,   TYP(IM))                                      \
         EMITW(0x21000000 | MRM(REG(RM), REG(RM), 0x00) |                    \
         (+((VAL(IM) & 0xFFFFF000) == 0) & (0x10000000  | VAL(IM) << 10)) |  \
-        (+((VAL(IM) & 0xFFFFF000) != 0) & (0x0A000000  | TIxx << 16)))
+        (+((VAL(IM) & 0xFFFFF000) != 0) & (0x0A000000  | TIxx << 16)))      \
         /* equals to -1 (not 1) if ^ true */
 
 #define addxx_mi(RM, DP, IM)                                                \
@@ -400,7 +400,7 @@
         AUX(EMPTY,   EMPTY,   TYP(IM))                                      \
         EMITW(0x61000000 | MRM(REG(RM), REG(RM), 0x00) |                    \
         (+((VAL(IM) & 0xFFFFF000) == 0) & (0x10000000  | VAL(IM) << 10)) |  \
-        (+((VAL(IM) & 0xFFFFF000) != 0) & (0x0A000000  | TIxx << 16)))
+        (+((VAL(IM) & 0xFFFFF000) != 0) & (0x0A000000  | TIxx << 16)))      \
         /* equals to -1 (not 1) if ^ true */
 
 #define subxx_mi(RM, DP, IM)                                                \
@@ -539,38 +539,46 @@
  * set-flags: no */
 
 #define divxx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-        EMITW(0x1AC00800 | MRM(0x00,    0x00,    REG(RM)))
+        AUX(EMPTY,   EMPTY,   EMPTY) /* destroys Redx, Xmm0 (in ARMv7) */   \
+        EMITW(0x1AC00800 | MRM(0x00,    0x00,    REG(RM)))                  \
+                                     /* 32-bit int (fp64 div in ARMv7) */
 
 #define divxx_xm(RM, DP) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
         AUX(SIB(RM), EMPTY,   EMPTY) /* destroys Redx, Xmm0 (in ARMv7) */   \
         EMITW(0xB9400000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8) \
-        EMITW(0x1AC00800 | MRM(0x00,    0x00,    TMxx))
+        EMITW(0x1AC00800 | MRM(0x00,    0x00,    TMxx))                     \
+                                     /* 32-bit int (fp64 div in ARMv7) */
 
 #define divxn_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        EMITW(0x1AC00C00 | MRM(0x00,    0x00,    REG(RM)))
+        AUX(EMPTY,   EMPTY,   EMPTY) /* destroys Redx, Xmm0 (in ARMv7) */   \
+        EMITW(0x1AC00C00 | MRM(0x00,    0x00,    REG(RM)))                  \
+                                     /* 32-bit int (fp64 div in ARMv7) */
 
 #define divxn_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
         AUX(SIB(RM), EMPTY,   EMPTY) /* destroys Redx, Xmm0 (in ARMv7) */   \
         EMITW(0xB9400000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8) \
-        EMITW(0x1AC00C00 | MRM(0x00,    0x00,    TMxx))
+        EMITW(0x1AC00C00 | MRM(0x00,    0x00,    TMxx))                     \
+                                     /* 32-bit int (fp64 div in ARMv7) */
 
 #define divxp_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divxn_xr(W(RM))              /* part-range fp32 div (in ARMv7) */
+        divxn_xr(W(RM))              /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
 
 #define divxp_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divxn_xm(W(RM), W(DP))       /* part-range fp32 div (in ARMv7) */
+        divxn_xm(W(RM), W(DP))       /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
 
 /* rem
  * set-flags: no */
 
 #define remxx_xx()          /* to be placed immediately prior divx*_x* */   \
-        movxx_rr(Redx, Reax)
+        movxx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
 #define remxx_xr(RM)        /* to be placed immediately after divx*_xr */   \
-        EMITW(0x1B008800 | MRM(0x02,    0x00,    REG(RM)))
+        EMITW(0x1B008800 | MRM(0x02,    0x00,    REG(RM)))/* Redx<-rem */
 
 #define remxx_xm(RM, DP)    /* to be placed immediately after divx*_xm */   \
-        EMITW(0x1B008800 | MRM(0x02,    0x00,    TMxx))
+        EMITW(0x1B008800 | MRM(0x02,    0x00,    TMxx))   /* Redx<-rem */
 
 /* cmp
  * set-flags: yes */
@@ -579,7 +587,7 @@
         AUX(EMPTY,   EMPTY,   TYP(IM))                                      \
         EMITW(0x61000000 | MRM(0x1F,    REG(RM), 0x00) |                    \
         (+((VAL(IM) & 0xFFFFF000) == 0) & (0x10000000  | VAL(IM) << 10)) |  \
-        (+((VAL(IM) & 0xFFFFF000) != 0) & (0x0A000000  | TIxx << 16)))
+        (+((VAL(IM) & 0xFFFFF000) != 0) & (0x0A000000  | TIxx << 16)))      \
         /* equals to -1 (not 1) if ^ true */
 
 #define cmpxx_mi(RM, DP, IM)                                                \
@@ -587,7 +595,7 @@
         EMITW(0xB9400000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP)&0xFFC)<<8) \
         EMITW(0x61000000 | MRM(0x1F,    TMxx,    0x00) |                    \
         (+((VAL(IM) & 0xFFFFF000) == 0) & (0x10000000  | VAL(IM) << 10)) |  \
-        (+((VAL(IM) & 0xFFFFF000) != 0) & (0x0A000000  | TIxx << 16)))
+        (+((VAL(IM) & 0xFFFFF000) != 0) & (0x0A000000  | TIxx << 16)))      \
         /* equals to -1 (not 1) if ^ true */
 
 #define cmpxx_rr(RG, RM)                                                    \
