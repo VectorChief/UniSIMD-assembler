@@ -488,14 +488,13 @@
 #define fpscr_st(RG) /* not portable, do not use outside */                 \
         EMITW(0xEEF10A10 | MRM(REG(RG), 0x00,    0x00))
 
-#define FCTRL_ENTER(mode) /* destroys Reax, assumes default upon entry */   \
-        movxx_ri(Reax, IB(RT_SIMD_MODE_##mode))                             \
-        shlxx_ri(Reax, IB(22))                                              \
-        fpscr_ld(Reax)
+#define FCTRL_ENTER(mode) /* assumes default mode (ROUNDN) upon entry */    \
+        EMITW(0xE3A00500 | MRM(TIxx,    0x00,    0x00) |                    \
+                           RT_SIMD_MODE_##mode)                             \
+        EMITW(0xEEE10A10 | MRM(TIxx,    0x00,    0x00))
 
-#define FCTRL_LEAVE(mode) /* destroys Reax, resumes default upon entry */   \
-        xorxx_rr(Reax, Reax)                                                \
-        fpscr_ld(Reax)
+#define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */    \
+        EMITW(0xEEE10A10 | MRM(0x04,    0x00,    0x00))
 
 /* cvr
  * rounding mode is encoded directly (cannot be used in FCTRL blocks) */

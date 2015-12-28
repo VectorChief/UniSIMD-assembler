@@ -707,12 +707,11 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xE2)                       \
         MRM(0x03,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define FCTRL_ENTER(mode) /* destroys Reax, assumes default upon entry */   \
-        movxx_mi(Mebp, inf_FCTRL, IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))   \
-        mxcsr_ld(Mebp, inf_FCTRL)                                           \
+#define FCTRL_ENTER(mode) /* assumes default mode (ROUNDN) upon entry */    \
+        movxx_mi(Mebp, inf_SCR00, IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))   \
+        mxcsr_ld(Mebp, inf_SCR00)                                           \
 
-#define FCTRL_LEAVE(mode) /* destroys Reax, resumes default upon entry */   \
-        movxx_mi(Mebp, inf_FCTRL, IH(RT_SIMD_MODE_ROUNDN << 13 | 0x1F80))   \
+#define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */    \
         mxcsr_ld(Mebp, inf_FCTRL)
 
 /* cvr

@@ -144,7 +144,8 @@
                             {                                               \
                                 pushad  /* stack_sa() */                    \
                                 movlb_ld(info)                              \
-                                movxx_rr(Rebp, Reax)
+                                movxx_rr(Rebp, Reax)                        \
+                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))
 #define ASM_LEAVE(info)         popad   /* stack_la() */                    \
                             }
 
@@ -187,7 +188,8 @@
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
                                 stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)
+                                movxx_rr(Rebp, Reax)                        \
+                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
                                 : "a" (info)                                \
@@ -222,7 +224,8 @@
                             (                                               \
                                 stack_sa()                                  \
                                 "xor %%r15, %%r15\n"                        \
-                                movxx_rr(Rebp, Reax)
+                                movxx_rr(Rebp, Reax)                        \
+                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
                                 : "a" (info)                                \
@@ -261,6 +264,7 @@
                             (                                               \
                                 stack_sa()                                  \
                                 movlb_ld(%[info])                           \
+                                "eor r4, r4, r4\n"                          \
                                 movxx_rr(Rebp, Reax)
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
