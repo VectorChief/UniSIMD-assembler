@@ -385,10 +385,10 @@
                                                  (0x1F & VAL(IM)) << 7)     \
         EMITW(0xE5800000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFC))
 
-#define shlxx_rx(RM)     /* reads Recx for shift value */                   \
+#define shlxx_rx(RM)                     /* reads Recx for shift value */   \
         EMITW(0xE1A00110 | MRM(REG(RM), 0x00,    REG(RM)))
 
-#define shlxx_mx(RM, DP) /* reads Recx for shift value */                   \
+#define shlxx_mx(RM, DP)                 /* reads Recx for shift value */   \
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFC))  \
         EMITW(0xE1A00110 | MRM(TMxx,    0x00,    TMxx))                     \
@@ -408,10 +408,10 @@
                                                  (0x1F & VAL(IM)) << 7)     \
         EMITW(0xE5800000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFC))
 
-#define shrxx_rx(RM)     /* reads Recx for shift value */                   \
+#define shrxx_rx(RM)                     /* reads Recx for shift value */   \
         EMITW(0xE1A00130 | MRM(REG(RM), 0x00,    REG(RM)))
 
-#define shrxx_mx(RM, DP) /* reads Recx for shift value */                   \
+#define shrxx_mx(RM, DP)                 /* reads Recx for shift value */   \
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFC))  \
         EMITW(0xE1A00130 | MRM(TMxx,    0x00,    TMxx))                     \
@@ -428,10 +428,10 @@
                                                  (0x1F & VAL(IM)) << 7)     \
         EMITW(0xE5800000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFC))
 
-#define shrxn_rx(RM)     /* reads Recx for shift value */                   \
+#define shrxn_rx(RM)                     /* reads Recx for shift value */   \
         EMITW(0xE1A00150 | MRM(REG(RM), 0x00,    REG(RM)))
 
-#define shrxn_mx(RM, DP) /* reads Recx for shift value */                   \
+#define shrxn_mx(RM, DP)                 /* reads Recx for shift value */   \
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFC))  \
         EMITW(0xE1A00150 | MRM(TMxx,    0x00,    TMxx))                     \
@@ -442,24 +442,24 @@
 
 #define mulxx_ri(RM, IM) /* one unnecessary op for IH, IW */                \
         EMITW(0xE1A00000 | MRM(TIxx,    0x00,    0x00) | TYP(IM))           \
-        AUX(EMPTY,   EMPTY,   CMD(IM))                                      \
+        AUX(EMPTY,   EMPTY,   CMD(IM))   /* part-range 32-bit multiply */   \
         EMITW(0xE0000090 | REG(RM) << 16 | REG(RM) << 8| TIxx)
 
-#define mulxx_rr(RG, RM)                                                    \
+#define mulxx_rr(RG, RM)                 /* part-range 32-bit multiply */   \
         EMITW(0xE0000090 | REG(RG) << 16 | REG(RG) << 8| REG(RM))
 
-#define mulxx_ld(RG, RM, DP)                                                \
+#define mulxx_ld(RG, RM, DP)             /* part-range 32-bit multiply */   \
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFC))  \
         EMITW(0xE0000090 | REG(RG) << 16 | REG(RG) << 8| TMxx)
 
-#define mulxn_ri(RM, IM)                                                    \
+#define mulxn_ri(RM, IM)                 /* part-range 32-bit multiply */   \
         mulxx_ri(W(RM), W(IM))
 
-#define mulxn_rr(RG, RM)                                                    \
+#define mulxn_rr(RG, RM)                 /* part-range 32-bit multiply */   \
         mulxx_rr(W(RG), W(RM))
 
-#define mulxn_ld(RG, RM, DP)                                                \
+#define mulxn_ld(RG, RM, DP)             /* part-range 32-bit multiply */   \
         mulxx_ld(W(RG), W(RM), W(DP))
 
 #define mulxx_xr(RM)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
@@ -477,6 +477,14 @@
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFC))  \
         EMITW(0xE0C00090 | MRM(0x00,    0x02,    TMxx))
+
+#define mulxp_xr(RM)     /* Reax is in/out, prepares Redx for divxn/xp */   \
+        EMITW(0xE0000090 | REG(RM))      /* part-range 32-bit multiply */
+
+#define mulxp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn/xp */   \
+        AUX(SIB(RM), EMPTY,   EMPTY)     /* part-range 32-bit multiply */   \
+        EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFC))  \
+        EMITW(0xE0000090 | TMxx)
 
 /* div
  * set-flags: no */

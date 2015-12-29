@@ -423,11 +423,11 @@
         MRM(0x04,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
-#define shlxx_rx(RM)     /* reads Recx for shift value */                   \
+#define shlxx_rx(RM)                     /* reads Recx for shift value */   \
         REX(0,       RXB(RM)) EMITB(0xD3)                                   \
         MRM(0x04,    MOD(RM), REG(RM))                                      \
 
-#define shlxx_mx(RM, DP) /* reads Recx for shift value */                   \
+#define shlxx_mx(RM, DP)                 /* reads Recx for shift value */   \
     ADR REX(0,       RXB(RM)) EMITB(0xD3)                                   \
         MRM(0x04,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -445,11 +445,11 @@
         MRM(0x05,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
-#define shrxx_rx(RM)     /* reads Recx for shift value */                   \
+#define shrxx_rx(RM)                     /* reads Recx for shift value */   \
         REX(0,       RXB(RM)) EMITB(0xD3)                                   \
         MRM(0x05,    MOD(RM), REG(RM))                                      \
 
-#define shrxx_mx(RM, DP) /* reads Recx for shift value */                   \
+#define shrxx_mx(RM, DP)                 /* reads Recx for shift value */   \
     ADR REX(0,       RXB(RM)) EMITB(0xD3)                                   \
         MRM(0x05,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -464,11 +464,11 @@
         MRM(0x07,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
-#define shrxn_rx(RM)     /* reads Recx for shift value */                   \
+#define shrxn_rx(RM)                     /* reads Recx for shift value */   \
         REX(0,       RXB(RM)) EMITB(0xD3)                                   \
         MRM(0x07,    MOD(RM), REG(RM))                                      \
 
-#define shrxn_mx(RM, DP) /* reads Recx for shift value */                   \
+#define shrxn_mx(RM, DP)                 /* reads Recx for shift value */   \
     ADR REX(0,       RXB(RM)) EMITB(0xD3)                                   \
         MRM(0x07,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -476,27 +476,27 @@
 /* mul
  * set-flags: no (in ARM) */
 
-#define mulxx_ri(RM, IM)                                                    \
+#define mulxx_ri(RM, IM)                 /* part-range 32-bit multiply */   \
         REX(RXB(RM), RXB(RM)) EMITB(0x69 | TYP(IM))                         \
         MRM(REG(RM), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   CMD(IM))
 
-#define mulxx_rr(RG, RM)                                                    \
+#define mulxx_rr(RG, RM)                 /* part-range 32-bit multiply */   \
         REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xAF)                       \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define mulxx_ld(RG, RM, DP)                                                \
+#define mulxx_ld(RG, RM, DP)             /* part-range 32-bit multiply */   \
     ADR REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xAF)                       \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define mulxn_ri(RM, IM)                                                    \
+#define mulxn_ri(RM, IM)                 /* part-range 32-bit multiply */   \
         mulxx_ri(W(RM), W(IM))
 
-#define mulxn_rr(RG, RM)                                                    \
+#define mulxn_rr(RG, RM)                 /* part-range 32-bit multiply */   \
         mulxx_rr(W(RG), W(RM))
 
-#define mulxn_ld(RG, RM, DP)                                                \
+#define mulxn_ld(RG, RM, DP)             /* part-range 32-bit multiply */   \
         mulxx_ld(W(RG), W(RM), W(DP))
 
 #define mulxx_xr(RM)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
@@ -516,6 +516,12 @@
     ADR REX(0,       RXB(RM)) EMITB(0xF7)                                   \
         MRM(0x05,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
+
+#define mulxp_xr(RM)     /* Reax is in/out, prepares Redx for divxn/xp */   \
+        mulxn_xr(W(RM))         /* (in ARM) part-range 32-bit multiply */
+
+#define mulxp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn/xp */   \
+        mulxn_xm(W(RM), W(DP))  /* (in ARM) part-range 32-bit multiply */
 
 /* div
  * set-flags: no (in ARM) */
