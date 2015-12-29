@@ -363,6 +363,10 @@
 /* cvz
  * rounding mode is encoded directly    (can be used in FCTRL blocks) */
 
+#define rnzps_rr(RG, RM)     /* round towards zero */                       \
+        cvzps_rr(W(RG), W(RM))                                              \
+        cvnpn_rr(W(RG), W(RG))
+
 #define cvzps_rr(RG, RM)     /* round towards zero */                       \
         fpucw_st(Mebp,  inf_SCR00)                                          \
         movxx_mi(Mebp,  inf_SCR02(0), IH(0x0C7F))                           \
@@ -385,6 +389,10 @@
 
 /* cvt
  * rounding mode comes from fp control register (set in FCTRL blocks) */
+
+#define rndps_rr(RG, RM)                                                    \
+        cvtps_rr(W(RG), W(RM))                                              \
+        cvnpn_rr(W(RG), W(RG))
 
 #define cvtps_rr(RG, RM)                                                    \
         fpucw_st(Mebp,  inf_SCR00)                                          \
@@ -568,6 +576,10 @@
 /* cvz
  * rounding mode is encoded directly    (can be used in FCTRL blocks) */
 
+#define rnzps_rr(RG, RM)     /* round towards zero */                       \
+        cvzps_rr(W(RG), W(RM))                                              \
+        cvnpn_rr(W(RG), W(RG))
+
 #define cvzps_rr(RG, RM)     /* round towards zero */                       \
     xF3 EMITB(0x0F) EMITB(0x5B)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))
@@ -579,6 +591,10 @@
 
 /* cvt
  * rounding mode comes from fp control register (set in FCTRL blocks) */
+
+#define rndps_rr(RG, RM)                                                    \
+        cvtps_rr(W(RG), W(RM))                                              \
+        cvnpn_rr(W(RG), W(RG))
 
 #define cvtps_rr(RG, RM)                                                    \
     ESC EMITB(0x0F) EMITB(0x5B)                                             \
@@ -708,6 +724,10 @@
 
 /* cvr
  * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
+
+#define rnrps_rr(RG, RM, mode)                                              \
+        cvrps_rr(W(RG), W(RM), mode)                                        \
+        cvnpn_rr(W(RG), W(RG))
 
 #define cvrps_rr(RG, RM, mode)                                              \
         FCTRL_ENTER(mode)                                                   \

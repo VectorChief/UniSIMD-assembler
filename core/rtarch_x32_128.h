@@ -371,6 +371,10 @@ FWT ADR REX(0,       RXB(RM)) EMITB(0xD9)                                   \
 /* cvz
  * rounding mode is encoded directly    (can be used in FCTRL blocks) */
 
+#define rnzps_rr(RG, RM)     /* round towards zero */                       \
+        cvzps_rr(W(RG), W(RM))                                              \
+        cvnpn_rr(W(RG), W(RG))
+
 #define cvzps_rr(RG, RM)     /* round towards zero */                       \
         fpucw_st(Mebp,  inf_SCR00)                                          \
         movxx_mi(Mebp,  inf_SCR02(0), IH(0x0C7F))                           \
@@ -393,6 +397,10 @@ FWT ADR REX(0,       RXB(RM)) EMITB(0xD9)                                   \
 
 /* cvt
  * rounding mode comes from fp control register (set in FCTRL blocks) */
+
+#define rndps_rr(RG, RM)                                                    \
+        cvtps_rr(W(RG), W(RM))                                              \
+        cvnpn_rr(W(RG), W(RG))
 
 #define cvtps_rr(RG, RM)                                                    \
         fpucw_st(Mebp,  inf_SCR00)                                          \
@@ -576,6 +584,10 @@ FWT ADR REX(0,       RXB(RM)) EMITB(0xD9)                                   \
 /* cvz
  * rounding mode is encoded directly    (can be used in FCTRL blocks) */
 
+#define rnzps_rr(RG, RM)     /* round towards zero */                       \
+        cvzps_rr(W(RG), W(RM))                                              \
+        cvnpn_rr(W(RG), W(RG))
+
 #define cvzps_rr(RG, RM)     /* round towards zero */                       \
     xF3 REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x5B)                       \
         MRM(REG(RG), MOD(RM), REG(RM))
@@ -587,6 +599,10 @@ ADR xF3 REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x5B)                       \
 
 /* cvt
  * rounding mode comes from fp control register (set in FCTRL blocks) */
+
+#define rndps_rr(RG, RM)                                                    \
+        cvtps_rr(W(RG), W(RM))                                              \
+        cvnpn_rr(W(RG), W(RG))
 
 #define cvtps_rr(RG, RM)                                                    \
     ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x5B)                       \
@@ -716,6 +732,10 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xE2)                       \
 
 /* cvr
  * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
+
+#define rnrps_rr(RG, RM, mode)                                              \
+        cvrps_rr(W(RG), W(RM), mode)                                        \
+        cvnpn_rr(W(RG), W(RG))
 
 #define cvrps_rr(RG, RM, mode)                                              \
         FCTRL_ENTER(mode)                                                   \

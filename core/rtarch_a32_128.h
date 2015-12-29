@@ -299,6 +299,9 @@
 /* cvz
  * rounding mode is encoded directly    (can be used in FCTRL blocks) */
 
+#define rnzps_rr(RG, RM)     /* round towards zero */                       \
+        EMITW(0x4EA19800 | MRM(REG(RG), REG(RM), 0x00))
+
 #define cvzps_rr(RG, RM)     /* round towards zero */                       \
         EMITW(0x4EA1B800 | MRM(REG(RG), REG(RM), 0x00))
 
@@ -309,6 +312,9 @@
 
 /* cvt
  * rounding mode comes from fp control register (set in FCTRL blocks) */
+
+#define rndps_rr(RG, RM)                                                    \
+        EMITW(0x6EA19800 | MRM(REG(RG), REG(RM), 0x00))
 
 #define cvtps_rr(RG, RM)                                                    \
         EMITW(0x6EA19800 | MRM(REG(RG), REG(RM), 0x00))                     \
@@ -435,6 +441,10 @@
 
 /* cvr
  * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
+
+#define rnrps_rr(RG, RM, mode)                                              \
+        EMITW(0x4E218800 | MRM(REG(RG), REG(RM), 0x00) |                    \
+        (RT_SIMD_MODE_##mode & 1) << 23 | (RT_SIMD_MODE_##mode & 2) << 11)
 
 #define cvrps_rr(RG, RM, mode)                                              \
         EMITW(0x4E21A800 | MRM(REG(RG), REG(RM), 0x00) |                    \

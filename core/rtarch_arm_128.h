@@ -343,6 +343,10 @@
 /* cvz
  * rounding mode is encoded directly    (can be used in FCTRL blocks) */
 
+#define rnzps_rr(RG, RM)     /* round towards zero */                       \
+        cvzps_rr(W(RG), W(RM))                                              \
+        cvnpn_rr(W(RG), W(RG))
+
 #define cvzps_rr(RG, RM)     /* round towards zero */                       \
         EMITW(0xF3BB0740 | MTM(REG(RG), 0x00,    REG(RM)))
 
@@ -354,6 +358,10 @@
 
 /* cvt
  * rounding mode comes from fp control register (set in FCTRL blocks) */
+
+#define rndps_rr(RG, RM)                                                    \
+        cvtps_rr(W(RG), W(RM))                                              \
+        cvnpn_rr(W(RG), W(RG))
 
 #define cvtps_rr(RG, RM)     /* fallback to VFP for float-to-integer cvt */ \
         EMITW(0xEEBD0A40 | MTM(REG(RG)+0, 0x00,  REG(RM)+0)) /* due to */   \
@@ -501,12 +509,20 @@
 
 #if (RT_128 < 2)
 
+#define rnrps_rr(RG, RM, mode)                                              \
+        cvrps_rr(W(RG), W(RM), mode)                                        \
+        cvnpn_rr(W(RG), W(RG))
+
 #define cvrps_rr(RG, RM, mode)                                              \
         FCTRL_ENTER(mode)                                                   \
         cvtps_rr(W(RG), W(RM))                                              \
         FCTRL_LEAVE(mode)
 
 #else /* RT_128 >= 2 */
+
+#define rnrps_rr(RG, RM, mode)                                              \
+        cvrps_rr(W(RG), W(RM), mode)                                        \
+        cvnpn_rr(W(RG), W(RG))
 
 #define cvrps_rr(RG, RM, mode)                                              \
         EMITW(0xF3BB0040 | MTM(REG(RG), 0x00,    REG(RM)) |                 \
