@@ -48,7 +48,7 @@
  *  - rtarch_x32_256.h     - x86_64:x32 ABI, 16 SIMD regs, AVX 256-bit
  *
  * Future 32-bit targets:
- *  - rtarch_x86_512.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, AVX
+ *  - rtarch_x86_512.h     - 32-bit x86 ISA, 8 SIMD regs, AVX 512-bit
  *  - rtarch_x32_512.h     - x86_64:x32 ABI, 32 SIMD regs, AVX 512-bit
  *
  * Future 64-bit targets:
@@ -61,15 +61,15 @@
  *
  * Reserved 32-bit targets:
  *  - rtarch_m32.h         - 32-bit MIPS ISA, ?? core regs
- *  - rtarch_m32_128.h     - 32-bit MIPS ISA, ?? SIMD regs, MIPS3D
+ *  - rtarch_m32_128.h     - 32-bit MIPS ISA, ?? SIMD regs, MSA
  *  - rtarch_p32.h         - 32-bit PowerISA, ?? core regs
- *  - rtarch_p32_128.h     - 32-bit PowerISA, ?? SIMD regs, AltiVec
+ *  - rtarch_p32_128.h     - 32-bit PowerISA, ?? SIMD regs, VMX
  *
  * Reserved 64-bit targets:
  *  - rtarch_m64.h         - 64-bit MIPS ISA, ?? core regs
- *  - rtarch_m64_128.h     - 64-bit MIPS ISA, ?? SIMD regs, MIPS3D
+ *  - rtarch_m64_128.h     - 64-bit MIPS ISA, ?? SIMD regs, MSA
  *  - rtarch_p64.h         - 64-bit PowerISA, ?? core regs
- *  - rtarch_p64_128.h     - 64-bit PowerISA, ?? SIMD regs, AltiVec
+ *  - rtarch_p64_128.h     - 64-bit PowerISA, ?? SIMD regs, VMX
  *
  * Preliminary naming scheme for extended core and SIMD register files.
  *
