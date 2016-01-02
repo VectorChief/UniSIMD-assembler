@@ -150,15 +150,25 @@
 
 /* immediate    VAL,  TYP,  CMD */
 
-#define IB(im)  (im), 0x02, EMITB((im) & 0x7F) /* drop sign-ext (zero in ARM) */
-#define IM(im)  (im), 0x00, EMITW((im) & 0xFFF)
-#define IH(im)  (im), 0x00, EMITW((im) & 0xFFFF)
-#define IW(im)  (im), 0x00, EMITW((im) & 0xFFFFFFFF)
+#define IC(im)  (im), 0x02, EMITB((im) & 0x7F) /* drop sign-ext (zero in ARM) */
+#define IB(im)  (im), 0x00, EMITW((im) & 0xFF) /* drop sign-ext (32-bit word) */
+
+#define IM(im)  (im), 0x00, EMITW((im) & 0xFFF) /* native AArch64 add/sub/cmp */
+
+#define IG(im)  (im), 0x00, EMITW((im) & 0x7FFF) /* native MIPS32 add/sub/cmp */
+#define IH(im)  (im), 0x00, EMITW((im) & 0xFFFF) /* second native on all ARMs */
+
+#define IV(im)  (im), 0x00, EMITW((im) & 0x7FFFFFFF)  /* native x64 long mode */
+#define IW(im)  (im), 0x00, EMITW((im) & 0xFFFFFFFF)  /* extra load op on x64 */
 
 /* displacement VAL,  TYP,  CMD */
 
 #define DP(im)  (im), 0x00, EMITW((im) & ((0x7FC*Q)|0x7FC))  /* ext for Q=2,4 */
-#define DH(im)  (im), 0x00, EMITW((im) & (0x7FF0*Q)) /* <- SIMD-only (in ARM) */
+#define DM(im)  (im), 0x00, EMITW((im) & ((0xFFC*Q)|0xFFC))  /* ext for Q=2,4 */
+
+#define DG(im)  (im), 0x00, EMITW((im) & (0x7FF0*Q)) /* <- SIMD-only (in ARM) */
+#define DH(im)  (im), 0x00, EMITW((im) & (0xFFF0*Q)) /* <- SIMD-only (in ARM) */
+
 #define PLAIN   0x00, 0x00, EMPTY
 
 /* triplet pass-through wrapper */
