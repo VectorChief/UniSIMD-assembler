@@ -152,24 +152,21 @@
 
 #define IC(im)  (im), 0x02, EMITB((im) & 0x7F) /* drop sign-ext (zero in ARM) */
 #define IB(im)  (im), 0x00, EMITW((im) & 0xFF) /* drop sign-ext (32-bit word) */
-
 #define IM(im)  (im), 0x00, EMITW((im) & 0xFFF) /* native AArch64 add/sub/cmp */
-
 #define IG(im)  (im), 0x00, EMITW((im) & 0x7FFF) /* native MIPS32 add/sub/cmp */
 #define IH(im)  (im), 0x00, EMITW((im) & 0xFFFF) /* second native on all ARMs */
-
 #define IV(im)  (im), 0x00, EMITW((im) & 0x7FFFFFFF)  /* native x64 long mode */
 #define IW(im)  (im), 0x00, EMITW((im) & 0xFFFFFFFF)  /* extra load op on x64 */
 
 /* displacement VAL,  TYP,  CMD */
 
-#define DP(im)  (im), 0x00, EMITW((im) & ((0x7FC*Q)|0x7FC))  /* ext for Q=2,4 */
-#define DM(im)  (im), 0x00, EMITW((im) & ((0xFFC*Q)|0xFFC))  /* ext for Q=2,4 */
-
-#define DG(im)  (im), 0x00, EMITW((im) & (0x7FF0*Q)) /* <- SIMD-only (in ARM) */
-#define DH(im)  (im), 0x00, EMITW((im) & (0xFFF0*Q)) /* <- SIMD-only (in ARM) */
-
-#define PLAIN   0x00, 0x00, EMPTY
+#define DP(dp)  (dp), 0x00, EMITW((dp) & ((0x7FC  * Q) | 0x7FC))
+#define DM(dp)  (dp), 0x00, EMITW((dp) & ((0xFFC  * Q) | 0xFFC))
+#define DF(dp)  (dp), 0x00, EMITW((dp) & ((0x3FFC * Q) | 0x3FFC))
+#define DG(dp)  (dp), 0x00, EMITW((dp) & ((0x7FFC * Q) | 0x7FFC))
+#define DH(dp)  (dp), 0x00, EMITW((dp) & ((0xFFFC * Q) | 0xFFFC))
+#define DV(dp)  (dp), 0x00, EMITW((dp) & 0x7FFFFFFC)
+#define PLAIN   0x00, 0x00, EMPTY    /* special type for Oeax addressing mode */
 
 /* triplet pass-through wrapper */
 
@@ -184,12 +181,12 @@
 
 #define movxx_ri(RM, IM)                                                    \
         REX(0,       RXB(RM)) EMITB(0xC7)                                   \
-        MRM(0x00,    MOD(RM), REG(RM)) /* truncate IB with TYP below */     \
+        MRM(0x00,    MOD(RM), REG(RM)) /* truncate IC with TYP below */     \
         AUX(EMPTY,   EMPTY,   EMITW(VAL(IM) & ((TYP(IM) << 6) - 1)))
 
 #define movxx_mi(RM, DP, IM)                                                \
     ADR REX(0,       RXB(RM)) EMITB(0xC7)                                   \
-        MRM(0x00,    MOD(RM), REG(RM)) /* truncate IB with TYP below */     \
+        MRM(0x00,    MOD(RM), REG(RM)) /* truncate IC with TYP below */     \
         AUX(SIB(RM), CMD(DP), EMITW(VAL(IM) & ((TYP(IM) << 6) - 1)))
 
 #define movxx_rr(RG, RM)                                                    \
