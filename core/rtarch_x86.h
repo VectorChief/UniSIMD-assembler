@@ -413,7 +413,7 @@
 
 #define mulxn_ri(RM, IM)                                                    \
         EMITB(0x69 | TYP(IM))                                               \
-        MRM(0x00,    MOD(RM), REG(RM))                                      \
+        MRM(REG(RM), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   CMD(IM))
 
 #define mulxn_rr(RG, RM)                                                    \
