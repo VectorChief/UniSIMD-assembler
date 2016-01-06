@@ -60,15 +60,15 @@
  *
  * Reserved 32-bit targets:
  *  - rtarch_m32.h         - 32-bit MIPS ISA, ?? core regs
- *  - rtarch_m32_128.h     - 32-bit MIPS ISA, ?? SIMD regs, MIPS3D
+ *  - rtarch_m32_128.h     - 32-bit MIPS ISA, ?? SIMD regs, MSA
  *  - rtarch_p32.h         - 32-bit PowerISA, ?? core regs
- *  - rtarch_p32_128.h     - 32-bit PowerISA, ?? SIMD regs, AltiVec
+ *  - rtarch_p32_128.h     - 32-bit PowerISA, ?? SIMD regs, VMX
  *
  * Reserved 64-bit targets:
  *  - rtarch_m64.h         - 64-bit MIPS ISA, ?? core regs
- *  - rtarch_m64_128.h     - 64-bit MIPS ISA, ?? SIMD regs, MIPS3D
+ *  - rtarch_m64_128.h     - 64-bit MIPS ISA, ?? SIMD regs, MSA
  *  - rtarch_p64.h         - 64-bit PowerISA, ?? core regs
- *  - rtarch_p64_128.h     - 64-bit PowerISA, ?? SIMD regs, AltiVec
+ *  - rtarch_p64_128.h     - 64-bit PowerISA, ?? SIMD regs, VMX
  *
  * Preliminary naming scheme for extended core and SIMD register files.
  *
