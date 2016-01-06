@@ -128,9 +128,9 @@
 
 /* displacement VAL,  TYP,  CMD */
 
-#define DP(im)  (im), 0x00, EMITW((im) & 0xFFF)
-#define DH(im)  (im), 0x00, EMITW((im) & 0xFFFF)        /* SIMD-only (in ARM) */
-#define DW(im)  (im), 0x00, EMITW((im) & 0xFFFFFFFF)    /* SIMD-only (in ARM) */
+#define DP(im)  (im), 0x00, EMITW((im) & ((0xFFC*Q)|0xFFC))  /* ext for Q=2,4 */
+#define DH(im)  (im), 0x00, EMITW((im) & (0xFFF0*Q)) /* <- SIMD-only (in ARM) */
+#define DW(im)  (im), 0x00, EMITW((im) & 0xFFFFFFF0) /* <- SIMD-only (in ARM) */
 
 #define PLAIN   0x00, 0x00, EMPTY
 
