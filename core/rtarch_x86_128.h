@@ -350,7 +350,8 @@
         MRM(0x07,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* cvt */
+/* cvt
+ * rounding mode comes from fp control register (set in FCTRL blocks) */
 
 #define cvtps_rr(RG, RM)                                                    \
         fpucw_st(Mebp,  inf_SCR00)                                          \
@@ -390,6 +391,15 @@
 #define cvtpn_ld(RG, RM, DP)                                                \
         movpx_ld(W(RG), W(RM), W(DP))                                       \
         cvtpn_rr(W(RG), W(RG))
+
+/* cvx
+ * rounding mode is encoded directly (not to be used in FCTRL blocks) */
+
+#define cvnpn_rr(RG, RM)     /* round to nearest */                         \
+        cvtpn_rr(W(RG), W(RM))
+
+#define cvnpn_ld(RG, RM, DP) /* round to nearest */                         \
+        cvtpn_ld(W(RG), W(RM), W(DP))
 
 /* add */
 
@@ -522,7 +532,8 @@
 
 #else /* RT_128 >= 2 */
 
-/* cvt */
+/* cvt
+ * rounding mode comes from fp control register (set in FCTRL blocks) */
 
 #define cvtps_rr(RG, RM)                                                    \
         EMITB(0x66) EMITB(0x0F) EMITB(0x5B)                                 \
@@ -541,6 +552,15 @@
         EMITB(0x0F) EMITB(0x5B)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
+
+/* cvx
+ * rounding mode is encoded directly (not to be used in FCTRL blocks) */
+
+#define cvnpn_rr(RG, RM)     /* round to nearest */                         \
+        cvtpn_rr(W(RG), W(RM))
+
+#define cvnpn_ld(RG, RM, DP) /* round to nearest */                         \
+        cvtpn_ld(W(RG), W(RM), W(DP))
 
 /* add */
 
