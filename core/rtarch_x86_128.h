@@ -636,7 +636,8 @@
         cmpxx_ri(Reax, IB(RT_SIMD_MASK_##mask))                             \
         jeqxx_lb(lb)
 
-/* simd mode */
+/* simd mode
+ * set in FCTRL blocks (cannot be nested) */
 
 #define RT_SIMD_MODE_ROUNDN     0x00    /* round to nearest */
 #define RT_SIMD_MODE_ROUNDM     0x01    /* round towards minus infinity */
@@ -663,7 +664,8 @@
 #define FCTRL_LEAVE(mode) /* destroys Reax (in ARM) */                      \
         mxcsr_ld(Mebp, inf_FCTRL)
 
-/* cvr */
+/* cvr
+ * rounding mode is encoded directly (not to be used in FCTRL blocks) */
 
 #define cvrps_rr(RG, RM, mode)                                              \
         FCTRL_ENTER(mode)                                                   \
