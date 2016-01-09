@@ -109,7 +109,8 @@
 /* registers    REG */
 
 #define TMxx    0x1A                    /* w26 */
-#define TIxx    0x1B                    /* w27 */
+#define TIxx    0x1B                    /* w27, not used together with TDxx */
+#define TDxx    0x1B                    /* w27, not used together with TIxx */
 #define TPxx    0x1C                    /* w28 */
 
 /******************************************************************************/

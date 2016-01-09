@@ -117,7 +117,7 @@
 
 #define adrpx_ld(RG, RM, DP) /* RG is a core reg, DP is SIMD-aligned */     \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C3(DP), EMPTY2)   \
-        EMITW(0x0B000000 | MRM(REG(RG), MOD(RM), TDxx)
+        EMITW(0x0B000000 | MRM(REG(RG), MOD(RM), TDxx))
 
 /* and */
 
