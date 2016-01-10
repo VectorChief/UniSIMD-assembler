@@ -132,12 +132,11 @@
 
 /* displacement VAL,  TYP,  CMD */
 
-#define DP(dp)  (dp), 0x00, EMITW((dp) & ((0x7FC  * Q) | 0x7FC))
-#define DM(dp)  (dp), 0x00, EMITW((dp) & ((0xFFC  * Q) | 0xFFC))
-#define DF(dp)  (dp), 0x00, EMITW((dp) & ((0x3FFC * Q) | 0x3FFC))
-#define DG(dp)  (dp), 0x00, EMITW((dp) & ((0x7FFC * Q) | 0x7FFC))
-#define DH(dp)  (dp), 0x00, EMITW((dp) & ((0xFFFC * Q) | 0xFFFC))
-#define DV(dp)  (dp), 0x00, EMITW((dp) & 0x7FFFFFFC)
+#define DP(dp)  (dp), 0x00, EMITW((dp) & ((0xFFC  * Q) | 0xC)) /* ext Q=1,2,4 */
+#define DF(dp)  (dp), 0x00, EMITW((dp) & ((0x3FFC * Q) | 0xC)) /* ext Q=1,2,4 */
+#define DG(dp)  (dp), 0x00, EMITW((dp) & ((0x7FFC * Q) | 0xC)) /* ext Q=1,2,4 */
+#define DH(dp)  (dp), 0x00, EMITW((dp) & ((0xFFFC * Q) | 0xC)) /* ext Q=1,2,4 */
+#define DV(dp)  (dp), 0x00, EMITW((dp) & 0x7FFFFFFC)  /* native x64 long mode */
 #define PLAIN   0x00, 0x00, EMPTY    /* special type for Oeax addressing mode */
 
 /* triplet pass-through wrapper */

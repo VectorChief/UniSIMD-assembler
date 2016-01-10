@@ -158,8 +158,7 @@
 
 /* displacement VAL,  TP1,  TP2 */
 
-#define DP(dp)  ((dp) & 0x7FC),      0, 0      /* native MIPS SIMD ld/st */
-#define DM(dp)  ((dp) & 0xFFC),      0, 0          /* native on all ARMs */
+#define DP(dp)  ((dp) & 0xFFC),      0, 0    /* native on all ARMs, MIPS */
 #define DF(dp)  ((dp) & 0x3FFC),     1, 1   /* native AArch64 core ld/st */
 #define DG(dp)  ((dp) & 0x7FFC),     1, 1      /* native MIPS core ld/st */
 #define DH(dp)  ((dp) & 0xFFFC),     1, 1   /* second native on all ARMs */
