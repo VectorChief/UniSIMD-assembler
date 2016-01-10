@@ -95,16 +95,16 @@
 
 #define VAL(val, tp1, tp2)  val
 
-#define M1(val, tp1, tp2)  M1##tp1
-#define G1(val, tp1, tp2)  G1##tp1
-#define M2(val, tp1, tp2)  M2##tp2
-#define G2(val, tp1, tp2)  G2##tp2
-#define G3(val, tp1, tp2)  G3##tp2 /* <- "G3##tp2" not a bug */
+#define  M1(val, tp1, tp2)  M1##tp1
+#define  G1(val, tp1, tp2)  G1##tp1
+#define  M2(val, tp1, tp2)  M2##tp2
+#define  G2(val, tp1, tp2)  G2##tp2
+#define  G3(val, tp1, tp2)  G3##tp2 /* <- "G3##tp2" not a bug */
 
-#define B1(val, tp1, tp2)  B1##tp1
-#define P1(val, tp1, tp2)  P1##tp1
-#define C1(val, tp1, tp2)  C1##tp1
-#define C3(val, tp1, tp2)  C3##tp1 /* <- "C3##tp1" not a bug */
+#define  B1(val, tp1, tp2)  B1##tp1
+#define  P1(val, tp1, tp2)  P1##tp1
+#define  C1(val, tp1, tp2)  C1##tp1
+#define  C3(val, tp1, tp2)  C3##tp2 /* <- "C3##tp2" not a bug */
 
 /* registers    REG */
 
@@ -197,21 +197,21 @@
 #define P10(dp) (0x00000000 | (dp))
 #define C10(br, dp) EMPTY
 #define C30(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
-                            (0xF0000 & (dp) <<  4) | (0xFF0 & (dp)))
+                            (0xF0000 & (dp) <<  4) | (0xFFC & (dp)))
 
 #define B11(br) TPxx
 #define P11(dp) (0x00000000)
-#define C11(br, dp) C31(br, dp)                                             \
+#define C11(br, dp) C30(br, dp)                                             \
                     EMITW(0xE0800000 | MRM(TPxx,    (br),    TDxx))
 #define C31(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
-                            (0xF0000 & (dp) <<  4) | (0xFF0 & (dp)))
+                            (0xF0000 & (dp) <<  4) | (0xFFC & (dp)))
 
 #define B12(br) TPxx
 #define P12(dp) (0x00000000)
 #define C12(br, dp) C32(br, dp)                                             \
                     EMITW(0xE0800000 | MRM(TPxx,    (br),    TDxx))
 #define C32(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
-                            (0xF0000 & (dp) <<  4) | (0xFF0 & (dp)))        \
+                            (0xF0000 & (dp) <<  4) | (0xFFC & (dp)))        \
                     EMITW(0xE3400000 | MRM(TDxx,    0x00,    0x00) |        \
                             (0x70000 & (dp) >> 12) | (0xFFF & (dp) >> 16))
 

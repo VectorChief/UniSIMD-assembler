@@ -95,16 +95,16 @@
 
 #define VAL(val, typ, cmd)  val
 
-#define M1(val, tp1, tp2)  M1##tp1
-#define G1(val, tp1, tp2)  G1##tp1
-#define M2(val, tp1, tp2)  M2##tp2
-#define G2(val, tp1, tp2)  G2##tp2
-#define G3(val, tp1, tp2)  G3##tp2 /* <- "G3##tp2" not a bug */
+#define  M1(val, tp1, tp2)  M1##tp1
+#define  G1(val, tp1, tp2)  G1##tp1
+#define  M2(val, tp1, tp2)  M2##tp2
+#define  G2(val, tp1, tp2)  G2##tp2
+#define  G3(val, tp1, tp2)  G3##tp2 /* <- "G3##tp2" not a bug */
 
-#define B1(val, tp1, tp2)  B1##tp1
-#define P1(val, tp1, tp2)  P1##tp1
-#define C1(val, tp1, tp2)  C1##tp1
-#define C3(val, tp1, tp2)  C3##tp1 /* <- "C3##tp1" not a bug */
+#define  B1(val, tp1, tp2)  B1##tp1
+#define  P1(val, tp1, tp2)  P1##tp1
+#define  C1(val, tp1, tp2)  C1##tp1
+#define  C3(val, tp1, tp2)  C3##tp2 /* <- "C3##tp2" not a bug */
 
 /* registers    REG */
 
@@ -213,23 +213,21 @@
 #define P10(dp) (0x00000000 | (dp) << 8)
 #define C10(br, dp) EMPTY
 #define C30(br, dp) EMITW(0x52800000 | MRM(TDxx,    0x00,    0x00) |        \
-                               ((dp) & 0xFFFF) << 5)
+                               ((dp) & 0xFFFC) << 5)
 
 #define B11(br) TPxx
 #define P11(dp) (0x00000000)
-#define C11(br, dp) C31(br, dp)                                             \
+#define C11(br, dp) C30(br, dp)                                             \
                     EMITW(0x0B000000 | MRM(TPxx,    (br),    TDxx))
-#define C31(br, dp) EMITW(0x52800000 | MRM(TDxx,    0x00,    0x00) |        \
-                               ((dp) & 0xFFFF) << 5)
 
 #define B12(br) TPxx
 #define P12(dp) (0x00000000)
 #define C12(br, dp) C32(br, dp)                                             \
                     EMITW(0x0B000000 | MRM(TPxx,    (br),    TDxx))
 #define C32(br, dp) EMITW(0x52800000 | MRM(TDxx,    0x00,    0x00) |        \
-                               ((dp) & 0xFFFF) << 5)                        \
+                               ((dp) & 0xFFFC) << 5)                        \
                     EMITW(0x72A00000 | MRM(TDxx,    0x00,    0x00) |        \
-                               ((dp) & 0xFFFF) << 5)
+                               ((dp) & 0x7FFF) << 5)
 
 /* triplet pass-through wrapper */
 
@@ -262,7 +260,7 @@
 
 #define adrxx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C3(DP), EMPTY2)   \
-        EMITW(0x0B000000 | MRM(REG(RG), MOD(RM), TDxx)
+        EMITW(0x0B000000 | MRM(REG(RG), MOD(RM), TDxx))
 
 #define adrxx_lb(lb) /* load label to Reax */                               \
         label_ld(lb)

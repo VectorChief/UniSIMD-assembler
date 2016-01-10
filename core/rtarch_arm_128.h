@@ -58,9 +58,9 @@
 
 /* selectors  */
 
-#define B2(val, tp1, tp2)  B2##tp2
-#define P2(val, tp1, tp2)  P2##tp2
-#define C2(val, tp1, tp2)  C2##tp2
+#define  B2(val, tp1, tp2)  B2##tp2
+#define  P2(val, tp1, tp2)  P2##tp2
+#define  C2(val, tp1, tp2)  C2##tp2
 
 /* displacement encoding SIMD(TP2) */
 
