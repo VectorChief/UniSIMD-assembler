@@ -195,16 +195,16 @@
 #define M21(im) (0x0A000000 | TIxx << 16)
 #define G21(rg, im) G31(rg, im)
 #define G31(rg, im) EMITW(0x52800000 | MRM((rg),    0x00,    0x00) |        \
-                               ((im) & 0xFFFF) << 5)
+                             (0xFFFF & (im)) << 5)
 
 #define M12(im) (0x0A000000 | TIxx << 16)
 #define G12(rg, im) G32(rg, im)
 #define M22(im) (0x0A000000 | TIxx << 16)
 #define G22(rg, im) G32(rg, im)
 #define G32(rg, im) EMITW(0x52800000 | MRM((rg),    0x00,    0x00) |        \
-                               ((im) & 0xFFFF) << 5)                        \
+                             (0xFFFF & (im)) << 5)                          \
                     EMITW(0x72A00000 | MRM((rg),    0x00,    0x00) |        \
-                               ((im) & 0xFFFF) << 5)
+                             (0xFFFF & (im) >> 16) << 5)
 
 /* displacement encoding core(TP1), adr(TP3) */
 
@@ -212,7 +212,7 @@
 #define P10(dp) (0x00000000 | (dp) << 8)
 #define C10(br, dp) EMPTY
 #define C30(br, dp) EMITW(0x52800000 | MRM(TDxx,    0x00,    0x00) |        \
-                               ((dp) & 0xFFFC) << 5)
+                             (0xFFFC & (dp)) << 5)
 
 #define B11(br) TPxx
 #define P11(dp) (0x00000000)
@@ -224,9 +224,9 @@
 #define C12(br, dp) C32(br, dp)                                             \
                     EMITW(0x0B000000 | MRM(TPxx,    (br),    TDxx))
 #define C32(br, dp) EMITW(0x52800000 | MRM(TDxx,    0x00,    0x00) |        \
-                               ((dp) & 0xFFFC) << 5)                        \
+                             (0xFFFC & (dp)) << 5)                          \
                     EMITW(0x72A00000 | MRM(TDxx,    0x00,    0x00) |        \
-                               ((dp) & 0x7FFF) << 5)
+                             (0x7FFF & (dp) >> 16) << 5)
 
 /* triplet pass-through wrapper */
 

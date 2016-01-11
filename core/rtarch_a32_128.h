@@ -64,9 +64,9 @@
 #define B22(br) TPxx
 #define P22(dp) (0x00000000)
 #define C22(br, dp) EMITW(0x52800000 | MRM(TDxx,    0x00,    0x00) |        \
-                               ((dp) & 0xFFF0) << 5)                        \
+                             (0xFFF0 & (dp)) << 5)                          \
                     EMITW(0x72A00000 | MRM(TDxx,    0x00,    0x00) |        \
-                               ((dp) & 0x7FFF) << 5)                        \
+                             (0x7FFF & (dp) >> 16) << 5)                    \
                     EMITW(0x0B000000 | MRM(TPxx,    (br),    TDxx))
 
 /* registers    REG */
