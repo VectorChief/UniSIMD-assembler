@@ -79,8 +79,8 @@
 #define MDM(reg, brm, vdp, bxx, pxx)                                        \
         (bxx(brm) << 16 | (reg) << 12 | pxx(vdp))
 
-#define MIM(reg, ren, vim, mxx)                                             \
-        ((ren) << 16 | (reg) << 12 | mxx(vim))
+#define MIM(reg, ren, vim, txx, mxx)                                        \
+        ((ren) << 16 | txx(reg) | mxx(vim))
 
 #define AUZ(sib, vim, reg, brm, vdp, cdp, cim)                              \
             sib  cdp(brm, vdp)  cim(reg, vim)
@@ -95,8 +95,10 @@
 
 #define VAL(val, tp1, tp2)  val
 
+#define  T1(val, tp1, tp2)  T1##tp1
 #define  M1(val, tp1, tp2)  M1##tp1
 #define  G1(val, tp1, tp2)  G1##tp1
+#define  T2(val, tp1, tp2)  T2##tp2
 #define  M2(val, tp1, tp2)  M2##tp2
 #define  G2(val, tp1, tp2)  G2##tp2
 #define  G3(val, tp1, tp2)  G3##tp2 /* <- "G3##tp2" not a bug */
@@ -167,22 +169,28 @@
 
 /* immediate encoding add/sub/cmp(TP1), and/orr/xor(TP2), mov/mul(TP3) */
 
+#define T10(tr) ((tr) << 12)
 #define M10(im) (0x02000000 | (im))
 #define G10(rg, im) EMPTY
+#define T20(tr) ((tr) << 12)
 #define M20(im) (0x02000000 | (im))
 #define G20(rg, im) EMPTY
 #define G30(rg, im) EMITW(0xE3000000 | MRM((rg),    0x00,    0x00) |        \
                             (0xF0000 & (im) <<  4) | (0xFFF & (im)))
 
+#define T11(tr) ((tr) << 12)
 #define M11(im) (0x00000000 | TIxx)
 #define G11(rg, im) G31(rg, im)
+#define T21(tr) ((tr) << 12)
 #define M21(im) (0x00000000 | TIxx)
 #define G21(rg, im) G31(rg, im)
 #define G31(rg, im) EMITW(0xE3000000 | MRM((rg),    0x00,    0x00) |        \
                             (0xF0000 & (im) <<  4) | (0xFFF & (im)))
 
+#define T12(tr) ((tr) << 12)
 #define M12(im) (0x00000000 | TIxx)
 #define G12(rg, im) G32(rg, im)
+#define T22(tr) ((tr) << 12)
 #define M22(im) (0x00000000 | TIxx)
 #define G22(rg, im) G32(rg, im)
 #define G32(rg, im) EMITW(0xE3000000 | MRM((rg),    0x00,    0x00) |        \
@@ -267,12 +275,12 @@
 
 #define andxx_ri(RM, IM)                                                    \
         AUZ(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
-        EMITW(0xE0100000 | MIM(REG(RM), REG(RM), VAL(IM), M2(IM)))
+        EMITW(0xE0100000 | MIM(REG(RM), REG(RM), VAL(IM), T2(IM), M2(IM)))
 
 #define andxx_mi(RM, DP, IM)                                                \
         AUZ(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
         EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0xE0100000 | MIM(TMxx,    TMxx,    VAL(IM), M2(IM)))          \
+        EMITW(0xE0100000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)))  \
         EMITW(0xE5800000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define andxx_rr(RG, RM)                                                    \
@@ -294,12 +302,12 @@
 
 #define orrxx_ri(RM, IM)                                                    \
         AUZ(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
-        EMITW(0xE1800000 | MIM(REG(RM), REG(RM), VAL(IM), M2(IM)))
+        EMITW(0xE1800000 | MIM(REG(RM), REG(RM), VAL(IM), T2(IM), M2(IM)))
 
 #define orrxx_mi(RM, DP, IM)                                                \
         AUZ(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
         EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0xE1800000 | MIM(TMxx,    TMxx,    VAL(IM), M2(IM)))          \
+        EMITW(0xE1800000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)))  \
         EMITW(0xE5800000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define orrxx_rr(RG, RM)                                                    \
@@ -321,12 +329,12 @@
 
 #define xorxx_ri(RM, IM)                                                    \
         AUZ(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
-        EMITW(0xE0200000 | MIM(REG(RM), REG(RM), VAL(IM), M2(IM)))
+        EMITW(0xE0200000 | MIM(REG(RM), REG(RM), VAL(IM), T2(IM), M2(IM)))
 
 #define xorxx_mi(RM, DP, IM)                                                \
         AUZ(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
         EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0xE0200000 | MIM(TMxx,    TMxx,    VAL(IM), M2(IM)))          \
+        EMITW(0xE0200000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)))  \
         EMITW(0xE5800000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define xorxx_rr(RG, RM)                                                    \
@@ -372,12 +380,12 @@
 
 #define addxx_ri(RM, IM)                                                    \
         AUZ(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
-        EMITW(0xE0900000 | MIM(REG(RM), REG(RM), VAL(IM), M1(IM)))
+        EMITW(0xE0900000 | MIM(REG(RM), REG(RM), VAL(IM), T1(IM), M1(IM)))
 
 #define addxx_mi(RM, DP, IM)                                                \
         AUZ(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G1(IM))   \
         EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0xE0900000 | MIM(TMxx,    TMxx,    VAL(IM), M1(IM)))          \
+        EMITW(0xE0900000 | MIM(TMxx,    TMxx,    VAL(IM), T1(IM), M1(IM)))  \
         EMITW(0xE5800000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define addxx_rr(RG, RM)                                                    \
@@ -399,12 +407,12 @@
 
 #define subxx_ri(RM, IM)                                                    \
         AUZ(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
-        EMITW(0xE0500000 | MIM(REG(RM), REG(RM), VAL(IM), M1(IM)))
+        EMITW(0xE0500000 | MIM(REG(RM), REG(RM), VAL(IM), T1(IM), M1(IM)))
 
 #define subxx_mi(RM, DP, IM)                                                \
         AUZ(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G1(IM))   \
         EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0xE0500000 | MIM(TMxx,    TMxx,    VAL(IM), M1(IM)))          \
+        EMITW(0xE0500000 | MIM(TMxx,    TMxx,    VAL(IM), T1(IM), M1(IM)))  \
         EMITW(0xE5800000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define subxx_rr(RG, RM)                                                    \
@@ -654,12 +662,12 @@
 
 #define cmpxx_ri(RM, IM)                                                    \
         AUZ(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
-        EMITW(0xE1500000 | MIM(0x00,    REG(RM), VAL(IM), M1(IM)))
+        EMITW(0xE1500000 | MIM(0x00,    REG(RM), VAL(IM), T1(IM), M1(IM)))
 
 #define cmpxx_mi(RM, DP, IM)                                                \
         AUZ(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G1(IM))   \
         EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0xE1500000 | MIM(0x00,    TMxx,    VAL(IM), M1(IM)))
+        EMITW(0xE1500000 | MIM(0x00,    TMxx,    VAL(IM), T1(IM), M1(IM)))
 
 #define cmpxx_rr(RG, RM)                                                    \
         EMITW(0xE1500000 | MRM(0x00,    REG(RG), REG(RM)))
