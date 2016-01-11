@@ -115,17 +115,17 @@
 
 #define movpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(REG(RG), TPxx,    0x00))
 
 #define movpx_st(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4000AAF | MTM(REG(RG), TPxx,    0x00))
 
 #define adrpx_ld(RG, RM, DP) /* RG is a core reg, DP is SIMD-aligned */     \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(REG(RG), MOD(RM), VAL(DP), B2(DP), P2(DP)))
+        EMITW(0xE0800000 | MDM(REG(RG), MOD(RM), VAL(DP), B2(DP), P2(DP)))
 
 /* and */
 
@@ -134,7 +134,7 @@
 
 #define andpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF2000150 | MTM(REG(RG), REG(RG), Tmm1))
 
@@ -145,7 +145,7 @@
 
 #define annpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF2100150 | MTM(REG(RG), Tmm1,    REG(RG)))
 
@@ -156,7 +156,7 @@
 
 #define orrpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF2200150 | MTM(REG(RG), REG(RG), Tmm1))
 
@@ -167,7 +167,7 @@
 
 #define xorpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF3000150 | MTM(REG(RG), REG(RG), Tmm1))
 
@@ -180,7 +180,7 @@
 
 #define addps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF2000D40 | MTM(REG(RG), REG(RG), Tmm1))
 
@@ -191,7 +191,7 @@
 
 #define subps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF2200D40 | MTM(REG(RG), REG(RG), Tmm1))
 
@@ -202,7 +202,7 @@
 
 #define mulps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF3000D50 | MTM(REG(RG), REG(RG), Tmm1))
 
@@ -218,7 +218,7 @@
 
 #define divps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm3,    TPxx,    0x00))                     \
         EMITW(0xF3BB0540 | MTM(Tmm1,    0x00,    Tmm3))    /* estimate */   \
         EMITW(0xF2000F50 | MTM(Tmm2,    Tmm1,    Tmm3))    /* 1st N-R */    \
@@ -241,7 +241,7 @@
 
 #define sqrps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm3,    TPxx,    0x00))                     \
         EMITW(0xF3BB05C0 | MTM(Tmm1,    0x00,    Tmm3))    /* estimate */   \
         EMITW(0xF3000D50 | MTM(Tmm2,    Tmm1,    Tmm1))    /* pre-mul */    \
@@ -289,7 +289,7 @@
 
 #define minps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF2200F40 | MTM(REG(RG), REG(RG), Tmm1))
 
@@ -300,7 +300,7 @@
 
 #define maxps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF2000F40 | MTM(REG(RG), REG(RG), Tmm1))
 
@@ -311,7 +311,7 @@
 
 #define ceqps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF2000E40 | MTM(REG(RG), REG(RG), Tmm1))
 
@@ -321,7 +321,7 @@
 
 #define cneps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF2000E40 | MTM(REG(RG), REG(RG), Tmm1))                     \
         EMITW(0xF3B005C0 | MTM(REG(RG), 0x00,    REG(RG)))
@@ -331,7 +331,7 @@
 
 #define cltps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF3200E40 | MTM(REG(RG), Tmm1,    REG(RG)))
 
@@ -340,7 +340,7 @@
 
 #define cleps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF3000E40 | MTM(REG(RG), Tmm1,    REG(RG)))
 
@@ -349,7 +349,7 @@
 
 #define cgtps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF3200E40 | MTM(REG(RG), REG(RG), Tmm1))
 
@@ -358,7 +358,7 @@
 
 #define cgeps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF3000E40 | MTM(REG(RG), REG(RG), Tmm1))
 
@@ -376,7 +376,7 @@
 
 #define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF3BB0740 | MTM(REG(RG), 0x00,    Tmm1))
 
@@ -395,7 +395,7 @@
 
 #define cvtps_ld(RG, RM, DP) /* fallback to VFP for float-to-integer cvt */ \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(REG(RG), TPxx,    0x00))                     \
         EMITW(0xEEBD0A40 | MTM(REG(RG)+0, 0x00,  REG(RG)+0)) /* due to */   \
         EMITW(0xEEFD0A60 | MTM(REG(RG)+0, 0x00,  REG(RG)+0)) /* lack of */  \
@@ -410,7 +410,7 @@
 
 #define cvtpn_ld(RG, RM, DP) /* fallback to VFP for integer-to-float cvt */ \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(REG(RG), TPxx,    0x00))                     \
         EMITW(0xEEB80AC0 | MTM(REG(RG)+0, 0x00,  REG(RG)+0)) /* due to */   \
         EMITW(0xEEF80AE0 | MTM(REG(RG)+0, 0x00,  REG(RG)+0)) /* lack of */  \
@@ -425,7 +425,7 @@
 
 #define cvnpn_ld(RG, RM, DP) /* round to nearest */                         \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF3BB0640 | MTM(REG(RG), 0x00,    Tmm1))
 
@@ -436,7 +436,7 @@
 
 #define addpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF2200840 | MTM(REG(RG), REG(RG), Tmm1))
 
@@ -447,7 +447,7 @@
 
 #define subpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF3200840 | MTM(REG(RG), REG(RG), Tmm1))
 
@@ -459,7 +459,7 @@
 
 #define shlpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4A00CBF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF3200440 | MTM(REG(RG), Tmm1,    REG(RG)))
 
@@ -472,7 +472,7 @@
 
 #define shrpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4A00CBF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF3B903C0 | MTM(Tmm1,    0x00,    Tmm1))                     \
         EMITW(0xF3200440 | MTM(REG(RG), Tmm1,    REG(RG)))
@@ -484,7 +484,7 @@
 
 #define shrpn_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MZM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xE0800000 | MDM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4A00CBF | MTM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF3B903C0 | MTM(Tmm1,    0x00,    Tmm1))                     \
         EMITW(0xF2200440 | MTM(REG(RG), Tmm1,    REG(RG)))

@@ -109,11 +109,11 @@
 
 #define movpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(REG(RG), MOD(RM), VAL(DP), B2(DP), P2(DP)))
+        EMITW(0x3DC00000 | MDM(REG(RG), MOD(RM), VAL(DP), B2(DP), P2(DP)))
 
 #define movpx_st(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3D800000 | MZM(REG(RG), MOD(RM), VAL(DP), B2(DP), P2(DP)))
+        EMITW(0x3D800000 | MDM(REG(RG), MOD(RM), VAL(DP), B2(DP), P2(DP)))
 
 #define adrpx_ld(RG, RM, DP) /* RG is a core reg, DP is SIMD-aligned */     \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C3(DP), EMPTY2)   \
@@ -126,7 +126,7 @@
 
 #define andpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4E201C00 | MRM(REG(RG), REG(RG), Tmm1))
 
 /* ann */
@@ -136,7 +136,7 @@
 
 #define annpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4E601C00 | MRM(REG(RG), Tmm1,    REG(RG)))
 
 /* orr */
@@ -146,7 +146,7 @@
 
 #define orrpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4EA01C00 | MRM(REG(RG), REG(RG), Tmm1))
 
 /* xor */
@@ -156,7 +156,7 @@
 
 #define xorpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x6E201C00 | MRM(REG(RG), REG(RG), Tmm1))
 
 /**************   packed single precision floating point (NEON)   *************/
@@ -168,7 +168,7 @@
 
 #define addps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4E20D400 | MRM(REG(RG), REG(RG), Tmm1))
 
 /* sub */
@@ -178,7 +178,7 @@
 
 #define subps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4EA0D400 | MRM(REG(RG), REG(RG), Tmm1))
 
 /* mul */
@@ -188,7 +188,7 @@
 
 #define mulps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x6E20DC00 | MRM(REG(RG), REG(RG), Tmm1))
 
 /* div */
@@ -198,7 +198,7 @@
 
 #define divps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x6E20FC00 | MRM(REG(RG), REG(RG), Tmm1))
 
 /* sqr */
@@ -208,7 +208,7 @@
 
 #define sqrps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x6EA1F800 | MRM(REG(RG), Tmm1,    0x00))
 
 /* cbr */
@@ -248,7 +248,7 @@
 
 #define minps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4EA0F400 | MRM(REG(RG), REG(RG), Tmm1))
 
 /* max */
@@ -258,7 +258,7 @@
 
 #define maxps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4E20F400 | MRM(REG(RG), REG(RG), Tmm1))
 
 /* cmp */
@@ -268,7 +268,7 @@
 
 #define ceqps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4E20E400 | MRM(REG(RG), REG(RG), Tmm1))
 
 #define cneps_rr(RG, RM)                                                    \
@@ -277,7 +277,7 @@
 
 #define cneps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4E20E400 | MRM(REG(RG), REG(RG), Tmm1))                     \
         EMITW(0x6E205800 | MRM(REG(RG), REG(RG), 0x00))
 
@@ -286,7 +286,7 @@
 
 #define cltps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x6EA0E400 | MRM(REG(RG), Tmm1,    REG(RG)))
 
 #define cleps_rr(RG, RM)                                                    \
@@ -294,7 +294,7 @@
 
 #define cleps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x6E20E400 | MRM(REG(RG), Tmm1,    REG(RG)))
 
 #define cgtps_rr(RG, RM)                                                    \
@@ -302,7 +302,7 @@
 
 #define cgtps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x6EA0E400 | MRM(REG(RG), REG(RG), Tmm1))
 
 #define cgeps_rr(RG, RM)                                                    \
@@ -310,7 +310,7 @@
 
 #define cgeps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x6E20E400 | MRM(REG(RG), REG(RG), Tmm1))
 
 /**************************   packed integer (NEON)   *************************/
@@ -326,7 +326,7 @@
 
 #define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4EA1B800 | MRM(REG(RG), Tmm1,    0x00))
 
 /* cvt
@@ -341,7 +341,7 @@
 
 #define cvtps_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x6EA19800 | MRM(REG(RG), Tmm1,    0x00))                     \
         EMITW(0x4E21A800 | MRM(REG(RG), REG(RG), 0x00))
 
@@ -350,7 +350,7 @@
 
 #define cvtpn_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4E21D800 | MRM(REG(RG), Tmm1,    0x00))
 
 /* cvn
@@ -369,7 +369,7 @@
 
 #define addpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4EA08400 | MRM(REG(RG), REG(RG), Tmm1))
 
 /* sub */
@@ -379,7 +379,7 @@
 
 #define subpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x6EA08400 | MRM(REG(RG), REG(RG), Tmm1))
 
 /* shl */
@@ -390,7 +390,7 @@
 
 #define shlpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4E040400 | MRM(Tmm1,    Tmm1,    0x00))                     \
         EMITW(0x6EE04400 | MRM(REG(RG), REG(RG), Tmm1))
 
@@ -403,7 +403,7 @@
 
 #define shrpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4E040400 | MRM(Tmm1,    Tmm1,    0x00))                     \
         EMITW(0x6EA0B800 | MRM(Tmm1,    Tmm1,    0x00))                     \
         EMITW(0x6EE04400 | MRM(REG(RG), REG(RG), Tmm1))
@@ -415,7 +415,7 @@
 
 #define shrpn_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MZM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4E040400 | MRM(Tmm1,    Tmm1,    0x00))                     \
         EMITW(0x6EA0B800 | MRM(Tmm1,    Tmm1,    0x00))                     \
         EMITW(0x4EE04400 | MRM(REG(RG), REG(RG), Tmm1))
