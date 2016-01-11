@@ -94,6 +94,8 @@
 #define SIB(reg, mod, sib)  sib
 
 #define VAL(val, tp1, tp2)  val
+#define TP1(val, tp1, tp2)  tp1
+#define TP2(val, tp1, tp2)  tp2
 
 #define  T1(val, tp1, tp2)  T1##tp1
 #define  M1(val, tp1, tp2)  M1##tp1
