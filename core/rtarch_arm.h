@@ -85,6 +85,7 @@
 #define AUZ(sib, vim, reg, brm, vdp, cdp, cim)                              \
             sib  cdp(brm, vdp)  cim(reg, vim)
 
+#define EMPTY1(em1)
 #define EMPTY2(em1, em2)
 
 /* selectors  */
