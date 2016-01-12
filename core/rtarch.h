@@ -40,6 +40,8 @@
  *  - rtarch_arm_128.h     - 32-bit ARMv7/8 ISA, 16 SIMD regs, 8 + temps used
  *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 core regs, int-div, fp-cvt-r
  *  - rtarch_a32_128.h     - AArch64:ILP32 ABI, 32 SIMD regs, IEEE-fp, sqr, div
+ *  - rtarch_m32.h         - 32-bit MIPS r5/r6 ISA, 32 core regs, 14 + 3 used
+ *  - rtarch_m32_128.h     - 32-bit MIPS r5/r6 ISA, 32 SIMD regs, MSA 128-bit
  *  - rtarch_x86.h         - 32-bit x86 ISA, 8 core regs, 6 + esp, ebp used
  *  - rtarch_x86_128.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, SSE
  *  - rtarch_x86_256.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, AVX
@@ -60,16 +62,14 @@
  *  - rtarch_x64_512.h     - x86_64:x64 ISA, 32 SIMD regs, AVX 512-bit
  *
  * Reserved 32-bit targets:
- *  - rtarch_m32.h         - 32-bit MIPS ISA, ?? core regs
- *  - rtarch_m32_128.h     - 32-bit MIPS ISA, ?? SIMD regs, MSA
- *  - rtarch_p32.h         - 32-bit PowerISA, ?? core regs
- *  - rtarch_p32_128.h     - 32-bit PowerISA, ?? SIMD regs, VMX
+ *  - rtarch_p32.h         - 32-bit PowerISA, 32 core regs
+ *  - rtarch_p32_128.h     - 32-bit PowerISA, 32 SIMD regs, VMX
  *
  * Reserved 64-bit targets:
- *  - rtarch_m64.h         - 64-bit MIPS ISA, ?? core regs
- *  - rtarch_m64_128.h     - 64-bit MIPS ISA, ?? SIMD regs, MSA
- *  - rtarch_p64.h         - 64-bit PowerISA, ?? core regs
- *  - rtarch_p64_128.h     - 64-bit PowerISA, ?? SIMD regs, VMX
+ *  - rtarch_m64.h         - 64-bit MIPS ISA, 32 core regs
+ *  - rtarch_m64_128.h     - 64-bit MIPS ISA, 32 SIMD regs, MSA
+ *  - rtarch_p64.h         - 64-bit PowerISA, 32 core regs
+ *  - rtarch_p64_128.h     - 64-bit PowerISA, 32 SIMD regs, VMX
  *
  * Preliminary naming scheme for extended core and SIMD register files.
  *
@@ -121,6 +121,7 @@
 #define ASM_OP0(op)             op
 #define ASM_OP1(op, p1)         op  p1
 #define ASM_OP2(op, p1, p2)     op  p1, p2
+#define ASM_OP3(op, p1, p2, p3) op  p1, p2, p3
 
 #define ASM_BEG /*internal*/    __asm {
 #define ASM_END /*internal*/    }
@@ -128,7 +129,6 @@
 #define EMITB(b)                ASM_BEG ASM_OP1(_emit, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lea, eax, lb) ASM_END
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, eax, lb) ASM_END
-#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, eax) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -149,13 +149,7 @@
 #define ASM_LEAVE(info)         popad   /* stack_la() */                    \
                             }
 
-/* ---------------------------------   ARM   -------------------------------- */
-
-#elif defined (RT_ARM)
-
-#error "ARM native builds for Windows are not supported yet"
-
-#endif /* RT_X86, RT_ARM */
+#endif /* RT_X86 */
 
 /*******************************   LINUX, GCC   *******************************/
 
@@ -168,6 +162,7 @@
 #define ASM_OP0(op)             #op
 #define ASM_OP1(op, p1)         #op"  "#p1
 #define ASM_OP2(op, p1, p2)     #op"  "#p2", "#p1
+#define ASM_OP3(op, p1, p2, p3) #op"  "#p1", "#p2", "#p3
 
 #define ASM_BEG /*internal*/    ""
 #define ASM_END /*internal*/    "\n"
@@ -175,7 +170,6 @@
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, %%eax, lb) ASM_END
-#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, lb, %%eax) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -203,6 +197,7 @@
 #define ASM_OP0(op)             #op
 #define ASM_OP1(op, p1)         #op"  "#p1
 #define ASM_OP2(op, p1, p2)     #op"  "#p2", "#p1
+#define ASM_OP3(op, p1, p2, p3) #op"  "#p1", "#p2", "#p3
 
 #define ASM_BEG /*internal*/    ""
 #define ASM_END /*internal*/    "\n"
@@ -210,7 +205,6 @@
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, %%eax, lb) ASM_END
-#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, lb, %%eax) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -243,6 +237,7 @@
 #define ASM_OP0(op)             #op
 #define ASM_OP1(op, p1)         #op"  "#p1
 #define ASM_OP2(op, p1, p2)     #op"  "#p1", "#p2
+#define ASM_OP3(op, p1, p2, p3) #op"  "#p1", "#p2", "#p3
 
 #define ASM_BEG /*internal*/    ""
 #define ASM_END /*internal*/    "\n"
@@ -250,7 +245,6 @@
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(adr, r0, lb) ASM_END
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, r0, lb) ASM_END
-#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, r0) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -285,6 +279,7 @@
 #define ASM_OP0(op)             #op
 #define ASM_OP1(op, p1)         #op"  "#p1
 #define ASM_OP2(op, p1, p2)     #op"  "#p1", "#p2
+#define ASM_OP3(op, p1, p2, p3) #op"  "#p1", "#p2", "#p3
 
 #define ASM_BEG /*internal*/    ""
 #define ASM_END /*internal*/    "\n"
@@ -292,7 +287,6 @@
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(adr, x0, lb) ASM_END
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, w0, lb) ASM_END
-#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, w0) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -317,7 +311,44 @@
                                   "q12", "q13", "q14", "q15", "q31"         \
                             );
 
-#endif /* RT_X86, RT_X32, RT_ARM, RT_A32 */
+/* ---------------------------------   M32   -------------------------------- */
+
+#elif defined (RT_M32)
+
+#define ASM_OP0(op)             #op
+#define ASM_OP1(op, p1)         #op"  "#p1
+#define ASM_OP2(op, p1, p2)     #op"  "#p1", "#p2
+#define ASM_OP3(op, p1, p2, p3) #op"  "#p1", "#p2", "#p3
+
+#define ASM_BEG /*internal*/    ""
+#define ASM_END /*internal*/    "\n"
+
+#define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
+#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(la, $a0, lb) ASM_END
+#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(move, $a0, lb) ASM_END
+#define movxx_xx()  /*Rebp*/    ASM_BEG ASM_OP2(move, $a1, %0) ASM_END
+
+#if   defined (RT_256) && (RT_256 != 0)
+#define S 8
+#error "MSA doesn't support SIMD wider than 4 at the moment"
+#elif defined (RT_128) && (RT_128 != 0)
+#define S 4
+#include "rtarch_m32_128.h"
+#endif /* RT_256, RT_128 */
+
+#define ASM_ENTER(info)     asm volatile                                    \
+                            (                                               \
+                                movxx_xx()                                  \
+                                EMITW(0x787EF79E) /* Tmm0(w30) <- 0 */
+#define ASM_LEAVE(info)         :                                           \
+                                : "r" (info)                                \
+                                : "cc",  "memory",                          \
+                                  "at", "v0", "v1", "a0", "a1", "a2", "a3", \
+                                  "t0", "t1", "t2", "t3", "t4", "t5", "t6", \
+                                  "t7", "t8", "t9"                          \
+                            );
+
+#endif /* RT_X86, RT_X32, RT_ARM, RT_A32, RT_M32 */
 
 #endif /* OS, COMPILER, ARCH */
 
