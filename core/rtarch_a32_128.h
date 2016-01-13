@@ -49,6 +49,14 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
+/* structural */
+
+#define MXM(reg, ren, rem)                                                  \
+        ((rem) << 16 | (ren) << 5 | (reg))
+
+#define MPM(reg, brm, vdp, bxx, pxx)                                        \
+        (pxx(vdp) | bxx(brm) << 5 | (reg))
+
 /* selectors  */
 
 #define  B2(val, tp1, tp2)  B2##tp2
@@ -63,11 +71,11 @@
 
 #define B22(br) TPxx
 #define P22(dp) (0x00000000)
-#define C22(br, dp) EMITW(0x52800000 | MRM(TDxx,    0x00,    0x00) |        \
+#define C22(br, dp) EMITW(0x52800000 | MXM(TDxx,    0x00,    0x00) |        \
                              (0xFFF0 & (dp)) << 5)                          \
-                    EMITW(0x72A00000 | MRM(TDxx,    0x00,    0x00) |        \
+                    EMITW(0x72A00000 | MXM(TDxx,    0x00,    0x00) |        \
                              (0x7FFF & (dp) >> 16) << 5)                    \
-                    EMITW(0x0B000000 | MRM(TPxx,    (br),    TDxx))
+                    EMITW(0x0B000000 | MXM(TPxx,    (br),    TDxx))
 
 /* registers    REG */
 
@@ -105,111 +113,111 @@
 /* mov */
 
 #define movpx_rr(RG, RM)                                                    \
-        EMITW(0x4EA01C00 | MRM(REG(RG), REG(RM), REG(RM)))
+        EMITW(0x4EA01C00 | MXM(REG(RG), REG(RM), REG(RM)))
 
 #define movpx_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(REG(RG), MOD(RM), VAL(DP), B2(DP), P2(DP)))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(REG(RG), MOD(RM), VAL(DP), B2(DP), P2(DP)))
 
 #define movpx_st(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3D800000 | MDM(REG(RG), MOD(RM), VAL(DP), B2(DP), P2(DP)))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3D800000 | MPM(REG(RG), MOD(RM), VAL(DP), B2(DP), P2(DP)))
 
 #define adrpx_ld(RG, RM, DP) /* RG is a core reg, DP is SIMD-aligned */     \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C3(DP), EMPTY2)   \
-        EMITW(0x0B000000 | MRM(REG(RG), MOD(RM), TDxx))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C3(DP), EMPTY2)   \
+        EMITW(0x0B000000 | MXM(REG(RG), MOD(RM), TDxx))
 
 /* and */
 
 #define andpx_rr(RG, RM)                                                    \
-        EMITW(0x4E201C00 | MRM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x4E201C00 | MXM(REG(RG), REG(RG), REG(RM)))                  \
 
 #define andpx_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x4E201C00 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x4E201C00 | MXM(REG(RG), REG(RG), Tmm1))
 
 /* ann */
 
 #define annpx_rr(RG, RM)                                                    \
-        EMITW(0x4E601C00 | MRM(REG(RG), REG(RM), REG(RG)))                  \
+        EMITW(0x4E601C00 | MXM(REG(RG), REG(RM), REG(RG)))                  \
 
 #define annpx_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x4E601C00 | MRM(REG(RG), Tmm1,    REG(RG)))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x4E601C00 | MXM(REG(RG), Tmm1,    REG(RG)))
 
 /* orr */
 
 #define orrpx_rr(RG, RM)                                                    \
-        EMITW(0x4EA01C00 | MRM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x4EA01C00 | MXM(REG(RG), REG(RG), REG(RM)))                  \
 
 #define orrpx_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x4EA01C00 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x4EA01C00 | MXM(REG(RG), REG(RG), Tmm1))
 
 /* xor */
 
 #define xorpx_rr(RG, RM)                                                    \
-        EMITW(0x6E201C00 | MRM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x6E201C00 | MXM(REG(RG), REG(RG), REG(RM)))                  \
 
 #define xorpx_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x6E201C00 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x6E201C00 | MXM(REG(RG), REG(RG), Tmm1))
 
 /**************   packed single precision floating point (NEON)   *************/
 
 /* add */
 
 #define addps_rr(RG, RM)                                                    \
-        EMITW(0x4E20D400 | MRM(REG(RG), REG(RG), REG(RM)))
+        EMITW(0x4E20D400 | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define addps_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x4E20D400 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x4E20D400 | MXM(REG(RG), REG(RG), Tmm1))
 
 /* sub */
 
 #define subps_rr(RG, RM)                                                    \
-        EMITW(0x4EA0D400 | MRM(REG(RG), REG(RG), REG(RM)))
+        EMITW(0x4EA0D400 | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define subps_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x4EA0D400 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x4EA0D400 | MXM(REG(RG), REG(RG), Tmm1))
 
 /* mul */
 
 #define mulps_rr(RG, RM)                                                    \
-        EMITW(0x6E20DC00 | MRM(REG(RG), REG(RG), REG(RM)))
+        EMITW(0x6E20DC00 | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define mulps_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x6E20DC00 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x6E20DC00 | MXM(REG(RG), REG(RG), Tmm1))
 
 /* div */
 
 #define divps_rr(RG, RM)                                                    \
-        EMITW(0x6E20FC00 | MRM(REG(RG), REG(RG), REG(RM)))
+        EMITW(0x6E20FC00 | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define divps_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x6E20FC00 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x6E20FC00 | MXM(REG(RG), REG(RG), Tmm1))
 
 /* sqr */
 
 #define sqrps_rr(RG, RM)                                                    \
-        EMITW(0x6EA1F800 | MRM(REG(RG), REG(RM), 0x00))
+        EMITW(0x6EA1F800 | MXM(REG(RG), REG(RM), 0x00))
 
 #define sqrps_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x6EA1F800 | MRM(REG(RG), Tmm1,    0x00))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x6EA1F800 | MXM(REG(RG), Tmm1,    0x00))
 
 /* cbr */
 
@@ -219,11 +227,11 @@
 /* rcp */
 
 #define rceps_rr(RG, RM)                                                    \
-        EMITW(0x4EA1D800 | MRM(REG(RG), REG(RM), 0x00))
+        EMITW(0x4EA1D800 | MXM(REG(RG), REG(RM), 0x00))
 
 #define rcsps_rr(RG, RM) /* destroys RM */                                  \
-        EMITW(0x4E20FC00 | MRM(REG(RM), REG(RM), REG(RG)))                  \
-        EMITW(0x6E20DC00 | MRM(REG(RG), REG(RG), REG(RM)))
+        EMITW(0x4E20FC00 | MXM(REG(RM), REG(RM), REG(RG)))                  \
+        EMITW(0x6E20DC00 | MXM(REG(RG), REG(RG), REG(RM)))
 
         /* rcp defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
@@ -231,12 +239,12 @@
 /* rsq */
 
 #define rseps_rr(RG, RM)                                                    \
-        EMITW(0x6EA1D800 | MRM(REG(RG), REG(RM), 0x00))
+        EMITW(0x6EA1D800 | MXM(REG(RG), REG(RM), 0x00))
 
 #define rssps_rr(RG, RM) /* destroys RM */                                  \
-        EMITW(0x6E20DC00 | MRM(REG(RM), REG(RM), REG(RG)))                  \
-        EMITW(0x4EA0FC00 | MRM(REG(RM), REG(RM), REG(RG)))                  \
-        EMITW(0x6E20DC00 | MRM(REG(RG), REG(RG), REG(RM)))
+        EMITW(0x6E20DC00 | MXM(REG(RM), REG(RM), REG(RG)))                  \
+        EMITW(0x4EA0FC00 | MXM(REG(RM), REG(RM), REG(RG)))                  \
+        EMITW(0x6E20DC00 | MXM(REG(RG), REG(RG), REG(RM)))
 
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
@@ -244,74 +252,74 @@
 /* min */
 
 #define minps_rr(RG, RM)                                                    \
-        EMITW(0x4EA0F400 | MRM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x4EA0F400 | MXM(REG(RG), REG(RG), REG(RM)))                  \
 
 #define minps_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x4EA0F400 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x4EA0F400 | MXM(REG(RG), REG(RG), Tmm1))
 
 /* max */
 
 #define maxps_rr(RG, RM)                                                    \
-        EMITW(0x4E20F400 | MRM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x4E20F400 | MXM(REG(RG), REG(RG), REG(RM)))                  \
 
 #define maxps_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x4E20F400 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x4E20F400 | MXM(REG(RG), REG(RG), Tmm1))
 
 /* cmp */
 
 #define ceqps_rr(RG, RM)                                                    \
-        EMITW(0x4E20E400 | MRM(REG(RG), REG(RG), REG(RM)))
+        EMITW(0x4E20E400 | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define ceqps_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x4E20E400 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x4E20E400 | MXM(REG(RG), REG(RG), Tmm1))
 
 #define cneps_rr(RG, RM)                                                    \
-        EMITW(0x4E20E400 | MRM(REG(RG), REG(RG), REG(RM)))                  \
-        EMITW(0x6E205800 | MRM(REG(RG), REG(RG), 0x00))
+        EMITW(0x4E20E400 | MXM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x6E205800 | MXM(REG(RG), REG(RG), 0x00))
 
 #define cneps_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x4E20E400 | MRM(REG(RG), REG(RG), Tmm1))                     \
-        EMITW(0x6E205800 | MRM(REG(RG), REG(RG), 0x00))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x4E20E400 | MXM(REG(RG), REG(RG), Tmm1))                     \
+        EMITW(0x6E205800 | MXM(REG(RG), REG(RG), 0x00))
 
 #define cltps_rr(RG, RM)                                                    \
-        EMITW(0x6EA0E400 | MRM(REG(RG), REG(RM), REG(RG)))
+        EMITW(0x6EA0E400 | MXM(REG(RG), REG(RM), REG(RG)))
 
 #define cltps_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x6EA0E400 | MRM(REG(RG), Tmm1,    REG(RG)))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x6EA0E400 | MXM(REG(RG), Tmm1,    REG(RG)))
 
 #define cleps_rr(RG, RM)                                                    \
-        EMITW(0x6E20E400 | MRM(REG(RG), REG(RM), REG(RG)))
+        EMITW(0x6E20E400 | MXM(REG(RG), REG(RM), REG(RG)))
 
 #define cleps_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x6E20E400 | MRM(REG(RG), Tmm1,    REG(RG)))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x6E20E400 | MXM(REG(RG), Tmm1,    REG(RG)))
 
 #define cgtps_rr(RG, RM)                                                    \
-        EMITW(0x6EA0E400 | MRM(REG(RG), REG(RG), REG(RM)))
+        EMITW(0x6EA0E400 | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define cgtps_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x6EA0E400 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x6EA0E400 | MXM(REG(RG), REG(RG), Tmm1))
 
 #define cgeps_rr(RG, RM)                                                    \
-        EMITW(0x6E20E400 | MRM(REG(RG), REG(RG), REG(RM)))
+        EMITW(0x6E20E400 | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define cgeps_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x6E20E400 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x6E20E400 | MXM(REG(RG), REG(RG), Tmm1))
 
 /**************************   packed integer (NEON)   *************************/
 
@@ -319,39 +327,39 @@
  * rounding mode is encoded directly    (can be used in FCTRL blocks) */
 
 #define rnzps_rr(RG, RM)     /* round towards zero */                       \
-        EMITW(0x4EA19800 | MRM(REG(RG), REG(RM), 0x00))
+        EMITW(0x4EA19800 | MXM(REG(RG), REG(RM), 0x00))
 
 #define cvzps_rr(RG, RM)     /* round towards zero */                       \
-        EMITW(0x4EA1B800 | MRM(REG(RG), REG(RM), 0x00))
+        EMITW(0x4EA1B800 | MXM(REG(RG), REG(RM), 0x00))
 
 #define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x4EA1B800 | MRM(REG(RG), Tmm1,    0x00))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x4EA1B800 | MXM(REG(RG), Tmm1,    0x00))
 
 /* cvt
  * rounding mode comes from fp control register (set in FCTRL blocks) */
 
 #define rndps_rr(RG, RM)                                                    \
-        EMITW(0x6EA19800 | MRM(REG(RG), REG(RM), 0x00))
+        EMITW(0x6EA19800 | MXM(REG(RG), REG(RM), 0x00))
 
 #define cvtps_rr(RG, RM)                                                    \
-        EMITW(0x6EA19800 | MRM(REG(RG), REG(RM), 0x00))                     \
-        EMITW(0x4E21A800 | MRM(REG(RG), REG(RG), 0x00))
+        EMITW(0x6EA19800 | MXM(REG(RG), REG(RM), 0x00))                     \
+        EMITW(0x4E21A800 | MXM(REG(RG), REG(RG), 0x00))
 
 #define cvtps_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x6EA19800 | MRM(REG(RG), Tmm1,    0x00))                     \
-        EMITW(0x4E21A800 | MRM(REG(RG), REG(RG), 0x00))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x6EA19800 | MXM(REG(RG), Tmm1,    0x00))                     \
+        EMITW(0x4E21A800 | MXM(REG(RG), REG(RG), 0x00))
 
 #define cvtpn_rr(RG, RM)                                                    \
-        EMITW(0x4E21D800 | MRM(REG(RG), REG(RM), 0x00))
+        EMITW(0x4E21D800 | MXM(REG(RG), REG(RM), 0x00))
 
 #define cvtpn_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x4E21D800 | MRM(REG(RG), Tmm1,    0x00))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x4E21D800 | MXM(REG(RG), Tmm1,    0x00))
 
 /* cvn
  * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
@@ -365,60 +373,60 @@
 /* add */
 
 #define addpx_rr(RG, RM)                                                    \
-        EMITW(0x4EA08400 | MRM(REG(RG), REG(RG), REG(RM)))
+        EMITW(0x4EA08400 | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define addpx_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x4EA08400 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x4EA08400 | MXM(REG(RG), REG(RG), Tmm1))
 
 /* sub */
 
 #define subpx_rr(RG, RM)                                                    \
-        EMITW(0x6EA08400 | MRM(REG(RG), REG(RG), REG(RM)))
+        EMITW(0x6EA08400 | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define subpx_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x6EA08400 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x6EA08400 | MXM(REG(RG), REG(RG), Tmm1))
 
 /* shl */
 
 #define shlpx_ri(RM, IM)                                                    \
-        EMITW(0x4F205400 | MRM(REG(RM), REG(RM), 0x00) |                    \
+        EMITW(0x4F205400 | MXM(REG(RM), REG(RM), 0x00) |                    \
                                                  (0x1F & VAL(IM)) << 16)
 
 #define shlpx_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x4E040400 | MRM(Tmm1,    Tmm1,    0x00))                     \
-        EMITW(0x6EE04400 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x4E040400 | MXM(Tmm1,    Tmm1,    0x00))                     \
+        EMITW(0x6EE04400 | MXM(REG(RG), REG(RG), Tmm1))
 
 /* shr */
 
 #define shrpx_ri(RM, IM) /* emit shift-left for zero-immediate args */      \
-        EMITW(0x4F200400 | MRM(REG(RM), REG(RM), 0x00) |                    \
+        EMITW(0x4F200400 | MXM(REG(RM), REG(RM), 0x00) |                    \
         (+(VAL(IM) == 0) & 0x00005000) | (+(VAL(IM) != 0) & 0x20000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IM)) << 16)
 
 #define shrpx_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x4E040400 | MRM(Tmm1,    Tmm1,    0x00))                     \
-        EMITW(0x6EA0B800 | MRM(Tmm1,    Tmm1,    0x00))                     \
-        EMITW(0x6EE04400 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x4E040400 | MXM(Tmm1,    Tmm1,    0x00))                     \
+        EMITW(0x6EA0B800 | MXM(Tmm1,    Tmm1,    0x00))                     \
+        EMITW(0x6EE04400 | MXM(REG(RG), REG(RG), Tmm1))
 
 #define shrpn_ri(RM, IM) /* emit shift-left for zero-immediate args */      \
-        EMITW(0x4F200400 | MRM(REG(RM), REG(RM), 0x00) |                    \
+        EMITW(0x4F200400 | MXM(REG(RM), REG(RM), 0x00) |                    \
         (+(VAL(IM) == 0) & 0x00005000) | (+(VAL(IM) != 0) & 0x00000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IM)) << 16)
 
 #define shrpn_ld(RG, RM, DP)                                                \
-        AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x3DC00000 | MDM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x4E040400 | MRM(Tmm1,    Tmm1,    0x00))                     \
-        EMITW(0x6EA0B800 | MRM(Tmm1,    Tmm1,    0x00))                     \
-        EMITW(0x4EE04400 | MRM(REG(RG), REG(RG), Tmm1))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x4E040400 | MXM(Tmm1,    Tmm1,    0x00))                     \
+        EMITW(0x6EA0B800 | MXM(Tmm1,    Tmm1,    0x00))                     \
+        EMITW(0x4EE04400 | MXM(REG(RG), REG(RG), Tmm1))
 
 /**************************   helper macros (NEON)   **************************/
 
@@ -428,8 +436,8 @@
 #define RT_SIMD_MASK_FULL       0x04    /*  all satisfy the condition */
 
 #define movms_rr(RG, RM) /* not portable, do not use outside */             \
-        EMITW(0x4EB1B800 | MRM(Tmm1,    REG(RM), 0x00))                     \
-        EMITW(0x0E043C00 | MRM(REG(RG), Tmm1,    0x00))
+        EMITW(0x4EB1B800 | MXM(Tmm1,    REG(RM), 0x00))                     \
+        EMITW(0x0E043C00 | MXM(REG(RG), Tmm1,    0x00))
 
 #define CHECK_MASK(lb, mask, RG) /* destroys Reax */                        \
         movms_rr(Reax, W(RG))                                               \
@@ -445,28 +453,28 @@
 #define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
 
 #define fpscr_ld(RG) /* not portable, do not use outside */                 \
-        EMITW(0xD51B4400 | MRM(REG(RG), 0x00,    0x00))
+        EMITW(0xD51B4400 | MXM(REG(RG), 0x00,    0x00))
 
 #define fpscr_st(RG) /* not portable, do not use outside */                 \
-        EMITW(0xD53B4400 | MRM(REG(RG), 0x00,    0x00))
+        EMITW(0xD53B4400 | MXM(REG(RG), 0x00,    0x00))
 
 #define FCTRL_ENTER(mode) /* assumes default mode (ROUNDN) upon entry */    \
-        EMITW(0x52A00000 | MRM(TIxx,    0x00,    0x00) |                    \
+        EMITW(0x52A00000 | MXM(TIxx,    0x00,    0x00) |                    \
                            RT_SIMD_MODE_##mode << 11)                       \
-        EMITW(0xD51B4400 | MRM(TIxx,    0x00,    0x00))
+        EMITW(0xD51B4400 | MXM(TIxx,    0x00,    0x00))
 
 #define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */    \
-        EMITW(0xD51B4400 | MRM(0x1F,    0x00,    0x00))
+        EMITW(0xD51B4400 | MXM(0x1F,    0x00,    0x00))
 
 /* cvr
  * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
 
 #define rnrps_rr(RG, RM, mode)                                              \
-        EMITW(0x4E218800 | MRM(REG(RG), REG(RM), 0x00) |                    \
+        EMITW(0x4E218800 | MXM(REG(RG), REG(RM), 0x00) |                    \
         (RT_SIMD_MODE_##mode & 1) << 23 | (RT_SIMD_MODE_##mode & 2) << 11)
 
 #define cvrps_rr(RG, RM, mode)                                              \
-        EMITW(0x4E21A800 | MRM(REG(RG), REG(RM), 0x00) |                    \
+        EMITW(0x4E21A800 | MXM(REG(RG), REG(RM), 0x00) |                    \
         (RT_SIMD_MODE_##mode & 1) << 23 | (RT_SIMD_MODE_##mode & 2) << 11)
 
 #endif /* RT_SIMD_CODE */
