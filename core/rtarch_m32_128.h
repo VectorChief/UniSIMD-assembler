@@ -395,7 +395,7 @@
 
 #define shlpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0x8C000000 | MPM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7B02001E | MSM(Tmm1,    TMxx,    0x00))                     \
         EMITW(0x7840000D | MSM(REG(RG), REG(RG), Tmm1))
 
@@ -407,7 +407,7 @@
 
 #define shrpx_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0x8C000000 | MPM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7B02001E | MSM(Tmm1,    TMxx,    0x00))                     \
         EMITW(0x7940000D | MSM(REG(RG), REG(RG), Tmm1))
 
@@ -417,7 +417,7 @@
 
 #define shrpn_ld(RG, RM, DP)                                                \
         AUZ(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0x8C000000 | MPM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7B02001E | MSM(Tmm1,    TMxx,    0x00))                     \
         EMITW(0x78C0000D | MSM(REG(RG), REG(RG), Tmm1))
 
