@@ -35,27 +35,31 @@
  *
  * Preliminary naming scheme for potential future targets.
  *
- * Current 32-bit targets:
+ * Legacy 32-bit targets:
  *  - rtarch_arm.h         - 32-bit ARMv7/8 ISA, 16 core regs, 8 + temps used
  *  - rtarch_arm_128.h     - 32-bit ARMv7/8 ISA, 16 SIMD regs, 8 + temps used
+ *  - rtarch_x86.h         - 32-bit x86 ISA, 8 core regs, 6 + esp, ebp used
+ *  - rtarch_x86_128.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, SSE 128-bit
+ *  - rtarch_x86_256.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, AVX 256-bit
+ *
+ * Current 32-bit targets:
  *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 core regs, int-div, fp-cvt-r
  *  - rtarch_a32_128.h     - AArch64:ILP32 ABI, 32 SIMD regs, IEEE-fp, sqr, div
- *  - rtarch_m32.h         - 32-bit MIPS r5/r6 ISA, 32 core regs, 14 + 3 used
- *  - rtarch_m32_128.h     - 32-bit MIPS r5/r6 ISA, 32 SIMD regs, MSA 128-bit
- *  - rtarch_x86.h         - 32-bit x86 ISA, 8 core regs, 6 + esp, ebp used
- *  - rtarch_x86_128.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, SSE
- *  - rtarch_x86_256.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, AVX
+ *  - rtarch_m32.h         - MIPS32 r5/r6 ISA, 32 core regs, 14 + 3 used
+ *  - rtarch_m32_128.h     - MIPS32 r5/r6 ISA, 32 SIMD regs, MSA 128-bit
  *  - rtarch_x32.h         - x86_64:x32 ABI, 16 core regs, 32-bit ptrs
  *  - rtarch_x32_128.h     - x86_64:x32 ABI, 16 SIMD regs, SSE 128-bit
  *  - rtarch_x32_256.h     - x86_64:x32 ABI, 16 SIMD regs, AVX 256-bit
  *
  * Future 32-bit targets:
- *  - rtarch_x86_512.h     - 32-bit x86 ISA, 8 SIMD regs, AVX 512-bit
+ *  - rtarch_x86_512.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, AVX 512-bit
  *  - rtarch_x32_512.h     - x86_64:x32 ABI, 32 SIMD regs, AVX 512-bit
  *
  * Future 64-bit targets:
  *  - rtarch_a64.h         - AArch64:ARMv8 ISA, 32 core regs, int-div, fp-cvt-r
  *  - rtarch_a64_128.h     - AArch64:ARMv8 ISA, 32 SIMD regs, IEEE-fp, sqr, div
+ *  - rtarch_m64.h         - MIPS64 r5/r6 ISA, 32 core regs, 14 + 3 used
+ *  - rtarch_m64_128.h     - MIPS64 r5/r6 ISA, 32 SIMD regs, MSA 128-bit
  *  - rtarch_x64.h         - x86_64:x64 ISA, 16 core regs, 64-bit ptrs
  *  - rtarch_x64_128.h     - x86_64:x64 ISA, 16 SIMD regs, SSE 128-bit
  *  - rtarch_x64_256.h     - x86_64:x64 ISA, 16 SIMD regs, AVX 256-bit
@@ -66,8 +70,6 @@
  *  - rtarch_p32_128.h     - 32-bit PowerISA, 32 SIMD regs, VMX
  *
  * Reserved 64-bit targets:
- *  - rtarch_m64.h         - 64-bit MIPS ISA, 32 core regs
- *  - rtarch_m64_128.h     - 64-bit MIPS ISA, 32 SIMD regs, MSA
  *  - rtarch_p64.h         - 64-bit PowerISA, 32 core regs
  *  - rtarch_p64_128.h     - 64-bit PowerISA, 32 SIMD regs, VMX
  *
@@ -128,7 +130,7 @@
 
 #define EMITB(b)                ASM_BEG ASM_OP1(_emit, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lea, eax, lb) ASM_END
-#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, eax, lb) ASM_END
+#define movxx_xx()  /*Rebp*/    ASM_BEG ASM_OP2(mov, ebp, info) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -143,9 +145,10 @@
 #define ASM_ENTER(info)     __asm                                           \
                             {                                               \
                                 pushad  /* stack_sa() */                    \
-                                movlb_ld(info)                              \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))
+                                movxx_xx()                                  \
+                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
+                                /* placeholder for custom op */
+
 #define ASM_LEAVE(info)         popad   /* stack_la() */                    \
                             }
 
@@ -169,7 +172,7 @@
 
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
-#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, %%eax, lb) ASM_END
+#define movxx_xx()  /*Rebp*/    ASM_BEG ASM_OP2(movl, %%ebp, %%eax) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -182,8 +185,10 @@
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
                                 stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))
+                                movxx_xx()                                  \
+                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
+                                /* placeholder for custom op */
+
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
                                 : "a" (info)                                \
@@ -204,7 +209,7 @@
 
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
-#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, %%eax, lb) ASM_END
+#define movxx_xx()  /*Rebp*/    ASM_BEG ASM_OP2(movl, %%ebp, %%eax) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -217,9 +222,10 @@
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
                                 stack_sa()                                  \
-                                "xor %%r15, %%r15\n"                        \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))
+                                movxx_xx()                                  \
+                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
+                                "xor %%r15, %%r15\n" /* JMP r15 <- 0 (xor) */
+
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
                                 : "a" (info)                                \
@@ -244,7 +250,7 @@
 
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(adr, r0, lb) ASM_END
-#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, r0, lb) ASM_END
+#define movxx_xx()  /*Rebp*/    ASM_BEG ASM_OP2(mov, r5, %0) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -257,12 +263,12 @@
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
                                 stack_sa()                                  \
-                                movlb_ld(%[info])                           \
-                                "eor r4, r4, r4\n"                          \
-                                movxx_rr(Rebp, Reax)
+                                movxx_xx()                                  \
+                                "eor r4, r4, r4\n" /* TZxx (r4) <- 0 (xor) */
+
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
-                                : [info] "r" (info)                         \
+                                : "r" (info)                                \
                                 : "cc",  "memory",                          \
                                   "d0",  "d1",  "d2",  "d3",                \
                                   "d4",  "d5",  "d6",  "d7",                \
@@ -286,7 +292,7 @@
 
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(adr, x0, lb) ASM_END
-#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, w0, lb) ASM_END
+#define movxx_xx()  /*Rebp*/    ASM_BEG ASM_OP2(mov, x5, %0) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -299,11 +305,12 @@
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
                                 stack_sa()                                  \
-                                movlb_ld(%w[info])                          \
-                                movxx_rr(Rebp, Reax)
+                                movxx_xx()                                  \
+                                /* placeholder for custom op */
+
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
-                                : [info] "r" (info)                         \
+                                : "r" (info)                                \
                                 : "cc",  "memory",                          \
                                   "q0",  "q1",  "q2",  "q3",                \
                                   "q4",  "q5",  "q6",  "q7",                \
@@ -325,7 +332,6 @@
 
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(la, $a0, lb) ASM_END
-#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(move, $a0, lb) ASM_END
 #define movxx_xx()  /*Rebp*/    ASM_BEG ASM_OP2(move, $a1, %0) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
@@ -339,7 +345,8 @@
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
                                 movxx_xx()                                  \
-                                EMITW(0x787EF79E) /* Tmm0(w30) <- 0 */
+                                EMITW(0x787EF79E) /* TmmZ (w30) <- 0 (xor) */
+
 #define ASM_LEAVE(info)         :                                           \
                                 : "r" (info)                                \
                                 : "cc",  "memory",                          \

@@ -111,18 +111,31 @@
 #define  C1(val, tp1, tp2)  C1##tp1
 #define  C3(val, tp1, tp2)  C3##tp2 /* <- "C3##tp2" not a bug */
 
-/* registers    REG */
+/* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
-#define TLxx    0x18                    /* t8(r24) */
-#define TRxx    0x19                    /* t9(r25) */
-#define TMxx    0x18                    /* t8 */
-#define TIxx    0x19                    /* t9, not used together with TDxx */
-#define TDxx    0x19                    /* t9, not used together with TIxx */
-#define TPxx    0x0F                    /* t7(r15) */
+#define TLxx    0x18  /* t8 (r24), left  arg for compare */
+#define TRxx    0x19  /* t9 (r25), right arg for compare */
+#define TMxx    0x18  /* t8 */
+#define TIxx    0x19  /* t9, not used together with TDxx */
+#define TDxx    0x19  /* t9, not used together with TIxx */
+#define TPxx    0x01  /* at (r1) */
+#define TZxx    0x00  /* zero (r0) */
+#define SPxx    0x1D  /* sp (r29) */
 
-#define Teax    0x04                    /* a0(r4) */
-#define Tecx    0x01                    /* at(r1) */
-#define Tedx    0x02                    /* v0(r2) */
+#define Teax    0x04  /* a0 (r4) */
+#define Tecx    0x0F  /* t7 (r15) */
+#define Tedx    0x02  /* v0 (r2) */
+#define Tebx    0x03  /* v1 (r3) */
+#define Tebp    0x05  /* a1 (r5) */
+#define Tesi    0x06  /* a2 (r6) */
+#define Tedi    0x07  /* a3 (r7) */
+#define Teg8    0x08  /* t0 (r8) */
+#define Teg9    0x09  /* t1 (r9) */
+#define TegA    0x0A  /* t2 (r10) */
+#define TegB    0x0B  /* t3 (r11) */
+#define TegC    0x0C  /* t4 (r12) */
+#define TegD    0x0D  /* t5 (r13) */
+#define TegE    0x0E  /* t6 (r14) */
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -130,52 +143,52 @@
 
 /* registers    REG,  MOD,  SIB */
 
-#define Reax    Teax, 0x00, EMPTY       /* a0(r4) */
-#define Recx    Tecx, 0x00, EMPTY       /* at(r1) */
-#define Redx    Tedx, 0x00, EMPTY       /* v0(r2) */
-#define Rebx    0x03, 0x00, EMPTY       /* v1(r3) */
-#define Rebp    0x05, 0x00, EMPTY       /* a1(r5) */
-#define Resi    0x06, 0x00, EMPTY       /* a2(r6) */
-#define Redi    0x07, 0x00, EMPTY       /* a3(r7) */
-#define Reg8    0x08, 0x00, EMPTY       /* t0(r8) */
-#define Reg9    0x09, 0x00, EMPTY       /* t1(r9) */
-#define RegA    0x0A, 0x00, EMPTY       /* t2(r10) */
-#define RegB    0x0B, 0x00, EMPTY       /* t3(r11) */
-#define RegC    0x0C, 0x00, EMPTY       /* t4(r12) */
-#define RegD    0x0D, 0x00, EMPTY       /* t5(r13) */
-#define RegE    0x0E, 0x00, EMPTY       /* t6(r14) */
+#define Reax    Teax, 0x00, EMPTY
+#define Recx    Tecx, 0x00, EMPTY
+#define Redx    Tedx, 0x00, EMPTY
+#define Rebx    Tebx, 0x00, EMPTY
+#define Rebp    Tebp, 0x00, EMPTY
+#define Resi    Tesi, 0x00, EMPTY
+#define Redi    Tedi, 0x00, EMPTY
+#define Reg8    Teg8, 0x00, EMPTY
+#define Reg9    Teg9, 0x00, EMPTY
+#define RegA    TegA, 0x00, EMPTY
+#define RegB    TegB, 0x00, EMPTY
+#define RegC    TegC, 0x00, EMPTY
+#define RegD    TegD, 0x00, EMPTY
+#define RegE    TegE, 0x00, EMPTY
 
 /* addressing   REG,  MOD,  SIB */
 
-#define Oeax    Teax, Teax, EMPTY       /* [r4] */
+#define Oeax    Teax, Teax, EMPTY
 
-#define Mecx    Tecx, Tecx, EMPTY       /* [r1, DP] */
-#define Medx    Tedx, Tedx, EMPTY       /* [r2, DP] */
-#define Mebx    0x03, 0x03, EMPTY       /* [r3, DP] */
-#define Mebp    0x05, 0x05, EMPTY       /* [r5, DP] */
-#define Mesi    0x06, 0x06, EMPTY       /* [r6, DP] */
-#define Medi    0x07, 0x07, EMPTY       /* [r7, DP] */
-#define Meg8    0x08, 0x08, EMPTY       /* [r8, DP] */
-#define Meg9    0x09, 0x09, EMPTY       /* [r9, DP] */
-#define MegA    0x0A, 0x0A, EMPTY       /* [r10, DP] */
-#define MegB    0x0B, 0x0B, EMPTY       /* [r11, DP] */
-#define MegC    0x0C, 0x0C, EMPTY       /* [r12, DP] */
-#define MegD    0x0D, 0x0D, EMPTY       /* [r13, DP] */
-#define MegE    0x0E, 0x0E, EMPTY       /* [r14, DP] */
+#define Mecx    Tecx, Tecx, EMPTY
+#define Medx    Tedx, Tedx, EMPTY
+#define Mebx    Tebx, Tebx, EMPTY
+#define Mebp    Tebp, Tebp, EMPTY
+#define Mesi    Tesi, Tesi, EMPTY
+#define Medi    Tedi, Tedi, EMPTY
+#define Meg8    Teg8, Teg8, EMPTY
+#define Meg9    Teg9, Teg9, EMPTY
+#define MegA    TegA, TegA, EMPTY
+#define MegB    TegB, TegB, EMPTY
+#define MegC    TegC, TegC, EMPTY
+#define MegD    TegD, TegD, EMPTY
+#define MegE    TegE, TegE, EMPTY
 
 #define Iecx    Tecx, TPxx, EMITW(0x00000021 | MRM(TPxx,    Tecx,    Teax))
 #define Iedx    Tedx, TPxx, EMITW(0x00000021 | MRM(TPxx,    Tedx,    Teax))
-#define Iebx    0x03, TPxx, EMITW(0x00000021 | MRM(TPxx,    0x03,    Teax))
-#define Iebp    0x05, TPxx, EMITW(0x00000021 | MRM(TPxx,    0x05,    Teax))
-#define Iesi    0x06, TPxx, EMITW(0x00000021 | MRM(TPxx,    0x06,    Teax))
-#define Iedi    0x07, TPxx, EMITW(0x00000021 | MRM(TPxx,    0x07,    Teax))
-#define Ieg8    0x08, TPxx, EMITW(0x00000021 | MRM(TPxx,    0x08,    Teax))
-#define Ieg9    0x09, TPxx, EMITW(0x00000021 | MRM(TPxx,    0x09,    Teax))
-#define IegA    0x0A, TPxx, EMITW(0x00000021 | MRM(TPxx,    0x0A,    Teax))
-#define IegB    0x0B, TPxx, EMITW(0x00000021 | MRM(TPxx,    0x0B,    Teax))
-#define IegC    0x0C, TPxx, EMITW(0x00000021 | MRM(TPxx,    0x0C,    Teax))
-#define IegD    0x0D, TPxx, EMITW(0x00000021 | MRM(TPxx,    0x0D,    Teax))
-#define IegE    0x0E, TPxx, EMITW(0x00000021 | MRM(TPxx,    0x0E,    Teax))
+#define Iebx    Tebx, TPxx, EMITW(0x00000021 | MRM(TPxx,    Tebx,    Teax))
+#define Iebp    Tebp, TPxx, EMITW(0x00000021 | MRM(TPxx,    Tebp,    Teax))
+#define Iesi    Tesi, TPxx, EMITW(0x00000021 | MRM(TPxx,    Tesi,    Teax))
+#define Iedi    Tedi, TPxx, EMITW(0x00000021 | MRM(TPxx,    Tedi,    Teax))
+#define Ieg8    Teg8, TPxx, EMITW(0x00000021 | MRM(TPxx,    Teg8,    Teax))
+#define Ieg9    Teg9, TPxx, EMITW(0x00000021 | MRM(TPxx,    Teg9,    Teax))
+#define IegA    TegA, TPxx, EMITW(0x00000021 | MRM(TPxx,    TegA,    Teax))
+#define IegB    TegB, TPxx, EMITW(0x00000021 | MRM(TPxx,    TegB,    Teax))
+#define IegC    TegC, TPxx, EMITW(0x00000021 | MRM(TPxx,    TegC,    Teax))
+#define IegD    TegD, TPxx, EMITW(0x00000021 | MRM(TPxx,    TegD,    Teax))
+#define IegE    TegE, TPxx, EMITW(0x00000021 | MRM(TPxx,    TegE,    Teax))
 
 /* immediate    VAL,  TP1,  TP2 */
 
@@ -260,7 +273,7 @@
         EMITW(0xAC000000 | MDM(TIxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define movxx_rr(RG, RM)                                                    \
-        EMITW(0x00000025 | MRM(REG(RG), 0x00,    REG(RM)))
+        EMITW(0x00000025 | MRM(REG(RG), TZxx,    REG(RM)))
 
 #define movxx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
@@ -293,7 +306,7 @@
         EMITW(0x00000000 | MIM(REG(RM), REG(RM), VAL(IM), T2(IM), M2(IM)) | \
         (+(TP2(IM) == 0) & 0x30000000) | (+(TP2(IM) != 0) & 0x00000024))    \
         /* if true ^ equals to -1 (not 1) */                                \
-        EMITW(0x00000025 | MRM(TLxx,    0x00,    REG(RM))) /* <- set flags */
+        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RM))) /* <- set flags */
 
 #define andxx_mi(RM, DP, IM)                                                \
         AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
@@ -304,7 +317,7 @@
 
 #define andxx_rr(RG, RM)                                                    \
         EMITW(0x00000024 | MRM(REG(RG), REG(RG), REG(RM)))                  \
-        EMITW(0x00000025 | MRM(TLxx,    0x00,    REG(RG))) /* <- set flags */
+        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RG))) /* <- set flags */
 
 #define andxx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
@@ -381,25 +394,25 @@
  * set-flags: no */
 
 #define notxx_rr(RM)                                                        \
-        EMITW(0x00000027 | MRM(REG(RM), 0x00,    REG(RM)))
+        EMITW(0x00000027 | MRM(REG(RM), TZxx,    REG(RM)))
 
 #define notxx_mm(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000027 | MRM(TMxx,    0x00,    TMxx))                     \
+        EMITW(0x00000027 | MRM(TMxx,    TZxx,    TMxx))                     \
         EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* neg
  * set-flags: yes */
 
 #define negxx_rr(RM)                                                        \
-        EMITW(0x00000023 | MRM(REG(RM), 0x00,    REG(RM)))                  \
-        EMITW(0x00000025 | MRM(TLxx,    0x00,    REG(RM))) /* <- set flags */
+        EMITW(0x00000023 | MRM(REG(RM), TZxx,    REG(RM)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RM))) /* <- set flags */
 
 #define negxx_mm(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000023 | MRM(TMxx,    0x00,    TMxx))                     \
+        EMITW(0x00000023 | MRM(TMxx,    TZxx,    TMxx))                     \
         EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* add
@@ -410,7 +423,7 @@
         EMITW(0x00000000 | MIM(REG(RM), REG(RM), VAL(IM), T1(IM), M1(IM)) | \
         (+(TP1(IM) == 0) & 0x24000000) | (+(TP1(IM) != 0) & 0x00000021))    \
         /* if true ^ equals to -1 (not 1) */                                \
-        EMITW(0x00000025 | MRM(TLxx,    0x00,    REG(RM))) /* <- set flags */
+        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RM))) /* <- set flags */
 
 #define addxx_mi(RM, DP, IM)                                                \
         AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G1(IM))   \
@@ -421,7 +434,7 @@
 
 #define addxx_rr(RG, RM)                                                    \
         EMITW(0x00000021 | MRM(REG(RG), REG(RG), REG(RM)))                  \
-        EMITW(0x00000025 | MRM(TLxx,    0x00,    REG(RG))) /* <- set flags */
+        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RG))) /* <- set flags */
 
 #define addxx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
@@ -443,7 +456,7 @@
         (+(TP1(IM) == 0) & 0x24000000) | (+(TP1(IM) != 0) & 0x00000023)   | \
         (+(TP1(IM) == 0) & 0x0000FFFF  &   -VAL(IM)))                       \
         /* if true ^ equals to -1 (not 1) */                                \
-        EMITW(0x00000025 | MRM(TLxx,    0x00,    REG(RM))) /* <- set flags */
+        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RM))) /* <- set flags */
 
 #define subxx_mi(RM, DP, IM)                                                \
         AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G1(IM))   \
@@ -455,7 +468,7 @@
 
 #define subxx_rr(RG, RM)                                                    \
         EMITW(0x00000023 | MRM(REG(RG), REG(RG), REG(RM)))                  \
-        EMITW(0x00000025 | MRM(TLxx,    0x00,    REG(RG))) /* <- set flags */
+        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RG))) /* <- set flags */
 
 #define subxx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
@@ -651,25 +664,25 @@
 
 #define cmpxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
-        EMITW(0x00000025 | MRM(TLxx,    0x00,    REG(RM)))
+        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RM)))
 
 #define cmpxx_mi(RM, DP, IM)                                                \
         AUW(SIB(RM),  VAL(IM), TRxx,    MOD(RM), VAL(DP), C1(DP), G3(IM))   \
         EMITW(0x8C000000 | MDM(TLxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define cmpxx_rr(RG, RM)                                                    \
-        EMITW(0x00000025 | MRM(TRxx,    0x00,    REG(RM)))                  \
-        EMITW(0x00000025 | MRM(TLxx,    0x00,    REG(RG)))
+        EMITW(0x00000025 | MRM(TRxx,    TZxx,    REG(RM)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RG)))
 
 #define cmpxx_rm(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TRxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000025 | MRM(TLxx,    0x00,    REG(RG)))
+        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RG)))
 
 #define cmpxx_mr(RM, DP, RG)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TLxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000025 | MRM(TRxx,    0x00,    REG(RG)))
+        EMITW(0x00000025 | MRM(TRxx,    TZxx,    REG(RG)))
 
 /* jmp
  * set-flags: no */
@@ -678,7 +691,7 @@
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x00000008 | MRM(0x00,    TMxx,    0x00))                     \
-        EMITW(0x00000000 | MRM(0x00,    0x00,    0x00)) /* <- branch delay */
+        EMITW(0x00000000 | MRM(TZxx,    0x00,    TZxx)) /* <- branch delay */
 
 #define jmpxx_lb(lb)                                                        \
         ASM_BEG ASM_OP1(b, lb) ASM_END

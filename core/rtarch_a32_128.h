@@ -77,9 +77,9 @@
                              (0x7FFF & (dp) >> 16) << 5)                    \
                     EMITW(0x0B000000 | MXM(TPxx,    (br),    TDxx))
 
-/* registers    REG */
+/* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
-#define Tmm1    0x1F                    /* v31 */
+#define Tmm1    0x1F  /* v31 */
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/

@@ -111,17 +111,23 @@
 #define  C1(val, tp1, tp2)  C1##tp1
 #define  C3(val, tp1, tp2)  C3##tp2 /* <- "C3##tp2" not a bug */
 
-/* registers    REG */
+/* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
-#define TMxx    0x08                    /* r8 */
-#define TIxx    0x09                    /* r9, not used together with TDxx */
-#define TDxx    0x09                    /* r9, not used together with TIxx */
-#define TPxx    0x0A                    /* r10 */
-#define PCxx    0x0F                    /* r15 */
+#define TMxx    0x08  /* r8 */
+#define TIxx    0x09  /* r9, not used together with TDxx */
+#define TDxx    0x09  /* r9, not used together with TIxx */
+#define TPxx    0x0A  /* r10 */
+#define TZxx    0x04  /* r4 */
+#define SPxx    0x0D  /* r13 */
+#define PCxx    0x0F  /* r15 */
 
-#define Teax    0x00                    /* r0 */
-#define Tecx    0x01                    /* r1 */
-#define Tedx    0x02                    /* r2 */
+#define Teax    0x00  /* r0 */
+#define Tecx    0x01  /* r1 */
+#define Tedx    0x02  /* r2 */
+#define Tebx    0x03  /* r3 */
+#define Tebp    0x05  /* r5 */
+#define Tesi    0x06  /* r6 */
+#define Tedi    0x07  /* r7 */
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -129,31 +135,31 @@
 
 /* registers    REG,  MOD,  SIB */
 
-#define Reax    Teax, 0x00, EMPTY       /* r0 */
-#define Recx    Tecx, 0x00, EMPTY       /* r1 */
-#define Redx    Tedx, 0x00, EMPTY       /* r2 */
-#define Rebx    0x03, 0x00, EMPTY       /* r3 */
-#define Rebp    0x05, 0x00, EMPTY       /* r5 */
-#define Resi    0x06, 0x00, EMPTY       /* r6 */
-#define Redi    0x07, 0x00, EMPTY       /* r7 */
+#define Reax    Teax, 0x00, EMPTY
+#define Recx    Tecx, 0x00, EMPTY
+#define Redx    Tedx, 0x00, EMPTY
+#define Rebx    Tebx, 0x00, EMPTY
+#define Rebp    Tebp, 0x00, EMPTY
+#define Resi    Tesi, 0x00, EMPTY
+#define Redi    Tedi, 0x00, EMPTY
 
 /* addressing   REG,  MOD,  SIB */
 
-#define Oeax    Teax, Teax, EMPTY       /* [r0] */
+#define Oeax    Teax, Teax, EMPTY
 
-#define Mecx    Tecx, Tecx, EMPTY       /* [r1, DP] */
-#define Medx    Tedx, Tedx, EMPTY       /* [r2, DP] */
-#define Mebx    0x03, 0x03, EMPTY       /* [r3, DP] */
-#define Mebp    0x05, 0x05, EMPTY       /* [r5, DP] */
-#define Mesi    0x06, 0x06, EMPTY       /* [r6, DP] */
-#define Medi    0x07, 0x07, EMPTY       /* [r7, DP] */
+#define Mecx    Tecx, Tecx, EMPTY
+#define Medx    Tedx, Tedx, EMPTY
+#define Mebx    Tebx, Tebx, EMPTY
+#define Mebp    Tebp, Tebp, EMPTY
+#define Mesi    Tesi, Tesi, EMPTY
+#define Medi    Tedi, Tedi, EMPTY
 
 #define Iecx    Tecx, TPxx, EMITW(0xE0800000 | MRM(TPxx,    Tecx,    Teax))
 #define Iedx    Tedx, TPxx, EMITW(0xE0800000 | MRM(TPxx,    Tedx,    Teax))
-#define Iebx    0x03, TPxx, EMITW(0xE0800000 | MRM(TPxx,    0x03,    Teax))
-#define Iebp    0x05, TPxx, EMITW(0xE0800000 | MRM(TPxx,    0x05,    Teax))
-#define Iesi    0x06, TPxx, EMITW(0xE0800000 | MRM(TPxx,    0x06,    Teax))
-#define Iedi    0x07, TPxx, EMITW(0xE0800000 | MRM(TPxx,    0x07,    Teax))
+#define Iebx    Tebx, TPxx, EMITW(0xE0800000 | MRM(TPxx,    Tebx,    Teax))
+#define Iebp    Tebp, TPxx, EMITW(0xE0800000 | MRM(TPxx,    Tebp,    Teax))
+#define Iesi    Tesi, TPxx, EMITW(0xE0800000 | MRM(TPxx,    Tesi,    Teax))
+#define Iedi    Tedi, TPxx, EMITW(0xE0800000 | MRM(TPxx,    Tedi,    Teax))
 
 /* immediate    VAL,  TP1,  TP2 */
 
@@ -266,16 +272,16 @@
         label_ld(lb)
 
 #define stack_st(RM)                                                        \
-        EMITW(0xE52D0004 | MRM(REG(RM), 0x00,    0x00))
+        EMITW(0xE5200004 | MRM(REG(RM), SPxx,    0x00))
 
 #define stack_ld(RM)                                                        \
-        EMITW(0xE49D0004 | MRM(REG(RM), 0x00,    0x00))
+        EMITW(0xE4900004 | MRM(REG(RM), SPxx,    0x00))
 
 #define stack_sa() /* save all [r0 - r11], 12 regs in total */              \
-        EMITW(0xE92D0FFF)
+        EMITW(0xE9200FFF | MRM(0x00,    SPxx,    0x00))
 
 #define stack_la() /* load all [r0 - r11], 12 regs in total */              \
-        EMITW(0xE8BD0FFF)
+        EMITW(0xE8B00FFF | MRM(0x00,    SPxx,    0x00))
 
 /* and
  * set-flags: yes */

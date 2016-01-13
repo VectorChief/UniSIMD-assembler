@@ -83,12 +83,12 @@
                     EMITW(0xE3400000 | MRM(TDxx,    0x00,    0x00) |        \
                             (0x70000 & (dp) >> 12) | (0xFFF & (dp) >> 16))
 
-/* registers    REG */
+/* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
-#define Tmm0    0x00                    /* q0, for integer div VFP fallback */
-#define Tmm1    0x10                    /* q8 */
-#define Tmm2    0x12                    /* q9 */
-#define Tmm3    0x14                    /* q10 */
+#define Tmm0    0x00  /* q0, for integer div VFP fallback */
+#define Tmm1    0x10  /* q8 */
+#define Tmm2    0x12  /* q9 */
+#define Tmm3    0x14  /* q10 */
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -529,7 +529,7 @@
         EMITW(0xEEE10A10 | MRM(TIxx,    0x00,    0x00))
 
 #define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */    \
-        EMITW(0xEEE10A10 | MRM(0x04,    0x00,    0x00))
+        EMITW(0xEEE10A10 | MRM(TZxx,    0x00,    0x00))
 
 /* cvr
  * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
