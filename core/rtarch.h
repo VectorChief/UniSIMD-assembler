@@ -130,7 +130,7 @@
 
 #define EMITB(b)                ASM_BEG ASM_OP1(_emit, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lea, eax, lb) ASM_END
-#define movxx_xx()  /*Rebp*/    ASM_BEG ASM_OP2(mov, ebp, info) ASM_END
+#define movxx_lb(lb)/*Rebp*/    ASM_BEG ASM_OP2(mov, ebp, lb) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -145,7 +145,7 @@
 #define ASM_ENTER(info)     __asm                                           \
                             {                                               \
                                 pushad  /* stack_sa() */                    \
-                                movxx_xx()                                  \
+                                movxx_lb(info)                              \
                                 movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
                                 /* placeholder for custom op */
 
