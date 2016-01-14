@@ -344,15 +344,14 @@
 
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
+                                stack_sa()                                  \
                                 movxx_lb(%[info])                           \
                                 EMITW(0x787EF79E) /* TmmZ (w30) <- 0 (xor) */
 
-#define ASM_LEAVE(info)         :                                           \
+#define ASM_LEAVE(info)         stack_la()                                  \
+                                :                                           \
                                 : [info] "r" (info)                         \
-                                : "cc",  "memory",                          \
-                                  "at", "v0", "v1", "a0", "a1", "a2", "a3", \
-                                  "t0", "t1", "t2", "t3", "t4", "t5", "t6", \
-                                  "t7", "t8", "t9"                          \
+                                : "cc",  "memory"                           \
                             );
 
 #endif /* RT_X86, RT_X32, RT_ARM, RT_A32, RT_M32 */
