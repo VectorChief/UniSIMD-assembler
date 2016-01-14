@@ -36,8 +36,8 @@
  * Preliminary naming scheme for potential future targets.
  *
  * Legacy 32-bit targets:
- *  - rtarch_arm.h         - 32-bit ARMv7/8 ISA, 16 core regs, 8 + temps used
- *  - rtarch_arm_128.h     - 32-bit ARMv7/8 ISA, 16 SIMD regs, 8 + temps used
+ *  - rtarch_arm.h         - AArch32:ARMv7 ISA, 16 core regs, 8 + temps used
+ *  - rtarch_arm_128.h     - AArch32:ARMv7 ISA, 16 SIMD regs, 8 + temps used
  *  - rtarch_x86.h         - 32-bit x86 ISA, 8 core regs, 6 + esp, ebp used
  *  - rtarch_x86_128.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, SSE 128-bit
  *  - rtarch_x86_256.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, AVX 256-bit
@@ -172,7 +172,7 @@
 
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
-#define movxx_xx()  /*Rebp*/    ASM_BEG ASM_OP2(movl, %%ebp, %%eax) ASM_END
+#define movxx_lb(lb)/*Rebp*/    ASM_BEG ASM_OP2(movl, %%ebp, lb) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -185,13 +185,13 @@
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
                                 stack_sa()                                  \
-                                movxx_xx()                                  \
+                                movxx_lb(%[info])                           \
                                 movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
                                 /* placeholder for custom op */
 
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
-                                : "a" (info)                                \
+                                : [info] "r" (info)                         \
                                 : "cc",  "memory"                           \
                             );
 
@@ -209,7 +209,7 @@
 
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
-#define movxx_xx()  /*Rebp*/    ASM_BEG ASM_OP2(movl, %%ebp, %%eax) ASM_END
+#define movxx_lb(lb)/*Rebp*/    ASM_BEG ASM_OP2(movl, %%ebp, lb) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -222,13 +222,13 @@
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
                                 stack_sa()                                  \
-                                movxx_xx()                                  \
+                                movxx_lb(%[info])                           \
                                 movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
                                 "xor %%r15, %%r15\n" /* JMP r15 <- 0 (xor) */
 
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
-                                : "a" (info)                                \
+                                : [info] "r" (info)                         \
                                 : "cc",  "memory",                          \
                                   "xmm0",  "xmm1",  "xmm2",  "xmm3",        \
                                   "xmm4",  "xmm5",  "xmm6",  "xmm7",        \
@@ -250,7 +250,7 @@
 
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(adr, r0, lb) ASM_END
-#define movxx_xx()  /*Rebp*/    ASM_BEG ASM_OP2(mov, r5, %0) ASM_END
+#define movxx_lb(lb)/*Rebp*/    ASM_BEG ASM_OP2(mov, r5, lb) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -263,12 +263,12 @@
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
                                 stack_sa()                                  \
-                                movxx_xx()                                  \
+                                movxx_lb(%[info])                           \
                                 "eor r4, r4, r4\n" /* TZxx (r4) <- 0 (xor) */
 
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
-                                : "r" (info)                                \
+                                : [info] "r" (info)                         \
                                 : "cc",  "memory",                          \
                                   "d0",  "d1",  "d2",  "d3",                \
                                   "d4",  "d5",  "d6",  "d7",                \
@@ -292,7 +292,7 @@
 
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(adr, x0, lb) ASM_END
-#define movxx_xx()  /*Rebp*/    ASM_BEG ASM_OP2(mov, x5, %0) ASM_END
+#define movxx_lb(lb)/*Rebp*/    ASM_BEG ASM_OP2(mov, x5, lb) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -305,12 +305,12 @@
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
                                 stack_sa()                                  \
-                                movxx_xx()                                  \
+                                movxx_lb(%[info])                           \
                                 /* placeholder for custom op */
 
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
-                                : "r" (info)                                \
+                                : [info] "r" (info)                         \
                                 : "cc",  "memory",                          \
                                   "q0",  "q1",  "q2",  "q3",                \
                                   "q4",  "q5",  "q6",  "q7",                \
@@ -332,7 +332,7 @@
 
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(la, $a0, lb) ASM_END
-#define movxx_xx()  /*Rebp*/    ASM_BEG ASM_OP2(move, $a1, %0) ASM_END
+#define movxx_lb(lb)/*Rebp*/    ASM_BEG ASM_OP2(move, $a1, lb) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -344,11 +344,11 @@
 
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
-                                movxx_xx()                                  \
+                                movxx_lb(%[info])                           \
                                 EMITW(0x787EF79E) /* TmmZ (w30) <- 0 (xor) */
 
 #define ASM_LEAVE(info)         :                                           \
-                                : "r" (info)                                \
+                                : [info] "r" (info)                         \
                                 : "cc",  "memory",                          \
                                   "at", "v0", "v1", "a0", "a1", "a2", "a3", \
                                   "t0", "t1", "t2", "t3", "t4", "t5", "t6", \

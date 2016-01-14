@@ -423,15 +423,16 @@
 
 /**************************   helper macros (SIMD)   **************************/
 
-/* simd mask */
+/* simd mask
+ * requires MSA-enabled compiler */
 
 #define RT_SIMD_MASK_NONE       N       /* none satisfy the condition */
 #define RT_SIMD_MASK_FULL       F       /*  all satisfy the condition */
 
 #define S0(mask)    S1(mask)
 #define S1(mask)    S##mask
-#define SN(rg, lb)  ASM_BEG ASM_OP2( BZ.V, rg, lb) ASM_END
-#define SF(rg, lb)  ASM_BEG ASM_OP2(BNZ.W, rg, lb) ASM_END
+#define SN(rg, lb)  ASM_BEG ASM_OP2( bz.v, rg, lb) ASM_END
+#define SF(rg, lb)  ASM_BEG ASM_OP2(bnz.w, rg, lb) ASM_END
 
 #define CHECK_MASK(lb, mask, RG) /* destroys Reax */                        \
         AUW(EMPTY, EMPTY, EMPTY, SIB(RG), lb, S0(RT_SIMD_MASK_##mask), EMPTY2)
