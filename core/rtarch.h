@@ -185,13 +185,13 @@
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
                                 stack_sa()                                  \
-                                movxx_lb(%[info])                           \
+                                movxx_lb(%%eax)                             \
                                 movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
                                 /* placeholder for custom op */
 
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
-                                : [info] "r" (info)                         \
+                                : "a" (info)                                \
                                 : "cc",  "memory"                           \
                             );
 
@@ -222,13 +222,13 @@
 #define ASM_ENTER(info)     asm volatile                                    \
                             (                                               \
                                 stack_sa()                                  \
-                                movxx_lb(%[info])                           \
+                                movxx_lb(%%eax)                             \
                                 movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
                                 "xor %%r15, %%r15\n" /* JMP r15 <- 0 (xor) */
 
 #define ASM_LEAVE(info)         stack_la()                                  \
                                 :                                           \
-                                : [info] "r" (info)                         \
+                                : "a" (info)                                \
                                 : "cc",  "memory",                          \
                                   "xmm0",  "xmm1",  "xmm2",  "xmm3",        \
                                   "xmm4",  "xmm5",  "xmm6",  "xmm7",        \
