@@ -277,10 +277,10 @@
 #define stack_ld(RM)                                                        \
         EMITW(0xE4900004 | MRM(REG(RM), SPxx,    0x00))
 
-#define stack_sa() /* save all [r0 - r11], 12 regs in total */              \
+#define stack_sa()   /* save all [Reax - Redi] + 4 temps + r11, 12 regs */  \
         EMITW(0xE9200FFF | MRM(0x00,    SPxx,    0x00))
 
-#define stack_la() /* load all [r0 - r11], 12 regs in total */              \
+#define stack_la()   /* load all r11 + 4 temps + [Redi - Reax], 12 regs */  \
         EMITW(0xE8B00FFF | MRM(0x00,    SPxx,    0x00))
 
 /* and
@@ -700,50 +700,50 @@
 /* jmp
  * set-flags: no */
 
-#define jmpxx_mm(RM, DP)                                                    \
+#define jmpxx_mm(RM, DP)         /* memory-targeted unconditional jump */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xE5900000 | MDM(PCxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
-#define jmpxx_lb(lb)                                                        \
+#define jmpxx_lb(lb)              /* label-targeted unconditional jump */   \
         ASM_BEG ASM_OP1(b,   lb) ASM_END
 
-#define jeqxx_lb(lb)                                                        \
+#define jezxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
         ASM_BEG ASM_OP1(beq, lb) ASM_END
 
-#define jezxx_lb(lb)                                                        \
+#define jnzxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
+        ASM_BEG ASM_OP1(bne, lb) ASM_END
+
+#define jeqxx_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(beq, lb) ASM_END
 
-#define jnexx_lb(lb)                                                        \
+#define jnexx_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(bne, lb) ASM_END
 
-#define jnzxx_lb(lb)                                                        \
-        ASM_BEG ASM_OP1(bne, lb) ASM_END
-
-#define jltxx_lb(lb)                                                        \
+#define jltxx_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(blo, lb) ASM_END
 
-#define jlexx_lb(lb)                                                        \
+#define jlexx_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(bls, lb) ASM_END
 
-#define jgtxx_lb(lb)                                                        \
+#define jgtxx_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(bhi, lb) ASM_END
 
-#define jgexx_lb(lb)                                                        \
+#define jgexx_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(bhs, lb) ASM_END
 
-#define jltxn_lb(lb)                                                        \
+#define jltxn_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(blt, lb) ASM_END
 
-#define jlexn_lb(lb)                                                        \
+#define jlexn_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(ble, lb) ASM_END
 
-#define jgtxn_lb(lb)                                                        \
+#define jgtxn_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(bgt, lb) ASM_END
 
-#define jgexn_lb(lb)                                                        \
+#define jgexn_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(bge, lb) ASM_END
 
-#define LBL(lb)                                                             \
+#define LBL(lb)                                          /* code label */   \
         ASM_BEG ASM_OP0(lb:) ASM_END
 
 /* ver

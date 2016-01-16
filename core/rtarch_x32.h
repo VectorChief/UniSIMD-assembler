@@ -180,12 +180,12 @@
 
 #define movxx_ri(RM, IM)                                                    \
         REX(0,       RXB(RM)) EMITB(0xC7)                                   \
-        MRM(0x00,    MOD(RM), REG(RM)) /* truncate IC with TYP below */     \
+        MRM(0x00,    MOD(RM), REG(RM))   /* truncate IC with TYP below */   \
         AUX(EMPTY,   EMPTY,   EMITW(VAL(IM) & ((TYP(IM) << 6) - 1)))
 
 #define movxx_mi(RM, DP, IM)                                                \
     ADR REX(0,       RXB(RM)) EMITB(0xC7)                                   \
-        MRM(0x00,    MOD(RM), REG(RM)) /* truncate IC with TYP below */     \
+        MRM(0x00,    MOD(RM), REG(RM))   /* truncate IC with TYP below */   \
         AUX(SIB(RM), CMD(DP), EMITW(VAL(IM) & ((TYP(IM) << 6) - 1)))
 
 #define movxx_rr(RG, RM)                                                    \
@@ -218,7 +218,7 @@
         REX(0,       RXB(RM)) EMITB(0x8F)                                   \
         MRM(0x00,    MOD(RM), REG(RM))
 
-#define stack_sa() /* save all [rax - r15] w/o rsp, 15 regs in total */     \
+#define stack_sa()   /* save all [Reax - RegF], 15 regs in total */         \
         stack_st(Reax)                                                      \
         stack_st(Recx)                                                      \
         stack_st(Redx)                                                      \
@@ -233,11 +233,11 @@
         stack_st(RegC)                                                      \
         stack_st(RegD)                                                      \
         stack_st(RegE)                                                      \
-        REX(0,             1) EMITB(0xFF)  /* <- save r15 or [RegF] */      \
+        REX(0,             1) EMITB(0xFF)     /* <- save r15 or [RegF] */   \
         MRM(0x06,       0x03, 0x07)
 
-#define stack_la() /* load all [r15 - rax] w/o rsp, 15 regs in total */     \
-        REX(0,             1) EMITB(0x8F)  /* <- load r15 or [RegF] */      \
+#define stack_la()   /* load all [RegF - Reax], 15 regs in total */         \
+        REX(0,             1) EMITB(0x8F)     /* <- load r15 or [RegF] */   \
         MRM(0x00,       0x03, 0x07)                                         \
         stack_ld(RegE)                                                      \
         stack_ld(RegD)                                                      \
@@ -602,53 +602,53 @@
 /* jmp
  * set-flags: no */
 
-#define jmpxx_mm(RM, DP)                                                    \
-    ADR REX(1,       RXB(RM)) EMITB(0x8B)  /* <- load r15d from RM/DP */    \
-        MRM(0x07,    MOD(RM), REG(RM))     /*    upper half is zeroed */    \
-        AUX(SIB(RM), CMD(DP), EMPTY)       /*    only once in ASM_ENTER */  \
-        REX(0,             1) EMITB(0xFF)  /* <- jump to address in r15 */  \
+#define jmpxx_mm(RM, DP)         /* memory-targeted unconditional jump */   \
+    ADR REX(1,       RXB(RM)) EMITB(0x8B)   /* <- load r15d from RM/DP */   \
+        MRM(0x07,    MOD(RM), REG(RM))      /*    upper half is zeroed */   \
+        AUX(SIB(RM), CMD(DP), EMPTY)        /*    only once in ASM_ENTER */ \
+        REX(0,             1) EMITB(0xFF)   /* <- jump to address in r15 */ \
         MRM(0x04,       0x03, 0x07)
 
-#define jmpxx_lb(lb)                                                        \
+#define jmpxx_lb(lb)              /* label-targeted unconditional jump */   \
         ASM_BEG ASM_OP1(jmp, lb) ASM_END
 
-#define jeqxx_lb(lb)                                                        \
+#define jezxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
         ASM_BEG ASM_OP1(je,  lb) ASM_END
 
-#define jezxx_lb(lb)                                                        \
-        ASM_BEG ASM_OP1(je,  lb) ASM_END
-
-#define jnexx_lb(lb)                                                        \
-        ASM_BEG ASM_OP1(jne, lb) ASM_END
-
-#define jnzxx_lb(lb)                                                        \
+#define jnzxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
         ASM_BEG ASM_OP1(jnz, lb) ASM_END
 
-#define jltxx_lb(lb)                                                        \
+#define jeqxx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP1(je,  lb) ASM_END
+
+#define jnexx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP1(jne, lb) ASM_END
+
+#define jltxx_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(jb,  lb) ASM_END
 
-#define jlexx_lb(lb)                                                        \
+#define jlexx_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(jbe, lb) ASM_END
 
-#define jgtxx_lb(lb)                                                        \
+#define jgtxx_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(ja,  lb) ASM_END
 
-#define jgexx_lb(lb)                                                        \
+#define jgexx_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(jae, lb) ASM_END
 
-#define jltxn_lb(lb)                                                        \
+#define jltxn_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(jl,  lb) ASM_END
 
-#define jlexn_lb(lb)                                                        \
+#define jlexn_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(jle, lb) ASM_END
 
-#define jgtxn_lb(lb)                                                        \
+#define jgtxn_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(jg,  lb) ASM_END
 
-#define jgexn_lb(lb)                                                        \
+#define jgexn_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP1(jge, lb) ASM_END
 
-#define LBL(lb)                                                             \
+#define LBL(lb)                                          /* code label */   \
         ASM_BEG ASM_OP0(lb:) ASM_END
 
 /* ver
