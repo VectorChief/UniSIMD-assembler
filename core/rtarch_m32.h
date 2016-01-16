@@ -273,7 +273,7 @@
         EMITW(0xAC000000 | MDM(TIxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define movxx_rr(RG, RM)                                                    \
-        EMITW(0x00000025 | MRM(REG(RG), TZxx,    REG(RM)))
+        EMITW(0x00000025 | MRM(REG(RG), REG(RM), TZxx))
 
 #define movxx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
@@ -346,7 +346,7 @@
         EMITW(0x00000000 | MIM(REG(RM), REG(RM), VAL(IM), T2(IM), M2(IM)) | \
         (+(TP2(IM) == 0) & 0x30000000) | (+(TP2(IM) != 0) & 0x00000024))    \
         /* if true ^ equals to -1 (not 1) */                                \
-        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RM))) /* <- set flags */
+        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))/* <- set flags (Z) */
 
 #define andxx_mi(RM, DP, IM)                                                \
         AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
@@ -357,7 +357,7 @@
 
 #define andxx_rr(RG, RM)                                                    \
         EMITW(0x00000024 | MRM(REG(RG), REG(RG), REG(RM)))                  \
-        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RG))) /* <- set flags */
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
 
 #define andxx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
@@ -447,7 +447,7 @@
 
 #define negxx_rr(RM)                                                        \
         EMITW(0x00000023 | MRM(REG(RM), TZxx,    REG(RM)))                  \
-        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RM))) /* <- set flags */
+        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))/* <- set flags (Z) */
 
 #define negxx_mm(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
@@ -463,7 +463,7 @@
         EMITW(0x00000000 | MIM(REG(RM), REG(RM), VAL(IM), T1(IM), M1(IM)) | \
         (+(TP1(IM) == 0) & 0x24000000) | (+(TP1(IM) != 0) & 0x00000021))    \
         /* if true ^ equals to -1 (not 1) */                                \
-        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RM))) /* <- set flags */
+        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))/* <- set flags (Z) */
 
 #define addxx_mi(RM, DP, IM)                                                \
         AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G1(IM))   \
@@ -474,7 +474,7 @@
 
 #define addxx_rr(RG, RM)                                                    \
         EMITW(0x00000021 | MRM(REG(RG), REG(RG), REG(RM)))                  \
-        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RG))) /* <- set flags */
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
 
 #define addxx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
@@ -496,7 +496,7 @@
         (+(TP1(IM) == 0) & 0x24000000) | (+(TP1(IM) != 0) & 0x00000023)   | \
         (+(TP1(IM) == 0) & 0x0000FFFF  &   -VAL(IM)))                       \
         /* if true ^ equals to -1 (not 1) */                                \
-        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RM))) /* <- set flags */
+        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))/* <- set flags (Z) */
 
 #define subxx_mi(RM, DP, IM)                                                \
         AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G1(IM))   \
@@ -508,7 +508,7 @@
 
 #define subxx_rr(RG, RM)                                                    \
         EMITW(0x00000023 | MRM(REG(RG), REG(RG), REG(RM)))                  \
-        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RG))) /* <- set flags */
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
 
 #define subxx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
@@ -704,25 +704,25 @@
 
 #define cmpxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
-        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RM)))
+        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))
 
 #define cmpxx_mi(RM, DP, IM)                                                \
         AUW(SIB(RM),  VAL(IM), TRxx,    MOD(RM), VAL(DP), C1(DP), G3(IM))   \
         EMITW(0x8C000000 | MDM(TLxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define cmpxx_rr(RG, RM)                                                    \
-        EMITW(0x00000025 | MRM(TRxx,    TZxx,    REG(RM)))                  \
-        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RG)))
+        EMITW(0x00000025 | MRM(TRxx,    REG(RM), TZxx))                     \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))
 
 #define cmpxx_rm(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TRxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000025 | MRM(TLxx,    TZxx,    REG(RG)))
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))
 
 #define cmpxx_mr(RM, DP, RG)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TLxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000025 | MRM(TRxx,    TZxx,    REG(RG)))
+        EMITW(0x00000025 | MRM(TRxx,    REG(RG), TZxx))
 
 /* jmp
  * set-flags: no */
@@ -731,7 +731,7 @@
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x00000008 | MRM(0x00,    TMxx,    0x00))                     \
-        EMITW(0x00000000 | MRM(TZxx,    0x00,    TZxx)) /* <- branch delay */
+        EMITW(0x00000025 | MRM(TPxx,    TPxx,    TZxx)) /* <- branch delay */
 
 #define jmpxx_lb(lb)              /* label-targeted unconditional jump */   \
         ASM_BEG ASM_OP1(b, lb) ASM_END
