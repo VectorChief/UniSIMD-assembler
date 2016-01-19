@@ -566,10 +566,16 @@
 #define remxx_xx()          /* to be placed immediately prior divx*_x* */   \
                             /* (in ARM) to prepare for rem calculation */
 
-#define remxx_xr(RM)        /* to be placed immediately after divx*_xr */   \
+#define remxx_xr(RM)        /* to be placed immediately after divxx_xr */   \
                             /* (in ARM) to produce remainder Redx<-rem */
 
-#define remxx_xm(RM, DP)    /* to be placed immediately after divx*_xm */   \
+#define remxx_xm(RM, DP)    /* to be placed immediately after divxx_xm */   \
+                            /* (in ARM) to produce remainder Redx<-rem */
+
+#define remxn_xr(RM)        /* to be placed immediately after divxn_xr */   \
+                            /* (in ARM) to produce remainder Redx<-rem */
+
+#define remxn_xm(RM, DP)    /* to be placed immediately after divxn_xm */   \
                             /* (in ARM) to produce remainder Redx<-rem */
 
 /* cmp

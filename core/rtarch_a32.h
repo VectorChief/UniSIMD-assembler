@@ -638,11 +638,19 @@
 #define remxx_xx()          /* to be placed immediately prior divx*_x* */   \
         movxx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
-#define remxx_xr(RM)        /* to be placed immediately after divx*_xr */   \
+#define remxx_xr(RM)        /* to be placed immediately after divxx_xr */   \
         EMITW(0x1B008000 | MRM(Tedx,    Teax,    REG(RM)) | Tedx << 10)     \
                                                           /* Redx<-rem */
 
-#define remxx_xm(RM, DP)    /* to be placed immediately after divx*_xm */   \
+#define remxx_xm(RM, DP)    /* to be placed immediately after divxx_xm */   \
+        EMITW(0x1B008000 | MRM(Tedx,    Teax,    TMxx) | Tedx << 10)        \
+                                                          /* Redx<-rem */
+
+#define remxn_xr(RM)        /* to be placed immediately after divxn_xr */   \
+        EMITW(0x1B008000 | MRM(Tedx,    Teax,    REG(RM)) | Tedx << 10)     \
+                                                          /* Redx<-rem */
+
+#define remxn_xm(RM, DP)    /* to be placed immediately after divxn_xm */   \
         EMITW(0x1B008000 | MRM(Tedx,    Teax,    TMxx) | Tedx << 10)        \
                                                           /* Redx<-rem */
 
