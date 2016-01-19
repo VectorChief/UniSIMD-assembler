@@ -590,6 +590,8 @@
         EMITW(0x00000007 | MRM(TMxx,    Tecx,    TMxx))                     \
         EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
+#if RT_M32 < 6 /* pre-r6 */
+
 /* mul
  * set-flags: no */
 
@@ -698,6 +700,113 @@
 
 #define remxx_xm(RM, DP)    /* to be placed immediately after divx*_xm */   \
         EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))   /* Redx<-rem */
+
+#else  /* r6 */
+
+/* mul
+ * set-flags: no */
+
+#define mulxx_ri(RM, IM)                 /* part-range 32-bit multiply */   \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
+        EMITW(0x00000099 | MRM(REG(RM), REG(RM), TIxx))
+
+#define mulxx_rr(RG, RM)                 /* part-range 32-bit multiply */   \
+        EMITW(0x00000099 | MRM(REG(RG), REG(RG), REG(RM)))
+
+#define mulxx_ld(RG, RM, DP)             /* part-range 32-bit multiply */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000099 | MRM(REG(RG), REG(RG), TMxx))
+
+#define mulxn_ri(RM, IM)                 /* part-range 32-bit multiply */   \
+        mulxx_ri(W(RM), W(IM))
+
+#define mulxn_rr(RG, RM)                 /* part-range 32-bit multiply */   \
+        mulxx_rr(W(RG), W(RM))
+
+#define mulxn_ld(RG, RM, DP)             /* part-range 32-bit multiply */   \
+        mulxx_ld(W(RG), W(RM), W(DP))
+
+#define mulxx_xr(RM)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
+        EMITW(0x000000D9 | MRM(Tedx,    Teax,    REG(RM)))                  \
+        EMITW(0x00000099 | MRM(Teax,    Teax,    REG(RM)))
+
+#define mulxx_xm(RM, DP) /* Reax is in/out, Redx is out(high)-zero-ext */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x000000D9 | MRM(Tedx,    Teax,    TMxx))                     \
+        EMITW(0x00000099 | MRM(Teax,    Teax,    TMxx))
+
+#define mulxn_xr(RM)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
+        EMITW(0x000000D8 | MRM(Tedx,    Teax,    REG(RM)))                  \
+        EMITW(0x00000098 | MRM(Teax,    Teax,    REG(RM)))
+
+#define mulxn_xm(RM, DP) /* Reax is in/out, Redx is out(high)-sign-ext */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x000000D8 | MRM(Tedx,    Teax,    TMxx))                     \
+        EMITW(0x00000098 | MRM(Teax,    Teax,    TMxx))
+
+#define mulxp_xr(RM)     /* Reax is in/out, prepares Redx for divxn/xp */   \
+                                         /* part-range 32-bit multiply */   \
+        EMITW(0x00000099 | MRM(Teax,    Teax,    REG(RM)))
+
+#define mulxp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn/xp */   \
+                                         /* part-range 32-bit multiply */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000099 | MRM(Teax,    Teax,    TMxx))
+
+/* div
+ * set-flags: no */
+
+#define divxx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+                                     /* destroys Redx, Xmm0 (in ARMv7) */   \
+        EMITW(0x0000009B | MRM(Teax,    Teax,    REG(RM)))                  \
+                                     /* 32-bit int (fp64 div in ARMv7) */
+
+#define divxx_xm(RM, DP) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+                                     /* destroys Redx, Xmm0 (in ARMv7) */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x0000009B | MRM(Teax,    Teax,    TMxx))                     \
+                                     /* 32-bit int (fp64 div in ARMv7) */
+
+#define divxn_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+                                     /* destroys Redx, Xmm0 (in ARMv7) */   \
+        EMITW(0x0000009A | MRM(Teax,    Teax,    REG(RM)))                  \
+                                     /* 32-bit int (fp64 div in ARMv7) */
+
+#define divxn_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+                                     /* destroys Redx, Xmm0 (in ARMv7) */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x0000009A | MRM(Teax,    Teax,    TMxx))                     \
+                                     /* 32-bit int (fp64 div in ARMv7) */
+
+#define divxp_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divxn_xr(W(RM))              /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
+
+#define divxp_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divxn_xm(W(RM), W(DP))       /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
+
+/* rem
+ * set-flags: no */
+
+#define remxx_xx()          /* to be placed immediately prior divx*_x* */   \
+        movxx_rr(Redx, Reax)         /* to prepare for rem calculation */
+
+#define remxx_xr(RM)        /* to be placed immediately after divx*_xr */   \
+        EMITW(0x00000099 | MRM(TMxx,    Tedx,    REG(RM)))                  \
+        EMITW(0x00000023 | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
+
+#define remxx_xm(RM, DP)    /* to be placed immediately after divx*_xm */   \
+        EMITW(0x00000099 | MRM(TMxx,    Tedx,    TMxx))                     \
+        EMITW(0x00000023 | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
+
+#endif /* r6 */
 
 /* cmp
  * set-flags: yes */
