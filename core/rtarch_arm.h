@@ -562,7 +562,7 @@
 /* div
  * set-flags: no */
 
-#if (RT_128 < 2)
+#if (RT_ARM < 2)
 
 #define divxx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
                                                 /* destroys Redx, Xmm0 */   \
@@ -622,7 +622,7 @@
         EMITW(0xF3BB0700 | MRM(Tmm0+0,  0x00,    Tmm0+1))                   \
         EMITW(0xEE100B10 | MRM(Teax,    Tmm0+0,  0x00)) /* fallback to VFP */
 
-#else /* RT_128 >= 2 */
+#else /* RT_ARM >= 2 */
 
 #define divxx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
                                      /* destroys Redx, Xmm0 (in ARMv7) */   \
@@ -656,7 +656,7 @@
         divxn_xm(W(RM), W(DP))       /* destroys Redx, Xmm0 (in ARMv7) */   \
                                      /* 24-bit int (fp32 div in ARMv7) */
 
-#endif /* RT_128 >= 2 */
+#endif /* RT_ARM >= 2 */
 
 /* rem
  * set-flags: no */
