@@ -843,6 +843,8 @@
         EMITW(0x8C000000 | MDM(TLxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x00000025 | MRM(TRxx,    REG(RG), TZxx))
 
+#if RT_M32 < 6 /* pre-r6 */
+
 /* jmp
  * set-flags: no */
 
@@ -901,6 +903,61 @@
 
 #define LBL(lb)                                          /* code label */   \
         ASM_BEG ASM_OP0(lb:) ASM_END
+
+#else  /* r6 */
+
+/* jmp
+ * set-flags: no */
+
+#define jmpxx_mm(RM, DP)         /* memory-targeted unconditional jump */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000009 | MRM(0x00,    TMxx,    0x00))                     \
+        EMITW(0x00000025 | MRM(TPxx,    TPxx,    TZxx)) /* <- branch delay */
+
+#define jmpxx_lb(lb)              /* label-targeted unconditional jump */   \
+        ASM_BEG ASM_OP1(b, lb) ASM_END
+
+#define jezxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
+        ASM_BEG ASM_OP2(beqzc, $t8, lb) ASM_END
+
+#define jnzxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
+        ASM_BEG ASM_OP2(bnezc, $t8, lb) ASM_END
+
+#define jeqxx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(beqc,  $t8, $t9, lb) ASM_END
+
+#define jnexx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(bnec,  $t8, $t9, lb) ASM_END
+
+#define jltxx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(bltuc, $t8, $t9, lb) ASM_END
+
+#define jlexx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(bleuc, $t8, $t9, lb) ASM_END
+
+#define jgtxx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(bgtuc, $t8, $t9, lb) ASM_END
+
+#define jgexx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(bgeuc, $t8, $t9, lb) ASM_END
+
+#define jltxn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(bltc,  $t8, $t9, lb) ASM_END
+
+#define jlexn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(blec,  $t8, $t9, lb) ASM_END
+
+#define jgtxn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(bgtc,  $t8, $t9, lb) ASM_END
+
+#define jgexn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(bgec,  $t8, $t9, lb) ASM_END
+
+#define LBL(lb)                                          /* code label */   \
+        ASM_BEG ASM_OP0(lb:) ASM_END
+
+#endif /* r6 */
 
 /* ver
  * set-flags: no */
