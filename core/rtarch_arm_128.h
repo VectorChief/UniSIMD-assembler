@@ -71,12 +71,12 @@
 #define P20(dp) (0x02000E00 | ((dp) >> 4 & 0xFF))
 #define C20(br, dp) EMPTY
 
-#define B21(br) TPxx
+#define B21(br) (br)
 #define P21(dp) (0x00000000 | TDxx)
 #define C21(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
                             (0xF0000 & (dp) <<  4) | (0xFF0 & (dp)))
 
-#define B22(br) TPxx
+#define B22(br) (br)
 #define P22(dp) (0x00000000 | TDxx)
 #define C22(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
                             (0xF0000 & (dp) <<  4) | (0xFF0 & (dp)))        \
