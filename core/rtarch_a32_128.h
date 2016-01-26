@@ -130,7 +130,7 @@
 /* and */
 
 #define andpx_rr(RG, RM)                                                    \
-        EMITW(0x4E201C00 | MXM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x4E201C00 | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define andpx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -140,7 +140,7 @@
 /* ann */
 
 #define annpx_rr(RG, RM)                                                    \
-        EMITW(0x4E601C00 | MXM(REG(RG), REG(RM), REG(RG)))                  \
+        EMITW(0x4E601C00 | MXM(REG(RG), REG(RM), REG(RG)))
 
 #define annpx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -150,7 +150,7 @@
 /* orr */
 
 #define orrpx_rr(RG, RM)                                                    \
-        EMITW(0x4EA01C00 | MXM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x4EA01C00 | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define orrpx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -160,7 +160,7 @@
 /* xor */
 
 #define xorpx_rr(RG, RM)                                                    \
-        EMITW(0x6E201C00 | MXM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x6E201C00 | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define xorpx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -252,7 +252,7 @@
 /* min */
 
 #define minps_rr(RG, RM)                                                    \
-        EMITW(0x4EA0F400 | MXM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x4EA0F400 | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define minps_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -262,7 +262,7 @@
 /* max */
 
 #define maxps_rr(RG, RM)                                                    \
-        EMITW(0x4E20F400 | MXM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x4E20F400 | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define maxps_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \

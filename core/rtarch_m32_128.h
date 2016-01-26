@@ -135,7 +135,7 @@
 /* and */
 
 #define andpx_rr(RG, RM)                                                    \
-        EMITW(0x7800001E | MXM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x7800001E | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define andpx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -145,7 +145,7 @@
 /* ann */
 
 #define annpx_rr(RG, RM)                                                    \
-        EMITW(0x78C0001E | MXM(REG(RG), REG(RM), TmmZ))                     \
+        EMITW(0x78C0001E | MXM(REG(RG), REG(RM), TmmZ))
 
 #define annpx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -155,7 +155,7 @@
 /* orr */
 
 #define orrpx_rr(RG, RM)                                                    \
-        EMITW(0x7820001E | MXM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x7820001E | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define orrpx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -165,7 +165,7 @@
 /* xor */
 
 #define xorpx_rr(RG, RM)                                                    \
-        EMITW(0x7860001E | MXM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x7860001E | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define xorpx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -252,7 +252,7 @@
 /* min */
 
 #define minps_rr(RG, RM)                                                    \
-        EMITW(0x7B00001B | MXM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x7B00001B | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define minps_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -262,7 +262,7 @@
 /* max */
 
 #define maxps_rr(RG, RM)                                                    \
-        EMITW(0x7B80001B | MXM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x7B80001B | MXM(REG(RG), REG(RG), REG(RM)))
 
 #define maxps_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -329,7 +329,7 @@
         cvnpn_rr(W(RG), W(RG))
 
 #define cvzps_rr(RG, RM)     /* round towards zero */                       \
-        EMITW(0x7B22001E | MXM(REG(RG), REG(RM), 0x00))                     \
+        EMITW(0x7B22001E | MXM(REG(RG), REG(RM), 0x00))
 
 #define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -340,15 +340,15 @@
  * rounding mode comes from fp control register (set in FCTRL blocks) */
 
 #define rndps_rr(RG, RM)                                                    \
-        EMITW(0x7B2A001E | MXM(REG(RG), REG(RM), 0x00))                     \
+        EMITW(0x7B2A001E | MXM(REG(RG), REG(RM), 0x00))
 
 #define cvtps_rr(RG, RM)                                                    \
-        EMITW(0x7B38001E | MXM(REG(RG), REG(RM), 0x00))                     \
+        EMITW(0x7B38001E | MXM(REG(RG), REG(RM), 0x00))
 
 #define cvtps_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0x78000023 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x7B38001E | MXM(REG(RG), Tmm1,    0x00))                     \
+        EMITW(0x7B38001E | MXM(REG(RG), Tmm1,    0x00))
 
 #define cvtpn_rr(RG, RM)                                                    \
         EMITW(0x7B3C001E | MXM(REG(RG), REG(RM), 0x00))
