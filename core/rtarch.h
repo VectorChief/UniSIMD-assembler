@@ -47,6 +47,8 @@
  *  - rtarch_a32_128.h     - AArch64:ILP32 ABI, 32 SIMD regs, IEEE-fp, sqr, div
  *  - rtarch_m32.h         - MIPS32 r5/r6 ISA, 32 core regs, 14 + 3 used
  *  - rtarch_m32_128.h     - MIPS32 r5/r6 ISA, 32 SIMD regs, MSA 128-bit
+ *  - rtarch_p32.h         - 32-bit PowerISA, 32 core regs
+ *  - rtarch_p32_128.h     - 32-bit PowerISA, 32 SIMD regs, VMX 128-bit
  *  - rtarch_x32.h         - x86_64:x32 ABI, 16 core regs, 32-bit ptrs
  *  - rtarch_x32_128.h     - x86_64:x32 ABI, 16 SIMD regs, SSE 128-bit
  *  - rtarch_x32_256.h     - x86_64:x32 ABI, 16 SIMD regs, AVX 256-bit
@@ -60,18 +62,12 @@
  *  - rtarch_a64_128.h     - AArch64:ARMv8 ISA, 32 SIMD regs, IEEE-fp, sqr, div
  *  - rtarch_m64.h         - MIPS64 r5/r6 ISA, 32 core regs, 14 + 3 used
  *  - rtarch_m64_128.h     - MIPS64 r5/r6 ISA, 32 SIMD regs, MSA 128-bit
+ *  - rtarch_p64.h         - 64-bit PowerISA, 32 core regs
+ *  - rtarch_p64_128.h     - 64-bit PowerISA, 32 SIMD regs, VMX 128-bit
  *  - rtarch_x64.h         - x86_64:x64 ISA, 16 core regs, 64-bit ptrs
  *  - rtarch_x64_128.h     - x86_64:x64 ISA, 16 SIMD regs, SSE 128-bit
  *  - rtarch_x64_256.h     - x86_64:x64 ISA, 16 SIMD regs, AVX 256-bit
  *  - rtarch_x64_512.h     - x86_64:x64 ISA, 32 SIMD regs, AVX 512-bit
- *
- * Reserved 32-bit targets:
- *  - rtarch_p32.h         - 32-bit PowerISA, 32 core regs
- *  - rtarch_p32_128.h     - 32-bit PowerISA, 32 SIMD regs, VMX
- *
- * Reserved 64-bit targets:
- *  - rtarch_p64.h         - 64-bit PowerISA, 32 core regs
- *  - rtarch_p64_128.h     - 64-bit PowerISA, 32 SIMD regs, VMX
  *
  * Preliminary naming scheme for extended core and SIMD register files.
  *
@@ -388,7 +384,60 @@
                                 : "cc",  "memory"                           \
                             );}
 
-#endif /* RT_X86, RT_X32, RT_ARM, RT_A32, RT_M32 */
+/* ---------------------------------   P32   -------------------------------- */
+
+#elif defined (RT_P32)
+
+#define ASM_OP0(op)             #op
+#define ASM_OP1(op, p1)         #op"  "#p1
+#define ASM_OP2(op, p1, p2)     #op"  "#p1", "#p2
+#define ASM_OP3(op, p1, p2, p3) #op"  "#p1", "#p2", "#p3
+
+#define ASM_BEG /*internal*/    ""
+#define ASM_END /*internal*/    "\n"
+
+#define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
+#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lis, %%r4, lb@h) ASM_END    \
+                                ASM_BEG ASM_OP3(ori, %%r4, %%r4, lb@l) ASM_END
+#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mr, %%r4, lb) ASM_END
+#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mr, lb, %%r4) ASM_END
+
+#if   defined (RT_256) && (RT_256 != 0)
+#define S 8
+#error "VMX doesn't support SIMD wider than 4 at the moment"
+#elif defined (RT_128) && (RT_128 != 0)
+#define S 4
+#include "rtarch_p32_128.h"
+#endif /* RT_256, RT_128 */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__) {int __Reax__; asm volatile                     \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                movpx_ld(Xmm2, Mebp, inf_GPC01)             \
+                                movpx_ld(Xmm4, Mebp, inf_GPC02)             \
+                                movpx_ld(Xmm8, Mebp, inf_GPC04)             \
+                                EMITW(0x13084504)                           \
+                                EMITW(0x1328C504)                           \
+                                EMITW(0x13421484)                           \
+                                EMITW(0x13642484)                           \
+                                EMITW(0x7C0902A6 | 0x1B << 21)              \
+                                "cmplw cr2, %%r24, %%r24\n"                 \
+                                EMITW(0x7C000278)  /* TZxx (r0) <- 0 (xor) */
+
+#define ASM_LEAVE(__Info__)     EMITW(0x7C0903A6 | 0x1B << 21)              \
+                                stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" (__Reax__)                   \
+                                : [Info_]  "r" (__Info__)                   \
+                                : "cc",  "memory", "r0", "r27"              \
+                            );}
+
+#endif /* RT_X86, RT_X32, RT_ARM, RT_A32, RT_M32, RT_P32 */
 
 #endif /* OS, COMPILER, ARCH */
 
