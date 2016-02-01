@@ -499,7 +499,7 @@
 
 #define rnrps_rr(RG, RM, mode)                                              \
         EMITW(0x1000020A | MXM(REG(RG), 0x00,    REG(RM)) |                 \
-        RT_SIMD_MASK_##mask << 6)
+        RT_SIMD_MODE_##mode << 6)
 
 #define cvrps_rr(RG, RM, mode)                                              \
         rnrps_rr(W(RG), W(RM), mode)                                        \
