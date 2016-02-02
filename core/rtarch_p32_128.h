@@ -364,40 +364,90 @@
 /**************************   packed integer (SIMD)   *************************/
 
 /* cvz
- * rounding mode is encoded directly    (can be used in FCTRL blocks) */
+ * rounding mode is encoded directly */
 
-#define rnzps_rr(RG, RM)     /* round towards zero */                       \
+#define rnzps_rr(RG, RM)     /* round towards zero  (fp-to-signed-int) */   \
         EMITW(0x1000024A | MXM(REG(RG), 0x00,    REG(RM)))
 
-#define cvzps_rr(RG, RM)     /* round towards zero */                       \
+#define rnzps_ld(RG, RM, DP) /* round towards zero  (fp-to-signed-int) */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x7C0000CE | MXM(Tmm1,    TPxx,    0x00))                     \
+        EMITW(0x1000024A | MXM(REG(RG), 0x00,    Tmm1))
+
+#define cvzps_rr(RG, RM)     /* round towards zero  (fp-to-signed-int) */   \
         EMITW(0x100003CA | MXM(REG(RG), 0x00,    REG(RM)))
 
-#define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
+#define cvzps_ld(RG, RM, DP) /* round towards zero  (fp-to-signed-int) */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x7C0000CE | MXM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0x100003CA | MXM(REG(RG), 0x00,    Tmm1))
 
-/* cvt
- * rounding mode comes from fp control register (set in FCTRL blocks) */
+/* cvp
+ * rounding mode is encoded directly */
 
-#define rndps_rr(RG, RM)                                                    \
+#define rnpps_rr(RG, RM)     /* round towards +inf  (fp-to-signed-int) */   \
+        EMITW(0x1000028A | MXM(REG(RG), 0x00,    REG(RM)))
 
-#define cvtps_rr(RG, RM)                                                    \
+#define rnpps_ld(RG, RM, DP) /* round towards +inf  (fp-to-signed-int) */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x7C0000CE | MXM(Tmm1,    TPxx,    0x00))                     \
+        EMITW(0x1000028A | MXM(REG(RG), 0x00,    Tmm1))
 
-#define cvtps_ld(RG, RM, DP)                                                \
+#define cvpps_rr(RG, RM)     /* round towards +inf  (fp-to-signed-int) */   \
+        rnpps_rr(W(RG), W(RM))                                              \
+        cvzps_rr(W(RG), W(RG))
 
-#define cvtpn_rr(RG, RM)                                                    \
+#define cvpps_ld(RG, RM, DP) /* round towards +inf  (fp-to-signed-int) */   \
+        rnpps_ld(W(RG), W(RM), W(DP))                                       \
+        cvzps_rr(W(RG), W(RG))
 
-#define cvtpn_ld(RG, RM, DP)                                                \
+/* cvm
+ * rounding mode is encoded directly */
+
+#define rnmps_rr(RG, RM)     /* round towards -inf  (fp-to-signed-int) */   \
+        EMITW(0x100002CA | MXM(REG(RG), 0x00,    REG(RM)))
+
+#define rnmps_ld(RG, RM, DP) /* round towards -inf  (fp-to-signed-int) */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x7C0000CE | MXM(Tmm1,    TPxx,    0x00))                     \
+        EMITW(0x100002CA | MXM(REG(RG), 0x00,    Tmm1))
+
+#define cvmps_rr(RG, RM)     /* round towards -inf  (fp-to-signed-int) */   \
+        rnmps_rr(W(RG), W(RM))                                              \
+        cvzps_rr(W(RG), W(RG))
+
+#define cvmps_ld(RG, RM, DP) /* round towards -inf  (fp-to-signed-int) */   \
+        rnmps_ld(W(RG), W(RM), W(DP))                                       \
+        cvzps_rr(W(RG), W(RG))
 
 /* cvn
- * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
+ * rounding mode is encoded directly */
 
-#define cvnpn_rr(RG, RM)     /* round to nearest */                         \
+#define rnnps_rr(RG, RM)     /* round to nearest    (fp-to-signed-int) */   \
+        EMITW(0x1000020A | MXM(REG(RG), 0x00,    REG(RM)))
+
+#define rnnps_ld(RG, RM, DP) /* round to nearest    (fp-to-signed-int) */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x7C0000CE | MXM(Tmm1,    TPxx,    0x00))                     \
+        EMITW(0x1000020A | MXM(REG(RG), 0x00,    Tmm1))
+
+#define cvnps_rr(RG, RM)     /* round to nearest    (fp-to-signed-int) */   \
+        rnnps_rr(W(RG), W(RM))                                              \
+        cvzps_rr(W(RG), W(RG))
+
+#define cvnps_ld(RG, RM, DP) /* round to nearest    (fp-to-signed-int) */   \
+        rnnps_ld(W(RG), W(RM), W(DP))                                       \
+        cvzps_rr(W(RG), W(RG))
+
+#define cvnpn_rr(RG, RM)     /* round to nearest    (signed-int-to-fp) */   \
         EMITW(0x1000034A | MXM(REG(RG), 0x00,    REG(RM)))
 
-#define cvnpn_ld(RG, RM, DP) /* round to nearest */                         \
+#define cvnpn_ld(RG, RM, DP) /* round to nearest    (signed-int-to-fp) */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x7C0000CE | MXM(Tmm1,    TPxx,    0x00))                     \
@@ -477,33 +527,6 @@
 #define CHECK_MASK(lb, mask, RG) /* destroys Reax */                        \
         EMITW(0x10000486 | MXM(REG(RG), REG(RG), TmmQ))                     \
         AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb, S0(RT_SIMD_MASK_##mask), EMPTY2)
-
-/* simd mode
- * set in FCTRL blocks (cannot be nested) */
-
-#define RT_SIMD_MODE_ROUNDN     0x00    /* round to nearest */
-#define RT_SIMD_MODE_ROUNDM     0x03    /* round towards minus infinity */
-#define RT_SIMD_MODE_ROUNDP     0x02    /* round towards plus  infinity */
-#define RT_SIMD_MODE_ROUNDZ     0x01    /* round towards zero */
-
-#define fpscr_ld(RG) /* not portable, do not use outside */
-
-#define fpscr_st(RG) /* not portable, do not use outside */
-
-#define FCTRL_ENTER(mode) /* assumes default mode (ROUNDN) upon entry */
-
-#define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */
-
-/* cvr
- * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
-
-#define rnrps_rr(RG, RM, mode)                                              \
-        EMITW(0x1000020A | MXM(REG(RG), 0x00,    REG(RM)) |                 \
-        RT_SIMD_MODE_##mode << 6)
-
-#define cvrps_rr(RG, RM, mode)                                              \
-        rnrps_rr(W(RG), W(RM), mode)                                        \
-        cvzps_rr(W(RG), W(RG))
 
 #endif /* RT_SIMD_CODE */
 

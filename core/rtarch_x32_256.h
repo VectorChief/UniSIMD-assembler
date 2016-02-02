@@ -332,55 +332,99 @@
         AUX(SIB(RM), CMD(DP), EMITB(0x05))
 
 /* cvz
- * rounding mode is encoded directly    (can be used in FCTRL blocks) */
+ * rounding mode is encoded directly */
 
-#define rnzps_rr(RG, RM)     /* round towards zero */                       \
+#define rnzps_rr(RG, RM)     /* round towards zero  (fp-to-signed-int) */   \
         VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 3) EMITB(0x08)                 \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_ROUNDZ))
+        AUX(EMPTY,   EMPTY,   EMITB(0x03))
 
-#define cvzps_rr(RG, RM)     /* round towards zero */                       \
+#define rnzps_ld(RG, RM, DP) /* round towards zero  (fp-to-signed-int) */   \
+    ADR VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 3) EMITB(0x08)                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(0x03))
+
+#define cvzps_rr(RG, RM)     /* round towards zero  (fp-to-signed-int) */   \
         VEX(RXB(RG), RXB(RM),     0x0, 1, 2, 1) EMITB(0x5B)                 \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
+#define cvzps_ld(RG, RM, DP) /* round towards zero  (fp-to-signed-int) */   \
     ADR VEX(RXB(RG), RXB(RM),     0x0, 1, 2, 1) EMITB(0x5B)                 \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* cvt
- * rounding mode comes from fp control register (set in FCTRL blocks) */
+/* cvp
+ * rounding mode is encoded directly */
 
-#define rndps_rr(RG, RM)                                                    \
-        cvtps_rr(W(RG), W(RM))                                              \
-        cvnpn_rr(W(RG), W(RG))
+#define rnpps_rr(RG, RM)     /* round towards +inf  (fp-to-signed-int) */   \
+        VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 3) EMITB(0x08)                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
 
-#define cvtps_rr(RG, RM)                                                    \
+#define rnpps_ld(RG, RM, DP) /* round towards +inf  (fp-to-signed-int) */   \
+    ADR VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 3) EMITB(0x08)                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(0x02))
+
+#define cvpps_rr(RG, RM)     /* round towards +inf  (fp-to-signed-int) */   \
+        rnpps_rr(W(RG), W(RM))                                              \
+        cvzps_rr(W(RG), W(RG))
+
+#define cvpps_ld(RG, RM, DP) /* round towards +inf  (fp-to-signed-int) */   \
+        rnpps_ld(W(RG), W(RM), W(DP))                                       \
+        cvzps_rr(W(RG), W(RG))
+
+/* cvm
+ * rounding mode is encoded directly */
+
+#define rnmps_rr(RG, RM)     /* round towards -inf  (fp-to-signed-int) */   \
+        VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 3) EMITB(0x08)                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+
+#define rnmps_ld(RG, RM, DP) /* round towards -inf  (fp-to-signed-int) */   \
+    ADR VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 3) EMITB(0x08)                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(0x01))
+
+#define cvmps_rr(RG, RM)     /* round towards -inf  (fp-to-signed-int) */   \
+        rnmps_rr(W(RG), W(RM))                                              \
+        cvzps_rr(W(RG), W(RG))
+
+#define cvmps_ld(RG, RM, DP) /* round towards -inf  (fp-to-signed-int) */   \
+        rnmps_ld(W(RG), W(RM), W(DP))                                       \
+        cvzps_rr(W(RG), W(RG))
+
+/* cvn
+ * rounding mode is encoded directly */
+
+#define rnnps_rr(RG, RM)     /* round to nearest    (fp-to-signed-int) */   \
+        VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 3) EMITB(0x08)                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+
+#define rnnps_ld(RG, RM, DP) /* round to nearest    (fp-to-signed-int) */   \
+    ADR VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 3) EMITB(0x08)                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(0x00))
+
+#define cvnps_rr(RG, RM)     /* round to nearest    (fp-to-signed-int) */   \
         VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 1) EMITB(0x5B)                 \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define cvtps_ld(RG, RM, DP)                                                \
+#define cvnps_ld(RG, RM, DP) /* round to nearest    (fp-to-signed-int) */   \
     ADR VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 1) EMITB(0x5B)                 \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define cvtpn_rr(RG, RM)                                                    \
+#define cvnpn_rr(RG, RM)     /* round to nearest    (signed-int-to-fp) */   \
         VEX(RXB(RG), RXB(RM),     0x0, 1, 0, 1) EMITB(0x5B)                 \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define cvtpn_ld(RG, RM, DP)                                                \
+#define cvnpn_ld(RG, RM, DP) /* round to nearest    (signed-int-to-fp) */   \
     ADR VEX(RXB(RG), RXB(RM),     0x0, 1, 0, 1) EMITB(0x5B)                 \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
-
-/* cvn
- * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnpn_rr(RG, RM)     /* round to nearest */                         \
-        cvtpn_rr(W(RG), W(RM))
-
-#define cvnpn_ld(RG, RM, DP) /* round to nearest */                         \
-        cvtpn_ld(W(RG), W(RM), W(DP))
 
 /**************************   packed integer (AVX1)   *************************/
 
@@ -634,43 +678,6 @@
         movsn_rr(Reax, W(RG))                                               \
         cmpxx_ri(Reax, IH(RT_SIMD_MASK_##mask))                             \
         jeqxx_lb(lb)
-
-/* simd mode
- * set in FCTRL blocks (cannot be nested) */
-
-#define RT_SIMD_MODE_ROUNDN     0x00    /* round to nearest */
-#define RT_SIMD_MODE_ROUNDM     0x01    /* round towards minus infinity */
-#define RT_SIMD_MODE_ROUNDP     0x02    /* round towards plus  infinity */
-#define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
-
-#define mxcsr_ld(RM, DP) /* not portable, do not use outside */             \
-    ADR VEX(0,       RXB(RM),     0x0, 0, 0, 1) EMITB(0xAE)                 \
-        MRM(0x02,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
-
-#define mxcsr_st(RM, DP) /* not portable, do not use outside */             \
-    ADR VEX(0,       RXB(RM),     0x0, 0, 0, 1) EMITB(0xAE)                 \
-        MRM(0x03,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
-
-#define FCTRL_ENTER(mode) /* assumes default mode (ROUNDN) upon entry */    \
-        movxx_mi(Mebp, inf_SCR00, IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))   \
-        mxcsr_ld(Mebp, inf_SCR00)                                           \
-
-#define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */    \
-        mxcsr_ld(Mebp, inf_FCTRL)
-
-/* cvr
- * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
-
-#define rnrps_rr(RG, RM, mode)                                              \
-        VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 3) EMITB(0x08)                 \
-        MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode))
-
-#define cvrps_rr(RG, RM, mode)                                              \
-        rnrps_rr(W(RG), W(RM), mode)                                        \
-        cvtps_rr(W(RG), W(RG))
 
 /* mmv */
 
