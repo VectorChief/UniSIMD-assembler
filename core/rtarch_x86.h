@@ -171,7 +171,7 @@
 #define adrxx_ld(RG, RM, DP)                                                \
         EMITB(0x8D)                                                         \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), EMITW(VAL(DP) & 0xFFC), EMPTY)
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define adrxx_lb(lb) /* load label to Reax */                               \
         label_ld(lb)
