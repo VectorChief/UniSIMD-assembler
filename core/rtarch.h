@@ -56,16 +56,16 @@
  *  - rtarch_x64_512.h     - x86_64:x64 ISA, 32 SIMD regs, AVX 512-bit
  *
  * Reserved 32-bit targets:
- *  - rtarch_m32.h         - 32-bit MIPS ISA, ?? core regs
- *  - rtarch_m32_128.h     - 32-bit MIPS ISA, ?? SIMD regs, MIPS3D
- *  - rtarch_p32.h         - 32-bit PowerISA, ?? core regs
- *  - rtarch_p32_128.h     - 32-bit PowerISA, ?? SIMD regs, AltiVec
+ *  - rtarch_m32.h         - 32-bit MIPS ISA, 32 core regs
+ *  - rtarch_m32_128.h     - 32-bit MIPS ISA, 32 SIMD regs, MSA
+ *  - rtarch_p32.h         - 32-bit PowerISA, 32 core regs
+ *  - rtarch_p32_128.h     - 32-bit PowerISA, 32 SIMD regs, VMX
  *
  * Reserved 64-bit targets:
- *  - rtarch_m64.h         - 64-bit MIPS ISA, ?? core regs
- *  - rtarch_m64_128.h     - 64-bit MIPS ISA, ?? SIMD regs, MIPS3D
- *  - rtarch_p64.h         - 64-bit PowerISA, ?? core regs
- *  - rtarch_p64_128.h     - 64-bit PowerISA, ?? SIMD regs, AltiVec
+ *  - rtarch_m64.h         - 64-bit MIPS ISA, 32 core regs
+ *  - rtarch_m64_128.h     - 64-bit MIPS ISA, 32 SIMD regs, MSA
+ *  - rtarch_p64.h         - 64-bit PowerISA, 32 core regs
+ *  - rtarch_p64_128.h     - 64-bit PowerISA, 32 SIMD regs, VMX
  *
  * Preliminary naming scheme for extended core and SIMD register files.
  *
@@ -115,17 +115,19 @@
 
 #include "rtarch_x86_sse.h"
 
-/* use temp var to fix Release builds, where locals are referenced via esp,
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(info)     int __eax; __asm                                \
+#define ASM_ENTER(__Info__) {int __Reax__; __asm                            \
                             {                                               \
-                                movlb_st(__eax)                             \
-                                movlb_ld(info)                              \
+                                movlb_st(__Reax__)                          \
+                                movlb_ld(__Info__)                          \
                                 stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)
-#define ASM_LEAVE(info)         stack_la()                                  \
-                                movlb_ld(__eax)                             \
-                            }
+                                movxx_rr(Rebp, Reax)                        \
+                                /* placeholder for custom ops */
+
+#define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(__Reax__)                          \
+                            }}
 
 /* ---------------------------------   ARM   -------------------------------- */
 
@@ -157,15 +159,22 @@
 
 #include "rtarch_x86_sse.h"
 
-#define ASM_ENTER(info)     asm volatile                                    \
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__) {int __Reax__; asm volatile                     \
                             (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)
-#define ASM_LEAVE(info)         stack_la()                                  \
-                                :                                           \
-                                : "a" (info)                                \
+                                movxx_rr(Rebp, Reax)                        \
+                                /* placeholder for custom ops */
+
+#define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" (__Reax__)                   \
+                                : [Info_]  "r" (__Info__)                   \
                                 : "cc",  "memory"                           \
-                            );
+                            );}
 
 /* ---------------------------------   ARM   -------------------------------- */
 
@@ -185,14 +194,20 @@
 
 #include "rtarch_arm_mpe.h"
 
-#define ASM_ENTER(info)     asm volatile                                    \
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__) {int __Reax__; asm volatile                     \
                             (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
-                                movlb_ld(%[info])                           \
-                                movxx_rr(Rebp, Reax)
-#define ASM_LEAVE(info)         stack_la()                                  \
-                                :                                           \
-                                : [info] "r" (info)                         \
+                                movxx_rr(Rebp, Reax)                        \
+                                /* placeholder for custom ops */
+
+#define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" (__Reax__)                   \
+                                : [Info_]  "r" (__Info__)                   \
                                 : "cc",  "memory",                          \
                                   "d0",  "d1",  "d2",  "d3",                \
                                   "d4",  "d5",  "d6",  "d7",                \
@@ -200,7 +215,7 @@
                                   "d12", "d13", "d14", "d15",               \
                                   "d16", "d17", "d18", "d19",               \
                                   "d20", "d21"                              \
-                            );
+                            );}
 
 #endif /* RT_X86, RT_ARM */
 
