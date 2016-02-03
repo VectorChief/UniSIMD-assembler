@@ -330,6 +330,42 @@ struct rt_SIMD_INFO
         rseps_rr(W(RG), W(RM))                                              \
         rssps_rr(W(RG), W(RM)) /* <- not reusable without extra temp reg */
 
+/* ----------- aliases for deprecated round/convert instructions ------------ */
+
+/* cvr
+ * rounding mode is encoded directly */
+
+#define RT_SIMD_MODE_ROUNDN     n    /* round to nearest */
+#define RT_SIMD_MODE_ROUNDM     m    /* round towards minus infinity */
+#define RT_SIMD_MODE_ROUNDP     p    /* round towards plus  infinity */
+#define RT_SIMD_MODE_ROUNDZ     z    /* round towards zero */
+
+#define ARN(RG, RM, mode)       BRN(W(RG), W(RM), mode)
+#define ACV(RG, RM, mode)       BCV(W(RG), W(RM), mode)
+#define BRN(RG, RM, mode)       rn##mode##ps_rr(W(RG), W(RM))
+#define BCV(RG, RM, mode)       cv##mode##ps_rr(W(RG), W(RM))
+
+#define rnrps_rr(RG, RM, mode)                                              \
+        ARN(W(RG), W(RM), RT_SIMD_MODE_##mode)
+
+#define cvrps_rr(RG, RM, mode)                                              \
+        ACV(W(RG), W(RM), RT_SIMD_MODE_##mode)
+
+/* cvt
+ * default round to nearest (outside of deprecated FCTRL blocks) */
+
+#define cvtps_rr(RG, RM)                                                    \
+        cvnps_rr(W(RG), W(RM))
+
+#define cvtps_ld(RG, RM, DP)                                                \
+        cvnps_ld(W(RG), W(RM), W(DP))
+
+#define cvtpn_rr(RG, RM)                                                    \
+        cvnpn_rr(W(RG), W(RM))
+
+#define cvtpn_ld(RG, RM, DP)                                                \
+        cvnpn_ld(W(RG), W(RM), W(DP))
+
 #endif /* RT_RTBASE_H */
 
 /******************************************************************************/
