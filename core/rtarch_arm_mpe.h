@@ -421,11 +421,10 @@
 
 /* shr */
 
-#define shrpx_ri(RM, IM) /* few extra ops to support shifts by zero */      \
-        EMITW(0xE3A00000 | MRM(TIxx,    0x00,    0x00) |(VAL(IM) & 0x1F))   \
-        EMITW(0xEEA00B10 | MTM(TIxx,    Tmm1,    0x00))                     \
-        EMITW(0xF3B903C0 | MTM(Tmm1,    0x00,    Tmm1))                     \
-        EMITW(0xF3200440 | MTM(REG(RM), Tmm1,    REG(RM)))
+#define shrpx_ri(RM, IM) /* emit shift-left for zero-immediate args */      \
+        EMITW(0xF2A00050 | MTM(REG(RM), 0x00,    REG(RM)) |                 \
+        (+(VAL(IM) == 0) & 0x00000500) | (+(VAL(IM) != 0) & 0x01000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IM)) << 16)
 
 #define shrpx_ld(RG, RM, DP)                                                \
         AUX(SIB(RM), CMD(DP), EMPTY)                                        \
@@ -434,11 +433,10 @@
         EMITW(0xF3B903C0 | MTM(Tmm1,    0x00,    Tmm1))                     \
         EMITW(0xF3200440 | MTM(REG(RG), Tmm1,    REG(RG)))
 
-#define shrpn_ri(RM, IM) /* few extra ops to support shifts by zero */      \
-        EMITW(0xE3A00000 | MRM(TIxx,    0x00,    0x00) |(VAL(IM) & 0x1F))   \
-        EMITW(0xEEA00B10 | MTM(TIxx,    Tmm1,    0x00))                     \
-        EMITW(0xF3B903C0 | MTM(Tmm1,    0x00,    Tmm1))                     \
-        EMITW(0xF2200440 | MTM(REG(RM), Tmm1,    REG(RM)))
+#define shrpn_ri(RM, IM) /* emit shift-left for zero-immediate args */      \
+        EMITW(0xF2A00050 | MTM(REG(RM), 0x00,    REG(RM)) |                 \
+        (+(VAL(IM) == 0) & 0x00000500) | (+(VAL(IM) != 0) & 0x00000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IM)) << 16)
 
 #define shrpn_ld(RG, RM, DP)                                                \
         AUX(SIB(RM), CMD(DP), EMPTY)                                        \
