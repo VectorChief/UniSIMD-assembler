@@ -432,6 +432,9 @@
 #define jeqxx_lb(lb)                                                        \
         ASM_BEG ASM_OP1(beq, lb) ASM_END
 
+#define jezxx_lb(lb)                                                        \
+        ASM_BEG ASM_OP1(beq, lb) ASM_END
+
 #define jnexx_lb(lb)                                                        \
         ASM_BEG ASM_OP1(bne, lb) ASM_END
 
