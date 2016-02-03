@@ -36,8 +36,8 @@
  * Preliminary naming scheme for potential future targets.
  *
  * Current 32-bit targets:
- *  - rtarch_arm.h         - 32-bit ARMv7/8 ISA, 16 core regs, 8 + temps used
- *  - rtarch_arm_128.h     - 32-bit ARMv7/8 ISA, 16 SIMD regs, 8 + temps used
+ *  - rtarch_arm.h         - AArch32:ARMv7 ISA, 16 core regs, 8 + temps used
+ *  - rtarch_arm_128.h     - AArch32:ARMv7 ISA, 16 SIMD regs, 8 + temps used
  *  - rtarch_x86.h         - 32-bit x86 ISA, 8 core regs, 6 + esp, ebp used
  *  - rtarch_x86_128.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, SSE
  *  - rtarch_x86_256.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, AVX
@@ -59,16 +59,16 @@
  *  - rtarch_x64_512.h     - x86_64:x64 ISA, 32 SIMD regs, AVX 512-bit
  *
  * Reserved 32-bit targets:
- *  - rtarch_m32.h         - 32-bit MIPS ISA, ?? core regs
- *  - rtarch_m32_128.h     - 32-bit MIPS ISA, ?? SIMD regs, MSA
- *  - rtarch_p32.h         - 32-bit PowerISA, ?? core regs
- *  - rtarch_p32_128.h     - 32-bit PowerISA, ?? SIMD regs, VMX
+ *  - rtarch_m32.h         - 32-bit MIPS ISA, 32 core regs
+ *  - rtarch_m32_128.h     - 32-bit MIPS ISA, 32 SIMD regs, MSA
+ *  - rtarch_p32.h         - 32-bit PowerISA, 32 core regs
+ *  - rtarch_p32_128.h     - 32-bit PowerISA, 32 SIMD regs, VMX
  *
  * Reserved 64-bit targets:
- *  - rtarch_m64.h         - 64-bit MIPS ISA, ?? core regs
- *  - rtarch_m64_128.h     - 64-bit MIPS ISA, ?? SIMD regs, MSA
- *  - rtarch_p64.h         - 64-bit PowerISA, ?? core regs
- *  - rtarch_p64_128.h     - 64-bit PowerISA, ?? SIMD regs, VMX
+ *  - rtarch_m64.h         - 64-bit MIPS ISA, 32 core regs
+ *  - rtarch_m64_128.h     - 64-bit MIPS ISA, 32 SIMD regs, MSA
+ *  - rtarch_p64.h         - 64-bit PowerISA, 32 core regs
+ *  - rtarch_p64_128.h     - 64-bit PowerISA, 32 SIMD regs, VMX
  *
  * Preliminary naming scheme for extended core and SIMD register files.
  *
@@ -137,15 +137,19 @@
 #include "rtarch_x86_128.h"
 #endif /* RT_256, RT_128 */
 
-/* use explicit asm versions of stack ops (instead of encoded ones)
- * to let the optimizer handle stack offsets for locals properly */
-#define ASM_ENTER(info)     __asm                                           \
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__) {int __Reax__; __asm                            \
                             {                                               \
-                                pushad  /* stack_sa() */                    \
-                                movlb_ld(info)                              \
-                                movxx_rr(Rebp, Reax)
-#define ASM_LEAVE(info)         popad   /* stack_la() */                    \
-                            }
+                                movlb_st(__Reax__)                          \
+                                movlb_ld(__Info__)                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                /* placeholder for custom ops */
+
+#define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(__Reax__)                          \
+                            }}
 
 /* ---------------------------------   ARM   -------------------------------- */
 
@@ -183,15 +187,22 @@
 #include "rtarch_x86_128.h"
 #endif /* RT_256, RT_128 */
 
-#define ASM_ENTER(info)     asm volatile                                    \
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__) {int __Reax__; asm volatile                     \
                             (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)
-#define ASM_LEAVE(info)         stack_la()                                  \
-                                :                                           \
-                                : "a" (info)                                \
+                                movxx_rr(Rebp, Reax)                        \
+                                /* placeholder for custom ops */
+
+#define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" (__Reax__)                   \
+                                : [Info_]  "r" (__Info__)                   \
                                 : "cc",  "memory"                           \
-                            );
+                            );}
 
 /* ---------------------------------   ARM   -------------------------------- */
 
@@ -217,14 +228,20 @@
 #include "rtarch_arm_128.h"
 #endif /* RT_256, RT_128 */
 
-#define ASM_ENTER(info)     asm volatile                                    \
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__) {int __Reax__; asm volatile                     \
                             (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
-                                movlb_ld(%[info])                           \
-                                movxx_rr(Rebp, Reax)
-#define ASM_LEAVE(info)         stack_la()                                  \
-                                :                                           \
-                                : [info] "r" (info)                         \
+                                movxx_rr(Rebp, Reax)                        \
+                                /* placeholder for custom ops */
+
+#define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" (__Reax__)                   \
+                                : [Info_]  "r" (__Info__)                   \
                                 : "cc",  "memory",                          \
                                   "d0",  "d1",  "d2",  "d3",                \
                                   "d4",  "d5",  "d6",  "d7",                \
@@ -232,7 +249,7 @@
                                   "d12", "d13", "d14", "d15",               \
                                   "d16", "d17", "d18", "d19",               \
                                   "d20", "d21"                              \
-                            );
+                            );}
 
 #endif /* RT_X86, RT_ARM */
 
