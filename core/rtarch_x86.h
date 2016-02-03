@@ -242,6 +242,32 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
+/* xor */
+
+#define xorxx_ri(RM, IM)                                                    \
+        EMITB(0x81 | TYP(IM))                                               \
+        MRM(0x06,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   CMD(IM))
+
+#define xorxx_mi(RM, DP, IM)                                                \
+        EMITB(0x81 | TYP(IM))                                               \
+        MRM(0x06,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), CMD(IM))
+
+#define xorxx_rr(RG, RM)                                                    \
+        EMITB(0x33)                                                         \
+        MRM(REG(RG), MOD(RM), REG(RM))
+
+#define xorxx_ld(RG, RM, DP)                                                \
+        EMITB(0x33)                                                         \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+#define xorxx_st(RG, RM, DP)                                                \
+        EMITB(0x31)                                                         \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
 /* not */
 
 #define notxx_rr(RM)                                                        \
