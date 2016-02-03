@@ -416,7 +416,8 @@
         cmpxx_ri(Reax, IB(RT_SIMD_MASK_##mask))                             \
         jeqxx_lb(lb)
 
-/* simd mode */
+/* simd mode
+ * set in FCTRL blocks (cannot be nested) */
 
 #define RT_SIMD_MODE_ROUNDN     0x00    /* round to nearest */
 #define RT_SIMD_MODE_ROUNDM     0x01    /* round towards minus infinity */
