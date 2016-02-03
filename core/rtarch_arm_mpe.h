@@ -340,7 +340,8 @@
 
 /**************************   packed integer (NEON)   *************************/
 
-/* cvt */
+/* cvt
+ * rounding mode comes from fp control register (set in FCTRL blocks) */
 
 #define cvtps_rr(RG, RM)     /* fallback to VFP for float-to-integer cvt */ \
         EMITW(0xEEBD0A40 | MTM(REG(RG)+0, 0x00,  REG(RM)+0)) /* due to */   \
@@ -357,10 +358,28 @@
         EMITW(0xEEBD0A40 | MTM(REG(RG)+1, 0x00,  REG(RG)+1)) /* rounding */ \
         EMITW(0xEEFD0A60 | MTM(REG(RG)+1, 0x00,  REG(RG)+1)) /* modes */
 
-#define cvtpn_rr(RG, RM)                                                    \
+#define cvtpn_rr(RG, RM)     /* fallback to VFP for integer-to-float cvt */ \
+        EMITW(0xEEB80AC0 | MTM(REG(RG)+0, 0x00,  REG(RM)+0)) /* due to */   \
+        EMITW(0xEEF80AE0 | MTM(REG(RG)+0, 0x00,  REG(RM)+0)) /* lack of */  \
+        EMITW(0xEEB80AC0 | MTM(REG(RG)+1, 0x00,  REG(RM)+1)) /* rounding */ \
+        EMITW(0xEEF80AE0 | MTM(REG(RG)+1, 0x00,  REG(RM)+1)) /* modes */
+
+#define cvtpn_ld(RG, RM, DP) /* fallback to VFP for integer-to-float cvt */ \
+        AUX(SIB(RM), CMD(DP), EMPTY)                                        \
+        EMITW(0xE0800000 | MRM(TPxx,    MOD(RM), 0x00) | TYP(DP))           \
+        EMITW(0xF4200AAF | MTM(REG(RG), TPxx,    0x00))                     \
+        EMITW(0xEEB80AC0 | MTM(REG(RG)+0, 0x00,  REG(RG)+0)) /* due to */   \
+        EMITW(0xEEF80AE0 | MTM(REG(RG)+0, 0x00,  REG(RG)+0)) /* lack of */  \
+        EMITW(0xEEB80AC0 | MTM(REG(RG)+1, 0x00,  REG(RG)+1)) /* rounding */ \
+        EMITW(0xEEF80AE0 | MTM(REG(RG)+1, 0x00,  REG(RG)+1)) /* modes */
+
+/* cvn
+ * rounding mode is encoded directly (not to be used in FCTRL blocks) */
+
+#define cvnpn_rr(RG, RM)     /* round to nearest */                         \
         EMITW(0xF3BB0640 | MTM(REG(RG), 0x00,    REG(RM)))
 
-#define cvtpn_ld(RG, RM, DP)                                                \
+#define cvnpn_ld(RG, RM, DP) /* round to nearest */                         \
         AUX(SIB(RM), CMD(DP), EMPTY)                                        \
         EMITW(0xE0800000 | MRM(TPxx,    MOD(RM), 0x00) | TYP(DP))           \
         EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
