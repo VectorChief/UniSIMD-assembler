@@ -441,7 +441,7 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define FCTRL_ENTER(mode) /* assume default round-to-nearest upon entry */  \
-        movxx_mi(Mebp, inf_SCR00, IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))   \
+        movxx_mi(Mebp, inf_SCR00, IH(RT_SIMD_MODE_##mode << 13 | 0x9F80))   \
         mxcsr_ld(Mebp, inf_SCR00)
 
 #define FCTRL_LEAVE(mode) /* resume default round-to-nearest upon leave */  \
