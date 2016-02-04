@@ -647,8 +647,6 @@ rt_void s_test06(rt_SIMD_INFOX *info)
     {
         ASM_ENTER(info)
 
-        FCTRL_ENTER(ROUNDM)
-
         movxx_ld(Recx, Mebp, inf_FAR0)
         movxx_ld(Resi, Mebp, inf_IAR0)
         movxx_ld(Redx, Mebp, inf_ISO1)
@@ -656,26 +654,24 @@ rt_void s_test06(rt_SIMD_INFOX *info)
 
         movpx_ld(Xmm0, Mecx, AJ0)
         movpx_ld(Xmm1, Mesi, AJ0)
-        cvtps_rr(Xmm2, Xmm0)
-        cvtpn_rr(Xmm3, Xmm1)
+        cvzps_rr(Xmm2, Xmm0)
+        cvnpn_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
 
         movpx_ld(Xmm0, Mecx, AJ1)
         movpx_ld(Xmm1, Mesi, AJ1)
-        cvtps_rr(Xmm2, Xmm0)
-        cvtpn_rr(Xmm3, Xmm1)
+        cvzps_rr(Xmm2, Xmm0)
+        cvnpn_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
 
         movpx_ld(Xmm0, Mecx, AJ2)
         movpx_ld(Xmm1, Mesi, AJ2)
-        cvtps_rr(Xmm2, Xmm0)
-        cvtpn_rr(Xmm3, Xmm1)
+        cvzps_rr(Xmm2, Xmm0)
+        cvnpn_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
-
-        FCTRL_LEAVE(ROUNDM)
 
         ASM_LEAVE(info)
     }
