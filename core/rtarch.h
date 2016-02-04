@@ -151,12 +151,6 @@
                                 movlb_ld(__Reax__)                          \
                             }}
 
-/* ---------------------------------   ARM   -------------------------------- */
-
-#elif defined (RT_ARM)
-
-#error "ARM native builds for Windows are not supported yet"
-
 #endif /* RT_X86, RT_ARM */
 
 /*******************************   LINUX, GCC   *******************************/
