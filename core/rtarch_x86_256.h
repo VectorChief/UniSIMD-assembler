@@ -328,8 +328,21 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x05))
 
+/* cvz (fp-to-signed-int)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define cvzps_rr(RG, RM)     /* round towards zero */                       \
+        VEX(0      , 2) EMITB(0x5B)                                         \
+        MRM(REG(RG), MOD(RM), REG(RM))
+
+#define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
+        VEX(0      , 2) EMITB(0x5B)                                         \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
 /* cvt
- * rounding mode comes from fp control register (set in FCTRL blocks) */
+ * rounding mode comes from control register (set in FCTRL blocks)
+ * DEPRECATED: use cvrps_rr with explicit rounding mode parameter! */
 
 #define cvtps_rr(RG, RM)                                                    \
         VEX(0      , 1) EMITB(0x5B)                                         \
@@ -349,8 +362,8 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* cvx
- * rounding mode is encoded directly (not to be used in FCTRL blocks) */
+/* cvn (signed-int-to-fp)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
 #define cvnpn_rr(RG, RM)     /* round to nearest */                         \
         cvtpn_rr(W(RG), W(RM))
@@ -612,7 +625,8 @@
         jeqxx_lb(lb)
 
 /* simd mode
- * set in FCTRL blocks (cannot be nested) */
+ * set in FCTRL blocks (cannot be nested)
+ * DEPRECATED: use cvrps_rr with explicit rounding mode parameter! */
 
 #define RT_SIMD_MODE_ROUNDN     0x00    /* round to nearest */
 #define RT_SIMD_MODE_ROUNDM     0x01    /* round towards minus infinity */
@@ -636,8 +650,8 @@
 #define FCTRL_LEAVE(mode) /* resume default round-to-nearest upon leave */  \
         mxcsr_ld(Mebp, inf_FCTRL)
 
-/* cvr
- * rounding mode is encoded directly (not to be used in FCTRL blocks) */
+/* cvr (fp-to-signed-int)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
 #define rndps_rr(RG, RM, mode) /* not portable, do not use outside */       \
         VX3(0      , 1, 3) EMITB(0x08)                                      \

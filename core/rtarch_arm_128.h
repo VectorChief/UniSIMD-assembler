@@ -342,8 +342,21 @@
 
 /**************************   packed integer (NEON)   *************************/
 
+/* cvz (fp-to-signed-int)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define cvzps_rr(RG, RM)     /* round towards zero */                       \
+        EMITW(0xF3BB0740 | MTM(REG(RG), 0x00,    REG(RM)))
+
+#define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
+        AUX(SIB(RM), CMD(DP), EMPTY)                                        \
+        EMITW(0xE0800000 | MRM(TPxx,    MOD(RM), 0x00) | TYP(DP))           \
+        EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
+        EMITW(0xF3BB0740 | MTM(REG(RG), 0x00,    Tmm1))
+
 /* cvt
- * rounding mode comes from fp control register (set in FCTRL blocks) */
+ * rounding mode comes from control register (set in FCTRL blocks)
+ * DEPRECATED: use cvrps_rr with explicit rounding mode parameter! */
 
 #define cvtps_rr(RG, RM)     /* fallback to VFP for float-to-integer cvt */ \
         EMITW(0xEEBD0A40 | MTM(REG(RG)+0, 0x00,  REG(RM)+0)) /* due to */   \
@@ -375,8 +388,8 @@
         EMITW(0xEEB80AC0 | MTM(REG(RG)+1, 0x00,  REG(RG)+1)) /* rounding */ \
         EMITW(0xEEF80AE0 | MTM(REG(RG)+1, 0x00,  REG(RG)+1)) /* modes */
 
-/* cvx
- * rounding mode is encoded directly (not to be used in FCTRL blocks) */
+/* cvn (signed-int-to-fp)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
 #define cvnpn_rr(RG, RM)     /* round to nearest */                         \
         EMITW(0xF3BB0640 | MTM(REG(RG), 0x00,    REG(RM)))
@@ -465,7 +478,8 @@
         jezxx_lb(lb)
 
 /* simd mode
- * set in FCTRL blocks (cannot be nested) */
+ * set in FCTRL blocks (cannot be nested)
+ * DEPRECATED: use cvrps_rr with explicit rounding mode parameter! */
 
 #define RT_SIMD_MODE_ROUNDN     0x00    /* round to nearest */
 #define RT_SIMD_MODE_ROUNDM     0x02    /* round towards minus infinity */
@@ -485,8 +499,8 @@
 #define FCTRL_LEAVE(mode) /* resume default round-to-nearest upon leave */  \
         EMITW(0xEEE10A10 | MRM(TZxx,    0x00,    0x00))
 
-/* cvr
- * rounding mode is encoded directly (not to be used in FCTRL blocks) */
+/* cvr (fp-to-signed-int)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
 #if (RT_128 < 2)
 
