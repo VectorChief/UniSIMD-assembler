@@ -699,6 +699,10 @@
 #define RT_SIMD_MODE_ROUNDP     0x02    /* round towards plus  infinity */
 #define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
 
+#ifdef mxcsr_ld
+#undef mxcsr_ld
+#endif /* mxcsr_ld */
+
 #define mxcsr_ld(RM, DP) /* not portable, do not use outside */             \
         EMITB(0x0F) EMITB(0xAE)                                             \
         MRM(0x02,    MOD(RM), REG(RM))                                      \
@@ -710,7 +714,7 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define FCTRL_ENTER(mode) /* assume default round-to-nearest upon entry */  \
-        movxx_mi(Mebp, inf_SCR00, IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))   \
+        movxx_mi(Mebp, inf_SCR00, IH(RT_SIMD_MODE_##mode << 13 | 0x9F80))   \
         mxcsr_ld(Mebp, inf_SCR00)
 
 #define FCTRL_LEAVE(mode) /* resume default round-to-nearest upon leave */  \
