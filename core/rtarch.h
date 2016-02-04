@@ -145,7 +145,7 @@
                                 movlb_ld(__Info__)                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                /* placeholder for custom ops */
+                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(__Reax__)                          \
@@ -195,7 +195,7 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                /* placeholder for custom ops */
+                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
@@ -236,7 +236,7 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                /* placeholder for custom ops */
+                                "eor r4, r4, r4\n" /* TZxx (r4) <- 0 (xor) */
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
