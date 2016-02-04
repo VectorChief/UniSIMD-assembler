@@ -99,14 +99,6 @@ SOURCE=..\core\rtarch.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\core\rtarch_arm.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\core\rtarch_arm_mpe.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\core\rtarch_x86.h
 # End Source File
 # Begin Source File
