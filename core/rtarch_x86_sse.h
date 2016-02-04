@@ -314,8 +314,20 @@
 
 /**************************   packed integer (SSE2)   *************************/
 
+/* cvz (fp-to-signed-int)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define cvzps_rr(RG, RM)     /* round towards zero */                       \
+        EMITB(0xF3) EMITB(0x0F) EMITB(0x5B)                                 \
+        MRM(REG(RG), MOD(RM), REG(RM))
+
+#define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
+        EMITB(0xF3) EMITB(0x0F) EMITB(0x5B)                                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
 /* cvt (fp-to-signed-int)
- * rounding mode comes from fp control register (set in FCTRL blocks) */
+ * rounding mode comes from control register (set in FCTRL blocks) */
 
 #define cvtps_rr(RG, RM)                                                    \
         EMITB(0x66) EMITB(0x0F) EMITB(0x5B)                                 \
@@ -327,7 +339,7 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* cvt (signed-int-to-fp)
- * round to nearest (not to be used in FCTRL blocks) */
+ * default mode round to nearest  (cannot be used in FCTRL blocks) */
 
 #define cvtpn_rr(RG, RM)     /* round to nearest */                         \
         EMITB(0x0F) EMITB(0x5B)                                             \

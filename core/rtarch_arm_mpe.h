@@ -340,8 +340,20 @@
 
 /**************************   packed integer (NEON)   *************************/
 
+/* cvz (fp-to-signed-int)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define cvzps_rr(RG, RM)     /* round towards zero */                       \
+        EMITW(0xF3BB0740 | MTM(REG(RG), 0x00,    REG(RM)))
+
+#define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
+        AUX(SIB(RM), CMD(DP), EMPTY)                                        \
+        EMITW(0xE0800000 | MRM(TPxx,    MOD(RM), 0x00) | TYP(DP))           \
+        EMITW(0xF4200AAF | MTM(Tmm1,    TPxx,    0x00))                     \
+        EMITW(0xF3BB0740 | MTM(REG(RG), 0x00,    Tmm1))
+
 /* cvt (fp-to-signed-int)
- * rounding mode comes from fp control register (set in FCTRL blocks) */
+ * rounding mode comes from control register (set in FCTRL blocks) */
 
 #define cvtps_rr(RG, RM)     /* fallback to VFP for float-to-integer cvt */ \
         EMITW(0xEEBD0A40 | MTM(REG(RG)+0, 0x00,  REG(RM)+0)) /* due to */   \
@@ -359,7 +371,7 @@
         EMITW(0xEEFD0A60 | MTM(REG(RG)+1, 0x00,  REG(RG)+1)) /* modes */
 
 /* cvt (signed-int-to-fp)
- * round to nearest (not to be used in FCTRL blocks) */
+ * default mode round to nearest  (cannot be used in FCTRL blocks) */
 
 #define cvtpn_rr(RG, RM)     /* round to nearest */                         \
         EMITW(0xF3BB0640 | MTM(REG(RG), 0x00,    REG(RM)))
