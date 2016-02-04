@@ -123,7 +123,7 @@
                                 movlb_ld(__Info__)                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                /* placeholder for custom ops */
+                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(__Reax__)                          \
@@ -167,7 +167,7 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                /* placeholder for custom ops */
+                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
@@ -202,7 +202,7 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                /* placeholder for custom ops */
+                                "eor r4, r4, r4\n" /* TZxx (r4) <- 0 (xor) */
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
@@ -269,8 +269,11 @@ struct rt_SIMD_INFO
     rt_word fctrl;
 #define inf_FCTRL           DP(0x000)
 
-    rt_word pad01[S-1];     /* reserved, do not use! */
-#define inf_PAD01           DP(0x004)
+    rt_word scr00;          /* scratchpad 00 */
+#define inf_SCR00           DP(0x004)
+
+    rt_word pad01[S-2];     /* reserved, do not use! */
+#define inf_PAD01           DP(0x008)
 
     /* general purpose constants */
 
