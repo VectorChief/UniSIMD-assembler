@@ -435,23 +435,23 @@
 #define mulxn_ri(RM, IM) /* one unnecessary op for IH, IW */                \
         EMITW(0xE1A00000 | MRM(TIxx,    0x00,    0x00) | TYP(IM))           \
         AUX(EMPTY,   EMPTY,   CMD(IM))                                      \
-        EMITW(0xE0100090 | REG(RM) << 16 | REG(RM) << 8| TIxx)
+        EMITW(0xE0000090 | REG(RM) << 16 | REG(RM) << 8| TIxx)
 
 #define mulxn_rr(RG, RM)                                                    \
-        EMITW(0xE0100090 | REG(RG) << 16 | REG(RG) << 8| REG(RM))
+        EMITW(0xE0000090 | REG(RG) << 16 | REG(RG) << 8| REG(RM))
 
 #define mulxn_ld(RG, RM, DP)                                                \
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))  \
-        EMITW(0xE0100090 | REG(RG) << 16 | REG(RG) << 8| TMxx)
+        EMITW(0xE0000090 | REG(RG) << 16 | REG(RG) << 8| TMxx)
 
 #define mulxn_xr(RM)     /* Reax is in/out, prepares Redx for divxn_x* */   \
-        EMITW(0xE0100090 | REG(RM))
+        EMITW(0xE0000090 | REG(RM))
 
 #define mulxn_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn_x* */   \
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))  \
-        EMITW(0xE0100090 | TMxx)
+        EMITW(0xE0000090 | TMxx)
 
 /* div */
 
