@@ -373,9 +373,9 @@
         movpx_ld(W(RG), W(RM), W(DP))                                       \
         cvzps_rr(W(RG), W(RG))
 
-/* cvt
+/* cvt (fp-to-signed-int)
  * rounding mode comes from control register (set in FCTRL blocks)
- * DEPRECATED: use cvrps_rr with explicit rounding mode parameter! */
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz */
 
 #define cvtps_rr(RG, RM)                                                    \
         fpucw_st(Mebp,  inf_SCR00)                                          \
@@ -399,6 +399,10 @@
 #define cvtps_ld(RG, RM, DP)                                                \
         movpx_ld(W(RG), W(RM), W(DP))                                       \
         cvtps_rr(W(RG), W(RG))
+
+/* cvt (signed-int-to-fp)
+ * rounding mode comes from control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
 
 #define cvtpn_rr(RG, RM)                                                    \
         fpucw_st(Mebp,  inf_SCR00)                                          \
@@ -585,9 +589,9 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* cvt
+/* cvt (fp-to-signed-int)
  * rounding mode comes from control register (set in FCTRL blocks)
- * DEPRECATED: use cvrps_rr with explicit rounding mode parameter! */
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz */
 
 #define cvtps_rr(RG, RM)                                                    \
         EMITB(0x66) EMITB(0x0F) EMITB(0x5B)                                 \
@@ -597,6 +601,10 @@
         EMITB(0x66) EMITB(0x0F) EMITB(0x5B)                                 \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
+
+/* cvt (signed-int-to-fp)
+ * rounding mode comes from control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
 
 #define cvtpn_rr(RG, RM)                                                    \
         EMITB(0x0F) EMITB(0x5B)                                             \
@@ -691,8 +699,8 @@
         jeqxx_lb(lb)
 
 /* simd mode
- * set in FCTRL blocks (cannot be nested)
- * DEPRECATED: use cvrps_rr with explicit rounding mode parameter! */
+ * set in FCTRL blocks (cannot be nested) for bulk cvt, no arithmetic
+ * NOTE: there are limitations on pre-VSX Power systems, check cvt */
 
 #define RT_SIMD_MODE_ROUNDN     0x00    /* round to nearest */
 #define RT_SIMD_MODE_ROUNDM     0x01    /* round towards minus infinity */
