@@ -52,7 +52,7 @@
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
  *
- * Argument x-register is fixed by the implementation.
+ * Argument x-register (implied) is fixed by the implementation.
  * Some formal definitions are not given below to encourage
  * use of friendly aliases for better code readability.
  */
@@ -128,7 +128,7 @@
 
 /* displacement VAL,  TYP,  CMD */
 
-#define DP(im)  (im), 0x00, EMITW((im) & ((0xFFC*Q)|0xFFC))  /* ext for Q=2,4 */
+#define DP(im)  (im), 0x00, EMITW((im) & ((0xFFF*Q)|0xF))    /* ext for Q=2,4 */
 #define DH(im)  (im), 0x00, EMITW((im) & (0xFFF0*Q)) /* <- SIMD-only (in ARM) */
 #define DW(im)  (im), 0x00, EMITW((im) & 0xFFFFFFF0) /* <- SIMD-only (in ARM) */
 
@@ -146,12 +146,12 @@
 
 #define movxx_ri(RM, IM)                                                    \
         EMITB(0xC7)                                                         \
-        MRM(0x00,    MOD(RM), REG(RM)) /* truncate IB with TYP below */     \
+        MRM(0x00,    MOD(RM), REG(RM))   /* truncate IB with TYP below */   \
         AUX(EMPTY,   EMPTY,   EMITW(VAL(IM) & ((TYP(IM) << 6) - 1)))
 
 #define movxx_mi(RM, DP, IM)                                                \
         EMITB(0xC7)                                                         \
-        MRM(0x00,    MOD(RM), REG(RM)) /* truncate IB with TYP below */     \
+        MRM(0x00,    MOD(RM), REG(RM))   /* truncate IB with TYP below */   \
         AUX(SIB(RM), CMD(DP), EMITW(VAL(IM) & ((TYP(IM) << 6) - 1)))
 
 #define movxx_rr(RG, RM)                                                    \
@@ -184,10 +184,10 @@
         EMITB(0x8F)                                                         \
         MRM(0x00,    MOD(RM), REG(RM))
 
-#define stack_sa() /* save all [EAX - EDI], 8 regs in total */              \
+#define stack_sa() /* save all [eax - edi], 8 regs in total */              \
         EMITB(0x60)
 
-#define stack_la() /* load all [EAX - EDI], 8 regs in total */              \
+#define stack_la() /* load all [eax - edi], 8 regs in total */              \
         EMITB(0x61)
 
 /* and */
@@ -357,12 +357,11 @@
         MRM(0x04,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
-#define shlxx_rx(RM)     /* reads Recx for shift value */                   \
+#define shlxx_rx(RM)                     /* reads Recx for shift value */   \
         EMITB(0xD3)                                                         \
         MRM(0x04,    MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   EMPTY)
 
-#define shlxx_mx(RM, DP) /* reads Recx for shift value */                   \
+#define shlxx_mx(RM, DP)                 /* reads Recx for shift value */   \
         EMITB(0xD3)                                                         \
         MRM(0x04,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -379,12 +378,11 @@
         MRM(0x05,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
-#define shrxx_rx(RM)     /* reads Recx for shift value */                   \
+#define shrxx_rx(RM)                     /* reads Recx for shift value */   \
         EMITB(0xD3)                                                         \
         MRM(0x05,    MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   EMPTY)
 
-#define shrxx_mx(RM, DP) /* reads Recx for shift value */                   \
+#define shrxx_mx(RM, DP)                 /* reads Recx for shift value */   \
         EMITB(0xD3)                                                         \
         MRM(0x05,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -399,12 +397,11 @@
         MRM(0x07,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
 
-#define shrxn_rx(RM)     /* reads Recx for shift value */                   \
+#define shrxn_rx(RM)                     /* reads Recx for shift value */   \
         EMITB(0xD3)                                                         \
         MRM(0x07,    MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   EMPTY)
 
-#define shrxn_mx(RM, DP) /* reads Recx for shift value */                   \
+#define shrxn_mx(RM, DP)                 /* reads Recx for shift value */   \
         EMITB(0xD3)                                                         \
         MRM(0x07,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -425,17 +422,36 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define mulxn_xm(RM, DP) /* Reax is in/out, destroys Redx */                \
+#define mulxn_xr(RM)     /* Reax is in/out, prepares Redx for divxn_x* */   \
+        EMITB(0xF7)                                                         \
+        MRM(0x05,    MOD(RM), REG(RM))
+
+#define mulxn_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn_x* */   \
         EMITB(0xF7)                                                         \
         MRM(0x05,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* div */
 
+#define divxn_xr(RM)     /* Reax is in/out, Redx is Reax-sign-extended */   \
+        EMITB(0xF7)                  /* destroys Redx, Xmm0 (in ARMv7) */   \
+        MRM(0x07,    MOD(RM), REG(RM)) /* 24-bit-int fp-div (in ARMv7) */
+
 #define divxn_xm(RM, DP) /* Reax is in/out, Redx is Reax-sign-extended */   \
-        EMITB(0xF7)      /* destroys Xmm0 (in ARM, not AArch32) */          \
-        MRM(0x07,    MOD(RM), REG(RM)) /* limited precision */              \
-        AUX(SIB(RM), CMD(DP), EMPTY)   /* fp div (in ARM, not AArch32) */
+        EMITB(0xF7)                  /* destroys Redx, Xmm0 (in ARMv7) */   \
+        MRM(0x07,    MOD(RM), REG(RM)) /* 24-bit-int fp-div (in ARMv7) */   \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+/* rem */
+
+#define remxn_xx()          /* to be placed immediately prior divxn_x* */   \
+                            /* (in ARM) to prepare for rem calculation */
+
+#define remxn_xr(RM)        /* to be placed immediately after divxn_xr */   \
+                            /* (in ARM) to produce remainder Redx<-rem */
+
+#define remxn_xm(RM, DP)    /* to be placed immediately after divxn_xm */   \
+                            /* (in ARM) to produce remainder Redx<-rem */
 
 /* cmp */
 
@@ -473,17 +489,17 @@
 #define jmpxx_lb(lb)                                                        \
         ASM_BEG ASM_OP1(jmp, lb) ASM_END
 
-#define jeqxx_lb(lb)                                                        \
+#define jezxx_lb(lb)                                                        \
         ASM_BEG ASM_OP1(je,  lb) ASM_END
 
-#define jezxx_lb(lb)                                                        \
+#define jnzxx_lb(lb)                                                        \
+        ASM_BEG ASM_OP1(jnz, lb) ASM_END
+
+#define jeqxx_lb(lb)                                                        \
         ASM_BEG ASM_OP1(je,  lb) ASM_END
 
 #define jnexx_lb(lb)                                                        \
         ASM_BEG ASM_OP1(jne, lb) ASM_END
-
-#define jnzxx_lb(lb)                                                        \
-        ASM_BEG ASM_OP1(jnz, lb) ASM_END
 
 #define jltxx_lb(lb)                                                        \
         ASM_BEG ASM_OP1(jb,  lb) ASM_END

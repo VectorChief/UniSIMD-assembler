@@ -52,7 +52,7 @@
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
  *
- * Argument x-register is fixed by the implementation.
+ * Argument x-register (implied) is fixed by the implementation.
  * Some formal definitions are not given below to encourage
  * use of friendly aliases for better code readability.
  */
@@ -379,10 +379,10 @@
                                                  (0x1F & VAL(IM)) << 7)     \
         EMITW(0xE5800000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))
 
-#define shlxx_rx(RM)     /* reads Recx for shift value */                   \
+#define shlxx_rx(RM)                     /* reads Recx for shift value */   \
         EMITW(0xE1B00110 | MRM(REG(RM), 0x00,    REG(RM)))
 
-#define shlxx_mx(RM, DP) /* reads Recx for shift value */                   \
+#define shlxx_mx(RM, DP)                 /* reads Recx for shift value */   \
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))  \
         EMITW(0xE1B00110 | MRM(TMxx,    0x00,    TMxx))                     \
@@ -401,10 +401,10 @@
                                                  (0x1F & VAL(IM)) << 7)     \
         EMITW(0xE5800000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))
 
-#define shrxx_rx(RM)     /* reads Recx for shift value */                   \
+#define shrxx_rx(RM)                     /* reads Recx for shift value */   \
         EMITW(0xE1B00130 | MRM(REG(RM), 0x00,    REG(RM)))
 
-#define shrxx_mx(RM, DP) /* reads Recx for shift value */                   \
+#define shrxx_mx(RM, DP)                 /* reads Recx for shift value */   \
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))  \
         EMITW(0xE1B00130 | MRM(TMxx,    0x00,    TMxx))                     \
@@ -421,10 +421,10 @@
                                                  (0x1F & VAL(IM)) << 7)     \
         EMITW(0xE5800000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))
 
-#define shrxn_rx(RM)     /* reads Recx for shift value */                   \
+#define shrxn_rx(RM)                     /* reads Recx for shift value */   \
         EMITW(0xE1B00150 | MRM(REG(RM), 0x00,    REG(RM)))
 
-#define shrxn_mx(RM, DP) /* reads Recx for shift value */                   \
+#define shrxn_mx(RM, DP)                 /* reads Recx for shift value */   \
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))  \
         EMITW(0xE1B00150 | MRM(TMxx,    0x00,    TMxx))                     \
@@ -445,7 +445,10 @@
         EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))  \
         EMITW(0xE0100090 | REG(RG) << 16 | REG(RG) << 8| TMxx)
 
-#define mulxn_xm(RM, DP) /* Reax is in/out, destroys Redx (in x86) */       \
+#define mulxn_xr(RM)     /* Reax is in/out, prepares Redx for divxn_x* */   \
+        EMITW(0xE0100090 | REG(RM))
+
+#define mulxn_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn_x* */   \
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))  \
         EMITW(0xE0100090 | TMxx)
@@ -454,23 +457,44 @@
 
 #if (RT_128 < 2)
 
-#define divxn_xm(RM, DP) /* Reax is in/out, Redx is Reax-sign-extended */   \
-        AUX(SIB(RM), EMPTY,   EMPTY) /* destroys Xmm0, fallback to VFP */   \
-        EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))  \
-        EMITW(0xEC400B10 | MRM(0x00,    TMxx,    Tmm0+0)) /* limited */     \
-        EMITW(0xF3BB0600 | MRM(Tmm0+1,  0x00,    Tmm0+0)) /* precision */   \
-        EMITW(0xEE800A20 | MRM(Tmm0+1,  Tmm0+1,  Tmm0+1)) /* <- fp div */   \
-        EMITW(0xF3BB0700 | MRM(Tmm0+0,  0x00,    Tmm0+1)) /* first 0x00 */  \
-        EMITW(0xEE100B10 | MRM(0x00,    Tmm0+0,  0x00)) /* in MRM is Reax */
-
-#else /* RT_128 >= 2 */
+#define divxn_xr(RM)     /* Reax is in/out, Redx is Reax-sign-extended */   \
+        EMITW(0xEC400B10 | MRM(0x00,    REG(RM), Tmm0+0))/* destroys Redx */\
+        EMITW(0xF3BB0600 | MRM(Tmm0+1,  0x00,    Tmm0+0))/* 24-bit int */   \
+        EMITW(0xEE800A20 | MRM(Tmm0+1,  Tmm0+1,  Tmm0+1))/* <-fp32 div */   \
+        EMITW(0xF3BB0700 | MRM(Tmm0+0,  0x00,    Tmm0+1))/* destroys Xmm0 */\
+        EMITW(0xEE100B10 | MRM(0x00,    Tmm0+0,  0x00))/* fallback to VFP */
 
 #define divxn_xm(RM, DP) /* Reax is in/out, Redx is Reax-sign-extended */   \
         AUX(SIB(RM), EMPTY,   EMPTY)                                        \
         EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))  \
-        EMITW(0xE710F010 | MRM(0x00,    0x00,    0x00) | TMxx << 8)
+        EMITW(0xEC400B10 | MRM(0x00,    TMxx,    Tmm0+0))/* destroys Redx */\
+        EMITW(0xF3BB0600 | MRM(Tmm0+1,  0x00,    Tmm0+0))/* 24-bit int */   \
+        EMITW(0xEE800A20 | MRM(Tmm0+1,  Tmm0+1,  Tmm0+1))/* <-fp32 div */   \
+        EMITW(0xF3BB0700 | MRM(Tmm0+0,  0x00,    Tmm0+1))/* destroys Xmm0 */\
+        EMITW(0xEE100B10 | MRM(0x00,    Tmm0+0,  0x00))/* fallback to VFP */
+
+#else /* RT_128 >= 2 */
+
+#define divxn_xr(RM)     /* Reax is in/out, Redx is Reax-sign-extended */   \
+        EMITW(0xE710F010 | REG(RM) << 8)/* destroys Redx, Xmm0 (ARMv7) */
+
+#define divxn_xm(RM, DP) /* Reax is in/out, Redx is Reax-sign-extended */   \
+        AUX(SIB(RM), EMPTY,   EMPTY)                                        \
+        EMITW(0xE5900000 | MRM(TMxx,    MOD(RM), 0x00) |(VAL(DP) & 0xFFF))  \
+        EMITW(0xE710F010 | TMxx << 8)   /* destroys Redx, Xmm0 (ARMv7) */
 
 #endif /* RT_128 >= 2 */
+
+/* rem */
+
+#define remxn_xx()          /* to be placed immediately prior divxn_x* */   \
+        movxx_rr(Redx, Reax)         /* to prepare for rem calculation */
+
+#define remxn_xr(RM)        /* to be placed immediately after divxn_xr */   \
+        EMITW(0xE0600090 | MRM(0x02,    0x02,    REG(RM)))/* Redx<-rem */
+
+#define remxn_xm(RM, DP)    /* to be placed immediately after divxn_xm */   \
+        EMITW(0xE0600090 | MRM(0x02,    0x02,    TMxx))   /* Redx<-rem */
 
 /* cmp */
 
@@ -505,16 +529,16 @@
 #define jmpxx_lb(lb)                                                        \
         ASM_BEG ASM_OP1(b,   lb) ASM_END
 
-#define jeqxx_lb(lb)                                                        \
-        ASM_BEG ASM_OP1(beq, lb) ASM_END
-
 #define jezxx_lb(lb)                                                        \
         ASM_BEG ASM_OP1(beq, lb) ASM_END
 
-#define jnexx_lb(lb)                                                        \
+#define jnzxx_lb(lb)                                                        \
         ASM_BEG ASM_OP1(bne, lb) ASM_END
 
-#define jnzxx_lb(lb)                                                        \
+#define jeqxx_lb(lb)                                                        \
+        ASM_BEG ASM_OP1(beq, lb) ASM_END
+
+#define jnexx_lb(lb)                                                        \
         ASM_BEG ASM_OP1(bne, lb) ASM_END
 
 #define jltxx_lb(lb)                                                        \
