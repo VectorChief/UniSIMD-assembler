@@ -59,13 +59,13 @@
  *  - rtarch_m32.h         - 32-bit MIPS ISA, 32 core regs
  *  - rtarch_m32_128.h     - 32-bit MIPS ISA, 32 SIMD regs, MSA
  *  - rtarch_p32.h         - 32-bit PowerISA, 32 core regs
- *  - rtarch_p32_128.h     - 32-bit PowerISA, 32 SIMD regs, VMX
+ *  - rtarch_p32_128.h     - 32-bit PowerISA, 32 SIMD regs, VMX/VSX
  *
  * Reserved 64-bit targets:
  *  - rtarch_m64.h         - 64-bit MIPS ISA, 32 core regs
  *  - rtarch_m64_128.h     - 64-bit MIPS ISA, 32 SIMD regs, MSA
  *  - rtarch_p64.h         - 64-bit PowerISA, 32 core regs
- *  - rtarch_p64_128.h     - 64-bit PowerISA, 32 SIMD regs, VMX
+ *  - rtarch_p64_128.h     - 64-bit PowerISA, 32 SIMD regs, VMX/VSX
  *
  * Preliminary naming scheme for extended core and SIMD register files.
  *
@@ -115,6 +115,13 @@
 
 #include "rtarch_x86_sse.h"
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, so that the ASM overhead is minimized.
+ * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
+ */
+
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
 #define ASM_ENTER(__Info__) {int __Reax__; __asm                            \
@@ -123,16 +130,37 @@
                                 movlb_ld(__Info__)                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
+                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))
+
+#define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(__Reax__)                          \
+                            }}
+
+/*
+ * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
+ * except that they put the SIMD unit into slightly faster non-IEEE mode,
+ * where denormal results from floating point operations are flushed to zero,
+ * This mode is closely compatible with ARMv7, which lacks full IEEE support.
+ */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__) {int __Reax__; __asm                          \
+                            {                                               \
+                                movlb_st(__Reax__)                          \
+                                movlb_ld(__Info__)                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
                                 movxx_mi(Mebp, inf_FCTRL, IH(0x9F80))       \
                                 mxcsr_ld(Mebp, inf_FCTRL)
 
-#define ASM_LEAVE(__Info__)     movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
+#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
                                 mxcsr_ld(Mebp, inf_FCTRL)                   \
                                 stack_la()                                  \
                                 movlb_ld(__Reax__)                          \
                             }}
 
-#endif /* RT_X86, RT_ARM */
+#endif /* RT_X86 */
 
 /*******************************   LINUX, GCC   *******************************/
 
@@ -156,6 +184,13 @@
 
 #include "rtarch_x86_sse.h"
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, so that the ASM overhead is minimized.
+ * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
+ */
+
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
 #define ASM_ENTER(__Info__) {int __Reax__; asm volatile                     \
@@ -164,10 +199,34 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
+                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))
+
+#define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" (__Reax__)                   \
+                                : [Info_]  "r" (__Info__)                   \
+                                : "cc",  "memory"                           \
+                            );}
+
+/*
+ * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
+ * except that they put the SIMD unit into slightly faster non-IEEE mode,
+ * where denormal results from floating point operations are flushed to zero.
+ * This mode is closely compatible with ARMv7, which lacks full IEEE support.
+ */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__) {int __Reax__; asm volatile                   \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
                                 movxx_mi(Mebp, inf_FCTRL, IH(0x9F80))       \
                                 mxcsr_ld(Mebp, inf_FCTRL)
 
-#define ASM_LEAVE(__Info__)     movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
+#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
                                 mxcsr_ld(Mebp, inf_FCTRL)                   \
                                 stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
@@ -194,6 +253,13 @@
 
 #include "rtarch_arm_mpe.h"
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, so that the ASM overhead is minimized.
+ * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
+ */
+
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
 #define ASM_ENTER(__Info__) {int __Reax__; asm volatile                     \
@@ -205,6 +271,38 @@
                                 "eor r4, r4, r4\n" /* TZxx (r4) <- 0 (xor) */
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" (__Reax__)                   \
+                                : [Info_]  "r" (__Info__)                   \
+                                : "cc",  "memory",                          \
+                                  "d0",  "d1",  "d2",  "d3",                \
+                                  "d4",  "d5",  "d6",  "d7",                \
+                                  "d8",  "d9",  "d10", "d11",               \
+                                  "d12", "d13", "d14", "d15",               \
+                                  "d16", "d17", "d18", "d19",               \
+                                  "d20", "d21"                              \
+                            );}
+
+/*
+ * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
+ * except that they put the SIMD unit into slightly faster non-IEEE mode,
+ * where denormal results from floating point operations are flushed to zero.
+ * This mode is closely compatible with ARMv7, which lacks full IEEE support.
+ */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__) {int __Reax__; asm volatile                   \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                "eor r4, r4, r4\n"                          \
+                                "vmsr fpscr, r4\n" /* set FPSCR to default */
+
+#define ASM_LEAVE_F(__Info__)   "vmsr fpscr, r4\n"                          \
+                                stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
                                 : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" (__Info__)                   \
