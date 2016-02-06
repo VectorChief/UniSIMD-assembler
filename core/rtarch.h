@@ -161,7 +161,7 @@
 /*
  * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
  * except that they put the SIMD unit into slightly faster non-IEEE mode,
- * where denormal results from floating point operations are flushed to zero,
+ * where denormal results from floating point operations are flushed to zero.
  * This mode is closely compatible with ARMv7, which lacks full IEEE support.
  */
 
