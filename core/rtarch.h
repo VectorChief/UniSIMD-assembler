@@ -27,17 +27,16 @@
  * and rtarch_***_***.h for SIMD instructions.
  *
  * At present, Intel SSE2 (32-bit x86 ISA) and ARM NEON (32-bit ARMv7 ISA)
- * are two primary targets, although wider SIMD, 64-bit addressing along with
- * more available registers, and other architectures can be supported by design.
+ * are two primary targets although wider SIMD, 64-bit addressing along with
+ * more available registers and other architectures can be supported by design.
  *
  * Preliminary naming scheme for potential future targets.
  *
  * Current 32-bit targets:
- *  - rtarch_arm.h         - 32-bit ARMv7/8 ISA, 16 core regs, 8 + temps used
- *  - rtarch_arm_128.h     - 32-bit ARMv7/8 ISA, 16 SIMD regs, 8 + temps used
+ *  - rtarch_arm.h         - 32-bit ARMv7 ISA, 16 core regs, 8 + temps used
+ *  - rtarch_arm_128.h     - 32-bit ARMv7 ISA, 16 SIMD regs, 8 + temps used
  *  - rtarch_x86.h         - 32-bit x86 ISA, 8 core regs, 6 + esp, ebp used
- *  - rtarch_x86_128.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, SSE
- *  - rtarch_x86_256.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, AVX
+ *  - rtarch_x86_128.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, SSE 128-bit
  *
  * Future 32-bit targets:
  *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 core regs, int-div, fp-cvt-r
@@ -139,7 +138,7 @@
 /*
  * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
  * except that they put the SIMD unit into slightly faster non-IEEE mode,
- * where denormal results from floating point operations are flushed to zero,
+ * where denormal results from floating point operations are flushed to zero.
  * This mode is closely compatible with ARMv7, which lacks full IEEE support.
  */
 
