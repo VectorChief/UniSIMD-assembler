@@ -460,12 +460,19 @@
         jezxx_lb(lb)
 
 /* simd mode
- * set in FCTRL blocks (cannot be nested) */
+ * set in FCTRL blocks (cannot be nested), *_F for faster non-IEEE mode
+ * NOTE: ARMv7 always uses ROUNDN non-IEEE mode for SIMD fp-arithmetic,
+ * while fp<->int conversion takes ROUND* into account via VFP fallback */
 
 #define RT_SIMD_MODE_ROUNDN     0x00    /* round to nearest */
 #define RT_SIMD_MODE_ROUNDM     0x02    /* round towards minus infinity */
 #define RT_SIMD_MODE_ROUNDP     0x01    /* round towards plus  infinity */
 #define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
+
+#define RT_SIMD_MODE_ROUNDN_F   0x04    /* round to nearest */
+#define RT_SIMD_MODE_ROUNDM_F   0x06    /* round towards minus infinity */
+#define RT_SIMD_MODE_ROUNDP_F   0x05    /* round towards plus  infinity */
+#define RT_SIMD_MODE_ROUNDZ_F   0x07    /* round towards zero */
 
 #define fpscr_ld(RG) /* not portable, do not use outside */                 \
         EMITW(0xEEE10A10 | MRM(REG(RG), 0x00,    0x00))
