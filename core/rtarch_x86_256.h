@@ -629,13 +629,19 @@
         jeqxx_lb(lb)
 
 /* simd mode
- * set in FCTRL blocks (cannot be nested) for bulk cvt, no arithmetic
- * NOTE: there are limitations on pre-VSX Power systems, check cvt */
+ * set in FCTRL blocks (cannot be nested), *_F for faster non-IEEE mode
+ * NOTE: ARMv7 always uses ROUNDN non-IEEE mode for SIMD fp-arithmetic,
+ * while fp<->int conversion takes ROUND* into account via VFP fallback */
 
 #define RT_SIMD_MODE_ROUNDN     0x00    /* round to nearest */
 #define RT_SIMD_MODE_ROUNDM     0x01    /* round towards minus infinity */
 #define RT_SIMD_MODE_ROUNDP     0x02    /* round towards plus  infinity */
 #define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
+
+#define RT_SIMD_MODE_ROUNDN_F   0x04    /* round to nearest */
+#define RT_SIMD_MODE_ROUNDM_F   0x05    /* round towards minus infinity */
+#define RT_SIMD_MODE_ROUNDP_F   0x06    /* round towards plus  infinity */
+#define RT_SIMD_MODE_ROUNDZ_F   0x07    /* round towards zero */
 
 #ifdef mxcsr_ld
 #undef mxcsr_ld
@@ -652,7 +658,7 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define FCTRL_ENTER(mode) /* assume default round-to-nearest upon entry */  \
-        movxx_mi(Mebp, inf_SCR00, IH(RT_SIMD_MODE_##mode << 13 | 0x9F80))   \
+        movxx_mi(Mebp, inf_SCR00, IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))   \
         mxcsr_ld(Mebp, inf_SCR00)
 
 #define FCTRL_LEAVE(mode) /* resume default round-to-nearest upon leave */  \
@@ -664,7 +670,7 @@
 #define rndps_rr(RG, RM, mode) /* not portable, do not use outside */       \
         VX3(0      , 1, 3) EMITB(0x08)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode))
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
 
 #define cvrps_rr(RG, RM, mode)                                              \
         rndps_rr(W(RG), W(RM), mode)                                        \
