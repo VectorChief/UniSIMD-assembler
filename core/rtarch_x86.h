@@ -505,7 +505,7 @@
 /* rem
  * set-flags: no */
 
-#define remxx_xx()          /* to be placed immediately prior divx*_x* */   \
+#define remxx_xx()          /* to be placed immediately prior divxx_x* */   \
                             /* (in ARM) to prepare for rem calculation */
 
 #define remxx_xr(RM)        /* to be placed immediately after divxx_xr */   \
@@ -513,6 +513,9 @@
 
 #define remxx_xm(RM, DP)    /* to be placed immediately after divxx_xm */   \
                             /* (in ARM) to produce remainder Redx<-rem */
+
+#define remxn_xx()          /* to be placed immediately prior divxn_x* */   \
+                            /* (in ARM) to prepare for rem calculation */
 
 #define remxn_xr(RM)        /* to be placed immediately after divxn_xr */   \
                             /* (in ARM) to produce remainder Redx<-rem */
