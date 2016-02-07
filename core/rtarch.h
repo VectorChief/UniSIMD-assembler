@@ -25,13 +25,13 @@
  * and rtarch_***_***.h for SIMD instructions.
  *
  * At present, Intel SSE2/AVX2 (32-bit x86 ISA) and ARM NEON (32-bit ARMv7 ISA)
- * are three primary targets, although wider SIMD, 64-bit addressing along with
- * more available registers, and other architectures can be supported by design.
+ * are three primary targets although wider SIMD, 64-bit addressing along with
+ * more available registers and other architectures can be supported by design.
  *
  * Note that AArch32 mode of ARMv8 ISA is now part of the current ARM target,
- * as it brings integer-divide and fp-convert with explicit round parameter,
- * while IEEE-compatible fp along with SIMD versions of square root and divide
- * are planned for (ILP32 ABI of) AArch64:ARMv8 ISA in (A32 and) A64 targets.
+ * as it brings core int-div and SIMD fp-convert with explicit round parameter,
+ * while IEEE-compatible SIMD fp-arithmetic with full square root and divide
+ * are planned for (ILP32 ABI of) AArch64:ARMv8 ISA in (A32 and) A64 target(s).
  *
  * Preliminary naming scheme for potential future targets.
  *
