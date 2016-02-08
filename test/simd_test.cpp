@@ -21,6 +21,8 @@
 #define ARR_SIZE            S*3 /* hardcoded in asm sections, S = SIMD width */
 #define MASK                (RT_SIMD_ALIGN - 1) /* SIMD alignment mask */
 
+/* NOTE: floating point values are not tested for equality precisely due to
+ * the slight difference in SIMD/FPU implementations across supported targets */
 #define FRK(f)              (f < 10.0       ?    0.0001     :               \
                              f < 100.0      ?    0.001      :               \
                              f < 1000.0     ?    0.01       :               \
@@ -2035,11 +2037,7 @@ rt_cell main(rt_cell argc, rt_char *argv[])
     rt_pntr info = malloc(sizeof(rt_SIMD_INFOX) + MASK);
     rt_SIMD_INFOX *inf0 = (rt_SIMD_INFOX *)(((rt_word)info + MASK) & ~MASK);
 
-    RT_SIMD_SET(inf0->gpc01, +1.0f);
-    RT_SIMD_SET(inf0->gpc02, -0.5f);
-    RT_SIMD_SET(inf0->gpc03, +3.0f);
-    RT_SIMD_SET(inf0->gpc04, 0x7FFFFFFF);
-    RT_SIMD_SET(inf0->gpc05, 0x3F800000);
+    ASM_INIT(inf0)
 
     inf0->far0 = far0;
     inf0->fco1 = fco1;
@@ -2091,6 +2089,8 @@ rt_cell main(rt_cell argc, rt_char *argv[])
 
         RT_LOGI("----------------------------------------------------\n");
     }
+
+    ASM_DONE(inf0)
 
     free(info);
     free(marr);

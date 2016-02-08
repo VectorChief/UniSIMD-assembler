@@ -437,6 +437,15 @@ struct rt_SIMD_INFO
 
 };
 
+#define ASM_INIT(__Info__)                                                  \
+    RT_SIMD_SET(__Info__->gpc01, +1.0f);                                    \
+    RT_SIMD_SET(__Info__->gpc02, -0.5f);                                    \
+    RT_SIMD_SET(__Info__->gpc03, +3.0f);                                    \
+    RT_SIMD_SET(__Info__->gpc04, 0x7FFFFFFF);                               \
+    RT_SIMD_SET(__Info__->gpc05, 0x3F800000);
+
+#define ASM_DONE(__Info__)
+
 /******************************************************************************/
 /************************   COMMON SIMD INSTRUCTIONS   ************************/
 /******************************************************************************/
