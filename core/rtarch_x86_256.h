@@ -633,10 +633,21 @@
  * NOTE: ARMv7 always uses ROUNDN non-IEEE mode for SIMD fp-arithmetic,
  * while fp<->int conversion takes ROUND* into account via VFP fallback */
 
+#if RT_SIMD_FLUSH_ZERO == 0
+
 #define RT_SIMD_MODE_ROUNDN     0x00    /* round to nearest */
 #define RT_SIMD_MODE_ROUNDM     0x01    /* round towards minus infinity */
 #define RT_SIMD_MODE_ROUNDP     0x02    /* round towards plus  infinity */
 #define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
+
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define RT_SIMD_MODE_ROUNDN     0x04    /* round to nearest */
+#define RT_SIMD_MODE_ROUNDM     0x05    /* round towards minus infinity */
+#define RT_SIMD_MODE_ROUNDP     0x06    /* round towards plus  infinity */
+#define RT_SIMD_MODE_ROUNDZ     0x07    /* round towards zero */
+
+#endif /* RT_SIMD_FLUSH_ZERO */
 
 #define RT_SIMD_MODE_ROUNDN_F   0x04    /* round to nearest */
 #define RT_SIMD_MODE_ROUNDM_F   0x05    /* round towards minus infinity */

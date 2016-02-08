@@ -129,6 +129,9 @@
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, eax, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, eax) ASM_END
 
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      0
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
@@ -149,6 +152,7 @@
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
 
+#if RT_SIMD_FLUSH_ZERO == 0
 #if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
@@ -186,6 +190,13 @@
                             }}
 
 #endif /* RT_SIMD_FAST_FCTRL */
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
+
+#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
+
+#endif /* RT_SIMD_FLUSH_ZERO */
 
 /*
  * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
@@ -264,6 +275,9 @@
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, %%eax, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, lb, %%eax) ASM_END
 
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      0
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
@@ -284,6 +298,7 @@
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
 
+#if RT_SIMD_FLUSH_ZERO == 0
 #if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
@@ -327,6 +342,13 @@
                             );}
 
 #endif /* RT_SIMD_FAST_FCTRL */
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
+
+#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
+
+#endif /* RT_SIMD_FLUSH_ZERO */
 
 /*
  * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
@@ -405,6 +427,9 @@
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, r0, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, r0) ASM_END
 
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      0
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
@@ -425,6 +450,7 @@
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
 
+#if RT_SIMD_FLUSH_ZERO == 0
 #if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
@@ -479,6 +505,13 @@
                             );}
 
 #endif /* RT_SIMD_FAST_FCTRL */
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
+
+#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
+
+#endif /* RT_SIMD_FLUSH_ZERO */
 
 /*
  * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
