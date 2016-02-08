@@ -237,7 +237,7 @@ struct rt_SIMD_INFO
 #define inf_SCR00           DP(0x008)
 
     rt_word pad01[S-3];     /* reserved, do not use! */
-#define inf_PAD01           DP(0x00C)
+#define inf_PAD01(nx)       DP(0x00C + nx)
 
     /* general purpose constants */
 

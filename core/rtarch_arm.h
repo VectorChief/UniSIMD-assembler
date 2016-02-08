@@ -90,11 +90,11 @@
 
 /* registers    REG */
 
-#define TZxx    0x04                    /* r4 */
-#define TMxx    0x08                    /* r8 */
+#define TMxx    0x04                    /* r4 */
+#define TZxx    0x08                    /* r8 */
 #define TIxx    0x09                    /* r9, not used together with TDxx */
 #define TDxx    0x09                    /* r9, not used together with TIxx */
-#define TPxx    0x0A                    /* r10 */
+#define TPxx    0x0B                    /* r11 */
 #define PCxx    0x0F                    /* r15 */
 
 /******************************************************************************/
@@ -205,11 +205,23 @@
 #define stack_ld(RM)                                                        \
         EMITW(0xE49D0004 | MRM(REG(RM), 0x00,    0x00))
 
+#if RT_SIMD_FAST_FCTRL == 0
+
 #define stack_sa() /* save all [r0 - r11], 12 regs in total */              \
         EMITW(0xE92D0FFF)
 
 #define stack_la() /* load all [r0 - r11], 12 regs in total */              \
         EMITW(0xE8BD0FFF)
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+#define stack_sa() /* save all [r0 - r12, r14], 14 regs in total */         \
+        EMITW(0xE92D5FFF)
+
+#define stack_la() /* load all [r0 - r12, r14], 14 regs in total */         \
+        EMITW(0xE8BD5FFF)
+
+#endif /* RT_SIMD_FAST_FCTRL */
 
 /* and */
 

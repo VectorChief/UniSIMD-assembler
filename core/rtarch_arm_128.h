@@ -502,12 +502,24 @@
 #define fpscr_st(RG) /* not portable, do not use outside */                 \
         EMITW(0xEEF10A10 | MRM(REG(RG), 0x00,    0x00))
 
+#if RT_SIMD_FAST_FCTRL == 0
+
 #define FCTRL_ENTER(mode) /* assume default round-to-nearest upon entry */  \
         EMITW(0xE3A00500 | MRM(TIxx,    0x00,    0x00)|RT_SIMD_MODE_##mode) \
         EMITW(0xEEE10A10 | MRM(TIxx,    0x00,    0x00))
 
 #define FCTRL_LEAVE(mode) /* resume default round-to-nearest upon leave */  \
         EMITW(0xEEE10A10 | MRM(TZxx,    0x00,    0x00))
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+#define FCTRL_ENTER(mode) /* assume default round-to-nearest upon entry */  \
+        EMITW(0xEEE10A10 | MRM((RT_SIMD_MODE_##mode&3)*2+8,    0x00,    0x00))
+
+#define FCTRL_LEAVE(mode) /* resume default round-to-nearest upon leave */  \
+        EMITW(0xEEE10A10 | MRM(TZxx,    0x00,    0x00))
+
+#endif /* RT_SIMD_FAST_FCTRL */
 
 /* cvr (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)

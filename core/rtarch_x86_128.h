@@ -727,12 +727,24 @@
         MRM(0x03,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
+#if RT_SIMD_FAST_FCTRL == 0
+
 #define FCTRL_ENTER(mode) /* assume default round-to-nearest upon entry */  \
         movxx_mi(Mebp, inf_SCR00, IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))   \
         mxcsr_ld(Mebp, inf_SCR00)
 
 #define FCTRL_LEAVE(mode) /* resume default round-to-nearest upon leave */  \
         mxcsr_ld(Mebp, inf_FCTRL)
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+#define FCTRL_ENTER(mode) /* assume default round-to-nearest upon entry */  \
+        mxcsr_ld(Mebp, inf_PAD01((RT_SIMD_MODE_##mode&3)*4+4))
+
+#define FCTRL_LEAVE(mode) /* resume default round-to-nearest upon leave */  \
+        mxcsr_ld(Mebp, inf_FCTRL)
+
+#endif /* RT_SIMD_FAST_FCTRL */
 
 /* cvr (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
