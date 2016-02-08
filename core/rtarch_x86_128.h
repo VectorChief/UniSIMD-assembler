@@ -355,7 +355,7 @@
 
 #define cvzps_rr(RG, RM)     /* round towards zero */                       \
         fpucw_st(Mebp,  inf_SCR00)                                          \
-        movxx_mi(Mebp,  inf_SCR02(0), IH(0x0C7F))                           \
+        movxx_mi(Mebp,  inf_SCR02(0), IH(0x0F7F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
         movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
         fpuxs_ld(Mebp,  inf_SCR01(0x00))                                    \
@@ -382,7 +382,7 @@
         mxcsr_st(Mebp,  inf_SCR02(0))                                       \
         shrxx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
         andxx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
-        orrxx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
+        orrxx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
         movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
         fpuxs_ld(Mebp,  inf_SCR01(0x00))                                    \
@@ -409,7 +409,7 @@
         mxcsr_st(Mebp,  inf_SCR02(0))                                       \
         shrxx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
         andxx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
-        orrxx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
+        orrxx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
         movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
         fpuxn_ld(Mebp,  inf_SCR01(0x00))                                    \
