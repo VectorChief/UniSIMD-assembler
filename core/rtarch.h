@@ -301,7 +301,7 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                "eor r4, r4, r4\n" /* TZxx (r4) <- 0 (xor) */
+                                EMITW(0xE3A04500) /* r4  <- (0 << 22) */
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
@@ -339,10 +339,11 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                "eor r4, r4, r4\n"                          \
-                                "vmsr fpscr, r4\n" /* set FPSCR to default */
+                                EMITW(0xE3A04504) /* r4  <- (4 << 22) */    \
+                                EMITW(0xEEE14A10) /* fpscr <- r4 */
 
-#define ASM_LEAVE_F(__Info__)   "vmsr fpscr, r4\n"                          \
+#define ASM_LEAVE_F(__Info__)   EMITW(0xE3A04500) /* r4  <- (0 << 22) */    \
+                                EMITW(0xEEE14A10) /* fpscr <- r4 */         \
                                 stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
                                 : [Reax_] "+r" (__Reax__)                   \
