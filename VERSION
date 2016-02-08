@@ -9,10 +9,15 @@ v0.6: Unified SIMD Assembler, additional SIMD targets
   - add mmv (vmaskmov) to AVX backend for fast conditional loads/stores
   - add core instructions sub-tests to SIMD test if RT_CORE_CODE is defined
   - drop set-flags bit (slow) from core mul instructions on ARM
+  - add RT_SIMD_FAST_FCTRL to save 1 instruction on FCTRL blocks entry
   - clarify current and future targets in rtarch (from here backported down)
   - add xor & neg core instructions to rtarch
   - add shifts by fixed core register instructions
   - add register versions of core mul/div, remainder instructions
+  - add SIMD cvzps instruction for fp-to-int round-towards-zero conversion
+  - add ASM_ENTER_F/ASM_LEAVE_F/ROUND*_F for non-IEEE flush-to-zero SIMD mode
+  - add RT_SIMD_FLUSH_ZERO to enable faster non-IEEE flush-to-zero SIMD mode
+  - add ASM_INIT/ASM_DONE to manage root info structure
   - make stack pointer register architecturally invisible
   - replace non-standard malloc.h with stdlib.h for malloc/free
   - clean up rtarch whitespace formatting
