@@ -112,6 +112,10 @@
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, eax, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, eax) ASM_END
 
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      0
+
 #include "rtarch_x86_sse.h"
 
 /*
@@ -120,6 +124,8 @@
  * intensive parts of the program, so that the ASM overhead is minimized.
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
+
+#if RT_SIMD_FLUSH_ZERO == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -134,6 +140,14 @@
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(__Reax__)                          \
                             }}
+
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
+
+#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
+
+#endif /* RT_SIMD_FLUSH_ZERO */
 
 /*
  * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
@@ -181,6 +195,10 @@
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, %%eax, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, lb, %%eax) ASM_END
 
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      0
+
 #include "rtarch_x86_sse.h"
 
 /*
@@ -189,6 +207,8 @@
  * intensive parts of the program, so that the ASM overhead is minimized.
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
+
+#if RT_SIMD_FLUSH_ZERO == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -206,6 +226,14 @@
                                 : [Info_]  "r" (__Info__)                   \
                                 : "cc",  "memory"                           \
                             );}
+
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
+
+#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
+
+#endif /* RT_SIMD_FLUSH_ZERO */
 
 /*
  * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
@@ -250,6 +278,10 @@
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, r0, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, r0) ASM_END
 
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      0
+
 #include "rtarch_arm_mpe.h"
 
 /*
@@ -258,6 +290,8 @@
  * intensive parts of the program, so that the ASM overhead is minimized.
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
+
+#if RT_SIMD_FLUSH_ZERO == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -281,6 +315,14 @@
                                   "d16", "d17", "d18", "d19",               \
                                   "d20", "d21"                              \
                             );}
+
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
+
+#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
+
+#endif /* RT_SIMD_FLUSH_ZERO */
 
 /*
  * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
