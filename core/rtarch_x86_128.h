@@ -745,15 +745,15 @@
         mxcsr_ld(Mebp, inf_SCR00)
 
 #define FCTRL_LEAVE(mode) /* resume default round-to-nearest upon leave */  \
-        mxcsr_ld(Mebp, inf_FCTRL)
+        mxcsr_ld(Mebp, inf_FCTRL((RT_SIMD_MODE_ROUNDN&3)*4))
 
 #else /* RT_SIMD_FAST_FCTRL */
 
 #define FCTRL_ENTER(mode) /* assume default round-to-nearest upon entry */  \
-        mxcsr_ld(Mebp, inf_PAD01((RT_SIMD_MODE_##mode&3)*4+4))
+        mxcsr_ld(Mebp, inf_FCTRL((RT_SIMD_MODE_##mode&3)*4))
 
 #define FCTRL_LEAVE(mode) /* resume default round-to-nearest upon leave */  \
-        mxcsr_ld(Mebp, inf_FCTRL)
+        mxcsr_ld(Mebp, inf_FCTRL((RT_SIMD_MODE_ROUNDN&3)*4))
 
 #endif /* RT_SIMD_FAST_FCTRL */
 

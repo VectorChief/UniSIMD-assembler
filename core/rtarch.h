@@ -163,7 +163,7 @@
                                 movlb_ld(__Info__)                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(__Reax__)                          \
@@ -179,11 +179,10 @@
                                 movlb_ld(__Info__)                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                movxx_mi(Mebp, inf_PAD01(0*4+4), IH(0x1F80))\
-                                movxx_mi(Mebp, inf_PAD01(1*4+4), IH(0x3F80))\
-                                movxx_mi(Mebp, inf_PAD01(2*4+4), IH(0x5F80))\
-                                movxx_mi(Mebp, inf_PAD01(3*4+4), IH(0x7F80))\
-                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))
+                                movxx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))  \
+                                movxx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))  \
+                                movxx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))  \
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(__Reax__)                          \
@@ -215,11 +214,11 @@
                                 movlb_ld(__Info__)                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                movxx_mi(Mebp, inf_FCTRL, IH(0x9F80))       \
-                                mxcsr_ld(Mebp, inf_FCTRL)
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
-#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
-                                mxcsr_ld(Mebp, inf_FCTRL)                   \
+#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
                                 stack_la()                                  \
                                 movlb_ld(__Reax__)                          \
                             }}
@@ -234,15 +233,14 @@
                                 movlb_ld(__Info__)                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                movxx_mi(Mebp, inf_PAD01(0*4+4), IH(0x9F80))\
-                                movxx_mi(Mebp, inf_PAD01(1*4+4), IH(0xBF80))\
-                                movxx_mi(Mebp, inf_PAD01(2*4+4), IH(0xDF80))\
-                                movxx_mi(Mebp, inf_PAD01(3*4+4), IH(0xFF80))\
-                                movxx_mi(Mebp, inf_FCTRL, IH(0x9F80))       \
-                                mxcsr_ld(Mebp, inf_FCTRL)
+                                movxx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))  \
+                                movxx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))  \
+                                movxx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))  \
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
-#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
-                                mxcsr_ld(Mebp, inf_FCTRL)                   \
+#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
                                 stack_la()                                  \
                                 movlb_ld(__Reax__)                          \
                             }}
@@ -309,7 +307,7 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
@@ -328,11 +326,10 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                movxx_mi(Mebp, inf_PAD01(0*4+4), IH(0x1F80))\
-                                movxx_mi(Mebp, inf_PAD01(1*4+4), IH(0x3F80))\
-                                movxx_mi(Mebp, inf_PAD01(2*4+4), IH(0x5F80))\
-                                movxx_mi(Mebp, inf_PAD01(3*4+4), IH(0x7F80))\
-                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))
+                                movxx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))  \
+                                movxx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))  \
+                                movxx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))  \
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
@@ -367,11 +364,11 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                movxx_mi(Mebp, inf_FCTRL, IH(0x9F80))       \
-                                mxcsr_ld(Mebp, inf_FCTRL)
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
-#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
-                                mxcsr_ld(Mebp, inf_FCTRL)                   \
+#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
                                 stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
                                 : [Reax_] "+r" (__Reax__)                   \
@@ -389,15 +386,14 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                movxx_mi(Mebp, inf_PAD01(0*4+4), IH(0x9F80))\
-                                movxx_mi(Mebp, inf_PAD01(1*4+4), IH(0xBF80))\
-                                movxx_mi(Mebp, inf_PAD01(2*4+4), IH(0xDF80))\
-                                movxx_mi(Mebp, inf_PAD01(3*4+4), IH(0xFF80))\
-                                movxx_mi(Mebp, inf_FCTRL, IH(0x9F80))       \
-                                mxcsr_ld(Mebp, inf_FCTRL)
+                                movxx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))  \
+                                movxx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))  \
+                                movxx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))  \
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
-#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
-                                mxcsr_ld(Mebp, inf_FCTRL)                   \
+#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
                                 stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
                                 : [Reax_] "+r" (__Reax__)                   \

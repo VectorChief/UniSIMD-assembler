@@ -227,17 +227,17 @@ struct rt_SIMD_INFO
 {
     /* internal variables */
 
-    rt_word fctrl;
-#define inf_FCTRL           DP(0x000)
+    rt_word scr00;          /* scratchpad 00 */
+#define inf_SCR00           DP(0x000)
 
-    rt_word ver;
+    rt_word ver;            /* SIMD version <- cpuid */
 #define inf_VER             DP(0x004)
 
-    rt_word scr00;          /* scratchpad 00 */
-#define inf_SCR00           DP(0x008)
+    rt_word pad01;          /* reserved, do not use! */
+#define inf_PAD01           DP(0x008)
 
-    rt_word pad01[S-3];     /* reserved, do not use! */
-#define inf_PAD01(nx)       DP(0x00C + nx)
+    rt_word fctrl[S-3];     /* reserved, do not use! */
+#define inf_FCTRL(nx)       DP(0x00C + nx)
 
     /* general purpose constants */
 
