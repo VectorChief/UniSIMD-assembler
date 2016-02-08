@@ -520,7 +520,7 @@
         EMITW(0xEEE10A10 | MRM(TIxx,    0x00,    0x00))
 
 #define FCTRL_LEAVE(mode) /* resume default round-to-nearest upon leave */  \
-        EMITW(0xEEE10A10 | MRM(TZxx,    0x00,    0x00))
+        EMITW(0xEEE10A10 | MRM(TNxx,    0x00,    0x00))
 
 #else /* RT_SIMD_FAST_FCTRL */
 
@@ -528,7 +528,7 @@
         EMITW(0xEEE10A10 | MRM((RT_SIMD_MODE_##mode&3)*2+8,    0x00,    0x00))
 
 #define FCTRL_LEAVE(mode) /* resume default round-to-nearest upon leave */  \
-        EMITW(0xEEE10A10 | MRM(TZxx,    0x00,    0x00))
+        EMITW(0xEEE10A10 | MRM(TNxx,    0x00,    0x00))
 
 #endif /* RT_SIMD_FAST_FCTRL */
 

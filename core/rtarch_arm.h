@@ -91,7 +91,7 @@
 /* registers    REG */
 
 #define TMxx    0x04                    /* r4 */
-#define TZxx    0x08                    /* r8 */
+#define TNxx    0x08                    /* r8 */
 #define TIxx    0x09                    /* r9, not used together with TDxx */
 #define TDxx    0x09                    /* r9, not used together with TIxx */
 #define TPxx    0x0B                    /* r11 */

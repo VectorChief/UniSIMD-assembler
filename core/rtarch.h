@@ -461,7 +461,7 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                "eor r8, r8, r8\n" /* TZxx (r8) <- 0 (xor) */
+                                EMITW(0xE3A08500) /* r8  <- (0 << 22) */
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
@@ -486,10 +486,10 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                "mov r8,  #0\n"                             \
-                                "mov r10, #4194304\n"                       \
-                                "mov r12, #8388608\n"                       \
-                                "mov r14, #12582912\n"
+                                EMITW(0xE3A0E503) /* r14 <- (3 << 22) */    \
+                                EMITW(0xE3A0C502) /* r12 <- (2 << 22) */    \
+                                EMITW(0xE3A0A501) /* r10 <- (1 << 22) */    \
+                                EMITW(0xE3A08500) /* r8  <- (0 << 22) */
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
@@ -530,10 +530,11 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                "eor r8, r8, r8\n"                          \
-                                "vmsr fpscr, r8\n" /* set FPSCR to default */
+                                EMITW(0xE3A08504) /* r8  <- (4 << 22) */    \
+                                EMITW(0xEEE18A10) /* fpscr <- r8 */
 
-#define ASM_LEAVE_F(__Info__)   "vmsr fpscr, r8\n"                          \
+#define ASM_LEAVE_F(__Info__)   EMITW(0xE3A08500) /* r8  <- (0 << 22) */    \
+                                EMITW(0xEEE18A10) /* fpscr <- r8 */         \
                                 stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
                                 : [Reax_] "+r" (__Reax__)                   \
@@ -557,13 +558,14 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                "mov r8,  #0\n"                             \
-                                "mov r10, #4194304\n"                       \
-                                "mov r12, #8388608\n"                       \
-                                "mov r14, #12582912\n"                      \
-                                "vmsr fpscr, r8\n" /* set FPSCR to default */
+                                EMITW(0xE3A0E507) /* r14 <- (7 << 22) */    \
+                                EMITW(0xE3A0C506) /* r12 <- (6 << 22) */    \
+                                EMITW(0xE3A0A505) /* r10 <- (5 << 22) */    \
+                                EMITW(0xE3A08504) /* r8  <- (4 << 22) */    \
+                                EMITW(0xEEE18A10) /* fpscr <- r8 */
 
-#define ASM_LEAVE_F(__Info__)   "vmsr fpscr, r8\n"                          \
+#define ASM_LEAVE_F(__Info__)   EMITW(0xE3A08500) /* r8  <- (0 << 22) */    \
+                                EMITW(0xEEE18A10) /* fpscr <- r8 */         \
                                 stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
                                 : [Reax_] "+r" (__Reax__)                   \
