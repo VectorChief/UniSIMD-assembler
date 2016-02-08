@@ -735,7 +735,9 @@
         mxcsr_ld(Mebp, inf_FCTRL)
 
 /* cvr (fp-to-signed-int)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block */
 
 #define cvrps_rr(RG, RM, mode)                                              \
         FCTRL_ENTER(mode)                                                   \

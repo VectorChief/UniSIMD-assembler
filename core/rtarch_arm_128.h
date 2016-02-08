@@ -510,7 +510,9 @@
         EMITW(0xEEE10A10 | MRM(TZxx,    0x00,    0x00))
 
 /* cvr (fp-to-signed-int)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block */
 
 #if (RT_128 < 2)
 

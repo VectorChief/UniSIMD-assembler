@@ -24,6 +24,8 @@
 #define ARR_SIZE            S*3 /* hardcoded in asm sections, S = SIMD width */
 #define MASK                (RT_SIMD_ALIGN - 1) /* SIMD alignment mask */
 
+/* NOTE: floating point values are not tested for equality precisely due to
+ * the slight difference in SIMD/FPU implementations across supported targets */
 #define FRK(f)              (f < 10.0       ?    0.0001     :               \
                              f < 100.0      ?    0.001      :               \
                              f < 1000.0     ?    0.01       :               \
