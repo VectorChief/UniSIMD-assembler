@@ -10,13 +10,11 @@ for 64-bit systems:
 run for x86 architecture:
     make -f simd_make_x86.mk
     ./simd_test.x86
-run for ARM architecture (inside scratchbox, see below):
+run for ARM architecture:
     make -f simd_make_arm.mk
-    copy simd_test.arm over to N900 and run there
-ARM builds are done in Maemo/scratchbox cross-compilation environment for N900.
-    http://wiki.maemo.org/Documentation/Maemo_5_Final_SDK_Installation
+    ./simd_test.arm
 Only DEB-based distributions (Mint, Ubuntu, Debian) are supported for now,
-users of RPM-based distros need to figure out build-deps on their own.
+users of RPM-based distributions need to figure out build-deps on their own.
 
 ================================================================================
 
