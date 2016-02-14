@@ -423,7 +423,7 @@
                                 movpx_ld(Xmm4, Mebp, inf_GPC02)             \
                                 movpx_ld(Xmm8, Mebp, inf_GPC04)             \
                                 EMITW(0x13084504)                           \
-                                EMITW(0x1328C504)                           \
+                                EMITW(0x1328C484)                           \
                                 EMITW(0x13421484)                           \
                                 EMITW(0x13642484)                           \
                                 EMITW(0x7C0902A6 | 0x1B << 21)              \
