@@ -418,6 +418,7 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
+                                EMITW(0x7C000278) /* TZxx (r0) <- 0 (xor) */\
                                 movpx_ld(Xmm2, Mebp, inf_GPC01)             \
                                 movpx_ld(Xmm4, Mebp, inf_GPC02)             \
                                 movpx_ld(Xmm8, Mebp, inf_GPC04)             \
@@ -426,8 +427,7 @@
                                 EMITW(0x13421484)                           \
                                 EMITW(0x13642484)                           \
                                 EMITW(0x7C0902A6 | 0x1B << 21)              \
-                                "cmplw cr2, %%r24, %%r24\n"                 \
-                                EMITW(0x7C000278)  /* TZxx (r0) <- 0 (xor) */
+                                "cmplw cr2, %%r24, %%r24\n"
 
 #define ASM_LEAVE(__Info__)     EMITW(0x7C0903A6 | 0x1B << 21)              \
                                 stack_la()                                  \
