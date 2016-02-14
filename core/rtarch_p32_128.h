@@ -240,7 +240,8 @@
         EMITW(0x1000002E | MXM(TmmD,    TmmC,    TmmS) | TmmC << 6)         \
         EMITW(0x1000002E | MXM(REG(RG), TmmC,    TmmS) | TmmB << 6)         \
         EMITW(0x1000002F | MXM(TmmD,    TmmD,    TmmA) | REG(RM) << 6)      \
-        EMITW(0x1000002F | MXM(REG(RG), TmmD,    TmmC) | REG(RG) << 6)
+        EMITW(0x1000002F | MXM(REG(RG), TmmD,    TmmC) | REG(RG) << 6)      \
+        EMITW(0x1000002E | MXM(REG(RG), REG(RG), TmmS) | REG(RM) << 6)
 
 #define sqrps_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -250,7 +251,8 @@
         EMITW(0x1000002E | MXM(TmmD,    TmmC,    TmmS) | TmmC << 6)         \
         EMITW(0x1000002E | MXM(REG(RG), TmmC,    TmmS) | TmmB << 6)         \
         EMITW(0x1000002F | MXM(TmmD,    TmmD,    TmmA) | Tmm1 << 6)         \
-        EMITW(0x1000002F | MXM(REG(RG), TmmD,    TmmC) | REG(RG) << 6)
+        EMITW(0x1000002F | MXM(REG(RG), TmmD,    TmmC) | REG(RG) << 6)      \
+        EMITW(0x1000002E | MXM(REG(RG), REG(RG), TmmS) | REG(RM) << 6)
 
 /* cbr */
 
