@@ -221,7 +221,8 @@
 #define divps_rr(RG, RM)                                                    \
         EMITW(0x1000010A | MXM(TmmC,    0x00,    REG(RM)))                  \
         EMITW(0x1000002F | MXM(TmmD,    TmmC,    TmmA) | REG(RM) << 6)      \
-        EMITW(0x1000002E | MXM(REG(RG), TmmC,    TmmC) | TmmD << 6)
+        EMITW(0x1000002E | MXM(TmmD,    TmmC,    TmmC) | TmmD << 6)         \
+        EMITW(0x1000002E | MXM(REG(RG), REG(RG), TmmS) | TmmD << 6)
 
 #define divps_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -229,7 +230,8 @@
         EMITW(0x7C0000CE | MXM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0x1000010A | MXM(TmmC,    0x00,    Tmm1))                     \
         EMITW(0x1000002F | MXM(TmmD,    TmmC,    TmmA) | Tmm1 << 6)         \
-        EMITW(0x1000002E | MXM(REG(RG), TmmC,    TmmC) | TmmD << 6)
+        EMITW(0x1000002E | MXM(TmmD,    TmmC,    TmmC) | TmmD << 6)         \
+        EMITW(0x1000002E | MXM(REG(RG), REG(RG), TmmS) | TmmD << 6)
 
 /* sqr */
 
