@@ -422,10 +422,10 @@
                                 movpx_ld(Xmm2, Mebp, inf_GPC01)             \
                                 movpx_ld(Xmm4, Mebp, inf_GPC02)             \
                                 movpx_ld(Xmm8, Mebp, inf_GPC04)             \
-                                EMITW(0x13084504)                           \
-                                EMITW(0x1328C484)                           \
-                                EMITW(0x13421484)                           \
-                                EMITW(0x13642484)                           \
+                                EMITX(0x13084504)                           \
+                                EMITX(0x1328C484)                           \
+                                EMITX(0x13421484)                           \
+                                EMITX(0x13642484)                           \
                                 EMITW(0x7C0902A6 | 0x1B << 21)              \
                                 "cmplw cr2, %%r24, %%r24\n"
 
@@ -436,6 +436,13 @@
                                 : [Info_]  "r" (__Info__)                   \
                                 : "cc",  "memory", "r0", "r27"              \
                             );}
+
+#ifndef movpx_ld
+#define movpx_ld(RG, RM, DP)
+#define EMITX(w) /* EMPTY */
+#else  /* movpx_ld */
+#define EMITX(w)    EMITW(w)
+#endif /* movpx_ld */
 
 #endif /* RT_X86, RT_X32, RT_ARM, RT_A32, RT_M32, RT_P32 */
 

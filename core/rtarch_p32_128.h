@@ -123,6 +123,10 @@
 #define movpx_rr(RG, RM)                                                    \
         EMITW(0x10000484 | MXM(REG(RG), REG(RM), REG(RM)))
 
+#ifdef movpx_ld
+#undef movpx_ld
+#endif /* movpx_ld */
+
 #define movpx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
