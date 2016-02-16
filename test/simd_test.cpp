@@ -2326,11 +2326,7 @@ rt_cell main(rt_cell argc, rt_char *argv[])
     rt_pntr info = malloc(sizeof(rt_SIMD_INFOX) + MASK);
     rt_SIMD_INFOX *inf0 = (rt_SIMD_INFOX *)(((rt_word)info + MASK) & ~MASK);
 
-    RT_SIMD_SET(inf0->gpc01, +1.0f);
-    RT_SIMD_SET(inf0->gpc02, -0.5f);
-    RT_SIMD_SET(inf0->gpc03, +3.0f);
-    RT_SIMD_SET(inf0->gpc04, 0x7FFFFFFF);
-    RT_SIMD_SET(inf0->gpc05, 0x3F800000);
+    ASM_INIT(inf0)
 
     inf0->far0 = far0;
     inf0->fco1 = fco1;
@@ -2409,6 +2405,8 @@ rt_cell main(rt_cell argc, rt_char *argv[])
         RT_LOGI("----------------------------------- simd = %dv%d ---\n",
                                                 (simd & 0xFF) * 32, simd >> 8);
     }
+
+    ASM_DONE(inf0)
 
     free(info);
     free(marr);
