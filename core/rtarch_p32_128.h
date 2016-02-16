@@ -125,6 +125,8 @@
 
 #ifdef movpx_ld
 #undef movpx_ld
+#undef  EMITX
+#define EMITX(w) EMITW(w)
 #endif /* movpx_ld */
 
 #define movpx_ld(RG, RM, DP)                                                \
