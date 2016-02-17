@@ -81,13 +81,13 @@
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
-#define TmmS    0x18  /* vr24, SIGN */
-#define TmmQ    0x19  /* vr25, QNAN */
-#define TmmA    0x1A  /* vr26, +1.0 */
-#define TmmB    0x1B  /* vr27, -0.5 */
-#define TmmC    0x1C  /* vr28 */
-#define TmmD    0x1D  /* vr29 */
-#define Tmm1    0x1F  /* vr31 */
+#define TmmS    0x18  /* v24, SIGN */
+#define TmmQ    0x19  /* v25, QNAN */
+#define TmmA    0x1A  /* v26, +1.0 */
+#define TmmB    0x1B  /* v27, -0.5 */
+#define TmmC    0x1C  /* v28 */
+#define TmmD    0x1D  /* v29 */
+#define Tmm1    0x1F  /* v31 */
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -95,22 +95,22 @@
 
 /* registers    REG,  MOD,  SIB */
 
-#define Xmm0    0x00, 0x00, EMPTY       /* vr0 */
-#define Xmm1    0x01, 0x00, EMPTY       /* vr1 */
-#define Xmm2    0x02, 0x00, EMPTY       /* vr2 */
-#define Xmm3    0x03, 0x00, EMPTY       /* vr3 */
-#define Xmm4    0x04, 0x00, EMPTY       /* vr4 */
-#define Xmm5    0x05, 0x00, EMPTY       /* vr5 */
-#define Xmm6    0x06, 0x00, EMPTY       /* vr6 */
-#define Xmm7    0x07, 0x00, EMPTY       /* vr7 */
-#define Xmm8    0x08, 0x00, EMPTY       /* vr8 */
-#define Xmm9    0x09, 0x00, EMPTY       /* vr9 */
-#define XmmA    0x0A, 0x00, EMPTY       /* vr10 */
-#define XmmB    0x0B, 0x00, EMPTY       /* vr11 */
-#define XmmC    0x0C, 0x00, EMPTY       /* vr12 */
-#define XmmD    0x0D, 0x00, EMPTY       /* vr13 */
-#define XmmE    0x0E, 0x00, EMPTY       /* vr14 */
-#define XmmF    0x0F, 0x00, EMPTY       /* vr15 */
+#define Xmm0    0x00, 0x00, EMPTY       /* v0 */
+#define Xmm1    0x01, 0x00, EMPTY       /* v1 */
+#define Xmm2    0x02, 0x00, EMPTY       /* v2 */
+#define Xmm3    0x03, 0x00, EMPTY       /* v3 */
+#define Xmm4    0x04, 0x00, EMPTY       /* v4 */
+#define Xmm5    0x05, 0x00, EMPTY       /* v5 */
+#define Xmm6    0x06, 0x00, EMPTY       /* v6 */
+#define Xmm7    0x07, 0x00, EMPTY       /* v7 */
+#define Xmm8    0x08, 0x00, EMPTY       /* v8 */
+#define Xmm9    0x09, 0x00, EMPTY       /* v9 */
+#define XmmA    0x0A, 0x00, EMPTY       /* v10 */
+#define XmmB    0x0B, 0x00, EMPTY       /* v11 */
+#define XmmC    0x0C, 0x00, EMPTY       /* v12 */
+#define XmmD    0x0D, 0x00, EMPTY       /* v13 */
+#define XmmE    0x0E, 0x00, EMPTY       /* v14 */
+#define XmmF    0x0F, 0x00, EMPTY       /* v15 */
 
 /******************************************************************************/
 /**********************************   VMX   ***********************************/
