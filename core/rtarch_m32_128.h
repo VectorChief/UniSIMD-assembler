@@ -150,7 +150,7 @@
 #define annpx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0x78000023 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x4E601C00 | MXM(REG(RG), Tmm1,    TmmZ))
+        EMITW(0x78C0001E | MXM(REG(RG), Tmm1,    TmmZ))
 
 /* orr */
 
