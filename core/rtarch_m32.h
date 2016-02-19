@@ -493,8 +493,8 @@
 #define subxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
         EMITW(0x00000000 | MIM(REG(RM), REG(RM), 0x00,    T1(IM), EMPTY1) | \
-        (+(TP1(IM) == 0) & 0x24000000) | (+(TP1(IM) != 0) & 0x00000023)   | \
-        (+(TP1(IM) == 0) & 0x0000FFFF  &   -VAL(IM)))                       \
+        (+(TP1(IM) == 0) & (0x24000000 | (0xFFFF & -VAL(IM)))) |            \
+        (+(TP1(IM) != 0) & (0x00000023 | TIxx << 16)))                      \
         /* if true ^ equals to -1 (not 1) */                                \
         EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))/* <- set flags (Z) */
 
@@ -502,8 +502,8 @@
         AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G1(IM))   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    0x00,    T1(IM), EMPTY1) | \
-        (+(TP1(IM) == 0) & 0x24000000) | (+(TP1(IM) != 0) & 0x00000023)   | \
-        (+(TP1(IM) == 0) & 0x0000FFFF  &   -VAL(IM)))                       \
+        (+(TP1(IM) == 0) & (0x24000000 | (0xFFFF & -VAL(IM)))) |            \
+        (+(TP1(IM) != 0) & (0x00000023 | TIxx << 16)))                      \
         EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define subxx_rr(RG, RM)                                                    \
