@@ -288,26 +288,26 @@
         EMITW(0xF8408400 | MRM(REG(RM), SPxx,    0x00))
 
 #define stack_sa() /* save all [Reax - RegE], TMxx, TIxx, TPxx, 17 regs */  \
-        EMITW(0xA9B80000 | MRM(Teax,    SPxx,    0x00) | Tecx << 10)        \
-        EMITW(0xA9B80000 | MRM(Tedx,    SPxx,    0x00) | Tebx << 10)        \
-        EMITW(0xA9B80000 | MRM(Tebp,    SPxx,    0x00) | Tesi << 10)        \
-        EMITW(0xA9B80000 | MRM(Tedi,    SPxx,    0x00) | Teg8 << 10)        \
-        EMITW(0xA9B80000 | MRM(Teg9,    SPxx,    0x00) | TegA << 10)        \
-        EMITW(0xA9B80000 | MRM(TegB,    SPxx,    0x00) | TegC << 10)        \
-        EMITW(0xA9B80000 | MRM(TegD,    SPxx,    0x00) | TegE << 10)        \
-        EMITW(0xA9B80000 | MRM(TMxx,    SPxx,    0x00) | TIxx << 10)        \
+        EMITW(0xA9BF0000 | MRM(Teax,    SPxx,    0x00) | Tecx << 10)        \
+        EMITW(0xA9BF0000 | MRM(Tedx,    SPxx,    0x00) | Tebx << 10)        \
+        EMITW(0xA9BF0000 | MRM(Tebp,    SPxx,    0x00) | Tesi << 10)        \
+        EMITW(0xA9BF0000 | MRM(Tedi,    SPxx,    0x00) | Teg8 << 10)        \
+        EMITW(0xA9BF0000 | MRM(Teg9,    SPxx,    0x00) | TegA << 10)        \
+        EMITW(0xA9BF0000 | MRM(TegB,    SPxx,    0x00) | TegC << 10)        \
+        EMITW(0xA9BF0000 | MRM(TegD,    SPxx,    0x00) | TegE << 10)        \
+        EMITW(0xA9BF0000 | MRM(TMxx,    SPxx,    0x00) | TIxx << 10)        \
         EMITW(0xF81F8C00 | MRM(TPxx,    SPxx,    0x00))
 
 #define stack_la() /* load all TPxx, TIxx, TMxx, [RegE - Reax], 17 regs */  \
         EMITW(0xF8408400 | MRM(TPxx,    SPxx,    0x00))                     \
-        EMITW(0xA8C80000 | MRM(TMxx,    SPxx,    0x00) | TIxx << 10)        \
-        EMITW(0xA8C80000 | MRM(TegD,    SPxx,    0x00) | TegE << 10)        \
-        EMITW(0xA8C80000 | MRM(TegB,    SPxx,    0x00) | TegC << 10)        \
-        EMITW(0xA8C80000 | MRM(Teg9,    SPxx,    0x00) | TegA << 10)        \
-        EMITW(0xA8C80000 | MRM(Tedi,    SPxx,    0x00) | Teg8 << 10)        \
-        EMITW(0xA8C80000 | MRM(Tebp,    SPxx,    0x00) | Tesi << 10)        \
-        EMITW(0xA8C80000 | MRM(Tedx,    SPxx,    0x00) | Tebx << 10)        \
-        EMITW(0xA8C80000 | MRM(Teax,    SPxx,    0x00) | Tecx << 10)
+        EMITW(0xA8C10000 | MRM(TMxx,    SPxx,    0x00) | TIxx << 10)        \
+        EMITW(0xA8C10000 | MRM(TegD,    SPxx,    0x00) | TegE << 10)        \
+        EMITW(0xA8C10000 | MRM(TegB,    SPxx,    0x00) | TegC << 10)        \
+        EMITW(0xA8C10000 | MRM(Teg9,    SPxx,    0x00) | TegA << 10)        \
+        EMITW(0xA8C10000 | MRM(Tedi,    SPxx,    0x00) | Teg8 << 10)        \
+        EMITW(0xA8C10000 | MRM(Tebp,    SPxx,    0x00) | Tesi << 10)        \
+        EMITW(0xA8C10000 | MRM(Tedx,    SPxx,    0x00) | Tebx << 10)        \
+        EMITW(0xA8C10000 | MRM(Teax,    SPxx,    0x00) | Tecx << 10)
 
 /* and
  * set-flags: yes */
