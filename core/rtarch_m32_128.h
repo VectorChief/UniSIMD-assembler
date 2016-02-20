@@ -130,7 +130,7 @@
 
 #define adrpx_ld(RG, RM, DP) /* RG is a core reg, DP is SIMD-aligned */     \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C3(DP), EMPTY2)   \
-        EMITW(0x00000021 | MXM(REG(RG), MOD(RM), TDxx))
+        EMITW(0x00000021 | MRM(REG(RG), MOD(RM), TDxx))
 
 /* and */
 
