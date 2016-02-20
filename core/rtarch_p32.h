@@ -61,16 +61,6 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
-/* emitters */
-
-#define EMPTY   ASM_BEG ASM_END
-
-#define EMITW(w)    /* big endian */                                        \
-        EMITB((w) >> 0x18 & 0xFF)                                           \
-        EMITB((w) >> 0x10 & 0xFF)                                           \
-        EMITB((w) >> 0x08 & 0xFF)                                           \
-        EMITB((w) >> 0x00 & 0xFF)
-
 /* structural */
 
 #define MRM(reg, ren, rem) /* arithmetic */                                 \

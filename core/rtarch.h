@@ -83,7 +83,7 @@
  *  - Reax, ... , Redi, Reg8, Reg9, RegA, ... , RegV
  *  - Xmm0, ... , Xmm7, Xmm8, Xmm9, XmmA, ... , XmmV
  *
- * While register names are fixed, register sizes are not and depend on the
+ * Although register names are fixed, register sizes are not and depend on the
  * chosen target (only 32-bit core and 128/256-bit SIMD are implemented now).
  * Core registers can be 32-bit/64-bit wide, while their SIMD counterparts
  * depend on the architecture and SIMD version chosen for the target.
@@ -124,10 +124,16 @@
 #define ASM_BEG /*internal*/    __asm {
 #define ASM_END /*internal*/    }
 
+#define EMPTY                   ASM_BEG ASM_END /* endian-little */
 #define EMITB(b)                ASM_BEG ASM_OP1(_emit, b) ASM_END
-#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lea, eax, lb) ASM_END
+#define EMITW(w)                EMITB((w) >> 0x00 & 0xFF)                   \
+                                EMITB((w) >> 0x08 & 0xFF)                   \
+                                EMITB((w) >> 0x10 & 0xFF)                   \
+                                EMITB((w) >> 0x18 & 0xFF)
+
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, eax, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, eax) ASM_END
+#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lea, eax, lb) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -170,10 +176,13 @@
 #define ASM_BEG /*internal*/    ""
 #define ASM_END /*internal*/    "\n"
 
+#define EMPTY                   ASM_BEG ASM_END /* endian-little */
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
-#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
+#define EMITW(w)                ASM_BEG ASM_OP1(.long, w) ASM_END
+
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, %%eax, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, lb, %%eax) ASM_END
+#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -213,10 +222,13 @@
 #define ASM_BEG /*internal*/    ""
 #define ASM_END /*internal*/    "\n"
 
+#define EMPTY                   ASM_BEG ASM_END /* endian-little */
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
-#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
+#define EMITW(w)                ASM_BEG ASM_OP1(.long, w) ASM_END
+
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, %%eax, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, lb, %%eax) ASM_END
+#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -260,10 +272,13 @@
 #define ASM_BEG /*internal*/    ""
 #define ASM_END /*internal*/    "\n"
 
+#define EMPTY                   ASM_BEG ASM_END /* endian-agnostic */
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
-#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(adr, r0, lb) ASM_END
+#define EMITW(w)                ASM_BEG ASM_OP1(.long, w) ASM_END
+
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, r0, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, r0) ASM_END
+#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(adr, r0, lb) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -308,10 +323,13 @@
 #define ASM_BEG /*internal*/    ""
 #define ASM_END /*internal*/    "\n"
 
+#define EMPTY                   ASM_BEG ASM_END /* endian-agnostic */
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
-#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(adr, x0, lb) ASM_END
+#define EMITW(w)                ASM_BEG ASM_OP1(.long, w) ASM_END
+
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, w0, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, w0) ASM_END
+#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(adr, x0, lb) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -354,10 +372,13 @@
 #define ASM_BEG /*internal*/    ""
 #define ASM_END /*internal*/    "\n"
 
+#define EMPTY                   ASM_BEG ASM_END /* endian-agnostic */
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
-#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(la, $a0, lb) ASM_END
+#define EMITW(w)                ASM_BEG ASM_OP1(.long, w) ASM_END
+
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(move, $a0, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(move, lb, $a0) ASM_END
+#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(la, $a0, lb) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -396,11 +417,14 @@
 #define ASM_BEG /*internal*/    ""
 #define ASM_END /*internal*/    "\n"
 
+#define EMPTY                   ASM_BEG ASM_END /* endian-agnostic */
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
-#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lis, %%r4, lb@h) ASM_END    \
-                                ASM_BEG ASM_OP3(ori, %%r4, %%r4, lb@l) ASM_END
+#define EMITW(w)                ASM_BEG ASM_OP1(.long, w) ASM_END
+
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mr, %%r4, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mr, lb, %%r4) ASM_END
+#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lis, %%r4, lb@h) ASM_END    \
+                                ASM_BEG ASM_OP3(ori, %%r4, %%r4, lb@l) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
