@@ -170,7 +170,7 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {int __Reax__; __asm                            \
+#define ASM_ENTER(__Info__) {rt_word __Reax__; __asm                        \
                             {                                               \
                                 movlb_st(__Reax__)                          \
                                 movlb_ld(__Info__)                          \
@@ -201,7 +201,7 @@
 #define ASM_BEG /*internal*/    ""
 #define ASM_END /*internal*/    "\n"
 
-#define EMPTY                   ASM_BEG ASM_END /* endian-little */
+#define EMPTY                   ASM_BEG ASM_END /* endian-agnostic */
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define EMITW(w)                ASM_BEG ASM_OP1(.long, w) ASM_END
 
@@ -219,7 +219,7 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {int __Reax__; asm volatile                     \
+#define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
                             (                                               \
                                 movlb_st(%[Reax_])                          \
                                 movlb_ld(%[Info_])                          \
@@ -230,8 +230,8 @@
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" (__Info__)                   \
+                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Info_]  "r" ((rt_word)__Info__)          \
                                 : "cc",  "memory"                           \
                             );}
 
@@ -247,13 +247,13 @@
 #define ASM_BEG /*internal*/    ""
 #define ASM_END /*internal*/    "\n"
 
-#define EMPTY                   ASM_BEG ASM_END /* endian-little */
+#define EMPTY                   ASM_BEG ASM_END /* endian-agnostic */
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define EMITW(w)                ASM_BEG ASM_OP1(.long, w) ASM_END
 
-#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, %%eax, lb) ASM_END
-#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, lb, %%eax) ASM_END
-#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
+#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movq, %%rax, lb) ASM_END
+#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movq, lb, %%rax) ASM_END
+#define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(leaq, %%rax, lb) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -265,7 +265,7 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {int __Reax__; asm volatile                     \
+#define ASM_ENTER(__Info__) {rt_full __Reax__; asm volatile                 \
                             (                                               \
                                 movlb_st(%[Reax_])                          \
                                 movlb_ld(%[Info_])                          \
@@ -276,8 +276,8 @@
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" (__Info__)                   \
+                                : [Reax_] "+r" ((rt_full)__Reax__)          \
+                                : [Info_]  "r" ((rt_full)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "xmm0",  "xmm1",  "xmm2",  "xmm3",        \
                                   "xmm4",  "xmm5",  "xmm6",  "xmm7",        \
@@ -315,7 +315,7 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {int __Reax__; asm volatile                     \
+#define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
                             (                                               \
                                 movlb_st(%[Reax_])                          \
                                 movlb_ld(%[Info_])                          \
@@ -325,8 +325,8 @@
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" (__Info__)                   \
+                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Info_]  "r" ((rt_word)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "d0",  "d1",  "d2",  "d3",                \
                                   "d4",  "d5",  "d6",  "d7",                \
@@ -352,8 +352,8 @@
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define EMITW(w)                ASM_BEG ASM_OP1(.long, w) ASM_END
 
-#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, w0, lb) ASM_END
-#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, w0) ASM_END
+#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, x0, lb) ASM_END
+#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, x0) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(adr, x0, lb) ASM_END
 
 #if   defined (RT_256) && (RT_256 != 0)
@@ -366,18 +366,18 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {int __Reax__; asm volatile                     \
+#define ASM_ENTER(__Info__) {rt_full __Reax__; asm volatile                 \
                             (                                               \
-                                movlb_st(%w[Reax_])  /* %w => 32-bit reg */ \
-                                movlb_ld(%w[Info_])  /* %w => 32-bit reg */ \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
                                 /* placeholder for custom op */
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
-                                movlb_ld(%w[Reax_])  /* %w => 32-bit reg */ \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" (__Info__)                   \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" ((rt_full)__Reax__)          \
+                                : [Info_]  "r" ((rt_full)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "q0",  "q1",  "q2",  "q3",                \
                                   "q4",  "q5",  "q6",  "q7",                \
@@ -415,7 +415,7 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {int __Reax__; asm volatile                     \
+#define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
                             (                                               \
                                 movlb_st(%[Reax_])                          \
                                 movlb_ld(%[Info_])                          \
@@ -461,7 +461,7 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {int __Reax__; asm volatile                     \
+#define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
                             (                                               \
                                 movlb_st(%[Reax_])                          \
                                 movlb_ld(%[Info_])                          \
