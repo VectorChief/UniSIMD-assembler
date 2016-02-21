@@ -168,6 +168,13 @@
 #include "rtarch_x86_128.h"
 #endif /* RT_256, RT_128 */
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, so that the ASM overhead is minimized.
+ * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
+ */
+
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
 #define ASM_ENTER(__Info__) {rt_word __Reax__; __asm                        \
@@ -217,6 +224,13 @@
 #include "rtarch_x86_128.h"
 #endif /* RT_256, RT_128 */
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, so that the ASM overhead is minimized.
+ * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
+ */
+
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
 #define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
@@ -262,6 +276,13 @@
 #define S 4
 #include "rtarch_x32_128.h"
 #endif /* RT_256, RT_128 */
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, so that the ASM overhead is minimized.
+ * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
+ */
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -312,6 +333,13 @@
 #define S 4
 #include "rtarch_arm_128.h"
 #endif /* RT_256, RT_128 */
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, so that the ASM overhead is minimized.
+ * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
+ */
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -364,6 +392,13 @@
 #include "rtarch_a32_128.h"
 #endif /* RT_256, RT_128 */
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, so that the ASM overhead is minimized.
+ * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
+ */
+
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
 #define ASM_ENTER(__Info__) {rt_full __Reax__; asm volatile                 \
@@ -413,6 +448,13 @@
 #include "rtarch_m32_128.h"
 #endif /* RT_256, RT_128 */
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, so that the ASM overhead is minimized.
+ * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
+ */
+
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
 #define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
@@ -458,6 +500,13 @@
 #define S 4
 #include "rtarch_p32_128.h"
 #endif /* RT_256, RT_128 */
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, so that the ASM overhead is minimized.
+ * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
+ */
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
