@@ -7,14 +7,14 @@
 #ifndef RT_RTARCH_P32_H
 #define RT_RTARCH_P32_H
 
-#define RT_CORE_REGS        16
+#define RT_BASE_REGS        16
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
 
 /*
- * rtarch_p32.h: Implementation of PowerPC 32-bit core instructions.
+ * rtarch_p32.h: Implementation of PowerPC 32-bit base instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -50,7 +50,7 @@
  * stack_sa - applies [mov] to stack from all registers
  * stack_la - applies [mov] to all registers from stack
  *
- * cmdx*_** - applies [cmd] to core register/memory/immediate args
+ * cmdx*_** - applies [cmd] to base register/memory/immediate args
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
  *
@@ -201,8 +201,8 @@
 /* displacement VAL,  TP1,  TP2 */
 
 #define DP(dp)  ((dp) & 0xFFC),      0, 0    /* native on all ARMs, MIPS */
-#define DF(dp)  ((dp) & 0x3FFC),     0, 0   /* native AArch64 core ld/st */
-#define DG(dp)  ((dp) & 0x7FFC),     0, 0      /* native MIPS core ld/st */
+#define DF(dp)  ((dp) & 0x3FFC),     0, 0   /* native AArch64 base ld/st */
+#define DG(dp)  ((dp) & 0x7FFC),     0, 0      /* native MIPS base ld/st */
 #define DH(dp)  ((dp) & 0xFFFC),     1, 1   /* second native on all ARMs */
 #define DV(dp)  ((dp) & 0x7FFFFFFC), 2, 2        /* native x64 long mode */
 #define PLAIN   DP(0)           /* special type for Oeax addressing mode */
@@ -231,7 +231,7 @@
                     EMITW(0x60000000 | (rg) << 16 | (rg) << 21 |            \
                                                     (0xFFFF & (im)))
 
-/* displacement encoding core(TP1), adr(TP3) */
+/* displacement encoding base(TP1), adr(TP3) */
 
 #define B10(br) (br)
 #define P10(dp) (0x00000000 | (dp))

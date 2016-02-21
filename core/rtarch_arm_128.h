@@ -42,7 +42,7 @@
  * The cmdp*_** instructions are intended for SPMD programming model
  * and can potentially be configured per target to work with 32-bit/64-bit
  * data-elements (integers/pointers, floating point).
- * In this model data-paths are fixed-width, core and SIMD data-elements are
+ * In this model data-paths are fixed-width, base and SIMD data-elements are
  * width-compatible, code-path divergence is handled via CHECK_MASK macro.
  */
 
@@ -127,7 +127,7 @@
         EMITW(0xE0800000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4000AAF | MXM(REG(RG), TPxx,    0x00))
 
-#define adrpx_ld(RG, RM, DP) /* RG is a core reg, DP is SIMD-aligned */     \
+#define adrpx_ld(RG, RM, DP) /* RG is a base reg, DP is SIMD-aligned */     \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0xE0800000 | MPM(REG(RG), MOD(RM), VAL(DP), B2(DP), P2(DP)))
 

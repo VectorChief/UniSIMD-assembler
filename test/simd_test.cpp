@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 #define RT_SIMD_CODE /* enable SIMD instructions definitions */
-#define RT_CORE_CODE /* enable core instructions sub-tests */
+#define RT_BASE_TEST /* enable base instructions sub-tests */
 
 #include "rtarch.h"
 #include "rtbase.h"
@@ -890,7 +890,7 @@ rt_void s_test08(rt_SIMD_INFOX *info)
         subpx_rr(Xmm3, Xmm0)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
-#if defined (RT_CORE_CODE)
+#ifdef RT_BASE_TEST
         movxx_ld(Reax, Mesi, AJ0)
         movxx_ld(Recx, Mesi, AJ0)
         movxx_rr(Redi, Reax)
@@ -903,7 +903,7 @@ rt_void s_test08(rt_SIMD_INFOX *info)
         shrxx_ri(Reax, IB(2))
         subxx_rr(Recx, Reax)
         movxx_st(Recx, Mebx, AJ0)
-#endif /* RT_CORE_CODE */
+#endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm0, Mesi, AJ1)
         movpx_ld(Xmm3, Mesi, AJ1)
@@ -916,7 +916,7 @@ rt_void s_test08(rt_SIMD_INFOX *info)
         subpx_rr(Xmm3, Xmm0)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
-#if defined (RT_CORE_CODE)
+#ifdef RT_BASE_TEST
         movxx_ld(Reax, Mesi, AJ1)
         movxx_ld(Recx, Mesi, AJ1)
         movxx_st(Reax, Medx, AJ1)
@@ -928,7 +928,7 @@ rt_void s_test08(rt_SIMD_INFOX *info)
         movxx_ld(Reax, Mebx, AJ1)
         movxx_st(Recx, Mebx, AJ1)
         subxx_st(Reax, Mebx, AJ1)
-#endif /* RT_CORE_CODE */
+#endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm0, Mesi, AJ2)
         movpx_ld(Xmm3, Mesi, AJ2)
@@ -941,7 +941,7 @@ rt_void s_test08(rt_SIMD_INFOX *info)
         subpx_rr(Xmm3, Xmm0)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
-#if defined (RT_CORE_CODE)
+#ifdef RT_BASE_TEST
         movxx_ld(Reax, Mesi, AJ2)
         movxx_ld(Recx, Mesi, AJ2)
         shlxx_ri(Reax, IB(1))
@@ -952,7 +952,7 @@ rt_void s_test08(rt_SIMD_INFOX *info)
         shrxx_ri(Reax, IB(2))
         subxx_rr(Recx, Reax)
         movxx_st(Recx, Mebx, AJ2)
-#endif /* RT_CORE_CODE */
+#endif /* RT_BASE_TEST */
 
         ASM_LEAVE(info)
     }
@@ -1261,7 +1261,7 @@ rt_void s_test11(rt_SIMD_INFOX *info)
         xorpx_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
-#if defined (RT_CORE_CODE)
+#ifdef RT_BASE_TEST
         movxx_ld(Reax, Mesi, AJ0)
         movxx_ld(Recx, Mesi, AJ0)
         shlxx_ri(Reax, IB(7))
@@ -1271,7 +1271,7 @@ rt_void s_test11(rt_SIMD_INFOX *info)
         shrxx_ri(Reax, IB(3))
         xorxx_rr(Reax, Recx)
         movxx_st(Reax, Mebx, AJ0)
-#endif /* RT_CORE_CODE */
+#endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm0, Mesi, AJ1)
         movpx_ld(Xmm1, Mesi, AJ1)
@@ -1283,7 +1283,7 @@ rt_void s_test11(rt_SIMD_INFOX *info)
         xorpx_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
-#if defined (RT_CORE_CODE)
+#ifdef RT_BASE_TEST
         movxx_ld(Reax, Mesi, AJ1)
         movxx_ld(Recx, Mesi, AJ1)
         movxx_st(Reax, Medx, AJ1)
@@ -1292,7 +1292,7 @@ rt_void s_test11(rt_SIMD_INFOX *info)
         movxx_st(Recx, Mebx, AJ1)
         shrxx_mi(Mebx, AJ1, IB(3))
         xorxx_st(Recx, Mebx, AJ1)
-#endif /* RT_CORE_CODE */
+#endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm0, Mesi, AJ2)
         movpx_ld(Xmm1, Mesi, AJ2)
@@ -1304,7 +1304,7 @@ rt_void s_test11(rt_SIMD_INFOX *info)
         xorpx_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
-#if defined (RT_CORE_CODE)
+#ifdef RT_BASE_TEST
         movxx_ld(Reax, Mesi, AJ2)
         movxx_ld(Recx, Mesi, AJ2)
         shlxx_ri(Reax, IB(7))
@@ -1314,7 +1314,7 @@ rt_void s_test11(rt_SIMD_INFOX *info)
         shrxx_mi(Mebx, AJ2, IB(3))
         xorxx_ld(Recx, Mebx, AJ2)
         movxx_st(Recx, Mebx, AJ2)
-#endif /* RT_CORE_CODE */
+#endif /* RT_BASE_TEST */
 
         ASM_LEAVE(info)
     }
@@ -1399,7 +1399,7 @@ rt_void s_test12(rt_SIMD_INFOX *info)
         annpx_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
-#if defined (RT_CORE_CODE)
+#ifdef RT_BASE_TEST
         movxx_ld(Reax, Mesi, AJ0)
         movxx_ld(Recx, Mesi, AJ0)
         shlxx_ri(Reax, IB(7))
@@ -1410,7 +1410,7 @@ rt_void s_test12(rt_SIMD_INFOX *info)
         notxx_rr(Reax)
         andxx_rr(Recx, Reax)
         movxx_st(Recx, Mebx, AJ0)
-#endif /* RT_CORE_CODE */
+#endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm0, Mesi, AJ1)
         movpx_ld(Xmm1, Mesi, AJ1)
@@ -1422,7 +1422,7 @@ rt_void s_test12(rt_SIMD_INFOX *info)
         annpx_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
-#if defined (RT_CORE_CODE)
+#ifdef RT_BASE_TEST
         movxx_ld(Reax, Mesi, AJ1)
         movxx_ld(Recx, Mesi, AJ1)
         movxx_st(Reax, Medx, AJ1)
@@ -1434,7 +1434,7 @@ rt_void s_test12(rt_SIMD_INFOX *info)
         movxx_st(Recx, Mebx, AJ1)
         shrxx_mi(Mebx, AJ1, IB(3))
         andxx_st(Reax, Mebx, AJ1)
-#endif /* RT_CORE_CODE */
+#endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm0, Mesi, AJ2)
         movpx_ld(Xmm1, Mesi, AJ2)
@@ -1446,7 +1446,7 @@ rt_void s_test12(rt_SIMD_INFOX *info)
         annpx_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
-#if defined (RT_CORE_CODE)
+#ifdef RT_BASE_TEST
         movxx_ld(Reax, Mesi, AJ2)
         movxx_ld(Recx, Mesi, AJ2)
         shlxx_ri(Reax, IB(7))
@@ -1457,7 +1457,7 @@ rt_void s_test12(rt_SIMD_INFOX *info)
         notxx_rr(Reax)
         andxx_rr(Recx, Reax)
         movxx_st(Recx, Mebx, AJ2)
-#endif /* RT_CORE_CODE */
+#endif /* RT_BASE_TEST */
 
         ASM_LEAVE(info)
     }
@@ -1816,7 +1816,7 @@ rt_void s_test15(rt_SIMD_INFOX *info)
         shrpn_ri(Xmm3, IB(5))
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
-#if defined (RT_CORE_CODE)
+#ifdef RT_BASE_TEST
         movxx_ld(Reax, Mesi, AJ0)
         xorxx_rr(Recx, Recx)
         subxx_ld(Recx, Mesi, AJ0)
@@ -1824,7 +1824,7 @@ rt_void s_test15(rt_SIMD_INFOX *info)
         shrxn_ri(Recx, IB(5))
         movxx_st(Reax, Medx, AJ0)
         movxx_st(Recx, Mebx, AJ0)
-#endif /* RT_CORE_CODE */
+#endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm2, Mesi, AJ1)
         xorpx_rr(Xmm3, Xmm3)
@@ -1833,7 +1833,7 @@ rt_void s_test15(rt_SIMD_INFOX *info)
         shrpn_ri(Xmm3, IB(5))
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
-#if defined (RT_CORE_CODE)
+#ifdef RT_BASE_TEST
         movxx_ld(Reax, Mesi, AJ1)
         xorxx_rr(Recx, Recx)
         subxx_ld(Recx, Mesi, AJ1)
@@ -1841,7 +1841,7 @@ rt_void s_test15(rt_SIMD_INFOX *info)
         shrxn_mi(Medx, AJ1, IB(3))
         movxx_st(Recx, Mebx, AJ1)
         shrxn_mi(Mebx, AJ1, IB(5))
-#endif /* RT_CORE_CODE */
+#endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm2, Mesi, AJ2)
         xorpx_rr(Xmm3, Xmm3)
@@ -1850,7 +1850,7 @@ rt_void s_test15(rt_SIMD_INFOX *info)
         shrpn_ri(Xmm3, IB(5))
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
-#if defined (RT_CORE_CODE)
+#ifdef RT_BASE_TEST
         movxx_ld(Reax, Mesi, AJ2)
         xorxx_rr(Recx, Recx)
         subxx_ld(Recx, Mesi, AJ2)
@@ -1858,7 +1858,7 @@ rt_void s_test15(rt_SIMD_INFOX *info)
         shrxn_ri(Recx, IB(5))
         movxx_st(Reax, Medx, AJ2)
         movxx_st(Recx, Mebx, AJ2)
-#endif /* RT_CORE_CODE */
+#endif /* RT_BASE_TEST */
 
         ASM_LEAVE(info)
     }
@@ -1946,14 +1946,14 @@ rt_void s_test16(rt_SIMD_INFOX *info)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
         movpx_st(Xmm0, Mesi, AJ0)
-#if defined (RT_CORE_CODE)
+#ifdef RT_BASE_TEST
         movxx_ld(Reax, Mesi, AJ0)
         shrxx_rx(Reax)
         movxx_st(Reax, Medx, AJ0)
         movxx_ld(Reax, Mesi, AJ0)
         shlxx_rx(Reax)
         movxx_st(Reax, Mebx, AJ0)
-#endif /* RT_CORE_CODE */
+#endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm0, Mesi, AJ1)
         movpx_rr(Xmm2, Xmm0)
@@ -1968,14 +1968,14 @@ rt_void s_test16(rt_SIMD_INFOX *info)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
         movpx_st(Xmm0, Mesi, AJ1)
-#if defined (RT_CORE_CODE)
+#ifdef RT_BASE_TEST
         movxx_ld(Reax, Mesi, AJ1)
         movxx_st(Reax, Medx, AJ1)
         shrxx_mx(Medx, AJ1)
         movxx_ld(Reax, Mesi, AJ1)
         movxx_st(Reax, Mebx, AJ1)
         shlxx_mx(Mebx, AJ1)
-#endif /* RT_CORE_CODE */
+#endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm0, Mesi, AJ2)
         movpx_rr(Xmm2, Xmm0)
@@ -1990,14 +1990,14 @@ rt_void s_test16(rt_SIMD_INFOX *info)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
         movpx_st(Xmm0, Mesi, AJ2)
-#if defined (RT_CORE_CODE)
+#ifdef RT_BASE_TEST
         movxx_ld(Reax, Mesi, AJ2)
         shrxx_rx(Reax)
         movxx_st(Reax, Medx, AJ2)
         movxx_ld(Reax, Mesi, AJ2)
         shlxx_rx(Reax)
         movxx_st(Reax, Mebx, AJ2)
-#endif /* RT_CORE_CODE */
+#endif /* RT_BASE_TEST */
 
         ASM_LEAVE(info)
     }
