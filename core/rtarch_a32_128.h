@@ -437,7 +437,7 @@
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4E040400 | MXM(Tmm1,    Tmm1,    0x00))                     \
-        EMITW(0x6EE04400 | MXM(REG(RG), REG(RG), Tmm1))
+        EMITW(0x6EA04400 | MXM(REG(RG), REG(RG), Tmm1))
 
 /* shr */
 
@@ -451,7 +451,7 @@
         EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4E040400 | MXM(Tmm1,    Tmm1,    0x00))                     \
         EMITW(0x6EA0B800 | MXM(Tmm1,    Tmm1,    0x00))                     \
-        EMITW(0x6EE04400 | MXM(REG(RG), REG(RG), Tmm1))
+        EMITW(0x6EA04400 | MXM(REG(RG), REG(RG), Tmm1))
 
 #define shrpn_ri(RM, IM) /* emit shift-left for zero-immediate args */      \
         EMITW(0x4F200400 | MXM(REG(RM), REG(RM), 0x00) |                    \
@@ -463,7 +463,7 @@
         EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4E040400 | MXM(Tmm1,    Tmm1,    0x00))                     \
         EMITW(0x6EA0B800 | MXM(Tmm1,    Tmm1,    0x00))                     \
-        EMITW(0x4EE04400 | MXM(REG(RG), REG(RG), Tmm1))
+        EMITW(0x4EA04400 | MXM(REG(RG), REG(RG), Tmm1))
 
 /**************************   helper macros (NEON)   **************************/
 
