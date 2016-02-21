@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 #define RT_SIMD_CODE /* enable SIMD instructions definitions */
-#define RT_BASE_TEST /* enable base instructions sub-tests */
+#define RT_BASE_TEST /* enable BASE instructions sub-tests */
 
 #include "rtarch.h"
 #include "rtbase.h"

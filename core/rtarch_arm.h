@@ -14,7 +14,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_arm.h: Implementation of ARMv7/8:AArch32 base instructions.
+ * rtarch_arm.h: Implementation of ARMv7/8:AArch32 BASE instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -50,7 +50,7 @@
  * stack_sa - applies [mov] to stack from all registers
  * stack_la - applies [mov] to all registers from stack
  *
- * cmdx*_** - applies [cmd] to base register/memory/immediate args
+ * cmdx*_** - applies [cmd] to BASE register/memory/immediate args
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
  *
@@ -166,8 +166,8 @@
 /* displacement VAL,  TP1,  TP2 */
 
 #define DP(dp)  ((dp) & 0xFFC),      0, 0    /* native on all ARMs, MIPS */
-#define DF(dp)  ((dp) & 0x3FFC),     1, 1   /* native AArch64 base ld/st */
-#define DG(dp)  ((dp) & 0x7FFC),     1, 1      /* native MIPS base ld/st */
+#define DF(dp)  ((dp) & 0x3FFC),     1, 1   /* native AArch64 BASE ld/st */
+#define DG(dp)  ((dp) & 0x7FFC),     1, 1      /* native MIPS BASE ld/st */
 #define DH(dp)  ((dp) & 0xFFFC),     1, 1   /* second native on all ARMs */
 #define DV(dp)  ((dp) & 0x7FFFFFFC), 2, 2        /* native x64 long mode */
 #define PLAIN   DP(0)           /* special type for Oeax addressing mode */
@@ -203,7 +203,7 @@
                     EMITW(0xE3400000 | MRM((rg),    0x00,    0x00) |        \
                             (0xF0000 & (im) >> 12) | (0xFFF & (im) >> 16))
 
-/* displacement encoding base(TP1), adr(TP3) */
+/* displacement encoding BASE(TP1), adr(TP3) */
 
 #define B10(br) (br)
 #define P10(dp) (0x00000000 | (dp))

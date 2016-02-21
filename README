@@ -1,5 +1,5 @@
 UniSIMD assembler is a low-level macro assembler framework unified across
-ARM and x86 architectures. It establishes a subset of both base and SIMD
+ARM and x86 architectures. It establishes a subset of both BASE and SIMD
 instruction sets with strictly defined common API, so that application logic
 can be written and maintained in one place without code replication.
 
@@ -7,7 +7,7 @@ At present, Intel SSE2/AVX2 (32-bit x86 ISA) and ARM NEON (32-bit ARMv7 ISA)
 are three primary targets although wider SIMD, 64-bit addressing along with
 more available registers and other architectures can be supported by design.
 Preliminary naming scheme for potential future targets as well as extended
-base and SIMD register files can be found in core/rtarch.h file.
+BASE and SIMD register files can be found in core/rtarch.h file.
 
 The project comes with a test framework, which can be compiled in Linux/GCC,
 Maemo/scratchbox (ARM version) as well as Windows/VC++ 6.0 or later.
