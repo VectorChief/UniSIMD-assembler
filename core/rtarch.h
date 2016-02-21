@@ -96,7 +96,7 @@
 /******************************************************************************/
 
 /*
- * Short names Q and S for RT_SIMD_QUADS and RT_SIMD_WIDTH respectively.
+ * Short names Q, S, W for RT_SIMD_QUADS, RT_SIMD_WIDTH, triplet wrapper.
  * Used independently for SIMD-fields' sizes and offsets in backend structures.
  * Must be undef'd explicitly after use to avoid collisions with system headers.
  */
@@ -107,6 +107,31 @@
 #ifdef S
 #undef S
 #endif /* in case S is defined outside */
+
+#ifdef W
+#undef W
+#endif /* in case W is defined outside */
+
+/*
+ * Short names P, A, E for RT_POINTER/32, RT_ADDRESS/32, RT_ENDIAN*(P-A)*4.
+ * Used independently for SIMD-fields' sizes and offsets in backend structures.
+ * Must be undef'd explicitly after use to avoid collisions with system headers.
+ */
+#ifdef P
+#undef P
+#endif /* in case P is defined outside */
+
+#ifdef A
+#undef A
+#endif /* in case A is defined outside */
+
+#ifdef E
+#undef E
+#endif /* in case E is defined outside */
+
+#define P   (RT_POINTER/32)         /* short name for RT_POINTER/32 */
+#define A   (RT_ADDRESS/32)         /* short name for RT_ADDRESS/32 */
+#define E   (RT_ENDIAN*(P-A)*4)     /* short name for RT_ENDIAN*(P-A)*4 */
 
 /*******************************   WIN32, MSVC   ******************************/
 

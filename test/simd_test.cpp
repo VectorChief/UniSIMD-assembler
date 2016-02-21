@@ -41,6 +41,44 @@
 /***************************   VARS, FUNCS, TYPES   ***************************/
 /******************************************************************************/
 
+/*
+ * Allocate memory from system heap.
+ */
+static
+rt_pntr sys_alloc(rt_word size)
+{
+    /* consider using mmap/munmap with MAP_32BIT to limit address range */
+    rt_pntr ptr = malloc(size);
+
+    if ((P-A) != 0)
+    {
+        RT_LOGI("ALLOC PTR = %016"RT_PR64"X\n", (rt_full)ptr);
+
+        if ((rt_full)ptr > (0xFFFFFFFF - size))
+        {
+            RT_LOGI("address exceeded allowed range, exiting.\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    return ptr;
+}
+
+/*
+ * Free memory from system heap.
+ */
+static
+rt_void sys_free(rt_pntr ptr)
+{
+    /* consider using mmap/munmap with MAP_32BIT to limit address range */
+    free(ptr);
+
+    if ((P-A) != 0)
+    {
+        RT_LOGI("FREED PTR = %016"RT_PR64"X\n", (rt_full)ptr);
+    }
+}
+
 static rt_cell t_diff = 2;
 static rt_bool v_mode = RT_FALSE;
 
@@ -52,59 +90,59 @@ static rt_bool v_mode = RT_FALSE;
  */
 struct rt_SIMD_INFOX : public rt_SIMD_INFO
 {
+    /* internal variables */
+
+    rt_cell cyc;
+#define inf_CYC             DP(Q*0x100+0x000)
+
+    rt_cell loc;
+#define inf_LOC             DP(Q*0x100+0x004)
+
+    rt_cell size;
+#define inf_SIZE            DP(Q*0x100+0x008)
+
+    rt_cell simd;
+#define inf_SIMD            DP(Q*0x100+0x00C)
+
+    rt_pntr label;
+#define inf_LABEL           DP(Q*0x100+0x010+0x000*P+E)
+
+    rt_pntr tail;
+#define inf_TAIL            DP(Q*0x100+0x010+0x004*P+E)
+
     /* floating point arrays */
 
     rt_real*far0;
-#define inf_FAR0            DP(Q*0x100+0x000)
+#define inf_FAR0            DP(Q*0x100+0x010+0x008*P+E)
 
     rt_real*fco1;
-#define inf_FCO1            DP(Q*0x100+0x004)
+#define inf_FCO1            DP(Q*0x100+0x010+0x00C*P+E)
 
     rt_real*fco2;
-#define inf_FCO2            DP(Q*0x100+0x008)
+#define inf_FCO2            DP(Q*0x100+0x010+0x010*P+E)
 
     rt_real*fso1;
-#define inf_FSO1            DP(Q*0x100+0x00C)
+#define inf_FSO1            DP(Q*0x100+0x010+0x014*P+E)
 
     rt_real*fso2;
-#define inf_FSO2            DP(Q*0x100+0x010)
+#define inf_FSO2            DP(Q*0x100+0x010+0x018*P+E)
 
     /* integer arrays */
 
     rt_cell*iar0;
-#define inf_IAR0            DP(Q*0x100+0x014)
+#define inf_IAR0            DP(Q*0x100+0x010+0x01C*P+E)
 
     rt_cell*ico1;
-#define inf_ICO1            DP(Q*0x100+0x018)
+#define inf_ICO1            DP(Q*0x100+0x010+0x020*P+E)
 
     rt_cell*ico2;
-#define inf_ICO2            DP(Q*0x100+0x01C)
+#define inf_ICO2            DP(Q*0x100+0x010+0x024*P+E)
 
     rt_cell*iso1;
-#define inf_ISO1            DP(Q*0x100+0x020)
+#define inf_ISO1            DP(Q*0x100+0x010+0x028*P+E)
 
     rt_cell*iso2;
-#define inf_ISO2            DP(Q*0x100+0x024)
-
-    /* internal variables */
-
-    rt_cell cyc;
-#define inf_CYC             DP(Q*0x100+0x028)
-
-    rt_cell loc;
-#define inf_LOC             DP(Q*0x100+0x02C)
-
-    rt_cell size;
-#define inf_SIZE            DP(Q*0x100+0x030)
-
-    rt_cell simd;
-#define inf_SIMD            DP(Q*0x100+0x034)
-
-    rt_pntr label;
-#define inf_LABEL           DP(Q*0x100+0x038)
-
-    rt_pntr tail;
-#define inf_TAIL            DP(Q*0x100+0x03C)
+#define inf_ISO2            DP(Q*0x100+0x010+0x02C*P+E)
 
 };
 
@@ -2265,9 +2303,9 @@ rt_cell main(rt_cell argc, rt_char *argv[])
         }
     }
 
-    rt_pntr marr = malloc(10 * ARR_SIZE * sizeof(rt_word) + MASK);
+    rt_pntr marr = sys_alloc(10 * ARR_SIZE * sizeof(rt_word) + MASK);
     memset(marr, 0, 10 * ARR_SIZE * sizeof(rt_word) + MASK);
-    rt_pntr mar0 = (rt_pntr)(((rt_word)marr + MASK) & ~MASK);
+    rt_pntr mar0 = (rt_pntr)(((rt_full)marr + MASK) & ~MASK);
 
     rt_real farr[4*3] =
     {
@@ -2323,8 +2361,8 @@ rt_cell main(rt_cell argc, rt_char *argv[])
         memcpy(iar0 + RT_ARR_SIZE(iarr) * k, iarr, sizeof(iarr));
     }
 
-    rt_pntr info = malloc(sizeof(rt_SIMD_INFOX) + MASK);
-    rt_SIMD_INFOX *inf0 = (rt_SIMD_INFOX *)(((rt_word)info + MASK) & ~MASK);
+    rt_pntr info = sys_alloc(sizeof(rt_SIMD_INFOX) + MASK);
+    rt_SIMD_INFOX *inf0 = (rt_SIMD_INFOX *)(((rt_full)info + MASK) & ~MASK);
 
     ASM_INIT(inf0)
 
@@ -2408,8 +2446,8 @@ rt_cell main(rt_cell argc, rt_char *argv[])
 
     ASM_DONE(inf0)
 
-    free(info);
-    free(marr);
+    sys_free(info);
+    sys_free(marr);
 
 #if   defined (RT_WIN32) /* Win32, MSVC ------------------------------------- */
 
@@ -2429,6 +2467,10 @@ rt_cell main(rt_cell argc, rt_char *argv[])
 #undef Q /* short name for RT_SIMD_QUADS */
 #undef S /* short name for RT_SIMD_WIDTH */
 #undef W /* triplet pass-through wrapper */
+
+#undef P /* short name for RT_POINTER/32 */
+#undef A /* short name for RT_ADDRESS/32 */
+#undef E /* short name for RT_ENDIAN*(P-A)*4 */
 
 #if   defined (RT_WIN32) /* Win32, MSVC ------------------------------------- */
 
