@@ -9,6 +9,7 @@
 
 #include "rtarch_x86.h"
 
+#define RT_SIMD_REGS        8
 #define RT_SIMD_WIDTH       4
 #define RT_SIMD_ALIGN       16
 #define RT_SIMD_SET(s, v)   s[0]=s[1]=s[2]=s[3]=v
