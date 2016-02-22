@@ -929,28 +929,28 @@
         ASM_BEG ASM_OP3(bnec,  $t8, $t9, lb) ASM_END
 
 #define jltxx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(bltuc, $t8, $t9, lb) ASM_END
+        ASM_BEG ASM_OP3(bltuc, $t8, $t9, lb) ASM_END
 
 #define jlexx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(bleuc, $t8, $t9, lb) ASM_END
+        ASM_BEG ASM_OP3(bgeuc, $t9, $t8, lb) ASM_END
 
 #define jgtxx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(bgtuc, $t8, $t9, lb) ASM_END
+        ASM_BEG ASM_OP3(bltuc, $t9, $t8, lb) ASM_END
 
 #define jgexx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(bgeuc, $t8, $t9, lb) ASM_END
+        ASM_BEG ASM_OP3(bgeuc, $t8, $t9, lb) ASM_END
 
 #define jltxn_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(bltc,  $t8, $t9, lb) ASM_END
+        ASM_BEG ASM_OP3(bltc,  $t8, $t9, lb) ASM_END
 
 #define jlexn_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(blec,  $t8, $t9, lb) ASM_END
+        ASM_BEG ASM_OP3(bgec,  $t9, $t8, lb) ASM_END
 
 #define jgtxn_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(bgtc,  $t8, $t9, lb) ASM_END
+        ASM_BEG ASM_OP3(bltc,  $t9, $t8, lb) ASM_END
 
 #define jgexn_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(bgec,  $t8, $t9, lb) ASM_END
+        ASM_BEG ASM_OP3(bgec,  $t8, $t9, lb) ASM_END
 
 #define LBL(lb)                                          /* code label */   \
         ASM_BEG ASM_OP0(lb:) ASM_END
