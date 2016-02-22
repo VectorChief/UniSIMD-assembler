@@ -10,9 +10,11 @@ for 64-bit systems:
 run for x86 architecture:
     make -f simd_make_x86.mk
     ./simd_test.x86
-run for ARM architecture:
-    make -f simd_make_arm.mk
-    ./simd_test.arm
+run for non-x86 architectures:
+    make -f simd_make_***.mk
+    ./simd_test.***
+Prerequisites for building/emulating guest non-x86 architectures as well as
+configurations for particular hardware platforms are given in the makefiles.
 Only DEB-based distributions (Mint, Ubuntu, Debian) are supported for now,
 users of RPM-based distributions need to figure out build-deps on their own.
 

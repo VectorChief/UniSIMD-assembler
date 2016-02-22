@@ -1,15 +1,23 @@
 v0.6: Unified SIMD Assembler, additional SIMD targets
-  - add new SIMD targets for SSE1, AVX1, AVX2 with corresponding build flags
+  - rename SIMD target files to reflect SIMD width
   - enable SIMD instructions definitions only if RT_SIMD_CODE is defined
-  - add shifts by fixed BASE register instructions
-  - add float-to-integer convert with mode parameter (x86, ARM + AArch32)
+  - add new SIMD targets for SSE1, AVX1, AVX2 with corresponding build flags
+  - add float-to-integer convert with explicit mode parameter (x86, AArch32)
   - add signed-integer-divide native instruction for ARM's AArch32 mode
   - add SIMD test for shifts by runtime value & BASE register, run level 16
   - add ver (cpuid) instruction for runtime SIMD target selection (x86 only)
   - add mmv (vmaskmov) to AVX backend for fast conditional loads/stores
   - add BASE instructions sub-tests to SIMD test if RT_BASE_TEST is defined
-  - add xor & neg BASE instructions to rtarch and SIMD test
+  - drop set-flags bit (slow) from BASE mul instructions on ARM
+  - add RT_SIMD_FAST_FCTRL to save 1 instruction on FCTRL blocks entry
   - clarify current and future targets in rtarch (from here backported down)
+  - add xor & neg BASE instructions to rtarch
+  - add shifts by fixed BASE register instructions
+  - add register versions of BASE mul/div, remainder instructions
+  - add SIMD cvzps instruction for fp-to-int round-towards-zero conversion
+  - add ASM_ENTER_F/ASM_LEAVE_F/ROUND*_F for non-IEEE flush-to-zero SIMD mode
+  - add RT_SIMD_FLUSH_ZERO to enable faster non-IEEE flush-to-zero SIMD mode
+  - add ASM_INIT/ASM_DONE to manage root info structure
   - make stack pointer register architecturally invisible
   - replace non-standard malloc.h with stdlib.h for malloc/free
   - clean up rtarch whitespace formatting
