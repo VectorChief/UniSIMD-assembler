@@ -463,7 +463,7 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                EMITW(0x787EF79E) /* TmmZ (w30) <- 0 (xor) */
+                                EMITX(0x787EF79E) /* TmmZ (w30) <- 0 (xor) */
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
@@ -471,6 +471,12 @@
                                 : [Info_]  "r" (__Info__)                   \
                                 : "cc",  "memory"                           \
                             );}
+
+#ifndef RT_SIMD_CODE
+#define EMITX(w) /* EMPTY */
+#else  /* RT_SIMD_CODE */
+#define EMITX(w)    EMITW(w)
+#endif /* RT_SIMD_CODE */
 
 /* ---------------------------------   P32   -------------------------------- */
 
@@ -535,12 +541,12 @@
                                 : "cc",  "memory", "r0", "r27"              \
                             );}
 
-#ifndef movpx_ld
+#ifndef RT_SIMD_CODE
 #define movpx_ld(RG, RM, DP)
 #define EMITX(w) /* EMPTY */
-#else  /* movpx_ld */
+#else  /* RT_SIMD_CODE */
 #define EMITX(w)    EMITW(w)
-#endif /* movpx_ld */
+#endif /* RT_SIMD_CODE */
 
 #endif /* RT_X86, RT_X32, RT_ARM, RT_A32, RT_M32, RT_P32 */
 
