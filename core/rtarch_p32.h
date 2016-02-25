@@ -121,7 +121,7 @@
 #define TZxx    0x00  /* r0 */
 #define SPxx    0x01  /* r1 */
 
-#define Teax    0x04  /* r4 */
+#define Teax    0x04  /* r4, must be larger reg-num than zero (r0) */
 #define Tecx    0x0F  /* r15 */
 #define Tedx    0x02  /* r2 */
 #define Tebx    0x03  /* r3 */
