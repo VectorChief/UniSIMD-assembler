@@ -803,6 +803,126 @@
         cmpxx_ri(Reax, IB(RT_SIMD_MASK_##mask))                             \
         jeqxx_lb(lb)
 
+/* simd mode
+ * set in FCTRL blocks (cannot be nested) */
+
+#define RT_SIMD_MODE_ROUNDN     0x00    /* round to nearest */
+#define RT_SIMD_MODE_ROUNDM     0x01    /* round towards minus infinity */
+#define RT_SIMD_MODE_ROUNDP     0x02    /* round towards plus  infinity */
+#define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
+
+#define mxcsr_ld(RM, DP) /* not portable, do not use outside */             \
+        EMITB(0x0F) EMITB(0xAE)                                             \
+        MRM(0x02,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+#define mxcsr_st(RM, DP) /* not portable, do not use outside */             \
+        EMITB(0x0F) EMITB(0xAE)                                             \
+        MRM(0x03,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+#define FCTRL_ENTER(mode) /* assumes default mode (ROUNDN) upon entry */    \
+        movxx_mi(Mebp, inf_SCR00, IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))   \
+        mxcsr_ld(Mebp, inf_SCR00)                                           \
+
+#define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */    \
+        mxcsr_ld(Mebp, inf_FCTRL)
+
+#if (RT_128 < 2)
+
+/* cvt (fp-to-signed-int)
+ * rounding mode comes from fp control register (set in FCTRL blocks) */
+
+#define rndps_rr(RG, RM)                                                    \
+        cvtps_rr(W(RG), W(RM))                                              \
+        cvnpn_rr(W(RG), W(RG))
+
+#define cvtps_rr(RG, RM)                                                    \
+        fpucw_st(Mebp,  inf_SCR00)                                          \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrxx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andxx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrxx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
+        fpuxs_ld(Mebp,  inf_SCR01(0x00))                                    \
+        fpuxn_st(Mebp,  inf_SCR01(0x00))                                    \
+        fpuxs_ld(Mebp,  inf_SCR01(0x04))                                    \
+        fpuxn_st(Mebp,  inf_SCR01(0x04))                                    \
+        fpuxs_ld(Mebp,  inf_SCR01(0x08))                                    \
+        fpuxn_st(Mebp,  inf_SCR01(0x08))                                    \
+        fpuxs_ld(Mebp,  inf_SCR01(0x0C))                                    \
+        fpuxn_st(Mebp,  inf_SCR01(0x0C))                                    \
+        fpucw_ld(Mebp,  inf_SCR00)                                          \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
+#define cvtps_ld(RG, RM, DP)                                                \
+        movpx_ld(W(RG), W(RM), W(DP))                                       \
+        cvtps_rr(W(RG), W(RG))
+
+/* cvt (signed-int-to-fp)
+ * rounding mode comes from fp control register (set in FCTRL blocks) */
+
+#define cvtpn_rr(RG, RM)                                                    \
+        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
+        fpuxn_ld(Mebp,  inf_SCR01(0x00))                                    \
+        fpuxs_st(Mebp,  inf_SCR01(0x00))                                    \
+        fpuxn_ld(Mebp,  inf_SCR01(0x04))                                    \
+        fpuxs_st(Mebp,  inf_SCR01(0x04))                                    \
+        fpuxn_ld(Mebp,  inf_SCR01(0x08))                                    \
+        fpuxs_st(Mebp,  inf_SCR01(0x08))                                    \
+        fpuxn_ld(Mebp,  inf_SCR01(0x0C))                                    \
+        fpuxs_st(Mebp,  inf_SCR01(0x0C))                                    \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
+#define cvtpn_ld(RG, RM, DP)                                                \
+        movpx_ld(W(RG), W(RM), W(DP))                                       \
+        cvtpn_rr(W(RG), W(RG))
+
+#else /* RT_128 >= 2 */
+
+/* cvt (fp-to-signed-int)
+ * rounding mode comes from fp control register (set in FCTRL blocks) */
+
+#define rndps_rr(RG, RM)                                                    \
+        cvtps_rr(W(RG), W(RM))                                              \
+        cvnpn_rr(W(RG), W(RG))
+
+#define cvtps_rr(RG, RM)                                                    \
+    ESC EMITB(0x0F) EMITB(0x5B)                                             \
+        MRM(REG(RG), MOD(RM), REG(RM))
+
+#define cvtps_ld(RG, RM, DP)                                                \
+    ESC EMITB(0x0F) EMITB(0x5B)                                             \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+/* cvt (signed-int-to-fp)
+ * rounding mode comes from fp control register (set in FCTRL blocks) */
+
+#define cvtpn_rr(RG, RM)                                                    \
+        EMITB(0x0F) EMITB(0x5B)                                             \
+        MRM(REG(RG), MOD(RM), REG(RM))
+
+#define cvtpn_ld(RG, RM, DP)                                                \
+        EMITB(0x0F) EMITB(0x5B)                                             \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+#endif /* RT_128 >= 2 */
+
+/* cvr (fp-to-signed-int)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
+
+#define rnrps_rr(RG, RM, mode)                                              \
+        cvrps_rr(W(RG), W(RM), mode)                                        \
+        cvnpn_rr(W(RG), W(RG))
+
+#define cvrps_rr(RG, RM, mode)                                              \
+        FCTRL_ENTER(mode)                                                   \
+        cvtps_rr(W(RG), W(RM))                                              \
+        FCTRL_LEAVE(mode)
+
 #endif /* RT_128 */
 
 #endif /* RT_SIMD_CODE */

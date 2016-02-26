@@ -683,6 +683,71 @@
         cmpxx_ri(Reax, IH(RT_SIMD_MASK_##mask))                             \
         jeqxx_lb(lb)
 
+/* simd mode
+ * set in FCTRL blocks (cannot be nested) */
+
+#define RT_SIMD_MODE_ROUNDN     0x00    /* round to nearest */
+#define RT_SIMD_MODE_ROUNDM     0x01    /* round towards minus infinity */
+#define RT_SIMD_MODE_ROUNDP     0x02    /* round towards plus  infinity */
+#define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
+
+#define mxcsr_ld(RM, DP) /* not portable, do not use outside */             \
+    ADR VEX(0,       RXB(RM),     0x0, 0, 0, 1) EMITB(0xAE)                 \
+        MRM(0x02,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+#define mxcsr_st(RM, DP) /* not portable, do not use outside */             \
+    ADR VEX(0,       RXB(RM),     0x0, 0, 0, 1) EMITB(0xAE)                 \
+        MRM(0x03,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+#define FCTRL_ENTER(mode) /* assumes default mode (ROUNDN) upon entry */    \
+        movxx_mi(Mebp, inf_SCR00, IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))   \
+        mxcsr_ld(Mebp, inf_SCR00)                                           \
+
+#define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */    \
+        mxcsr_ld(Mebp, inf_FCTRL)
+
+/* cvt (fp-to-signed-int)
+ * rounding mode comes from fp control register (set in FCTRL blocks) */
+
+#define rndps_rr(RG, RM)                                                    \
+        cvtps_rr(W(RG), W(RM))                                              \
+        cvnpn_rr(W(RG), W(RG))
+
+#define cvtps_rr(RG, RM)                                                    \
+        VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 1) EMITB(0x5B)                 \
+        MRM(REG(RG), MOD(RM), REG(RM))
+
+#define cvtps_ld(RG, RM, DP)                                                \
+    ADR VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 1) EMITB(0x5B)                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+/* cvt (signed-int-to-fp)
+ * rounding mode comes from fp control register (set in FCTRL blocks) */
+
+#define cvtpn_rr(RG, RM)                                                    \
+        VEX(RXB(RG), RXB(RM),     0x0, 1, 0, 1) EMITB(0x5B)                 \
+        MRM(REG(RG), MOD(RM), REG(RM))
+
+#define cvtpn_ld(RG, RM, DP)                                                \
+    ADR VEX(RXB(RG), RXB(RM),     0x0, 1, 0, 1) EMITB(0x5B)                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+/* cvr (fp-to-signed-int)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
+
+#define rnrps_rr(RG, RM, mode)                                              \
+        VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 3) EMITB(0x08)                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode))
+
+#define cvrps_rr(RG, RM, mode)                                              \
+        rnrps_rr(W(RG), W(RM), mode)                                        \
+        cvtps_rr(W(RG), W(RG))
+
 /* mmv */
 
 #define mmvpx_ld(RG, RM, DP, RN) /* not portable, use conditionally */      \
