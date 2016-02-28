@@ -709,6 +709,10 @@
         cvtps_rr(W(RG), W(RM))                                              \
         cvnpn_rr(W(RG), W(RG))
 
+#define rndps_ld(RG, RM, DP)                                                \
+        cvtps_ld(W(RG), W(RM), W(DP))                                       \
+        cvnpn_rr(W(RG), W(RG))
+
 #define cvtps_rr(RG, RM)                                                    \
         VX2(0x0,     1, 1) EMITB(0x5B)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))

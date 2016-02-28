@@ -651,6 +651,10 @@
         cvtps_rr(W(RG), W(RM))                                              \
         cvnpn_rr(W(RG), W(RG))
 
+#define rndps_ld(RG, RM, DP)                                                \
+        cvtps_ld(W(RG), W(RM), W(DP))                                       \
+        cvnpn_rr(W(RG), W(RG))
+
 #define cvtps_rr(RG, RM)     /* fallback to VFP for float-to-integer cvt */ \
         EMITW(0xEEBD0A40 | MXM(REG(RG)+0, 0x00,  REG(RM)+0)) /* due to */   \
         EMITW(0xEEFD0A60 | MXM(REG(RG)+0, 0x00,  REG(RM)+0)) /* lack of */  \

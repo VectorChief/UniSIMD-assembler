@@ -918,6 +918,13 @@
         EMITW(0x1000000A | MXM(REG(RG), TmmR,    REG(RM)))                  \
         EMITW(0x1000020A | MXM(REG(RG), 0x00,    REG(RG)))
 
+#define rndps_ld(RG, RM, DP)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
+        EMITW(0x1000000A | MXM(REG(RG), TmmR,    Tmm1))                     \
+        EMITW(0x1000020A | MXM(REG(RG), 0x00,    REG(RG)))
+
 #define cvtps_rr(RG, RM)                                                    \
         rndps_rr(W(RG), W(RM))                                              \
         cvzps_rr(W(RG), W(RG))
@@ -952,6 +959,12 @@
 
 #define rndps_rr(RG, RM)                                                    \
         EMITW(0xF00002AF | MXM(REG(RG), 0x00,    REG(RM)))
+
+#define rndps_ld(RG, RM, DP)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
+        EMITW(0xF00002AF | MXM(REG(RG), 0x00,    Tmm1))/* ^ == -1 if true */
 
 #define cvtps_rr(RG, RM)                                                    \
         rndps_rr(W(RG), W(RM))                                              \

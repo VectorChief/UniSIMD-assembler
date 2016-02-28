@@ -837,6 +837,10 @@
         cvtps_rr(W(RG), W(RM))                                              \
         cvnpn_rr(W(RG), W(RG))
 
+#define rndps_ld(RG, RM, DP)                                                \
+        cvtps_ld(W(RG), W(RM), W(DP))                                       \
+        cvnpn_rr(W(RG), W(RG))
+
 #define cvtps_rr(RG, RM)                                                    \
         fpucw_st(Mebp,  inf_SCR00)                                          \
         mxcsr_st(Mebp,  inf_SCR02(0))                                       \
@@ -886,6 +890,10 @@
 
 #define rndps_rr(RG, RM)                                                    \
         cvtps_rr(W(RG), W(RM))                                              \
+        cvnpn_rr(W(RG), W(RG))
+
+#define rndps_ld(RG, RM, DP)                                                \
+        cvtps_ld(W(RG), W(RM), W(DP))                                       \
         cvnpn_rr(W(RG), W(RG))
 
 #define cvtps_rr(RG, RM)                                                    \
