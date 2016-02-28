@@ -530,6 +530,7 @@
                                 EMITX(0x1328C484)                           \
                                 EMITX(0x13421484)                           \
                                 EMITX(0x13642484)                           \
+                                EMITX(0x1000004A | MXM(TmmR, TmmS, TmmS))   \
                                 EMITW(0x7C0902A6 | TCxx << 21)              \
                                 "cmplw cr2, %%r24, %%r24\n"
 
