@@ -86,6 +86,7 @@
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
+#define TmmR    0x17  /* v23, Rounding Mode */
 #define TmmS    0x18  /* v24, SIGN */
 #define TmmQ    0x19  /* v25, QNAN */
 #define TmmA    0x1A  /* v26, +1.0 */
@@ -897,27 +898,46 @@
 
 #if (RT_128 < 2)
 
+#define F0(mode)    F1(mode)
+#define F1(mode)    F##mode
+#define F0x00 EMITW(0xFF80010C) EMITW(0x1000004A | MXM(TmmR, TmmS, TmmS))
+#define F0x03 EMITW(0xFF80310C) EMITW(0x1000000A | MXM(TmmR, TmmS, TmmB))
+#define F0x02 EMITW(0xFF80210C) EMITW(0x1000004A | MXM(TmmR, TmmS, TmmB))
+#define F0x01 EMITW(0xFF80110C) EMITW(0x1000000A | MXM(TmmR, TmmS, TmmS)) /*!*/
+
 #define FCTRL_ENTER(mode) /* assumes default mode (ROUNDN) upon entry */    \
-        EMITW(0xFF80010C | RT_SIMD_MODE_##mode << 12)
+        F0(RT_SIMD_MODE_##mode)
 
 #define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */    \
-        EMITW(0xFF80010C)
+        F0(RT_SIMD_MODE_ROUNDN)
 
 /* cvt (fp-to-signed-int)
  * rounding mode comes from fp control register (set in FCTRL blocks) */
 
 #define rndps_rr(RG, RM)                                                    \
+        EMITW(0x1000000A | MXM(REG(RG), TmmR,    REG(RM)))                  \
+        EMITW(0x1000020A | MXM(REG(RG), 0x00,    REG(RG)))
 
 #define cvtps_rr(RG, RM)                                                    \
+        rndps_rr(W(RG), W(RM))                                              \
+        cvzps_rr(W(RG), W(RG))
 
 #define cvtps_ld(RG, RM, DP)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
+        EMITW(0x1000000A | MXM(REG(RG), TmmR,    Tmm1))                     \
+        EMITW(0x1000020A | MXM(REG(RG), 0x00,    REG(RG)))                  \
+        EMITW(0x100003CA | MXM(REG(RG), 0x00,    REG(RG)))
 
 /* cvt (signed-int-to-fp)
  * rounding mode comes from fp control register (set in FCTRL blocks) */
 
 #define cvtpn_rr(RG, RM)                                                    \
+        cvnpn_rr(W(RG), W(RM))                                            /*!*/
 
 #define cvtpn_ld(RG, RM, DP)                                                \
+        cvnpn_ld(W(RG), W(RM), W(DP))                                     /*!*/
 
 #else /* RT_128 >= 2 */
 
