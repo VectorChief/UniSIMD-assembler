@@ -703,6 +703,8 @@
         EMITW(0xF3BB0040 | MXM(REG(RG), 0x00,    REG(RM)) |                 \
         (RT_SIMD_MODE_##mode+1 + 3*((RT_SIMD_MODE_##mode+1) >> 2)) << 8)
 
+#endif /* RT_128 >= 2 */
+
 #endif /* RT_SIMD_CODE */
 
 #endif /* RT_RTARCH_ARM_128_H */
