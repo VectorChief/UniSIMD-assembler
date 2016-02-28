@@ -407,12 +407,12 @@
 
 #define cvpps_rr(RG, RM)     /* round towards +inf */                       \
         fpurp_xx()                                                          \
-        cvnps_rr(W(RG), W(RM))                                              \
+        cvtps_rr(W(RG), W(RM))                                              \
         fpurn_xx()
 
 #define cvpps_ld(RG, RM, DP) /* round towards +inf */                       \
         fpurp_xx()                                                          \
-        cvnps_ld(W(RG), W(RM), W(DP))                                       \
+        cvtps_ld(W(RG), W(RM), W(DP))                                       \
         fpurn_xx()
 
 /* cvm (fp-to-signed-int)
@@ -432,12 +432,12 @@
 
 #define cvmps_rr(RG, RM)     /* round towards -inf */                       \
         fpurm_xx()                                                          \
-        cvnps_rr(W(RG), W(RM))                                              \
+        cvtps_rr(W(RG), W(RM))                                              \
         fpurn_xx()
 
 #define cvmps_ld(RG, RM, DP) /* round towards -inf */                       \
         fpurm_xx()                                                          \
-        cvnps_ld(W(RG), W(RM), W(DP))                                       \
+        cvtps_ld(W(RG), W(RM), W(DP))                                       \
         fpurn_xx()
 
 /* cvn (fp-to-signed-int)
@@ -454,20 +454,11 @@
         cvnps_ld(W(RG), W(RM), W(DP))                                       \
         cvnpn_rr(W(RG), W(RG))
 
-#define cvnps_rr(RG, RM)     /* fallback to VFP for float-to-integer cvt */ \
-        EMITW(0xEEBD0A40 | MXM(REG(RG)+0, 0x00,  REG(RM)+0)) /* due to */   \
-        EMITW(0xEEFD0A60 | MXM(REG(RG)+0, 0x00,  REG(RM)+0)) /* lack of */  \
-        EMITW(0xEEBD0A40 | MXM(REG(RG)+1, 0x00,  REG(RM)+1)) /* rounding */ \
-        EMITW(0xEEFD0A60 | MXM(REG(RG)+1, 0x00,  REG(RM)+1)) /* modes */
+#define cvnps_rr(RG, RM)     /* round towards near */                       \
+        cvtps_rr(W(RG), W(RM))
 
-#define cvnps_ld(RG, RM, DP) /* fallback to VFP for float-to-integer cvt */ \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0xF4200AAF | MXM(REG(RG), TPxx,    0x00))                     \
-        EMITW(0xEEBD0A40 | MXM(REG(RG)+0, 0x00,  REG(RG)+0)) /* due to */   \
-        EMITW(0xEEFD0A60 | MXM(REG(RG)+0, 0x00,  REG(RG)+0)) /* lack of */  \
-        EMITW(0xEEBD0A40 | MXM(REG(RG)+1, 0x00,  REG(RG)+1)) /* rounding */ \
-        EMITW(0xEEFD0A60 | MXM(REG(RG)+1, 0x00,  REG(RG)+1)) /* modes */
+#define cvnps_ld(RG, RM, DP) /* round towards near */                       \
+        cvtps_ld(W(RG), W(RM), W(DP))
 
 #else /* RT_128 >= 2 */
 

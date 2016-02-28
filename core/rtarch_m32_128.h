@@ -353,22 +353,22 @@
 
 #define rnpps_rr(RG, RM)     /* round towards +inf */                       \
         fpurp_xx()                                                          \
-        rnnps_rr(W(RG), W(RM))                                              \
+        rndps_rr(W(RG), W(RM))                                              \
         fpurn_xx()
 
 #define rnpps_ld(RG, RM, DP) /* round towards +inf */                       \
         fpurp_xx()                                                          \
-        rnnps_ld(W(RG), W(RM), W(DP))                                       \
+        rndps_ld(W(RG), W(RM), W(DP))                                       \
         fpurn_xx()
 
 #define cvpps_rr(RG, RM)     /* round towards +inf */                       \
         fpurp_xx()                                                          \
-        cvnps_rr(W(RG), W(RM))                                              \
+        cvtps_rr(W(RG), W(RM))                                              \
         fpurn_xx()
 
 #define cvpps_ld(RG, RM, DP) /* round towards +inf */                       \
         fpurp_xx()                                                          \
-        cvnps_ld(W(RG), W(RM), W(DP))                                       \
+        cvtps_ld(W(RG), W(RM), W(DP))                                       \
         fpurn_xx()
 
 /* cvm (fp-to-signed-int)
@@ -380,22 +380,22 @@
 
 #define rnmps_rr(RG, RM)     /* round towards -inf */                       \
         fpurm_xx()                                                          \
-        rnnps_rr(W(RG), W(RM))                                              \
+        rndps_rr(W(RG), W(RM))                                              \
         fpurn_xx()
 
 #define rnmps_ld(RG, RM, DP) /* round towards -inf */                       \
         fpurm_xx()                                                          \
-        rnnps_ld(W(RG), W(RM), W(DP))                                       \
+        rndps_ld(W(RG), W(RM), W(DP))                                       \
         fpurn_xx()
 
 #define cvmps_rr(RG, RM)     /* round towards -inf */                       \
         fpurm_xx()                                                          \
-        cvnps_rr(W(RG), W(RM))                                              \
+        cvtps_rr(W(RG), W(RM))                                              \
         fpurn_xx()
 
 #define cvmps_ld(RG, RM, DP) /* round towards -inf */                       \
         fpurm_xx()                                                          \
-        cvnps_ld(W(RG), W(RM), W(DP))                                       \
+        cvtps_ld(W(RG), W(RM), W(DP))                                       \
         fpurn_xx()
 
 /* cvn (fp-to-signed-int)
@@ -405,31 +405,25 @@
         EMITW(0x783E0019 | MXM(0x01,    TZxx,    0x00))
 
 #define rnnps_rr(RG, RM)     /* round towards near */                       \
-        EMITW(0x7B2C001E | MXM(REG(RG), REG(RM), 0x00))
+        rndps_rr(W(RG), W(RM))
 
 #define rnnps_ld(RG, RM, DP) /* round towards near */                       \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x78000023 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x7B2C001E | MXM(REG(RG), Tmm1,    0x00))
+        rndps_ld(W(RG), W(RM), W(DP))
 
 #define cvnps_rr(RG, RM)     /* round towards near */                       \
-        EMITW(0x7B38001E | MXM(REG(RG), REG(RM), 0x00))
+        cvtps_rr(W(RG), W(RM))
 
 #define cvnps_ld(RG, RM, DP) /* round towards near */                       \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x78000023 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x7B38001E | MXM(REG(RG), Tmm1,    0x00))
+        cvtps_ld(W(RG), W(RM), W(DP))
 
 /* cvn (signed-int-to-fp)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
 #define cvnpn_rr(RG, RM)     /* round towards near */                       \
-        EMITW(0x7B3C001E | MXM(REG(RG), REG(RM), 0x00))
+        cvtpn_rr(W(RG), W(RM))
 
 #define cvnpn_ld(RG, RM, DP) /* round towards near */                       \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x78000023 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x7B3C001E | MXM(REG(RG), Tmm1,    0x00))
+        cvtpn_ld(W(RG), W(RM), W(DP))
 
 /* add */
 

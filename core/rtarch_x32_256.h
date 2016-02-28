@@ -410,25 +410,19 @@
         AUX(SIB(RM), CMD(DP), EMITB(0x00))
 
 #define cvnps_rr(RG, RM)     /* round towards near */                       \
-        VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 1) EMITB(0x5B)                 \
-        MRM(REG(RG), MOD(RM), REG(RM))
+        cvtps_rr(W(RG), W(RM))
 
 #define cvnps_ld(RG, RM, DP) /* round towards near */                       \
-    ADR VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 1) EMITB(0x5B)                 \
-        MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+        cvtps_ld(W(RG), W(RM), W(DP))
 
 /* cvn (signed-int-to-fp)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
 #define cvnpn_rr(RG, RM)     /* round towards near */                       \
-        VEX(RXB(RG), RXB(RM),     0x0, 1, 0, 1) EMITB(0x5B)                 \
-        MRM(REG(RG), MOD(RM), REG(RM))
+        cvtpn_rr(W(RG), W(RM))
 
 #define cvnpn_ld(RG, RM, DP) /* round towards near */                       \
-    ADR VEX(RXB(RG), RXB(RM),     0x0, 1, 0, 1) EMITB(0x5B)                 \
-        MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+        cvtpn_ld(W(RG), W(RM), W(DP))
 
 /**************************   packed integer (AVX1)   *************************/
 

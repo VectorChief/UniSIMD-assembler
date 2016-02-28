@@ -669,12 +669,12 @@ ADR xF3 REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x5B)                       \
 
 #define cvpps_rr(RG, RM)     /* round towards +inf */                       \
         fpurp_xx()                                                          \
-        cvnps_rr(W(RG), W(RM))                                              \
+        cvtps_rr(W(RG), W(RM))                                              \
         fpurn_xx()
 
 #define cvpps_ld(RG, RM, DP) /* round towards +inf */                       \
         fpurp_xx()                                                          \
-        cvnps_ld(W(RG), W(RM), W(DP))                                       \
+        cvtps_ld(W(RG), W(RM), W(DP))                                       \
         fpurn_xx()
 
 /* cvm (fp-to-signed-int)
@@ -694,12 +694,12 @@ ADR xF3 REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x5B)                       \
 
 #define cvmps_rr(RG, RM)     /* round towards -inf */                       \
         fpurm_xx()                                                          \
-        cvnps_rr(W(RG), W(RM))                                              \
+        cvtps_rr(W(RG), W(RM))                                              \
         fpurn_xx()
 
 #define cvmps_ld(RG, RM, DP) /* round towards -inf */                       \
         fpurm_xx()                                                          \
-        cvnps_ld(W(RG), W(RM), W(DP))                                       \
+        cvtps_ld(W(RG), W(RM), W(DP))                                       \
         fpurn_xx()
 
 /* cvn (fp-to-signed-int)
@@ -717,25 +717,19 @@ ADR xF3 REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x5B)                       \
         cvnpn_rr(W(RG), W(RG))
 
 #define cvnps_rr(RG, RM)     /* round towards near */                       \
-    ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x5B)                       \
-        MRM(REG(RG), MOD(RM), REG(RM))
+        cvtps_rr(W(RG), W(RM))
 
 #define cvnps_ld(RG, RM, DP) /* round towards near */                       \
-ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x5B)                       \
-        MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+        cvtps_ld(W(RG), W(RM), W(DP))
 
 /* cvn (signed-int-to-fp)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
 #define cvnpn_rr(RG, RM)     /* round towards near */                       \
-        REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x5B)                       \
-        MRM(REG(RG), MOD(RM), REG(RM))
+        cvtpn_rr(W(RG), W(RM))
 
 #define cvnpn_ld(RG, RM, DP) /* round towards near */                       \
-    ADR REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x5B)                       \
-        MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+        cvtpn_ld(W(RG), W(RM), W(DP))
 
 /* add */
 
@@ -856,17 +850,8 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xE2)                       \
         andxx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
         orrxx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
-        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
-        fpuxs_ld(Mebp,  inf_SCR01(0x00))                                    \
-        fpuxn_st(Mebp,  inf_SCR01(0x00))                                    \
-        fpuxs_ld(Mebp,  inf_SCR01(0x04))                                    \
-        fpuxn_st(Mebp,  inf_SCR01(0x04))                                    \
-        fpuxs_ld(Mebp,  inf_SCR01(0x08))                                    \
-        fpuxn_st(Mebp,  inf_SCR01(0x08))                                    \
-        fpuxs_ld(Mebp,  inf_SCR01(0x0C))                                    \
-        fpuxn_st(Mebp,  inf_SCR01(0x0C))                                    \
-        fpucw_ld(Mebp,  inf_SCR00)                                          \
-        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+        cvnps_rr(W(RG), W(RM))                                              \
+        fpucw_ld(Mebp,  inf_SCR00)
 
 #define cvtps_ld(RG, RM, DP)                                                \
         movpx_ld(W(RG), W(RM), W(DP))                                       \
@@ -876,16 +861,14 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xE2)                       \
  * rounding mode comes from fp control register (set in FCTRL blocks) */
 
 #define cvtpn_rr(RG, RM)                                                    \
-        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
-        fpuxn_ld(Mebp,  inf_SCR01(0x00))                                    \
-        fpuxs_st(Mebp,  inf_SCR01(0x00))                                    \
-        fpuxn_ld(Mebp,  inf_SCR01(0x04))                                    \
-        fpuxs_st(Mebp,  inf_SCR01(0x04))                                    \
-        fpuxn_ld(Mebp,  inf_SCR01(0x08))                                    \
-        fpuxs_st(Mebp,  inf_SCR01(0x08))                                    \
-        fpuxn_ld(Mebp,  inf_SCR01(0x0C))                                    \
-        fpuxs_st(Mebp,  inf_SCR01(0x0C))                                    \
-        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+        fpucw_st(Mebp,  inf_SCR00)                                          \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrxx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andxx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrxx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        cvnpn_rr(W(RG), W(RM))                                              \
+        fpucw_ld(Mebp,  inf_SCR00)
 
 #define cvtpn_ld(RG, RM, DP)                                                \
         movpx_ld(W(RG), W(RM), W(DP))                                       \
