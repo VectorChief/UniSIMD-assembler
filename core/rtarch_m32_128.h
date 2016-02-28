@@ -405,12 +405,12 @@
         EMITW(0x783E0019 | MXM(0x01,    TZxx,    0x00))
 
 #define rnnps_rr(RG, RM)     /* round towards near */                       \
-        EMITW(0x7B2A001E | MXM(REG(RG), REG(RM), 0x00))
+        EMITW(0x7B2C001E | MXM(REG(RG), REG(RM), 0x00))
 
 #define rnnps_ld(RG, RM, DP) /* round towards near */                       \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0x78000023 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x7B2A001E | MXM(REG(RG), Tmm1,    0x00))
+        EMITW(0x7B2C001E | MXM(REG(RG), Tmm1,    0x00))
 
 #define cvnps_rr(RG, RM)     /* round towards near */                       \
         EMITW(0x7B38001E | MXM(REG(RG), REG(RM), 0x00))
@@ -526,12 +526,12 @@
  * rounding mode comes from fp control register (set in FCTRL blocks) */
 
 #define rndps_rr(RG, RM)                                                    \
-        EMITW(0x7B2A001E | MXM(REG(RG), REG(RM), 0x00))
+        EMITW(0x7B2C001E | MXM(REG(RG), REG(RM), 0x00))
 
 #define rndps_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0x78000023 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x7B2A001E | MXM(REG(RG), Tmm1,    0x00))
+        EMITW(0x7B2C001E | MXM(REG(RG), Tmm1,    0x00))
 
 #define cvtps_rr(RG, RM)                                                    \
         EMITW(0x7B38001E | MXM(REG(RG), REG(RM), 0x00))
