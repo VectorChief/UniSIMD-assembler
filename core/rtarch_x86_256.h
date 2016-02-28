@@ -680,9 +680,9 @@
 /* simd mode
  * set in FCTRL blocks (cannot be nested) */
 
-#define RT_SIMD_MODE_ROUNDN     0x00    /* round to nearest */
-#define RT_SIMD_MODE_ROUNDM     0x01    /* round towards minus infinity */
-#define RT_SIMD_MODE_ROUNDP     0x02    /* round towards plus  infinity */
+#define RT_SIMD_MODE_ROUNDN     0x00    /* round towards near */
+#define RT_SIMD_MODE_ROUNDM     0x01    /* round towards -inf */
+#define RT_SIMD_MODE_ROUNDP     0x02    /* round towards +inf */
 #define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
 
 #define mxcsr_ld(RM, DP) /* not portable, do not use outside */             \
