@@ -880,7 +880,8 @@
         AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb, S0(RT_SIMD_MASK_##mask), EMPTY2)
 
 /* simd mode
- * set in FCTRL blocks (cannot be nested) */
+ * set via FCTRL macros,
+ * original FCTRL blocks are defined in rtbase.h */
 
 #define RT_SIMD_MODE_ROUNDN     0x00    /* round towards near */
 #define RT_SIMD_MODE_ROUNDM     0x03    /* round towards -inf */
@@ -902,10 +903,10 @@
 #define F0x02 EMITW(0xFF80210C) EMITW(0x1000004A | MXM(TmmR, TmmS, TmmB))
 #define F0x01 EMITW(0xFF80110C) EMITW(0x1000000A | MXM(TmmR, TmmS, TmmS)) /*!*/
 
-#define FCTRL_ENTER(mode) /* assumes default mode (ROUNDN) upon entry */    \
+#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
         F0(RT_SIMD_MODE_##mode)
 
-#define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */    \
+#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
         F0(RT_SIMD_MODE_ROUNDN)
 
 /* cvt (fp-to-signed-int)
@@ -941,10 +942,10 @@
 
 #else /* RT_128 >= 2 */
 
-#define FCTRL_ENTER(mode) /* assumes default mode (ROUNDN) upon entry */    \
+#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
         EMITW(0xFF80010C | RT_SIMD_MODE_##mode << 12)
 
-#define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */    \
+#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
         EMITW(0xFF80010C)
 
 /* cvt (fp-to-signed-int)

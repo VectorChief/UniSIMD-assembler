@@ -339,6 +339,14 @@ struct rt_SIMD_INFO
         rseps_rr(W(RG), W(RM))                                              \
         rssps_rr(W(RG), W(RM)) /* <- not reusable without extra temp reg */
 
+/****************** original FCTRL blocks (cannot be nested) ******************/
+
+#define FCTRL_ENTER(mode) /* assumes default mode (ROUNDN) upon entry */    \
+        FCTRL_SET(mode)
+
+#define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */    \
+        FCTRL_RESET()
+
 #endif /* RT_RTBASE_H */
 
 /******************************************************************************/

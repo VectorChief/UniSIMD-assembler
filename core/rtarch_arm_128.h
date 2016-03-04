@@ -603,7 +603,8 @@
         jezxx_lb(lb)
 
 /* simd mode
- * set in FCTRL blocks (cannot be nested) */
+ * set via FCTRL macros,
+ * original FCTRL blocks are defined in rtbase.h */
 
 #define RT_SIMD_MODE_ROUNDN     0x00    /* round towards near */
 #define RT_SIMD_MODE_ROUNDM     0x02    /* round towards -inf */
@@ -616,12 +617,12 @@
 #define fpscr_st(RG) /* not portable, do not use outside */                 \
         EMITW(0xEEF10A10 | MRM(REG(RG), 0x00,    0x00))
 
-#define FCTRL_ENTER(mode) /* assumes default mode (ROUNDN) upon entry */    \
+#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
         EMITW(0xE3A00500 | MRM(TIxx,    0x00,    0x00) |                    \
                            RT_SIMD_MODE_##mode)                             \
         EMITW(0xEEE10A10 | MRM(TIxx,    0x00,    0x00))
 
-#define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */    \
+#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
         EMITW(0xEEE10A10 | MRM(TZxx,    0x00,    0x00))
 
 /* cvt (fp-to-signed-int)
