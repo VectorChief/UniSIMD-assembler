@@ -105,11 +105,11 @@
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
-#define TMxx    0x08  /* r8 */
+#define TMxx    0x04  /* r4 */
+#define TNxx    0x08  /* r8 */
 #define TIxx    0x09  /* r9, not used together with TDxx */
 #define TDxx    0x09  /* r9, not used together with TIxx */
-#define TPxx    0x0A  /* r10 */
-#define TZxx    0x04  /* r4 */
+#define TPxx    0x0B  /* r11 */
 #define SPxx    0x0D  /* r13 */
 #define PCxx    0x0F  /* r15 */
 
@@ -269,11 +269,11 @@
 #define stack_ld(RM)                                                        \
         EMITW(0xE4900004 | MRM(REG(RM), SPxx,    0x00))
 
-#define stack_sa()   /* save all [Reax - Redi] + 4 temps + r11, 12 regs */  \
-        EMITW(0xE9200FFF | MRM(0x00,    SPxx,    0x00))
+#define stack_sa()   /* save all, [Reax - Redi] + 4 temps, 11 regs total */ \
+        EMITW(0xE9200BFF | MRM(0x00,    SPxx,    0x00))
 
-#define stack_la()   /* load all r11 + 4 temps + [Redi - Reax], 12 regs */  \
-        EMITW(0xE8B00FFF | MRM(0x00,    SPxx,    0x00))
+#define stack_la()   /* load all, 4 temps + [Redi - Reax], 11 regs total */ \
+        EMITW(0xE8B00BFF | MRM(0x00,    SPxx,    0x00))
 
 /* and
  * set-flags: yes */

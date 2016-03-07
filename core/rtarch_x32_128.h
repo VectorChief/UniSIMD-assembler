@@ -818,7 +818,7 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xE2)                       \
         mxcsr_ld(Mebp, inf_SCR00)                                           \
 
 #define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
-        mxcsr_ld(Mebp, inf_FCTRL)
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
 #if (RT_128 < 2)
 

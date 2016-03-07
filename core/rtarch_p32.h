@@ -297,7 +297,7 @@
         EMITW(0x80000000 | MTM(REG(RM), SPxx,    0x00))                     \
         EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x04 & 0xFFFF))
 
-#define stack_sa() /* save all [Reax - RegE], TMxx, ... , TZxx, 19 regs */  \
+#define stack_sa()   /* save all, [Reax - RegE] + 5 temps, 19 regs total */ \
         EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x4C & 0xFFFF))  \
         EMITW(0x90000000 | MTM(Teax,    SPxx,    0x00) | (+0x00 & 0xFFFF))  \
         EMITW(0x90000000 | MTM(Tecx,    SPxx,    0x00) | (+0x04 & 0xFFFF))  \
@@ -319,7 +319,7 @@
         EMITW(0x90000000 | MTM(TCxx,    SPxx,    0x00) | (+0x44 & 0xFFFF))  \
         EMITW(0x90000000 | MTM(TZxx,    SPxx,    0x00) | (+0x48 & 0xFFFF))
 
-#define stack_la() /* load all TZxx, ... , TMxx, [RegE - Reax], 19 regs */  \
+#define stack_la()   /* load all, 5 temps + [RegE - Reax], 19 regs total */ \
         EMITW(0x80000000 | MTM(TZxx,    SPxx,    0x00) | (+0x48 & 0xFFFF))  \
         EMITW(0x80000000 | MTM(TCxx,    SPxx,    0x00) | (+0x44 & 0xFFFF))  \
         EMITW(0x80000000 | MTM(TPxx,    SPxx,    0x00) | (+0x40 & 0xFFFF))  \

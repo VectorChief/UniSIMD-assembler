@@ -493,18 +493,18 @@
 #define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
 
 #define fpscr_ld(RG) /* not portable, do not use outside */                 \
-        EMITW(0xD51B4400 | MXM(REG(RG), 0x00,    0x00))
+        EMITW(0xD51B4400 | MRM(REG(RG), 0x00,    0x00))
 
 #define fpscr_st(RG) /* not portable, do not use outside */                 \
-        EMITW(0xD53B4400 | MXM(REG(RG), 0x00,    0x00))
+        EMITW(0xD53B4400 | MRM(REG(RG), 0x00,    0x00))
 
 #define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
-        EMITW(0x52A00000 | MXM(TIxx,    0x00,    0x00) |                    \
+        EMITW(0x52A00000 | MRM(TIxx,    0x00,    0x00) |                    \
                            RT_SIMD_MODE_##mode << 11)                       \
-        EMITW(0xD51B4400 | MXM(TIxx,    0x00,    0x00))
+        EMITW(0xD51B4400 | MRM(TIxx,    0x00,    0x00))
 
 #define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
-        EMITW(0xD51B4400 | MXM(0x1F,    0x00,    0x00))
+        EMITW(0xD51B4400 | MRM(TNxx,    0x00,    0x00))
 
 /* cvt (fp-to-signed-int)
  * rounding mode comes from fp control register (set in FCTRL blocks) */

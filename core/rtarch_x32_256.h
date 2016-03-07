@@ -701,7 +701,7 @@
         mxcsr_ld(Mebp, inf_SCR00)                                           \
 
 #define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
-        mxcsr_ld(Mebp, inf_FCTRL)
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
 /* cvt (fp-to-signed-int)
  * rounding mode comes from fp control register (set in FCTRL blocks) */

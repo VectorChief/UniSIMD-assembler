@@ -183,8 +183,7 @@
                                 movlb_ld(__Info__)                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
-                                /* placeholder for custom op */
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(__Reax__)                          \
@@ -239,8 +238,7 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
-                                /* placeholder for custom op */
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
@@ -292,8 +290,8 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                movxx_mi(Mebp, inf_FCTRL, IH(0x1F80))       \
-                                "xor %%r15, %%r15\n" /* JMP r15 <- 0 (xor) */
+                                "xor %%r15, %%r15\n" /* r15 <- 0 (xor) */   \
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
@@ -349,7 +347,7 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                "eor r4, r4, r4\n" /* TZxx (r4) <- 0 (xor) */
+                                EMITW(0xE3A08500) /* r8  <- (0 << 22) */
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
@@ -407,7 +405,7 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                /* placeholder for custom op */
+                                EMITW(0x52A00016) /* w22 <- (0 << 22) */
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
@@ -463,7 +461,8 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                EMITX(0x787EF79E) /* TmmZ (w30) <- 0 (xor) */
+                                EMITX(0x787EF79E) /* w30 <- 0 (xor) */      \
+                                EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
@@ -522,7 +521,7 @@
                                 movlb_ld(%[Info_])                          \
                                 stack_sa()                                  \
                                 movxx_rr(Rebp, Reax)                        \
-                                EMITW(0x7C000278) /* TZxx (r0) <- 0 (xor) */\
+                                EMITW(0x7C000278) /* r0  <- 0 (xor) */      \
                                 movpx_ld(Xmm2, Mebp, inf_GPC01)             \
                                 movpx_ld(Xmm4, Mebp, inf_GPC02)             \
                                 movpx_ld(Xmm8, Mebp, inf_GPC04)             \

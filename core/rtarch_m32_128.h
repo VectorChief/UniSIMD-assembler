@@ -504,7 +504,7 @@
         EMITW(0x783E0019 | MXM(0x01,    TIxx,    0x00))
 
 #define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
-        EMITW(0x783E0019 | MXM(0x01,    0x00,    0x00))
+        EMITW(0x783E0019 | MXM(0x01,    TNxx,    0x00))
 
 /* cvt (fp-to-signed-int)
  * rounding mode comes from fp control register (set in FCTRL blocks) */

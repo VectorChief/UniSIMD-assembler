@@ -105,6 +105,7 @@
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
+#define TNxx    0x14  /* s4 (r20), default rounding mode */
 #define TLxx    0x18  /* t8 (r24), left  arg for compare */
 #define TRxx    0x19  /* t9 (r25), right arg for compare */
 #define TMxx    0x18  /* t8 */
@@ -290,8 +291,8 @@
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    REG(RM)))                  \
         EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (+0x04 & 0xFFFF))
 
-#define stack_sa() /* save all [Reax - RegE], TMxx, TIxx, TPxx, 17 regs */  \
-        EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (-0x44 & 0xFFFF))  \
+#define stack_sa()   /* save all, [Reax - RegE] + 4 temps, 18 regs total */ \
+        EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (-0x48 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    Tecx) | (+0x04 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    Tedx) | (+0x08 & 0xFFFF))  \
@@ -308,9 +309,11 @@
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    TegE) | (+0x34 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    TMxx) | (+0x38 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    TIxx) | (+0x3C & 0xFFFF))  \
-        EMITW(0xAC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x40 & 0xFFFF))
+        EMITW(0xAC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x40 & 0xFFFF))  \
+        EMITW(0xAC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x44 & 0xFFFF))
 
-#define stack_la() /* load all TPxx, TIxx, TMxx, [RegE - Reax], 17 regs */  \
+#define stack_la()   /* load all, 4 temps + [RegE - Reax], 18 regs total */ \
+        EMITW(0x8C000000 | MRM(0x00,    SPxx,    TNxx) | (+0x44 & 0xFFFF))  \
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    TPxx) | (+0x40 & 0xFFFF))  \
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    TIxx) | (+0x3C & 0xFFFF))  \
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    TMxx) | (+0x38 & 0xFFFF))  \
@@ -328,7 +331,7 @@
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    Tedx) | (+0x08 & 0xFFFF))  \
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    Tecx) | (+0x04 & 0xFFFF))  \
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
-        EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (+0x44 & 0xFFFF))
+        EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (+0x48 & 0xFFFF))
 
 /* and
  * set-flags: yes */
