@@ -160,6 +160,10 @@
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, eax) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lea, eax, lb) ASM_END
 
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      0
+
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
 #include "rtarch_x86_256.h"
@@ -175,6 +179,8 @@
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
 
+#if RT_SIMD_FLUSH_ZERO == 0
+
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
 #define ASM_ENTER(__Info__) {rt_word __Reax__; __asm                        \
@@ -188,6 +194,42 @@
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(__Reax__)                          \
                             }}
+
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
+
+#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
+
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+/*
+ * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
+ * except that they put the SIMD unit into slightly faster non-IEEE mode,
+ * where denormal results from floating point operations are flushed to zero.
+ * This mode is closely compatible with ARMv7, which lacks full IEEE support.
+ */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__) {rt_word __Reax__; __asm                      \
+                            {                                               \
+                                movlb_st(__Reax__)                          \
+                                movlb_ld(__Info__)                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))
+
+#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
+                                stack_la()                                  \
+                                movlb_ld(__Reax__)                          \
+                            }}
+
+#ifndef RT_SIMD_CODE
+#define mxcsr_ld(RM, DP)
+#endif /* RT_SIMD_CODE */
 
 #endif /* RT_X86 */
 
@@ -215,6 +257,10 @@
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, lb, %%eax) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
 
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      0
+
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
 #include "rtarch_x86_256.h"
@@ -229,6 +275,8 @@
  * intensive parts of the program, so that the ASM overhead is minimized.
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
+
+#if RT_SIMD_FLUSH_ZERO == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -246,6 +294,45 @@
                                 : [Info_]  "r" ((rt_word)__Info__)          \
                                 : "cc",  "memory"                           \
                             );}
+
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
+
+#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
+
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+/*
+ * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
+ * except that they put the SIMD unit into slightly faster non-IEEE mode,
+ * where denormal results from floating point operations are flushed to zero.
+ * This mode is closely compatible with ARMv7, which lacks full IEEE support.
+ */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__) {rt_word __Reax__; asm volatile               \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))
+
+#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
+                                stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" (__Reax__)                   \
+                                : [Info_]  "r" (__Info__)                   \
+                                : "cc",  "memory"                           \
+                            );}
+
+#ifndef RT_SIMD_CODE
+#define mxcsr_ld(RM, DP)
+#endif /* RT_SIMD_CODE */
 
 /* ---------------------------------   X32   -------------------------------- */
 
@@ -267,6 +354,10 @@
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movq, lb, %%rax) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(leaq, %%rax, lb) ASM_END
 
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      0
+
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
 #include "rtarch_x32_256.h"
@@ -281,6 +372,8 @@
  * intensive parts of the program, so that the ASM overhead is minimized.
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
+
+#if RT_SIMD_FLUSH_ZERO == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -304,6 +397,50 @@
                                   "xmm12", "xmm13", "xmm14", "xmm15"        \
                             );}
 
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
+
+#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
+
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+/*
+ * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
+ * except that they put the SIMD unit into slightly faster non-IEEE mode,
+ * where denormal results from floating point operations are flushed to zero.
+ * This mode is closely compatible with ARMv7, which lacks full IEEE support.
+ */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__) {rt_full __Reax__; asm volatile               \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                "xor %%r15, %%r15\n" /* r15 <- 0 (xor) */   \
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))
+
+#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
+                                stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" ((rt_full)__Reax__)          \
+                                : [Info_]  "r" ((rt_full)__Info__)          \
+                                : "cc",  "memory",                          \
+                                  "xmm0",  "xmm1",  "xmm2",  "xmm3",        \
+                                  "xmm4",  "xmm5",  "xmm6",  "xmm7",        \
+                                  "xmm8",  "xmm9",  "xmm10", "xmm11",       \
+                                  "xmm12", "xmm13", "xmm14", "xmm15"        \
+                            );}
+
+#ifndef RT_SIMD_CODE
+#define mxcsr_ld(RM, DP)
+#endif /* RT_SIMD_CODE */
+
 /* ---------------------------------   ARM   -------------------------------- */
 
 #elif defined (RT_ARM)
@@ -324,6 +461,10 @@
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, r0) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(adr, r0, lb) ASM_END
 
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      0
+
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
 #error "ARM doesn't support SIMD wider than 4 at the moment"
@@ -339,6 +480,8 @@
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
 
+#if RT_SIMD_FLUSH_ZERO == 0
+
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
 #define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
@@ -353,6 +496,47 @@
                                 movlb_ld(%[Reax_])                          \
                                 : [Reax_] "+r" ((rt_word)__Reax__)          \
                                 : [Info_]  "r" ((rt_word)__Info__)          \
+                                : "cc",  "memory",                          \
+                                  "d0",  "d1",  "d2",  "d3",                \
+                                  "d4",  "d5",  "d6",  "d7",                \
+                                  "d8",  "d9",  "d10", "d11",               \
+                                  "d12", "d13", "d14", "d15",               \
+                                  "d16", "d17", "d18", "d19",               \
+                                  "d20", "d21"                              \
+                            );}
+
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
+
+#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
+
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+/*
+ * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
+ * except that they put the SIMD unit into slightly faster non-IEEE mode,
+ * where denormal results from floating point operations are flushed to zero.
+ * This mode is closely compatible with ARMv7, which lacks full IEEE support.
+ */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__) {rt_word __Reax__; asm volatile               \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                EMITW(0xE3A08504) /* r8  <- (4 << 22) */    \
+                                EMITW(0xEEE18A10) /* fpscr <- r8 */
+
+#define ASM_LEAVE_F(__Info__)   EMITW(0xE3A08500) /* r8  <- (0 << 22) */    \
+                                EMITW(0xEEE18A10) /* fpscr <- r8 */         \
+                                stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" (__Reax__)                   \
+                                : [Info_]  "r" (__Info__)                   \
                                 : "cc",  "memory",                          \
                                   "d0",  "d1",  "d2",  "d3",                \
                                   "d4",  "d5",  "d6",  "d7",                \
@@ -382,6 +566,10 @@
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, x0) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(adr, x0, lb) ASM_END
 
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      0
+
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
 #error "ARM doesn't support SIMD wider than 4 at the moment"
@@ -397,6 +585,8 @@
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
 
+#if RT_SIMD_FLUSH_ZERO == 0
+
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
 #define ASM_ENTER(__Info__) {rt_full __Reax__; asm volatile                 \
@@ -408,6 +598,45 @@
                                 EMITW(0x52A00016) /* w22 <- (0 << 22) */
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" ((rt_full)__Reax__)          \
+                                : [Info_]  "r" ((rt_full)__Info__)          \
+                                : "cc",  "memory",                          \
+                                  "q0",  "q1",  "q2",  "q3",                \
+                                  "q4",  "q5",  "q6",  "q7",                \
+                                  "q8",  "q9",  "q10", "q11",               \
+                                  "q12", "q13", "q14", "q15", "q31"         \
+                            );}
+
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
+
+#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
+
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+/*
+ * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
+ * except that they put the SIMD unit into slightly faster non-IEEE mode,
+ * where denormal results from floating point operations are flushed to zero.
+ * This mode is closely compatible with ARMv7, which lacks full IEEE support.
+ */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__) {rt_full __Reax__; asm volatile               \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                EMITW(0x52A02016) /* w22 <- (4 << 22) */    \
+                                EMITW(0xD51B4416) /* fpcr <- w22 */
+
+#define ASM_LEAVE_F(__Info__)   EMITW(0x52A00016) /* w22 <- (0 << 22) */    \
+                                EMITW(0xD51B4416) /* fpcr <- w22 */         \
+                                stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
                                 : [Reax_] "+r" ((rt_full)__Reax__)          \
                                 : [Info_]  "r" ((rt_full)__Info__)          \
@@ -438,6 +667,10 @@
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(move, lb, $a0) ASM_END
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(la, $a0, lb) ASM_END
 
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      0
+
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
 #error "MSA doesn't support SIMD wider than 4 at the moment"
@@ -453,6 +686,8 @@
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
 
+#if RT_SIMD_FLUSH_ZERO == 0
+
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
 #define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
@@ -465,6 +700,44 @@
                                 EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Info_]  "r" ((rt_word)__Info__)          \
+                                : "cc",  "memory"                           \
+                            );}
+
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
+
+#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
+
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+/*
+ * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
+ * except that they put the SIMD unit into slightly faster non-IEEE mode,
+ * where denormal results from floating point operations are flushed to zero.
+ * This mode is closely compatible with ARMv7, which lacks full IEEE support.
+ */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__) {rt_word __Reax__; asm volatile               \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                EMITX(0x787EF79E) /* w30 <- 0 (xor) */      \
+                                EMITW(0x3C140100) /* r20 <- 0|(1 << 24) */  \
+                                EMITW(0x44D4F800) /* fcsr <- r20 */         \
+                                EMITX(0x783EA059) /* msacsr <- r20 */
+
+#define ASM_LEAVE_F(__Info__)   EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */  \
+                                EMITW(0x44D4F800) /* fcsr <- r20 */         \
+                                EMITX(0x783EA059) /* msacsr <- r20 */       \
+                                stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
                                 : [Reax_] "+r" ((rt_word)__Reax__)          \
                                 : [Info_]  "r" ((rt_word)__Info__)          \
@@ -498,6 +771,10 @@
 #define label_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lis, %%r4, lb@h) ASM_END    \
                                 ASM_BEG ASM_OP3(ori, %%r4, %%r4, lb@l) ASM_END
 
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      0
+
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
 #error "VMX doesn't support SIMD wider than 4 at the moment"
@@ -512,6 +789,8 @@
  * intensive parts of the program, so that the ASM overhead is minimized.
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
+
+#if RT_SIMD_FLUSH_ZERO == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -534,6 +813,55 @@
                                 "cmplw cr2, %%r24, %%r24\n"
 
 #define ASM_LEAVE(__Info__)     EMITW(0x7C0903A6 | TCxx << 21)              \
+                                stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Info_]  "r" ((rt_word)__Info__)          \
+                                : "cc",  "memory"                           \
+                            );}
+
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
+
+#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
+
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+/*
+ * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
+ * except that they put the SIMD unit into slightly faster non-IEEE mode,
+ * where denormal results from floating point operations are flushed to zero.
+ * This mode is closely compatible with ARMv7, which lacks full IEEE support.
+ */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__) {rt_word __Reax__; asm volatile               \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                EMITW(0x7C000278) /* r0  <- 0 (xor) */      \
+                                EMITX(0xFF80410C) /* fpscr <- NI(4) */      \
+                                EMITX(0x13E1034C) /* v31 <- splt-half(1) */ \
+                                EMITX(0x1000FE44) /* vscr <- v31, NJ(16) */ \
+                                movpx_ld(Xmm2, Mebp, inf_GPC01)             \
+                                movpx_ld(Xmm4, Mebp, inf_GPC02)             \
+                                movpx_ld(Xmm8, Mebp, inf_GPC04)             \
+                                EMITX(0x13084504)                           \
+                                EMITX(0x1328C484)                           \
+                                EMITX(0x13421484)                           \
+                                EMITX(0x13642484)                           \
+                                EMITX(0x1000004A | MXM(TmmR, TmmS, TmmS))   \
+                                EMITW(0x7C0902A6 | TCxx << 21)              \
+                                "cmplw cr2, %%r24, %%r24\n"
+
+#define ASM_LEAVE_F(__Info__)   EMITW(0x7C0903A6 | TCxx << 21)              \
+                                EMITX(0xFF80010C) /* fpscr <- NI(0) */      \
+                                EMITX(0x13E0034C) /* v31 <- splt-half(0) */ \
+                                EMITX(0x1000FE44) /* vscr <- v31, NJ(16) */ \
                                 stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
                                 : [Reax_] "+r" ((rt_word)__Reax__)          \

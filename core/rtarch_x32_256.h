@@ -16,6 +16,8 @@
 
 #if defined (RT_SIMD_CODE)
 
+#undef  mxcsr_ld
+
 #if defined (RT_256) && (RT_256 != 0)
 
 /******************************************************************************/
@@ -678,13 +680,31 @@
         jeqxx_lb(lb)
 
 /* simd mode
- * set via FCTRL macros,
- * original FCTRL blocks are defined in rtbase.h */
+ * set via FCTRL macros, *_F for faster non-IEEE mode,
+ * original FCTRL blocks are defined in rtbase.h
+ * NOTE: ARMv7 always uses ROUNDN non-IEEE mode for SIMD fp-arithmetic,
+ * while fp<->int conversion takes ROUND* into account via VFP fallback */
+
+#if RT_SIMD_FLUSH_ZERO == 0
 
 #define RT_SIMD_MODE_ROUNDN     0x00    /* round towards near */
 #define RT_SIMD_MODE_ROUNDM     0x01    /* round towards -inf */
 #define RT_SIMD_MODE_ROUNDP     0x02    /* round towards +inf */
 #define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
+
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define RT_SIMD_MODE_ROUNDN     0x04    /* round towards near */
+#define RT_SIMD_MODE_ROUNDM     0x05    /* round towards -inf */
+#define RT_SIMD_MODE_ROUNDP     0x06    /* round towards +inf */
+#define RT_SIMD_MODE_ROUNDZ     0x07    /* round towards zero */
+
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+#define RT_SIMD_MODE_ROUNDN_F   0x04    /* round towards near */
+#define RT_SIMD_MODE_ROUNDM_F   0x05    /* round towards -inf */
+#define RT_SIMD_MODE_ROUNDP_F   0x06    /* round towards +inf */
+#define RT_SIMD_MODE_ROUNDZ_F   0x07    /* round towards zero */
 
 #define mxcsr_ld(RM, DP) /* not portable, do not use outside */             \
     ADR VEX(0,       RXB(RM),     0x0, 0, 0, 1) EMITB(0xAE)                 \
@@ -704,7 +724,8 @@
         mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
 /* cvt (fp-to-signed-int)
- * rounding mode comes from fp control register (set in FCTRL blocks) */
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz */
 
 #define rndps_rr(RG, RM)                                                    \
         cvtps_rr(W(RG), W(RM))                                              \
@@ -724,7 +745,8 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* cvt (signed-int-to-fp)
- * rounding mode comes from fp control register (set in FCTRL blocks) */
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
 
 #define cvtpn_rr(RG, RM)                                                    \
         VEX(RXB(RG), RXB(RM),     0x0, 1, 0, 1) EMITB(0x5B)                 \
@@ -736,12 +758,14 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* cvr (fp-to-signed-int)
- * rounding mode is encoded directly (cannot be used in FCTRL blocks) */
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block */
 
 #define rnrps_rr(RG, RM, mode)                                              \
         VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 3) EMITB(0x08)                 \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode))
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
 
 #define cvrps_rr(RG, RM, mode)                                              \
         rnrps_rr(W(RG), W(RM), mode)                                        \
