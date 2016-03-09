@@ -163,6 +163,10 @@
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
 #define RT_SIMD_FLUSH_ZERO      0
+/* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
+ * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
+ * with (_F) and without (_F) are not intermixed in the code */
+#define RT_SIMD_FAST_FCTRL      0*(S/8) /* only if AVX is among build targets */
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -180,6 +184,7 @@
  */
 
 #if RT_SIMD_FLUSH_ZERO == 0
+#if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -195,6 +200,26 @@
                                 movlb_ld(__Reax__)                          \
                             }}
 
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__) {rt_word __Reax__; __asm                        \
+                            {                                               \
+                                movlb_st(__Reax__)                          \
+                                movlb_ld(__Info__)                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                movxx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))  \
+                                movxx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))  \
+                                movxx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))  \
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
+
+#define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(__Reax__)                          \
+                            }}
+
+#endif /* RT_SIMD_FAST_FCTRL */
 #else /* RT_SIMD_FLUSH_ZERO */
 
 #define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
@@ -209,6 +234,8 @@
  * where denormal results from floating point operations are flushed to zero.
  * This mode is closely compatible with ARMv7, which lacks full IEEE support.
  */
+
+#if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -226,6 +253,30 @@
                                 stack_la()                                  \
                                 movlb_ld(__Reax__)                          \
                             }}
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__) {rt_word __Reax__; __asm                      \
+                            {                                               \
+                                movlb_st(__Reax__)                          \
+                                movlb_ld(__Info__)                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                movxx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))  \
+                                movxx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))  \
+                                movxx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))  \
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))
+
+#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
+                                stack_la()                                  \
+                                movlb_ld(__Reax__)                          \
+                            }}
+
+#endif /* RT_SIMD_FAST_FCTRL */
 
 #ifndef RT_SIMD_CODE
 #define mxcsr_ld(RM, DP)
@@ -260,6 +311,10 @@
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
 #define RT_SIMD_FLUSH_ZERO      0
+/* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
+ * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
+ * with (_F) and without (_F) are not intermixed in the code */
+#define RT_SIMD_FAST_FCTRL      0*(S/8) /* only if AVX is among build targets */
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -277,6 +332,7 @@
  */
 
 #if RT_SIMD_FLUSH_ZERO == 0
+#if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -295,6 +351,29 @@
                                 : "cc",  "memory"                           \
                             );}
 
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                movxx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))  \
+                                movxx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))  \
+                                movxx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))  \
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
+
+#define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Info_]  "r" ((rt_word)__Info__)          \
+                                : "cc",  "memory"                           \
+                            );}
+
+#endif /* RT_SIMD_FAST_FCTRL */
 #else /* RT_SIMD_FLUSH_ZERO */
 
 #define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
@@ -309,6 +388,8 @@
  * where denormal results from floating point operations are flushed to zero.
  * This mode is closely compatible with ARMv7, which lacks full IEEE support.
  */
+
+#if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -329,6 +410,33 @@
                                 : [Info_]  "r" (__Info__)                   \
                                 : "cc",  "memory"                           \
                             );}
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__) {rt_word __Reax__; asm volatile               \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                movxx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))  \
+                                movxx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))  \
+                                movxx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))  \
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))
+
+#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
+                                stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" (__Reax__)                   \
+                                : [Info_]  "r" (__Info__)                   \
+                                : "cc",  "memory"                           \
+                            );}
+
+#endif /* RT_SIMD_FAST_FCTRL */
 
 #ifndef RT_SIMD_CODE
 #define mxcsr_ld(RM, DP)
@@ -357,6 +465,10 @@
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
 #define RT_SIMD_FLUSH_ZERO      0
+/* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
+ * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
+ * with (_F) and without (_F) are not intermixed in the code */
+#define RT_SIMD_FAST_FCTRL      0*(S/8) /* only if AVX is among build targets */
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -374,6 +486,7 @@
  */
 
 #if RT_SIMD_FLUSH_ZERO == 0
+#if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -397,6 +510,34 @@
                                   "xmm12", "xmm13", "xmm14", "xmm15"        \
                             );}
 
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__) {rt_full __Reax__; asm volatile                 \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                "xor %%r15, %%r15\n" /* r15 <- 0 (xor) */   \
+                                movxx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))  \
+                                movxx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))  \
+                                movxx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))  \
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
+
+#define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" ((rt_full)__Reax__)          \
+                                : [Info_]  "r" ((rt_full)__Info__)          \
+                                : "cc",  "memory",                          \
+                                  "xmm0",  "xmm1",  "xmm2",  "xmm3",        \
+                                  "xmm4",  "xmm5",  "xmm6",  "xmm7",        \
+                                  "xmm8",  "xmm9",  "xmm10", "xmm11",       \
+                                  "xmm12", "xmm13", "xmm14", "xmm15"        \
+                            );}
+
+#endif /* RT_SIMD_FAST_FCTRL */
 #else /* RT_SIMD_FLUSH_ZERO */
 
 #define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
@@ -411,6 +552,8 @@
  * where denormal results from floating point operations are flushed to zero.
  * This mode is closely compatible with ARMv7, which lacks full IEEE support.
  */
+
+#if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -436,6 +579,38 @@
                                   "xmm8",  "xmm9",  "xmm10", "xmm11",       \
                                   "xmm12", "xmm13", "xmm14", "xmm15"        \
                             );}
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__) {rt_full __Reax__; asm volatile               \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                "xor %%r15, %%r15\n" /* r15 <- 0 (xor) */   \
+                                movxx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))  \
+                                movxx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))  \
+                                movxx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))  \
+                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))
+
+#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))  \
+                                mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
+                                stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" ((rt_full)__Reax__)          \
+                                : [Info_]  "r" ((rt_full)__Info__)          \
+                                : "cc",  "memory",                          \
+                                  "xmm0",  "xmm1",  "xmm2",  "xmm3",        \
+                                  "xmm4",  "xmm5",  "xmm6",  "xmm7",        \
+                                  "xmm8",  "xmm9",  "xmm10", "xmm11",       \
+                                  "xmm12", "xmm13", "xmm14", "xmm15"        \
+                            );}
+
+#endif /* RT_SIMD_FAST_FCTRL */
 
 #ifndef RT_SIMD_CODE
 #define mxcsr_ld(RM, DP)
@@ -464,6 +639,10 @@
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
 #define RT_SIMD_FLUSH_ZERO      0
+/* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
+ * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
+ * with (_F) and without (_F) are not intermixed in the code */
+#define RT_SIMD_FAST_FCTRL      0 /* takes all available regs except (SP, PC) */
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -481,6 +660,7 @@
  */
 
 #if RT_SIMD_FLUSH_ZERO == 0
+#if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -505,6 +685,35 @@
                                   "d20", "d21"                              \
                             );}
 
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                EMITW(0xE3A0E503) /* r14 <- (3 << 22) */    \
+                                EMITW(0xE3A0C502) /* r12 <- (2 << 22) */    \
+                                EMITW(0xE3A0A501) /* r10 <- (1 << 22) */    \
+                                EMITW(0xE3A08500) /* r8  <- (0 << 22) */
+
+#define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Info_]  "r" ((rt_word)__Info__)          \
+                                : "cc",  "memory",                          \
+                                  "d0",  "d1",  "d2",  "d3",                \
+                                  "d4",  "d5",  "d6",  "d7",                \
+                                  "d8",  "d9",  "d10", "d11",               \
+                                  "d12", "d13", "d14", "d15",               \
+                                  "d16", "d17", "d18", "d19",               \
+                                  "d20", "d21"                              \
+                            );}
+
+#endif /* RT_SIMD_FAST_FCTRL */
 #else /* RT_SIMD_FLUSH_ZERO */
 
 #define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
@@ -519,6 +728,8 @@
  * where denormal results from floating point operations are flushed to zero.
  * This mode is closely compatible with ARMv7, which lacks full IEEE support.
  */
+
+#if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -546,6 +757,39 @@
                                   "d20", "d21"                              \
                             );}
 
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__) {rt_word __Reax__; asm volatile               \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                EMITW(0xE3A0E507) /* r14 <- (7 << 22) */    \
+                                EMITW(0xE3A0C506) /* r12 <- (6 << 22) */    \
+                                EMITW(0xE3A0A505) /* r10 <- (5 << 22) */    \
+                                EMITW(0xE3A08504) /* r8  <- (4 << 22) */    \
+                                EMITW(0xEEE18A10) /* fpscr <- r8 */
+
+#define ASM_LEAVE_F(__Info__)   EMITW(0xE3A08500) /* r8  <- (0 << 22) */    \
+                                EMITW(0xEEE18A10) /* fpscr <- r8 */         \
+                                stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" (__Reax__)                   \
+                                : [Info_]  "r" (__Info__)                   \
+                                : "cc",  "memory",                          \
+                                  "d0",  "d1",  "d2",  "d3",                \
+                                  "d4",  "d5",  "d6",  "d7",                \
+                                  "d8",  "d9",  "d10", "d11",               \
+                                  "d12", "d13", "d14", "d15",               \
+                                  "d16", "d17", "d18", "d19",               \
+                                  "d20", "d21"                              \
+                            );}
+
+#endif /* RT_SIMD_FAST_FCTRL */
+
 /* ---------------------------------   A32   -------------------------------- */
 
 #elif defined (RT_A32)
@@ -569,6 +813,10 @@
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
 #define RT_SIMD_FLUSH_ZERO      0
+/* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
+ * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
+ * with (_F) and without (_F) are not intermixed in the code */
+#define RT_SIMD_FAST_FCTRL      0
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -586,6 +834,7 @@
  */
 
 #if RT_SIMD_FLUSH_ZERO == 0
+#if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -608,6 +857,33 @@
                                   "q12", "q13", "q14", "q15", "q31"         \
                             );}
 
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__) {rt_full __Reax__; asm volatile                 \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                EMITW(0x52A01819) /* w25 <- (3 << 22) */    \
+                                EMITW(0x52A01018) /* w24 <- (2 << 22) */    \
+                                EMITW(0x52A00817) /* w23 <- (1 << 22) */    \
+                                EMITW(0x52A00016) /* w22 <- (0 << 22) */
+
+#define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" ((rt_full)__Reax__)          \
+                                : [Info_]  "r" ((rt_full)__Info__)          \
+                                : "cc",  "memory",                          \
+                                  "q0",  "q1",  "q2",  "q3",                \
+                                  "q4",  "q5",  "q6",  "q7",                \
+                                  "q8",  "q9",  "q10", "q11",               \
+                                  "q12", "q13", "q14", "q15", "q31"         \
+                            );}
+
+#endif /* RT_SIMD_FAST_FCTRL */
 #else /* RT_SIMD_FLUSH_ZERO */
 
 #define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
@@ -622,6 +898,8 @@
  * where denormal results from floating point operations are flushed to zero.
  * This mode is closely compatible with ARMv7, which lacks full IEEE support.
  */
+
+#if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -647,6 +925,37 @@
                                   "q12", "q13", "q14", "q15", "q31"         \
                             );}
 
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__) {rt_full __Reax__; asm volatile               \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                EMITW(0x52A03819) /* w25 <- (7 << 22) */    \
+                                EMITW(0x52A03018) /* w24 <- (6 << 22) */    \
+                                EMITW(0x52A02817) /* w23 <- (5 << 22) */    \
+                                EMITW(0x52A02016) /* w22 <- (4 << 22) */    \
+                                EMITW(0xD51B4416) /* fpcr <- w22 */
+
+#define ASM_LEAVE_F(__Info__)   EMITW(0x52A00016) /* w22 <- (0 << 22) */    \
+                                EMITW(0xD51B4416) /* fpcr <- w22 */         \
+                                stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" ((rt_full)__Reax__)          \
+                                : [Info_]  "r" ((rt_full)__Info__)          \
+                                : "cc",  "memory",                          \
+                                  "q0",  "q1",  "q2",  "q3",                \
+                                  "q4",  "q5",  "q6",  "q7",                \
+                                  "q8",  "q9",  "q10", "q11",               \
+                                  "q12", "q13", "q14", "q15", "q31"         \
+                            );}
+
+#endif /* RT_SIMD_FAST_FCTRL */
+
 /* ---------------------------------   M32   -------------------------------- */
 
 #elif defined (RT_M32)
@@ -670,6 +979,10 @@
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
 #define RT_SIMD_FLUSH_ZERO      0
+/* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
+ * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
+ * with (_F) and without (_F) are not intermixed in the code */
+#define RT_SIMD_FAST_FCTRL      0
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -687,6 +1000,7 @@
  */
 
 #if RT_SIMD_FLUSH_ZERO == 0
+#if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -706,6 +1020,30 @@
                                 : "cc",  "memory"                           \
                             );}
 
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                EMITX(0x787EF79E) /* w30 <- 0 (xor) */      \
+                                EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */  \
+                                EMITW(0x36950001) /* r21 <- 1|(0 << 24) */  \
+                                EMITW(0x36960002) /* r22 <- 2|(0 << 24) */  \
+                                EMITW(0x36970003) /* r23 <- 3|(0 << 24) */
+
+#define ASM_LEAVE(__Info__)     stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Info_]  "r" ((rt_word)__Info__)          \
+                                : "cc",  "memory"                           \
+                            );}
+
+#endif /* RT_SIMD_FAST_FCTRL */
 #else /* RT_SIMD_FLUSH_ZERO */
 
 #define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
@@ -720,6 +1058,8 @@
  * where denormal results from floating point operations are flushed to zero.
  * This mode is closely compatible with ARMv7, which lacks full IEEE support.
  */
+
+#if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -743,6 +1083,36 @@
                                 : [Info_]  "r" ((rt_word)__Info__)          \
                                 : "cc",  "memory"                           \
                             );}
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__) {rt_word __Reax__; asm volatile               \
+                            (                                               \
+                                movlb_st(%[Reax_])                          \
+                                movlb_ld(%[Info_])                          \
+                                stack_sa()                                  \
+                                movxx_rr(Rebp, Reax)                        \
+                                EMITX(0x787EF79E) /* w30 <- 0 (xor) */      \
+                                EMITW(0x3C140100) /* r20 <- 0|(1 << 24) */  \
+                                EMITW(0x36950001) /* r21 <- 1|(1 << 24) */  \
+                                EMITW(0x36960002) /* r22 <- 2|(1 << 24) */  \
+                                EMITW(0x36970003) /* r23 <- 3|(1 << 24) */  \
+                                EMITW(0x44D4F800) /* fcsr <- r20 */         \
+                                EMITX(0x783EA059) /* msacsr <- r20 */
+
+#define ASM_LEAVE_F(__Info__)   EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */  \
+                                EMITW(0x44D4F800) /* fcsr <- r20 */         \
+                                EMITX(0x783EA059) /* msacsr <- r20 */       \
+                                stack_la()                                  \
+                                movlb_ld(%[Reax_])                          \
+                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Info_]  "r" ((rt_word)__Info__)          \
+                                : "cc",  "memory"                           \
+                            );}
+
+#endif /* RT_SIMD_FAST_FCTRL */
 
 #ifndef RT_SIMD_CODE
 #define EMITX(w) /* EMPTY */
@@ -774,6 +1144,10 @@
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
 #define RT_SIMD_FLUSH_ZERO      0
+/* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
+ * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
+ * with (_F) and without (_F) are not intermixed in the code */
+#define RT_SIMD_FAST_FCTRL      0 /* not applicable to Power */
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8

@@ -635,6 +635,8 @@
 #define fpscr_st(RG) /* not portable, do not use outside */                 \
         EMITW(0xEEF10A10 | MRM(REG(RG), 0x00,    0x00))
 
+#if RT_SIMD_FAST_FCTRL == 0
+
 #define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
         EMITW(0xE3A00500 | MRM(TIxx,    0x00,    0x00) |                    \
                            RT_SIMD_MODE_##mode)                             \
@@ -642,6 +644,16 @@
 
 #define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
         EMITW(0xEEE10A10 | MRM(TNxx,    0x00,    0x00))
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
+        EMITW(0xEEE10A10 | MRM((RT_SIMD_MODE_##mode&3)*2+8, 0x00, 0x00))
+
+#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
+        EMITW(0xEEE10A10 | MRM(TNxx,    0x00,    0x00))
+
+#endif /* RT_SIMD_FAST_FCTRL */
 
 /* cvt (fp-to-signed-int)
  * rounding mode comes from fp control register (set in FCTRL blocks)
