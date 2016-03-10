@@ -740,12 +740,14 @@
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz */
 
 #define rndps_rr(RG, RM)                                                    \
-        cvtps_rr(W(RG), W(RM))                                              \
-        cvnpn_rr(W(RG), W(RG))
+        VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 3) EMITB(0x08)                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
 
 #define rndps_ld(RG, RM, DP)                                                \
-        cvtps_ld(W(RG), W(RM), W(DP))                                       \
-        cvnpn_rr(W(RG), W(RG))
+    ADR VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 3) EMITB(0x08)                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(0x04))
 
 #define cvtps_rr(RG, RM)                                                    \
         VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 1) EMITB(0x5B)                 \
@@ -781,7 +783,7 @@
 
 #define cvrps_rr(RG, RM, mode)                                              \
         rnrps_rr(W(RG), W(RM), mode)                                        \
-        cvtps_rr(W(RG), W(RG))
+        cvzps_rr(W(RG), W(RG))
 
 /* mmv */
 

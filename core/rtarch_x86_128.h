@@ -629,6 +629,8 @@
 /* cvz (fp-to-signed-int)
  * rounding mode is encoded directly (can be used in FCTRL blocks) */
 
+#if (RT_128 < 4)
+
 #define rnzps_rr(RG, RM)     /* round towards zero */                       \
         cvzps_rr(W(RG), W(RM))                                              \
         cvnpn_rr(W(RG), W(RG))
@@ -636,6 +638,20 @@
 #define rnzps_ld(RG, RM, DP) /* round towards zero */                       \
         cvzps_ld(W(RG), W(RM), W(DP))                                       \
         cvnpn_rr(W(RG), W(RG))
+
+#else /* RT_128 >= 4 */
+
+#define rnzps_rr(RG, RM)     /* round towards zero */                       \
+    ESC EMITB(0x0F) EMITB(0x3A) EMITB(0x08)                                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x03))
+
+#define rnzps_ld(RG, RM, DP) /* round towards zero */                       \
+    ESC EMITB(0x0F) EMITB(0x3A) EMITB(0x08)                                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(0x03))
+
+#endif /* RT_128 >= 4 */
 
 #define cvzps_rr(RG, RM)     /* round towards zero */                       \
     xF3 EMITB(0x0F) EMITB(0x5B)                                             \
@@ -648,6 +664,8 @@
 
 /* cvp (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#if (RT_128 < 4)
 
 #define rnpps_rr(RG, RM)     /* round towards +inf */                       \
         cvpps_rr(W(RG), W(RM))                                              \
@@ -667,8 +685,32 @@
         cvtps_ld(W(RG), W(RM), W(DP))                                       \
         FCTRL_LEAVE(ROUNDP)
 
+#else /* RT_128 >= 4 */
+
+#define rnpps_rr(RG, RM)     /* round towards +inf */                       \
+    ESC EMITB(0x0F) EMITB(0x3A) EMITB(0x08)                                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+
+#define rnpps_ld(RG, RM, DP) /* round towards +inf */                       \
+    ESC EMITB(0x0F) EMITB(0x3A) EMITB(0x08)                                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(0x02))
+
+#define cvpps_rr(RG, RM)     /* round towards +inf */                       \
+        rnpps_rr(W(RG), W(RM))                                              \
+        cvzps_rr(W(RG), W(RG))
+
+#define cvpps_ld(RG, RM, DP) /* round towards +inf */                       \
+        rnpps_ld(W(RG), W(RM), W(DP))                                       \
+        cvzps_rr(W(RG), W(RG))
+
+#endif /* RT_128 >= 4 */
+
 /* cvm (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#if (RT_128 < 4)
 
 #define rnmps_rr(RG, RM)     /* round towards -inf */                       \
         cvmps_rr(W(RG), W(RM))                                              \
@@ -688,8 +730,32 @@
         cvtps_ld(W(RG), W(RM), W(DP))                                       \
         FCTRL_LEAVE(ROUNDM)
 
+#else /* RT_128 >= 4 */
+
+#define rnmps_rr(RG, RM)     /* round towards -inf */                       \
+    ESC EMITB(0x0F) EMITB(0x3A) EMITB(0x08)                                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+
+#define rnmps_ld(RG, RM, DP) /* round towards -inf */                       \
+    ESC EMITB(0x0F) EMITB(0x3A) EMITB(0x08)                                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(0x01))
+
+#define cvmps_rr(RG, RM)     /* round towards -inf */                       \
+        rnmps_rr(W(RG), W(RM))                                              \
+        cvzps_rr(W(RG), W(RG))
+
+#define cvmps_ld(RG, RM, DP) /* round towards -inf */                       \
+        rnmps_ld(W(RG), W(RM), W(DP))                                       \
+        cvzps_rr(W(RG), W(RG))
+
+#endif /* RT_128 >= 4 */
+
 /* cvn (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#if (RT_128 < 4)
 
 #define rnnps_rr(RG, RM)     /* round towards near */                       \
         cvnps_rr(W(RG), W(RM))                                              \
@@ -698,6 +764,20 @@
 #define rnnps_ld(RG, RM, DP) /* round towards near */                       \
         cvnps_ld(W(RG), W(RM), W(DP))                                       \
         cvnpn_rr(W(RG), W(RG))
+
+#else /* RT_128 >= 4 */
+
+#define rnnps_rr(RG, RM)     /* round towards near */                       \
+    ESC EMITB(0x0F) EMITB(0x3A) EMITB(0x08)                                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+
+#define rnnps_ld(RG, RM, DP) /* round towards near */                       \
+    ESC EMITB(0x0F) EMITB(0x3A) EMITB(0x08)                                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(0x00))
+
+#endif /* RT_128 >= 4 */
 
 #define cvnps_rr(RG, RM)     /* round towards near */                       \
         cvtps_rr(W(RG), W(RM))
@@ -896,6 +976,8 @@
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz */
 
+#if (RT_128 < 4)
+
 #define rndps_rr(RG, RM)                                                    \
         cvtps_rr(W(RG), W(RM))                                              \
         cvnpn_rr(W(RG), W(RG))
@@ -903,6 +985,20 @@
 #define rndps_ld(RG, RM, DP)                                                \
         cvtps_ld(W(RG), W(RM), W(DP))                                       \
         cvnpn_rr(W(RG), W(RG))
+
+#else /* RT_128 >= 4 */
+
+#define rndps_rr(RG, RM)                                                    \
+    ESC EMITB(0x0F) EMITB(0x3A) EMITB(0x08)                                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define rndps_ld(RG, RM, DP)                                                \
+    ESC EMITB(0x0F) EMITB(0x3A) EMITB(0x08)                                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(0x04))
+
+#endif /* RT_128 >= 4 */
 
 #define cvtps_rr(RG, RM)                                                    \
     ESC EMITB(0x0F) EMITB(0x5B)                                             \
@@ -933,6 +1029,8 @@
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block */
 
+#if (RT_128 < 4)
+
 #define rnrps_rr(RG, RM, mode)                                              \
         cvrps_rr(W(RG), W(RM), mode)                                        \
         cvnpn_rr(W(RG), W(RG))
@@ -941,6 +1039,19 @@
         FCTRL_ENTER(mode)                                                   \
         cvtps_rr(W(RG), W(RM))                                              \
         FCTRL_LEAVE(mode)
+
+#else /* RT_128 >= 4 */
+
+#define rnrps_rr(RG, RM, mode)                                              \
+    ESC EMITB(0x0F) EMITB(0x3A) EMITB(0x08)                                 \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
+
+#define cvrps_rr(RG, RM, mode)                                              \
+        rnrps_rr(W(RG), W(RM), mode)                                        \
+        cvzps_rr(W(RG), W(RG))
+
+#endif /* RT_128 >= 4 */
 
 #endif /* RT_128 */
 
