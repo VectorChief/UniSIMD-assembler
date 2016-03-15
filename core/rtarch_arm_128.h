@@ -623,7 +623,7 @@
 
 #define CHECK_MASK(lb, mask, RG) /* destroys Reax */                        \
         movms_rr(Reax, W(RG))                                               \
-        addxx_ri(Reax, IB(RT_SIMD_MASK_##mask))                             \
+        addzx_ri(Reax, IB(RT_SIMD_MASK_##mask))                             \
         jezxx_lb(lb)
 
 /* simd mode
