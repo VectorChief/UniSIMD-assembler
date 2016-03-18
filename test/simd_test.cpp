@@ -1049,8 +1049,8 @@ rt_void s_test09(rt_SIMD_INFOX *info)
         addxx_ri(Rebx, IB(4))
         addxx_ri(Resi, IB(4))
         subxx_ri(Redi, IB(1))
-        cmpxx_ri(Redi, IB(S))
-        jgtxx_lb(loc_beg)
+        cmjxx_ri(Redi, IB(S),
+                 GT_x, loc_beg)
 
         movxx_ld(Redi, Mebp, inf_IAR0)
         movxx_mi(Mebp, inf_SIMD, IB(S))
@@ -1070,12 +1070,12 @@ rt_void s_test09(rt_SIMD_INFOX *info)
         addxx_ri(Resi, IB(4))
         addxx_ri(Redi, IB(4))
         subxx_mi(Mebp, inf_SIMD, IB(1))
-        cmpxx_mi(Mebp, inf_SIMD, IB(0))
-        jgtxx_lb(smd_beg)
+        cmjxx_mi(Mebp, inf_SIMD, IB(0),
+                 GT_x, smd_beg)
 
         subxx_mi(Mebp, inf_LOC, IB(1))
-        cmpxx_mi(Mebp, inf_LOC, IB(0))
-        jeqxx_lb(cyc_end)
+        cmjxx_mi(Mebp, inf_LOC, IB(0),
+                 EQ_x, cyc_end)
         jmpxx_mm(Mebp, inf_LABEL)
         jmpxx_lb(cyc_beg) /* the same jump as above */
 
