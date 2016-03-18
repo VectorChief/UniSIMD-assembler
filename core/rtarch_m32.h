@@ -1091,24 +1091,24 @@
 #define CM0(cmj, cm1, cm2, r1, r2, lb)                                      \
         cmj(cm1, cm2, r1, r2, lb)
 
-#define cmjxx_ri(CC, RM, IM, lb)                                            \
+#define cmjxx_ri(RM, IM, CC, lb)                                            \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
         CM0(VAL(CC),  TP1(CC), TP2(CC), MOD(RM),     $t9, lb)
 
-#define cmjxx_mi(CC, RM, DP, IM, lb)                                        \
+#define cmjxx_mi(RM, DP, IM, CC, lb)                                        \
         AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G3(IM))   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         CM0(VAL(CC),  TP1(CC), TP2(CC),     $t8,     $t9, lb)
 
-#define cmjxx_rr(CC, RG, RM, lb)                                            \
+#define cmjxx_rr(RG, RM, CC, lb)                                            \
         CM0(VAL(CC),  TP1(CC), TP2(CC), MOD(RG), MOD(RM), lb)
 
-#define cmjxx_rm(CC, RG, RM, DP, lb)                                        \
+#define cmjxx_rm(RG, RM, DP, CC, lb)                                        \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         CM0(VAL(CC),  TP1(CC), TP2(CC), MOD(RG),     $t8, lb)
 
-#define cmjxx_mr(CC, RM, DP, RG, lb)                                        \
+#define cmjxx_mr(RM, DP, RG, CC, lb)                                        \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         CM0(VAL(CC),  TP1(CC), TP2(CC),     $t8, MOD(RG), lb)
