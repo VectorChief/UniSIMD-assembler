@@ -140,20 +140,20 @@
 
 /* registers    REG,  MOD,  SIB */
 
-#define Reax    Teax, 0x00, EMPTY
-#define Recx    Tecx, 0x00, EMPTY
-#define Redx    Tedx, 0x00, EMPTY
-#define Rebx    Tebx, 0x00, EMPTY
-#define Rebp    Tebp, 0x00, EMPTY
-#define Resi    Tesi, 0x00, EMPTY
-#define Redi    Tedi, 0x00, EMPTY
-#define Reg8    Teg8, 0x00, EMPTY
-#define Reg9    Teg9, 0x00, EMPTY
-#define RegA    TegA, 0x00, EMPTY
-#define RegB    TegB, 0x00, EMPTY
-#define RegC    TegC, 0x00, EMPTY
-#define RegD    TegD, 0x00, EMPTY
-#define RegE    TegE, 0x00, EMPTY
+#define Reax    Teax,  $a0, EMPTY
+#define Recx    Tecx,  $t7, EMPTY
+#define Redx    Tedx,  $v0, EMPTY
+#define Rebx    Tebx,  $v1, EMPTY
+#define Rebp    Tebp,  $a1, EMPTY
+#define Resi    Tesi,  $a2, EMPTY
+#define Redi    Tedi,  $a3, EMPTY
+#define Reg8    Teg8,  $t0, EMPTY
+#define Reg9    Teg9,  $t1, EMPTY
+#define RegA    TegA,  $t2, EMPTY
+#define RegB    TegB,  $t3, EMPTY
+#define RegC    TegC,  $t4, EMPTY
+#define RegD    TegD,  $t5, EMPTY
+#define RegE    TegE,  $t6, EMPTY
 
 /* addressing   REG,  MOD,  SIB */
 
@@ -1061,6 +1061,58 @@
 #define LBL(lb)                                          /* code label */   \
         ASM_BEG ASM_OP0(lb:) ASM_END
 
+/* cmj
+ * set-flags: no */
+
+#define EQ_x    A0, beq,  EMPTY
+#define NE_x    A0, bne,  EMPTY
+
+#define LT_x    A1, sltu, bnez
+#define LE_x    A2, sltu, beqz
+#define GT_x    A2, sltu, bnez
+#define GE_x    A1, sltu, beqz
+
+#define LT_n    A1, slt,  bnez
+#define LE_n    A2, slt,  beqz
+#define GT_n    A2, slt,  bnez
+#define GE_n    A1, slt,  beqz
+
+#define A0(cm1, cm2, r1, r2, lb)                                            \
+        ASM_BEG ASM_OP3(cm1, r1, r2, lb) ASM_END
+
+#define A1(cm1, cm2, r1, r2, lb)                                            \
+        ASM_BEG ASM_OP3(cm1, $t8, r1, r2) ASM_END                           \
+        ASM_BEG ASM_OP2(cm2, $t8, lb) ASM_END
+
+#define A2(cm1, cm2, r1, r2, lb)                                            \
+        ASM_BEG ASM_OP3(cm1, $t8, r2, r1) ASM_END                           \
+        ASM_BEG ASM_OP2(cm2, $t8, lb) ASM_END
+
+#define CM0(cmj, cm1, cm2, r1, r2, lb)                                      \
+        cmj(cm1, cm2, r1, r2, lb)
+
+#define cmjxx_ri(CC, RM, IM, lb)                                            \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
+        CM0(VAL(CC),  TP1(CC), TP2(CC), MOD(RM),     $t9, lb)
+
+#define cmjxx_mi(CC, RM, DP, IM, lb)                                        \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G3(IM))   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        CM0(VAL(CC),  TP1(CC), TP2(CC),     $t8,     $t9, lb)
+
+#define cmjxx_rr(CC, RG, RM, lb)                                            \
+        CM0(VAL(CC),  TP1(CC), TP2(CC), MOD(RG), MOD(RM), lb)
+
+#define cmjxx_rm(CC, RG, RM, DP, lb)                                        \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        CM0(VAL(CC),  TP1(CC), TP2(CC), MOD(RG),     $t8, lb)
+
+#define cmjxx_mr(CC, RM, DP, RG, lb)                                        \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        CM0(VAL(CC),  TP1(CC), TP2(CC),     $t8, MOD(RG), lb)
+
 #else  /* r6 */
 
 /* jmp
@@ -1113,6 +1165,56 @@
 
 #define LBL(lb)                                          /* code label */   \
         ASM_BEG ASM_OP0(lb:) ASM_END
+
+/* cmj
+ * set-flags: no */
+
+#define EQ_x    A0, beqc,  EMPTY
+#define NE_x    A0, bnec,  EMPTY
+
+#define LT_x    A1, bltuc, EMPTY
+#define LE_x    A2, bgeuc, EMPTY
+#define GT_x    A2, bltuc, EMPTY
+#define GE_x    A1, bgeuc, EMPTY
+
+#define LT_n    A1, bltc,  EMPTY
+#define LE_n    A2, bgec,  EMPTY
+#define GT_n    A2, bltc,  EMPTY
+#define GE_n    A1, bgec,  EMPTY
+
+#define A0(cm1, cm2, r1, r2, lb)                                            \
+        ASM_BEG ASM_OP3(cm1, r1, r2, lb) ASM_END
+
+#define A1(cm1, cm2, r1, r2, lb)                                            \
+        ASM_BEG ASM_OP3(cm1, r1, r2, lb) ASM_END
+
+#define A2(cm1, cm2, r1, r2, lb)                                            \
+        ASM_BEG ASM_OP3(cm1, r2, r1, lb) ASM_END
+
+#define CM0(cmj, cm1, cm2, r1, r2, lb)                                      \
+        cmj(cm1, cm2, r1, r2, lb)
+
+#define cmjxx_ri(RM, IM, CC, lb)                                            \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
+        CM0(VAL(CC),  TP1(CC), TP2(CC), MOD(RM),     $t9, lb)
+
+#define cmjxx_mi(RM, DP, IM, CC, lb)                                        \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G3(IM))   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        CM0(VAL(CC),  TP1(CC), TP2(CC),     $t8,     $t9, lb)
+
+#define cmjxx_rr(RG, RM, CC, lb)                                            \
+        CM0(VAL(CC),  TP1(CC), TP2(CC), MOD(RG), MOD(RM), lb)
+
+#define cmjxx_rm(RG, RM, DP, CC, lb)                                        \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        CM0(VAL(CC),  TP1(CC), TP2(CC), MOD(RG),     $t8, lb)
+
+#define cmjxx_mr(RM, DP, RG, CC, lb)                                        \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        CM0(VAL(CC),  TP1(CC), TP2(CC),     $t8, MOD(RG), lb)
 
 #endif /* r6 */
 
