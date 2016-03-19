@@ -775,6 +775,45 @@
         EMITW(0xE0600090 | MRM(Tedx,    Tedx,    TMxx) | Teax << 8)         \
                                                           /* Redx<-rem */
 
+/* cmj
+ * set-flags: no */
+
+#define EQ_x    jeqxx_lb
+#define NE_x    jnexx_lb
+
+#define LT_x    jltxx_lb
+#define LE_x    jlexx_lb
+#define GT_x    jgtxx_lb
+#define GE_x    jgexx_lb
+
+#define LT_n    jltxn_lb
+#define LE_n    jlexn_lb
+#define GT_n    jgtxn_lb
+#define GE_n    jgexn_lb
+
+#define cmjxx_ri(RM, IM, CC, lb)                                            \
+        cmpxx_ri(W(RM), W(IM))                                              \
+        CMJ(CC, lb)
+
+#define cmjxx_mi(RM, DP, IM, CC, lb)                                        \
+        cmpxx_mi(W(RM), W(DP), W(IM))                                       \
+        CMJ(CC, lb)
+
+#define cmjxx_rr(RG, RM, CC, lb)                                            \
+        cmpxx_rr(W(RG), W(RM))                                              \
+        CMJ(CC, lb)
+
+#define cmjxx_rm(RG, RM, DP, CC, lb)                                        \
+        cmpxx_rm(W(RG), W(RM), W(DP))                                       \
+        CMJ(CC, lb)
+
+#define cmjxx_mr(RM, DP, RG, CC, lb)                                        \
+        cmpxx_mr(W(RM), W(DP), W(RG))                                       \
+        CMJ(CC, lb)
+
+#define CMJ(CC, lb) /* internal macro for combined-compare-jump (cmj) */    \
+        CC(lb)
+
 /* cmp
  * set-flags: yes */
 
@@ -848,45 +887,6 @@
 
 #define LBL(lb)                                          /* code label */   \
         ASM_BEG ASM_OP0(lb:) ASM_END
-
-/* cmj
- * set-flags: no */
-
-#define EQ_x    jeqxx_lb, EMPTY, EMPTY
-#define NE_x    jnexx_lb, EMPTY, EMPTY
-
-#define LT_x    jltxx_lb, EMPTY, EMPTY
-#define LE_x    jlexx_lb, EMPTY, EMPTY
-#define GT_x    jgtxx_lb, EMPTY, EMPTY
-#define GE_x    jgexx_lb, EMPTY, EMPTY
-
-#define LT_n    jltxn_lb, EMPTY, EMPTY
-#define LE_n    jlexn_lb, EMPTY, EMPTY
-#define GT_n    jgtxn_lb, EMPTY, EMPTY
-#define GE_n    jgexn_lb, EMPTY, EMPTY
-
-#define CM0(cmj, lb)                                                        \
-        cmj(lb)
-
-#define cmjxx_ri(RM, IM, CC, lb)                                            \
-        cmpxx_ri(W(RM), W(IM))                                              \
-        CM0(VAL(CC), lb)
-
-#define cmjxx_mi(RM, DP, IM, CC, lb)                                        \
-        cmpxx_mi(W(RM), W(DP), W(IM))                                       \
-        CM0(VAL(CC), lb)
-
-#define cmjxx_rr(RG, RM, CC, lb)                                            \
-        cmpxx_rr(W(RG), W(RM))                                              \
-        CM0(VAL(CC), lb)
-
-#define cmjxx_rm(RG, RM, DP, CC, lb)                                        \
-        cmpxx_rm(W(RG), W(RM), W(DP))                                       \
-        CM0(VAL(CC), lb)
-
-#define cmjxx_mr(RM, DP, RG, CC, lb)                                        \
-        cmpxx_mr(W(RM), W(DP), W(RG))                                       \
-        CM0(VAL(CC), lb)
 
 /* ver
  * set-flags: no */
