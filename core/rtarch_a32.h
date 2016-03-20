@@ -786,6 +786,12 @@
 #define GT_n    jgtxn_lb
 #define GE_n    jgexn_lb
 
+#define cmjxx_rz(RM, CC, lb)                                                \
+        cmjxx_ri(W(RM), IC(0), CC, lb)
+
+#define cmjxx_mz(RM, DP, CC, lb)                                            \
+        cmjxx_mi(W(RM), W(DP), IC(0), CC, lb)
+
 #define cmjxx_ri(RM, IM, CC, lb)                                            \
         cmpxx_ri(W(RM), W(IM))                                              \
         CMJ(CC, lb)

@@ -991,6 +991,14 @@
 #define GT_n    A8
 #define GE_n    A9
 
+#define cmjxx_rz(RM, CC, lb)                                                \
+        CMZ(CC, MOD(RM), lb)
+
+#define cmjxx_mz(RM, DP, CC, lb)                                            \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        CMZ(CC, $t8,     lb)
+
 #define cmjxx_ri(RM, IM, CC, lb)                                            \
         CMI(CC, MOD(RM), REG(RM), W(IM), lb)
 
@@ -1099,6 +1107,40 @@
         ASM_BEG ASM_OP0(lb:) ASM_END
 
 /* internal definitions for combined-compare-jump (cmj) */
+
+#define ZA0(r1, lb)                                                         \
+        ASM_BEG ASM_OP3(beq, r1, $zero, lb) ASM_END
+
+#define ZA1(r1, lb)                                                         \
+        ASM_BEG ASM_OP3(bne, r1, $zero, lb) ASM_END
+
+#define ZA2(r1, lb) /* "never" branch as unsigned is always >= 0 */         \
+        EMPTY
+
+#define ZA3(r1, lb)                                                         \
+        ASM_BEG ASM_OP3(beq, r1, $zero, lb) ASM_END
+
+#define ZA4(r1, lb)                                                         \
+        ASM_BEG ASM_OP3(bne, r1, $zero, lb) ASM_END
+
+#define ZA5(r1, lb) /* "always" branch as unsigned is never < 0 */          \
+        ASM_BEG ASM_OP1(b, lb) ASM_END
+
+#define ZA6(r1, lb)                                                         \
+        ASM_BEG ASM_OP2(bltz, r1, lb) ASM_END
+
+#define ZA7(r1, lb)                                                         \
+        ASM_BEG ASM_OP2(blez, r1, lb) ASM_END
+
+#define ZA8(r1, lb)                                                         \
+        ASM_BEG ASM_OP2(bgtz, r1, lb) ASM_END
+
+#define ZA9(r1, lb)                                                         \
+        ASM_BEG ASM_OP2(bgez, r1, lb) ASM_END
+
+#define CMZ(CC, r1, lb)                                                     \
+        Z##CC(r1, lb)
+
 
 #define IA0(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
@@ -1251,6 +1293,40 @@
         ASM_BEG ASM_OP0(lb:) ASM_END
 
 /* internal definitions for combined-compare-jump (cmj) */
+
+#define ZA0(r1, lb)                                                         \
+        ASM_BEG ASM_OP2(beqzc, r1, lb) ASM_END
+
+#define ZA1(r1, lb)                                                         \
+        ASM_BEG ASM_OP2(bnezc, r1, lb) ASM_END
+
+#define ZA2(r1, lb) /* "never" branch as unsigned is always >= 0 */         \
+        EMPTY
+
+#define ZA3(r1, lb)                                                         \
+        ASM_BEG ASM_OP2(beqzc, r1, lb) ASM_END
+
+#define ZA4(r1, lb)                                                         \
+        ASM_BEG ASM_OP2(bnezc, r1, lb) ASM_END
+
+#define ZA5(r1, lb) /* "always" branch as unsigned is never < 0 */          \
+        ASM_BEG ASM_OP1(b, lb) ASM_END
+
+#define ZA6(r1, lb)                                                         \
+        ASM_BEG ASM_OP2(bltzc, r1, lb) ASM_END
+
+#define ZA7(r1, lb)                                                         \
+        ASM_BEG ASM_OP2(blezc, r1, lb) ASM_END
+
+#define ZA8(r1, lb)                                                         \
+        ASM_BEG ASM_OP2(bgtzc, r1, lb) ASM_END
+
+#define ZA9(r1, lb)                                                         \
+        ASM_BEG ASM_OP2(bgezc, r1, lb) ASM_END
+
+#define CMZ(CC, r1, lb)                                                     \
+        Z##CC(r1, lb)
+
 
 #define IA0(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \

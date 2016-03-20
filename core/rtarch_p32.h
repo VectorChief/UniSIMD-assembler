@@ -821,6 +821,12 @@
 #define GT_n    A8
 #define GE_n    A9
 
+#define cmjxx_rz(RM, CC, lb)                                                \
+        cmjxx_ri(W(RM), IC(0), CC, lb)
+
+#define cmjxx_mz(RM, DP, CC, lb)                                            \
+        cmjxx_mi(W(RM), W(DP), IC(0), CC, lb)
+
 #define cmjxx_ri(RM, IM, CC, lb)                                            \
         CMI(CC, MOD(RM), REG(RM), W(IM), lb)
 
