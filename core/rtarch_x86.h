@@ -24,6 +24,8 @@
  *
  * cmdxx_ri - applies [cmd] to [r]egister from [i]mmediate
  * cmdxx_mi - applies [cmd] to [m]emory   from [i]mmediate
+ * cmdxx_rz - applies [cmd] to [r]egister from [z]ero-arg
+ * cmdxx_mz - applies [cmd] to [m]emory   from [z]ero-arg
  *
  * cmdxx_rm - applies [cmd] to [r]egister from [m]emory
  * cmdxx_ld - applies [cmd] as above
@@ -193,7 +195,7 @@
         EMITB(0x61)
 
 /* and
- * set-flags: yes (z-version only) */
+ * set-flags: undefined (xx), yes (zx) */
 
 #define andxx_ri(RM, IM)                                                    \
         EMITB(0x81 | TYP(IM))                                               \
@@ -244,7 +246,7 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* orr
- * set-flags: no (in ARM) */
+ * set-flags: undefined */
 
 #define orrxx_ri(RM, IM)                                                    \
         EMITB(0x81 | TYP(IM))                                               \
@@ -271,7 +273,7 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* xor
- * set-flags: no (in ARM) */
+ * set-flags: undefined */
 
 #define xorxx_ri(RM, IM)                                                    \
         EMITB(0x81 | TYP(IM))                                               \
@@ -310,7 +312,7 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* neg
- * set-flags: yes (z-version only) */
+ * set-flags: undefined (xx), yes (zx) */
 
 #define negxx_rr(RM)                                                        \
         EMITB(0xF7)                                                         \
@@ -331,7 +333,7 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* add
- * set-flags: yes (z-version only) */
+ * set-flags: undefined (xx), yes (zx) */
 
 #define addxx_ri(RM, IM)                                                    \
         EMITB(0x81 | TYP(IM))                                               \
@@ -382,7 +384,7 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* sub
- * set-flags: yes (z-version only) */
+ * set-flags: undefined (xx), yes (zx) */
 
 #define subxx_ri(RM, IM)                                                    \
         EMITB(0x81 | TYP(IM))                                               \
@@ -439,7 +441,7 @@
         subzx_st(W(RG), W(RM), W(DP))
 
 /* shl
- * set-flags: no (in ARM) */
+ * set-flags: undefined */
 
 #define shlxx_ri(RM, IM)                                                    \
         EMITB(0xC1)                                                         \
@@ -461,7 +463,7 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* shr
- * set-flags: no (in ARM) */
+ * set-flags: undefined */
 
 #define shrxx_ri(RM, IM)                                                    \
         EMITB(0xC1)                                                         \
@@ -502,7 +504,7 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* mul
- * set-flags: no (in ARM) */
+ * set-flags: undefined */
 
 #define mulxx_ri(RM, IM)                 /* part-range 32-bit multiply */   \
         EMITB(0x69 | TYP(IM))                                               \
@@ -552,7 +554,7 @@
         mulxn_xm(W(RM), W(DP))  /* (in ARM) part-range 32-bit multiply */
 
 /* div
- * set-flags: no (in ARM) */
+ * set-flags: undefined */
 
 #define divxx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
         EMITB(0xF7)                        /* destroys Redx (out:junk) */   \
@@ -583,7 +585,7 @@
                                      /* 24-bit int (fp32 div in ARMv7) */
 
 /* rem
- * set-flags: no */
+ * set-flags: undefined */
 
 #define remxx_xx()          /* to be placed immediately prior divxx_x* */   \
                             /* (in ARM) to prepare for rem calculation */
@@ -604,7 +606,7 @@
                             /* (in ARM) to produce remainder Redx<-rem */
 
 /* cmj
- * set-flags: no */
+ * set-flags: undefined */
 
 #define EQ_x    jeqxx_lb
 #define NE_x    jnexx_lb

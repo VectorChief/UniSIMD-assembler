@@ -24,6 +24,8 @@
  *
  * cmdxx_ri - applies [cmd] to [r]egister from [i]mmediate
  * cmdxx_mi - applies [cmd] to [m]emory   from [i]mmediate
+ * cmdxx_rz - applies [cmd] to [r]egister from [z]ero-arg
+ * cmdxx_mz - applies [cmd] to [m]emory   from [z]ero-arg
  *
  * cmdxx_rm - applies [cmd] to [r]egister from [m]emory
  * cmdxx_ld - applies [cmd] as above
@@ -292,7 +294,7 @@
 #endif /* RT_SIMD_FAST_FCTRL */
 
 /* and
- * set-flags: yes (z-version only) */
+ * set-flags: undefined (xx), yes (zx) */
 
 #define andxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
@@ -343,7 +345,7 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* orr
- * set-flags: no */
+ * set-flags: undefined */
 
 #define orrxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
@@ -370,7 +372,7 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* xor
- * set-flags: no */
+ * set-flags: undefined */
 
 #define xorxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
@@ -409,7 +411,7 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* neg
- * set-flags: yes (z-version only) */
+ * set-flags: undefined (xx), yes (zx) */
 
 #define negxx_rr(RM)                                                        \
         EMITW(0xE2600000 | MRM(REG(RM), REG(RM), 0x00))
@@ -430,7 +432,7 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* add
- * set-flags: yes (z-version only) */
+ * set-flags: undefined (xx), yes (zx) */
 
 #define addxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
@@ -481,7 +483,7 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* sub
- * set-flags: yes (z-version only) */
+ * set-flags: undefined (xx), yes (zx) */
 
 #define subxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
@@ -538,7 +540,7 @@
         subzx_st(W(RG), W(RM), W(DP))
 
 /* shl
- * set-flags: no */
+ * set-flags: undefined */
 
 #define shlxx_ri(RM, IM)                                                    \
         EMITW(0xE1A00000 | MRM(REG(RM), 0x00,    REG(RM)) |                 \
@@ -561,7 +563,7 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* shr
- * set-flags: no */
+ * set-flags: undefined */
 
 #define shrxx_ri(RM, IM)                                                    \
         EMITW(0xE1A00020 | MRM(REG(RM), 0x00,    REG(RM)) |                 \
@@ -604,7 +606,7 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* mul
- * set-flags: no */
+ * set-flags: undefined */
 
 #define mulxx_ri(RM, IM)                 /* part-range 32-bit multiply */   \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
@@ -652,7 +654,7 @@
         EMITW(0xE0000090 | TMxx)         /* part-range 32-bit multiply */
 
 /* div
- * set-flags: no */
+ * set-flags: undefined */
 
 #if (RT_ARM < 8) /* hw int-div is only mandatory in ARMv8:AArch32 */
 
@@ -751,7 +753,7 @@
 #endif /* RT_ARM >= 8 */
 
 /* rem
- * set-flags: no */
+ * set-flags: undefined */
 
 #define remxx_xx()          /* to be placed immediately prior divxx_x* */   \
         movxx_rr(Redx, Reax)         /* to prepare for rem calculation */
@@ -776,7 +778,7 @@
                                                           /* Redx<-rem */
 
 /* cmj
- * set-flags: no */
+ * set-flags: undefined */
 
 #define EQ_x    jeqxx_lb
 #define NE_x    jnexx_lb

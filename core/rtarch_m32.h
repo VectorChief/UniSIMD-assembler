@@ -24,6 +24,8 @@
  *
  * cmdxx_ri - applies [cmd] to [r]egister from [i]mmediate
  * cmdxx_mi - applies [cmd] to [m]emory   from [i]mmediate
+ * cmdxx_rz - applies [cmd] to [r]egister from [z]ero-arg
+ * cmdxx_mz - applies [cmd] to [m]emory   from [z]ero-arg
  *
  * cmdxx_rm - applies [cmd] to [r]egister from [m]emory
  * cmdxx_ld - applies [cmd] as above
@@ -392,7 +394,7 @@
 #endif /* RT_SIMD_FAST_FCTRL */
 
 /* and
- * set-flags: yes (z-version only) */
+ * set-flags: undefined (xx), yes (zx) */
 
 #define andxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
@@ -452,7 +454,7 @@
         EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* orr
- * set-flags: no */
+ * set-flags: undefined */
 
 #define orrxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
@@ -482,7 +484,7 @@
         EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* xor
- * set-flags: no */
+ * set-flags: undefined */
 
 #define xorxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
@@ -524,7 +526,7 @@
         EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* neg
- * set-flags: yes (z-version only) */
+ * set-flags: undefined (xx), yes (zx) */
 
 #define negxx_rr(RM)                                                        \
         EMITW(0x00000023 | MRM(REG(RM), TZxx,    REG(RM)))
@@ -546,7 +548,7 @@
         EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* add
- * set-flags: yes (z-version only) */
+ * set-flags: undefined (xx), yes (zx) */
 
 #define addxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
@@ -606,7 +608,7 @@
         EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* sub
- * set-flags: yes (z-version only) */
+ * set-flags: undefined (xx), yes (zx) */
 
 #define subxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
@@ -676,7 +678,7 @@
         subzx_st(W(RG), W(RM), W(DP))
 
 /* shl
- * set-flags: no */
+ * set-flags: undefined */
 
 #define shlxx_ri(RM, IM)                                                    \
         EMITW(0x00000000 | MRM(REG(RM), 0x00,    REG(RM)) |                 \
@@ -699,7 +701,7 @@
         EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* shr
- * set-flags: no */
+ * set-flags: undefined */
 
 #define shrxx_ri(RM, IM)                                                    \
         EMITW(0x00000002 | MRM(REG(RM), 0x00,    REG(RM)) |                 \
@@ -744,7 +746,7 @@
 #if RT_M32 < 6 /* pre-r6 */
 
 /* mul
- * set-flags: no */
+ * set-flags: undefined */
 
 #define mulxx_ri(RM, IM)                 /* part-range 32-bit multiply */   \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
@@ -802,7 +804,7 @@
         EMITW(0x70000002 | MRM(Teax,    Teax,    TMxx))
 
 /* div
- * set-flags: no */
+ * set-flags: undefined */
 
 #define divxx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
                                      /* destroys Redx, Xmm0 (in ARMv7) */   \
@@ -841,7 +843,7 @@
                                      /* 24-bit int (fp32 div in ARMv7) */
 
 /* rem
- * set-flags: no */
+ * set-flags: undefined */
 
 #define remxx_xx()          /* to be placed immediately prior divxx_x* */   \
                                      /* to prepare for rem calculation */
@@ -864,7 +866,7 @@
 #else  /* r6 */
 
 /* mul
- * set-flags: no */
+ * set-flags: undefined */
 
 #define mulxx_ri(RM, IM)                 /* part-range 32-bit multiply */   \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
@@ -918,7 +920,7 @@
         EMITW(0x00000099 | MRM(Teax,    Teax,    TMxx))
 
 /* div
- * set-flags: no */
+ * set-flags: undefined */
 
 #define divxx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
                                      /* destroys Redx, Xmm0 (in ARMv7) */   \
@@ -953,7 +955,7 @@
                                      /* 24-bit int (fp32 div in ARMv7) */
 
 /* rem
- * set-flags: no */
+ * set-flags: undefined */
 
 #define remxx_xx()          /* to be placed immediately prior divxx_x* */   \
                                      /* to prepare for rem calculation */
@@ -976,7 +978,7 @@
 #endif /* r6 */
 
 /* cmj
- * set-flags: no */
+ * set-flags: undefined */
 
 #define EQ_x    A0
 #define NE_x    A1

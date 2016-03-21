@@ -45,25 +45,25 @@
  * Current 32-bit targets:
  *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 BASE regs, int-div, fp-cvt-r
  *  - rtarch_a32_128.h     - AArch64:ILP32 ABI, 32 SIMD regs, IEEE-fp, sqr, div
- *  - rtarch_m32.h         - MIPS32 r5/r6 ISA, 32 BASE regs, 14 + 3 used
+ *  - rtarch_m32.h         - MIPS32 r5/r6 ISA, 32 BASE regs, 14 + 4 used
  *  - rtarch_m32_128.h     - MIPS32 r5/r6 ISA, 32 SIMD regs, MSA 128-bit
- *  - rtarch_p32.h         - 32-bit PowerISA, 32 BASE regs
- *  - rtarch_p32_128.h     - 32-bit PowerISA, 32 SIMD regs, VMX 128-bit
+ *  - rtarch_p32.h         - 32-bit PowerISA, 32 BASE regs, 14 + 5 used
+ *  - rtarch_p32_128.h     - 32-bit PowerISA, 32 SIMD regs, VMX/VSX 128-bit
  *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 32-bit ptrs
  *  - rtarch_x32_128.h     - x86_64:x32 ABI, 16 SIMD regs, SSE 128-bit
  *  - rtarch_x32_256.h     - x86_64:x32 ABI, 16 SIMD regs, AVX 256-bit
  *
  * Future 32-bit targets:
- *  - rtarch_x86_512.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, AVX 512-bit
+ *  - rtarch_x86_512.h     - 32-bit x86 ISA,  8 SIMD regs, AVX 512-bit
  *  - rtarch_x32_512.h     - x86_64:x32 ABI, 32 SIMD regs, AVX 512-bit
  *
  * Future 64-bit targets:
  *  - rtarch_a64.h         - AArch64:ARMv8 ISA, 32 BASE regs, int-div, fp-cvt-r
  *  - rtarch_a64_128.h     - AArch64:ARMv8 ISA, 32 SIMD regs, IEEE-fp, sqr, div
- *  - rtarch_m64.h         - MIPS64 r5/r6 ISA, 32 BASE regs, 14 + 3 used
+ *  - rtarch_m64.h         - MIPS64 r5/r6 ISA, 32 BASE regs, 14 + 4 used
  *  - rtarch_m64_128.h     - MIPS64 r5/r6 ISA, 32 SIMD regs, MSA 128-bit
- *  - rtarch_p64.h         - 64-bit PowerISA, 32 BASE regs
- *  - rtarch_p64_128.h     - 64-bit PowerISA, 32 SIMD regs, VMX 128-bit
+ *  - rtarch_p64.h         - 64-bit PowerISA, 32 BASE regs, 14 + 5 used
+ *  - rtarch_p64_128.h     - 64-bit PowerISA, 32 SIMD regs, VMX/VSX 128-bit
  *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 64-bit ptrs
  *  - rtarch_x64_128.h     - x86_64:x64 ISA, 16 SIMD regs, SSE 128-bit
  *  - rtarch_x64_256.h     - x86_64:x64 ISA, 16 SIMD regs, AVX 256-bit
@@ -71,11 +71,11 @@
  *
  * Preliminary naming scheme for extended BASE and SIMD register files.
  *
- * Current 8 BASE and 8 SIMD registers:
+ * Legacy 8 BASE and 8 SIMD registers:
  *  - Reax, Rebx, Recx, Redx, Resp, Rebp, Resi, Redi
  *  - Xmm0, Xmm1, Xmm2, Xmm3, Xmm4, Xmm5, Xmm6, Xmm7
  *
- * Future 16 BASE and 16 SIMD registers:
+ * Current 16 BASE and 16 SIMD registers:
  *  - Reax, ... , Redi, Reg8, Reg9, RegA, ... , RegF
  *  - Xmm0, ... , Xmm7, Xmm8, Xmm9, XmmA, ... , XmmF
  *
