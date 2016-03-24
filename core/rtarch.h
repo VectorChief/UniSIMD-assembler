@@ -643,6 +643,12 @@
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #define RT_SIMD_FAST_FCTRL      1 /* takes all available regs except (SP, PC) */
+/* RT_SIMD_COMPAT_DIV when enabled changes the default behavior
+ * of divps_** to the corresponding IEEE-compatible fallback */
+#define RT_SIMD_COMPAT_DIV      0
+/* RT_SIMD_COMPAT_SQR when enabled changes the default behavior
+ * of sqrps_** to the corresponding IEEE-compatible fallback */
+#define RT_SIMD_COMPAT_SQR      0
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -1148,6 +1154,12 @@
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #define RT_SIMD_FAST_FCTRL      1 /* not applicable to Power */
+/* RT_SIMD_COMPAT_DIV when enabled changes the default behavior
+ * of divps_** to the corresponding IEEE-compatible fallback */
+#define RT_SIMD_COMPAT_DIV      0
+/* RT_SIMD_COMPAT_SQR when enabled changes the default behavior
+ * of sqrps_** to the corresponding IEEE-compatible fallback */
+#define RT_SIMD_COMPAT_SQR      0
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8

@@ -212,6 +212,22 @@
 
 /* div */
 
+#if RT_SIMD_COMPAT_DIV != 0
+
+#define divps_rr(RG, RM)                                                    \
+        EMITW(0xEE800A00 | MRM(REG(RG)+0, REG(RG)+0, REG(RM)+0))            \
+        EMITW(0xEEC00AA0 | MRM(REG(RG)+0, REG(RG)+0, REG(RM)+0))            \
+        EMITW(0xEE800A00 | MRM(REG(RG)+1, REG(RG)+1, REG(RM)+1))            \
+        EMITW(0xEEC00AA0 | MRM(REG(RG)+1, REG(RG)+1, REG(RM)+1))
+
+#define divps_ld(RG, RM, DP)                                                \
+        movpx_st(Xmm0, Mebp, inf_SCR01(0))                                  \
+        movpx_ld(Xmm0, W(RM), W(DP))                                        \
+        divps_rr(W(RG), Xmm0)                                               \
+        movpx_ld(Xmm0, Mebp, inf_SCR01(0))
+
+#else /* RT_SIMD_COMPAT_DIV */
+
 #define divps_rr(RG, RM)                                                    \
         EMITW(0xF3BB0540 | MXM(Tmm1,    0x00,    REG(RM))) /* estimate */   \
         EMITW(0xF2000F50 | MXM(Tmm2,    Tmm1,    REG(RM))) /* 1st N-R */    \
@@ -231,7 +247,23 @@
         EMITW(0xF3000D50 | MXM(Tmm1,    Tmm1,    Tmm2))    /* post-mul */   \
         EMITW(0xF3000D50 | MXM(REG(RG), REG(RG), Tmm1))
 
+#endif /* RT_SIMD_COMPAT_DIV */
+
 /* sqr */
+
+#if RT_SIMD_COMPAT_SQR != 0
+
+#define sqrps_rr(RG, RM)                                                    \
+        EMITW(0xEEB10AC0 | MRM(REG(RG)+0, 0x00, REG(RM)+0))                 \
+        EMITW(0xEEF10AE0 | MRM(REG(RG)+0, 0x00, REG(RM)+0))                 \
+        EMITW(0xEEB10AC0 | MRM(REG(RG)+1, 0x00, REG(RM)+1))                 \
+        EMITW(0xEEF10AE0 | MRM(REG(RG)+1, 0x00, REG(RM)+1))
+
+#define sqrps_ld(RG, RM, DP)                                                \
+        movpx_ld(W(RG), W(RM), W(DP))                                       \
+        sqrps_rr(W(RG), W(RG))
+
+#else /* RT_SIMD_COMPAT_SQR */
 
 #define sqrps_rr(RG, RM)                                                    \
         EMITW(0xF3BB05C0 | MXM(Tmm1,    0x00,    REG(RM))) /* estimate */   \
@@ -255,6 +287,8 @@
         EMITW(0xF2200F50 | MXM(Tmm2,    Tmm2,    Tmm3))    /* 2nd N-R */    \
         EMITW(0xF3000D50 | MXM(Tmm1,    Tmm1,    Tmm2))    /* post-mul */   \
         EMITW(0xF3000D50 | MXM(REG(RG), Tmm3,    Tmm1))
+
+#endif /* RT_SIMD_COMPAT_SQR */
 
 /* cbr */
 
