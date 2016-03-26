@@ -96,22 +96,22 @@
 
 /* registers    REG,  MOD,  SIB */
 
-#define Xmm0    0x00, 0x00, $w0         /* w0 */
-#define Xmm1    0x01, 0x00, $w1         /* w1 */
-#define Xmm2    0x02, 0x00, $w2         /* w2 */
-#define Xmm3    0x03, 0x00, $w3         /* w3 */
-#define Xmm4    0x04, 0x00, $w4         /* w4 */
-#define Xmm5    0x05, 0x00, $w5         /* w5 */
-#define Xmm6    0x06, 0x00, $w6         /* w6 */
-#define Xmm7    0x07, 0x00, $w7         /* w7 */
-#define Xmm8    0x08, 0x00, $w8         /* w8 */
-#define Xmm9    0x09, 0x00, $w9         /* w9 */
-#define XmmA    0x0A, 0x00, $w10        /* w10 */
-#define XmmB    0x0B, 0x00, $w11        /* w11 */
-#define XmmC    0x0C, 0x00, $w12        /* w12 */
-#define XmmD    0x0D, 0x00, $w13        /* w13 */
-#define XmmE    0x0E, 0x00, $w14        /* w14 */
-#define XmmF    0x0F, 0x00, $w15        /* w15 */
+#define Xmm0    0x00, $w0,  EMPTY       /* w0 */
+#define Xmm1    0x01, $w1,  EMPTY       /* w1 */
+#define Xmm2    0x02, $w2,  EMPTY       /* w2 */
+#define Xmm3    0x03, $w3,  EMPTY       /* w3 */
+#define Xmm4    0x04, $w4,  EMPTY       /* w4 */
+#define Xmm5    0x05, $w5,  EMPTY       /* w5 */
+#define Xmm6    0x06, $w6,  EMPTY       /* w6 */
+#define Xmm7    0x07, $w7,  EMPTY       /* w7 */
+#define Xmm8    0x08, $w8,  EMPTY       /* w8 */
+#define Xmm9    0x09, $w9,  EMPTY       /* w9 */
+#define XmmA    0x0A, $w10, EMPTY       /* w10 */
+#define XmmB    0x0B, $w11, EMPTY       /* w11 */
+#define XmmC    0x0C, $w12, EMPTY       /* w12 */
+#define XmmD    0x0D, $w13, EMPTY       /* w13 */
+#define XmmE    0x0E, $w14, EMPTY       /* w14 */
+#define XmmF    0x0F, $w15, EMPTY       /* w15 */
 
 /******************************************************************************/
 /**********************************   MSA   ***********************************/
@@ -482,7 +482,7 @@
 #define SF(rg, lb)  ASM_BEG ASM_OP2(bnz.w, rg, lb) ASM_END
 
 #define CHECK_MASK(lb, mask, RG) /* destroys Reax */                        \
-        AUW(EMPTY, EMPTY, EMPTY, SIB(RG), lb, S0(RT_SIMD_MASK_##mask), EMPTY2)
+        AUW(EMPTY, EMPTY, EMPTY, MOD(RG), lb, S0(RT_SIMD_MASK_##mask), EMPTY2)
 
 /* simd mode
  * set via FCTRL macros, *_F for faster non-IEEE mode,

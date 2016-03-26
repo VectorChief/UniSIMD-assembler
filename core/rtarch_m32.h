@@ -142,20 +142,20 @@
 
 /* registers    REG,  MOD,  SIB */
 
-#define Reax    Teax,  $a0, EMPTY
-#define Recx    Tecx,  $t7, EMPTY
-#define Redx    Tedx,  $v0, EMPTY
-#define Rebx    Tebx,  $v1, EMPTY
-#define Rebp    Tebp,  $a1, EMPTY
-#define Resi    Tesi,  $a2, EMPTY
-#define Redi    Tedi,  $a3, EMPTY
-#define Reg8    Teg8,  $t0, EMPTY
-#define Reg9    Teg9,  $t1, EMPTY
-#define RegA    TegA,  $t2, EMPTY
-#define RegB    TegB,  $t3, EMPTY
-#define RegC    TegC,  $t4, EMPTY
-#define RegD    TegD,  $t5, EMPTY
-#define RegE    TegE,  $t6, EMPTY
+#define Reax    Teax, $a0,  EMPTY
+#define Recx    Tecx, $t7,  EMPTY
+#define Redx    Tedx, $v0,  EMPTY
+#define Rebx    Tebx, $v1,  EMPTY
+#define Rebp    Tebp, $a1,  EMPTY
+#define Resi    Tesi, $a2,  EMPTY
+#define Redi    Tedi, $a3,  EMPTY
+#define Reg8    Teg8, $t0,  EMPTY
+#define Reg9    Teg9, $t1,  EMPTY
+#define RegA    TegA, $t2,  EMPTY
+#define RegB    TegB, $t3,  EMPTY
+#define RegC    TegC, $t4,  EMPTY
+#define RegD    TegD, $t5,  EMPTY
+#define RegE    TegE, $t6,  EMPTY
 
 /* addressing   REG,  MOD,  SIB */
 
