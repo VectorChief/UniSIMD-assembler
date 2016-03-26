@@ -1023,7 +1023,11 @@
                                 movlb_ld(%[Reax_])                          \
                                 : [Reax_] "+r" ((rt_word)__Reax__)          \
                                 : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
+                                : "cc",  "memory",                          \
+                                  "f0",  "f1",  "f2",  "f3",                \
+                                  "f4",  "f5",  "f6",  "f7",                \
+                                  "f8",  "f9",  "f10", "f11",               \
+                                  "f12", "f13", "f14", "f15", "f30", "f31"  \
                             );}
 
 #else /* RT_SIMD_FAST_FCTRL */
@@ -1046,7 +1050,11 @@
                                 movlb_ld(%[Reax_])                          \
                                 : [Reax_] "+r" ((rt_word)__Reax__)          \
                                 : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
+                                : "cc",  "memory",                          \
+                                  "f0",  "f1",  "f2",  "f3",                \
+                                  "f4",  "f5",  "f6",  "f7",                \
+                                  "f8",  "f9",  "f10", "f11",               \
+                                  "f12", "f13", "f14", "f15", "f30", "f31"  \
                             );}
 
 #endif /* RT_SIMD_FAST_FCTRL */
@@ -1087,7 +1095,11 @@
                                 movlb_ld(%[Reax_])                          \
                                 : [Reax_] "+r" ((rt_word)__Reax__)          \
                                 : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
+                                : "cc",  "memory",                          \
+                                  "f0",  "f1",  "f2",  "f3",                \
+                                  "f4",  "f5",  "f6",  "f7",                \
+                                  "f8",  "f9",  "f10", "f11",               \
+                                  "f12", "f13", "f14", "f15", "f30", "f31"  \
                             );}
 
 #else /* RT_SIMD_FAST_FCTRL */
@@ -1115,7 +1127,11 @@
                                 movlb_ld(%[Reax_])                          \
                                 : [Reax_] "+r" ((rt_word)__Reax__)          \
                                 : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
+                                : "cc",  "memory",                          \
+                                  "f0",  "f1",  "f2",  "f3",                \
+                                  "f4",  "f5",  "f6",  "f7",                \
+                                  "f8",  "f9",  "f10", "f11",               \
+                                  "f12", "f13", "f14", "f15", "f30", "f31"  \
                             );}
 
 #endif /* RT_SIMD_FAST_FCTRL */
