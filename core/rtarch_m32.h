@@ -344,7 +344,7 @@
 #else /* RT_SIMD_FAST_FCTRL */
 
 #define stack_sa()   /* save all, [Reax - RegE] + 7 temps, 21 regs total */ \
-        EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (-0x54 & 0xFFFF))  \
+        EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (-0x58 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    Tecx) | (+0x04 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    Tedx) | (+0x08 & 0xFFFF))  \
@@ -389,7 +389,7 @@
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    Tedx) | (+0x08 & 0xFFFF))  \
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    Tecx) | (+0x04 & 0xFFFF))  \
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
-        EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (+0x54 & 0xFFFF))
+        EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (+0x58 & 0xFFFF))
 
 #endif /* RT_SIMD_FAST_FCTRL */
 
