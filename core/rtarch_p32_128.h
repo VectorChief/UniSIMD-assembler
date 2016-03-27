@@ -295,8 +295,8 @@
 #define divps_rr(RG, RM)                                                    \
         EMITW(0x1000010A | MXM(TmmC,    0x00,    REG(RM)))                  \
         EMITW(0x1000002F | MXM(TmmD,    TmmC,    TmmA) | REG(RM) << 6)      \
-        EMITW(0x1000002E | MXM(TmmD,    TmmC,    TmmC) | TmmD << 6)         \
-        EMITW(0x1000002E | MXM(REG(RG), REG(RG), TmmS) | TmmD << 6)
+        EMITW(0x1000002E | MXM(TmmC,    TmmC,    TmmC) | TmmD << 6)         \
+        EMITW(0x1000002E | MXM(REG(RG), REG(RG), TmmS) | TmmC << 6)
 
 #define divps_ld(RG, RM, DP)                                                \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -304,8 +304,8 @@
         EMITW(0x7C0000CE | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
         EMITW(0x1000010A | MXM(TmmC,    0x00,    Tmm1))/* ^ == -1 if true */\
         EMITW(0x1000002F | MXM(TmmD,    TmmC,    TmmA) | Tmm1 << 6)         \
-        EMITW(0x1000002E | MXM(TmmD,    TmmC,    TmmC) | TmmD << 6)         \
-        EMITW(0x1000002E | MXM(REG(RG), REG(RG), TmmS) | TmmD << 6)
+        EMITW(0x1000002E | MXM(TmmC,    TmmC,    TmmC) | TmmD << 6)         \
+        EMITW(0x1000002E | MXM(REG(RG), REG(RG), TmmS) | TmmC << 6)
 
 #endif /* RT_SIMD_COMPAT_DIV */
 
@@ -353,8 +353,8 @@
         EMITW(0x1000002E | MXM(TmmD,    TmmC,    TmmS) | TmmC << 6)         \
         EMITW(0x1000002E | MXM(TmmE,    TmmC,    TmmS) | TmmB << 6)         \
         EMITW(0x1000002F | MXM(TmmD,    TmmD,    TmmA) | REG(RM) << 6)      \
-        EMITW(0x1000002F | MXM(TmmE,    TmmD,    TmmC) | TmmE << 6)         \
-        EMITW(0x1000002E | MXM(REG(RG), TmmE,    TmmS) | REG(RM) << 6)
+        EMITW(0x1000002F | MXM(TmmC,    TmmD,    TmmC) | TmmE << 6)         \
+        EMITW(0x1000002E | MXM(REG(RG), TmmC,    TmmS) | REG(RM) << 6)
 
 #define sqrps_ld(RG, RM, DP)                                                \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -364,8 +364,8 @@
         EMITW(0x1000002E | MXM(TmmD,    TmmC,    TmmS) | TmmC << 6)         \
         EMITW(0x1000002E | MXM(TmmE,    TmmC,    TmmS) | TmmB << 6)         \
         EMITW(0x1000002F | MXM(TmmD,    TmmD,    TmmA) | Tmm1 << 6)         \
-        EMITW(0x1000002F | MXM(TmmE,    TmmD,    TmmC) | TmmE << 6)         \
-        EMITW(0x1000002E | MXM(REG(RG), TmmE,    TmmS) | REG(RM) << 6)
+        EMITW(0x1000002F | MXM(TmmC,    TmmD,    TmmC) | TmmE << 6)         \
+        EMITW(0x1000002E | MXM(REG(RG), TmmC,    TmmS) | REG(RM) << 6)
 
 #endif /* RT_SIMD_COMPAT_SQR */
 
