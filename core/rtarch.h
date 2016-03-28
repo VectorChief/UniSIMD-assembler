@@ -1172,10 +1172,10 @@
 #define RT_SIMD_FAST_FCTRL      1 /* not applicable to Power */
 /* RT_SIMD_COMPAT_DIV when enabled changes the default behavior
  * of divps_** to the corresponding IEEE-compatible fallback */
-#define RT_SIMD_COMPAT_DIV      1
+#define RT_SIMD_COMPAT_DIV      0
 /* RT_SIMD_COMPAT_SQR when enabled changes the default behavior
  * of sqrps_** to the corresponding IEEE-compatible fallback */
-#define RT_SIMD_COMPAT_SQR      1
+#define RT_SIMD_COMPAT_SQR      0
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
