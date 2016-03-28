@@ -248,27 +248,47 @@
 #if RT_SIMD_COMPAT_DIV != 0
 
 #define divps_rr(RG, RM)                                                    \
-        EMITW(0x1000010A | MXM(TmmC,    0x00,    REG(RM)))                  \
-        EMITW(0x1000002F | MXM(TmmD,    TmmC,    TmmA) | REG(RM) << 6)      \
-        EMITW(0x1000002E | MXM(TmmC,    TmmC,    TmmC) | TmmD << 6)         \
-        EMITW(0x1000002F | MXM(TmmD,    TmmC,    TmmA) | REG(RM) << 6)      \
-        EMITW(0x1000002E | MXM(TmmC,    TmmC,    TmmC) | TmmD << 6)         \
-        EMITW(0x1000002E | MXM(TmmD,    REG(RG), TmmS) | TmmC << 6)         \
-        EMITW(0x1000002F | MXM(REG(RG), TmmD, REG(RG)) | REG(RM) << 6)      \
-        EMITW(0x1000002E | MXM(REG(RG), REG(RG), TmmD) | TmmC << 6)
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        movpx_st(W(RM), Mebp, inf_SCR02(0))                                 \
+        movfx_ld(Tff1,  Mebp, inf_SCR01(0x00))                              \
+        movfx_ld(Tff2,  Mebp, inf_SCR02(0x00))                              \
+        divfs_rr(Tff1, Tff2)                                                \
+        movfx_st(Tff1,  Mebp, inf_SCR01(0x00))                              \
+        movfx_ld(Tff1,  Mebp, inf_SCR01(0x04))                              \
+        movfx_ld(Tff2,  Mebp, inf_SCR02(0x04))                              \
+        divfs_rr(Tff1, Tff2)                                                \
+        movfx_st(Tff1,  Mebp, inf_SCR01(0x04))                              \
+        movfx_ld(Tff1,  Mebp, inf_SCR01(0x08))                              \
+        movfx_ld(Tff2,  Mebp, inf_SCR02(0x08))                              \
+        divfs_rr(Tff1, Tff2)                                                \
+        movfx_st(Tff1,  Mebp, inf_SCR01(0x08))                              \
+        movfx_ld(Tff1,  Mebp, inf_SCR01(0x0C))                              \
+        movfx_ld(Tff2,  Mebp, inf_SCR02(0x0C))                              \
+        divfs_rr(Tff1, Tff2)                                                \
+        movfx_st(Tff1,  Mebp, inf_SCR01(0x0C))                              \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
 
 #define divps_ld(RG, RM, DP)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x7C0000CE | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
-        EMITW(0x1000010A | MXM(TmmC,    0x00,    Tmm1))/* ^ == -1 if true */\
-        EMITW(0x1000002F | MXM(TmmD,    TmmC,    TmmA) | Tmm1 << 6)         \
-        EMITW(0x1000002E | MXM(TmmC,    TmmC,    TmmC) | TmmD << 6)         \
-        EMITW(0x1000002F | MXM(TmmD,    TmmC,    TmmA) | Tmm1 << 6)         \
-        EMITW(0x1000002E | MXM(TmmC,    TmmC,    TmmC) | TmmD << 6)         \
-        EMITW(0x1000002E | MXM(TmmD,    REG(RG), TmmS) | TmmC << 6)         \
-        EMITW(0x1000002F | MXM(REG(RG), TmmD, REG(RG)) | Tmm1 << 6)         \
-        EMITW(0x1000002E | MXM(REG(RG), REG(RG), TmmD) | TmmC << 6)
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        movpx_ld(W(RG), W(RM), W(DP))                                       \
+        movpx_st(W(RG), Mebp, inf_SCR02(0))                                 \
+        movfx_ld(Tff1,  Mebp, inf_SCR01(0x00))                              \
+        movfx_ld(Tff2,  Mebp, inf_SCR02(0x00))                              \
+        divfs_rr(Tff1, Tff2)                                                \
+        movfx_st(Tff1,  Mebp, inf_SCR01(0x00))                              \
+        movfx_ld(Tff1,  Mebp, inf_SCR01(0x04))                              \
+        movfx_ld(Tff2,  Mebp, inf_SCR02(0x04))                              \
+        divfs_rr(Tff1, Tff2)                                                \
+        movfx_st(Tff1,  Mebp, inf_SCR01(0x04))                              \
+        movfx_ld(Tff1,  Mebp, inf_SCR01(0x08))                              \
+        movfx_ld(Tff2,  Mebp, inf_SCR02(0x08))                              \
+        divfs_rr(Tff1, Tff2)                                                \
+        movfx_st(Tff1,  Mebp, inf_SCR01(0x08))                              \
+        movfx_ld(Tff1,  Mebp, inf_SCR01(0x0C))                              \
+        movfx_ld(Tff2,  Mebp, inf_SCR02(0x0C))                              \
+        divfs_rr(Tff1, Tff2)                                                \
+        movfx_st(Tff1,  Mebp, inf_SCR01(0x0C))                              \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
 
 #else /* RT_SIMD_COMPAT_DIV */
 
