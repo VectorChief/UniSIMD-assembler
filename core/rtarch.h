@@ -1211,10 +1211,14 @@
                                 EMITX(0x13421484)                           \
                                 EMITX(0x13642484)                           \
                                 EMITX(0x1000004A | MXM(TmmR, TmmS, TmmS))   \
+                                EMITX(0x7C0042A6 | TVxx << 21)              \
+                                EMITX(0x3800FFFF | TIxx << 21)              \
+                                EMITX(0x7C0043A6 | TIxx << 21)              \
                                 EMITW(0x7C0902A6 | TCxx << 21)              \
                                 "cmplw cr2, %%r24, %%r24\n"
 
 #define ASM_LEAVE(__Info__)     EMITW(0x7C0903A6 | TCxx << 21)              \
+                                EMITX(0x7C0043A6 | TVxx << 21)              \
                                 stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
                                 : [Reax_] "+r" ((rt_word)__Reax__)          \
@@ -1257,10 +1261,14 @@
                                 EMITX(0x13421484)                           \
                                 EMITX(0x13642484)                           \
                                 EMITX(0x1000004A | MXM(TmmR, TmmS, TmmS))   \
+                                EMITX(0x7C0042A6 | TVxx << 21)              \
+                                EMITX(0x3800FFFF | TIxx << 21)              \
+                                EMITX(0x7C0043A6 | TIxx << 21)              \
                                 EMITW(0x7C0902A6 | TCxx << 21)              \
                                 "cmplw cr2, %%r24, %%r24\n"
 
 #define ASM_LEAVE_F(__Info__)   EMITW(0x7C0903A6 | TCxx << 21)              \
+                                EMITX(0x7C0043A6 | TVxx << 21)              \
                                 EMITX(0xFF80010C) /* fpscr <- NI(0) */      \
                                 EMITX(0x13E0034C) /* v31 <- splt-half(0) */ \
                                 EMITX(0x1000FE44) /* vscr <- v31, NJ(16) */ \
