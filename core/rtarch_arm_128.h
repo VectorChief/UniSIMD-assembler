@@ -234,7 +234,12 @@
         EMITW(0xF3000D50 | MXM(Tmm1,    Tmm1,    Tmm2))    /* post-mul */   \
         EMITW(0xF2000F50 | MXM(Tmm2,    Tmm1,    REG(RM))) /* 2nd N-R */    \
         EMITW(0xF3000D50 | MXM(Tmm1,    Tmm1,    Tmm2))    /* post-mul */   \
-        EMITW(0xF3000D50 | MXM(REG(RG), REG(RG), Tmm1))
+        EMITW(0xF2000F50 | MXM(Tmm2,    Tmm1,    REG(RM))) /* 3rd N-R */    \
+        EMITW(0xF3000D50 | MXM(Tmm1,    Tmm1,    Tmm2))    /* post-mul */   \
+        EMITW(0xF3000D50 | MXM(Tmm2,    REG(RG), Tmm1))                     \
+        EMITW(0xF2200D50 | MXM(REG(RG), REG(RM), Tmm2))    /* residual */   \
+        EMITW(0xF2000D50 | MXM(Tmm2,    REG(RG), Tmm1))    /* correction */ \
+        EMITW(0xF2200150 | MXM(REG(RG), Tmm2,    Tmm2))
 
 #define divps_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -245,7 +250,12 @@
         EMITW(0xF3000D50 | MXM(Tmm1,    Tmm1,    Tmm2))    /* post-mul */   \
         EMITW(0xF2000F50 | MXM(Tmm2,    Tmm1,    Tmm3))    /* 2nd N-R */    \
         EMITW(0xF3000D50 | MXM(Tmm1,    Tmm1,    Tmm2))    /* post-mul */   \
-        EMITW(0xF3000D50 | MXM(REG(RG), REG(RG), Tmm1))
+        EMITW(0xF2000F50 | MXM(Tmm2,    Tmm1,    Tmm3))    /* 3rd N-R */    \
+        EMITW(0xF3000D50 | MXM(Tmm1,    Tmm1,    Tmm2))    /* post-mul */   \
+        EMITW(0xF3000D50 | MXM(Tmm2,    REG(RG), Tmm1))                     \
+        EMITW(0xF2200D50 | MXM(REG(RG), REG(RM), Tmm2))    /* residual */   \
+        EMITW(0xF2000D50 | MXM(Tmm2,    REG(RG), Tmm1))    /* correction */ \
+        EMITW(0xF2200150 | MXM(REG(RG), Tmm2,    Tmm2))
 
 #endif /* RT_SIMD_COMPAT_DIV */
 
