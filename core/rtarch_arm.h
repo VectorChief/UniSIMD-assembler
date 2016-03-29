@@ -656,7 +656,7 @@
 /* div
  * set-flags: undefined */
 
-#if (RT_ARM < 8) /* hw int-div is only mandatory in ARMv8:AArch32 */
+#if (RT_128 < 2) /* hw int-div is available in processors with ASIMDv2 */
 
 #define divxx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
                                                 /* destroys Redx, Xmm0 */   \
@@ -716,7 +716,7 @@
         EMITW(0xF3BB0700 | MRM(Tmm0+0,  0x00,    Tmm0+1))                   \
         EMITW(0xEE100B10 | MRM(Teax,    Tmm0+0,  0x00)) /* fallback to VFP */
 
-#else /* RT_ARM >= 8 */
+#else /* RT_128 >= 2 */
 
 #define divxx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
                                      /* destroys Redx, Xmm0 (in ARMv7) */   \
@@ -750,7 +750,7 @@
         divxn_xm(W(RM), W(DP))       /* destroys Redx, Xmm0 (in ARMv7) */   \
                                      /* 24-bit int (fp32 div in ARMv7) */
 
-#endif /* RT_ARM >= 8 */
+#endif /* RT_128 >= 2 */
 
 /* rem
  * set-flags: undefined */
@@ -900,7 +900,7 @@
  * set-flags: no */
 
 #define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
-        movxx_mi(Mebp, inf_VER, IB(1)) /* <- NEON to bit0, without checks */
+        movxx_mi(Mebp, inf_VER, IB(3)) /* <- NEON to bit0,bit1 w/o checks */
 
 #endif /* RT_RTARCH_ARM_H */
 

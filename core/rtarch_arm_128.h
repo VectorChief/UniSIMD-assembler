@@ -412,7 +412,7 @@
 
 /**************************   packed integer (NEON)   *************************/
 
-#if (RT_128 < 2)
+#if (RT_128 < 4) /* ASIMDv4 is used here for ARMv8:AArch32 processors */
 
 /* cvz (fp-to-signed-int)
  * rounding mode is encoded directly (can be used in FCTRL blocks) */
@@ -493,7 +493,7 @@
 #define cvnps_ld(RG, RM, DP) /* round towards near */                       \
         cvtps_ld(W(RG), W(RM), W(DP))
 
-#else /* RT_128 >= 2 */
+#else /* RT_128 >= 4 */
 
 /* cvz (fp-to-signed-int)
  * rounding mode is encoded directly (can be used in FCTRL blocks) */
@@ -579,7 +579,7 @@
         EMITW(0xF4200AAF | MXM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF3BB0140 | MXM(REG(RG), 0x00,    Tmm1))
 
-#endif /* RT_128 >= 2 */
+#endif /* RT_128 >= 4 */
 
 /* cvn (signed-int-to-fp)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
@@ -727,7 +727,7 @@
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz */
 
-#if (RT_128 < 2)
+#if (RT_128 < 4) /* ASIMDv4 is used here for ARMv8:AArch32 processors */
 
 #define rndps_rr(RG, RM)                                                    \
         cvtps_rr(W(RG), W(RM))                                              \
@@ -737,7 +737,7 @@
         cvtps_ld(W(RG), W(RM), W(DP))                                       \
         cvnpn_rr(W(RG), W(RG))
 
-#else /* RT_128 >= 2 */
+#else /* RT_128 >= 4 */
 
 #define rndps_rr(RG, RM)     /* fallback to VFP for float-to-integer rnd */ \
         EMITW(0xEEB60A40 | MXM(REG(RG)+0, 0x00,  REG(RM)+0)) /* due to */   \
@@ -754,7 +754,7 @@
         EMITW(0xEEB60A40 | MXM(REG(RG)+1, 0x00,  REG(RG)+1)) /* rounding */ \
         EMITW(0xEEF60A60 | MXM(REG(RG)+1, 0x00,  REG(RG)+1)) /* modes */
 
-#endif /* RT_128 >= 2 */
+#endif /* RT_128 >= 4 */
 
 #define cvtps_rr(RG, RM)     /* fallback to VFP for float-to-integer cvt */ \
         EMITW(0xEEBD0A40 | MXM(REG(RG)+0, 0x00,  REG(RM)+0)) /* due to */   \
@@ -795,7 +795,7 @@
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block */
 
-#if (RT_128 < 2)
+#if (RT_128 < 4) /* ASIMDv4 is used here for ARMv8:AArch32 processors */
 
 #define rnrps_rr(RG, RM, mode)                                              \
         cvrps_rr(W(RG), W(RM), mode)                                        \
@@ -806,7 +806,7 @@
         cvtps_rr(W(RG), W(RM))                                              \
         FCTRL_LEAVE(mode)
 
-#else /* RT_128 >= 2 */
+#else /* RT_128 >= 4 */
 
 #define rnrps_rr(RG, RM, mode)                                              \
         cvrps_rr(W(RG), W(RM), mode)                                        \
@@ -816,7 +816,7 @@
         EMITW(0xF3BB0040 | MXM(REG(RG), 0x00,    REG(RM)) |                 \
         ((RT_SIMD_MODE_##mode&3)+1 + 3*(((RT_SIMD_MODE_##mode&3)+1) >> 2)) << 8)
 
-#endif /* RT_128 >= 2 */
+#endif /* RT_128 >= 4 */
 
 #endif /* RT_SIMD_CODE */
 
