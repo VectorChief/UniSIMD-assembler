@@ -900,7 +900,7 @@
  * set-flags: no */
 
 #define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
-        movxx_mi(Mebp, inf_VER, IB(3)) /* <- NEON to bit0,bit1 w/o checks */
+        movxx_mi(Mebp, inf_VER, IB(7)) /* <- NEON to bit0, bit1, bit2 */
 
 #endif /* RT_RTARCH_ARM_H */
 

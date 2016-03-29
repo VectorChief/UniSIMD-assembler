@@ -739,9 +739,13 @@
         cpuid_xx()                                                          \
         shrxx_ri(Redx, IB(25))  /* <- SSE1, SSE2 to bit0, bit1 */           \
         andxx_ri(Redx, IB(0x03))                                            \
+        movxx_rr(Resi, Redx)                                                \
+        movxx_rr(Redx, Recx)                                                \
+        shrxx_ri(Redx, IB(17))  /* <- SSE4 to bit2 */                       \
+        andxx_ri(Redx, IB(0x04))                                            \
         shrxx_ri(Recx, IB(20))  /* <- AVX1 to bit8 */                       \
         andxx_ri(Recx, IH(0x0100))                                          \
-        movxx_rr(Resi, Redx)                                                \
+        orrxx_rr(Resi, Redx)                                                \
         orrxx_rr(Resi, Recx)                                                \
         /* request cpuid:eax=0 to test input value eax=7 */                 \
         movxx_ri(Reax, IB(0))                                               \
