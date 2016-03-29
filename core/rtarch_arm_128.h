@@ -228,6 +228,8 @@
 
 #else /* RT_SIMD_COMPAT_DIV */
 
+#if (RT_128 < 2) /* vector FMA is available in processors with ASIMDv2 */
+
 #define divps_rr(RG, RM)                                                    \
         EMITW(0xF3BB0540 | MXM(Tmm1,    0x00,    REG(RM))) /* estimate */   \
         EMITW(0xF2000F50 | MXM(Tmm2,    Tmm1,    REG(RM))) /* 1st N-R */    \
@@ -256,6 +258,31 @@
         EMITW(0xF2200D50 | MXM(REG(RG), REG(RM), Tmm2))    /* residual */   \
         EMITW(0xF2000D50 | MXM(Tmm2,    REG(RG), Tmm1))    /* correction */ \
         EMITW(0xF2200150 | MXM(REG(RG), Tmm2,    Tmm2))
+
+#else /* RT_128 >= 2 */
+
+#define divps_rr(RG, RM)                                                    \
+        EMITW(0xF3BB0540 | MXM(Tmm1,    0x00,    REG(RM))) /* estimate */   \
+        EMITW(0xF2000F50 | MXM(Tmm2,    Tmm1,    REG(RM))) /* 1st N-R */    \
+        EMITW(0xF3000D50 | MXM(Tmm1,    Tmm1,    Tmm2))    /* post-mul */   \
+        EMITW(0xF3000D50 | MXM(Tmm2,    REG(RG), Tmm1))                     \
+        EMITW(0xF2200C50 | MXM(REG(RG), REG(RM), Tmm2))    /* residual */   \
+        EMITW(0xF2000C50 | MXM(Tmm2,    REG(RG), Tmm1))    /* correction */ \
+        EMITW(0xF2200150 | MXM(REG(RG), Tmm2,    Tmm2))
+
+#define divps_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xF4200AAF | MXM(Tmm3,    TPxx,    0x00))                     \
+        EMITW(0xF3BB0540 | MXM(Tmm1,    0x00,    Tmm3))    /* estimate */   \
+        EMITW(0xF2000F50 | MXM(Tmm2,    Tmm1,    Tmm3))    /* 1st N-R */    \
+        EMITW(0xF3000D50 | MXM(Tmm1,    Tmm1,    Tmm2))    /* post-mul */   \
+        EMITW(0xF3000D50 | MXM(Tmm2,    REG(RG), Tmm1))                     \
+        EMITW(0xF2200C50 | MXM(REG(RG), REG(RM), Tmm2))    /* residual */   \
+        EMITW(0xF2000C50 | MXM(Tmm2,    REG(RG), Tmm1))    /* correction */ \
+        EMITW(0xF2200150 | MXM(REG(RG), Tmm2,    Tmm2))
+
+#endif /* RT_128 >= 2 */
 
 #endif /* RT_SIMD_COMPAT_DIV */
 
