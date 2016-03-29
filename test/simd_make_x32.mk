@@ -19,3 +19,8 @@ simd_test:
 # For actual x32 target use: -mx32, -DRT_POINTER=32 (replace).
 # Experimental 64/32-bit hybrid support is enabled for compatibility
 # with wider spectrum of toolchains/libraries in the standard x64 target.
+
+# For SSE1 build use (replace): RT_128=1
+# For SSE4 build use (replace): RT_128=4
+# For AVX1 build use (replace): RT_256=1
+# For AVX2 build use (replace): RT_256=2

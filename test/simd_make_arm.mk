@@ -28,3 +28,4 @@ simd_test:
 # settings suitable for specific hardware platform are given below (replace).
 # 1) Nokia N900, Maemo 5 scratchbox: "vanilla"
 # 2) Raspberry Pi 2, Raspbian: arm-linux-gnueabihf-g++ -DRT_128=2
+# 3) Raspberry Pi 3, Raspbian: arm-linux-gnueabihf-g++ -DRT_128=4
