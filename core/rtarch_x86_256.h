@@ -659,7 +659,10 @@
 
 /**************************   helper macros (AVX1)   **************************/
 
-/* simd mask */
+/* simd mask
+ * only use first 8 SIMD registers (Xmm0 - Xmm7) as SIMD masks
+ * for "potential" future compatibility with wider SIMD (AVX3),
+ * which may also require additional macros for SIMD mask ops */
 
 #define RT_SIMD_MASK_NONE       0x00    /* none satisfy the condition */
 #define RT_SIMD_MASK_FULL       0xFF    /*  all satisfy the condition */
