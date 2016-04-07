@@ -219,7 +219,8 @@
         /* cbe, cbs, cbr defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* rcp */
+/* rcp
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rceps_rr(RG, RM)                                                    \
         VEX(RXB(RG), RXB(RM),     0x0, 1, 0, 1) EMITB(0x53)                 \
@@ -234,7 +235,8 @@
         /* rcp defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* rsq */
+/* rsq
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rseps_rr(RG, RM)                                                    \
         VEX(RXB(RG), RXB(RM),     0x0, 1, 0, 1) EMITB(0x52)                 \

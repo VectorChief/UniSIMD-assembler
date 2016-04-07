@@ -332,7 +332,8 @@
         /* cbe, cbs, cbr defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* rcp */
+/* rcp
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rceps_rr(RG, RM)                                                    \
         EMITW(0xF3BB0540 | MXM(REG(RG), 0x00,    REG(RM)))
@@ -344,7 +345,8 @@
         /* rcp defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* rsq */
+/* rsq
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rseps_rr(RG, RM)                                                    \
         EMITW(0xF3BB05C0 | MXM(REG(RG), 0x00,    REG(RM)))

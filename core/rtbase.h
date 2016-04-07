@@ -327,13 +327,15 @@ struct rt_SIMD_INFO
         cbsps_rr(W(RG), W(R1), W(R2), W(RM))                                \
         cbsps_rr(W(RG), W(R1), W(R2), W(RM))
 
-/* rcp */
+/* rcp
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rcpps_rr(RG, RM) /* destroys RM */                                  \
         rceps_rr(W(RG), W(RM))                                              \
         rcsps_rr(W(RG), W(RM)) /* <- not reusable without extra temp reg */
 
-/* rsq */
+/* rsq
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rsqps_rr(RG, RM) /* destroys RM */                                  \
         rseps_rr(W(RG), W(RM))                                              \
