@@ -495,7 +495,9 @@
         EMITW(0x100001C6 | MXM(REG(RG), REG(RG), Tmm1))/* ^ == -1 if true */
 
 /* cvz (fp-to-signed-int)
- * rounding mode is encoded directly (can be used in FCTRL blocks) */
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnzps_rr(RG, RM)     /* round towards zero */                       \
         EMITW(0x1000024A | MXM(REG(RG), 0x00,    REG(RM)))
@@ -516,7 +518,9 @@
         EMITW(0x100003CA | MXM(REG(RG), 0x00,    Tmm1))/* ^ == -1 if true */
 
 /* cvp (fp-to-signed-int)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnpps_rr(RG, RM)     /* round towards +inf */                       \
         EMITW(0x1000028A | MXM(REG(RG), 0x00,    REG(RM)))
@@ -536,7 +540,9 @@
         cvzps_rr(W(RG), W(RG))
 
 /* cvm (fp-to-signed-int)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnmps_rr(RG, RM)     /* round towards -inf */                       \
         EMITW(0x100002CA | MXM(REG(RG), 0x00,    REG(RM)))
@@ -556,7 +562,9 @@
         cvzps_rr(W(RG), W(RG))
 
 /* cvn (fp-to-signed-int)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnnps_rr(RG, RM)     /* round towards near */                       \
         EMITW(0x1000020A | MXM(REG(RG), 0x00,    REG(RM)))
@@ -829,7 +837,9 @@
         EMITW(0xF000029F | MXM(REG(RG), REG(RG), Tmm1))/* ^ == -1 if true */
 
 /* cvz (fp-to-signed-int)
- * rounding mode is encoded directly (can be used in FCTRL blocks) */
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnzps_rr(RG, RM)     /* round towards zero */                       \
         EMITW(0xF0000267 | MXM(REG(RG), 0x00,    REG(RM)))
@@ -850,7 +860,9 @@
         EMITW(0xF0000263 | MXM(REG(RG), 0x00,    Tmm1))/* ^ == -1 if true */
 
 /* cvp (fp-to-signed-int)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnpps_rr(RG, RM)     /* round towards +inf */                       \
         EMITW(0xF00002A7 | MXM(REG(RG), 0x00,    REG(RM)))
@@ -870,7 +882,9 @@
         cvzps_rr(W(RG), W(RG))
 
 /* cvm (fp-to-signed-int)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnmps_rr(RG, RM)     /* round towards -inf */                       \
         EMITW(0xF00002E7 | MXM(REG(RG), 0x00,    REG(RM)))
@@ -890,7 +904,9 @@
         cvzps_rr(W(RG), W(RG))
 
 /* cvn (fp-to-signed-int)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnnps_rr(RG, RM)     /* round towards near */                       \
         EMITW(0xF00002AF | MXM(REG(RG), 0x00,    REG(RM)))
@@ -1054,7 +1070,9 @@
 
 /* cvt (fp-to-signed-int)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz */
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rndps_rr(RG, RM)                                                    \
         EMITW(0x1000000A | MXM(REG(RG), TmmR,    REG(RM)))                  \
@@ -1095,7 +1113,9 @@
 
 /* cvt (fp-to-signed-int)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz */
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rndps_rr(RG, RM)                                                    \
         EMITW(0xF00002AF | MXM(REG(RG), 0x00,    REG(RM)))
@@ -1132,7 +1152,9 @@
 /* cvr (fp-to-signed-int)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
- * isn't always taken into account when used within full-IEEE ASM block */
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnrps_rr(RG, RM, mode)                                              \
         EMITW(0x1000020A | MXM(REG(RG), 0x00,    REG(RM)) |                 \
