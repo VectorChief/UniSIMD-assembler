@@ -701,8 +701,8 @@
         jezxx_lb(lb)
 
 /* simd mode
- * set via FCTRL macros, *_F for faster non-IEEE mode,
- * original FCTRL blocks are defined in rtbase.h
+ * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),
+ * original FCTRL blocks (FCTRL_ENTER/FCTRL_LEAVE) are defined in rtbase.h
  * NOTE: ARMv7 always uses ROUNDN non-IEEE mode for SIMD fp-arithmetic,
  * while fp<->int conversion takes ROUND* into account via VFP fallback */
 
