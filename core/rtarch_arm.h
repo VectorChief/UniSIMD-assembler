@@ -848,7 +848,11 @@
         EMITW(0xE1500000 | MRM(0x00,    TMxx,    REG(RG)))
 
 /* jmp
- * set-flags: no */
+ * set-flags: no
+ * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
+ * based on minimum natively-encoded offset across supported targets (u/c)
+ * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
+ * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
 
 #define jmpxx_mm(RM, DP)         /* memory-targeted unconditional jump */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
