@@ -146,7 +146,7 @@
 #define IegD    0x0C, 0x02, EMITB(0x05) /* [r13d + eax + DP] */
 #define IegE    0x0C, 0x02, EMITB(0x06) /* [r14d + eax + DP] */
 
-/* immediate    VAL,  TYP,  CMD */
+/* immediate    VAL,  TYP,  CMD            (all immediate types are unsigned) */
 
 #define IC(im)  (im), 0x02, EMITB((im) & 0x7F) /* drop sign-ext (zero in ARM) */
 #define IB(im)  (im), 0x00, EMITW((im) & 0xFF) /* drop sign-ext (32-bit word) */
@@ -156,7 +156,7 @@
 #define IV(im)  (im), 0x00, EMITW((im) & 0x7FFFFFFF)  /* native x64 long mode */
 #define IW(im)  (im), 0x00, EMITW((im) & 0xFFFFFFFF)  /* extra load op on x64 */
 
-/* displacement VAL,  TYP,  CMD */
+/* displacement VAL,  TYP,  CMD         (all displacement types are unsigned) */
 
 #define DP(dp)  (dp), 0x00, EMITW((dp) & ((0xFFC  * Q) | 0xC)) /* ext Q=1,2,4 */
 #define DF(dp)  (dp), 0x00, EMITW((dp) & ((0x3FFC * Q) | 0xC)) /* ext Q=1,2,4 */

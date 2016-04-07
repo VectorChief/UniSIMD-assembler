@@ -189,7 +189,7 @@
 #define IegD    TegD, TPxx, EMITW(0x00000021 | MRM(TPxx,    TegD,    Teax))
 #define IegE    TegE, TPxx, EMITW(0x00000021 | MRM(TPxx,    TegE,    Teax))
 
-/* immediate    VAL,  TP1,  TP2 */
+/* immediate    VAL,  TP1,  TP2       (all immediate types are unsigned) */
 
 #define IC(im)  ((im) & 0x7F),       0, 0      /* drop sign-ext (in x86) */
 #define IB(im)  ((im) & 0xFF),       0, 0        /* 32-bit word (in x86) */
@@ -199,7 +199,7 @@
 #define IV(im)  ((im) & 0x7FFFFFFF), 2, 2        /* native x64 long mode */
 #define IW(im)  ((im) & 0xFFFFFFFF), 2, 2        /* extra load op on x64 */
 
-/* displacement VAL,  TP1,  TP2 */
+/* displacement VAL,  TP1,  TP2    (all displacement types are unsigned) */
 
 #define DP(dp)  ((dp) & 0xFFC),      0, 0    /* native on all ARMs, MIPS */
 #define DF(dp)  ((dp) & 0x3FFC),     0, 1   /* native AArch64 BASE ld/st */
