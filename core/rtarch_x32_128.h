@@ -1086,6 +1086,14 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x5B)                       \
         rnrps_rr(W(RG), W(RM), mode)                                        \
         cvzps_rr(W(RG), W(RG))
 
+/* mmv
+ * uses Xmm0 implicitly as a mask register */
+
+#define mmvpx_ld(RG, RM, DP) /* not portable, use conditionally */          \
+ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
+        MRM(REG(RG), MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
 #endif /* RT_128 >= 4 */
 
 #endif /* RT_128 */
