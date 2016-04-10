@@ -802,15 +802,16 @@
         rnrps_rr(W(RG), W(RM), mode)                                        \
         cvzps_rr(W(RG), W(RG))
 
-/* mmv */
+/* mmv
+ * uses Xmm0 implicitly as a mask register */
 
-#define mmvpx_ld(RG, RM, DP, RN) /* not portable, use conditionally */      \
-    ADR VEX(RXB(RG), RXB(RM), REN(RN), 1, 1, 2) EMITB(0x2C)                 \
+#define mmvpx_ld(RG, RM, DP) /* not portable, use conditionally */          \
+    ADR VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 2) EMITB(0x2C)                 \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define mmvpx_st(RG, RM, DP, RN) /* not portable, use conditionally */      \
-    ADR VEX(RXB(RG), RXB(RM), REN(RN), 1, 1, 2) EMITB(0x2E)                 \
+#define mmvpx_st(RG, RM, DP) /* not portable, use conditionally */          \
+    ADR VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 2) EMITB(0x2E)                 \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
