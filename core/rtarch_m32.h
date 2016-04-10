@@ -290,12 +290,12 @@
         label_ld(lb)
 
 #define stack_st(RM)                                                        \
-        EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (-0x04 & 0xFFFF))  \
+        EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (-0x08 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    REG(RM)))
 
 #define stack_ld(RM)                                                        \
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    REG(RM)))                  \
-        EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (+0x04 & 0xFFFF))
+        EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (+0x08 & 0xFFFF))
 
 #if RT_SIMD_FAST_FCTRL == 0
 

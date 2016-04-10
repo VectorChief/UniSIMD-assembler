@@ -308,12 +308,12 @@
         label_ld(lb)
 
 #define stack_st(RM)                                                        \
-        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x04 & 0xFFFF))  \
+        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x08 & 0xFFFF))  \
         EMITW(0x90000000 | MTM(REG(RM), SPxx,    0x00))
 
 #define stack_ld(RM)                                                        \
         EMITW(0x80000000 | MTM(REG(RM), SPxx,    0x00))                     \
-        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x04 & 0xFFFF))
+        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x08 & 0xFFFF))
 
 #if RT_SIMD_COMPAT_DIV != 0 || RT_SIMD_COMPAT_SQR != 0
 
