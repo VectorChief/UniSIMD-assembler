@@ -18,7 +18,7 @@
 /*******************************   DEFINITIONS   ******************************/
 /******************************************************************************/
 
-#define RUN_LEVEL           16
+#define RUN_LEVEL           18
 #define CYC_SIZE            1000000
 
 #define ARR_SIZE            S*3 /* hardcoded in asm sections, S = SIMD width */
@@ -2037,6 +2037,223 @@ rt_void p_test16(rt_SIMD_INFOX *info)
 #endif /* RUN_LEVEL 16 */
 
 /******************************************************************************/
+/******************************   RUN LEVEL 17   ******************************/
+/******************************************************************************/
+
+#if RUN_LEVEL >= 17
+
+rt_void c_test17(rt_SIMD_INFOX *info)
+{
+    rt_cell i, j, n = info->size;
+    rt_real *far0 = info->far0;
+    rt_real *fco1 = info->fco1;
+    rt_real *fco2 = info->fco2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            fco1[j] = roundf(far0[j]);
+            fco2[j] = floorf(far0[j]);
+        }
+    }
+}
+
+rt_void s_test17(rt_SIMD_INFOX *info)
+{
+    rt_cell i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Recx, Mebp, inf_FAR0)
+        movxx_ld(Redx, Mebp, inf_FSO1)
+        movxx_ld(Rebx, Mebp, inf_FSO2)
+
+        movpx_ld(Xmm0, Mecx, AJ0)
+        rnnps_rr(Xmm2, Xmm0)
+        rnmps_rr(Xmm3, Xmm0)
+        movpx_st(Xmm2, Medx, AJ0)
+        movpx_st(Xmm3, Mebx, AJ0)
+
+        movpx_ld(Xmm0, Mecx, AJ1)
+        rnnps_rr(Xmm2, Xmm0)
+        rnmps_rr(Xmm3, Xmm0)
+        movpx_st(Xmm2, Medx, AJ1)
+        movpx_st(Xmm3, Mebx, AJ1)
+
+        movpx_ld(Xmm0, Mecx, AJ2)
+        rnnps_rr(Xmm2, Xmm0)
+        rnmps_rr(Xmm3, Xmm0)
+        movpx_st(Xmm2, Medx, AJ2)
+        movpx_st(Xmm3, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test17(rt_SIMD_INFOX *info)
+{
+    rt_cell j, n = info->size;
+
+    rt_real *far0 = info->far0;
+    rt_real *fco1 = info->fco1;
+    rt_real *fco2 = info->fco2;
+    rt_real *fso1 = info->fso1;
+    rt_real *fso2 = info->fso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (FEQ(fco1[j], fso1[j]) && FEQ(fco2[j], fso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("farr[%d] = %e\n",
+                j, far0[j]);
+
+        RT_LOGI("C roundf(farr[%d]) = %e, floorf(farr[%d]) = %e\n",
+                j, fco1[j], j, fco2[j]);
+
+        RT_LOGI("S roundf(farr[%d]) = %e, floorf(farr[%d]) = %e\n",
+                j, fso1[j], j, fso2[j]);
+    }
+}
+
+#endif /* RUN_LEVEL 17 */
+
+/******************************************************************************/
+/******************************   RUN LEVEL 18   ******************************/
+/******************************************************************************/
+
+#if RUN_LEVEL >= 18
+
+rt_void c_test18(rt_SIMD_INFOX *info)
+{
+    rt_cell i, j, n = info->size;
+    rt_cell *iar0 = info->iar0;
+    rt_cell *ico1 = info->ico1;
+    rt_cell *ico2 = info->ico2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            ico1[j] = iar0[j] * iar0[(j + S) % n];
+            ico2[j] = iar0[j] % iar0[(j + S) % n];
+        }
+    }
+}
+
+rt_void s_test18(rt_SIMD_INFOX *info)
+{
+    ASM_ENTER(info)
+
+        label_ld(cyc_ini) /* load to Reax */
+        movxx_st(Reax, Mebp, inf_LABEL)
+
+        movxx_ld(Reax, Mebp, inf_CYC)
+        movxx_st(Reax, Mebp, inf_LOC)
+
+    LBL(cyc_ini)
+
+        movxx_ld(Recx, Mebp, inf_IAR0)
+        movxx_ld(Rebx, Mebp, inf_ISO1)
+        movxx_ld(Resi, Mebp, inf_ISO2)
+        movxx_ld(Redi, Mebp, inf_SIZE)
+
+    LBL(loc_ini)
+
+        movxx_ld(Reax, Mecx, DP(Q*0x000))
+        mulxp_xm(Mecx, DP(Q*0x010))
+        movxx_st(Reax, Mebx, DP(Q*0x000))
+        movxx_ld(Reax, Mecx, DP(Q*0x000))
+        movxx_ri(Redx, IB(0))
+        remxn_xx()
+        divxn_xm(Mecx, DP(Q*0x010))
+        remxn_xm(Mecx, DP(Q*0x010))
+        movxx_st(Redx, Mesi, DP(Q*0x000))
+
+        addxx_ri(Recx, IB(4))
+        addxx_ri(Rebx, IB(4))
+        addxx_ri(Resi, IB(4))
+        subxx_ri(Redi, IB(1))
+        cmjxx_ri(Redi, IB(S),
+        /* if */ GT_x, loc_ini)
+
+        movxx_ld(Redi, Mebp, inf_IAR0)
+        movxx_mi(Mebp, inf_SIMD, IB(S))
+
+    LBL(smd_ini)
+
+        movxx_ld(Reax, Mecx, DP(Q*0x000))
+        mulxp_xm(Medi, DP(Q*0x000))
+        movxx_st(Reax, Mebx, DP(Q*0x000))
+        movxx_ld(Reax, Mecx, DP(Q*0x000))
+        movxx_ri(Redx, IB(0))
+        remxn_xx()
+        divxn_xm(Medi, DP(Q*0x000))
+        remxn_xm(Mecx, DP(Q*0x010))
+        movxx_st(Redx, Mesi, DP(Q*0x000))
+
+        addxx_ri(Recx, IB(4))
+        addxx_ri(Rebx, IB(4))
+        addxx_ri(Resi, IB(4))
+        addxx_ri(Redi, IB(4))
+        subxx_mi(Mebp, inf_SIMD, IB(1))
+        cmjxx_mz(Mebp, inf_SIMD,
+        /* if */ GT_x, smd_ini)
+
+        subxx_mi(Mebp, inf_LOC, IB(1))
+        cmjxx_mz(Mebp, inf_LOC,
+        /* if */ EQ_x, cyc_fin)
+        jmpxx_mm(Mebp, inf_LABEL)
+        jmpxx_lb(cyc_ini) /* the same jump as above */
+
+    LBL(cyc_fin)
+
+    ASM_LEAVE(info)
+}
+
+rt_void p_test18(rt_SIMD_INFOX *info)
+{
+    rt_cell j, n = info->size;
+
+    rt_cell *iar0 = info->iar0;
+    rt_cell *ico1 = info->ico1;
+    rt_cell *ico2 = info->ico2;
+    rt_cell *iso1 = info->iso1;
+    rt_cell *iso2 = info->iso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(ico1[j], iso1[j]) && IEQ(ico2[j], iso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("iarr[%d] = %d, iarr[%d] = %d\n",
+                j, iar0[j], (j + S) % n, iar0[(j + S) % n]);
+
+        RT_LOGI("C iarr[%d]*iarr[%d] = %d, iarr[%d]%%iarr[%d] = %d\n",
+                j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
+
+        RT_LOGI("S iarr[%d]*iarr[%d] = %d, iarr[%d]%%iarr[%d] = %d\n",
+                j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
+    }
+}
+
+#endif /* RUN_LEVEL 18 */
+
+/******************************************************************************/
 /*********************************   TABLES   *********************************/
 /******************************************************************************/
 
@@ -2107,6 +2324,14 @@ testXX c_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 16
     c_test16,
 #endif /* RUN_LEVEL 16 */
+
+#if RUN_LEVEL >= 17
+    c_test17,
+#endif /* RUN_LEVEL 17 */
+
+#if RUN_LEVEL >= 18
+    c_test18,
+#endif /* RUN_LEVEL 18 */
 };
 
 testXX s_test[RUN_LEVEL] =
@@ -2174,6 +2399,14 @@ testXX s_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 16
     s_test16,
 #endif /* RUN_LEVEL 16 */
+
+#if RUN_LEVEL >= 17
+    s_test17,
+#endif /* RUN_LEVEL 17 */
+
+#if RUN_LEVEL >= 18
+    s_test18,
+#endif /* RUN_LEVEL 18 */
 };
 
 testXX p_test[RUN_LEVEL] =
@@ -2241,6 +2474,14 @@ testXX p_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 16
     p_test16,
 #endif /* RUN_LEVEL 16 */
+
+#if RUN_LEVEL >= 17
+    p_test17,
+#endif /* RUN_LEVEL 17 */
+
+#if RUN_LEVEL >= 18
+    p_test18,
+#endif /* RUN_LEVEL 18 */
 };
 
 /******************************************************************************/
