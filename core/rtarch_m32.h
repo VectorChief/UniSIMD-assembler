@@ -958,22 +958,22 @@
  * set-flags: undefined */
 
 #define remxx_xx()          /* to be placed immediately prior divxx_x* */   \
-                                     /* to prepare for rem calculation */
+        movxx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
 #define remxx_xr(RM)        /* to be placed immediately after divxx_xr */   \
-        EMITW(0x000000DB | MRM(Tedx,    Teax,    REG(RM)))/* Redx<-rem */
+        EMITW(0x000000DB | MRM(Tedx,    Tedx,    REG(RM)))/* Redx<-rem */
 
 #define remxx_xm(RM, DP)    /* to be placed immediately after divxx_xm */   \
-        EMITW(0x000000DB | MRM(Tedx,    Teax,    TMxx))   /* Redx<-rem */
+        EMITW(0x000000DB | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
 
 #define remxn_xx()          /* to be placed immediately prior divxn_x* */   \
-                                     /* to prepare for rem calculation */
+        movxx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
 #define remxn_xr(RM)        /* to be placed immediately after divxn_xr */   \
-        EMITW(0x000000DA | MRM(Tedx,    Teax,    REG(RM)))/* Redx<-rem */
+        EMITW(0x000000DA | MRM(Tedx,    Tedx,    REG(RM)))/* Redx<-rem */
 
 #define remxn_xm(RM, DP)    /* to be placed immediately after divxn_xm */   \
-        EMITW(0x000000DA | MRM(Tedx,    Teax,    TMxx))   /* Redx<-rem */
+        EMITW(0x000000DA | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
 
 #endif /* r6 */
 
