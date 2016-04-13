@@ -1,3 +1,22 @@
+v0.7: Unified SIMD Assembler, additional 32-bit CPU architectures
+  - add a32 (AArch64:ILP32 ABI) and x32 (x86_64:mx32 ABI) targets/makefiles
+  - add m32 (MIPS32r5/r6 + MSA) and p32 (Power + VMX/VSX) targets/makefiles
+  - add yet another SIMD variant (v4) for x86/SSE4.1 and ARMv8/AArch32
+  - separate ARMv7/ASIMDv2 (v2) and ARMv8/AArch32 (v4) SIMD variants on ARM
+  - add ARM builds for Raspberry Pi 2 and 3 in addition to Nokia N900
+  - use static linking in SIMD tests for QEMU emulation
+  - add mmv (blendvps) to x86/x32 SSE4.1 for fast conditional loads
+  - add combined-compare-jumps to rtarch for better efficiency (MIPS, Power)
+  - remove limitation for BASE instructions to only accept DP offsets
+  - add new immediate/displacement types, add comment that they are unsigned
+  - add comments throughout rtarch about instructions' set-flags behavior
+  - implement full-range 32-bit integer divide on ARMv7 (v1) as 64-bit fp-div
+  - add widening versions of integer multiply instructions to rtarch definitions
+  - add remainder wrappers for integer divide instructions to rtarch definitions
+  - add IEEE-compatible versions of fp div & sqr for ARMv7 and Power targets
+  - add "residual correction" to non-IEEE fp div on ARMv7 and Power targets
+  - add SIMD tests for fp-to-int round and int-div remainder, run level 18
+
 v0.6: Unified SIMD Assembler, additional SIMD targets
   - rename SIMD target files to reflect SIMD width
   - enable SIMD instructions definitions only if RT_SIMD_CODE is defined
