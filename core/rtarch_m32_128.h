@@ -24,7 +24,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_m32_128.h: Implementation of MIPS32 r5/r6 SIMD-128 instructions.
+ * rtarch_m32_128.h: Implementation of MIPS32 r5/r6 MSA instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

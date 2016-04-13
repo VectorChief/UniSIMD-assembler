@@ -25,7 +25,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x86_128.h: Implementation of x86:i386 SSE2-128 instructions.
+ * rtarch_x86_128.h: Implementation of x86:i386 SSE(1,2,4) instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
