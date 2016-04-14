@@ -2055,7 +2055,7 @@ rt_void c_test17(rt_SIMD_INFOX *info)
         j = n;
         while (j-->0)
         {
-            fco1[j] = roundf(far0[j]);
+            fco1[j] = ceilf(far0[j]);
             fco2[j] = floorf(far0[j]);
         }
     }
@@ -2075,19 +2075,19 @@ rt_void s_test17(rt_SIMD_INFOX *info)
         movxx_ld(Rebx, Mebp, inf_FSO2)
 
         movpx_ld(Xmm0, Mecx, AJ0)
-        rnnps_rr(Xmm2, Xmm0)
+        rnpps_rr(Xmm2, Xmm0)
         rnmps_rr(Xmm3, Xmm0)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
 
         movpx_ld(Xmm0, Mecx, AJ1)
-        rnnps_rr(Xmm2, Xmm0)
+        rnpps_rr(Xmm2, Xmm0)
         rnmps_rr(Xmm3, Xmm0)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
 
         movpx_ld(Xmm0, Mecx, AJ2)
-        rnnps_rr(Xmm2, Xmm0)
+        rnpps_rr(Xmm2, Xmm0)
         rnmps_rr(Xmm3, Xmm0)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
