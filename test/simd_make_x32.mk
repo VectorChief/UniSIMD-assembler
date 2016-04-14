@@ -14,10 +14,11 @@ simd_test:
 	x86_64-linux-gnu-g++ -O3 -g -static \
         -DRT_LINUX -DRT_X32 -DRT_128=2 -DRT_DEBUG=1 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ENDIAN=0 \
-        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x32
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_32
 
-# For actual x32 target use: -mx32, -DRT_POINTER=32 (replace).
-# Experimental 64/32-bit hybrid support is enabled for compatibility
+# For actual x32 target use: -mx32, -DRT_POINTER=32 (replace),
+# rename produced binary to simd_test.x32 or adjust the build command above.
+# Experimental 64/32-bit hybrid support is enabled by default for compatibility
 # with wider spectrum of toolchains/libraries in the standard x64 target.
 
 # For SSE1 build use (replace): RT_128=1
