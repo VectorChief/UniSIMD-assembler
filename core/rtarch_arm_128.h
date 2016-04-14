@@ -538,13 +538,13 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnzps_rr(RG, RM)     /* round towards zero */                       \
-        EMITW(0xF3BB05C0 | MXM(REG(RG), 0x00,    REG(RM)))
+        EMITW(0xF3BA05C0 | MXM(REG(RG), 0x00,    REG(RM)))
 
 #define rnzps_ld(RG, RM, DP) /* round towards zero */                       \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0xE0800000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MXM(Tmm1,    TPxx,    0x00))                     \
-        EMITW(0xF3BB05C0 | MXM(REG(RG), 0x00,    Tmm1))
+        EMITW(0xF3BA05C0 | MXM(REG(RG), 0x00,    Tmm1))
 
 #define cvzps_rr(RG, RM)     /* round towards zero */                       \
         EMITW(0xF3BB0740 | MXM(REG(RG), 0x00,    REG(RM)))
@@ -561,13 +561,13 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnpps_rr(RG, RM)     /* round towards +inf */                       \
-        EMITW(0xF3BB07C0 | MXM(REG(RG), 0x00,    REG(RM)))
+        EMITW(0xF3BA07C0 | MXM(REG(RG), 0x00,    REG(RM)))
 
 #define rnpps_ld(RG, RM, DP) /* round towards +inf */                       \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0xE0800000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MXM(Tmm1,    TPxx,    0x00))                     \
-        EMITW(0xF3BB07C0 | MXM(REG(RG), 0x00,    Tmm1))
+        EMITW(0xF3BA07C0 | MXM(REG(RG), 0x00,    Tmm1))
 
 #define cvpps_rr(RG, RM)     /* round towards +inf */                       \
         EMITW(0xF3BB0240 | MXM(REG(RG), 0x00,    REG(RM)))
@@ -584,13 +584,13 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnmps_rr(RG, RM)     /* round towards -inf */                       \
-        EMITW(0xF3BB06C0 | MXM(REG(RG), 0x00,    REG(RM)))
+        EMITW(0xF3BA06C0 | MXM(REG(RG), 0x00,    REG(RM)))
 
 #define rnmps_ld(RG, RM, DP) /* round towards -inf */                       \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0xE0800000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MXM(Tmm1,    TPxx,    0x00))                     \
-        EMITW(0xF3BB06C0 | MXM(REG(RG), 0x00,    Tmm1))
+        EMITW(0xF3BA06C0 | MXM(REG(RG), 0x00,    Tmm1))
 
 #define cvmps_rr(RG, RM)     /* round towards -inf */                       \
         EMITW(0xF3BB0340 | MXM(REG(RG), 0x00,    REG(RM)))
@@ -607,13 +607,13 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnnps_rr(RG, RM)     /* round towards near */                       \
-        EMITW(0xF3BB0440 | MXM(REG(RG), 0x00,    REG(RM)))
+        EMITW(0xF3BA0440 | MXM(REG(RG), 0x00,    REG(RM)))
 
 #define rnnps_ld(RG, RM, DP) /* round towards near */                       \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0xE0800000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4200AAF | MXM(Tmm1,    TPxx,    0x00))                     \
-        EMITW(0xF3BB0440 | MXM(REG(RG), 0x00,    Tmm1))
+        EMITW(0xF3BA0440 | MXM(REG(RG), 0x00,    Tmm1))
 
 #define cvnps_rr(RG, RM)     /* round towards near */                       \
         EMITW(0xF3BB0140 | MXM(REG(RG), 0x00,    REG(RM)))
