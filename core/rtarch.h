@@ -454,7 +454,7 @@
 #define mxcsr_ld(RM, DP)
 #endif /* RT_SIMD_CODE */
 
-/* ---------------------------------   X32   -------------------------------- */
+/* ------------------------------   X32, X64   ------------------------------ */
 
 #elif defined (RT_X32) || defined (RT_X64)
 
@@ -694,7 +694,7 @@
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
-#error "ARM doesn't support SIMD wider than 4 at the moment"
+#error "AArch32 doesn't support SIMD wider than 4, call back later :o)"
 #elif defined (RT_128) && (RT_128 != 0)
 #define S 4
 #include "rtarch_arm_128.h"
@@ -838,7 +838,7 @@
 
 #endif /* RT_SIMD_FAST_FCTRL */
 
-/* ---------------------------------   A32   -------------------------------- */
+/* ------------------------------   A32, A64   ------------------------------ */
 
 #elif defined (RT_A32) || defined (RT_A64)
 
@@ -890,7 +890,7 @@
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
-#error "ARM doesn't support SIMD wider than 4 at the moment"
+#error "AArch64 doesn't support SIMD wider than 4, call back later :o)"
 #elif defined (RT_128) && (RT_128 != 0)
 #define S 4
 #include "rtarch_a32_128.h"
@@ -1077,7 +1077,7 @@
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
-#error "MSA doesn't support SIMD wider than 4 at the moment"
+#error "mipsMSA doesn't support SIMD wider than 4, call back later :o)"
 #elif defined (RT_128) && (RT_128 != 0)
 #define S 4
 #include "rtarch_m32_128.h"
@@ -1289,7 +1289,7 @@
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
-#error "VMX doesn't support SIMD wider than 4 at the moment"
+#error "AltiVec doesn't support SIMD wider than 4, call back later :o)"
 #elif defined (RT_128) && (RT_128 != 0)
 #define S 4
 #include "rtarch_p32_128.h"
@@ -1396,7 +1396,7 @@
 #define EMITX(w)    EMITW(w)
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_X86, RT_X32, RT_ARM, RT_A32, RT_M32, RT_M64, RT_P32, RT_P64 */
+#endif /* RT_X86, RT_X32/X64, RT_ARM, RT_A32/A64, RT_M32/M64, RT_P32/P64 */
 
 #endif /* OS, COMPILER, ARCH */
 
