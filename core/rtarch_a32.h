@@ -849,10 +849,22 @@
  * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
  * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
 
+#if defined (RT_A32)
+
 #define jmpxx_mm(RM, DP)         /* memory-targeted unconditional jump */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0xD61F0000 | MRM(0x00,    TMxx,    0x00))
+
+#elif defined (RT_A64)
+
+#define jmpxx_mm(RM, DP)         /* memory-targeted unconditional jump */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C3(DP), EMPTY2)   \
+        EMITW(0x0B000000 | MRM(TPxx,    MOD(RM), TDxx))                     \
+        EMITW(0xF9400000 | MDM(TMxx,    TPxx,    0x00,    B1(DP), P1(DP)))  \
+        EMITW(0xD61F0000 | MRM(0x00,    TMxx,    0x00))
+
+#endif /* defined (RT_A32, RT_A64) */
 
 #define jmpxx_lb(lb)              /* label-targeted unconditional jump */   \
         ASM_BEG ASM_OP1(b,    lb) ASM_END
