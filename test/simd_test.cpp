@@ -43,25 +43,57 @@
 /***************************   VARS, FUNCS, TYPES   ***************************/
 /******************************************************************************/
 
+#if (RT_POINTER - RT_ADDRESS) != 0
+
+#include <sys/mman.h>
+
+#endif /* (RT_POINTER - RT_ADDRESS) */
+
+static
+rt_char *s_ptr = (rt_char *)0x0000000040000000;
+
 /*
  * Allocate memory from system heap.
+ * Not thread-safe due to common static ptr.
  */
 static
-rt_pntr sys_alloc(rt_ui32 size)
+rt_pntr sys_alloc(rt_size size)
 {
-    /* consider using mmap/munmap with MAP_32BIT to limit address range */
+#if (RT_POINTER - RT_ADDRESS) != 0
+
+    rt_pntr ptr = mmap(s_ptr, size, PROT_READ | PROT_WRITE,
+                  MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+
+    /* advance with page-size granularity */
+    s_ptr += ((size + 4095) / 4096) * 4096;
+
+    /* loop around 1GB boundary MAP_32BIT */
+    if (s_ptr >= (rt_char *)0x0000000080000000)
+    {
+        s_ptr  = (rt_char *)0x0000000040000000;
+    }
+
+#else /* (RT_POINTER - RT_ADDRESS) */
+
     rt_pntr ptr = malloc(size);
 
-    if ((P-A) != 0)
-    {
-        RT_LOGI("ALLOC PTR = %016"RT_PR64"X\n", (rt_full)ptr);
+#endif /* (RT_POINTER - RT_ADDRESS) */
 
-        if ((rt_full)ptr > (0xFFFFFFFF - size))
-        {
-            RT_LOGI("address exceeded allowed range, exiting.\n");
-            exit(EXIT_FAILURE);
-        }
+#if (RT_POINTER - RT_ADDRESS) != 0 && RT_DEBUG >= 1
+
+    RT_LOGI("ALLOC PTR = %016"RT_PR64"X, size = %ld\n", (rt_full)ptr, size);
+
+#endif /* (RT_POINTER - RT_ADDRESS) && RT_DEBUG */
+
+#if (RT_POINTER - RT_ADDRESS) != 0
+
+    if ((rt_full)ptr > (0xFFFFFFFF - size))
+    {
+        RT_LOGE("address exceeded allowed range, exiting...");
+        exit(EXIT_FAILURE);
     }
+
+#endif /* (RT_POINTER - RT_ADDRESS) */
 
     return ptr;
 }
@@ -70,15 +102,23 @@ rt_pntr sys_alloc(rt_ui32 size)
  * Free memory from system heap.
  */
 static
-rt_void sys_free(rt_pntr ptr)
+rt_void sys_free(rt_pntr ptr, rt_size size)
 {
-    /* consider using mmap/munmap with MAP_32BIT to limit address range */
+#if (RT_POINTER - RT_ADDRESS) != 0
+
+    munmap(ptr, size);
+
+#else /* (RT_POINTER - RT_ADDRESS) */
+
     free(ptr);
 
-    if ((P-A) != 0)
-    {
-        RT_LOGI("FREED PTR = %016"RT_PR64"X\n", (rt_full)ptr);
-    }
+#endif /* (RT_POINTER - RT_ADDRESS) */
+
+#if (RT_POINTER - RT_ADDRESS) != 0 && RT_DEBUG >= 1
+
+    RT_LOGI("FREED PTR = %016"RT_PR64"X, size = %ld\n", (rt_full)ptr, size);
+
+#endif /* (RT_POINTER - RT_ADDRESS) && RT_DEBUG */
 }
 
 static rt_si32 t_diff = 2;
@@ -2689,8 +2729,8 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 
     ASM_DONE(inf0)
 
-    sys_free(info);
-    sys_free(marr);
+    sys_free(info, sizeof(rt_SIMD_INFOX) + MASK);
+    sys_free(marr, 10 * ARR_SIZE * sizeof(rt_ui32) + MASK);
 
 #if   defined (RT_WIN32) /* Win32, MSVC ------------------------------------- */
 
