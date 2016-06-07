@@ -226,16 +226,16 @@ struct rt_SIMD_INFO
 {
     /* internal variables */
 
-    rt_word scr00;          /* scratchpad 00 */
+    rt_ui32 scr00;          /* scratchpad 00 */
 #define inf_SCR00           DP(0x000)
 
-    rt_word ver;            /* SIMD version <- cpuid */
+    rt_ui32 ver;            /* SIMD version <- cpuid */
 #define inf_VER             DP(0x004)
 
-    rt_word pad01;          /* reserved, do not use! */
+    rt_ui32 pad01;          /* reserved, do not use! */
 #define inf_PAD01           DP(0x008)
 
-    rt_word fctrl[S-3];     /* reserved, do not use! */
+    rt_ui32 fctrl[S-3];     /* reserved, do not use! */
 #define inf_FCTRL(nx)       DP(0x00C + nx)
 
     /* general purpose constants */
@@ -249,16 +249,16 @@ struct rt_SIMD_INFO
     rt_real gpc03[S];       /* +3.0 */
 #define inf_GPC03           DP(Q*0x030)
 
-    rt_word gpc04[S];       /* 0x7FFFFFFF */
+    rt_ui32 gpc04[S];       /* 0x7FFFFFFF */
 #define inf_GPC04           DP(Q*0x040)
 
-    rt_word gpc05[S];       /* 0x3F800000 */
+    rt_ui32 gpc05[S];       /* 0x3F800000 */
 #define inf_GPC05           DP(Q*0x050)
 
-    rt_word scr01[S];       /* scratchpad 01 */
+    rt_ui32 scr01[S];       /* scratchpad 01 */
 #define inf_SCR01(nx)       DP(Q*0x060 + nx)
 
-    rt_word scr02[S];       /* scratchpad 02 */
+    rt_ui32 scr02[S];       /* scratchpad 02 */
 #define inf_SCR02(nx)       DP(Q*0x070 + nx)
 
     rt_real pad02[S*8];     /* reserved, do not use! */
