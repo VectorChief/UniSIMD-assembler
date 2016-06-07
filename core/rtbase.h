@@ -97,17 +97,17 @@ typedef unsigned long long  rt_ui64;
 
 /* adjustable integer types */
 typedef rt_si08             rt_bool;
-typedef rt_si64             rt_size;
+typedef long                rt_size;
 typedef rt_si64             rt_time;
 
 typedef rt_si08             rt_char;
 typedef rt_si16             rt_shrt;
-typedef rt_si32             rt_cell;
+typedef long                rt_cell;
 typedef rt_si64             rt_long;
 
 typedef rt_ui08             rt_byte;
 typedef rt_ui16             rt_half;
-typedef rt_ui32             rt_word;
+typedef unsigned long       rt_word;
 typedef rt_ui64             rt_full;
 
 typedef void                rt_void;
