@@ -147,10 +147,10 @@ struct rt_SIMD_INFOX : public rt_SIMD_INFO
 #define inf_SIMD            DP(Q*0x100+0x00C)
 
     rt_pntr label;
-#define inf_LABEL           DP(Q*0x100+0x010+0x000*P+E)
+#define inf_LABEL           DP(Q*0x100+0x010+0x000*P)
 
     rt_pntr tail;
-#define inf_TAIL            DP(Q*0x100+0x010+0x004*P+E)
+#define inf_TAIL            DP(Q*0x100+0x010+0x004*P)
 
     /* floating point arrays */
 
@@ -1062,8 +1062,8 @@ rt_void s_test09(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
-        label_ld(cyc_beg) /* load to Reax */
-        movxx_st(Reax, Mebp, inf_LABEL)
+        label_st(cyc_beg,
+                 Mebp, inf_LABEL)
 
         movxx_ld(Reax, Mebp, inf_CYC)
         movxx_st(Reax, Mebp, inf_LOC)
@@ -2196,8 +2196,8 @@ rt_void s_test18(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
-        label_ld(cyc_ini) /* load to Reax */
-        movxx_st(Reax, Mebp, inf_LABEL)
+        label_st(cyc_ini,
+                 Mebp, inf_LABEL)
 
         movxx_ld(Reax, Mebp, inf_CYC)
         movxx_st(Reax, Mebp, inf_LOC)
