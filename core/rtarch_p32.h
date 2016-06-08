@@ -307,6 +307,8 @@
 #define adrxx_lb(lb) /* load label to Reax */                               \
         label_ld(lb)
 
+#if defined (RT_P32)
+
 #define stack_st(RM)                                                        \
         EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x08 & 0xFFFF))  \
         EMITW(0x90000000 | MTM(REG(RM), SPxx,    0x00))
@@ -314,8 +316,6 @@
 #define stack_ld(RM)                                                        \
         EMITW(0x80000000 | MTM(REG(RM), SPxx,    0x00))                     \
         EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x08 & 0xFFFF))
-
-#if defined (RT_P32)
 
 #if RT_SIMD_COMPAT_DIV != 0 || RT_SIMD_COMPAT_SQR != 0
 
@@ -420,6 +420,14 @@
 #endif /* RT_SIMD_COMPAT_DIV != 0 || RT_SIMD_COMPAT_SQR != 0 */
 
 #elif defined (RT_P64)
+
+#define stack_st(RM)                                                        \
+        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x08 & 0xFFFF))  \
+        EMITW(0xF8000000 | MTM(REG(RM), SPxx,    0x00))
+
+#define stack_ld(RM)                                                        \
+        EMITW(0xE8000000 | MTM(REG(RM), SPxx,    0x00))                     \
+        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x08 & 0xFFFF))
 
 #if RT_SIMD_COMPAT_DIV != 0 || RT_SIMD_COMPAT_SQR != 0
 
