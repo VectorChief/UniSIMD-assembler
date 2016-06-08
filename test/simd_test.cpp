@@ -47,10 +47,10 @@
 
 #include <sys/mman.h>
 
-#endif /* (RT_POINTER - RT_ADDRESS) */
-
 static
-rt_char *s_ptr = (rt_char *)0x0000000040000000;
+rt_byte *s_ptr = (rt_byte *)0x40000000;
+
+#endif /* (RT_POINTER - RT_ADDRESS) */
 
 /*
  * Allocate memory from system heap.
@@ -61,17 +61,17 @@ rt_pntr sys_alloc(rt_size size)
 {
 #if (RT_POINTER - RT_ADDRESS) != 0
 
+    /* loop around 1GB boundary MAP_32BIT */
+    if (s_ptr >= (rt_byte *)0x80000000 - size)
+    {
+        s_ptr  = (rt_byte *)0x40000000;
+    }
+
     rt_pntr ptr = mmap(s_ptr, size, PROT_READ | PROT_WRITE,
                   MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 
     /* advance with page-size granularity */
-    s_ptr += ((size + 4095) / 4096) * 4096;
-
-    /* loop around 1GB boundary MAP_32BIT */
-    if (s_ptr >= (rt_char *)0x0000000080000000)
-    {
-        s_ptr  = (rt_char *)0x0000000040000000;
-    }
+    s_ptr = (rt_byte *)ptr + ((size + 4095) / 4096) * 4096;
 
 #else /* (RT_POINTER - RT_ADDRESS) */
 
@@ -87,7 +87,7 @@ rt_pntr sys_alloc(rt_size size)
 
 #if (RT_POINTER - RT_ADDRESS) != 0
 
-    if ((rt_full)ptr > (0xFFFFFFFF - size))
+    if ((rt_byte *)ptr > (rt_byte *)0xFFFFFFFF - size)
     {
         RT_LOGE("address exceeded allowed range, exiting...");
         exit(EXIT_FAILURE);
