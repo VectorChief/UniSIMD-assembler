@@ -26,13 +26,3 @@ simd_test:
 
 # For 32-bit Power(7,7+,8) VSX target use (replace): -DRT_128=2
 # qemu-ppc64abi32 -cpu POWER7 simd_test.p32
-
-# For 64-bit Power(7,7+,8) VSX target use (replace): -DRT_128=2
-# powerpc64le-linux-gnu-g++ -O2 -DRT_P64 -DRT_POINTER=64 -DRT_ENDIAN=0
-# rename produced binary to simd_test.p64_32 or adjust the build command above.
-# qemu-ppc64le -cpu POWER7 simd_test.p64_32
-
-# For 64-bit Power(7,7+,8) VSX big-endian target use (replace): -DRT_128=2
-# powerpc64-linux-gnu-g++ -O2 -DRT_P64 -DRT_POINTER=64 -DRT_ENDIAN=1
-# rename produced binary to simd_test.p64_32 or adjust the build command above.
-# qemu-ppc64 -cpu POWER7 simd_test.p64_32

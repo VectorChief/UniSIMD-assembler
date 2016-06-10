@@ -35,15 +35,3 @@ simd_test:
 # For MIPS32 big-endian (r5 and r6) use (replace): -EB -DRT_ENDIAN=1
 # qemu-mips -cpu *** simd_test.m32
 # where *** is P5600 for r5 build and mips32r6-generic for r6 build.
-
-# For MIPS64 Release 6 target use the following options (replace):
-# mips-img-linux-gnu-g++ -mabi=64 -DRT_M64=6 -DRT_POINTER=64
-# rename produced binary to simd_test.m64_32 or adjust the build command above.
-# For MIPS64 Release 6 emulation use QEMU 2.4.0.1.0 from imgtec.com:
-# qemu-mips64el -cpu I6400 simd_test.m64_32
-
-# For MIPS64 Release 6 big-endian target use the following options (replace):
-# mips-img-linux-gnu-g++ -EB -mabi=64 -DRT_M64=6 -DRT_POINTER=64 -DRT_ENDIAN=1
-# rename produced binary to simd_test.m64_32 or adjust the build command above.
-# For MIPS64 Release 6 big-endian emulation use QEMU 2.4.0.1.0 from imgtec.com:
-# qemu-mips64 -cpu I6400 simd_test.m64_32
