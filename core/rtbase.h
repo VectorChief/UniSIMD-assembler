@@ -232,8 +232,8 @@ struct rt_SIMD_INFO
     rt_ui32 ver;            /* SIMD version <- cpuid */
 #define inf_VER             DP(0x004)
 
-    rt_ui32 pad01;          /* reserved, do not use! */
-#define inf_PAD01           DP(0x008)
+    rt_ui32 regs;           /* SIMD reg-file storage */
+#define inf_REGS            DP(0x008)
 
     rt_ui32 fctrl[S-3];     /* reserved, do not use! */
 #define inf_FCTRL(nx)       DP(0x00C + nx)
@@ -266,12 +266,22 @@ struct rt_SIMD_INFO
 
 };
 
-#define ASM_INIT(__Info__)                                                  \
+struct rt_SIMD_REGS
+{
+    /* register file */
+
+    rt_real file[S*32];
+#define reg_FILE            DP(Q*0x000)
+
+};
+
+#define ASM_INIT(__Info__, __Regs__)                                        \
     RT_SIMD_SET(__Info__->gpc01, +1.0f);                                    \
     RT_SIMD_SET(__Info__->gpc02, -0.5f);                                    \
     RT_SIMD_SET(__Info__->gpc03, +3.0f);                                    \
     RT_SIMD_SET(__Info__->gpc04, 0x7FFFFFFF);                               \
-    RT_SIMD_SET(__Info__->gpc05, 0x3F800000);
+    RT_SIMD_SET(__Info__->gpc05, 0x3F800000);                               \
+    __Info__->regs = (rt_ui32)(rt_word)__Regs__;
 
 #define ASM_DONE(__Info__)
 

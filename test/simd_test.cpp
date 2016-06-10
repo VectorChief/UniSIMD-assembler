@@ -2647,7 +2647,10 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     rt_pntr info = sys_alloc(sizeof(rt_SIMD_INFOX) + MASK);
     rt_SIMD_INFOX *inf0 = (rt_SIMD_INFOX *)(((rt_full)info + MASK) & ~MASK);
 
-    ASM_INIT(inf0)
+    rt_pntr regs = sys_alloc(sizeof(rt_SIMD_REGS) + MASK);
+    rt_SIMD_REGS *reg0 = (rt_SIMD_REGS *)(((rt_full)regs + MASK) & ~MASK);
+
+    ASM_INIT(inf0, reg0)
 
     inf0->far0 = far0;
     inf0->fco1 = fco1;
@@ -2729,6 +2732,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 
     ASM_DONE(inf0)
 
+    sys_free(regs, sizeof(rt_SIMD_REGS) + MASK);
     sys_free(info, sizeof(rt_SIMD_INFOX) + MASK);
     sys_free(marr, 10 * ARR_SIZE * sizeof(rt_ui32) + MASK);
 

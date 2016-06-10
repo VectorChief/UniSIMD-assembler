@@ -16,6 +16,9 @@
 
 #if defined (RT_SIMD_CODE)
 
+#undef  sregs_sa
+#undef  sregs_la
+
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
@@ -130,6 +133,52 @@
 #define adrpx_ld(RG, RM, DP) /* RG is a BASE reg, DP is SIMD-aligned */     \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0xE0800000 | MPM(REG(RG), MOD(RM), VAL(DP), B2(DP), P2(DP)))
+
+#define sregs_sa() /* save all SIMD regs, reads and destroys Reax */        \
+        movpx_st(Xmm0, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(Xmm1, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(Xmm2, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(Xmm3, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(Xmm4, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(Xmm5, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(Xmm6, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(Xmm7, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        EMITW(0xF4000AAF | MXM(Tmm1,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        EMITW(0xF4000AAF | MXM(Tmm2,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        EMITW(0xF4000AAF | MXM(Tmm3,    Teax,    0x00))
+
+#define sregs_la() /* load all SIMD regs, reads and destroys Reax */        \
+        movpx_ld(Xmm0, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(Xmm1, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(Xmm2, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(Xmm3, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(Xmm4, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(Xmm5, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(Xmm6, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(Xmm7, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        EMITW(0xF4200AAF | MXM(Tmm1,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        EMITW(0xF4200AAF | MXM(Tmm2,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        EMITW(0xF4200AAF | MXM(Tmm3,    Teax,    0x00))
 
 /* and */
 

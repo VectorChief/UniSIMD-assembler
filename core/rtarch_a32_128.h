@@ -16,6 +16,9 @@
 
 #if defined (RT_SIMD_CODE)
 
+#undef  sregs_sa
+#undef  sregs_la
+
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
@@ -127,6 +130,76 @@
 #define adrpx_ld(RG, RM, DP) /* RG is a BASE reg, DP is SIMD-aligned */     \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C3(DP), EMPTY2)   \
         EMITW(0x0B000000 | MXM(REG(RG), MOD(RM), TDxx))
+
+#define sregs_sa() /* save all SIMD regs, reads and destroys Reax */        \
+        movpx_st(Xmm0, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(Xmm1, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(Xmm2, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(Xmm3, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(Xmm4, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(Xmm5, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(Xmm6, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(Xmm7, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(Xmm8, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(Xmm9, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(XmmA, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(XmmB, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(XmmC, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(XmmD, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(XmmE, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_st(XmmF, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        EMITW(0x3D800000 | MXM(Tmm1,    Teax,    0x00))
+
+#define sregs_la() /* load all SIMD regs, reads and destroys Reax */        \
+        movpx_ld(Xmm0, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(Xmm1, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(Xmm2, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(Xmm3, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(Xmm4, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(Xmm5, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(Xmm6, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(Xmm7, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(Xmm8, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(Xmm9, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(XmmA, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(XmmB, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(XmmC, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(XmmD, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(XmmE, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        movpx_ld(XmmF, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
+        EMITW(0x3DC00000 | MXM(Tmm1,    Teax,    0x00))
 
 /* and */
 
