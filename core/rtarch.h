@@ -1483,12 +1483,12 @@
         EMITX(0x1328C484)                                                   \
         EMITX(0x13421484)                                                   \
         EMITX(0x13642484)                                                   \
-        EMITX(0x1000004A | MXM(TmmR, TmmS, TmmS))                           \
+        EMITX(0x1000004A | MXM(TmmR,    TmmS,    TmmS))                     \
         EMITX(0x7C0042A6 | TVxx << 21)                                      \
         EMITX(0x3800FFFF | TIxx << 21)                                      \
         EMITX(0x7C0043A6 | TIxx << 21)                                      \
         EMITW(0x7C0902A6 | TCxx << 21)                                      \
-        "cmplw cr2, %%r24, %%r24\n"
+        ASM_BEG ASM_OP3(cmplw, cr2, %%r24, %%r24) ASM_END
 
 #define ASM_LEAVE(__Info__)                                                 \
         EMITW(0x7C0903A6 | TCxx << 21)                                      \
@@ -1542,12 +1542,12 @@
         EMITX(0x1328C484)                                                   \
         EMITX(0x13421484)                                                   \
         EMITX(0x13642484)                                                   \
-        EMITX(0x1000004A | MXM(TmmR, TmmS, TmmS))                           \
+        EMITX(0x1000004A | MXM(TmmR,    TmmS,    TmmS))                     \
         EMITX(0x7C0042A6 | TVxx << 21)                                      \
         EMITX(0x3800FFFF | TIxx << 21)                                      \
         EMITX(0x7C0043A6 | TIxx << 21)                                      \
         EMITW(0x7C0902A6 | TCxx << 21)                                      \
-        "cmplw cr2, %%r24, %%r24\n"
+        ASM_BEG ASM_OP3(cmplw, cr2, %%r24, %%r24) ASM_END
 
 #define ASM_LEAVE_F(__Info__)                                               \
         EMITW(0x7C0903A6 | TCxx << 21)                                      \
