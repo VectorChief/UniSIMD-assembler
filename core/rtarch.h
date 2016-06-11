@@ -24,10 +24,10 @@
  * corresponding companion files named rtarch_***.h for BASE instructions
  * and rtarch_***_***.h for SIMD instructions.
  *
- * Note that AArch32 mode of ARMv8 ISA is now part of the current ARM target,
+ * Note that AArch32 mode of ARMv8 ISA is a part of the legacy ARM target,
  * as it brings hw int-div and SIMD fp-convert with explicit round parameter,
  * while IEEE-compatible SIMD fp-arithmetic with full square root and divide
- * are planned for (ILP32 ABI of) AArch64:ARMv8 ISA in (A32 and) A64 target(s).
+ * are exposed via (ILP32 ABI of) AArch64:ARMv8 ISA in (A32 and) A64 target(s).
  *
  * Preliminary naming scheme for potential future targets.
  *
@@ -192,44 +192,54 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {rt_word __Reax__; __asm                        \
-                            {                                               \
-                                movlb_st(__Reax__)                          \
-                                movlb_ld(__Info__)                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    __asm                                                                   \
+    {                                                                       \
+        movlb_st(__Reax__)                                                  \
+        movlb_ld(__Info__)                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
 
-#define ASM_LEAVE(__Info__)     movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(__Reax__)                          \
-                            }}
+#define ASM_LEAVE(__Info__)                                                 \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(__Reax__)                                                  \
+    }                                                                       \
+}
 
 #else /* RT_SIMD_FAST_FCTRL */
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {rt_word __Reax__; __asm                        \
-                            {                                               \
-                                movlb_st(__Reax__)                          \
-                                movlb_ld(__Info__)                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                movxx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))  \
-                                movxx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))  \
-                                movxx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))  \
-                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    __asm                                                                   \
+    {                                                                       \
+        movlb_st(__Reax__)                                                  \
+        movlb_ld(__Info__)                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        movxx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))                          \
+        movxx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))                          \
+        movxx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))                          \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
 
-#define ASM_LEAVE(__Info__)     movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(__Reax__)                          \
-                            }}
+#define ASM_LEAVE(__Info__)                                                 \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(__Reax__)                                                  \
+    }                                                                       \
+}
 
 #endif /* RT_SIMD_FAST_FCTRL */
 #else /* RT_SIMD_FLUSH_ZERO */
@@ -251,50 +261,60 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__) {rt_word __Reax__; __asm                      \
-                            {                                               \
-                                movlb_st(__Reax__)                          \
-                                movlb_ld(__Info__)                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
-                                mxcsr_ld(Mebp, inf_FCTRL(0*4))
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    __asm                                                                   \
+    {                                                                       \
+        movlb_st(__Reax__)                                                  \
+        movlb_ld(__Info__)                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
-#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))  \
-                                mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(__Reax__)                          \
-                            }}
+#define ASM_LEAVE_F(__Info__)                                               \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(__Reax__)                                                  \
+    }                                                                       \
+}
 
 #else /* RT_SIMD_FAST_FCTRL */
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__) {rt_word __Reax__; __asm                      \
-                            {                                               \
-                                movlb_st(__Reax__)                          \
-                                movlb_ld(__Info__)                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                movxx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))  \
-                                movxx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))  \
-                                movxx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))  \
-                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
-                                mxcsr_ld(Mebp, inf_FCTRL(0*4))
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    __asm                                                                   \
+    {                                                                       \
+        movlb_st(__Reax__)                                                  \
+        movlb_ld(__Info__)                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        movxx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))                          \
+        movxx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))                          \
+        movxx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))                          \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
-#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))  \
-                                mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(__Reax__)                          \
-                            }}
+#define ASM_LEAVE_F(__Info__)                                               \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(__Reax__)                                                  \
+    }                                                                       \
+}
 
 #endif /* RT_SIMD_FAST_FCTRL */
 
@@ -366,50 +386,60 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
 
-#define ASM_LEAVE(__Info__)     movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE(__Info__)                                                 \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #else /* RT_SIMD_FAST_FCTRL */
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                movxx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))  \
-                                movxx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))  \
-                                movxx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))  \
-                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        movxx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))                          \
+        movxx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))                          \
+        movxx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))                          \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
 
-#define ASM_LEAVE(__Info__)     movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE(__Info__)                                                 \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #endif /* RT_SIMD_FAST_FCTRL */
 #else /* RT_SIMD_FLUSH_ZERO */
@@ -431,56 +461,66 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__) {rt_word __Reax__; asm volatile               \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
-                                mxcsr_ld(Mebp, inf_FCTRL(0*4))
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
-#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))  \
-                                mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE_F(__Info__)                                               \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #else /* RT_SIMD_FAST_FCTRL */
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__) {rt_word __Reax__; asm volatile               \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                movxx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))  \
-                                movxx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))  \
-                                movxx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))  \
-                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
-                                mxcsr_ld(Mebp, inf_FCTRL(0*4))
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        movxx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))                          \
+        movxx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))                          \
+        movxx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))                          \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
-#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))  \
-                                mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE_F(__Info__)                                               \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #endif /* RT_SIMD_FAST_FCTRL */
 
@@ -561,52 +601,62 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {rt_full __Reax__; asm volatile                 \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                "xor %%r15, %%r15\n" /* r15 <- 0 (xor) */   \
-                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_full __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        "xor %%r15, %%r15\n" /* r15 <- 0 (xor) */                           \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
 
-#define ASM_LEAVE(__Info__)     movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_full)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE(__Info__)                                                 \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_full)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #else /* RT_SIMD_FAST_FCTRL */
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {rt_full __Reax__; asm volatile                 \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                "xor %%r15, %%r15\n" /* r15 <- 0 (xor) */   \
-                                movxx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))  \
-                                movxx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))  \
-                                movxx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))  \
-                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_full __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        "xor %%r15, %%r15\n" /* r15 <- 0 (xor) */                           \
+        movxx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))                          \
+        movxx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))                          \
+        movxx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))                          \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
 
-#define ASM_LEAVE(__Info__)     movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_full)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE(__Info__)                                                 \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_full)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #endif /* RT_SIMD_FAST_FCTRL */
 #else /* RT_SIMD_FLUSH_ZERO */
@@ -628,58 +678,68 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__) {rt_full __Reax__; asm volatile               \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                "xor %%r15, %%r15\n" /* r15 <- 0 (xor) */   \
-                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
-                                mxcsr_ld(Mebp, inf_FCTRL(0*4))
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_full __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        "xor %%r15, %%r15\n" /* r15 <- 0 (xor) */                           \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
-#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))  \
-                                mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_full)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE_F(__Info__)                                               \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_full)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #else /* RT_SIMD_FAST_FCTRL */
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__) {rt_full __Reax__; asm volatile               \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                "xor %%r15, %%r15\n" /* r15 <- 0 (xor) */   \
-                                movxx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))  \
-                                movxx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))  \
-                                movxx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))  \
-                                movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
-                                mxcsr_ld(Mebp, inf_FCTRL(0*4))
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_full __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        "xor %%r15, %%r15\n" /* r15 <- 0 (xor) */   \
+        movxx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))  \
+        movxx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))  \
+        movxx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))  \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))  \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
-#define ASM_LEAVE_F(__Info__)   movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))  \
-                                mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_full)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE_F(__Info__)                                               \
+        movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_full)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #endif /* RT_SIMD_FAST_FCTRL */
 
@@ -750,50 +810,60 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                EMITW(0xE3A08500) /* r8  <- (0 << 22) */
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        EMITW(0xE3A08500) /* r8  <- (0 << 22) */
 
-#define ASM_LEAVE(__Info__)     movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE(__Info__)                                                 \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #else /* RT_SIMD_FAST_FCTRL */
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                EMITW(0xE3A0E503) /* r14 <- (3 << 22) */    \
-                                EMITW(0xE3A0C502) /* r12 <- (2 << 22) */    \
-                                EMITW(0xE3A0A501) /* r10 <- (1 << 22) */    \
-                                EMITW(0xE3A08500) /* r8  <- (0 << 22) */
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        EMITW(0xE3A0E503) /* r14 <- (3 << 22) */                            \
+        EMITW(0xE3A0C502) /* r12 <- (2 << 22) */                            \
+        EMITW(0xE3A0A501) /* r10 <- (1 << 22) */                            \
+        EMITW(0xE3A08500) /* r8  <- (0 << 22) */
 
-#define ASM_LEAVE(__Info__)     movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE(__Info__)                                                 \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #endif /* RT_SIMD_FAST_FCTRL */
 #else /* RT_SIMD_FLUSH_ZERO */
@@ -815,56 +885,66 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__) {rt_word __Reax__; asm volatile               \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                EMITW(0xE3A08504) /* r8  <- (4 << 22) */    \
-                                EMITW(0xEEE18A10) /* fpscr <- r8 */
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        EMITW(0xE3A08504) /* r8  <- (4 << 22) */                            \
+        EMITW(0xEEE18A10) /* fpscr <- r8 */
 
-#define ASM_LEAVE_F(__Info__)   EMITW(0xE3A08500) /* r8  <- (0 << 22) */    \
-                                EMITW(0xEEE18A10) /* fpscr <- r8 */         \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE_F(__Info__)                                               \
+        EMITW(0xE3A08500) /* r8  <- (0 << 22) */                            \
+        EMITW(0xEEE18A10) /* fpscr <- r8 */                                 \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #else /* RT_SIMD_FAST_FCTRL */
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__) {rt_word __Reax__; asm volatile               \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                EMITW(0xE3A0E507) /* r14 <- (7 << 22) */    \
-                                EMITW(0xE3A0C506) /* r12 <- (6 << 22) */    \
-                                EMITW(0xE3A0A505) /* r10 <- (5 << 22) */    \
-                                EMITW(0xE3A08504) /* r8  <- (4 << 22) */    \
-                                EMITW(0xEEE18A10) /* fpscr <- r8 */
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        EMITW(0xE3A0E507) /* r14 <- (7 << 22) */                            \
+        EMITW(0xE3A0C506) /* r12 <- (6 << 22) */                            \
+        EMITW(0xE3A0A505) /* r10 <- (5 << 22) */                            \
+        EMITW(0xE3A08504) /* r8  <- (4 << 22) */                            \
+        EMITW(0xEEE18A10) /* fpscr <- r8 */
 
-#define ASM_LEAVE_F(__Info__)   EMITW(0xE3A08500) /* r8  <- (0 << 22) */    \
-                                EMITW(0xEEE18A10) /* fpscr <- r8 */         \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE_F(__Info__)                                               \
+        EMITW(0xE3A08500) /* r8  <- (0 << 22) */                            \
+        EMITW(0xEEE18A10) /* fpscr <- r8 */                                 \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #endif /* RT_SIMD_FAST_FCTRL */
 
@@ -943,50 +1023,60 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {rt_full __Reax__; asm volatile                 \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                EMITW(0x52A00016) /* w22 <- (0 << 22) */
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_full __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        EMITW(0x52A00016) /* w22 <- (0 << 22) */
 
-#define ASM_LEAVE(__Info__)     movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_full)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE(__Info__)                                                 \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_full)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #else /* RT_SIMD_FAST_FCTRL */
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {rt_full __Reax__; asm volatile                 \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                EMITW(0x52A01819) /* w25 <- (3 << 22) */    \
-                                EMITW(0x52A01018) /* w24 <- (2 << 22) */    \
-                                EMITW(0x52A00817) /* w23 <- (1 << 22) */    \
-                                EMITW(0x52A00016) /* w22 <- (0 << 22) */
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_full __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        EMITW(0x52A01819) /* w25 <- (3 << 22) */                            \
+        EMITW(0x52A01018) /* w24 <- (2 << 22) */                            \
+        EMITW(0x52A00817) /* w23 <- (1 << 22) */                            \
+        EMITW(0x52A00016) /* w22 <- (0 << 22) */
 
-#define ASM_LEAVE(__Info__)     movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_full)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE(__Info__)                                                 \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_full)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #endif /* RT_SIMD_FAST_FCTRL */
 #else /* RT_SIMD_FLUSH_ZERO */
@@ -1008,56 +1098,66 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__) {rt_full __Reax__; asm volatile               \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                EMITW(0x52A02016) /* w22 <- (4 << 22) */    \
-                                EMITW(0xD51B4416) /* fpcr <- w22 */
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_full __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        EMITW(0x52A02016) /* w22 <- (4 << 22) */                            \
+        EMITW(0xD51B4416) /* fpcr <- w22 */
 
-#define ASM_LEAVE_F(__Info__)   EMITW(0x52A00016) /* w22 <- (0 << 22) */    \
-                                EMITW(0xD51B4416) /* fpcr <- w22 */         \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_full)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE_F(__Info__)                                               \
+        EMITW(0x52A00016) /* w22 <- (0 << 22) */                            \
+        EMITW(0xD51B4416) /* fpcr <- w22 */                                 \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_full)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #else /* RT_SIMD_FAST_FCTRL */
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__) {rt_full __Reax__; asm volatile               \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                EMITW(0x52A03819) /* w25 <- (7 << 22) */    \
-                                EMITW(0x52A03018) /* w24 <- (6 << 22) */    \
-                                EMITW(0x52A02817) /* w23 <- (5 << 22) */    \
-                                EMITW(0x52A02016) /* w22 <- (4 << 22) */    \
-                                EMITW(0xD51B4416) /* fpcr <- w22 */
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_full __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        EMITW(0x52A03819) /* w25 <- (7 << 22) */                            \
+        EMITW(0x52A03018) /* w24 <- (6 << 22) */                            \
+        EMITW(0x52A02817) /* w23 <- (5 << 22) */                            \
+        EMITW(0x52A02016) /* w22 <- (4 << 22) */                            \
+        EMITW(0xD51B4416) /* fpcr <- w22 */
 
-#define ASM_LEAVE_F(__Info__)   EMITW(0x52A00016) /* w22 <- (0 << 22) */    \
-                                EMITW(0xD51B4416) /* fpcr <- w22 */         \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_full)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE_F(__Info__)                                               \
+        EMITW(0x52A00016) /* w22 <- (0 << 22) */                            \
+        EMITW(0xD51B4416) /* fpcr <- w22 */                                 \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_full)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #endif /* RT_SIMD_FAST_FCTRL */
 
@@ -1135,52 +1235,62 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                EMITX(0x787EF79E) /* w30 <- 0 (xor) */      \
-                                EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        EMITX(0x787EF79E) /* w30 <- 0 (xor) */                              \
+        EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */
 
-#define ASM_LEAVE(__Info__)     movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE(__Info__)                                                 \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #else /* RT_SIMD_FAST_FCTRL */
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                EMITX(0x787EF79E) /* w30 <- 0 (xor) */      \
-                                EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */  \
-                                EMITW(0x36950001) /* r21 <- 1|(0 << 24) */  \
-                                EMITW(0x36960002) /* r22 <- 2|(0 << 24) */  \
-                                EMITW(0x36970003) /* r23 <- 3|(0 << 24) */
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        EMITX(0x787EF79E) /* w30 <- 0 (xor) */                              \
+        EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */                          \
+        EMITW(0x36950001) /* r21 <- 1|(0 << 24) */                          \
+        EMITW(0x36960002) /* r22 <- 2|(0 << 24) */                          \
+        EMITW(0x36970003) /* r23 <- 3|(0 << 24) */
 
-#define ASM_LEAVE(__Info__)     movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE(__Info__)                                                 \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #endif /* RT_SIMD_FAST_FCTRL */
 #else /* RT_SIMD_FLUSH_ZERO */
@@ -1202,62 +1312,72 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__) {rt_word __Reax__; asm volatile               \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                EMITX(0x787EF79E) /* w30 <- 0 (xor) */      \
-                                EMITW(0x3C140100) /* r20 <- 0|(1 << 24) */  \
-                                EMITW(0x44D4F800) /* fcsr <- r20 */         \
-                                EMITX(0x783EA059) /* msacsr <- r20 */
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        EMITX(0x787EF79E) /* w30 <- 0 (xor) */                              \
+        EMITW(0x3C140100) /* r20 <- 0|(1 << 24) */                          \
+        EMITW(0x44D4F800) /* fcsr <- r20 */                                 \
+        EMITX(0x783EA059) /* msacsr <- r20 */
 
-#define ASM_LEAVE_F(__Info__)   EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */  \
-                                EMITW(0x44D4F800) /* fcsr <- r20 */         \
-                                EMITX(0x783EA059) /* msacsr <- r20 */       \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE_F(__Info__)                                               \
+        EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */                          \
+        EMITW(0x44D4F800) /* fcsr <- r20 */                                 \
+        EMITX(0x783EA059) /* msacsr <- r20 */                               \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #else /* RT_SIMD_FAST_FCTRL */
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__) {rt_word __Reax__; asm volatile               \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                EMITX(0x787EF79E) /* w30 <- 0 (xor) */      \
-                                EMITW(0x3C140100) /* r20 <- 0|(1 << 24) */  \
-                                EMITW(0x36950001) /* r21 <- 1|(1 << 24) */  \
-                                EMITW(0x36960002) /* r22 <- 2|(1 << 24) */  \
-                                EMITW(0x36970003) /* r23 <- 3|(1 << 24) */  \
-                                EMITW(0x44D4F800) /* fcsr <- r20 */         \
-                                EMITX(0x783EA059) /* msacsr <- r20 */
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        EMITX(0x787EF79E) /* w30 <- 0 (xor) */                              \
+        EMITW(0x3C140100) /* r20 <- 0|(1 << 24) */                          \
+        EMITW(0x36950001) /* r21 <- 1|(1 << 24) */                          \
+        EMITW(0x36960002) /* r22 <- 2|(1 << 24) */                          \
+        EMITW(0x36970003) /* r23 <- 3|(1 << 24) */                          \
+        EMITW(0x44D4F800) /* fcsr <- r20 */                                 \
+        EMITX(0x783EA059) /* msacsr <- r20 */
 
-#define ASM_LEAVE_F(__Info__)   EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */  \
-                                EMITW(0x44D4F800) /* fcsr <- r20 */         \
-                                EMITX(0x783EA059) /* msacsr <- r20 */       \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE_F(__Info__)                                               \
+        EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */                          \
+        EMITW(0x44D4F800) /* fcsr <- r20 */                                 \
+        EMITX(0x783EA059) /* msacsr <- r20 */                               \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #endif /* RT_SIMD_FAST_FCTRL */
 
@@ -1348,39 +1468,44 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__) {rt_word __Reax__; asm volatile                 \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                EMITW(0x7C000278) /* r0  <- 0 (xor) */      \
-                                movpx_ld(Xmm2, Mebp, inf_GPC01)             \
-                                movpx_ld(Xmm4, Mebp, inf_GPC02)             \
-                                movpx_ld(Xmm8, Mebp, inf_GPC04)             \
-                                EMITX(0x13084504)                           \
-                                EMITX(0x1328C484)                           \
-                                EMITX(0x13421484)                           \
-                                EMITX(0x13642484)                           \
-                                EMITX(0x1000004A | MXM(TmmR, TmmS, TmmS))   \
-                                EMITX(0x7C0042A6 | TVxx << 21)              \
-                                EMITX(0x3800FFFF | TIxx << 21)              \
-                                EMITX(0x7C0043A6 | TIxx << 21)              \
-                                EMITW(0x7C0902A6 | TCxx << 21)              \
-                                "cmplw cr2, %%r24, %%r24\n"
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        EMITW(0x7C000278) /* r0  <- 0 (xor) */                              \
+        movpx_ld(Xmm2, Mebp, inf_GPC01)                                     \
+        movpx_ld(Xmm4, Mebp, inf_GPC02)                                     \
+        movpx_ld(Xmm8, Mebp, inf_GPC04)                                     \
+        EMITX(0x13084504)                                                   \
+        EMITX(0x1328C484)                                                   \
+        EMITX(0x13421484)                                                   \
+        EMITX(0x13642484)                                                   \
+        EMITX(0x1000004A | MXM(TmmR, TmmS, TmmS))                           \
+        EMITX(0x7C0042A6 | TVxx << 21)                                      \
+        EMITX(0x3800FFFF | TIxx << 21)                                      \
+        EMITX(0x7C0043A6 | TIxx << 21)                                      \
+        EMITW(0x7C0902A6 | TCxx << 21)                                      \
+        "cmplw cr2, %%r24, %%r24\n"
 
-#define ASM_LEAVE(__Info__)     EMITW(0x7C0903A6 | TCxx << 21)              \
-                                EMITX(0x7C0043A6 | TVxx << 21)              \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE(__Info__)                                                 \
+        EMITW(0x7C0903A6 | TCxx << 21)                                      \
+        EMITX(0x7C0043A6 | TVxx << 21)                                      \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #else /* RT_SIMD_FLUSH_ZERO */
 
@@ -1399,45 +1524,50 @@
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__) {rt_word __Reax__; asm volatile               \
-                            (                                               \
-                                movlb_st(%[Reax_])                          \
-                                movlb_ld(%[Info_])                          \
-                                stack_sa()                                  \
-                                movxx_rr(Rebp, Reax)                        \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_sa()                                  \
-                                EMITW(0x7C000278) /* r0  <- 0 (xor) */      \
-                                EMITX(0xFF80410C) /* fpscr <- NI(4) */      \
-                                EMITX(0x13E1034C) /* v31 <- splt-half(1) */ \
-                                EMITX(0x1000FE44) /* vscr <- v31, NJ(16) */ \
-                                movpx_ld(Xmm2, Mebp, inf_GPC01)             \
-                                movpx_ld(Xmm4, Mebp, inf_GPC02)             \
-                                movpx_ld(Xmm8, Mebp, inf_GPC04)             \
-                                EMITX(0x13084504)                           \
-                                EMITX(0x1328C484)                           \
-                                EMITX(0x13421484)                           \
-                                EMITX(0x13642484)                           \
-                                EMITX(0x1000004A | MXM(TmmR, TmmS, TmmS))   \
-                                EMITX(0x7C0042A6 | TVxx << 21)              \
-                                EMITX(0x3800FFFF | TIxx << 21)              \
-                                EMITX(0x7C0043A6 | TIxx << 21)              \
-                                EMITW(0x7C0902A6 | TCxx << 21)              \
-                                "cmplw cr2, %%r24, %%r24\n"
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_sa()                                                          \
+        EMITW(0x7C000278) /* r0  <- 0 (xor) */                              \
+        EMITX(0xFF80410C) /* fpscr <- NI(4) */                              \
+        EMITX(0x13E1034C) /* v31 <- splt-half(1) */                         \
+        EMITX(0x1000FE44) /* vscr <- v31, NJ(16) */                         \
+        movpx_ld(Xmm2, Mebp, inf_GPC01)                                     \
+        movpx_ld(Xmm4, Mebp, inf_GPC02)                                     \
+        movpx_ld(Xmm8, Mebp, inf_GPC04)                                     \
+        EMITX(0x13084504)                                                   \
+        EMITX(0x1328C484)                                                   \
+        EMITX(0x13421484)                                                   \
+        EMITX(0x13642484)                                                   \
+        EMITX(0x1000004A | MXM(TmmR, TmmS, TmmS))                           \
+        EMITX(0x7C0042A6 | TVxx << 21)                                      \
+        EMITX(0x3800FFFF | TIxx << 21)                                      \
+        EMITX(0x7C0043A6 | TIxx << 21)                                      \
+        EMITW(0x7C0902A6 | TCxx << 21)                                      \
+        "cmplw cr2, %%r24, %%r24\n"
 
-#define ASM_LEAVE_F(__Info__)   EMITW(0x7C0903A6 | TCxx << 21)              \
-                                EMITX(0x7C0043A6 | TVxx << 21)              \
-                                EMITX(0xFF80010C) /* fpscr <- NI(0) */      \
-                                EMITX(0x13E0034C) /* v31 <- splt-half(0) */ \
-                                EMITX(0x1000FE44) /* vscr <- v31, NJ(16) */ \
-                                movxx_ld(Reax, Mebp, inf_REGS)              \
-                                sregs_la()                                  \
-                                stack_la()                                  \
-                                movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" (__Reax__)                   \
-                                : [Info_]  "r" ((rt_word)__Info__)          \
-                                : "cc",  "memory"                           \
-                            );}
+#define ASM_LEAVE_F(__Info__)                                               \
+        EMITW(0x7C0903A6 | TCxx << 21)                                      \
+        EMITX(0x7C0043A6 | TVxx << 21)                                      \
+        EMITX(0xFF80010C) /* fpscr <- NI(0) */                              \
+        EMITX(0x13E0034C) /* v31 <- splt-half(0) */                         \
+        EMITX(0x1000FE44) /* vscr <- v31, NJ(16) */                         \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
 
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
