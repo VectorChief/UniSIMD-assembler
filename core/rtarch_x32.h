@@ -747,7 +747,7 @@
 #define jmpxx_mm(RM, DP)         /* memory-targeted unconditional jump */   \
     ADR REX(1,       RXB(RM)) EMITB(0x8B)   /* <- load r15d from RM/DP */   \
         MRM(0x07,    MOD(RM), REG(RM))      /*    upper half is zeroed */   \
-        AUX(SIB(RM), CMD(DP), EMPTY)        /*    only once in ASM_ENTER */ \
+        AUX(SIB(RM), CMD(DP), EMPTY)        /*    as a part of 32-bit op */ \
         REX(0,             1) EMITB(0xFF)   /* <- jump to address in r15 */ \
         MRM(0x04,       0x03, 0x07)
 

@@ -612,7 +612,6 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        "xor %%r15, %%r15\n" /* r15 <- 0 (xor) */                           \
         movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
 
 #define ASM_LEAVE(__Info__)                                                 \
@@ -641,7 +640,6 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        "xor %%r15, %%r15\n" /* r15 <- 0 (xor) */                           \
         movxx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))                          \
         movxx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))                          \
         movxx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))                          \
@@ -689,7 +687,6 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        "xor %%r15, %%r15\n" /* r15 <- 0 (xor) */                           \
         movxx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
         mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
@@ -721,7 +718,6 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        "xor %%r15, %%r15\n" /* r15 <- 0 (xor) */   \
         movxx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))  \
         movxx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))  \
         movxx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))  \
