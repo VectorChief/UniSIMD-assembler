@@ -115,7 +115,8 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define sregs_sa() /* save all SIMD regs, reads and destroys Reax */        \
+#define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movpx_st(Xmm0, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
         movpx_st(Xmm1, Oeax, PLAIN)                                         \
@@ -148,7 +149,8 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
         movpx_st(XmmF, Oeax, PLAIN)
 
-#define sregs_la() /* load all SIMD regs, reads and destroys Reax */        \
+#define sregs_la() /* load all SIMD regs, destroys Reax */                  \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movpx_ld(Xmm0, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
         movpx_ld(Xmm1, Oeax, PLAIN)                                         \

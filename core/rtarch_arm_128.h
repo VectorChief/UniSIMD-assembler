@@ -134,7 +134,8 @@
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0xE0800000 | MPM(REG(RG), MOD(RM), VAL(DP), B2(DP), P2(DP)))
 
-#define sregs_sa() /* save all SIMD regs, reads and destroys Reax */        \
+#define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movpx_st(Xmm0, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
         movpx_st(Xmm1, Oeax, PLAIN)                                         \
@@ -157,7 +158,8 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
         EMITW(0xF4000AAF | MXM(Tmm3,    Teax,    0x00))
 
-#define sregs_la() /* load all SIMD regs, reads and destroys Reax */        \
+#define sregs_la() /* load all SIMD regs, destroys Reax */                  \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movpx_ld(Xmm0, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
         movpx_ld(Xmm1, Oeax, PLAIN)                                         \
