@@ -109,6 +109,61 @@
 #define  C1(val, tp1, tp2)  C1##tp1
 #define  C3(val, tp1, tp2)  C3##tp2 /* <- "C3##tp2" not a bug */
 
+/* immediate encoding add/sub/cmp(TP1), and/orr/xor(TP2), mov/mul(TP3) */
+
+#define T10(tr) ((tr) << 12)
+#define M10(im) (0x02000000 | (im))
+#define G10(rg, im) EMPTY
+#define T20(tr) ((tr) << 12)
+#define M20(im) (0x02000000 | (im))
+#define G20(rg, im) EMPTY
+#define G30(rg, im) EMITW(0xE3000000 | MRM((rg),    0x00,    0x00) |        \
+                            (0xF0000 & (im) <<  4) | (0xFFF & (im)))
+
+#define T11(tr) ((tr) << 12)
+#define M11(im) (0x00000000 | TIxx)
+#define G11(rg, im) G31(rg, im)
+#define T21(tr) ((tr) << 12)
+#define M21(im) (0x00000000 | TIxx)
+#define G21(rg, im) G31(rg, im)
+#define G31(rg, im) EMITW(0xE3000000 | MRM((rg),    0x00,    0x00) |        \
+                            (0xF0000 & (im) <<  4) | (0xFFF & (im)))
+
+#define T12(tr) ((tr) << 12)
+#define M12(im) (0x00000000 | TIxx)
+#define G12(rg, im) G32(rg, im)
+#define T22(tr) ((tr) << 12)
+#define M22(im) (0x00000000 | TIxx)
+#define G22(rg, im) G32(rg, im)
+#define G32(rg, im) EMITW(0xE3000000 | MRM((rg),    0x00,    0x00) |        \
+                            (0xF0000 & (im) <<  4) | (0xFFF & (im)))        \
+                    EMITW(0xE3400000 | MRM((rg),    0x00,    0x00) |        \
+                            (0xF0000 & (im) >> 12) | (0xFFF & (im) >> 16))
+
+/* displacement encoding BASE(TP1), adr(TP3) */
+
+#define B10(br) (br)
+#define P10(dp) (0x00000000 | (dp))
+#define C10(br, dp) EMPTY
+#define C30(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
+                            (0xF0000 & (dp) <<  4) | (0xFFC & (dp)))
+
+#define B11(br) TPxx
+#define P11(dp) (0x00000000)
+#define C11(br, dp) C30(br, dp)                                             \
+                    EMITW(0xE0800000 | MRM(TPxx,    (br),    TDxx))
+#define C31(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
+                            (0xF0000 & (dp) <<  4) | (0xFFC & (dp)))
+
+#define B12(br) TPxx
+#define P12(dp) (0x00000000)
+#define C12(br, dp) C32(br, dp)                                             \
+                    EMITW(0xE0800000 | MRM(TPxx,    (br),    TDxx))
+#define C32(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
+                            (0xF0000 & (dp) <<  4) | (0xFFC & (dp)))        \
+                    EMITW(0xE3400000 | MRM(TDxx,    0x00,    0x00) |        \
+                            (0x70000 & (dp) >> 12) | (0xFFF & (dp) >> 16))
+
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
 #define TMxx    0x04  /* r4 */
@@ -177,61 +232,6 @@
 #define DH(dp)  ((dp) & 0xFFFC),     1, 1   /* second native on all ARMs */
 #define DV(dp)  ((dp) & 0x7FFFFFFC), 2, 2        /* native x64 long mode */
 #define PLAIN   DP(0)           /* special type for Oeax addressing mode */
-
-/* immediate encoding add/sub/cmp(TP1), and/orr/xor(TP2), mov/mul(TP3) */
-
-#define T10(tr) ((tr) << 12)
-#define M10(im) (0x02000000 | (im))
-#define G10(rg, im) EMPTY
-#define T20(tr) ((tr) << 12)
-#define M20(im) (0x02000000 | (im))
-#define G20(rg, im) EMPTY
-#define G30(rg, im) EMITW(0xE3000000 | MRM((rg),    0x00,    0x00) |        \
-                            (0xF0000 & (im) <<  4) | (0xFFF & (im)))
-
-#define T11(tr) ((tr) << 12)
-#define M11(im) (0x00000000 | TIxx)
-#define G11(rg, im) G31(rg, im)
-#define T21(tr) ((tr) << 12)
-#define M21(im) (0x00000000 | TIxx)
-#define G21(rg, im) G31(rg, im)
-#define G31(rg, im) EMITW(0xE3000000 | MRM((rg),    0x00,    0x00) |        \
-                            (0xF0000 & (im) <<  4) | (0xFFF & (im)))
-
-#define T12(tr) ((tr) << 12)
-#define M12(im) (0x00000000 | TIxx)
-#define G12(rg, im) G32(rg, im)
-#define T22(tr) ((tr) << 12)
-#define M22(im) (0x00000000 | TIxx)
-#define G22(rg, im) G32(rg, im)
-#define G32(rg, im) EMITW(0xE3000000 | MRM((rg),    0x00,    0x00) |        \
-                            (0xF0000 & (im) <<  4) | (0xFFF & (im)))        \
-                    EMITW(0xE3400000 | MRM((rg),    0x00,    0x00) |        \
-                            (0xF0000 & (im) >> 12) | (0xFFF & (im) >> 16))
-
-/* displacement encoding BASE(TP1), adr(TP3) */
-
-#define B10(br) (br)
-#define P10(dp) (0x00000000 | (dp))
-#define C10(br, dp) EMPTY
-#define C30(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
-                            (0xF0000 & (dp) <<  4) | (0xFFC & (dp)))
-
-#define B11(br) TPxx
-#define P11(dp) (0x00000000)
-#define C11(br, dp) C30(br, dp)                                             \
-                    EMITW(0xE0800000 | MRM(TPxx,    (br),    TDxx))
-#define C31(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
-                            (0xF0000 & (dp) <<  4) | (0xFFC & (dp)))
-
-#define B12(br) TPxx
-#define P12(dp) (0x00000000)
-#define C12(br, dp) C32(br, dp)                                             \
-                    EMITW(0xE0800000 | MRM(TPxx,    (br),    TDxx))
-#define C32(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
-                            (0xF0000 & (dp) <<  4) | (0xFFC & (dp)))        \
-                    EMITW(0xE3400000 | MRM(TDxx,    0x00,    0x00) |        \
-                            (0x70000 & (dp) >> 12) | (0xFFF & (dp) >> 16))
 
 /* triplet pass-through wrapper */
 
