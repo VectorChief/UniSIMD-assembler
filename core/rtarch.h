@@ -817,7 +817,7 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        EMITW(0xE3A08500) /* r8  <- (0 << 22) */
+        EMITW(0xE3A00500 | MRM(TNxx, 0x00, 0x00)) /* r8  <- (0 << 22) */
 
 #define ASM_LEAVE(__Info__)                                                 \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
@@ -845,10 +845,10 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        EMITW(0xE3A0E503) /* r14 <- (3 << 22) */                            \
-        EMITW(0xE3A0C502) /* r12 <- (2 << 22) */                            \
-        EMITW(0xE3A0A501) /* r10 <- (1 << 22) */                            \
-        EMITW(0xE3A08500) /* r8  <- (0 << 22) */
+        EMITW(0xE3A00503 | MRM(TExx, 0x00, 0x00)) /* r14 <- (3 << 22) */    \
+        EMITW(0xE3A00502 | MRM(TCxx, 0x00, 0x00)) /* r12 <- (2 << 22) */    \
+        EMITW(0xE3A00501 | MRM(TAxx, 0x00, 0x00)) /* r10 <- (1 << 22) */    \
+        EMITW(0xE3A00500 | MRM(TNxx, 0x00, 0x00)) /* r8  <- (0 << 22) */
 
 #define ASM_LEAVE(__Info__)                                                 \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
@@ -892,12 +892,12 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        EMITW(0xE3A08504) /* r8  <- (4 << 22) */                            \
-        EMITW(0xEEE18A10) /* fpscr <- r8 */
+        EMITW(0xE3A00504 | MRM(TNxx, 0x00, 0x00)) /* r8  <- (4 << 22) */    \
+        EMITW(0xEEE10A10 | MRM(TNxx, 0x00, 0x00)) /* fpscr <- r8 */
 
 #define ASM_LEAVE_F(__Info__)                                               \
-        EMITW(0xE3A08500) /* r8  <- (0 << 22) */                            \
-        EMITW(0xEEE18A10) /* fpscr <- r8 */                                 \
+        EMITW(0xE3A00500 | MRM(TNxx, 0x00, 0x00)) /* r8  <- (0 << 22) */    \
+        EMITW(0xEEE10A10 | MRM(TNxx, 0x00, 0x00)) /* fpscr <- r8 */         \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_la()                                                          \
         stack_la()                                                          \
@@ -923,15 +923,15 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        EMITW(0xE3A0E507) /* r14 <- (7 << 22) */                            \
-        EMITW(0xE3A0C506) /* r12 <- (6 << 22) */                            \
-        EMITW(0xE3A0A505) /* r10 <- (5 << 22) */                            \
-        EMITW(0xE3A08504) /* r8  <- (4 << 22) */                            \
-        EMITW(0xEEE18A10) /* fpscr <- r8 */
+        EMITW(0xE3A00507 | MRM(TExx, 0x00, 0x00)) /* r14 <- (7 << 22) */    \
+        EMITW(0xE3A00506 | MRM(TCxx, 0x00, 0x00)) /* r12 <- (6 << 22) */    \
+        EMITW(0xE3A00505 | MRM(TAxx, 0x00, 0x00)) /* r10 <- (5 << 22) */    \
+        EMITW(0xE3A00504 | MRM(TNxx, 0x00, 0x00)) /* r8  <- (4 << 22) */    \
+        EMITW(0xEEE10A10 | MRM(TNxx, 0x00, 0x00)) /* fpscr <- r8 */
 
 #define ASM_LEAVE_F(__Info__)                                               \
-        EMITW(0xE3A08500) /* r8  <- (0 << 22) */                            \
-        EMITW(0xEEE18A10) /* fpscr <- r8 */                                 \
+        EMITW(0xE3A00500 | MRM(TNxx, 0x00, 0x00)) /* r8  <- (0 << 22) */    \
+        EMITW(0xEEE10A10 | MRM(TNxx, 0x00, 0x00)) /* fpscr <- r8 */         \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_la()                                                          \
         stack_la()                                                          \
@@ -1030,7 +1030,7 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        EMITW(0x52A00016) /* w22 <- (0 << 22) */
+        EMITW(0x52A00000 | MRM(TNxx, 0x00, 0x00)) /* w22 <- (0 << 22) */
 
 #define ASM_LEAVE(__Info__)                                                 \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
@@ -1058,10 +1058,10 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        EMITW(0x52A01819) /* w25 <- (3 << 22) */                            \
-        EMITW(0x52A01018) /* w24 <- (2 << 22) */                            \
-        EMITW(0x52A00817) /* w23 <- (1 << 22) */                            \
-        EMITW(0x52A00016) /* w22 <- (0 << 22) */
+        EMITW(0x52A01800 | MRM(TExx, 0x00, 0x00)) /* w25 <- (3 << 22) */    \
+        EMITW(0x52A01000 | MRM(TCxx, 0x00, 0x00)) /* w24 <- (2 << 22) */    \
+        EMITW(0x52A00800 | MRM(TAxx, 0x00, 0x00)) /* w23 <- (1 << 22) */    \
+        EMITW(0x52A00000 | MRM(TNxx, 0x00, 0x00)) /* w22 <- (0 << 22) */
 
 #define ASM_LEAVE(__Info__)                                                 \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
@@ -1105,12 +1105,12 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        EMITW(0x52A02016) /* w22 <- (4 << 22) */                            \
-        EMITW(0xD51B4416) /* fpcr <- w22 */
+        EMITW(0x52A02000 | MRM(TNxx, 0x00, 0x00)) /* w22 <- (4 << 22) */    \
+        EMITW(0xD51B4400 | MRM(TNxx, 0x00, 0x00)) /* fpcr <- w22 */
 
 #define ASM_LEAVE_F(__Info__)                                               \
-        EMITW(0x52A00016) /* w22 <- (0 << 22) */                            \
-        EMITW(0xD51B4416) /* fpcr <- w22 */                                 \
+        EMITW(0x52A00000 | MRM(TNxx, 0x00, 0x00)) /* w22 <- (0 << 22) */    \
+        EMITW(0xD51B4400 | MRM(TNxx, 0x00, 0x00)) /* fpcr <- w22 */         \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_la()                                                          \
         stack_la()                                                          \
@@ -1136,15 +1136,15 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        EMITW(0x52A03819) /* w25 <- (7 << 22) */                            \
-        EMITW(0x52A03018) /* w24 <- (6 << 22) */                            \
-        EMITW(0x52A02817) /* w23 <- (5 << 22) */                            \
-        EMITW(0x52A02016) /* w22 <- (4 << 22) */                            \
-        EMITW(0xD51B4416) /* fpcr <- w22 */
+        EMITW(0x52A03800 | MRM(TExx, 0x00, 0x00)) /* w25 <- (7 << 22) */    \
+        EMITW(0x52A03000 | MRM(TCxx, 0x00, 0x00)) /* w24 <- (6 << 22) */    \
+        EMITW(0x52A02800 | MRM(TAxx, 0x00, 0x00)) /* w23 <- (5 << 22) */    \
+        EMITW(0x52A02000 | MRM(TNxx, 0x00, 0x00)) /* w22 <- (4 << 22) */    \
+        EMITW(0xD51B4400 | MRM(TNxx, 0x00, 0x00)) /* fpcr <- w22 */
 
 #define ASM_LEAVE_F(__Info__)                                               \
-        EMITW(0x52A00016) /* w22 <- (0 << 22) */                            \
-        EMITW(0xD51B4416) /* fpcr <- w22 */                                 \
+        EMITW(0x52A00000 | MRM(TNxx, 0x00, 0x00)) /* w22 <- (0 << 22) */    \
+        EMITW(0xD51B4400 | MRM(TNxx, 0x00, 0x00)) /* fpcr <- w22 */         \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_la()                                                          \
         stack_la()                                                          \
@@ -1242,8 +1242,8 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        EMITX(0x787EF79E) /* w30 <- 0 (xor) */                              \
-        EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */
+        EMITX(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
+        EMITW(0x3C000000 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(0 << 24) */
 
 #define ASM_LEAVE(__Info__)                                                 \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
@@ -1271,11 +1271,11 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        EMITX(0x787EF79E) /* w30 <- 0 (xor) */                              \
-        EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */                          \
-        EMITW(0x36950001) /* r21 <- 1|(0 << 24) */                          \
-        EMITW(0x36960002) /* r22 <- 2|(0 << 24) */                          \
-        EMITW(0x36970003) /* r23 <- 3|(0 << 24) */
+        EMITX(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
+        EMITW(0x3C000000 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(0 << 24) */  \
+        EMITW(0x34000001 | MRM(0x00, TNxx, TAxx)) /* r21 <- 1|(0 << 24) */  \
+        EMITW(0x34000002 | MRM(0x00, TNxx, TCxx)) /* r22 <- 2|(0 << 24) */  \
+        EMITW(0x34000003 | MRM(0x00, TNxx, TExx)) /* r23 <- 3|(0 << 24) */
 
 #define ASM_LEAVE(__Info__)                                                 \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
@@ -1319,15 +1319,15 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        EMITX(0x787EF79E) /* w30 <- 0 (xor) */                              \
-        EMITW(0x3C140100) /* r20 <- 0|(1 << 24) */                          \
-        EMITW(0x44D4F800) /* fcsr <- r20 */                                 \
-        EMITX(0x783EA059) /* msacsr <- r20 */
+        EMITX(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
+        EMITW(0x3C000100 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(1 << 24) */  \
+        EMITW(0x44C0F800 | MRM(0x00, 0x00, TNxx)) /* fcsr <- r20 */         \
+        EMITX(0x783E0059 | MXM(0x00, TNxx, 0x00)) /* msacsr <- r20 */
 
 #define ASM_LEAVE_F(__Info__)                                               \
-        EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */                          \
-        EMITW(0x44D4F800) /* fcsr <- r20 */                                 \
-        EMITX(0x783EA059) /* msacsr <- r20 */                               \
+        EMITW(0x3C000000 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(0 << 24) */  \
+        EMITW(0x44C0F800 | MRM(0x00, 0x00, TNxx)) /* fcsr <- r20 */         \
+        EMITX(0x783E0059 | MXM(0x00, TNxx, 0x00)) /* msacsr <- r20 */       \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_la()                                                          \
         stack_la()                                                          \
@@ -1353,18 +1353,18 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        EMITX(0x787EF79E) /* w30 <- 0 (xor) */                              \
-        EMITW(0x3C140100) /* r20 <- 0|(1 << 24) */                          \
-        EMITW(0x36950001) /* r21 <- 1|(1 << 24) */                          \
-        EMITW(0x36960002) /* r22 <- 2|(1 << 24) */                          \
-        EMITW(0x36970003) /* r23 <- 3|(1 << 24) */                          \
-        EMITW(0x44D4F800) /* fcsr <- r20 */                                 \
-        EMITX(0x783EA059) /* msacsr <- r20 */
+        EMITX(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
+        EMITW(0x3C000100 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(1 << 24) */  \
+        EMITW(0x34000001 | MRM(0x00, TNxx, TAxx)) /* r21 <- 1|(1 << 24) */  \
+        EMITW(0x34000002 | MRM(0x00, TNxx, TCxx)) /* r22 <- 2|(1 << 24) */  \
+        EMITW(0x34000003 | MRM(0x00, TNxx, TExx)) /* r23 <- 3|(1 << 24) */  \
+        EMITW(0x44C0F800 | MRM(0x00, 0x00, TNxx)) /* fcsr <- r20 */         \
+        EMITX(0x783E0059 | MXM(0x00, TNxx, 0x00)) /* msacsr <- r20 */
 
 #define ASM_LEAVE_F(__Info__)                                               \
-        EMITW(0x3C140000) /* r20 <- 0|(0 << 24) */                          \
-        EMITW(0x44D4F800) /* fcsr <- r20 */                                 \
-        EMITX(0x783EA059) /* msacsr <- r20 */                               \
+        EMITW(0x3C000000 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(0 << 24) */  \
+        EMITW(0x44C0F800 | MRM(0x00, 0x00, TNxx)) /* fcsr <- r20 */         \
+        EMITX(0x783E0059 | MXM(0x00, TNxx, 0x00)) /* msacsr <- r20 */       \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_la()                                                          \
         stack_la()                                                          \
@@ -1475,24 +1475,24 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        EMITW(0x7C000278) /* r0  <- 0 (xor) */                              \
-        movpx_ld(Xmm2, Mebp, inf_GPC01)                                     \
-        movpx_ld(Xmm4, Mebp, inf_GPC02)                                     \
-        movpx_ld(Xmm8, Mebp, inf_GPC04)                                     \
-        EMITX(0x13084504)                                                   \
-        EMITX(0x1328C484)                                                   \
-        EMITX(0x13421484)                                                   \
-        EMITX(0x13642484)                                                   \
-        EMITX(0x1000004A | MXM(TmmR,    TmmS,    TmmS))                     \
-        EMITX(0x7C0042A6 | TVxx << 21)                                      \
-        EMITX(0x3800FFFF | TIxx << 21)                                      \
-        EMITX(0x7C0043A6 | TIxx << 21)                                      \
-        EMITW(0x7C0902A6 | TCxx << 21)                                      \
-        ASM_BEG ASM_OP3(cmplw, cr2, %%r24, %%r24) ASM_END
+        EMITW(0x7C000278 | MSM(TZxx, TZxx, TZxx)) /* r0  <- 0 (xor) */      \
+        movpx_ld(Xmm2, Mebp, inf_GPC01)           /* v2  <- +1.0f */        \
+        movpx_ld(Xmm4, Mebp, inf_GPC02)           /* v4  <- -0.5f */        \
+        movpx_ld(Xmm8, Mebp, inf_GPC04)           /* v8  <- 0x7FFFFFFF */   \
+        EMITX(0x10000504 | MXM(TmmS, 0x08, 0x08)) /* v24 <- not v8 */       \
+        EMITX(0x10000484 | MXM(TmmQ, 0x08, TmmS)) /* v25 <- v8 or v24 */    \
+        EMITX(0x10000484 | MXM(TmmA, 0x02, 0x02)) /* v26 <- v2 */           \
+        EMITX(0x10000484 | MXM(TmmB, 0x04, 0x04)) /* v27 <- v4 */           \
+        EMITX(0x1000004A | MXM(TmmR, TmmS, TmmS)) /* v23 <- v24 - v24 */    \
+        EMITX(0x7C0002A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave -> r28 */       \
+        EMITX(0x3800FFFF | MRM(TIxx, 0x00, 0x00)) /* r25 <- -1 */           \
+        EMITX(0x7C0003A6 | MRM(TIxx, 0x08, 0x00)) /* vrsave <- r25 */       \
+        EMITW(0x7C0002A6 | MRM(TCxx, 0x00, 0x09)) /* ctr -> r27 */          \
+        EMITW(0x7C000040 | MRM(0x08, TLxx, TLxx)) /* cmplw cr2, r24, r24 */
 
 #define ASM_LEAVE(__Info__)                                                 \
-        EMITW(0x7C0903A6 | TCxx << 21)                                      \
-        EMITX(0x7C0043A6 | TVxx << 21)                                      \
+        EMITW(0x7C0003A6 | MRM(TCxx, 0x00, 0x09)) /* ctr <- r27 */          \
+        EMITX(0x7C0003A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave <- r28 */       \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_la()                                                          \
         stack_la()                                                          \
@@ -1531,30 +1531,30 @@
         movxx_rr(Rebp, Reax)                                                \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_sa()                                                          \
-        EMITW(0x7C000278) /* r0  <- 0 (xor) */                              \
-        EMITX(0xFF80410C) /* fpscr <- NI(4) */                              \
-        EMITX(0x13E1034C) /* v31 <- splt-half(1) */                         \
-        EMITX(0x1000FE44) /* vscr <- v31, NJ(16) */                         \
-        movpx_ld(Xmm2, Mebp, inf_GPC01)                                     \
-        movpx_ld(Xmm4, Mebp, inf_GPC02)                                     \
-        movpx_ld(Xmm8, Mebp, inf_GPC04)                                     \
-        EMITX(0x13084504)                                                   \
-        EMITX(0x1328C484)                                                   \
-        EMITX(0x13421484)                                                   \
-        EMITX(0x13642484)                                                   \
-        EMITX(0x1000004A | MXM(TmmR,    TmmS,    TmmS))                     \
-        EMITX(0x7C0042A6 | TVxx << 21)                                      \
-        EMITX(0x3800FFFF | TIxx << 21)                                      \
-        EMITX(0x7C0043A6 | TIxx << 21)                                      \
-        EMITW(0x7C0902A6 | TCxx << 21)                                      \
-        ASM_BEG ASM_OP3(cmplw, cr2, %%r24, %%r24) ASM_END
+        EMITW(0x7C000278 | MSM(TZxx, TZxx, TZxx)) /* r0  <- 0 (xor) */      \
+        EMITW(0xFC00010C | MRM(0x1C, 0x08, 0x00)) /* fpscr <- NI(4) */      \
+        EMITX(0x1000034C | MXM(Tmm1, 0x01, 0x00)) /* v31 <- splt-half(1) */ \
+        EMITX(0x10000644 | MXM(0x00, 0x00, Tmm1)) /* vscr <- v31, NJ(16) */ \
+        movpx_ld(Xmm2, Mebp, inf_GPC01)           /* v2  <- +1.0f */        \
+        movpx_ld(Xmm4, Mebp, inf_GPC02)           /* v4  <- -0.5f */        \
+        movpx_ld(Xmm8, Mebp, inf_GPC04)           /* v8  <- 0x7FFFFFFF */   \
+        EMITX(0x10000504 | MXM(TmmS, 0x08, 0x08)) /* v24 <- not v8 */       \
+        EMITX(0x10000484 | MXM(TmmQ, 0x08, TmmS)) /* v25 <- v8 or v24 */    \
+        EMITX(0x10000484 | MXM(TmmA, 0x02, 0x02)) /* v26 <- v2 */           \
+        EMITX(0x10000484 | MXM(TmmB, 0x04, 0x04)) /* v27 <- v4 */           \
+        EMITX(0x1000004A | MXM(TmmR, TmmS, TmmS)) /* v23 <- v24 - v24 */    \
+        EMITX(0x7C0002A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave -> r28 */       \
+        EMITX(0x3800FFFF | MRM(TIxx, 0x00, 0x00)) /* r25 <- -1 */           \
+        EMITX(0x7C0003A6 | MRM(TIxx, 0x08, 0x00)) /* vrsave <- r25 */       \
+        EMITW(0x7C0002A6 | MRM(TCxx, 0x00, 0x09)) /* ctr -> r27 */          \
+        EMITW(0x7C000040 | MRM(0x08, TLxx, TLxx)) /* cmplw cr2, r24, r24 */
 
 #define ASM_LEAVE_F(__Info__)                                               \
-        EMITW(0x7C0903A6 | TCxx << 21)                                      \
-        EMITX(0x7C0043A6 | TVxx << 21)                                      \
-        EMITX(0xFF80010C) /* fpscr <- NI(0) */                              \
-        EMITX(0x13E0034C) /* v31 <- splt-half(0) */                         \
-        EMITX(0x1000FE44) /* vscr <- v31, NJ(16) */                         \
+        EMITW(0x7C0003A6 | MRM(TCxx, 0x00, 0x09)) /* ctr <- r27 */          \
+        EMITX(0x7C0003A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave <- r28 */       \
+        EMITW(0xFC00010C | MRM(0x1C, 0x00, 0x00)) /* fpscr <- NI(0) */      \
+        EMITX(0x1000034C | MXM(Tmm1, 0x00, 0x00)) /* v31 <- splt-half(0) */ \
+        EMITX(0x10000644 | MXM(0x00, 0x00, Tmm1)) /* vscr <- v31, NJ(16) */ \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         sregs_la()                                                          \
         stack_la()                                                          \

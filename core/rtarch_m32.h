@@ -156,7 +156,11 @@
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
-#define TNxx    0x14  /* s4 (r20), default rounding mode */
+#define TNxx    0x14  /* s4 (r20), default FCTRL round mode */
+#define TAxx    0x15  /* s5 (r21), extra reg for FAST_FCTRL */
+#define TCxx    0x16  /* s6 (r22), extra reg for FAST_FCTRL */
+#define TExx    0x17  /* s7 (r23), extra reg for FAST_FCTRL */
+
 #define TLxx    0x18  /* t8 (r24), left  arg for compare */
 #define TRxx    0x19  /* t9 (r25), right arg for compare */
 #define TMxx    0x18  /* t8 */
