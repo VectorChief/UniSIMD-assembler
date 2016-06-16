@@ -19,7 +19,7 @@ simd_test:
 # Prerequisites for the build:
 # (cross-)compiler for MIPS+MSA is installed and in the PATH variable.
 # Prerequisites for emulation:
-# QEMU 2.4.0.1.0 from imgtec.com is installed and in the PATH variable.
+# QEMU 2.4.0.1.0 from imgtec.com is built from source and in the PATH variable.
 #
 # make -f simd_make_m64.mk
 # qemu-mips64el -cpu I6400 simd_test.m64_32
