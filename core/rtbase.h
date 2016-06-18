@@ -120,8 +120,16 @@ typedef const char         *rt_pstr;
  * Generic definitions
  */
 #define RT_NULL             0
+
+#if   RT_POINTER == 32
 #define RT_ALIGN            4
 #define RT_QUAD_ALIGN       16 /* not dependent on SIMD align */
+#elif RT_POINTER == 64
+#define RT_ALIGN            8
+#define RT_QUAD_ALIGN       32 /* not dependent on SIMD align */
+#else  /* RT_POINTER */
+#error "unsupported pointer size, check RT_POINTER in makefiles"
+#endif /* RT_POINTER */
 
 #define RT_FALSE            0
 #define RT_TRUE             1
