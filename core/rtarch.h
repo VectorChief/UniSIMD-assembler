@@ -764,7 +764,7 @@
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
-#error "AArch32 doesn't support SIMD wider than 4, call back later :o)"
+#error "AArch32 doesn't support SIMD wider than 4, check build flags"
 #elif defined (RT_128) && (RT_128 != 0)
 #define S 4
 #include "rtarch_arm_128.h"
@@ -969,7 +969,7 @@
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
-#error "AArch64 doesn't support SIMD wider than 4, call back later :o)"
+#error "AArch64 doesn't support SIMD wider than 4, check build flags"
 #elif defined (RT_128) && (RT_128 != 0)
 #define S 4
 #include "rtarch_a32_128.h"
@@ -1173,7 +1173,7 @@
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
-#error "mipsMSA doesn't support SIMD wider than 4, call back later :o)"
+#error "mipsMSA doesn't support SIMD wider than 4, check build flags"
 #elif defined (RT_128) && (RT_128 != 0)
 #define S 4
 #include "rtarch_m32_128.h"
@@ -1399,7 +1399,7 @@
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
-#error "AltiVec doesn't support SIMD wider than 4, call back later :o)"
+#error "AltiVec doesn't support SIMD wider than 4, check build flags"
 #elif defined (RT_128) && (RT_128 != 0)
 #define S 4
 #include "rtarch_p32_128.h"
