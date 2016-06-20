@@ -22,7 +22,7 @@ simd_test:
 # latest QEMU(-2.5) is built from source and in the PATH variable.
 #
 # make -f simd_make_p64.mk
-# qemu-ppc64le -cpu POWER7 simd_test.p64_32
+# qemu-ppc64le -cpu POWER8 simd_test.p64_32
 
 # For 64-bit Power(7,7+,8) VSX big-endian target use (replace):
 # powerpc64-linux-gnu-g++ -DRT_ENDIAN=1
