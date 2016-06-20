@@ -18,8 +18,6 @@ simd_test:
 
 # Prerequisites for the build:
 # (cross-)compiler for AArch64 is installed and in the PATH variable.
-# Prerequisites for emulation:
-# latest QEMU(-2.5) is built from source and in the PATH variable.
 #
 # make -f simd_make_a32.mk
 

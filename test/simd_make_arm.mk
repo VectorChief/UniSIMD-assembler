@@ -19,7 +19,7 @@ simd_test:
 # Prerequisites for the build:
 # (cross-)compiler for ARMv7 is installed and in the PATH variable.
 # Prerequisites for emulation:
-# latest QEMU(-2.5) is built from source and in the PATH variable.
+# latest QEMU(-2.5) is installed or built from source and in the PATH variable.
 #
 # make -f simd_make_arm.mk
 # qemu-arm -cpu cortex-a8 simd_test.arm
