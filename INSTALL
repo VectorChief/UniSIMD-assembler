@@ -3,13 +3,16 @@
 To build SIMD test framework on Linux, open terminal window,
 go to the project's root folder, then "test" subfolder,
 make sure necessary tools and libraries are installed
-for 32-bit systems:
+for native builds (binary ABI matches host):
     sudo apt-get install make g++
-for 64-bit systems:
+for multilib builds (if libs are available):
     sudo apt-get install make g++-multilib
 run for x86 architecture:
     make -f simd_make_x86.mk
     ./simd_test.x86
+run for x64 architecture:
+    make -f simd_make_x64.mk
+    ./simd_test.x64_32
 run for non-x86 architectures:
     make -f simd_make_***.mk
     ./simd_test.***
@@ -25,5 +28,22 @@ go to the project's root folder, then "test" subfolder and open:
     simd_workspace.dsw
 in Visual C++ 6.0 or later, then press F5. In newer versions of VC++ agree to
 convert workspace files, then exit and open newly created solution file.
+
+================================================================================
+
+To build QEMU emulator from source on Linux, download the latest version from
+    http://wiki.qemu.org/Download
+and unpack the archive, open terminal window, go to the project's root folder,
+make sure necessary tools and libraries are installed:
+    sudo apt-get install make g++ zlib1g-dev libglib2.0-dev libpixman-1-dev
+run configure script:
+    ./configure
+run multithreaded make:
+    make -j8
+run installation script:
+    sudo make install
+
+When building QEMU from source isn't necessary install the full binary package:
+    sudo apt-get install qemu
 
 ================================================================================
