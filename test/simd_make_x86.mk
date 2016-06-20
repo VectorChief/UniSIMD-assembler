@@ -19,7 +19,9 @@ simd_test:
 # Prerequisites for the build:
 # native/multilib-compiler for x86/x86_64 is installed and in the PATH variable.
 #
+# Building/running SIMD test:
 # make -f simd_make_x86.mk
+# ./simd_test.x86
 
 # For SSE1 build use (replace): RT_128=1
 # For SSE4 build use (replace): RT_128=4
