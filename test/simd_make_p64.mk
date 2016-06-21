@@ -29,6 +29,7 @@ simd_test:
 # sudo apt-get install qemu
 #
 # Building/running SIMD test:
+# (recent g++-5-powerpc64le series target POWER8 and don't work well with -O3)
 # make -f simd_make_p64.mk
 # qemu-ppc64le -cpu POWER8 simd_test.p64_32
 

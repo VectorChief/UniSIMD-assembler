@@ -27,6 +27,7 @@ simd_test:
 # (cross-)compiler for MIPS+MSA is installed and in the PATH variable.
 # Codescape.GNU.Tools.Package.2015.06-05.for.MIPS.IMG.Linux.CentOS-5.x86_64
 # is unpacked and folder mips-img-linux-gnu/2015.06-05/bin is added to PATH
+# PATH=/home/ubuntu/Downloads/mips-img-linux-gnu/2015.06-05/bin:$PATH
 #
 # Prerequisites for emulation:
 # QEMU 2.4.0.1.0 from imgtec.com is built from source and in the PATH variable.
