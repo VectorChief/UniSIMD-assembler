@@ -18,6 +18,7 @@ simd_test:
 
 # Prerequisites for the build:
 # native-compiler for x86_64 is installed and in the PATH variable.
+# sudo apt-get install g++
 #
 # Building/running SIMD test:
 # make -f simd_make_x64.mk
