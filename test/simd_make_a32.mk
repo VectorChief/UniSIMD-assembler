@@ -23,9 +23,11 @@ simd_test:
 # Prerequisites for the build:
 # (cross-)compiler for AArch64 is installed and in the PATH variable.
 # sudo apt-get install g++-aarch64-linux-gnu
+# (recent upstream g++-5-aarch64 series may not fully support ILP32 ABI)
 #
-# Building SIMD test:
+# Building/running SIMD test:
 # make -f simd_make_a32.mk
+# (recent upstream QEMU(-2.6) doesn't currently support AArch64 ILP32 ABI)
 
 # The 32-bit ABI hasn't been fully tested yet due to lack of available libs,
 # check out an experimental 64/32-bit hybrid mode in simd_make_a64.mk

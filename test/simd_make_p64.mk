@@ -23,13 +23,13 @@ simd_test:
 # Prerequisites for the build:
 # (cross-)compiler for 64-bit Power is installed and in the PATH variable.
 # sudo apt-get install g++-powerpc64le-linux-gnu
+# (recent g++-5-powerpc64le series target POWER8 and don't work well with -O3)
 #
 # Prerequisites for emulation:
-# latest QEMU(-2.5) is installed or built from source and in the PATH variable.
+# recent QEMU(-2.5) is installed or built from source and in the PATH variable.
 # sudo apt-get install qemu
 #
 # Building/running SIMD test:
-# (recent g++-5-powerpc64le series target POWER8 and don't work well with -O3)
 # make -f simd_make_p64.mk
 # qemu-ppc64le -cpu POWER8 simd_test.p64_32
 

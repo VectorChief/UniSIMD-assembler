@@ -25,7 +25,7 @@ simd_test:
 # sudo apt-get install g++-arm-linux-gnueabi
 #
 # Prerequisites for emulation:
-# latest QEMU(-2.5) is installed or built from source and in the PATH variable.
+# recent QEMU(-2.5) is installed or built from source and in the PATH variable.
 # sudo apt-get install qemu
 #
 # Building/running SIMD test:
