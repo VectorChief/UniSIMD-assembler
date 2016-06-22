@@ -26,7 +26,7 @@ simd_test:
 # Prerequisites for the build:
 # (cross-)compiler for MIPS+MSA is installed and in the PATH variable.
 # Codescape.GNU.Tools.Package.2015.06-05.for.MIPS.MTI.Linux.CentOS-5.x86_64
-# is unpacked and folder mips-mti-linux-gnu/2015.06-05/bin is added to PATH
+# is unpacked and folder mips-mti-linux-gnu/2015.06-05/bin is added to PATH:
 # PATH=/home/ubuntu/Downloads/mips-mti-linux-gnu/2015.06-05/bin:$PATH
 #
 # Prerequisites for emulation:
