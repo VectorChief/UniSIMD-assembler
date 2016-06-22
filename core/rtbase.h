@@ -179,11 +179,11 @@ typedef const char         *rt_pstr;
 /*
  * Math macros
  */
-#define RT_ABS(a)           (abs((rt_cell)(a)))
+#define RT_ABS(a)           (abs((rt_si32)(a)))
 
 #define RT_FABS(a)          (fabsf(a))
 
-#define RT_FLOOR(a)         ((rt_cell)floorf(a))
+#define RT_FLOOR(a)         ((rt_si32)floorf(a))
 
 #define RT_SIGN(a)          ((a)  <    0.0f ? -1 :                          \
                              (a)  >    0.0f ? +1 :                          \
