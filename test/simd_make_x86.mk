@@ -26,6 +26,9 @@ simd_test:
 # make -f simd_make_x86.mk
 # ./simd_test.x86
 
+# Clang compilation is supported, but takes considerably longer, use (replace):
+# clang++ (in place of g++)
+
 # For SSE1 build use (replace): RT_128=1
 # For SSE4 build use (replace): RT_128=4
 # For AVX1 build use (replace): RT_256=1
