@@ -8,8 +8,8 @@ ARMv7 NEON/NEONv2, ARMv8:AArch32 NEON and AArch64:ILP32 NEON (32-bit ARM ISAs),
 MIPS32 r5/r6 MSA (little/big-endian) and 32-bit Power VMX/VSX (big-endian) ISAs
 are fully supported, although wider SIMD, 64-bit addressing along with
 more available registers and other architectures can be supported by design.
-Preliminary naming scheme for potential future targets as well as extended
-BASE and SIMD register files can be found in core/rtarch.h file.
+Experimental 64/32-bit hybrid mode (compatible with native 64-bit ABI) is also
+available on four major architectures until full 64-bit support is implemented.
 
 The project comes with a test framework, which can be compiled in Linux/GCC,
 Maemo/scratchbox (N900 version) as well as Windows/VC++ 6.0 or later.
