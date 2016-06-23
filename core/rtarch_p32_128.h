@@ -960,6 +960,47 @@
         EMITW(0x7C0000CE | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
         EMITW(0x10000480 | MXM(REG(RG), REG(RG), Tmm1))/* ^ == -1 if true */
 
+#if RT_ENDIAN == 0
+
+/* shl */
+
+#define shlpx_ri(RM, IM)                                                    \
+        EMITW(0x1000038C | MXM(Tmm1,    (0x1F & VAL(IM)), 0x00))            \
+        EMITW(0x10000184 | MXM(REG(RM), REG(RM), Tmm1))
+
+#define shlpx_ld(RG, RM, DP)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x7C00008E | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
+        EMITW(0x1003028C | MXM(Tmm1,    0x00,    Tmm1))/* ^ == -1 if true */\
+        EMITW(0x10000184 | MXM(REG(RG), REG(RG), Tmm1))
+
+/* shr */
+
+#define shrpx_ri(RM, IM)                                                    \
+        EMITW(0x1000038C | MXM(Tmm1,    (0x1F & VAL(IM)), 0x00))            \
+        EMITW(0x10000284 | MXM(REG(RM), REG(RM), Tmm1))
+
+#define shrpx_ld(RG, RM, DP)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x7C00008E | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
+        EMITW(0x1003028C | MXM(Tmm1,    0x00,    Tmm1))/* ^ == -1 if true */\
+        EMITW(0x10000284 | MXM(REG(RG), REG(RG), Tmm1))
+
+#define shrpn_ri(RM, IM)                                                    \
+        EMITW(0x1000038C | MXM(Tmm1,    (0x1F & VAL(IM)), 0x00))            \
+        EMITW(0x10000384 | MXM(REG(RM), REG(RM), Tmm1))
+
+#define shrpn_ld(RG, RM, DP)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x7C00008E | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
+        EMITW(0x1003028C | MXM(Tmm1,    0x00,    Tmm1))/* ^ == -1 if true */\
+        EMITW(0x10000384 | MXM(REG(RG), REG(RG), Tmm1))
+
+#else /* RT_ENDIAN == 0 */
+
 /* shl */
 
 #define shlpx_ri(RM, IM)                                                    \
@@ -996,6 +1037,8 @@
         EMITW(0x7C00008E | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
         EMITW(0x1000028C | MXM(Tmm1,    0x00,    Tmm1))/* ^ == -1 if true */\
         EMITW(0x10000384 | MXM(REG(RG), REG(RG), Tmm1))
+
+#endif /* RT_ENDIAN == 0 */
 
 /**************************   helper macros (SIMD)   **************************/
 
