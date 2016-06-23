@@ -342,7 +342,7 @@
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_word)__Info__)          \
                                 : "cc",  "memory"                           \
                             );}
@@ -364,7 +364,7 @@
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_word)__Info__)          \
                                 : "cc",  "memory"                           \
                             );}
@@ -497,7 +497,7 @@
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_full)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_full)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "xmm0",  "xmm1",  "xmm2",  "xmm3",        \
@@ -524,7 +524,7 @@
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_full)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_full)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "xmm0",  "xmm1",  "xmm2",  "xmm3",        \
@@ -567,7 +567,7 @@
                                 mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
                                 stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_full)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_full)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "xmm0",  "xmm1",  "xmm2",  "xmm3",        \
@@ -597,7 +597,7 @@
                                 mxcsr_ld(Mebp, inf_FCTRL(0*4))              \
                                 stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_full)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_full)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "xmm0",  "xmm1",  "xmm2",  "xmm3",        \
@@ -676,7 +676,7 @@
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_word)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "d0",  "d1",  "d2",  "d3",                \
@@ -704,7 +704,7 @@
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_word)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "d0",  "d1",  "d2",  "d3",                \
@@ -850,7 +850,7 @@
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_full)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_full)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "q0",  "q1",  "q2",  "q3",                \
@@ -876,7 +876,7 @@
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_full)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_full)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "q0",  "q1",  "q2",  "q3",                \
@@ -918,7 +918,7 @@
                                 EMITW(0xD51B4416) /* fpcr <- w22 */         \
                                 stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_full)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_full)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "q0",  "q1",  "q2",  "q3",                \
@@ -947,7 +947,7 @@
                                 EMITW(0xD51B4416) /* fpcr <- w22 */         \
                                 stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_full)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_full)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "q0",  "q1",  "q2",  "q3",                \
@@ -1017,7 +1017,7 @@
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_word)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "f0",  "f1",  "f2",  "f3",                \
@@ -1044,7 +1044,7 @@
 
 #define ASM_LEAVE(__Info__)     stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_word)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "f0",  "f1",  "f2",  "f3",                \
@@ -1089,7 +1089,7 @@
                                 EMITX(0x783EA059) /* msacsr <- r20 */       \
                                 stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_word)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "f0",  "f1",  "f2",  "f3",                \
@@ -1121,7 +1121,7 @@
                                 EMITX(0x783EA059) /* msacsr <- r20 */       \
                                 stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_word)__Info__)          \
                                 : "cc",  "memory",                          \
                                   "f0",  "f1",  "f2",  "f3",                \
@@ -1217,7 +1217,7 @@
                                 EMITX(0x7C0043A6 | TVxx << 21)              \
                                 stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_word)__Info__)          \
                                 : "cc",  "memory"                           \
                             );}
@@ -1270,7 +1270,7 @@
                                 EMITX(0x7C0043A6 | TVxx << 21)              \
                                 stack_la()                                  \
                                 movlb_ld(%[Reax_])                          \
-                                : [Reax_] "+r" ((rt_word)__Reax__)          \
+                                : [Reax_] "+r" (__Reax__)                   \
                                 : [Info_]  "r" ((rt_word)__Info__)          \
                                 : "cc",  "memory"                           \
                             );}
