@@ -109,6 +109,51 @@
 #define  C1(val, tp1, tp2)  C1##tp1
 #define  C3(val, tp1, tp2)  C3##tp2 /* <- "C3##tp2" not a bug */
 
+/* immediate encoding add/sub/cmp(TP1), and/orr/xor(TP2), mov/mul(TP3) */
+
+#define T10(tr) ((tr) << 16)
+#define M10(im) (0x00000000 | (im))
+#define G10(rg, im) EMPTY
+#define T20(tr) ((tr) << 16)
+#define M20(im) (0x00000000 | (im))
+#define G20(rg, im) EMPTY
+#define G30(rg, im) EMITW(0x34000000 | (rg) << 16 | (0xFFFF & (im)))
+
+#define T11(tr) ((tr) << 11)
+#define M11(im) (0x00000000 | TIxx << 16)
+#define G11(rg, im) G30(rg, im)
+
+#define T12(tr) ((tr) << 11)
+#define M12(im) (0x00000000 | TIxx << 16)
+#define G12(rg, im) G32(rg, im)
+#define T22(tr) ((tr) << 11)
+#define M22(im) (0x00000000 | TIxx << 16)
+#define G22(rg, im) G32(rg, im)
+#define G32(rg, im) EMITW(0x3C000000 | (rg) << 16 | (0xFFFF & (im) >> 16))  \
+                    EMITW(0x34000000 | (rg) << 16 | (rg) << 21 |            \
+                                                    (0xFFFF & (im)))
+
+/* displacement encoding BASE(TP1), adr(TP3) */
+
+#define B10(br) (br)
+#define P10(dp) (0x00000000 | (dp))
+#define C10(br, dp) EMPTY
+#define C30(br, dp) EMITW(0x34000000 | TDxx << 16 | (0xFFFC & (dp)))
+
+#define B11(br) TPxx
+#define P11(dp) (0x00000000)
+#define C11(br, dp) C30(br, dp)                                             \
+                    EMITW(0x00000021 | MRM(TPxx,    (br),    TDxx))
+#define C31(br, dp) EMITW(0x34000000 | TDxx << 16 | (0xFFFC & (dp)))
+
+#define B12(br) TPxx
+#define P12(dp) (0x00000000)
+#define C12(br, dp) C32(br, dp)                                             \
+                    EMITW(0x00000021 | MRM(TPxx,    (br),    TDxx))
+#define C32(br, dp) EMITW(0x3C000000 | TDxx << 16 | (0x7FFF & (dp) >> 16))  \
+                    EMITW(0x34000000 | TDxx << 16 | TDxx << 21 |            \
+                                                    (0xFFFC & (dp)))
+
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
 #define TNxx    0x14  /* s4 (r20), default rounding mode */
@@ -207,51 +252,6 @@
 #define DH(dp)  ((dp) & 0xFFFC),     1, 1   /* second native on all ARMs */
 #define DV(dp)  ((dp) & 0x7FFFFFFC), 2, 2        /* native x64 long mode */
 #define PLAIN   DP(0)           /* special type for Oeax addressing mode */
-
-/* immediate encoding add/sub/cmp(TP1), and/orr/xor(TP2), mov/mul(TP3) */
-
-#define T10(tr) ((tr) << 16)
-#define M10(im) (0x00000000 | (im))
-#define G10(rg, im) EMPTY
-#define T20(tr) ((tr) << 16)
-#define M20(im) (0x00000000 | (im))
-#define G20(rg, im) EMPTY
-#define G30(rg, im) EMITW(0x34000000 | (rg) << 16 | (0xFFFF & (im)))
-
-#define T11(tr) ((tr) << 11)
-#define M11(im) (0x00000000 | TIxx << 16)
-#define G11(rg, im) G30(rg, im)
-
-#define T12(tr) ((tr) << 11)
-#define M12(im) (0x00000000 | TIxx << 16)
-#define G12(rg, im) G32(rg, im)
-#define T22(tr) ((tr) << 11)
-#define M22(im) (0x00000000 | TIxx << 16)
-#define G22(rg, im) G32(rg, im)
-#define G32(rg, im) EMITW(0x3C000000 | (rg) << 16 | (0xFFFF & (im) >> 16))  \
-                    EMITW(0x34000000 | (rg) << 16 | (rg) << 21 |            \
-                                                    (0xFFFF & (im)))
-
-/* displacement encoding BASE(TP1), adr(TP3) */
-
-#define B10(br) (br)
-#define P10(dp) (0x00000000 | (dp))
-#define C10(br, dp) EMPTY
-#define C30(br, dp) EMITW(0x34000000 | TDxx << 16 | (0xFFFC & (dp)))
-
-#define B11(br) TPxx
-#define P11(dp) (0x00000000)
-#define C11(br, dp) C30(br, dp)                                             \
-                    EMITW(0x00000021 | MRM(TPxx,    (br),    TDxx))
-#define C31(br, dp) EMITW(0x34000000 | TDxx << 16 | (0xFFFC & (dp)))
-
-#define B12(br) TPxx
-#define P12(dp) (0x00000000)
-#define C12(br, dp) C32(br, dp)                                             \
-                    EMITW(0x00000021 | MRM(TPxx,    (br),    TDxx))
-#define C32(br, dp) EMITW(0x3C000000 | TDxx << 16 | (0x7FFF & (dp) >> 16))  \
-                    EMITW(0x34000000 | TDxx << 16 | TDxx << 21 |            \
-                                                    (0xFFFC & (dp)))
 
 /* triplet pass-through wrapper */
 
