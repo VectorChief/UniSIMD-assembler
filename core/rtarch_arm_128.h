@@ -306,7 +306,7 @@
         EMITW(0xF2000F50 | MXM(Tmm2,    Tmm1,    Tmm3))    /* 3rd N-R */    \
         EMITW(0xF3000D50 | MXM(Tmm1,    Tmm1,    Tmm2))    /* post-mul */   \
         EMITW(0xF3000D50 | MXM(Tmm2,    REG(RG), Tmm1))                     \
-        EMITW(0xF2200D50 | MXM(REG(RG), REG(RM), Tmm2))    /* residual */   \
+        EMITW(0xF2200D50 | MXM(REG(RG), Tmm3,    Tmm2))    /* residual */   \
         EMITW(0xF2000D50 | MXM(Tmm2,    REG(RG), Tmm1))    /* correction */ \
         EMITW(0xF2200150 | MXM(REG(RG), Tmm2,    Tmm2))
 
@@ -329,7 +329,7 @@
         EMITW(0xF2000F50 | MXM(Tmm2,    Tmm1,    Tmm3))    /* 1st N-R */    \
         EMITW(0xF3000D50 | MXM(Tmm1,    Tmm1,    Tmm2))    /* post-mul */   \
         EMITW(0xF3000D50 | MXM(Tmm2,    REG(RG), Tmm1))                     \
-        EMITW(0xF2200C50 | MXM(REG(RG), REG(RM), Tmm2))    /* residual */   \
+        EMITW(0xF2200C50 | MXM(REG(RG), Tmm3,    Tmm2))    /* residual */   \
         EMITW(0xF2000C50 | MXM(Tmm2,    REG(RG), Tmm1))    /* correction */ \
         EMITW(0xF2200150 | MXM(REG(RG), Tmm2,    Tmm2))
 
