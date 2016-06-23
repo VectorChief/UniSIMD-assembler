@@ -32,7 +32,9 @@
                              f < 10000.0    ?    0.1        :               \
                              f < 100000.0   ?    1.0        :               \
                              f < 1000000.0  ?   10.0        :  100.0)
+
 #define IEQ(i1, i2)         (i1 == i2)
+
 #define FEQ(f1, f2)         (RT_FABS((f1) - (f2)) <= t_diff *               \
                              RT_MIN(FRK(f1), FRK(f2)))
 
