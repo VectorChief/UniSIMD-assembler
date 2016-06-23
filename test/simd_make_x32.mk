@@ -25,7 +25,7 @@ simd_test:
 # make -f simd_make_x32.mk
 # ./simd_test.x32
 
-# Clang compilation is supported (takes much longer prior 3.8), use (replace):
+# Clang compilation works too (takes much longer prior to 3.8), use (replace):
 # clang++ (in place of x86_64-linux-gnu-g++)
 # sudo apt-get install clang (requires g++-multilib for non-native ABI)
 
