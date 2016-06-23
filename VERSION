@@ -1,3 +1,23 @@
+v0.7.1: Unified SIMD Assembler, 64/32-bit hybrid mode for native 64-bit ABI
+  - use fixed-sized and adjustable integer types in rtbase and SIMD test
+  - add a64 (AArch64 native ABI) and x64 (x86_64 native ABI) targets/makefiles
+  - add m64 (MIPS64 native ABI) and p64 (Power64 native ABI) targets/makefiles
+  - most of the current ISA remains 32-bit for BASE and SIMD with few exceptions
+  - adjust backend structures to support 64-bit pointer types in select places
+  - move sys_alloc/sys_free to platform-specific sections in SIMD test
+  - implement custom allocators (mmap) to limit address range to 32-bit (Linux)
+  - limit address range to 2GB boundary as MIPS64 sign-extends 32-bit mem-loads
+  - treat code labels as 64-bit in label_ld/st and jmpxx_mm instructions
+  - implement 64-bit versions of stack_sa/la instructions on MIPS and Power
+  - fix variable SIMD shifts to support little-endian on Power targets
+  - fix ASM blocks to only use SIMD registers within VRSAVE segment on Power
+  - remove ASM block's zeroing of r15 as unnecessary on x32/x64 targets
+  - reformat/rework ASM blocks to better respect internal register mapping
+  - explicitly save/load SIMD registers in ASM blocks across all targets
+  - drop ASM clobber lists for lack of consistency across targets/SIMD-widths
+  - fix clang's ASM block l-value errors and other warnings, official support
+  - add build instructions to makefiles for Ubuntu 16.04 LTS 64-bit Live CD
+
 v0.7: Unified SIMD Assembler, additional 32-bit CPU architectures
   - add a32 (AArch64:ILP32 ABI) and x32 (x86_64:mx32 ABI) targets/makefiles
   - add m32 (MIPS32r5/r6 + MSA) and p32 (Power + VMX/VSX) targets/makefiles
