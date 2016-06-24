@@ -17,8 +17,8 @@ v0.7.1: Unified SIMD Assembler, 64/32-bit hybrid mode for native 64-bit ABI
   - drop ASM clobber lists for lack of consistency across targets/SIMD-widths
   - fix clang's ASM block l-value errors and other warnings, official support
   - add build instructions to makefiles for Ubuntu 16.04 LTS 64-bit Live CD
-  - fix divps_ld instruction's encoding on ARM (fixes CORE test 15 with -a)
-  - use IEEE-compatible div/sqr on legacy ARM and Power (CORE test 14 with -a)
+  - fix divps_ld instruction's encoding on ARM
+  - use IEEE-compatible div/sqr on legacy ARM and Power
 
 v0.7: Unified SIMD Assembler, additional 32-bit CPU architectures
   - add a32 (AArch64:ILP32 ABI) and x32 (x86_64:mx32 ABI) targets/makefiles
