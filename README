@@ -2,6 +2,8 @@ UniSIMD assembler is a low-level C/C++ macro assembler framework unified across
 ARM, MIPS, Power and x86 architectures. It establishes a subset of both BASE and
 SIMD instruction sets with clearly defined common API, so that application logic
 can be written and maintained in one place without code replication.
+The assembler itself isn't a separate tool, but rather a collection of C/C++
+header files, which applications need to include directly in order to use.
 
 At present, Intel SSE/SSE2/SSE4 and 256-bit AVX/AVX2 (32-bit x86/x32 ISAs),
 ARMv7 NEON/NEONv2, ARMv8:AArch32 NEON and AArch64:ILP32 NEON (32-bit ARM ISAs),
@@ -13,7 +15,5 @@ available on four major architectures until full 64-bit support is implemented.
 
 The project comes with a test framework, which can be compiled in Linux/GCC,
 Maemo/scratchbox (N900 version) as well as Windows/VC++ 6.0 or later.
-The assembler itself isn't a separate tool, but rather a collection of C/C++
-header files, which applications need to include directly in order to use.
 Instructions for resolving dependencies and building the binaries
 for supported platforms can be found in the accompanying INSTALL file.
