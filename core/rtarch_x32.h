@@ -288,28 +288,19 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define andzx_ri(RM, IM)                                                    \
-        REX(0,       RXB(RM)) EMITB(0x81 | TYP(IM))                         \
-        MRM(0x04,    MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   CMD(IM))
+        andxx_ri(W(RM), W(IM))
 
 #define andzx_mi(RM, DP, IM)                                                \
-    ADR REX(0,       RXB(RM)) EMITB(0x81 | TYP(IM))                         \
-        MRM(0x04,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), CMD(IM))
+        andxx_mi(W(RM), W(DP), W(IM))
 
 #define andzx_rr(RG, RM)                                                    \
-        REX(RXB(RG), RXB(RM)) EMITB(0x23)                                   \
-        MRM(REG(RG), MOD(RM), REG(RM))
+        andxx_rr(W(RG), W(RM))
 
 #define andzx_ld(RG, RM, DP)                                                \
-    ADR REX(RXB(RG), RXB(RM)) EMITB(0x23)                                   \
-        MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+        andxx_ld(W(RG), W(RM), W(DP))
 
 #define andzx_st(RG, RM, DP)                                                \
-    ADR REX(RXB(RG), RXB(RM)) EMITB(0x21)                                   \
-        MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+        andxx_st(W(RG), W(RM), W(DP))
 
 /* orr
  * set-flags: undefined */
@@ -390,13 +381,10 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define negzx_rr(RM)                                                        \
-        REX(0,       RXB(RM)) EMITB(0xF7)                                   \
-        MRM(0x03,    MOD(RM), REG(RM))
+        negxx_rr(W(RM))
 
 #define negzx_mm(RM, DP)                                                    \
-    ADR REX(0,       RXB(RM)) EMITB(0xF7)                                   \
-        MRM(0x03,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+        negxx_mm(W(RM), W(DP))
 
 /* add
  * set-flags: undefined (xx), yes (zx) */
@@ -426,28 +414,19 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define addzx_ri(RM, IM)                                                    \
-        REX(0,       RXB(RM)) EMITB(0x81 | TYP(IM))                         \
-        MRM(0x00,    MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   CMD(IM))
+        addxx_ri(W(RM), W(IM))
 
 #define addzx_mi(RM, DP, IM)                                                \
-    ADR REX(0,       RXB(RM)) EMITB(0x81 | TYP(IM))                         \
-        MRM(0x00,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), CMD(IM))
+        addxx_mi(W(RM), W(DP), W(IM))
 
 #define addzx_rr(RG, RM)                                                    \
-        REX(RXB(RG), RXB(RM)) EMITB(0x03)                                   \
-        MRM(REG(RG), MOD(RM), REG(RM))
+        addxx_rr(W(RG), W(RM))
 
 #define addzx_ld(RG, RM, DP)                                                \
-    ADR REX(RXB(RG), RXB(RM)) EMITB(0x03)                                   \
-        MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+        addxx_ld(W(RG), W(RM), W(DP))
 
 #define addzx_st(RG, RM, DP)                                                \
-    ADR REX(RXB(RG), RXB(RM)) EMITB(0x01)                                   \
-        MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+        addxx_st(W(RG), W(RM), W(DP))
 
 /* sub
  * set-flags: undefined (xx), yes (zx) */
@@ -480,28 +459,19 @@
         subxx_st(W(RG), W(RM), W(DP))
 
 #define subzx_ri(RM, IM)                                                    \
-        REX(0,       RXB(RM)) EMITB(0x81 | TYP(IM))                         \
-        MRM(0x05,    MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   CMD(IM))
+        subxx_ri(W(RM), W(IM))
 
 #define subzx_mi(RM, DP, IM)                                                \
-    ADR REX(0,       RXB(RM)) EMITB(0x81 | TYP(IM))                         \
-        MRM(0x05,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), CMD(IM))
+        subxx_mi(W(RM), W(DP), W(IM))
 
 #define subzx_rr(RG, RM)                                                    \
-        REX(RXB(RG), RXB(RM)) EMITB(0x2B)                                   \
-        MRM(REG(RG), MOD(RM), REG(RM))
+        subxx_rr(W(RG), W(RM))
 
 #define subzx_ld(RG, RM, DP)                                                \
-    ADR REX(RXB(RG), RXB(RM)) EMITB(0x2B)                                   \
-        MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+        subxx_ld(W(RG), W(RM), W(DP))
 
 #define subzx_st(RG, RM, DP)                                                \
-    ADR REX(RXB(RG), RXB(RM)) EMITB(0x29)                                   \
-        MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+        subxx_st(W(RG), W(RM), W(DP))
 
 #define subzx_mr(RM, DP, RG)                                                \
         subzx_st(W(RG), W(RM), W(DP))
