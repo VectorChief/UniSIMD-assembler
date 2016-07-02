@@ -1034,26 +1034,26 @@
 /* mul
  * set-flags: undefined */
 
-#define mulwx_ri(RM, IM)                 /* part-range 32-bit multiply */   \
+#define mulwx_ri(RM, IM)                 /* full-range mod-32 multiply */   \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
         EMITW(0x7C0001D6 | MRM(REG(RM), REG(RM), TIxx))
 
-#define mulwx_rr(RG, RM)                 /* part-range 32-bit multiply */   \
+#define mulwx_rr(RG, RM)                 /* full-range mod-32 multiply */   \
         EMITW(0x7C0001D6 | MRM(REG(RG), REG(RG), REG(RM)))
 
-#define mulwx_ld(RG, RM, DP)             /* part-range 32-bit multiply */   \
+#define mulwx_ld(RG, RM, DP)             /* full-range mod-32 multiply */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C0001D6 | MRM(REG(RG), REG(RG), TMxx))
 
 
-#define mulxx_ri(RM, IM)                 /* part-range 32-bit multiply */   \
+#define mulxx_ri(RM, IM)                 /* full-range mod-32 multiply */   \
         mulwx_ri(W(RM), W(IM))
 
-#define mulxx_rr(RG, RM)                 /* part-range 32-bit multiply */   \
+#define mulxx_rr(RG, RM)                 /* full-range mod-32 multiply */   \
         mulwx_rr(W(RG), W(RM))
 
-#define mulxx_ld(RG, RM, DP)             /* part-range 32-bit multiply */   \
+#define mulxx_ld(RG, RM, DP)             /* full-range mod-32 multiply */   \
         mulwx_ld(W(RG), W(RM), W(DP))
 
 
@@ -1094,21 +1094,21 @@
 
 
 #define mulwp_xr(RM)     /* Reax is in/out, prepares Redx for divxn/xp */   \
-                                         /* part-range 32-bit multiply */   \
+                                         /* full-range mod-32 multiply */   \
         EMITW(0x7C0001D6 | MRM(Teax,    Teax,    REG(RM)))
 
 #define mulwp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn/xp */   \
-                                         /* part-range 32-bit multiply */   \
+                                         /* full-range mod-32 multiply */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C0001D6 | MRM(Teax,    Teax,    TMxx))
 
 
 #define mulxp_xr(RM)     /* Reax is in/out, prepares Redx for divxn/xp */   \
-        mulwp_xr(W(RM))         /* (in ARM) part-range 32-bit multiply */
+        mulwp_xr(W(RM))                  /* full-range mod-32 multiply */
 
 #define mulxp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn/xp */   \
-        mulwp_xm(W(RM), W(DP))  /* (in ARM) part-range 32-bit multiply */
+        mulwp_xm(W(RM), W(DP))           /* full-range mod-32 multiply */
 
 /* div
  * set-flags: undefined */
