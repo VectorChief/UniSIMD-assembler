@@ -932,6 +932,20 @@
 /* div
  * set-flags: undefined */
 
+#define prewx_xx()          /* to be placed immediately prior divwx_x* */   \
+                                     /* to prepare Redx for int-divide */
+
+#define prewn_xx()          /* to be placed immediately prior divwn_x* */   \
+                                     /* to prepare Redx for int-divide */
+
+
+#define prexx_xx()          /* to be placed immediately prior divxx_x* */   \
+        prewx_xx()                   /* to prepare Redx for int-divide */
+
+#define prexn_xx()          /* to be placed immediately prior divxn_x* */   \
+        prewn_xx()                   /* to prepare Redx for int-divide */
+
+
 #if (RT_128 < 2) /* hw int-div is available in processors with ASIMDv2 */
 
 #define divwx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \

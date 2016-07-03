@@ -1200,6 +1200,20 @@
 /* div
  * set-flags: undefined */
 
+#define prewx_xx()          /* to be placed immediately prior divwx_x* */   \
+                                     /* to prepare Redx for int-divide */
+
+#define prewn_xx()          /* to be placed immediately prior divwn_x* */   \
+                                     /* to prepare Redx for int-divide */
+
+
+#define prexx_xx()          /* to be placed immediately prior divxx_x* */   \
+        prewx_xx()                   /* to prepare Redx for int-divide */
+
+#define prexn_xx()          /* to be placed immediately prior divxn_x* */   \
+        prewn_xx()                   /* to prepare Redx for int-divide */
+
+
 #define divwx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
                                      /* destroys Redx, Xmm0 (in ARMv7) */   \
         EMITW(0x7C000396 | MTM(Teax,    Teax,    REG(RM)))                  \

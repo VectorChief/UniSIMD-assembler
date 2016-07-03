@@ -810,6 +810,21 @@
 /* div
  * set-flags: undefined */
 
+#define prewx_xx()          /* to be placed immediately prior divwx_x* */   \
+        movwx_ri(Redx, IC(0))        /* to prepare Redx for int-divide */
+
+#define prewn_xx()          /* to be placed immediately prior divwn_x* */   \
+        movwx_rr(Redx, Reax)         /* to prepare Redx for int-divide */   \
+        shrwn_ri(Redx, IC(31))
+
+
+#define prexx_xx()          /* to be placed immediately prior divxx_x* */   \
+        prewx_xx()                   /* to prepare Redx for int-divide */
+
+#define prexn_xx()          /* to be placed immediately prior divxn_x* */   \
+        prewn_xx()                   /* to prepare Redx for int-divide */
+
+
 #define divwx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
         EMITB(0xF7)                        /* destroys Redx (out:junk) */   \
         MRM(0x06,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
