@@ -1193,6 +1193,58 @@
 /* div
  * set-flags: undefined */
 
+#define divwx_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
+        EMITW(0x0000001B | MRM(0x00,    REG(RM), TIxx))                     \
+        EMITW(0x00000012 | MRM(REG(RM), 0x00,    0x00))
+
+#define divwx_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        EMITW(0x0000001B | MRM(0x00,    REG(RG), REG(RM)))                  \
+        EMITW(0x00000012 | MRM(REG(RG), 0x00,    0x00))
+
+#define divwx_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x0000001B | MRM(0x00,    REG(RG), TMxx))                     \
+        EMITW(0x00000012 | MRM(REG(RG), 0x00,    0x00))
+
+
+#define divxx_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        divwx_ri(W(RM), W(IM))
+
+#define divxx_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        divwx_rr(W(RG), W(RM))
+
+#define divxx_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        divwx_ld(W(RG), W(RM), W(DP))
+
+
+#define divwn_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
+        EMITW(0x0000001A | MRM(0x00,    REG(RM), TIxx))                     \
+        EMITW(0x00000012 | MRM(REG(RM), 0x00,    0x00))
+
+#define divwn_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        EMITW(0x0000001A | MRM(0x00,    REG(RG), REG(RM)))                  \
+        EMITW(0x00000012 | MRM(REG(RG), 0x00,    0x00))
+
+#define divwn_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x0000001A | MRM(0x00,    REG(RG), TMxx))                     \
+        EMITW(0x00000012 | MRM(REG(RG), 0x00,    0x00))
+
+
+#define divxn_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        divwn_ri(W(RM), W(IM))
+
+#define divxn_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        divwn_rr(W(RG), W(RM))
+
+#define divxn_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        divwn_ld(W(RG), W(RM), W(DP))
+
+
 #define prewx_xx()          /* to be placed immediately prior divwx_x* */   \
                                      /* to prepare Redx for int-divide */
 
@@ -1391,6 +1443,52 @@
 
 /* div
  * set-flags: undefined */
+
+#define divwx_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
+        EMITW(0x0000009B | MRM(REG(RM), REG(RM), TIxx))
+
+#define divwx_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        EMITW(0x0000009B | MRM(REG(RG), REG(RG), REG(RM)))
+
+#define divwx_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x0000009B | MRM(REG(RG), REG(RG), TMxx))
+
+
+#define divxx_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        divwx_ri(W(RM), W(IM))
+
+#define divxx_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        divwx_rr(W(RG), W(RM))
+
+#define divxx_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        divwx_ld(W(RG), W(RM), W(DP))
+
+
+#define divwn_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
+        EMITW(0x0000009A | MRM(REG(RM), REG(RM), TIxx))
+
+#define divwn_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        EMITW(0x0000009A | MRM(REG(RG), REG(RG), REG(RM)))
+
+#define divwn_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x0000009A | MRM(REG(RG), REG(RG), TMxx))
+
+
+#define divxn_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        divwn_ri(W(RM), W(IM))
+
+#define divxn_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        divwn_rr(W(RG), W(RM))
+
+#define divxn_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        divwn_ld(W(RG), W(RM), W(DP))
+
 
 #define prewx_xx()          /* to be placed immediately prior divwx_x* */   \
                                      /* to prepare Redx for int-divide */

@@ -991,6 +991,52 @@
 /* div
  * set-flags: undefined */
 
+#define divwx_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
+        EMITW(0x1AC00800 | MRM(REG(RM), REG(RM), TIxx))
+
+#define divwx_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        EMITW(0x1AC00800 | MRM(REG(RG), REG(RG), REG(RM)))
+
+#define divwx_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x1AC00800 | MRM(REG(RG), REG(RG), TMxx))
+
+
+#define divxx_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        divwx_ri(W(RM), W(IM))
+
+#define divxx_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        divwx_rr(W(RG), W(RM))
+
+#define divxx_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        divwx_ld(W(RG), W(RM), W(DP))
+
+
+#define divwn_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
+        EMITW(0x1AC00C00 | MRM(REG(RM), REG(RM), TIxx))
+
+#define divwn_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        EMITW(0x1AC00C00 | MRM(REG(RG), REG(RG), REG(RM)))
+
+#define divwn_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x1AC00C00 | MRM(REG(RG), REG(RG), TMxx))
+
+
+#define divxn_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        divwn_ri(W(RM), W(IM))
+
+#define divxn_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        divwn_rr(W(RG), W(RM))
+
+#define divxn_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        divwn_ld(W(RG), W(RM), W(DP))
+
+
 #define prewx_xx()          /* to be placed immediately prior divwx_x* */   \
                                      /* to prepare Redx for int-divide */
 

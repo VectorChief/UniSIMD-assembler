@@ -932,6 +932,96 @@
 /* div
  * set-flags: undefined */
 
+#if (RT_128 < 2) /* hw int-div is available in processors with ASIMDv2 */
+
+#define divwx_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        movpx_st(Xmm0, Mebp, inf_SCR01(0))          /* fallback to VFP */   \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
+        EMITW(0xEC400B10 | MRM(REG(RM), TIxx,    Tmm0+0))                   \
+        EMITW(0xEEB80B60 | MRM(Tmm0+1,  0x00,    Tmm0+0))/* full-range */   \
+        EMITW(0xEEB80B40 | MRM(Tmm0+0,  0x00,    Tmm0+0))/* 32-bit int */   \
+        EMITW(0xEE800B00 | MRM(Tmm0+0,  Tmm0+0,  Tmm0+1))/* <-fp64 div */   \
+        EMITW(0xEEBC0BC0 | MRM(Tmm0+0,  0x00,    Tmm0+0))                   \
+        EMITW(0xEE100B10 | MRM(REG(RM), Tmm0+0,  0x00))                     \
+        movpx_ld(Xmm0, Mebp, inf_SCR01(0))
+
+#define divwx_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        movpx_st(Xmm0, Mebp, inf_SCR01(0))          /* fallback to VFP */   \
+        EMITW(0xEC400B10 | MRM(REG(RG), REG(RM), Tmm0+0))                   \
+        EMITW(0xEEB80B60 | MRM(Tmm0+1,  0x00,    Tmm0+0))/* full-range */   \
+        EMITW(0xEEB80B40 | MRM(Tmm0+0,  0x00,    Tmm0+0))/* 32-bit int */   \
+        EMITW(0xEE800B00 | MRM(Tmm0+0,  Tmm0+0,  Tmm0+1))/* <-fp64 div */   \
+        EMITW(0xEEBC0BC0 | MRM(Tmm0+0,  0x00,    Tmm0+0))                   \
+        EMITW(0xEE100B10 | MRM(REG(RG), Tmm0+0,  0x00))                     \
+        movpx_ld(Xmm0, Mebp, inf_SCR01(0))
+
+#define divwx_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        movpx_st(Xmm0, Mebp, inf_SCR01(0))          /* fallback to VFP */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xEC400B10 | MRM(REG(RG), TMxx,    Tmm0+0))                   \
+        EMITW(0xEEB80B60 | MRM(Tmm0+1,  0x00,    Tmm0+0))/* full-range */   \
+        EMITW(0xEEB80B40 | MRM(Tmm0+0,  0x00,    Tmm0+0))/* 32-bit int */   \
+        EMITW(0xEE800B00 | MRM(Tmm0+0,  Tmm0+0,  Tmm0+1))/* <-fp64 div */   \
+        EMITW(0xEEBC0BC0 | MRM(Tmm0+0,  0x00,    Tmm0+0))                   \
+        EMITW(0xEE100B10 | MRM(REG(RG), Tmm0+0,  0x00))                     \
+        movpx_ld(Xmm0, Mebp, inf_SCR01(0))
+
+
+#define divxx_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        divwx_ri(W(RM), W(IM))
+
+#define divxx_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        divwx_rr(W(RG), W(RM))
+
+#define divxx_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        divwx_ld(W(RG), W(RM), W(DP))
+
+
+#define divwn_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        movpx_st(Xmm0, Mebp, inf_SCR01(0))          /* fallback to VFP */   \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
+        EMITW(0xEC400B10 | MRM(REG(RM), TIxx,    Tmm0+0))                   \
+        EMITW(0xEEB80BE0 | MRM(Tmm0+1,  0x00,    Tmm0+0))/* full-range */   \
+        EMITW(0xEEB80BC0 | MRM(Tmm0+0,  0x00,    Tmm0+0))/* 32-bit int */   \
+        EMITW(0xEE800B00 | MRM(Tmm0+0,  Tmm0+0,  Tmm0+1))/* <-fp64 div */   \
+        EMITW(0xEEBD0BC0 | MRM(Tmm0+0,  0x00,    Tmm0+0))                   \
+        EMITW(0xEE100B10 | MRM(REG(RM), Tmm0+0,  0x00))                     \
+        movpx_ld(Xmm0, Mebp, inf_SCR01(0))
+
+#define divwn_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        movpx_st(Xmm0, Mebp, inf_SCR01(0))          /* fallback to VFP */   \
+        EMITW(0xEC400B10 | MRM(REG(RG), REG(RM), Tmm0+0))                   \
+        EMITW(0xEEB80BE0 | MRM(Tmm0+1,  0x00,    Tmm0+0))/* full-range */   \
+        EMITW(0xEEB80BC0 | MRM(Tmm0+0,  0x00,    Tmm0+0))/* 32-bit int */   \
+        EMITW(0xEE800B00 | MRM(Tmm0+0,  Tmm0+0,  Tmm0+1))/* <-fp64 div */   \
+        EMITW(0xEEBD0BC0 | MRM(Tmm0+0,  0x00,    Tmm0+0))                   \
+        EMITW(0xEE100B10 | MRM(REG(RG), Tmm0+0,  0x00))                     \
+        movpx_ld(Xmm0, Mebp, inf_SCR01(0))
+
+#define divwn_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        movpx_st(Xmm0, Mebp, inf_SCR01(0))          /* fallback to VFP */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xEC400B10 | MRM(REG(RG), TMxx,    Tmm0+0))                   \
+        EMITW(0xEEB80BE0 | MRM(Tmm0+1,  0x00,    Tmm0+0))/* full-range */   \
+        EMITW(0xEEB80BC0 | MRM(Tmm0+0,  0x00,    Tmm0+0))/* 32-bit int */   \
+        EMITW(0xEE800B00 | MRM(Tmm0+0,  Tmm0+0,  Tmm0+1))/* <-fp64 div */   \
+        EMITW(0xEEBD0BC0 | MRM(Tmm0+0,  0x00,    Tmm0+0))                   \
+        EMITW(0xEE100B10 | MRM(REG(RG), Tmm0+0,  0x00))                     \
+        movpx_ld(Xmm0, Mebp, inf_SCR01(0))
+
+
+#define divxn_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        divwn_ri(W(RM), W(IM))
+
+#define divxn_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        divwn_rr(W(RG), W(RM))
+
+#define divxn_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        divwn_ld(W(RG), W(RM), W(DP))
+
+
 #define prewx_xx()          /* to be placed immediately prior divwx_x* */   \
                                      /* to prepare Redx for int-divide */
 
@@ -945,8 +1035,6 @@
 #define prexn_xx()          /* to be placed immediately prior divxn_x* */   \
         prewn_xx()                   /* to prepare Redx for int-divide */
 
-
-#if (RT_128 < 2) /* hw int-div is available in processors with ASIMDv2 */
 
 #define divwx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
                                                 /* destroys Redx, Xmm0 */   \
@@ -1032,6 +1120,66 @@
                                      /* 24-bit int (fp32 div in ARMv7) */
 
 #else /* RT_128 >= 2 */
+
+#define divwx_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
+        EMITW(0xE730F010 | MRM(0x00,    REG(RM), REG(RM)) | TIxx << 8)
+
+#define divwx_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        EMITW(0xE730F010 | MRM(0x00,    REG(RG), REG(RG)) | REG(RM) << 8)
+
+#define divwx_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xE730F010 | MRM(0x00,    REG(RG), REG(RG)) | TMxx << 8)
+
+
+#define divxx_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        divwx_ri(W(RM), W(IM))
+
+#define divxx_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        divwx_rr(W(RG), W(RM))
+
+#define divxx_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        divwx_ld(W(RG), W(RM), W(DP))
+
+
+#define divwn_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
+        EMITW(0xE710F010 | MRM(0x00,    REG(RM), REG(RM)) | TIxx << 8)
+
+#define divwn_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        EMITW(0xE710F010 | MRM(0x00,    REG(RG), REG(RG)) | REG(RM) << 8)
+
+#define divwn_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xE710F010 | MRM(0x00,    REG(RG), REG(RG)) | TMxx << 8)
+
+
+#define divxn_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        divwn_ri(W(RM), W(IM))
+
+#define divxn_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        divwn_rr(W(RG), W(RM))
+
+#define divxn_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        divwn_ld(W(RG), W(RM), W(DP))
+
+
+#define prewx_xx()          /* to be placed immediately prior divwx_x* */   \
+                                     /* to prepare Redx for int-divide */
+
+#define prewn_xx()          /* to be placed immediately prior divwn_x* */   \
+                                     /* to prepare Redx for int-divide */
+
+
+#define prexx_xx()          /* to be placed immediately prior divxx_x* */   \
+        prewx_xx()                   /* to prepare Redx for int-divide */
+
+#define prexn_xx()          /* to be placed immediately prior divxn_x* */   \
+        prewn_xx()                   /* to prepare Redx for int-divide */
+
 
 #define divwx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
                                      /* destroys Redx, Xmm0 (in ARMv7) */   \

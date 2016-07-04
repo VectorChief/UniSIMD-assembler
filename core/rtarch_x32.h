@@ -876,6 +876,90 @@
 /* div
  * set-flags: undefined */
 
+#define divwx_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_mi(Mebp, inf_SCR01(0), W(IM))                                 \
+        movwx_rr(Reax, W(RM))                                               \
+        prewx_rr()                                                          \
+        divwx_xm(Mebp, inf_SCR01(0))                                        \
+        stack_ld(Redx)                                                      \
+        movwx_rr(W(RM), Reax)                                               \
+        stack_ld(Reax)
+
+#define divwx_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_rr(Reax, W(RG))                                               \
+        prewx_rr()                                                          \
+        divwx_xr(W(RM))                                                     \
+        stack_ld(Redx)                                                      \
+        movwx_rr(W(RG), Reax)                                               \
+        stack_ld(Reax)
+
+#define divwx_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_rr(Reax, W(RG))                                               \
+        prewx_rr()                                                          \
+        divwx_xm(W(RM), W(DP))                                              \
+        stack_ld(Redx)                                                      \
+        movwx_rr(W(RG), Reax)                                               \
+        stack_ld(Reax)
+
+
+#define divxx_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        divwx_ri(W(RM), W(IM))
+
+#define divxx_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        divwx_rr(W(RG), W(RM))
+
+#define divxx_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        divwx_ld(W(RG), W(RM), W(DP))
+
+
+#define divwn_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_mi(Mebp, inf_SCR01(0), W(IM))                                 \
+        movwx_rr(Reax, W(RM))                                               \
+        prewn_rr()                                                          \
+        divwn_xm(Mebp, inf_SCR01(0))                                        \
+        stack_ld(Redx)                                                      \
+        movwx_rr(W(RM), Reax)                                               \
+        stack_ld(Reax)
+
+#define divwn_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_rr(Reax, W(RG))                                               \
+        prewn_rr()                                                          \
+        divwn_xr(W(RM))                                                     \
+        stack_ld(Redx)                                                      \
+        movwx_rr(W(RG), Reax)                                               \
+        stack_ld(Reax)
+
+#define divwn_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_rr(Reax, W(RG))                                               \
+        prewn_rr()                                                          \
+        divwn_xm(W(RM), W(DP))                                              \
+        stack_ld(Redx)                                                      \
+        movwx_rr(W(RG), Reax)                                               \
+        stack_ld(Reax)
+
+
+#define divxn_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        divwn_ri(W(RM), W(IM))
+
+#define divxn_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        divwn_rr(W(RG), W(RM))
+
+#define divxn_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        divwn_ld(W(RG), W(RM), W(DP))
+
+
 #define prewx_xx()          /* to be placed immediately prior divwx_x* */   \
         movwx_ri(Redx, IC(0))        /* to prepare Redx for int-divide */
 
