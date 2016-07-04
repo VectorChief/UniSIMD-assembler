@@ -1243,6 +1243,70 @@
 /* rem
  * set-flags: undefined */
 
+#define remwx_ri(RM, IM)       /* Redx cannot be used as first operand */   \
+        stack_st(Redx)                                                      \
+        movwx_rr(Redx, W(RM))                                               \
+        divwx_ri(W(RM), W(IM))                                              \
+        EMITW(0xE0600090 | MRM(Tedx,    REG(RM), REG(RM)) | TIxx << 8)      \
+        stack_ld(Redx)
+
+#define remwx_rr(RG, RM)                 /* RG, RM no Redx, RM no Reax */   \
+        stack_st(Redx)                                                      \
+        movwx_rr(Redx, W(RG))                                               \
+        divwx_rr(W(RG), W(RM))                                              \
+        EMITW(0xE0600090 | MRM(Tedx,    REG(RG), REG(RG)) | REG(RM) << 8)   \
+        stack_ld(Redx)
+
+#define remwx_ld(RG, RM, DP)   /* Redx cannot be used as first operand */   \
+        stack_st(Redx)                                                      \
+        movwx_rr(Redx, W(RG))                                               \
+        divwx_ld(W(RG), W(RM), W(DP))                                       \
+        EMITW(0xE0600090 | MRM(Tedx,    REG(RG), REG(RG)) | TMxx << 8)      \
+        stack_ld(Redx)
+
+
+#define remxx_ri(RM, IM)       /* Redx cannot be used as first operand */   \
+        remwx_ri(W(RM), W(IM))
+
+#define remxx_rr(RG, RM)                 /* RG, RM no Redx, RM no Reax */   \
+        remwx_rr(W(RG), W(RM))
+
+#define remxx_ld(RG, RM, DP)   /* Redx cannot be used as first operand */   \
+        remwx_ld(W(RG), W(RM), W(DP))
+
+
+#define remwn_ri(RM, IM)       /* Redx cannot be used as first operand */   \
+        stack_st(Redx)                                                      \
+        movwx_rr(Redx, W(RM))                                               \
+        divwn_ri(W(RM), W(IM))                                              \
+        EMITW(0xE0600090 | MRM(Tedx,    REG(RM), REG(RM)) | TIxx << 8)      \
+        stack_ld(Redx)
+
+#define remwn_rr(RG, RM)                 /* RG, RM no Redx, RM no Reax */   \
+        stack_st(Redx)                                                      \
+        movwx_rr(Redx, W(RG))                                               \
+        divwn_rr(W(RG), W(RM))                                              \
+        EMITW(0xE0600090 | MRM(Tedx,    REG(RG), REG(RG)) | REG(RM) << 8)   \
+        stack_ld(Redx)
+
+#define remwn_ld(RG, RM, DP)   /* Redx cannot be used as first operand */   \
+        stack_st(Redx)                                                      \
+        movwx_rr(Redx, W(RG))                                               \
+        divwn_ld(W(RG), W(RM), W(DP))                                       \
+        EMITW(0xE0600090 | MRM(Tedx,    REG(RG), REG(RG)) | TMxx << 8)      \
+        stack_ld(Redx)
+
+
+#define remxn_ri(RM, IM)       /* Redx cannot be used as first operand */   \
+        remwn_ri(W(RM), W(IM))
+
+#define remxn_rr(RG, RM)                 /* RG, RM no Redx, RM no Reax */   \
+        remwn_rr(W(RG), W(RM))
+
+#define remxn_ld(RG, RM, DP)   /* Redx cannot be used as first operand */   \
+        remwn_ld(W(RG), W(RM), W(DP))
+
+
 #define remwx_xx()          /* to be placed immediately prior divwx_x* */   \
         movwx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
