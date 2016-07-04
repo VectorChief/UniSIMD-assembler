@@ -1270,6 +1270,9 @@
  * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
  * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
 
+#define jmpxx_rr(RM)           /* register-targeted unconditional jump */   \
+        EMITW(0xD61F0000 | MRM(0x00,    REG(RM), 0x00))
+
 #if defined (RT_A32)
 
 #define jmpxx_mm(RM, DP)         /* memory-targeted unconditional jump */   \
