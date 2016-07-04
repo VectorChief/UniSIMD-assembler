@@ -1110,26 +1110,26 @@
 /* mul
  * set-flags: undefined */
 
-#define mulwx_ri(RM, IM)                 /* full-range mod-32 multiply */   \
+#define mulwx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
         EMITW(0x70000002 | MRM(REG(RM), REG(RM), TIxx))
 
-#define mulwx_rr(RG, RM)                 /* full-range mod-32 multiply */   \
+#define mulwx_rr(RG, RM)                                                    \
         EMITW(0x70000002 | MRM(REG(RG), REG(RG), REG(RM)))
 
-#define mulwx_ld(RG, RM, DP)             /* full-range mod-32 multiply */   \
+#define mulwx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x70000002 | MRM(REG(RG), REG(RG), TMxx))
 
 
-#define mulxx_ri(RM, IM)                 /* full-range mod-32 multiply */   \
+#define mulxx_ri(RM, IM)                                                    \
         mulwx_ri(W(RM), W(IM))
 
-#define mulxx_rr(RG, RM)                 /* full-range mod-32 multiply */   \
+#define mulxx_rr(RG, RM)                                                    \
         mulwx_rr(W(RG), W(RM))
 
-#define mulxx_ld(RG, RM, DP)             /* full-range mod-32 multiply */   \
+#define mulxx_ld(RG, RM, DP)                                                \
         mulwx_ld(W(RG), W(RM), W(DP))
 
 
@@ -1174,21 +1174,21 @@
 
 
 #define mulwp_xr(RM)     /* Reax is in/out, prepares Redx for divxn/xp */   \
-                                         /* full-range mod-32 multiply */   \
+                                         /* part-range 32-bit multiply */   \
         EMITW(0x70000002 | MRM(Teax,    Teax,    REG(RM)))
 
 #define mulwp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn/xp */   \
-                                         /* full-range mod-32 multiply */   \
+                                         /* part-range 32-bit multiply */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x70000002 | MRM(Teax,    Teax,    TMxx))
 
 
 #define mulxp_xr(RM)     /* Reax is in/out, prepares Redx for divxn/xp */   \
-        mulwp_xr(W(RM))                  /* full-range mod-32 multiply */
+        mulwp_xr(W(RM))                  /* part-range 32-bit multiply */
 
 #define mulxp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn/xp */   \
-        mulwp_xm(W(RM), W(DP))           /* full-range mod-32 multiply */
+        mulwp_xm(W(RM), W(DP))           /* part-range 32-bit multiply */
 
 /* div
  * set-flags: undefined */
@@ -1332,15 +1332,6 @@
 #define remwx_xm(RM, DP)    /* to be placed immediately after divwx_xm */   \
         EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))   /* Redx<-rem */
 
-#define remwn_xx()          /* to be placed immediately prior divwn_x* */   \
-                                     /* to prepare for rem calculation */
-
-#define remwn_xr(RM)        /* to be placed immediately after divwn_xr */   \
-        EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))   /* Redx<-rem */
-
-#define remwn_xm(RM, DP)    /* to be placed immediately after divwn_xm */   \
-        EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))   /* Redx<-rem */
-
 
 #define remxx_xx()          /* to be placed immediately prior divxx_x* */   \
         remwx_xx()                   /* to prepare for rem calculation */
@@ -1350,6 +1341,17 @@
 
 #define remxx_xm(RM, DP)    /* to be placed immediately after divxx_xm */   \
         remwx_xm(W(RM), W(DP))                            /* Redx<-rem */
+
+
+#define remwn_xx()          /* to be placed immediately prior divwn_x* */   \
+                                     /* to prepare for rem calculation */
+
+#define remwn_xr(RM)        /* to be placed immediately after divwn_xr */   \
+        EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))   /* Redx<-rem */
+
+#define remwn_xm(RM, DP)    /* to be placed immediately after divwn_xm */   \
+        EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))   /* Redx<-rem */
+
 
 #define remxn_xx()          /* to be placed immediately prior divxn_x* */   \
         remwn_xx()                   /* to prepare for rem calculation */
@@ -1365,26 +1367,26 @@
 /* mul
  * set-flags: undefined */
 
-#define mulwx_ri(RM, IM)                 /* full-range mod-32 multiply */   \
+#define mulwx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
         EMITW(0x00000099 | MRM(REG(RM), REG(RM), TIxx))
 
-#define mulwx_rr(RG, RM)                 /* full-range mod-32 multiply */   \
+#define mulwx_rr(RG, RM)                                                    \
         EMITW(0x00000099 | MRM(REG(RG), REG(RG), REG(RM)))
 
-#define mulwx_ld(RG, RM, DP)             /* full-range mod-32 multiply */   \
+#define mulwx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x00000099 | MRM(REG(RG), REG(RG), TMxx))
 
 
-#define mulxx_ri(RM, IM)                 /* full-range mod-32 multiply */   \
+#define mulxx_ri(RM, IM)                                                    \
         mulwx_ri(W(RM), W(IM))
 
-#define mulxx_rr(RG, RM)                 /* full-range mod-32 multiply */   \
+#define mulxx_rr(RG, RM)                                                    \
         mulwx_rr(W(RG), W(RM))
 
-#define mulxx_ld(RG, RM, DP)             /* full-range mod-32 multiply */   \
+#define mulxx_ld(RG, RM, DP)                                                \
         mulwx_ld(W(RG), W(RM), W(DP))
 
 
@@ -1425,21 +1427,21 @@
 
 
 #define mulwp_xr(RM)     /* Reax is in/out, prepares Redx for divxn/xp */   \
-                                         /* full-range mod-32 multiply */   \
+                                         /* part-range 32-bit multiply */   \
         EMITW(0x00000099 | MRM(Teax,    Teax,    REG(RM)))
 
 #define mulwp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn/xp */   \
-                                         /* full-range mod-32 multiply */   \
+                                         /* part-range 32-bit multiply */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x00000099 | MRM(Teax,    Teax,    TMxx))
 
 
 #define mulxp_xr(RM)     /* Reax is in/out, prepares Redx for divxn/xp */   \
-        mulwp_xr(W(RM))                  /* full-range mod-32 multiply */
+        mulwp_xr(W(RM))                  /* part-range 32-bit multiply */
 
 #define mulxp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn/xp */   \
-        mulwp_xm(W(RM), W(DP))           /* full-range mod-32 multiply */
+        mulwp_xm(W(RM), W(DP))           /* part-range 32-bit multiply */
 
 /* div
  * set-flags: undefined */
@@ -1573,15 +1575,6 @@
 #define remwx_xm(RM, DP)    /* to be placed immediately after divwx_xm */   \
         EMITW(0x000000DB | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
 
-#define remwn_xx()          /* to be placed immediately prior divwn_x* */   \
-        movwx_rr(Redx, Reax)         /* to prepare for rem calculation */
-
-#define remwn_xr(RM)        /* to be placed immediately after divwn_xr */   \
-        EMITW(0x000000DA | MRM(Tedx,    Tedx,    REG(RM)))/* Redx<-rem */
-
-#define remwn_xm(RM, DP)    /* to be placed immediately after divwn_xm */   \
-        EMITW(0x000000DA | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
-
 
 #define remxx_xx()          /* to be placed immediately prior divxx_x* */   \
         remwx_xx()                   /* to prepare for rem calculation */
@@ -1591,6 +1584,17 @@
 
 #define remxx_xm(RM, DP)    /* to be placed immediately after divxx_xm */   \
         remwx_xm(W(RM), W(DP))                            /* Redx<-rem */
+
+
+#define remwn_xx()          /* to be placed immediately prior divwn_x* */   \
+        movwx_rr(Redx, Reax)         /* to prepare for rem calculation */
+
+#define remwn_xr(RM)        /* to be placed immediately after divwn_xr */   \
+        EMITW(0x000000DA | MRM(Tedx,    Tedx,    REG(RM)))/* Redx<-rem */
+
+#define remwn_xm(RM, DP)    /* to be placed immediately after divwn_xm */   \
+        EMITW(0x000000DA | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
+
 
 #define remxn_xx()          /* to be placed immediately prior divxn_x* */   \
         remwn_xx()                   /* to prepare for rem calculation */

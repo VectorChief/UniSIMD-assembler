@@ -801,28 +801,28 @@
 /* mul
  * set-flags: undefined */
 
-#define mulwx_ri(RM, IM)                 /* full-range mod-32 multiply */   \
+#define mulwx_ri(RM, IM)                                                    \
         REX(RXB(RM), RXB(RM)) EMITB(0x69 | TYP(IM))                         \
         MRM(REG(RM), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   CMD(IM))
 
-#define mulwx_rr(RG, RM)                 /* full-range mod-32 multiply */   \
+#define mulwx_rr(RG, RM)                                                    \
         REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xAF)                       \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define mulwx_ld(RG, RM, DP)             /* full-range mod-32 multiply */   \
+#define mulwx_ld(RG, RM, DP)                                                \
     ADR REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xAF)                       \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 
-#define mulxx_ri(RM, IM)                 /* full-range mod-32 multiply */   \
+#define mulxx_ri(RM, IM)                                                    \
         mulwx_ri(W(RM), W(IM))
 
-#define mulxx_rr(RG, RM)                 /* full-range mod-32 multiply */   \
+#define mulxx_rr(RG, RM)                                                    \
         mulwx_rr(W(RG), W(RM))
 
-#define mulxx_ld(RG, RM, DP)             /* full-range mod-32 multiply */   \
+#define mulxx_ld(RG, RM, DP)                                                \
         mulwx_ld(W(RG), W(RM), W(DP))
 
 
@@ -861,17 +861,17 @@
 
 
 #define mulwp_xr(RM)     /* Reax is in/out, prepares Redx for divxn/xp */   \
-        mulwn_xr(W(RM))         /* (in ARM) full-range mod-32 multiply */
+        mulwn_xr(W(RM))         /* (in ARM) part-range 32-bit multiply */
 
 #define mulwp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn/xp */   \
-        mulwn_xm(W(RM), W(DP))  /* (in ARM) full-range mod-32 multiply */
+        mulwn_xm(W(RM), W(DP))  /* (in ARM) part-range 32-bit multiply */
 
 
 #define mulxp_xr(RM)     /* Reax is in/out, prepares Redx for divxn/xp */   \
-        mulwp_xr(W(RM))         /* (in ARM) full-range mod-32 multiply */
+        mulwp_xr(W(RM))         /* (in ARM) part-range 32-bit multiply */
 
 #define mulxp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn/xp */   \
-        mulwp_xm(W(RM), W(DP))  /* (in ARM) full-range mod-32 multiply */
+        mulwp_xm(W(RM), W(DP))  /* (in ARM) part-range 32-bit multiply */
 
 /* div
  * set-flags: undefined */
@@ -1040,15 +1040,6 @@
 #define remwx_xm(RM, DP)    /* to be placed immediately after divwx_xm */   \
                             /* (in ARM) to produce remainder Redx<-rem */
 
-#define remwn_xx()          /* to be placed immediately prior divwn_x* */   \
-                            /* (in ARM) to prepare for rem calculation */
-
-#define remwn_xr(RM)        /* to be placed immediately after divwn_xr */   \
-                            /* (in ARM) to produce remainder Redx<-rem */
-
-#define remwn_xm(RM, DP)    /* to be placed immediately after divwn_xm */   \
-                            /* (in ARM) to produce remainder Redx<-rem */
-
 
 #define remxx_xx()          /* to be placed immediately prior divxx_x* */   \
                             /* (in ARM) to prepare for rem calculation */
@@ -1058,6 +1049,17 @@
 
 #define remxx_xm(RM, DP)    /* to be placed immediately after divxx_xm */   \
                             /* (in ARM) to produce remainder Redx<-rem */
+
+
+#define remwn_xx()          /* to be placed immediately prior divwn_x* */   \
+                            /* (in ARM) to prepare for rem calculation */
+
+#define remwn_xr(RM)        /* to be placed immediately after divwn_xr */   \
+                            /* (in ARM) to produce remainder Redx<-rem */
+
+#define remwn_xm(RM, DP)    /* to be placed immediately after divwn_xm */   \
+                            /* (in ARM) to produce remainder Redx<-rem */
+
 
 #define remxn_xx()          /* to be placed immediately prior divxn_x* */   \
                             /* (in ARM) to prepare for rem calculation */
