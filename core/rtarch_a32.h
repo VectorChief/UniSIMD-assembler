@@ -95,6 +95,7 @@
 #define SIB(reg, mod, sib)  sib
 
 #define VAL(val, tp1, tp2)  val
+#define VXL(val, tp1, tp2)  (((val) >> 1) & 0x3FFC)
 #define TP1(val, tp1, tp2)  tp1
 #define TP2(val, tp1, tp2)  tp2
 
@@ -1347,9 +1348,8 @@
 #elif defined (RT_A64)
 
 #define jmpxx_mm(RM, DP)         /* memory-targeted unconditional jump */   \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C3(DP), EMPTY2)   \
-        EMITW(0x0B000000 | MRM(TPxx,    MOD(RM), TDxx))                     \
-        EMITW(0xF9400000 | MDM(TMxx,    TPxx,    0x00,    B1(DP), P1(DP)))  \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
         EMITW(0xD61F0000 | MRM(0x00,    TMxx,    0x00))
 
 #endif /* defined (RT_A32, RT_A64) */
