@@ -968,7 +968,7 @@
         shlwx_st(W(RG), W(RM), W(DP))
 
 #define shlxx_mr(RM, DP, RG)                                                \
-        shlwx_mr(W(RM), W(DP), W(RG))
+        shlxx_st(W(RG), W(RM), W(DP))
 
 #define shlxx_rx(RM)                     /* reads Recx for shift value */   \
         shlwx_rx(W(RM))
@@ -1033,7 +1033,7 @@
         shrwx_st(W(RG), W(RM), W(DP))
 
 #define shrxx_mr(RM, DP, RG)                                                \
-        shrwx_mr(W(RM), W(DP), W(RG))
+        shrxx_st(W(RG), W(RM), W(DP))
 
 #define shrxx_rx(RM)                     /* reads Recx for shift value */   \
         shrwx_rx(W(RM))
@@ -1096,7 +1096,7 @@
         shrwn_st(W(RG), W(RM), W(DP))
 
 #define shrxn_mr(RM, DP, RG)                                                \
-        shrwn_mr(W(RM), W(DP), W(RG))
+        shrxn_st(W(RG), W(RM), W(DP))
 
 #define shrxn_rx(RM)                     /* reads Recx for shift value */   \
         shrwn_rx(W(RM))
@@ -1173,11 +1173,11 @@
         mulwn_xm(W(RM), W(DP))
 
 
-#define mulwp_xr(RM)     /* Reax is in/out, prepares Redx for divxn/xp */   \
+#define mulwp_xr(RM)     /* Reax is in/out, prepares Redx for divwn/wp */   \
                                          /* part-range 32-bit multiply */   \
         EMITW(0x70000002 | MRM(Teax,    Teax,    REG(RM)))
 
-#define mulwp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn/xp */   \
+#define mulwp_xm(RM, DP) /* Reax is in/out, prepares Redx for divwn/wp */   \
                                          /* part-range 32-bit multiply */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
@@ -1478,11 +1478,11 @@
         mulwn_xm(W(RM), W(DP))
 
 
-#define mulwp_xr(RM)     /* Reax is in/out, prepares Redx for divxn/xp */   \
+#define mulwp_xr(RM)     /* Reax is in/out, prepares Redx for divwn/wp */   \
                                          /* part-range 32-bit multiply */   \
         EMITW(0x00000099 | MRM(Teax,    Teax,    REG(RM)))
 
-#define mulwp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn/xp */   \
+#define mulwp_xm(RM, DP) /* Reax is in/out, prepares Redx for divwn/wp */   \
                                          /* part-range 32-bit multiply */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
