@@ -87,6 +87,9 @@
 #define REX(rxg, rxm)                                                       \
         EMITB(0x40 | (rxg) << 2 | (rxm))
 
+#define REW(rxg, rxm)                                                       \
+        EMITB(0x48 | (rxg) << 2 | (rxm))
+
 #define MRM(reg, mod, rem)                                                  \
         EMITB((mod) << 6 | (reg) << 3 | (rem))
 
@@ -611,19 +614,19 @@
 
 #define shlwx_rr(RG, RM)       /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
-        movxx_rr(Recx, W(RM))                                               \
+        movwx_rr(Recx, W(RM))                                               \
         shlwx_rx(W(RG))                                                     \
         stack_ld(Recx)
 
 #define shlwx_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
-        movxx_ld(Recx, W(RM), W(DP))                                        \
+        movwx_ld(Recx, W(RM), W(DP))                                        \
         shlwx_rx(W(RG))                                                     \
         stack_ld(Recx)
 
 #define shlwx_st(RG, RM, DP)                                                \
         stack_st(Recx)                                                      \
-        movxx_rr(Recx, W(RG))                                               \
+        movwx_rr(Recx, W(RG))                                               \
         shlwx_mx(W(RM), W(DP))                                              \
         stack_ld(Recx)
 
@@ -679,19 +682,19 @@
 
 #define shrwx_rr(RG, RM)       /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
-        movxx_rr(Recx, W(RM))                                               \
+        movwx_rr(Recx, W(RM))                                               \
         shrwx_rx(W(RG))                                                     \
         stack_ld(Recx)
 
 #define shrwx_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
-        movxx_ld(Recx, W(RM), W(DP))                                        \
+        movwx_ld(Recx, W(RM), W(DP))                                        \
         shrwx_rx(W(RG))                                                     \
         stack_ld(Recx)
 
 #define shrwx_st(RG, RM, DP)                                                \
         stack_st(Recx)                                                      \
-        movxx_rr(Recx, W(RG))                                               \
+        movwx_rr(Recx, W(RG))                                               \
         shrwx_mx(W(RM), W(DP))                                              \
         stack_ld(Recx)
 
@@ -745,19 +748,19 @@
 
 #define shrwn_rr(RG, RM)       /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
-        movxn_rr(Recx, W(RM))                                               \
+        movwn_rr(Recx, W(RM))                                               \
         shrwn_rx(W(RG))                                                     \
         stack_ld(Recx)
 
 #define shrwn_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
-        movxn_ld(Recx, W(RM), W(DP))                                        \
+        movwn_ld(Recx, W(RM), W(DP))                                        \
         shrwn_rx(W(RG))                                                     \
         stack_ld(Recx)
 
 #define shrwn_st(RG, RM, DP)                                                \
         stack_st(Recx)                                                      \
-        movxn_rr(Recx, W(RG))                                               \
+        movwn_rr(Recx, W(RG))                                               \
         shrwn_mx(W(RM), W(DP))                                              \
         stack_ld(Recx)
 
@@ -1202,10 +1205,10 @@
 
 
 #define cmjxx_rz(RM, CC, lb)                                                \
-        cmjwx_rz(W(RM), CC, lb)
+        cmjxx_ri(W(RM), IC(0), CC, lb)
 
 #define cmjxx_mz(RM, DP, CC, lb)                                            \
-        cmjwx_mz(W(RM), W(DP), CC, lb)
+        cmjxx_mi(W(RM), W(DP), IC(0), CC, lb)
 
 #define cmjxx_ri(RM, IM, CC, lb)                                            \
         cmjwx_ri(W(RM), W(IM), CC, lb)
@@ -1288,7 +1291,7 @@
 #elif defined (RT_X64)
 
 #define jmpxx_mm(RM, DP)         /* memory-targeted unconditional jump */   \
-    ADR REX(3,       RXB(RM)) EMITB(0x8B)   /* <- load r15  from RM/DP */   \
+    ADR REW(1,       RXB(RM)) EMITB(0x8B)   /* <- load r15  from RM/DP */   \
         MRM(0x07,    MOD(RM), REG(RM))      /*    upper half is loaded */   \
         AUX(SIB(RM), CMD(DP), EMPTY)        /*    as a part of 64-bit op */ \
         REX(0,             1) EMITB(0xFF)   /* <- jump to address in r15 */ \

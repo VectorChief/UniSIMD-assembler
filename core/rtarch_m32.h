@@ -1753,10 +1753,10 @@
 
 
 #define cmjxx_rz(RM, CC, lb)                                                \
-        cmjwx_rz(W(RM), CC, lb)
+        cmjxx_ri(W(RM), IC(0), CC, lb)
 
 #define cmjxx_mz(RM, DP, CC, lb)                                            \
-        cmjwx_mz(W(RM), W(DP), CC, lb)
+        cmjxx_mi(W(RM), W(DP), IC(0), CC, lb)
 
 #define cmjxx_ri(RM, IM, CC, lb)                                            \
         cmjwx_ri(W(RM), W(IM), CC, lb)
