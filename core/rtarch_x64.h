@@ -981,10 +981,10 @@
 
 
 #define mulxp_xr(RM)     /* Reax is in/out, prepares Redx for divxn/xp */   \
-        mulwp_xr(W(RM))         /* (in ARM) part-range 32-bit multiply */
+        mulxn_xr(W(RM))         /* (in ARM) part-range 64-bit multiply */
 
 #define mulxp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn/xp */   \
-        mulwp_xm(W(RM), W(DP))  /* (in ARM) part-range 32-bit multiply */
+        mulxn_xm(W(RM), W(DP))  /* (in ARM) part-range 64-bit multiply */
 
 /* div
  * set-flags: undefined */
@@ -1147,12 +1147,12 @@
 #define divxx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
     ADR REW(0,       RXB(RM)) EMITB(0xF7)  /* destroys Redx (out:junk) */   \
         MRM(0x06,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
-        AUX(EMPTY,   EMPTY,   EMPTY) /* 32-bit int (fp64 div in ARMv7) */
+        AUX(EMPTY,   EMPTY,   EMPTY) /* 64-bit int (fp64 div in ARMv7) */
 
 #define divxx_xm(RM, DP) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
     ADR REW(0,       RXB(RM)) EMITB(0xF7)  /* destroys Redx (out:junk) */   \
         MRM(0x06,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
-        AUX(SIB(RM), CMD(DP), EMPTY) /* 32-bit int (fp64 div in ARMv7) */
+        AUX(SIB(RM), CMD(DP), EMPTY) /* 64-bit int (fp64 div in ARMv7) */
 
 
 #define divwn_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
@@ -1169,12 +1169,12 @@
 #define divxn_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
     ADR REW(0,       RXB(RM)) EMITB(0xF7)  /* destroys Redx (out:junk) */   \
         MRM(0x07,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
-        AUX(EMPTY,   EMPTY,   EMPTY) /* 32-bit int (fp64 div in ARMv7) */
+        AUX(EMPTY,   EMPTY,   EMPTY) /* 64-bit int (fp64 div in ARMv7) */
 
 #define divxn_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
     ADR REW(0,       RXB(RM)) EMITB(0xF7)  /* destroys Redx (out:junk) */   \
         MRM(0x07,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
-        AUX(SIB(RM), CMD(DP), EMPTY) /* 32-bit int (fp64 div in ARMv7) */
+        AUX(SIB(RM), CMD(DP), EMPTY) /* 64-bit int (fp64 div in ARMv7) */
 
 
 #define divwp_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
