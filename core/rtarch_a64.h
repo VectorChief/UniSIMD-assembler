@@ -56,7 +56,6 @@
  * cmdx*_** - applies [cmd] to full-size BASE register/memory/immediate args
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
- * cmd*p_** - applies [cmd] to   signed integer args, [p] - part-range
  *
  * cmdz*_** - applies [cmd] while setting condition flags, [z] - zero flag.
  * Regular cmdxx_** instructions may or may not set flags depending
@@ -1071,28 +1070,6 @@
         EMITW(0x9B407C00 | MRM(Tedx,    Teax,    TMxx))                     \
         EMITW(0x9B007C00 | MRM(Teax,    Teax,    TMxx))
 
-
-#define mulwp_xr(RM)     /* Reax is in/out, prepares Redx for divwn/wp */   \
-                                         /* part-range 32-bit multiply */   \
-        EMITW(0x1B007C00 | MRM(Teax,    Teax,    REG(RM)))
-
-#define mulwp_xm(RM, DP) /* Reax is in/out, prepares Redx for divwn/wp */   \
-                                         /* part-range 32-bit multiply */   \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x1B007C00 | MRM(Teax,    Teax,    TMxx))
-
-
-#define mulxp_xr(RM)     /* Reax is in/out, prepares Redx for divxn/xp */   \
-                                         /* part-range 64-bit multiply */   \
-        EMITW(0x9B007C00 | MRM(Teax,    Teax,    REG(RM)))
-
-#define mulxp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn/xp */   \
-                                         /* part-range 64-bit multiply */   \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x9B007C00 | MRM(Teax,    Teax,    TMxx))
-
 /* div
  * set-flags: undefined */
 
@@ -1212,24 +1189,6 @@
         EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
         EMITW(0x9AC00C00 | MRM(Teax,    Teax,    TMxx))                     \
                                      /* 64-bit int (fp64 div in ARMv7) */
-
-
-#define divwp_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divwn_xr(W(RM))              /* destroys Redx, Xmm0 (in ARMv7) */   \
-                                     /* 24-bit int (fp32 div in ARMv7) */
-
-#define divwp_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divwn_xm(W(RM), W(DP))       /* destroys Redx, Xmm0 (in ARMv7) */   \
-                                     /* 24-bit int (fp32 div in ARMv7) */
-
-
-#define divxp_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divwp_xr(W(RM))              /* destroys Redx, Xmm0 (in ARMv7) */   \
-                                     /* 24-bit int (fp32 div in ARMv7) */
-
-#define divxp_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divwp_xm(W(RM), W(DP))       /* destroys Redx, Xmm0 (in ARMv7) */   \
-                                     /* 24-bit int (fp32 div in ARMv7) */
 
 /* rem
  * set-flags: undefined */
