@@ -1119,47 +1119,47 @@
 
 
 #define divwx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-    ADR REX(0,       RXB(RM)) EMITB(0xF7)  /* destroys Redx (out:junk) */   \
-        MRM(0x06,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
-        AUX(EMPTY,   EMPTY,   EMPTY) /* 32-bit int (fp64 div in ARMv7) */
+    ADR REX(0,       RXB(RM)) EMITB(0xF7)                                   \
+        MRM(0x06,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMPTY)
 
 #define divwx_xm(RM, DP) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-    ADR REX(0,       RXB(RM)) EMITB(0xF7)  /* destroys Redx (out:junk) */   \
-        MRM(0x06,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
-        AUX(SIB(RM), CMD(DP), EMPTY) /* 32-bit int (fp64 div in ARMv7) */
+    ADR REX(0,       RXB(RM)) EMITB(0xF7)                                   \
+        MRM(0x06,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 
 #define divxx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-    ADR REW(0,       RXB(RM)) EMITB(0xF7)  /* destroys Redx (out:junk) */   \
-        MRM(0x06,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
-        AUX(EMPTY,   EMPTY,   EMPTY) /* 64-bit int (fp64 div in ARMv7) */
+    ADR REW(0,       RXB(RM)) EMITB(0xF7)                                   \
+        MRM(0x06,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMPTY)
 
 #define divxx_xm(RM, DP) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-    ADR REW(0,       RXB(RM)) EMITB(0xF7)  /* destroys Redx (out:junk) */   \
-        MRM(0x06,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
-        AUX(SIB(RM), CMD(DP), EMPTY) /* 64-bit int (fp64 div in ARMv7) */
+    ADR REW(0,       RXB(RM)) EMITB(0xF7)                                   \
+        MRM(0x06,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 
 #define divwn_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-    ADR REX(0,       RXB(RM)) EMITB(0xF7)  /* destroys Redx (out:junk) */   \
-        MRM(0x07,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
-        AUX(EMPTY,   EMPTY,   EMPTY) /* 32-bit int (fp64 div in ARMv7) */
+    ADR REX(0,       RXB(RM)) EMITB(0xF7)                                   \
+        MRM(0x07,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMPTY)
 
 #define divwn_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-    ADR REX(0,       RXB(RM)) EMITB(0xF7)  /* destroys Redx (out:junk) */   \
-        MRM(0x07,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
-        AUX(SIB(RM), CMD(DP), EMPTY) /* 32-bit int (fp64 div in ARMv7) */
+    ADR REX(0,       RXB(RM)) EMITB(0xF7)                                   \
+        MRM(0x07,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 
 #define divxn_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-    ADR REW(0,       RXB(RM)) EMITB(0xF7)  /* destroys Redx (out:junk) */   \
-        MRM(0x07,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
-        AUX(EMPTY,   EMPTY,   EMPTY) /* 64-bit int (fp64 div in ARMv7) */
+    ADR REW(0,       RXB(RM)) EMITB(0xF7)                                   \
+        MRM(0x07,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMPTY)
 
 #define divxn_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-    ADR REW(0,       RXB(RM)) EMITB(0xF7)  /* destroys Redx (out:junk) */   \
-        MRM(0x07,    MOD(RM), REG(RM))              /* Xmm0 (in ARMv7) */   \
-        AUX(SIB(RM), CMD(DP), EMPTY) /* 64-bit int (fp64 div in ARMv7) */
+    ADR REW(0,       RXB(RM)) EMITB(0xF7)                                   \
+        MRM(0x07,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* rem
  * set-flags: undefined */
@@ -1293,43 +1293,43 @@
 
 
 #define remwx_xx()          /* to be placed immediately prior divwx_x* */   \
-                            /* (in ARM) to prepare for rem calculation */
+                                     /* to prepare for rem calculation */
 
 #define remwx_xr(RM)        /* to be placed immediately after divwx_xr */   \
-                            /* (in ARM) to produce remainder Redx<-rem */
+                                     /* to produce remainder Redx<-rem */
 
 #define remwx_xm(RM, DP)    /* to be placed immediately after divwx_xm */   \
-                            /* (in ARM) to produce remainder Redx<-rem */
+                                     /* to produce remainder Redx<-rem */
 
 
 #define remxx_xx()          /* to be placed immediately prior divxx_x* */   \
-                            /* (in ARM) to prepare for rem calculation */
+                                     /* to prepare for rem calculation */
 
 #define remxx_xr(RM)        /* to be placed immediately after divxx_xr */   \
-                            /* (in ARM) to produce remainder Redx<-rem */
+                                     /* to produce remainder Redx<-rem */
 
 #define remxx_xm(RM, DP)    /* to be placed immediately after divxx_xm */   \
-                            /* (in ARM) to produce remainder Redx<-rem */
+                                     /* to produce remainder Redx<-rem */
 
 
 #define remwn_xx()          /* to be placed immediately prior divwn_x* */   \
-                            /* (in ARM) to prepare for rem calculation */
+                                     /* to prepare for rem calculation */
 
 #define remwn_xr(RM)        /* to be placed immediately after divwn_xr */   \
-                            /* (in ARM) to produce remainder Redx<-rem */
+                                     /* to produce remainder Redx<-rem */
 
 #define remwn_xm(RM, DP)    /* to be placed immediately after divwn_xm */   \
-                            /* (in ARM) to produce remainder Redx<-rem */
+                                     /* to produce remainder Redx<-rem */
 
 
 #define remxn_xx()          /* to be placed immediately prior divxn_x* */   \
-                            /* (in ARM) to prepare for rem calculation */
+                                     /* to prepare for rem calculation */
 
 #define remxn_xr(RM)        /* to be placed immediately after divxn_xr */   \
-                            /* (in ARM) to produce remainder Redx<-rem */
+                                     /* to produce remainder Redx<-rem */
 
 #define remxn_xm(RM, DP)    /* to be placed immediately after divxn_xm */   \
-                            /* (in ARM) to produce remainder Redx<-rem */
+                                     /* to produce remainder Redx<-rem */
 
 /* cmj
  * set-flags: undefined */

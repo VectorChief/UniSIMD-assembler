@@ -1241,18 +1241,14 @@
 
 
 #define divwx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-                                     /* destroys Redx, Xmm0 (in ARMv7) */   \
         EMITW(0x0000001B | MRM(0x00,    Teax,    REG(RM)))                  \
-        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))                     \
-                                     /* 32-bit int (fp64 div in ARMv7) */
+        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))
 
 #define divwx_xm(RM, DP) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-                                     /* destroys Redx, Xmm0 (in ARMv7) */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x0000001B | MRM(0x00,    Teax,    TMxx))                     \
-        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))                     \
-                                     /* 32-bit int (fp64 div in ARMv7) */
+        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))
 
 
 #define divxx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
@@ -1263,18 +1259,14 @@
 
 
 #define divwn_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-                                     /* destroys Redx, Xmm0 (in ARMv7) */   \
         EMITW(0x0000001A | MRM(0x00,    Teax,    REG(RM)))                  \
-        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))                     \
-                                     /* 32-bit int (fp64 div in ARMv7) */
+        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))
 
 #define divwn_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-                                     /* destroys Redx, Xmm0 (in ARMv7) */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x0000001A | MRM(0x00,    Teax,    TMxx))                     \
-        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))                     \
-                                     /* 32-bit int (fp64 div in ARMv7) */
+        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))
 
 
 #define divxn_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
@@ -1504,16 +1496,12 @@
 
 
 #define divwx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-                                     /* destroys Redx, Xmm0 (in ARMv7) */   \
-        EMITW(0x0000009B | MRM(Teax,    Teax,    REG(RM)))                  \
-                                     /* 32-bit int (fp64 div in ARMv7) */
+        EMITW(0x0000009B | MRM(Teax,    Teax,    REG(RM)))
 
 #define divwx_xm(RM, DP) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-                                     /* destroys Redx, Xmm0 (in ARMv7) */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x0000009B | MRM(Teax,    Teax,    TMxx))                     \
-                                     /* 32-bit int (fp64 div in ARMv7) */
+        EMITW(0x0000009B | MRM(Teax,    Teax,    TMxx))
 
 
 #define divxx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
@@ -1524,16 +1512,12 @@
 
 
 #define divwn_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-                                     /* destroys Redx, Xmm0 (in ARMv7) */   \
-        EMITW(0x0000009A | MRM(Teax,    Teax,    REG(RM)))                  \
-                                     /* 32-bit int (fp64 div in ARMv7) */
+        EMITW(0x0000009A | MRM(Teax,    Teax,    REG(RM)))
 
 #define divwn_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-                                     /* destroys Redx, Xmm0 (in ARMv7) */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x0000009A | MRM(Teax,    Teax,    TMxx))                     \
-                                     /* 32-bit int (fp64 div in ARMv7) */
+        EMITW(0x0000009A | MRM(Teax,    Teax,    TMxx))
 
 
 #define divxn_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
