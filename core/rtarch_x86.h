@@ -61,6 +61,13 @@
  * Regular cmdxx_** instructions may or may not set flags depending
  * on the target architecture, thus no assumptions can be made for jezxx/jnzxx.
  *
+ * The cmdw*_** and cmdx*_** subsets cannot be mixed across supported targets,
+ * thus any register initialization and use must happen within a single subset.
+ * Only a64 and x64 have a complete 32-bit support in 64-bit mode both zeroing
+ * the upper half of the result, while m64 sign-extending all 32-bit operations
+ * and p64 overflowing 32-bit arithmetic into the upper half. Similar reasons
+ * of inconsistency prohibit use of IW immediate type within 64-bit subset.
+ *
  * Argument x-register (implied) is fixed by the implementation.
  * Some formal definitions are not given below to encourage
  * use of friendly aliases for better code readability.
@@ -127,7 +134,7 @@
 #define IG(im)  (im), 0x00, EMITW((im) & 0x7FFF) /* native MIPS32 add/sub/cmp */
 #define IH(im)  (im), 0x00, EMITW((im) & 0xFFFF) /* second native on all ARMs */
 #define IV(im)  (im), 0x00, EMITW((im) & 0x7FFFFFFF)  /* native x64 long mode */
-#define IW(im)  (im), 0x00, EMITW((im) & 0xFFFFFFFF)  /* extra load op on x64 */
+#define IW(im)  (im), 0x00, EMITW((im) & 0xFFFFFFFF) /* only for cmdw*_** set */
 
 /* displacement VAL,  TYP,  CMD         (all displacement types are unsigned) */
 
