@@ -34,7 +34,7 @@
  *   in camel case without separator. For example: rt_Scene or rt_SceneThread.
  *
  * - All function names including class methods are in lower case with _ used
- *   as separator for complex names. For example: update_slice or render_fps.
+ *   as separator for complex names. For example: update_slice or render_num.
  *
  * - All function type names start with rt_FUNC_ followed by function type's
  *   specific name in upper case with _ used as separator for complex names.
@@ -227,7 +227,7 @@ typedef const char         *rt_pstr;
  * and general purpose constants used internally by some instructions.
  * Note that DP offsets below accept only 12-bit values (0xFFF),
  * use DF, DG, DH and DV for 14, 15, 16 and 31-bit offsets respectively.
- * SIMD width is taken into account via S and Q defined above.
+ * SIMD width is taken into account via S and Q defined in rtarch.h.
  * Structure is read-write in backend.
  */
 struct rt_SIMD_INFO
