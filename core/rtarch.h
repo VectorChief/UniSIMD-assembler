@@ -1201,7 +1201,7 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
-        EMITX(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
+        EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
         EMITW(0x3C000000 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(0 << 24) */
 
 #define ASM_LEAVE(__Info__)                                                 \
@@ -1228,7 +1228,7 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
-        EMITX(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
+        EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
         EMITW(0x3C000000 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(0 << 24) */  \
         EMITW(0x34000001 | MRM(0x00, TNxx, TAxx)) /* r21 <- 1|(0 << 24) */  \
         EMITW(0x34000002 | MRM(0x00, TNxx, TCxx)) /* r22 <- 2|(0 << 24) */  \
@@ -1274,15 +1274,15 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
-        EMITX(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
+        EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
         EMITW(0x3C000100 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(1 << 24) */  \
         EMITW(0x44C0F800 | MRM(0x00, 0x00, TNxx)) /* fcsr <- r20 */         \
-        EMITX(0x783E0059 | MXM(0x00, TNxx, 0x00)) /* msacsr <- r20 */
+        EMITS(0x783E0059 | MXM(0x00, TNxx, 0x00)) /* msacsr <- r20 */
 
 #define ASM_LEAVE_F(__Info__)                                               \
         EMITW(0x3C000000 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(0 << 24) */  \
         EMITW(0x44C0F800 | MRM(0x00, 0x00, TNxx)) /* fcsr <- r20 */         \
-        EMITX(0x783E0059 | MXM(0x00, TNxx, 0x00)) /* msacsr <- r20 */       \
+        EMITS(0x783E0059 | MXM(0x00, TNxx, 0x00)) /* msacsr <- r20 */       \
         sregs_la()                                                          \
         stack_la()                                                          \
         movlb_ld(%[Reax_])                                                  \
@@ -1306,18 +1306,18 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
-        EMITX(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
+        EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
         EMITW(0x3C000100 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(1 << 24) */  \
         EMITW(0x34000001 | MRM(0x00, TNxx, TAxx)) /* r21 <- 1|(1 << 24) */  \
         EMITW(0x34000002 | MRM(0x00, TNxx, TCxx)) /* r22 <- 2|(1 << 24) */  \
         EMITW(0x34000003 | MRM(0x00, TNxx, TExx)) /* r23 <- 3|(1 << 24) */  \
         EMITW(0x44C0F800 | MRM(0x00, 0x00, TNxx)) /* fcsr <- r20 */         \
-        EMITX(0x783E0059 | MXM(0x00, TNxx, 0x00)) /* msacsr <- r20 */
+        EMITS(0x783E0059 | MXM(0x00, TNxx, 0x00)) /* msacsr <- r20 */
 
 #define ASM_LEAVE_F(__Info__)                                               \
         EMITW(0x3C000000 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(0 << 24) */  \
         EMITW(0x44C0F800 | MRM(0x00, 0x00, TNxx)) /* fcsr <- r20 */         \
-        EMITX(0x783E0059 | MXM(0x00, TNxx, 0x00)) /* msacsr <- r20 */       \
+        EMITS(0x783E0059 | MXM(0x00, TNxx, 0x00)) /* msacsr <- r20 */       \
         sregs_la()                                                          \
         stack_la()                                                          \
         movlb_ld(%[Reax_])                                                  \
@@ -1332,9 +1332,9 @@
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
 #define sregs_la()
-#define EMITX(w) /* EMPTY */
+#define EMITS(w) /* EMPTY */
 #else  /* RT_SIMD_CODE */
-#define EMITX(w)    EMITW(w)
+#define EMITS(w)    EMITW(w)
 #endif /* RT_SIMD_CODE */
 
 /* ------------------------------   P32, P64   ------------------------------ */
@@ -1429,21 +1429,21 @@
         EMITW(0x7C000278 | MSM(TZxx, TZxx, TZxx)) /* r0  <- 0 (xor) */      \
         EMITW(0x7C000040 | MRM(0x08, TLxx, TLxx)) /* cmplw cr2, r24, r24 */ \
         EMITW(0x7C0002A6 | MRM(TCxx, 0x00, 0x09)) /* ctr -> r27 */          \
-        EMITX(0x7C0002A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave -> r28 */       \
-        EMITX(0x3800FFFF | MRM(TIxx, 0x00, 0x00)) /* r25 <- -1 */           \
-        EMITX(0x7C0003A6 | MRM(TIxx, 0x08, 0x00)) /* vrsave <- r25 */       \
+        EMITS(0x7C0002A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave -> r28 */       \
+        EMITS(0x3800FFFF | MRM(TIxx, 0x00, 0x00)) /* r25 <- -1 */           \
+        EMITS(0x7C0003A6 | MRM(TIxx, 0x08, 0x00)) /* vrsave <- r25 */       \
         movpx_ld(Xmm2, Mebp, inf_GPC01)           /* v2  <- +1.0f */        \
         movpx_ld(Xmm4, Mebp, inf_GPC02)           /* v4  <- -0.5f */        \
         movpx_ld(Xmm8, Mebp, inf_GPC04)           /* v8  <- 0x7FFFFFFF */   \
-        EMITX(0x10000504 | MXM(TmmS, 0x08, 0x08)) /* v24 <- not v8 */       \
-        EMITX(0x10000484 | MXM(TmmQ, 0x08, TmmS)) /* v25 <- v8 or v24 */    \
-        EMITX(0x10000484 | MXM(TmmA, 0x02, 0x02)) /* v26 <- v2 */           \
-        EMITX(0x10000484 | MXM(TmmB, 0x04, 0x04)) /* v27 <- v4 */           \
-        EMITX(0x1000004A | MXM(TmmR, TmmS, TmmS)) /* v23 <- v24 - v24 */
+        EMITS(0x10000504 | MXM(TmmS, 0x08, 0x08)) /* v24 <- not v8 */       \
+        EMITS(0x10000484 | MXM(TmmQ, 0x08, TmmS)) /* v25 <- v8 or v24 */    \
+        EMITS(0x10000484 | MXM(TmmA, 0x02, 0x02)) /* v26 <- v2 */           \
+        EMITS(0x10000484 | MXM(TmmB, 0x04, 0x04)) /* v27 <- v4 */           \
+        EMITS(0x1000004A | MXM(TmmR, TmmS, TmmS)) /* v23 <- v24 - v24 */
 
 #define ASM_LEAVE(__Info__)                                                 \
         EMITW(0x7C0003A6 | MRM(TCxx, 0x00, 0x09)) /* ctr <- r27 */          \
-        EMITX(0x7C0003A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave <- r28 */       \
+        EMITS(0x7C0003A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave <- r28 */       \
         sregs_la()                                                          \
         stack_la()                                                          \
         movlb_ld(%[Reax_])                                                  \
@@ -1483,27 +1483,27 @@
         EMITW(0x7C000278 | MSM(TZxx, TZxx, TZxx)) /* r0  <- 0 (xor) */      \
         EMITW(0x7C000040 | MRM(0x08, TLxx, TLxx)) /* cmplw cr2, r24, r24 */ \
         EMITW(0x7C0002A6 | MRM(TCxx, 0x00, 0x09)) /* ctr -> r27 */          \
-        EMITX(0x7C0002A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave -> r28 */       \
-        EMITX(0x3800FFFF | MRM(TIxx, 0x00, 0x00)) /* r25 <- -1 */           \
-        EMITX(0x7C0003A6 | MRM(TIxx, 0x08, 0x00)) /* vrsave <- r25 */       \
+        EMITS(0x7C0002A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave -> r28 */       \
+        EMITS(0x3800FFFF | MRM(TIxx, 0x00, 0x00)) /* r25 <- -1 */           \
+        EMITS(0x7C0003A6 | MRM(TIxx, 0x08, 0x00)) /* vrsave <- r25 */       \
         movpx_ld(Xmm2, Mebp, inf_GPC01)           /* v2  <- +1.0f */        \
         movpx_ld(Xmm4, Mebp, inf_GPC02)           /* v4  <- -0.5f */        \
         movpx_ld(Xmm8, Mebp, inf_GPC04)           /* v8  <- 0x7FFFFFFF */   \
-        EMITX(0x10000504 | MXM(TmmS, 0x08, 0x08)) /* v24 <- not v8 */       \
-        EMITX(0x10000484 | MXM(TmmQ, 0x08, TmmS)) /* v25 <- v8 or v24 */    \
-        EMITX(0x10000484 | MXM(TmmA, 0x02, 0x02)) /* v26 <- v2 */           \
-        EMITX(0x10000484 | MXM(TmmB, 0x04, 0x04)) /* v27 <- v4 */           \
-        EMITX(0x1000004A | MXM(TmmR, TmmS, TmmS)) /* v23 <- v24 - v24 */    \
+        EMITS(0x10000504 | MXM(TmmS, 0x08, 0x08)) /* v24 <- not v8 */       \
+        EMITS(0x10000484 | MXM(TmmQ, 0x08, TmmS)) /* v25 <- v8 or v24 */    \
+        EMITS(0x10000484 | MXM(TmmA, 0x02, 0x02)) /* v26 <- v2 */           \
+        EMITS(0x10000484 | MXM(TmmB, 0x04, 0x04)) /* v27 <- v4 */           \
+        EMITS(0x1000004A | MXM(TmmR, TmmS, TmmS)) /* v23 <- v24 - v24 */    \
         EMITW(0xFC00010C | MRM(0x1C, 0x08, 0x00)) /* fpscr <- NI(4) */      \
-        EMITX(0x1000034C | MXM(Tmm1, 0x01, 0x00)) /* v31 <- splt-half(1) */ \
-        EMITX(0x10000644 | MXM(0x00, 0x00, Tmm1)) /* vscr <- v31, NJ(16) */
+        EMITS(0x1000034C | MXM(Tmm1, 0x01, 0x00)) /* v31 <- splt-half(1) */ \
+        EMITS(0x10000644 | MXM(0x00, 0x00, Tmm1)) /* vscr <- v31, NJ(16) */
 
 #define ASM_LEAVE_F(__Info__)                                               \
         EMITW(0xFC00010C | MRM(0x1C, 0x00, 0x00)) /* fpscr <- NI(0) */      \
-        EMITX(0x1000034C | MXM(Tmm1, 0x00, 0x00)) /* v31 <- splt-half(0) */ \
-        EMITX(0x10000644 | MXM(0x00, 0x00, Tmm1)) /* vscr <- v31, NJ(16) */ \
+        EMITS(0x1000034C | MXM(Tmm1, 0x00, 0x00)) /* v31 <- splt-half(0) */ \
+        EMITS(0x10000644 | MXM(0x00, 0x00, Tmm1)) /* vscr <- v31, NJ(16) */ \
         EMITW(0x7C0003A6 | MRM(TCxx, 0x00, 0x09)) /* ctr <- r27 */          \
-        EMITX(0x7C0003A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave <- r28 */       \
+        EMITS(0x7C0003A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave <- r28 */       \
         sregs_la()                                                          \
         stack_la()                                                          \
         movlb_ld(%[Reax_])                                                  \
@@ -1517,9 +1517,9 @@
 #define sregs_sa()
 #define sregs_la()
 #define movpx_ld(RG, RM, DP)
-#define EMITX(w) /* EMPTY */
+#define EMITS(w) /* EMPTY */
 #else  /* RT_SIMD_CODE */
-#define EMITX(w)    EMITW(w)
+#define EMITS(w)    EMITW(w)
 #endif /* RT_SIMD_CODE */
 
 #endif /* RT_X86, RT_X32/X64, RT_ARM, RT_A32/A64, RT_M32/M64, RT_P32/P64 */

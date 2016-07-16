@@ -18,8 +18,8 @@
 
 #undef  sregs_sa
 #undef  sregs_la
-#undef  EMITX
-#define EMITX(w) EMITW(w)
+#undef  EMITS
+#define EMITS(w) EMITW(w)
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/

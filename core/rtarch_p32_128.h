@@ -19,8 +19,8 @@
 #undef  sregs_sa
 #undef  sregs_la
 #undef  movpx_ld
-#undef  EMITX
-#define EMITX(w) EMITW(w)
+#undef  EMITS
+#define EMITS(w) EMITW(w)
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
