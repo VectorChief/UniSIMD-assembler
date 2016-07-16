@@ -7,7 +7,15 @@
 #ifndef RT_RTARCH_M32_128_H
 #define RT_RTARCH_M32_128_H
 
+#if RT_ADDRESS == 32
+
 #include "rtarch_m32.h"
+
+#elif RT_ADDRESS == 64
+
+#include "rtarch_m64.h"
+
+#endif /* RT_ADDRESS */
 
 #define RT_SIMD_REGS        16
 #define RT_SIMD_WIDTH       4
