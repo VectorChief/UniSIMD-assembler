@@ -61,12 +61,15 @@
  * Regular cmdxx_** instructions may or may not set flags depending
  * on the target architecture, thus no assumptions can be made for jezxx/jnzxx.
  *
- * The cmdw*_** and cmdx*_** subsets cannot be mixed across supported targets,
- * thus any register initialization and use must happen within a single subset.
+ * The cmdw*_** and cmdx*_** subsets are not easily compatible on all targets,
+ * thus any register affected by cmdw*_** cannot be used in cmdx*_** subset.
+ * Alternatively, data flow must not exceed 31-bit range for 32-bit operations
+ * to produce consistent results usable in 64-bit subset across all targets.
  * Only a64 and x64 have a complete 32-bit support in 64-bit mode both zeroing
  * the upper half of the result, while m64 sign-extending all 32-bit operations
  * and p64 overflowing 32-bit arithmetic into the upper half. Similar reasons
- * of inconsistency prohibit use of IW immediate type within 64-bit subset.
+ * of inconsistency prohibit use of IW immediate type within 64-bit subset,
+ * where a64 and p64 zero-extend, while x64 and m64 sign-extend 32-bit value.
  *
  * Argument x-register (implied) is fixed by the implementation.
  * Some formal definitions are not given below to encourage
