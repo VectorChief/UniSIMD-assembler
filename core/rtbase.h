@@ -240,8 +240,8 @@ struct rt_SIMD_INFO
     rt_ui32 ver;            /* SIMD version <- cpuid */
 #define inf_VER             DP(0x004)
 
-    rt_ui32 regs;           /* SIMD reg-file storage */
-#define inf_REGS            DP(0x008)
+    rt_ui32 pad01;          /* reserved, do not use! */
+#define inf_PAD01           DP(0x008)
 
     rt_ui32 fctrl[S-3];     /* reserved, do not use! */
 #define inf_FCTRL(nx)       DP(0x00C + nx)
@@ -269,8 +269,11 @@ struct rt_SIMD_INFO
     rt_ui32 scr02[S];       /* scratchpad 02 */
 #define inf_SCR02(nx)       DP(Q*0x070 + nx)
 
-    rt_real pad02[S*8];     /* reserved, do not use! */
-#define inf_PAD02           DP(Q*0x080)
+    rt_ui64 regs[S/2];      /* SIMD reg-file storage */
+#define inf_REGS            DP(Q*0x080+E)
+
+    rt_real pad02[S*7];     /* reserved, do not use! */
+#define inf_PAD02           DP(Q*0x090)
 
 };
 
@@ -289,7 +292,7 @@ struct rt_SIMD_REGS
     RT_SIMD_SET(__Info__->gpc03, +3.0f);                                    \
     RT_SIMD_SET(__Info__->gpc04, 0x7FFFFFFF);                               \
     RT_SIMD_SET(__Info__->gpc05, 0x3F800000);                               \
-    __Info__->regs = (rt_ui32)(rt_word)__Regs__;
+    __Info__->regs[0] = (rt_ui64)(rt_word)__Regs__;
 
 #define ASM_DONE(__Info__)
 
