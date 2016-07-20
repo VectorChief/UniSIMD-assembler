@@ -240,7 +240,7 @@
 
 
 #define adrxx_ld(RG, RM, DP)                                                \
-    ADR REX(RXB(RG), RXB(RM)) EMITB(0x8D)                                   \
+    ADR REW(RXB(RG), RXB(RM)) EMITB(0x8D)                                   \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 

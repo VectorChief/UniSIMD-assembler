@@ -122,7 +122,7 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define adrpx_ld(RG, RM, DP) /* RG is a BASE reg, DP is SIMD-aligned */     \
-    ADR REX(RXB(RG), RXB(RM)) EMITB(0x8D)                                   \
+    ADR REW(RXB(RG), RXB(RM)) EMITB(0x8D)                                   \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
