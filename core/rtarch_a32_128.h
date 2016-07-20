@@ -137,7 +137,7 @@
 
 #define adrpx_ld(RG, RM, DP) /* RG is a BASE reg, DP is SIMD-aligned */     \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C3(DP), EMPTY2)   \
-        EMITW(0x0B000000 | MXM(REG(RG), MOD(RM), TDxx))
+        EMITW(0x8B000000 | MRM(REG(RG), MOD(RM), TDxx))
 
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
