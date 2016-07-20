@@ -2752,14 +2752,23 @@ rt_time get_time()
     return (rt_time)(tm.tv_sec * 1000 + tm.tv_usec / 1000);
 }
 
-#if (RT_POINTER - RT_ADDRESS) != 0
+#if RT_POINTER == 64
 
 #include <sys/mman.h>
 
-static
-rt_byte *s_ptr = (rt_byte *)0x40000000;
+#if RT_ADDRESS == 32
 
-#endif /* (RT_POINTER - RT_ADDRESS) */
+static
+rt_byte *s_ptr = (rt_byte *)0x0000000040000000;
+
+#else /* RT_ADDRESS == 64 */
+
+static
+rt_byte *s_ptr = (rt_byte *)0x0000000140000000;
+
+#endif /* RT_ADDRESS */
+
+#endif /* RT_POINTER */
 
 /*
  * Allocate memory from system heap.
@@ -2767,15 +2776,19 @@ rt_byte *s_ptr = (rt_byte *)0x40000000;
  */
 rt_pntr sys_alloc(rt_size size)
 {
-#if (RT_POINTER - RT_ADDRESS) != 0
+#if RT_POINTER == 64
+
+#if RT_ADDRESS == 32
 
     /* loop around 2GB boundary MAP_32BIT */
     /* in 64/32-bit hybrid mode pointers mustn't have sign bit
      * as MIPS64 sign-extends all 32-bit mem-loads by default */
-    if (s_ptr >= (rt_byte *)0x80000000 - size)
+    if (s_ptr >= (rt_byte *)0x0000000080000000 - size)
     {
-        s_ptr  = (rt_byte *)0x40000000;
+        s_ptr  = (rt_byte *)0x0000000040000000;
     }
+
+#endif /* RT_ADDRESS */
 
     rt_pntr ptr = mmap(s_ptr, size, PROT_READ | PROT_WRITE,
                   MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
@@ -2785,21 +2798,21 @@ rt_pntr sys_alloc(rt_size size)
      * mmap should round toward closest correct page boundary */
     s_ptr = (rt_byte *)ptr + ((size + 4095) / 4096) * 4096;
 
-#else /* (RT_POINTER - RT_ADDRESS) */
+#else /* RT_POINTER == 32 */
 
     rt_pntr ptr = malloc(size);
 
-#endif /* (RT_POINTER - RT_ADDRESS) */
+#endif /* RT_POINTER */
 
-#if (RT_POINTER - RT_ADDRESS) != 0 && RT_DEBUG >= 1
+#if RT_POINTER == 64 && RT_DEBUG >= 1
 
     RT_LOGI("ALLOC PTR = %016"RT_PR64"X, size = %ld\n", (rt_full)ptr, size);
 
-#endif /* (RT_POINTER - RT_ADDRESS) && RT_DEBUG */
+#endif /* RT_POINTER && RT_DEBUG */
 
 #if (RT_POINTER - RT_ADDRESS) != 0
 
-    if ((rt_byte *)ptr >= (rt_byte *)0x80000000 - size)
+    if ((rt_byte *)ptr >= (rt_byte *)0x0000000080000000 - size)
     {
         RT_LOGE("address exceeded allowed range, exiting...\n");
         exit(EXIT_FAILURE);
@@ -2815,21 +2828,21 @@ rt_pntr sys_alloc(rt_size size)
  */
 rt_void sys_free(rt_pntr ptr, rt_size size)
 {
-#if (RT_POINTER - RT_ADDRESS) != 0
+#if RT_POINTER == 64
 
     munmap(ptr, size);
 
-#else /* (RT_POINTER - RT_ADDRESS) */
+#else /* RT_POINTER == 32 */
 
     free(ptr);
 
-#endif /* (RT_POINTER - RT_ADDRESS) */
+#endif /* RT_POINTER */
 
-#if (RT_POINTER - RT_ADDRESS) != 0 && RT_DEBUG >= 1
+#if RT_POINTER == 64 && RT_DEBUG >= 1
 
     RT_LOGI("FREED PTR = %016"RT_PR64"X, size = %ld\n", (rt_full)ptr, size);
 
-#endif /* (RT_POINTER - RT_ADDRESS) && RT_DEBUG */
+#endif /* RT_POINTER && RT_DEBUG */
 }
 
 #endif /* ------------- OS specific ----------------------------------------- */
