@@ -71,6 +71,8 @@
 #define MPM(reg, brm, vdp, bxx, pxx)                                        \
         (pxx(vdp) | bxx(brm) << 11 | (reg) << 6)
 
+#define ADR (0xC*(A-1))
+
 /* selectors  */
 
 #define  B2(val, tp1, tp2)  B2##tp2
@@ -86,14 +88,14 @@
 #define B21(br) TPxx
 #define P21(dp) (0x00000000)
 #define C21(br, dp) EMITW(0x34000000 | TDxx << 16 | (0xFFF0 & (dp)))        \
-                    EMITW(0x00000021 | MRM(TPxx,    (br),    TDxx))
+                    EMITW(0x00000021 | MRM(TPxx,    (br),    TDxx) | ADR)
 
 #define B22(br) TPxx
 #define P22(dp) (0x00000000)
 #define C22(br, dp) EMITW(0x3C000000 | TDxx << 16 | (0x7FFF & (dp) >> 16))  \
                     EMITW(0x34000000 | TDxx << 16 | TDxx << 21 |            \
                                                     (0xFFF0 & (dp)))        \
-                    EMITW(0x00000021 | MRM(TPxx,    (br),    TDxx))
+                    EMITW(0x00000021 | MRM(TPxx,    (br),    TDxx) | ADR)
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
@@ -144,7 +146,7 @@
 
 #define adrpx_ld(RG, RM, DP) /* RG is a BASE reg, DP is SIMD-aligned */     \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C3(DP), EMPTY2)   \
-        EMITW(0x00000021 | MRM(REG(RG), MOD(RM), TDxx))
+        EMITW(0x00000021 | MRM(REG(RG), MOD(RM), TDxx) | ADR)
 
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
