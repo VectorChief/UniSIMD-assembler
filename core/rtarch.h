@@ -121,13 +121,31 @@
 #undef A
 #endif /* in case A is defined outside */
 
+
+#ifdef B
+#undef B
+#endif /* in case B is defined outside */
+
+#ifdef C
+#undef C
+#endif /* in case C is defined outside */
+
+#ifdef D
+#undef D
+#endif /* in case D is defined outside */
+
 #ifdef E
 #undef E
 #endif /* in case E is defined outside */
 
+
 #define P   (RT_POINTER/32)         /* short name for RT_POINTER/32 */
 #define A   (RT_ADDRESS/32)         /* short name for RT_ADDRESS/32 */
-#define E   (RT_ENDIAN*(P-A)*4)     /* short name for RT_ENDIAN*(P-A)*4 */
+
+#define B   (RT_ENDIAN*(2-1)*4)     /* for cmdw*_** working on 64-bit field */
+#define C   (RT_ENDIAN*(2-A)*4)     /* for cmdx*_** working on 64-bit field */
+#define D   (RT_ENDIAN*(P-1)*4)     /* for cmdw*_** working on P-size field */
+#define E   (RT_ENDIAN*(P-A)*4)     /* for cmdx*_** working on P-size field */
 
 /*******************************   WIN32, MSVC   ******************************/
 

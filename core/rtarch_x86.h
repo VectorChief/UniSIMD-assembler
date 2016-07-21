@@ -76,7 +76,8 @@
  * within pointer fields, when (in-heap) address and pointer sizes don't match.
  * Working with 32-bit data in 64-bit fields in any other circumstances must be
  * done consistently within a subset of one size (cmdw*_**, cmdx*_** or C/C++).
- * Alternatively full RT_ENDIAN flag (*4) can be used as offset adjustment.
+ * Alternatively, data written natively in C/C++ can be worked on from within
+ * a given (one) subset if appropriate offset correction is used from rtarch.h.
  *
  * Argument x-register (implied) is fixed by the implementation.
  * Some formal definitions are not given below to encourage
