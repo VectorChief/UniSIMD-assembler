@@ -65,11 +65,18 @@
  * thus any register affected by cmdw*_** cannot be used in cmdx*_** subset.
  * Alternatively, data flow must not exceed 31-bit range for 32-bit operations
  * to produce consistent results usable in 64-bit subset across all targets.
+ *
  * Only a64 and x64 have a complete 32-bit support in 64-bit mode both zeroing
  * the upper half of the result, while m64 sign-extending all 32-bit operations
  * and p64 overflowing 32-bit arithmetic into the upper half. Similar reasons
  * of inconsistency prohibit use of IW immediate type within 64-bit subset,
  * where a64 and p64 zero-extend, while x64 and m64 sign-extend 32-bit value.
+ *
+ * Note that offset correction for endianness E is only applicable for addresses
+ * within pointer fields, when (in-heap) address and pointer sizes don't match.
+ * Working with 32-bit data in 64-bit fields in any other circumstances must be
+ * done consistently within a subset of one size (cmdw*_**, cmdx*_** or C/C++).
+ * Alternatively full RT_ENDIAN flag (*4) can be used as offset adjustment.
  *
  * Argument x-register (implied) is fixed by the implementation.
  * Some formal definitions are not given below to encourage
