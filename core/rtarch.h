@@ -138,6 +138,10 @@
 #undef E
 #endif /* in case E is defined outside */
 
+#ifdef F
+#undef F
+#endif /* in case F is defined outside */
+
 
 #define P   (RT_POINTER/32)         /* short name for RT_POINTER/32 */
 #define A   (RT_ADDRESS/32)         /* short name for RT_ADDRESS/32 */
@@ -146,6 +150,7 @@
 #define C   (RT_ENDIAN*(2-A)*4)     /* for cmdx*_** working on 64-bit field */
 #define D   (RT_ENDIAN*(P-1)*4)     /* for cmdw*_** working on P-size field */
 #define E   (RT_ENDIAN*(P-A)*4)     /* for cmdx*_** working on P-size field */
+#define F   (RT_ENDIAN*(A-1)*4)     /* for cmdw*_**, cmdx*_** without C/C++ */
 
 /*******************************   WIN32, MSVC   ******************************/
 

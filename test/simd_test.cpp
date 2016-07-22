@@ -2701,6 +2701,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 #undef C /* short name for RT_ENDIAN*(2-A)*4 */
 #undef D /* short name for RT_ENDIAN*(P-1)*4 */
 #undef E /* short name for RT_ENDIAN*(P-A)*4 */
+#undef F /* short name for RT_ENDIAN*(A-1)*4 */
 
 #if   defined (RT_WIN32) /* Win32, MSVC ------------------------------------- */
 

@@ -53,7 +53,7 @@
  * stack_la - applies [mov] to all registers from stack
  *
  * cmdw*_** - applies [cmd] to 32-bit BASE register/memory/immediate args
- * cmdx*_** - applies [cmd] to full-size BASE register/memory/immediate args
+ * cmdx*_** - applies [cmd] to A-size BASE register/memory/immediate args
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
  *
@@ -78,6 +78,7 @@
  * done consistently within a subset of one size (cmdw*_**, cmdx*_** or C/C++).
  * Alternatively, data written natively in C/C++ can be worked on from within
  * a given (one) subset if appropriate offset correction is used from rtarch.h.
+ * Mixing of cmdw*_** and cmdx*_** without C/C++ is supported via F definition.
  *
  * Argument x-register (implied) is fixed by the implementation.
  * Some formal definitions are not given below to encourage
