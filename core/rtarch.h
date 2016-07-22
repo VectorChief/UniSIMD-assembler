@@ -977,7 +977,7 @@
 #define label_st(lb, RM, DP)                                                \
         label_ld(lb)/*Reax*/                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C3(DP), EMPTY2)   \
-        EMITW(0x0B000000 | MRM(TPxx,    MOD(RM), TDxx))                     \
+        EMITW(0x8B000000 | MRM(TPxx,    MOD(RM), TDxx))                     \
         EMITW(0xF9000000 | MDM(Teax,    TPxx,    0x00,    B1(DP), P1(DP)))
 
 #endif /* defined (RT_A32, RT_A64) */
