@@ -92,55 +92,28 @@
 /******************************************************************************/
 
 /*
- * Short names Q, S, W for RT_SIMD_QUADS, RT_SIMD_WIDTH, triplet wrapper.
+ * Short names Q, S, W for RT_SIMD_QUADS, RT_SIMD_WIDTH, pass-through wrapper.
  * Used independently for SIMD-fields' sizes and offsets in backend structures.
  * Must be undef'd explicitly after use to avoid collisions with system headers.
  */
-#ifdef Q
-#undef Q
-#endif /* in case Q is defined outside */
-
-#ifdef S
-#undef S
-#endif /* in case S is defined outside */
-
-#ifdef W
-#undef W
-#endif /* in case W is defined outside */
+#undef Q /* in case Q is defined outside */
+#undef S /* in case S is defined outside */
+#undef W /* in case W is defined outside */
 
 /*
- * Short names P, A, E for RT_POINTER/32, RT_ADDRESS/32, RT_ENDIAN*(P-A)*4.
+ * Short names P, A, B, C, D, E, F, G for RT_POINTER/32, RT_ADDRESS/32, offsets.
  * Used independently for SIMD-fields' sizes and offsets in backend structures.
  * Must be undef'd explicitly after use to avoid collisions with system headers.
  */
-#ifdef P
-#undef P
-#endif /* in case P is defined outside */
+#undef P /* in case P is defined outside */
+#undef A /* in case A is defined outside */
 
-#ifdef A
-#undef A
-#endif /* in case A is defined outside */
-
-
-#ifdef B
-#undef B
-#endif /* in case B is defined outside */
-
-#ifdef C
-#undef C
-#endif /* in case C is defined outside */
-
-#ifdef D
-#undef D
-#endif /* in case D is defined outside */
-
-#ifdef E
-#undef E
-#endif /* in case E is defined outside */
-
-#ifdef F
-#undef F
-#endif /* in case F is defined outside */
+#undef B /* in case B is defined outside */
+#undef C /* in case C is defined outside */
+#undef D /* in case D is defined outside */
+#undef E /* in case E is defined outside */
+#undef F /* in case F is defined outside */
+#undef G /* in case G is defined outside */
 
 
 #define P   (RT_POINTER/32)         /* short name for RT_POINTER/32 */
@@ -151,6 +124,7 @@
 #define D   (RT_ENDIAN*(P-1)*4)     /* for cmdw*_** working on P-size field */
 #define E   (RT_ENDIAN*(P-A)*4)     /* for cmdx*_** working on P-size field */
 #define F   (RT_ENDIAN*(A-1)*4)     /* for cmdw*_**, cmdx*_** without C/C++ */
+#define G   (RT_ENDIAN*(2-P)*4)     /* for jmpxx_mm working on 64-bit field */
 
 /*******************************   WIN32, MSVC   ******************************/
 
