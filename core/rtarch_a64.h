@@ -740,26 +740,26 @@
 
 #define subxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
-        EMITW(0xD1000000 | MIM(REG(RM), REG(RM), VAL(IM), T1(IM), M1(IM)))
+        EMITW(0xC1000000 | MIM(REG(RM), REG(RM), VAL(IM), T1(IM), M1(IM)))
 
 #define subxx_mi(RM, DP, IM)                                                \
         AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G1(IM))   \
         EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
-        EMITW(0xD1000000 | MIM(TMxx,    TMxx,    VAL(IM), T1(IM), M1(IM)))  \
+        EMITW(0xC1000000 | MIM(TMxx,    TMxx,    VAL(IM), T1(IM), M1(IM)))  \
         EMITW(0xF9000000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))
 
 #define subxx_rr(RG, RM)                                                    \
-        EMITW(0xDB000000 | MRM(REG(RG), REG(RG), REG(RM)))
+        EMITW(0xCB000000 | MRM(REG(RG), REG(RG), REG(RM)))
 
 #define subxx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
-        EMITW(0xDB000000 | MRM(REG(RG), REG(RG), TMxx))
+        EMITW(0xCB000000 | MRM(REG(RG), REG(RG), TMxx))
 
 #define subxx_st(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
-        EMITW(0xDB000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0xCB000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
         EMITW(0xF9000000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))
 
 #define subxx_mr(RM, DP, RG)                                                \
