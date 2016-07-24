@@ -163,13 +163,13 @@
 #define B11(br) TPxx
 #define P11(dp) (0x00000000)
 #define C11(br, dp) C30(br, dp)                                             \
-                    EMITW(0x00000021 | MRM(TPxx,    (br),    TDxx))
+                    EMITW(0x0000002D | MRM(TPxx,    (br),    TDxx))
 #define C31(br, dp) EMITW(0x34000000 | TDxx << 16 | (0xFFFC & (dp)))
 
 #define B12(br) TPxx
 #define P12(dp) (0x00000000)
 #define C12(br, dp) C32(br, dp)                                             \
-                    EMITW(0x00000021 | MRM(TPxx,    (br),    TDxx))
+                    EMITW(0x0000002D | MRM(TPxx,    (br),    TDxx))
 #define C32(br, dp) EMITW(0x3C000000 | TDxx << 16 | (0x7FFF & (dp) >> 16))  \
                     EMITW(0x34000000 | TDxx << 16 | TDxx << 21 |            \
                                                     (0xFFFC & (dp)))
@@ -244,19 +244,19 @@
 #define MegD    TegD, TegD, EMPTY
 #define MegE    TegE, TegE, EMPTY
 
-#define Iecx    Tecx, TPxx, EMITW(0x00000021 | MRM(TPxx,    Tecx,    Teax))
-#define Iedx    Tedx, TPxx, EMITW(0x00000021 | MRM(TPxx,    Tedx,    Teax))
-#define Iebx    Tebx, TPxx, EMITW(0x00000021 | MRM(TPxx,    Tebx,    Teax))
-#define Iebp    Tebp, TPxx, EMITW(0x00000021 | MRM(TPxx,    Tebp,    Teax))
-#define Iesi    Tesi, TPxx, EMITW(0x00000021 | MRM(TPxx,    Tesi,    Teax))
-#define Iedi    Tedi, TPxx, EMITW(0x00000021 | MRM(TPxx,    Tedi,    Teax))
-#define Ieg8    Teg8, TPxx, EMITW(0x00000021 | MRM(TPxx,    Teg8,    Teax))
-#define Ieg9    Teg9, TPxx, EMITW(0x00000021 | MRM(TPxx,    Teg9,    Teax))
-#define IegA    TegA, TPxx, EMITW(0x00000021 | MRM(TPxx,    TegA,    Teax))
-#define IegB    TegB, TPxx, EMITW(0x00000021 | MRM(TPxx,    TegB,    Teax))
-#define IegC    TegC, TPxx, EMITW(0x00000021 | MRM(TPxx,    TegC,    Teax))
-#define IegD    TegD, TPxx, EMITW(0x00000021 | MRM(TPxx,    TegD,    Teax))
-#define IegE    TegE, TPxx, EMITW(0x00000021 | MRM(TPxx,    TegE,    Teax))
+#define Iecx    Tecx, TPxx, EMITW(0x0000002D | MRM(TPxx,    Tecx,    Teax))
+#define Iedx    Tedx, TPxx, EMITW(0x0000002D | MRM(TPxx,    Tedx,    Teax))
+#define Iebx    Tebx, TPxx, EMITW(0x0000002D | MRM(TPxx,    Tebx,    Teax))
+#define Iebp    Tebp, TPxx, EMITW(0x0000002D | MRM(TPxx,    Tebp,    Teax))
+#define Iesi    Tesi, TPxx, EMITW(0x0000002D | MRM(TPxx,    Tesi,    Teax))
+#define Iedi    Tedi, TPxx, EMITW(0x0000002D | MRM(TPxx,    Tedi,    Teax))
+#define Ieg8    Teg8, TPxx, EMITW(0x0000002D | MRM(TPxx,    Teg8,    Teax))
+#define Ieg9    Teg9, TPxx, EMITW(0x0000002D | MRM(TPxx,    Teg9,    Teax))
+#define IegA    TegA, TPxx, EMITW(0x0000002D | MRM(TPxx,    TegA,    Teax))
+#define IegB    TegB, TPxx, EMITW(0x0000002D | MRM(TPxx,    TegB,    Teax))
+#define IegC    TegC, TPxx, EMITW(0x0000002D | MRM(TPxx,    TegC,    Teax))
+#define IegD    TegD, TPxx, EMITW(0x0000002D | MRM(TPxx,    TegD,    Teax))
+#define IegE    TegE, TPxx, EMITW(0x0000002D | MRM(TPxx,    TegE,    Teax))
 
 /* immediate    VAL,  TP1,  TP2       (all immediate types are unsigned) */
 
@@ -328,7 +328,7 @@
 
 #define adrxx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C3(DP), EMPTY2)   \
-        EMITW(0x00000021 | MRM(REG(RG), MOD(RM), TDxx))
+        EMITW(0x0000002D | MRM(REG(RG), MOD(RM), TDxx))
 
 #define adrxx_lb(lb) /* load label to Reax */                               \
         label_ld(lb)
