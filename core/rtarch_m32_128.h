@@ -573,13 +573,13 @@
  * for "potential" future compatibility with wider SIMD (AVX3),
  * which may also require additional macros for SIMD mask ops */
 
-#define RT_SIMD_MASK_NONE       N       /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL       F       /*  all satisfy the condition */
+#define RT_SIMD_MASK_NONE       MN      /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL       MF      /*  all satisfy the condition */
 
 #define S0(mask)    S1(mask)
 #define S1(mask)    S##mask
-#define SN(rg, lb)  ASM_BEG ASM_OP2( bz.v, rg, lb) ASM_END
-#define SF(rg, lb)  ASM_BEG ASM_OP2(bnz.w, rg, lb) ASM_END
+#define SMN(rg, lb) ASM_BEG ASM_OP2( bz.v, rg, lb) ASM_END
+#define SMF(rg, lb) ASM_BEG ASM_OP2(bnz.w, rg, lb) ASM_END
 
 #define CHECK_MASK(lb, mask, RG) /* destroys Reax */                        \
         AUW(EMPTY, EMPTY, EMPTY, MOD(RG), lb, S0(RT_SIMD_MASK_##mask), EMPTY2)
