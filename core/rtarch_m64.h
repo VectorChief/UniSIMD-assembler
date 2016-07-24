@@ -2227,7 +2227,7 @@
  * set-flags: no */
 
 #define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
-        movxx_mi(Mebp, inf_VER, IB(1)) /* <- MSA to bit0 */
+        movwx_mi(Mebp, inf_VER, IB(1)) /* <- MSA to bit0 */
 
 #endif /* RT_RTARCH_M64_H */
 
