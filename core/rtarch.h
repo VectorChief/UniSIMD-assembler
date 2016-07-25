@@ -168,6 +168,12 @@
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #define RT_SIMD_FAST_FCTRL      1*(S/8) /* only if AVX is among build targets */
+/* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
+ * of rcpps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_RCP      0
+/* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
+ * of rsqps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_RSQ      0
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -354,6 +360,12 @@
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #define RT_SIMD_FAST_FCTRL      1*(S/8) /* only if AVX is among build targets */
+/* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
+ * of rcpps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_RCP      0
+/* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
+ * of rsqps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_RSQ      0
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -561,6 +573,12 @@
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #define RT_SIMD_FAST_FCTRL      1*(S/8) /* only if AVX is among build targets */
+/* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
+ * of rcpps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_RCP      0
+/* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
+ * of rsqps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_RSQ      0
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -752,6 +770,12 @@
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #define RT_SIMD_FAST_FCTRL      1 /* takes all available regs except (SP, PC) */
+/* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
+ * of rcpps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_RCP      0
+/* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
+ * of rsqps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_RSQ      0
 /* RT_SIMD_COMPAT_DIV when enabled changes the default behavior
  * of divps_** to the corresponding IEEE-compatible fallback */
 #define RT_SIMD_COMPAT_DIV      1
@@ -963,6 +987,12 @@
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #define RT_SIMD_FAST_FCTRL      1
+/* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
+ * of rcpps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_RCP      0
+/* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
+ * of rsqps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_RSQ      0
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -1167,6 +1197,12 @@
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #define RT_SIMD_FAST_FCTRL      1
+/* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
+ * of rcpps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_RCP      0
+/* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
+ * of rsqps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_RSQ      0
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -1387,6 +1423,12 @@
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #define RT_SIMD_FAST_FCTRL      1 /* not applicable to Power */
+/* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
+ * of rcpps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_RCP      0
+/* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
+ * of rsqps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_RSQ      0
 /* RT_SIMD_COMPAT_DIV when enabled changes the default behavior
  * of divps_** to the corresponding IEEE-compatible fallback */
 #define RT_SIMD_COMPAT_DIV      1
