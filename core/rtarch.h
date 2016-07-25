@@ -92,6 +92,17 @@
 /******************************************************************************/
 
 /*
+ * Master config flags for SIMD compatibility modes across all targets.
+ * Each target can be configured individually regardless of the master flag.
+ * Refer to individual target sections for flags' detailed description.
+ */
+#define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and Power */
+#define RT_SIMD_COMPAT_RCP_MASTER       0 /* for rcpps_** full-precision */
+#define RT_SIMD_COMPAT_RSQ_MASTER       0 /* for rsqps_** full-precision */
+#define RT_SIMD_COMPAT_DIV_MASTER       1 /* for divps_** IEEE-compatible */
+#define RT_SIMD_COMPAT_SQR_MASTER       1 /* for sqrps_** IEEE-compatible */
+
+/*
  * Short names Q, S, W for RT_SIMD_QUADS, RT_SIMD_WIDTH, pass-through wrapper.
  * Used independently for SIMD-fields' sizes and offsets in backend structures.
  * Must be undef'd explicitly after use to avoid collisions with system headers.
@@ -161,19 +172,19 @@
         MRM(0x00,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
- * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
-#define RT_SIMD_FLUSH_ZERO      0
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #define RT_SIMD_FAST_FCTRL      1*(S/8) /* only if AVX is among build targets */
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
-#define RT_SIMD_COMPAT_RCP      0
+#define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
-#define RT_SIMD_COMPAT_RSQ      0
+#define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -353,19 +364,19 @@
         MRM(0x00,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
- * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
-#define RT_SIMD_FLUSH_ZERO      0
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #define RT_SIMD_FAST_FCTRL      1*(S/8) /* only if AVX is among build targets */
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
-#define RT_SIMD_COMPAT_RCP      0
+#define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
-#define RT_SIMD_COMPAT_RSQ      0
+#define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -566,19 +577,19 @@
 
 #endif /* defined (RT_X32, RT_X64) */
 
-/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
- * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
-#define RT_SIMD_FLUSH_ZERO      0
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #define RT_SIMD_FAST_FCTRL      1*(S/8) /* only if AVX is among build targets */
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
-#define RT_SIMD_COMPAT_RCP      0
+#define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
-#define RT_SIMD_COMPAT_RSQ      0
+#define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -763,25 +774,25 @@
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xE5800000 | MDM(Teax,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
-/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
- * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
-#define RT_SIMD_FLUSH_ZERO      0
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #define RT_SIMD_FAST_FCTRL      1 /* takes all available regs except (SP, PC) */
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
-#define RT_SIMD_COMPAT_RCP      0
+#define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
-#define RT_SIMD_COMPAT_RSQ      0
+#define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 /* RT_SIMD_COMPAT_DIV when enabled changes the default behavior
  * of divps_** to the corresponding IEEE-compatible fallback */
-#define RT_SIMD_COMPAT_DIV      1
+#define RT_SIMD_COMPAT_DIV      RT_SIMD_COMPAT_DIV_MASTER
 /* RT_SIMD_COMPAT_SQR when enabled changes the default behavior
  * of sqrps_** to the corresponding IEEE-compatible fallback */
-#define RT_SIMD_COMPAT_SQR      1
+#define RT_SIMD_COMPAT_SQR      RT_SIMD_COMPAT_SQR_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -980,19 +991,19 @@
 
 #endif /* defined (RT_A32, RT_A64) */
 
-/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
- * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
-#define RT_SIMD_FLUSH_ZERO      0
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #define RT_SIMD_FAST_FCTRL      1
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
-#define RT_SIMD_COMPAT_RCP      0
+#define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
-#define RT_SIMD_COMPAT_RSQ      0
+#define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -1190,19 +1201,19 @@
 
 #endif /* defined (RT_M32, RT_M64) */
 
-/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
- * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
-#define RT_SIMD_FLUSH_ZERO      0
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #define RT_SIMD_FAST_FCTRL      1
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
-#define RT_SIMD_COMPAT_RCP      0
+#define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
-#define RT_SIMD_COMPAT_RSQ      0
+#define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
@@ -1416,28 +1427,28 @@
 
 #endif /* defined (RT_P32, RT_P64) */
 
-/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
- * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
-#define RT_SIMD_FLUSH_ZERO      0
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #define RT_SIMD_FAST_FCTRL      1 /* not applicable to Power */
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
-#define RT_SIMD_COMPAT_RCP      0
+#define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
-#define RT_SIMD_COMPAT_RSQ      0
+#define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 /* RT_SIMD_COMPAT_DIV when enabled changes the default behavior
  * of divps_** to the corresponding IEEE-compatible fallback */
-#define RT_SIMD_COMPAT_DIV      1
+#define RT_SIMD_COMPAT_DIV      RT_SIMD_COMPAT_DIV_MASTER
 /* RT_SIMD_COMPAT_SQR when enabled changes the default behavior
  * of sqrps_** to the corresponding IEEE-compatible fallback */
-#define RT_SIMD_COMPAT_SQR      1
+#define RT_SIMD_COMPAT_SQR      RT_SIMD_COMPAT_SQR_MASTER
 /* RT_BASE_COMPAT_ZFL when enabled makes setting-flags BASE ops
  * compatible with 64-bit processors running 32-bit ISA mode */
-#define RT_BASE_COMPAT_ZFL      1
+#define RT_BASE_COMPAT_ZFL      1 /* only necessary on Power */
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
