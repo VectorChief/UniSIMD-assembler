@@ -16,7 +16,8 @@
  *
  * Main file of the unified SIMD assembler framework
  * designed to be compatible with different processor architectures,
- * while maintaining strictly defined common API.
+ * while maintaining strictly defined common API. Namespaces for current
+ * and future instruction subsets are defined (reserved) in the next section.
  *
  * Definitions provided in this file are intended to hide the differences of
  * inline assembly implementations in various compilers and operating systems,
@@ -90,6 +91,40 @@
 /******************************************************************************/
 /***************************   OS, COMPILER, ARCH   ***************************/
 /******************************************************************************/
+
+/*
+ * The following instruction namespaces are reserved for current/future use.
+ *
+ * cmdb*_** - byte-size args, BASE ISA (displacement/alignment may differ)
+ * cmdh*_** - half-size args, BASE ISA (displacement/alignment may differ)
+ *
+ * cmdw*_** - word-size args, BASE ISA (always fixed at 32-bit)
+ * cmdx*_** - addr-size args, BASE ISA (32/64-bit configurable with RT_ADDRESS)
+ * cmdy*_** - SIMD-elem args, BASE ISA (32/64-bit configurable with RT_ELEMENT)
+ * cmdz*_** - usage for setting-flags will be deprecated, reserved for 64-bit
+ * cmd*z_** - usage for setting-flags will be implemented orthogonal to size
+ *
+ * cmdp*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, packed)
+ * cmdq*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, packed)
+ * cmds*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, scalar)
+ * cmdt*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, scalar)
+ *
+ * Working with sub-word BASE elements (byte, half) is reserved for future use,
+ * however current displacement types may no longer apply due to alignment.
+ * Signed/unsigned types can be supported orthogonally in cmd*n_**, cmd*x_**.
+ *
+ * Note that within cmdx*_** subset most of the instructions follow in-heap
+ * address size (RT_ADDRESS or A) and only label_ld/st, jmpxx_rr/mm follow
+ * pointer size (RT_POINTER or P) as code/data/stack segments are fixed.
+ *
+ * Working with sub-word SIMD elements (byte, half) has not been investigated.
+ * However, as current major ISAs lack the ability to do sub-word fp-compute,
+ * these corresponding subsets cannot be considered valid targets for SPMD.
+ *
+ * For fixed 64-bit packed/scalar SIMD ISA there will be no BASE ISA equivalent
+ * on native 32-bit processors. Applications requiring 64-bit data flow in SIMD
+ * will have to be coded with BASE ISA size limitations in mind.
+ */
 
 /*
  * Master config flags for SIMD compatibility modes across all targets.
