@@ -1202,21 +1202,17 @@
 
 
 #define mulwp_xr(RM)     /* Reax is in/out, prepares Redx for divwn_x* */   \
-        EMITW(0x7C0001D6 | MRM(Teax,    Teax,    REG(RM)))
+        mulwx_rr(Reax, W(RM))         /* must not exceed operands size */
 
 #define mulwp_xm(RM, DP) /* Reax is in/out, prepares Redx for divwn_x* */   \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x7C0001D6 | MRM(Teax,    Teax,    TMxx))
+        mulwx_ld(Reax, W(RM), W(DP))  /* must not exceed operands size */
 
 
 #define mulxp_xr(RM)     /* Reax is in/out, prepares Redx for divxn_x* */   \
-        EMITW(0x7C0001D2 | MRM(Teax,    Teax,    REG(RM)))
+        mulxx_rr(Reax, W(RM))         /* must not exceed operands size */
 
 #define mulxp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn_x* */   \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0xE8000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x7C0001D2 | MRM(Teax,    Teax,    TMxx))
+        mulxx_ld(Reax, W(RM), W(DP))  /* must not exceed operands size */
 
 /* div
  * set-flags: undefined */

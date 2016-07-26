@@ -821,10 +821,10 @@
 
 
 #define mulxp_xr(RM)     /* Reax is in/out, prepares Redx for divxn_x* */   \
-        mulwp_xr(W(RM))               /* must not exceed operands size */
+        mulxn_xr(W(RM))               /* must not exceed operands size */
 
 #define mulxp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn_x* */   \
-        mulwp_xm(W(RM), W(DP))        /* must not exceed operands size */
+        mulxn_xm(W(RM), W(DP))        /* must not exceed operands size */
 
 /* div
  * set-flags: undefined */
