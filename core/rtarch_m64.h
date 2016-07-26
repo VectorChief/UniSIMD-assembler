@@ -1217,6 +1217,26 @@
         EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))                     \
         EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))
 
+
+#define mulwp_xr(RM)     /* Reax is in/out, prepares Redx for divwn_x* */   \
+        EMITW(0x70000002 | MRM(Teax,    Teax,    REG(RM)))
+
+#define mulwp_xm(RM, DP) /* Reax is in/out, prepares Redx for divwn_x* */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x70000002 | MRM(Teax,    Teax,    TMxx))
+
+
+#define mulxp_xr(RM)     /* Reax is in/out, prepares Redx for divxn_x* */   \
+        EMITW(0x0000001D | MRM(0x00,    Teax,    REG(RM)))                  \
+        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))
+
+#define mulxp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn_x* */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x0000001D | MRM(0x00,    Teax,    TMxx))                     \
+        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))
+
 /* div
  * set-flags: undefined */
 
@@ -1340,6 +1360,24 @@
         EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x0000001E | MRM(0x00,    Teax,    TMxx))                     \
         EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))
+
+
+#define divwp_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divwn_xr(W(RM))              /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
+
+#define divwp_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divwn_xm(W(RM), W(DP))       /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
+
+
+#define divxp_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divwp_xr(W(RM))              /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
+
+#define divxp_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divwp_xm(W(RM), W(DP))       /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
 
 /* rem
  * set-flags: undefined */
@@ -1520,6 +1558,24 @@
         EMITW(0x000000DC | MRM(Tedx,    Teax,    TMxx))                     \
         EMITW(0x0000009C | MRM(Teax,    Teax,    TMxx))
 
+
+#define mulwp_xr(RM)     /* Reax is in/out, prepares Redx for divwn_x* */   \
+        EMITW(0x00000099 | MRM(Teax,    Teax,    REG(RM)))
+
+#define mulwp_xm(RM, DP) /* Reax is in/out, prepares Redx for divwn_x* */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000099 | MRM(Teax,    Teax,    TMxx))
+
+
+#define mulxp_xr(RM)     /* Reax is in/out, prepares Redx for divxn_x* */   \
+        EMITW(0x0000009D | MRM(Teax,    Teax,    REG(RM)))
+
+#define mulxp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn_x* */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x0000009D | MRM(Teax,    Teax,    TMxx))
+
 /* div
  * set-flags: undefined */
 
@@ -1623,6 +1679,24 @@
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x0000009E | MRM(Teax,    Teax,    TMxx))
+
+
+#define divwp_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divwn_xr(W(RM))              /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
+
+#define divwp_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divwn_xm(W(RM), W(DP))       /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
+
+
+#define divxp_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divwp_xr(W(RM))              /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
+
+#define divxp_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divwp_xm(W(RM), W(DP))       /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
 
 /* rem
  * set-flags: undefined */
