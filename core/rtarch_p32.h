@@ -1453,11 +1453,11 @@
 
 
 #define divxp_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divwp_xr(W(RM))              /* destroys Redx, Xmm0 (in ARMv7) */   \
+        divxn_xr(W(RM))              /* destroys Redx, Xmm0 (in ARMv7) */   \
                                      /* 24-bit int (fp32 div in ARMv7) */
 
 #define divxp_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divwp_xm(W(RM), W(DP))       /* destroys Redx, Xmm0 (in ARMv7) */   \
+        divxn_xm(W(RM), W(DP))       /* destroys Redx, Xmm0 (in ARMv7) */   \
                                      /* 24-bit int (fp32 div in ARMv7) */
 
 /* rem
