@@ -58,8 +58,8 @@
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
  * cmd*p_** - applies [cmd] to   signed integer args, [p] - part-range
  *
- * cmdz*_** - applies [cmd] while setting condition flags, [z] - zero flag.
- * Regular cmdxx_** instructions may or may not set flags depending
+ * cmd*z_** - applies [cmd] while setting condition flags, [z] - zero flag.
+ * Regular cmd*x_** instructions may or may not set flags depending
  * on the target architecture, thus no assumptions can be made for jezxx/jnzxx.
  *
  * The cmdw*_** and cmdx*_** subsets are not easily compatible on all targets,
@@ -302,7 +302,7 @@
         stack_ld(Reax)
 
 /* and
- * set-flags: undefined (xx), yes (zx) */
+ * set-flags: undefined (*x), yes (*z) */
 
 #define andwx_ri(RM, IM)                                                    \
         REX(0,       RXB(RM)) EMITB(0x81 | TYP(IM))                         \
@@ -345,19 +345,19 @@
         andwx_st(W(RG), W(RM), W(DP))
 
 
-#define andzx_ri(RM, IM)                                                    \
+#define andxz_ri(RM, IM)                                                    \
         andxx_ri(W(RM), W(IM))
 
-#define andzx_mi(RM, DP, IM)                                                \
+#define andxz_mi(RM, DP, IM)                                                \
         andxx_mi(W(RM), W(DP), W(IM))
 
-#define andzx_rr(RG, RM)                                                    \
+#define andxz_rr(RG, RM)                                                    \
         andxx_rr(W(RG), W(RM))
 
-#define andzx_ld(RG, RM, DP)                                                \
+#define andxz_ld(RG, RM, DP)                                                \
         andxx_ld(W(RG), W(RM), W(DP))
 
-#define andzx_st(RG, RM, DP)                                                \
+#define andxz_st(RG, RM, DP)                                                \
         andxx_st(W(RG), W(RM), W(DP))
 
 /* orr
@@ -466,7 +466,7 @@
         notwx_mm(W(RM), W(DP))
 
 /* neg
- * set-flags: undefined (xx), yes (zx) */
+ * set-flags: undefined (*x), yes (*z) */
 
 #define negwx_rr(RM)                                                        \
         REX(0,       RXB(RM)) EMITB(0xF7)                                   \
@@ -485,14 +485,14 @@
         negwx_mm(W(RM), W(DP))
 
 
-#define negzx_rr(RM)                                                        \
+#define negxz_rr(RM)                                                        \
         negxx_rr(W(RM))
 
-#define negzx_mm(RM, DP)                                                    \
+#define negxz_mm(RM, DP)                                                    \
         negxx_mm(W(RM), W(DP))
 
 /* add
- * set-flags: undefined (xx), yes (zx) */
+ * set-flags: undefined (*x), yes (*z) */
 
 #define addwx_ri(RM, IM)                                                    \
         REX(0,       RXB(RM)) EMITB(0x81 | TYP(IM))                         \
@@ -535,23 +535,23 @@
         addwx_st(W(RG), W(RM), W(DP))
 
 
-#define addzx_ri(RM, IM)                                                    \
+#define addxz_ri(RM, IM)                                                    \
         addxx_ri(W(RM), W(IM))
 
-#define addzx_mi(RM, DP, IM)                                                \
+#define addxz_mi(RM, DP, IM)                                                \
         addxx_mi(W(RM), W(DP), W(IM))
 
-#define addzx_rr(RG, RM)                                                    \
+#define addxz_rr(RG, RM)                                                    \
         addxx_rr(W(RG), W(RM))
 
-#define addzx_ld(RG, RM, DP)                                                \
+#define addxz_ld(RG, RM, DP)                                                \
         addxx_ld(W(RG), W(RM), W(DP))
 
-#define addzx_st(RG, RM, DP)                                                \
+#define addxz_st(RG, RM, DP)                                                \
         addxx_st(W(RG), W(RM), W(DP))
 
 /* sub
- * set-flags: undefined (xx), yes (zx) */
+ * set-flags: undefined (*x), yes (*z) */
 
 #define subwx_ri(RM, IM)                                                    \
         REX(0,       RXB(RM)) EMITB(0x81 | TYP(IM))                         \
@@ -600,23 +600,23 @@
         subxx_st(W(RG), W(RM), W(DP))
 
 
-#define subzx_ri(RM, IM)                                                    \
+#define subxz_ri(RM, IM)                                                    \
         subxx_ri(W(RM), W(IM))
 
-#define subzx_mi(RM, DP, IM)                                                \
+#define subxz_mi(RM, DP, IM)                                                \
         subxx_mi(W(RM), W(DP), W(IM))
 
-#define subzx_rr(RG, RM)                                                    \
+#define subxz_rr(RG, RM)                                                    \
         subxx_rr(W(RG), W(RM))
 
-#define subzx_ld(RG, RM, DP)                                                \
+#define subxz_ld(RG, RM, DP)                                                \
         subxx_ld(W(RG), W(RM), W(DP))
 
-#define subzx_st(RG, RM, DP)                                                \
+#define subxz_st(RG, RM, DP)                                                \
         subxx_st(W(RG), W(RM), W(DP))
 
-#define subzx_mr(RM, DP, RG)                                                \
-        subzx_st(W(RG), W(RM), W(DP))
+#define subxz_mr(RM, DP, RG)                                                \
+        subxz_st(W(RG), W(RM), W(DP))
 
 /* shl
  * set-flags: undefined */
