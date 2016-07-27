@@ -1168,6 +1168,9 @@
 /* RT_SIMD_COMPAT_SQR when enabled changes the default behavior
  * of sqrps_** to the corresponding IEEE-compatible fallback */
 #define RT_SIMD_COMPAT_SQR      0
+/* RT_BASE_COMPAT_ZFL when enabled makes setting-flags BASE ops
+ * compatible with 64-bit processors running 32-bit ISA mode */
+#define RT_BASE_COMPAT_ZFL      1 /* only necessary on Power */
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define S 8
