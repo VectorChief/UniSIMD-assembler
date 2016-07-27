@@ -574,13 +574,9 @@
         EMITW(0x4EB1B800 | MXM(Tmm1,    REG(RM), 0x00))                     \
         EMITW(0x0E043C00 | MXM(REG(RG), Tmm1,    0x00))
 
-#define addmx_ri(RM, IM) /* not portable, do not use outside */             \
-        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
-        EMITW(0x21000000 | MIM(REG(RM), REG(RM), VAL(IM), T1(IM), M1(IM)))
-
 #define CHECK_MASK(lb, mask, RG) /* destroys Reax */                        \
         movms_rr(Reax, W(RG))                                               \
-        addmx_ri(Reax, IB(RT_SIMD_MASK_##mask))                             \
+        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask))                             \
         jezxx_lb(lb)
 
 /* simd mode
