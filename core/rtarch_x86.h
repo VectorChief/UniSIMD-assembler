@@ -276,20 +276,36 @@
         andwx_st(W(RG), W(RM), W(DP))
 
 
+#define andwz_ri(RM, IM)                                                    \
+        andwx_ri(W(RM), W(IM))
+
+#define andwz_mi(RM, DP, IM)                                                \
+        andwx_mi(W(RM), W(DP), W(IM))
+
+#define andwz_rr(RG, RM)                                                    \
+        andwx_rr(W(RG), W(RM))
+
+#define andwz_ld(RG, RM, DP)                                                \
+        andwx_ld(W(RG), W(RM), W(DP))
+
+#define andwz_st(RG, RM, DP)                                                \
+        andwx_st(W(RG), W(RM), W(DP))
+
+
 #define andxz_ri(RM, IM)                                                    \
-        andxx_ri(W(RM), W(IM))
+        andwz_ri(W(RM), W(IM))
 
 #define andxz_mi(RM, DP, IM)                                                \
-        andxx_mi(W(RM), W(DP), W(IM))
+        andwz_mi(W(RM), W(DP), W(IM))
 
 #define andxz_rr(RG, RM)                                                    \
-        andxx_rr(W(RG), W(RM))
+        andwz_rr(W(RG), W(RM))
 
 #define andxz_ld(RG, RM, DP)                                                \
-        andxx_ld(W(RG), W(RM), W(DP))
+        andwz_ld(W(RG), W(RM), W(DP))
 
 #define andxz_st(RG, RM, DP)                                                \
-        andxx_st(W(RG), W(RM), W(DP))
+        andwz_st(W(RG), W(RM), W(DP))
 
 /* orr
  * set-flags: undefined */
@@ -416,11 +432,18 @@
         negwx_mm(W(RM), W(DP))
 
 
+#define negwz_rr(RM)                                                        \
+        negwx_rr(W(RM))
+
+#define negwz_mm(RM, DP)                                                    \
+        negwx_mm(W(RM), W(DP))
+
+
 #define negxz_rr(RM)                                                        \
-        negxx_rr(W(RM))
+        negwz_rr(W(RM))
 
 #define negxz_mm(RM, DP)                                                    \
-        negxx_mm(W(RM), W(DP))
+        negwz_mm(W(RM), W(DP))
 
 /* add
  * set-flags: undefined (*x), yes (*z) */
@@ -466,20 +489,36 @@
         addwx_st(W(RG), W(RM), W(DP))
 
 
+#define addwz_ri(RM, IM)                                                    \
+        addwx_ri(W(RM), W(IM))
+
+#define addwz_mi(RM, DP, IM)                                                \
+        addwx_mi(W(RM), W(DP), W(IM))
+
+#define addwz_rr(RG, RM)                                                    \
+        addwx_rr(W(RG), W(RM))
+
+#define addwz_ld(RG, RM, DP)                                                \
+        addwx_ld(W(RG), W(RM), W(DP))
+
+#define addwz_st(RG, RM, DP)                                                \
+        addwx_st(W(RG), W(RM), W(DP))
+
+
 #define addxz_ri(RM, IM)                                                    \
-        addxx_ri(W(RM), W(IM))
+        addwz_ri(W(RM), W(IM))
 
 #define addxz_mi(RM, DP, IM)                                                \
-        addxx_mi(W(RM), W(DP), W(IM))
+        addwz_mi(W(RM), W(DP), W(IM))
 
 #define addxz_rr(RG, RM)                                                    \
-        addxx_rr(W(RG), W(RM))
+        addwz_rr(W(RG), W(RM))
 
 #define addxz_ld(RG, RM, DP)                                                \
-        addxx_ld(W(RG), W(RM), W(DP))
+        addwz_ld(W(RG), W(RM), W(DP))
 
 #define addxz_st(RG, RM, DP)                                                \
-        addxx_st(W(RG), W(RM), W(DP))
+        addwz_st(W(RG), W(RM), W(DP))
 
 /* sub
  * set-flags: undefined (*x), yes (*z) */
@@ -531,20 +570,39 @@
         subxx_st(W(RG), W(RM), W(DP))
 
 
+#define subwz_ri(RM, IM)                                                    \
+        subwx_ri(W(RM), W(IM))
+
+#define subwz_mi(RM, DP, IM)                                                \
+        subwx_mi(W(RM), W(DP), W(IM))
+
+#define subwz_rr(RG, RM)                                                    \
+        subwx_rr(W(RG), W(RM))
+
+#define subwz_ld(RG, RM, DP)                                                \
+        subwx_ld(W(RG), W(RM), W(DP))
+
+#define subwz_st(RG, RM, DP)                                                \
+        subwx_st(W(RG), W(RM), W(DP))
+
+#define subwz_mr(RM, DP, RG)                                                \
+        subwz_st(W(RG), W(RM), W(DP))
+
+
 #define subxz_ri(RM, IM)                                                    \
-        subxx_ri(W(RM), W(IM))
+        subwz_ri(W(RM), W(IM))
 
 #define subxz_mi(RM, DP, IM)                                                \
-        subxx_mi(W(RM), W(DP), W(IM))
+        subwz_mi(W(RM), W(DP), W(IM))
 
 #define subxz_rr(RG, RM)                                                    \
-        subxx_rr(W(RG), W(RM))
+        subwz_rr(W(RG), W(RM))
 
 #define subxz_ld(RG, RM, DP)                                                \
-        subxx_ld(W(RG), W(RM), W(DP))
+        subwz_ld(W(RG), W(RM), W(DP))
 
 #define subxz_st(RG, RM, DP)                                                \
-        subxx_st(W(RG), W(RM), W(DP))
+        subwz_st(W(RG), W(RM), W(DP))
 
 #define subxz_mr(RM, DP, RG)                                                \
         subxz_st(W(RG), W(RM), W(DP))

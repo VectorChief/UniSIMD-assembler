@@ -516,6 +516,39 @@
         EMITW(0xF8000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 
+#define andwz_ri(RM, IM)                                                    \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
+        EMITW(0x00000000 | MIM(REG(RM), REG(RM), VAL(IM), T2(IM), M2(IM)) | \
+        (+(TP2(IM) == 0) & 0x70000000) | (+(TP2(IM) != 0) & 0x7C000038))    \
+        /* if true ^ equals to -1 (not 1) */                                \
+        EMITW(0x28000000 | REG(RM) << 16)              /* <- set flags (Z) */
+
+#define andwz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)) | \
+        (+(TP2(IM) == 0) & 0x70000000) | (+(TP2(IM) != 0) & 0x7C000038))    \
+        EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
+
+#define andwz_rr(RG, RM)                                                    \
+        EMITW(0x7C000038 | MSM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define andwz_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x7C000038 | MSM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define andwz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x7C000038 | MSM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
+
+
 #define andxz_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
         EMITW(0x00000000 | MIM(REG(RM), REG(RM), VAL(IM), T2(IM), M2(IM)) | \
@@ -704,6 +737,18 @@
         EMITW(0xF8000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 
+#define negwz_rr(RM)                                                        \
+        EMITW(0x7C0000D0 | MRM(REG(RM), 0x00,    REG(RM)))                  \
+        EMITW(0x28000000 | REG(RM) << 16)              /* <- set flags (Z) */
+
+#define negwz_mm(RM, DP)                                                    \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x7C0000D0 | MRM(TMxx,    0x00,    TMxx))                     \
+        EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
+
+
 #define negxz_rr(RM)                                                        \
         EMITW(0x7C0000D1 | MRM(REG(RM), 0x00,    REG(RM)))
 
@@ -770,6 +815,39 @@
         EMITW(0xE8000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C000214 | MRM(TMxx,    TMxx,    REG(RG)))                  \
         EMITW(0xF8000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+
+#define addwz_ri(RM, IM)                                                    \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
+        EMITW(0x00000000 | MIM(REG(RM), REG(RM), VAL(IM), T1(IM), M1(IM)) | \
+        (+(TP1(IM) == 0) & 0x38000000) | (+(TP1(IM) != 0) & 0x7C000214))    \
+        /* if true ^ equals to -1 (not 1) */                                \
+        EMITW(0x28000000 | REG(RM) << 16)              /* <- set flags (Z) */
+
+#define addwz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G1(IM))   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IM), T1(IM), M1(IM)) | \
+        (+(TP1(IM) == 0) & 0x38000000) | (+(TP1(IM) != 0) & 0x7C000214))    \
+        EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
+
+#define addwz_rr(RG, RM)                                                    \
+        EMITW(0x7C000214 | MRM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define addwz_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x7C000214 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define addwz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x7C000214 | MRM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
 
 
 #define addxz_ri(RM, IM)                                                    \
@@ -866,6 +944,44 @@
 
 #define subxx_mr(RM, DP, RG)                                                \
         subxx_st(W(RG), W(RM), W(DP))
+
+
+#define subwz_ri(RM, IM)                                                    \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
+        EMITW(0x00000000 | MIM(REG(RM), REG(RM), 0x00,    T1(IM), EMPTY1) | \
+        (+(TP1(IM) == 0) & (0x38000000 | (0xFFFF & -VAL(IM)))) |            \
+        (+(TP1(IM) != 0) & (0x7C000050 | TIxx << 16)))                      \
+        /* if true ^ equals to -1 (not 1) */                                \
+        EMITW(0x28000000 | REG(RM) << 16)              /* <- set flags (Z) */
+
+#define subwz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G1(IM))   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000000 | MIM(TMxx,    TMxx,    0x00,    T1(IM), EMPTY1) | \
+        (+(TP1(IM) == 0) & (0x38000000 | (0xFFFF & -VAL(IM)))) |            \
+        (+(TP1(IM) != 0) & (0x7C000050 | TIxx << 16)))                      \
+        EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
+
+#define subwz_rr(RG, RM)                                                    \
+        EMITW(0x7C000050 | MRM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define subwz_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x7C000050 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define subwz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x7C000050 | MRM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
+
+#define subwz_mr(RM, DP, RG)                                                \
+        subwz_st(W(RG), W(RM), W(DP))
 
 
 #define subxz_ri(RM, IM)                                                    \

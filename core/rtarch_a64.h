@@ -449,6 +449,31 @@
         EMITW(0xF9000000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))
 
 
+#define andwz_ri(RM, IM)                                                    \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
+        EMITW(0x60000000 | MIM(REG(RM), REG(RM), VAL(IM), T2(IM), M2(IM)))
+
+#define andwz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x60000000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)))  \
+        EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define andwz_rr(RG, RM)                                                    \
+        EMITW(0x6A000000 | MRM(REG(RG), REG(RG), REG(RM)))
+
+#define andwz_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x6A000000 | MRM(REG(RG), REG(RG), TMxx))
+
+#define andwz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x6A000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+
 #define andxz_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
         EMITW(0xE0000000 | MIM(REG(RM), REG(RM), VAL(IM), T2(IM), M2(IM)))
@@ -622,6 +647,16 @@
         EMITW(0xF9000000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))
 
 
+#define negwz_rr(RM)                                                        \
+        EMITW(0x6B000000 | MRM(REG(RM), TZxx,    REG(RM)))
+
+#define negwz_mm(RM, DP)                                                    \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x6B000000 | MRM(TMxx,    TZxx,    TMxx))                     \
+        EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+
 #define negxz_rr(RM)                                                        \
         EMITW(0xEB000000 | MRM(REG(RM), TZxx,    REG(RM)))
 
@@ -682,6 +717,31 @@
         EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
         EMITW(0x8B000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
         EMITW(0xF9000000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))
+
+
+#define addwz_ri(RM, IM)                                                    \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
+        EMITW(0x21000000 | MIM(REG(RM), REG(RM), VAL(IM), T1(IM), M1(IM)))
+
+#define addwz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G1(IM))   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x21000000 | MIM(TMxx,    TMxx,    VAL(IM), T1(IM), M1(IM)))  \
+        EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define addwz_rr(RG, RM)                                                    \
+        EMITW(0x2B000000 | MRM(REG(RG), REG(RG), REG(RM)))
+
+#define addwz_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x2B000000 | MRM(REG(RG), REG(RG), TMxx))
+
+#define addwz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x2B000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 
 #define addxz_ri(RM, IM)                                                    \
@@ -765,6 +825,34 @@
 
 #define subxx_mr(RM, DP, RG)                                                \
         subxx_st(W(RG), W(RM), W(DP))
+
+
+#define subwz_ri(RM, IM)                                                    \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
+        EMITW(0x61000000 | MIM(REG(RM), REG(RM), VAL(IM), T1(IM), M1(IM)))
+
+#define subwz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G1(IM))   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x61000000 | MIM(TMxx,    TMxx,    VAL(IM), T1(IM), M1(IM)))  \
+        EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define subwz_rr(RG, RM)                                                    \
+        EMITW(0x6B000000 | MRM(REG(RG), REG(RG), REG(RM)))
+
+#define subwz_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x6B000000 | MRM(REG(RG), REG(RG), TMxx))
+
+#define subwz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x6B000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define subwz_mr(RM, DP, RG)                                                \
+        subwz_st(W(RG), W(RM), W(DP))
 
 
 #define subxz_ri(RM, IM)                                                    \

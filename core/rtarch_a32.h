@@ -437,29 +437,45 @@
         andwx_st(W(RG), W(RM), W(DP))
 
 
-#define andxz_ri(RM, IM)                                                    \
+#define andwz_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
         EMITW(0x60000000 | MIM(REG(RM), REG(RM), VAL(IM), T2(IM), M2(IM)))
 
-#define andxz_mi(RM, DP, IM)                                                \
+#define andwz_mi(RM, DP, IM)                                                \
         AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
         EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x60000000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)))  \
         EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
-#define andxz_rr(RG, RM)                                                    \
+#define andwz_rr(RG, RM)                                                    \
         EMITW(0x6A000000 | MRM(REG(RG), REG(RG), REG(RM)))
 
-#define andxz_ld(RG, RM, DP)                                                \
+#define andwz_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x6A000000 | MRM(REG(RG), REG(RG), TMxx))
 
-#define andxz_st(RG, RM, DP)                                                \
+#define andwz_st(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x6A000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
         EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+
+#define andxz_ri(RM, IM)                                                    \
+        andwz_ri(W(RM), W(IM))
+
+#define andxz_mi(RM, DP, IM)                                                \
+        andwz_mi(W(RM), W(DP), W(IM))
+
+#define andxz_rr(RG, RM)                                                    \
+        andwz_rr(W(RG), W(RM))
+
+#define andxz_ld(RG, RM, DP)                                                \
+        andwz_ld(W(RG), W(RM), W(DP))
+
+#define andxz_st(RG, RM, DP)                                                \
+        andwz_st(W(RG), W(RM), W(DP))
 
 /* orr
  * set-flags: undefined */
@@ -586,14 +602,21 @@
         negwx_mm(W(RM), W(DP))
 
 
-#define negxz_rr(RM)                                                        \
+#define negwz_rr(RM)                                                        \
         EMITW(0x6B000000 | MRM(REG(RM), TZxx,    REG(RM)))
 
-#define negxz_mm(RM, DP)                                                    \
+#define negwz_mm(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x6B000000 | MRM(TMxx,    TZxx,    TMxx))                     \
         EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+
+#define negxz_rr(RM)                                                        \
+        negwz_rr(W(RM))
+
+#define negxz_mm(RM, DP)                                                    \
+        negwz_mm(W(RM), W(DP))
 
 /* add
  * set-flags: undefined (*x), yes (*z) */
@@ -639,29 +662,45 @@
         addwx_st(W(RG), W(RM), W(DP))
 
 
-#define addxz_ri(RM, IM)                                                    \
+#define addwz_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
         EMITW(0x21000000 | MIM(REG(RM), REG(RM), VAL(IM), T1(IM), M1(IM)))
 
-#define addxz_mi(RM, DP, IM)                                                \
+#define addwz_mi(RM, DP, IM)                                                \
         AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G1(IM))   \
         EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x21000000 | MIM(TMxx,    TMxx,    VAL(IM), T1(IM), M1(IM)))  \
         EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
-#define addxz_rr(RG, RM)                                                    \
+#define addwz_rr(RG, RM)                                                    \
         EMITW(0x2B000000 | MRM(REG(RG), REG(RG), REG(RM)))
 
-#define addxz_ld(RG, RM, DP)                                                \
+#define addwz_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x2B000000 | MRM(REG(RG), REG(RG), TMxx))
 
-#define addxz_st(RG, RM, DP)                                                \
+#define addwz_st(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x2B000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
         EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+
+#define addxz_ri(RM, IM)                                                    \
+        addwz_ri(W(RM), W(IM))
+
+#define addxz_mi(RM, DP, IM)                                                \
+        addwz_mi(W(RM), W(DP), W(IM))
+
+#define addxz_rr(RG, RM)                                                    \
+        addwz_rr(W(RG), W(RM))
+
+#define addxz_ld(RG, RM, DP)                                                \
+        addwz_ld(W(RG), W(RM), W(DP))
+
+#define addxz_st(RG, RM, DP)                                                \
+        addwz_st(W(RG), W(RM), W(DP))
 
 /* sub
  * set-flags: undefined (*x), yes (*z) */
@@ -713,29 +752,48 @@
         subxx_st(W(RG), W(RM), W(DP))
 
 
-#define subxz_ri(RM, IM)                                                    \
+#define subwz_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
         EMITW(0x61000000 | MIM(REG(RM), REG(RM), VAL(IM), T1(IM), M1(IM)))
 
-#define subxz_mi(RM, DP, IM)                                                \
+#define subwz_mi(RM, DP, IM)                                                \
         AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G1(IM))   \
         EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x61000000 | MIM(TMxx,    TMxx,    VAL(IM), T1(IM), M1(IM)))  \
         EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
-#define subxz_rr(RG, RM)                                                    \
+#define subwz_rr(RG, RM)                                                    \
         EMITW(0x6B000000 | MRM(REG(RG), REG(RG), REG(RM)))
 
-#define subxz_ld(RG, RM, DP)                                                \
+#define subwz_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x6B000000 | MRM(REG(RG), REG(RG), TMxx))
 
-#define subxz_st(RG, RM, DP)                                                \
+#define subwz_st(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x6B000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
         EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define subwz_mr(RM, DP, RG)                                                \
+        subwz_st(W(RG), W(RM), W(DP))
+
+
+#define subxz_ri(RM, IM)                                                    \
+        subwz_ri(W(RM), W(IM))
+
+#define subxz_mi(RM, DP, IM)                                                \
+        subwz_mi(W(RM), W(DP), W(IM))
+
+#define subxz_rr(RG, RM)                                                    \
+        subwz_rr(W(RG), W(RM))
+
+#define subxz_ld(RG, RM, DP)                                                \
+        subwz_ld(W(RG), W(RM), W(DP))
+
+#define subxz_st(RG, RM, DP)                                                \
+        subwz_st(W(RG), W(RM), W(DP))
 
 #define subxz_mr(RM, DP, RG)                                                \
         subxz_st(W(RG), W(RM), W(DP))

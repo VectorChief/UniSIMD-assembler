@@ -354,6 +354,22 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 
+#define andwz_ri(RM, IM)                                                    \
+        andwx_ri(W(RM), W(IM))
+
+#define andwz_mi(RM, DP, IM)                                                \
+        andwx_mi(W(RM), W(DP), W(IM))
+
+#define andwz_rr(RG, RM)                                                    \
+        andwx_rr(W(RG), W(RM))
+
+#define andwz_ld(RG, RM, DP)                                                \
+        andwx_ld(W(RG), W(RM), W(DP))
+
+#define andwz_st(RG, RM, DP)                                                \
+        andwx_st(W(RG), W(RM), W(DP))
+
+
 #define andxz_ri(RM, IM)                                                    \
         andxx_ri(W(RM), W(IM))
 
@@ -518,6 +534,13 @@
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 
+#define negwz_rr(RM)                                                        \
+        negwx_rr(W(RM))
+
+#define negwz_mm(RM, DP)                                                    \
+        negwx_mm(W(RM), W(DP))
+
+
 #define negxz_rr(RM)                                                        \
         negxx_rr(W(RM))
 
@@ -575,6 +598,22 @@
     ADR REW(RXB(RG), RXB(RM)) EMITB(0x01)                                   \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
+
+
+#define addwz_ri(RM, IM)                                                    \
+        addwx_ri(W(RM), W(IM))
+
+#define addwz_mi(RM, DP, IM)                                                \
+        addwx_mi(W(RM), W(DP), W(IM))
+
+#define addwz_rr(RG, RM)                                                    \
+        addwx_rr(W(RG), W(RM))
+
+#define addwz_ld(RG, RM, DP)                                                \
+        addwx_ld(W(RG), W(RM), W(DP))
+
+#define addwz_st(RG, RM, DP)                                                \
+        addwx_st(W(RG), W(RM), W(DP))
 
 
 #define addxz_ri(RM, IM)                                                    \
@@ -649,6 +688,25 @@
 
 #define subxx_mr(RM, DP, RG)                                                \
         subxx_st(W(RG), W(RM), W(DP))
+
+
+#define subwz_ri(RM, IM)                                                    \
+        subwx_ri(W(RM), W(IM))
+
+#define subwz_mi(RM, DP, IM)                                                \
+        subwx_mi(W(RM), W(DP), W(IM))
+
+#define subwz_rr(RG, RM)                                                    \
+        subwx_rr(W(RG), W(RM))
+
+#define subwz_ld(RG, RM, DP)                                                \
+        subwx_ld(W(RG), W(RM), W(DP))
+
+#define subwz_st(RG, RM, DP)                                                \
+        subwx_st(W(RG), W(RM), W(DP))
+
+#define subwz_mr(RM, DP, RG)                                                \
+        subwz_st(W(RG), W(RM), W(DP))
 
 
 #define subxz_ri(RM, IM)                                                    \
