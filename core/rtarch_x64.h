@@ -1578,11 +1578,9 @@
         MRM(0x04,    MOD(RM), REG(RM))
 
 #define jmpxx_mm(RM, DP)         /* memory-targeted unconditional jump */   \
-    ADR REW(1,       RXB(RM)) EMITB(0x8B)   /* <- load r15  from RM/DP */   \
-        MRM(0x07,    MOD(RM), REG(RM))      /*    upper half is loaded */   \
-        AUX(SIB(RM), CMD(DP), EMPTY)        /*    as a part of 64-bit op */ \
-        REX(0,             1) EMITB(0xFF)   /* <- jump to address in r15 */ \
-        MRM(0x04,       0x03, 0x07)
+    ADR REX(0,       RXB(RM)) EMITB(0xFF)   /* <- jump to address in mem */ \
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define jmpxx_lb(lb)              /* label-targeted unconditional jump */   \
         ASM_BEG ASM_OP1(jmp, lb) ASM_END
