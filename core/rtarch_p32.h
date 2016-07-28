@@ -1637,18 +1637,18 @@
 /* cmj
  * set-flags: undefined */
 
-#define EQ_x    A0
-#define NE_x    A1
+#define EQ_x    J0
+#define NE_x    J1
 
-#define LT_x    A2
-#define LE_x    A3
-#define GT_x    A4
-#define GE_x    A5
+#define LT_x    J2
+#define LE_x    J3
+#define GT_x    J4
+#define GE_x    J5
 
-#define LT_n    A6
-#define LE_n    A7
-#define GT_n    A8
-#define GE_n    A9
+#define LT_n    J6
+#define LE_n    J7
+#define GT_n    J8
+#define GE_n    J9
 
 
 #define cmjwx_rz(RM, CC, lb)                                                \
@@ -1824,61 +1824,61 @@
 
 /* internal definitions for combined-compare-jump (cmj) */
 
-#define IA0(r1, p1, IM, lb)                                                 \
+#define IJ0(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IM), T2(IM), M2(IM)) | \
         (+(TP2(IM) == 0) & 0x28000000) | (+(TP2(IM) != 0) & 0x7C000040))    \
         ASM_BEG ASM_OP1(beq,   lb) ASM_END
 
-#define IA1(r1, p1, IM, lb)                                                 \
+#define IJ1(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IM), T2(IM), M2(IM)) | \
         (+(TP2(IM) == 0) & 0x28000000) | (+(TP2(IM) != 0) & 0x7C000040))    \
         ASM_BEG ASM_OP1(bne,   lb) ASM_END
 
-#define IA2(r1, p1, IM, lb)                                                 \
+#define IJ2(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IM), T2(IM), M2(IM)) | \
         (+(TP2(IM) == 0) & 0x28000000) | (+(TP2(IM) != 0) & 0x7C000040))    \
         ASM_BEG ASM_OP1(blt,   lb) ASM_END
 
-#define IA3(r1, p1, IM, lb)                                                 \
+#define IJ3(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IM), T2(IM), M2(IM)) | \
         (+(TP2(IM) == 0) & 0x28000000) | (+(TP2(IM) != 0) & 0x7C000040))    \
         ASM_BEG ASM_OP1(ble,   lb) ASM_END
 
-#define IA4(r1, p1, IM, lb)                                                 \
+#define IJ4(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IM), T2(IM), M2(IM)) | \
         (+(TP2(IM) == 0) & 0x28000000) | (+(TP2(IM) != 0) & 0x7C000040))    \
         ASM_BEG ASM_OP1(bgt,   lb) ASM_END
 
-#define IA5(r1, p1, IM, lb)                                                 \
+#define IJ5(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IM), T2(IM), M2(IM)) | \
         (+(TP2(IM) == 0) & 0x28000000) | (+(TP2(IM) != 0) & 0x7C000040))    \
         ASM_BEG ASM_OP1(bge,   lb) ASM_END
 
-#define IA6(r1, p1, IM, lb)                                                 \
+#define IJ6(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IM), T3(IM), M3(IM)) | \
         (+(TP2(IM) == 0) & 0x2C000000) | (+(TP2(IM) != 0) & 0x7C000000))    \
         ASM_BEG ASM_OP1(blt,   lb) ASM_END
 
-#define IA7(r1, p1, IM, lb)                                                 \
+#define IJ7(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IM), T3(IM), M3(IM)) | \
         (+(TP2(IM) == 0) & 0x2C000000) | (+(TP2(IM) != 0) & 0x7C000000))    \
         ASM_BEG ASM_OP1(ble,   lb) ASM_END
 
-#define IA8(r1, p1, IM, lb)                                                 \
+#define IJ8(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IM), T3(IM), M3(IM)) | \
         (+(TP2(IM) == 0) & 0x2C000000) | (+(TP2(IM) != 0) & 0x7C000000))    \
         ASM_BEG ASM_OP1(bgt,   lb) ASM_END
 
-#define IA9(r1, p1, IM, lb)                                                 \
+#define IJ9(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IM), T3(IM), M3(IM)) | \
         (+(TP2(IM) == 0) & 0x2C000000) | (+(TP2(IM) != 0) & 0x7C000000))    \
@@ -1888,43 +1888,43 @@
         I##CC(r1, p1, W(IM), lb)
 
 
-#define RA0(r1, r2, lb)                                                     \
+#define RJ0(r1, r2, lb)                                                     \
         ASM_BEG ASM_OP2(cmplw, r1, r2) ASM_END                              \
         ASM_BEG ASM_OP1(beq,   lb) ASM_END
 
-#define RA1(r1, r2, lb)                                                     \
+#define RJ1(r1, r2, lb)                                                     \
         ASM_BEG ASM_OP2(cmplw, r1, r2) ASM_END                              \
         ASM_BEG ASM_OP1(bne,   lb) ASM_END
 
-#define RA2(r1, r2, lb)                                                     \
+#define RJ2(r1, r2, lb)                                                     \
         ASM_BEG ASM_OP2(cmplw, r1, r2) ASM_END                              \
         ASM_BEG ASM_OP1(blt,   lb) ASM_END
 
-#define RA3(r1, r2, lb)                                                     \
+#define RJ3(r1, r2, lb)                                                     \
         ASM_BEG ASM_OP2(cmplw, r1, r2) ASM_END                              \
         ASM_BEG ASM_OP1(ble,   lb) ASM_END
 
-#define RA4(r1, r2, lb)                                                     \
+#define RJ4(r1, r2, lb)                                                     \
         ASM_BEG ASM_OP2(cmplw, r1, r2) ASM_END                              \
         ASM_BEG ASM_OP1(bgt,   lb) ASM_END
 
-#define RA5(r1, r2, lb)                                                     \
+#define RJ5(r1, r2, lb)                                                     \
         ASM_BEG ASM_OP2(cmplw, r1, r2) ASM_END                              \
         ASM_BEG ASM_OP1(bge,   lb) ASM_END
 
-#define RA6(r1, r2, lb)                                                     \
+#define RJ6(r1, r2, lb)                                                     \
         ASM_BEG ASM_OP2(cmpw,  r1, r2) ASM_END                              \
         ASM_BEG ASM_OP1(blt,   lb) ASM_END
 
-#define RA7(r1, r2, lb)                                                     \
+#define RJ7(r1, r2, lb)                                                     \
         ASM_BEG ASM_OP2(cmpw,  r1, r2) ASM_END                              \
         ASM_BEG ASM_OP1(ble,   lb) ASM_END
 
-#define RA8(r1, r2, lb)                                                     \
+#define RJ8(r1, r2, lb)                                                     \
         ASM_BEG ASM_OP2(cmpw,  r1, r2) ASM_END                              \
         ASM_BEG ASM_OP1(bgt,   lb) ASM_END
 
-#define RA9(r1, r2, lb)                                                     \
+#define RJ9(r1, r2, lb)                                                     \
         ASM_BEG ASM_OP2(cmpw,  r1, r2) ASM_END                              \
         ASM_BEG ASM_OP1(bge,   lb) ASM_END
 
