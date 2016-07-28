@@ -738,9 +738,9 @@
 
 #define notwx_mm(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000027 | MRM(TMxx,    TZxx,    TMxx))                     \
-        EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+        EMITW(0x8C000000 | MDM(TIxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000027 | MRM(TIxx,    TZxx,    TIxx))                     \
+        EMITW(0xAC000000 | MDM(TIxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 
 #define notxx_rr(RM)                                                        \
