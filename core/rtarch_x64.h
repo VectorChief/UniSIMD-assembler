@@ -1586,7 +1586,7 @@
         ASM_BEG ASM_OP1(jmp, lb) ASM_END
 
 #define jezxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
-        ASM_BEG ASM_OP1(je,  lb) ASM_END
+        ASM_BEG ASM_OP1(jz,  lb) ASM_END
 
 #define jnzxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
         ASM_BEG ASM_OP1(jnz, lb) ASM_END
