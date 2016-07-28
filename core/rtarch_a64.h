@@ -1452,6 +1452,75 @@
         EMITW(0x9B008000 | MRM(Tedx,    Teax,    TMxx) | Tedx << 10)        \
                                                           /* Redx<-rem */
 
+/* arj
+ * set-flags: undefined */
+
+#define and_x   and
+#define add_x   add
+#define sub_x   sub
+
+#define EZ_x    jezxx_lb
+#define NZ_x    jnzxx_lb
+
+
+#define arjwx_ri(RM, IM, OP, CC, lb)                                        \
+        AR2(W(RM), W(IM), OP, wz_ri)                                        \
+        CMJ(CC, lb)
+
+#define arjwx_mi(RM, DP, IM, OP, CC, lb)                                    \
+        AR3(W(RM), W(DP), W(IM), OP, wz_mi)                                 \
+        CMJ(CC, lb)
+
+#define arjwx_rr(RG, RM, OP, CC, lb)                                        \
+        AR2(W(RG), W(RM), OP, wz_rr)                                        \
+        CMJ(CC, lb)
+
+#define arjwx_ld(RG, RM, DP, OP, CC, lb)                                    \
+        AR3(W(RG), W(RM), W(DP), OP, wz_ld)                                 \
+        CMJ(CC, lb)
+
+#define arjwx_st(RG, RM, DP, OP, CC, lb)                                    \
+        AR3(W(RG), W(RM), W(DP), OP, wz_st)                                 \
+        CMJ(CC, lb)
+
+#define arjwx_mr(RM, DP, RG, OP, CC, lb)                                    \
+        arjwx_st(W(RG), W(RM), W(DP), OP, CC, lb)
+
+
+#define arjxx_ri(RM, IM, OP, CC, lb)                                        \
+        AR2(W(RM), W(IM), OP, xz_ri)                                        \
+        CMJ(CC, lb)
+
+#define arjxx_mi(RM, DP, IM, OP, CC, lb)                                    \
+        AR3(W(RM), W(DP), W(IM), OP, xz_mi)                                 \
+        CMJ(CC, lb)
+
+#define arjxx_rr(RG, RM, OP, CC, lb)                                        \
+        AR2(W(RG), W(RM), OP, xz_rr)                                        \
+        CMJ(CC, lb)
+
+#define arjxx_ld(RG, RM, DP, OP, CC, lb)                                    \
+        AR3(W(RG), W(RM), W(DP), OP, xz_ld)                                 \
+        CMJ(CC, lb)
+
+#define arjxx_st(RG, RM, DP, OP, CC, lb)                                    \
+        AR3(W(RG), W(RM), W(DP), OP, xz_st)                                 \
+        CMJ(CC, lb)
+
+#define arjxx_mr(RM, DP, RG, OP, CC, lb)                                    \
+        arjxx_st(W(RG), W(RM), W(DP), OP, CC, lb)
+
+/* internal definitions for combined-arithmetic-jump (arj) */
+
+#define AR2(P1, P2, OP, SG)                                                 \
+        OP##SG(W(P1), W(P2))
+
+#define AR3(P1, P2, P3, OP, SG)                                             \
+        OP##SG(W(P1), W(P2), W(P3))
+
+#define CMJ(CC, lb)                                                         \
+        CC(lb)
+
 /* cmj
  * set-flags: undefined */
 
@@ -1494,9 +1563,6 @@
 #define cmjwx_mr(RM, DP, RG, CC, lb)                                        \
         cmpwx_mr(W(RM), W(DP), W(RG))                                       \
         CMJ(CC, lb)
-
-#define CMJ(CC, lb) /* internal macro for combined-compare-jump (cmj) */    \
-        CC(lb)
 
 
 #define cmjxx_rz(RM, CC, lb)                                                \

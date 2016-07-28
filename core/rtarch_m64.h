@@ -1893,6 +1893,72 @@
 
 #endif /* r6 */
 
+/* arj
+ * set-flags: undefined */
+
+#define and_x   and
+#define add_x   add
+#define sub_x   sub
+
+#define EZ_x    J0
+#define NZ_x    J1
+
+
+#define arjwx_ri(RM, IM, OP, CC, lb)                                        \
+        AR2(W(RM), W(IM), OP, wx_ri)                                        \
+        CMZ(CC, MOD(RM), lb)
+
+#define arjwx_mi(RM, DP, IM, OP, CC, lb)                                    \
+        AR3(W(RM), W(DP), W(IM), OP, wz_mi)                                 \
+        CMZ(CC, $t8,     lb)
+
+#define arjwx_rr(RG, RM, OP, CC, lb)                                        \
+        AR2(W(RG), W(RM), OP, wx_rr)                                        \
+        CMZ(CC, MOD(RG), lb)
+
+#define arjwx_ld(RG, RM, DP, OP, CC, lb)                                    \
+        AR3(W(RG), W(RM), W(DP), OP, wx_ld)                                 \
+        CMZ(CC, MOD(RG), lb)
+
+#define arjwx_st(RG, RM, DP, OP, CC, lb)                                    \
+        AR3(W(RG), W(RM), W(DP), OP, wz_st)                                 \
+        CMZ(CC, $t8,     lb)
+
+#define arjwx_mr(RM, DP, RG, OP, CC, lb)                                    \
+        arjwx_st(W(RG), W(RM), W(DP), OP, CC, lb)
+
+
+#define arjxx_ri(RM, IM, OP, CC, lb)                                        \
+        AR2(W(RM), W(IM), OP, xx_ri)                                        \
+        CMZ(CC, MOD(RM), lb)
+
+#define arjxx_mi(RM, DP, IM, OP, CC, lb)                                    \
+        AR3(W(RM), W(DP), W(IM), OP, xz_mi)                                 \
+        CMZ(CC, $t8,     lb)
+
+#define arjxx_rr(RG, RM, OP, CC, lb)                                        \
+        AR2(W(RG), W(RM), OP, xx_rr)                                        \
+        CMZ(CC, MOD(RG), lb)
+
+#define arjxx_ld(RG, RM, DP, OP, CC, lb)                                    \
+        AR3(W(RG), W(RM), W(DP), OP, xx_ld)                                 \
+        CMZ(CC, MOD(RG), lb)
+
+#define arjxx_st(RG, RM, DP, OP, CC, lb)                                    \
+        AR3(W(RG), W(RM), W(DP), OP, xz_st)                                 \
+        CMZ(CC, $t8,     lb)
+
+#define arjxx_mr(RM, DP, RG, OP, CC, lb)                                    \
+        arjxx_st(W(RG), W(RM), W(DP), OP, CC, lb)
+
+/* internal definitions for combined-arithmetic-jump (arj) */
+
+#define AR2(P1, P2, OP, SG)                                                 \
+        OP##SG(W(P1), W(P2))
+
+#define AR3(P1, P2, P3, OP, SG)                                             \
+        OP##SG(W(P1), W(P2), W(P3))
+
 /* cmj
  * set-flags: undefined */
 
