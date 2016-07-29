@@ -101,16 +101,20 @@
  * cmdw*_** - word-size args, BASE ISA (always fixed at 32-bit)
  * cmdx*_** - addr-size args, BASE ISA (32/64-bit configurable with RT_ADDRESS)
  * cmdy*_** - SIMD-elem args, BASE ISA (32/64-bit configurable with RT_ELEMENT)
+ *
  * cmdz*_** - usage for setting-flags will be deprecated, reserved for 64-bit
  * cmd*z_** - usage for setting-flags will be implemented orthogonal to size
  *
+ * cmdo*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, packed)
  * cmdp*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, packed)
  * cmdq*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, packed)
+ *
+ * cmdr*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, scalar)
  * cmds*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, scalar)
  * cmdt*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, scalar)
  *
  * Working with sub-word BASE elements (byte, half) is reserved for future use,
- * however current displacement types may no longer apply due to alignment.
+ * however current displacement types may not work due to natural alignment.
  * Signed/unsigned types can be supported orthogonally in cmd*n_**, cmd*x_**.
  *
  * Note that within cmdx*_** subset most of the instructions follow in-heap
@@ -124,6 +128,11 @@
  * For fixed 64-bit packed/scalar SIMD ISA there will be no BASE ISA equivalent
  * on native 32-bit processors. Applications requiring 64-bit data flow in SIMD
  * will have to be coded with BASE ISA size limitations in mind.
+ *
+ * Setting-flags instructions' naming scheme may change again in the future for
+ * better orthogonality with operands size, type and args-list. It is therefore
+ * recommended to use combined-arithmetic-jump (arj) for better API stability
+ * and maximum efficiency across all supported targets.
  */
 
 /*
