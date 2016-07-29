@@ -499,7 +499,7 @@
         EMITW(0xF9000000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))
 
 /* orr
- * set-flags: undefined */
+ * set-flags: undefined (*x), yes (*z) */
 
 #define orrwx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
@@ -550,8 +550,68 @@
         EMITW(0xAA000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
         EMITW(0xF9000000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))
 
+
+#define orrwz_ri(RM, IM)                                                    \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
+        EMITW(0x20000000 | MIM(REG(RM), REG(RM), VAL(IM), T2(IM), M2(IM)))  \
+        EMITW(0x71000000 | REG(RM) << 5)               /* <- set flags (Z) */
+
+#define orrwz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x20000000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)))  \
+        EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x71000000 | TMxx << 5)                  /* <- set flags (Z) */
+
+#define orrwz_rr(RG, RM)                                                    \
+        EMITW(0x2A000000 | MRM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x71000000 | REG(RG) << 5)               /* <- set flags (Z) */
+
+#define orrwz_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x2A000000 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x71000000 | REG(RG) << 5)               /* <- set flags (Z) */
+
+#define orrwz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x2A000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x71000000 | TMxx << 5)                  /* <- set flags (Z) */
+
+
+#define orrxz_ri(RM, IM)                                                    \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
+        EMITW(0xA0000000 | MIM(REG(RM), REG(RM), VAL(IM), T2(IM), M2(IM)))  \
+        EMITW(0xF1000000 | REG(RM) << 5)               /* <- set flags (Z) */
+
+#define orrxz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
+        EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xA0000000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)))  \
+        EMITW(0xF9000000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xF1000000 | TMxx << 5)                  /* <- set flags (Z) */
+
+#define orrxz_rr(RG, RM)                                                    \
+        EMITW(0xAA000000 | MRM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0xF1000000 | REG(RG) << 5)               /* <- set flags (Z) */
+
+#define orrxz_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xAA000000 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0xF1000000 | REG(RG) << 5)               /* <- set flags (Z) */
+
+#define orrxz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xAA000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0xF9000000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xF1000000 | TMxx << 5)                  /* <- set flags (Z) */
+
 /* xor
- * set-flags: undefined */
+ * set-flags: undefined (*x), yes (*z) */
 
 #define xorwx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
@@ -601,6 +661,66 @@
         EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
         EMITW(0xCA000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
         EMITW(0xF9000000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))
+
+
+#define xorwz_ri(RM, IM)                                                    \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
+        EMITW(0x40000000 | MIM(REG(RM), REG(RM), VAL(IM), T2(IM), M2(IM)))  \
+        EMITW(0x71000000 | REG(RM) << 5)               /* <- set flags (Z) */
+
+#define xorwz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x40000000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)))  \
+        EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x71000000 | TMxx << 5)                  /* <- set flags (Z) */
+
+#define xorwz_rr(RG, RM)                                                    \
+        EMITW(0x4A000000 | MRM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x71000000 | REG(RG) << 5)               /* <- set flags (Z) */
+
+#define xorwz_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x4A000000 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x71000000 | REG(RG) << 5)               /* <- set flags (Z) */
+
+#define xorwz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x4A000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x71000000 | TMxx << 5)                  /* <- set flags (Z) */
+
+
+#define xorxz_ri(RM, IM)                                                    \
+        AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
+        EMITW(0xC0000000 | MIM(REG(RM), REG(RM), VAL(IM), T2(IM), M2(IM)))  \
+        EMITW(0xF1000000 | REG(RM) << 5)               /* <- set flags (Z) */
+
+#define xorxz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
+        EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xC0000000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)))  \
+        EMITW(0xF9000000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xF1000000 | TMxx << 5)                  /* <- set flags (Z) */
+
+#define xorxz_rr(RG, RM)                                                    \
+        EMITW(0xCA000000 | MRM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0xF1000000 | REG(RG) << 5)               /* <- set flags (Z) */
+
+#define xorxz_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xCA000000 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0xF1000000 | REG(RG) << 5)               /* <- set flags (Z) */
+
+#define xorxz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xCA000000 | MRM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0xF9000000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xF1000000 | TMxx << 5)                  /* <- set flags (Z) */
 
 /* not
  * set-flags: no */
@@ -1456,6 +1576,9 @@
  * set-flags: undefined */
 
 #define and_x   and
+#define orr_x   orr
+#define xor_x   xor
+
 #define add_x   add
 #define sub_x   sub
 
