@@ -393,5 +393,76 @@ struct rt_SIMD_REGS
 #endif /* RT_RTBASE_H */
 
 /******************************************************************************/
+/************************   COMMON BASE INSTRUCTIONS   ************************/
+/******************************************************************************/
+
+/***************** original forms of setting-flags arithmetic *****************/
+
+/* and */
+
+#define andzx_ri(RM, IM)                                                    \
+        andxz_ri(W(RM), W(IM))
+
+#define andzx_mi(RM, DP, IM)                                                \
+        andxz_mi(W(RM), W(DP), W(IM))
+
+#define andzx_rr(RG, RM)                                                    \
+        andxz_rr(W(RG), W(RM))
+
+#define andzx_ld(RG, RM, DP)                                                \
+        andxz_ld(W(RG), W(RM), W(DP))
+
+#define andzx_st(RG, RM, DP)                                                \
+        andxz_st(W(RG), W(RM), W(DP))
+
+
+/* neg */
+
+#define negzx_rr(RM)                                                        \
+        negxz_rr(W(RM))
+
+#define negzx_mm(RM, DP)                                                    \
+        negxz_mm(W(RM), W(DP))
+
+
+/* add */
+
+#define addzx_ri(RM, IM)                                                    \
+        addxz_ri(W(RM), W(IM))
+
+#define addzx_mi(RM, DP, IM)                                                \
+        addxz_mi(W(RM), W(DP), W(IM))
+
+#define addzx_rr(RG, RM)                                                    \
+        addxz_rr(W(RG), W(RM))
+
+#define addzx_ld(RG, RM, DP)                                                \
+        addxz_ld(W(RG), W(RM), W(DP))
+
+#define addzx_st(RG, RM, DP)                                                \
+        addxz_st(W(RG), W(RM), W(DP))
+
+
+/* sub */
+
+#define subzx_ri(RM, IM)                                                    \
+        subxz_ri(W(RM), W(IM))
+
+#define subzx_mi(RM, DP, IM)                                                \
+        subxz_mi(W(RM), W(DP), W(IM))
+
+#define subzx_rr(RG, RM)                                                    \
+        subxz_rr(W(RG), W(RM))
+
+#define subzx_ld(RG, RM, DP)                                                \
+        subxz_ld(W(RG), W(RM), W(DP))
+
+#define subzx_st(RG, RM, DP)                                                \
+        subxz_st(W(RG), W(RM), W(DP))
+
+#define subzx_mr(RM, DP, RG)                                                \
+        subzx_st(W(RG), W(RM), W(DP))
+
+/******************************************************************************/
 /******************************************************************************/
 /******************************************************************************/
