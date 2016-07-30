@@ -350,16 +350,37 @@ struct rt_SIMD_REGS
 /* rcp
  * accuracy/behavior may vary across supported targets, use accordingly */
 
+#if RT_SIMD_COMPAT_RCP == 0
+
 #define rcpps_rr(RG, RM) /* destroys RM */                                  \
         rceps_rr(W(RG), W(RM))                                              \
         rcsps_rr(W(RG), W(RM)) /* <- not reusable without extra temp reg */
 
+#else /* RT_SIMD_COMPAT_RCP */
+
+#define rcpps_rr(RG, RM) /* destroys RM */                                  \
+        movpx_ld(W(RG), Mebp, inf_GPC01)                                    \
+        divps_rr(W(RG), W(RM))
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
 /* rsq
  * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RSQ == 0
 
 #define rsqps_rr(RG, RM) /* destroys RM */                                  \
         rseps_rr(W(RG), W(RM))                                              \
         rssps_rr(W(RG), W(RM)) /* <- not reusable without extra temp reg */
+
+#else /* RT_SIMD_COMPAT_RSQ */
+
+#define rsqps_rr(RG, RM) /* destroys RM */                                  \
+        movpx_ld(W(RG), Mebp, inf_GPC01)                                    \
+        sqrps_rr(W(RM), W(RM))                                              \
+        divps_rr(W(RG), W(RM))
+
+#endif /* RT_SIMD_COMPAT_RSQ */
 
 /****************** original FCTRL blocks (cannot be nested) ******************/
 
