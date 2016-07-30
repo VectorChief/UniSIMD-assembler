@@ -1803,7 +1803,7 @@
         subwx_ri(Reax, IB(7))                                               \
         shrwn_ri(Reax, IB(31))                                              \
         movwx_rr(Redi, Reax)                                                \
-        notwx_rr(Redi)                                                      \
+        notwx_rx(Redi)                                                      \
         /* request cpuid:eax=7:ecx=0 */                                     \
         movwx_ri(Reax, IB(7))                                               \
         movwx_ri(Recx, IB(0))                                               \
