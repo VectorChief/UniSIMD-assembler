@@ -2351,43 +2351,43 @@
 
 #define IJ0(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
-        RA0(r1, $t9, lb)
+        RJ0(r1, $t9, lb)
 
 #define IJ1(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
-        RA1(r1, $t9, lb)
+        RJ1(r1, $t9, lb)
 
 #define IJ2(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
-        RA2(r1, $t9, lb)
+        RJ2(r1, $t9, lb)
 
 #define IJ3(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
-        RA3(r1, $t9, lb)
+        RJ3(r1, $t9, lb)
 
 #define IJ4(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
-        RA4(r1, $t9, lb)
+        RJ4(r1, $t9, lb)
 
 #define IJ5(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
-        RA5(r1, $t9, lb)
+        RJ5(r1, $t9, lb)
 
 #define IJ6(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
-        RA6(r1, $t9, lb)
+        RJ6(r1, $t9, lb)
 
 #define IJ7(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
-        RA7(r1, $t9, lb)
+        RJ7(r1, $t9, lb)
 
 #define IJ8(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
-        RA8(r1, $t9, lb)
+        RJ8(r1, $t9, lb)
 
 #define IJ9(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
-        RA9(r1, $t9, lb)
+        RJ9(r1, $t9, lb)
 
 #define CMI(CC, r1, p1, IM, lb)                                             \
         I##CC(r1, p1, W(IM), lb)
