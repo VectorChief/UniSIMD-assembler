@@ -34,8 +34,8 @@
  *
  * cmdxx_rr - applies [cmd] to [r]egister from [r]egister
  * cmdxx_mm - applies [cmd] to [m]emory   from [m]emory
- * cmdxx_rr - applies [cmd] to [r]egister (one operand cmd)
- * cmdxx_mm - applies [cmd] to [m]emory   (one operand cmd)
+ * cmdxx_rx - applies [cmd] to [r]egister (one-operand cmd)
+ * cmdxx_mx - applies [cmd] to [m]emory   (one-operand cmd)
  *
  * cmdxx_rx - applies [cmd] to [r]egister from x-register
  * cmdxx_mx - applies [cmd] to [m]emory   from x-register
@@ -556,21 +556,21 @@
 /* not
  * set-flags: no */
 
-#define notwx_rr(RM)                                                        \
+#define notwx_rx(RM)                                                        \
         REX(0,       RXB(RM)) EMITB(0xF7)                                   \
         MRM(0x02,    MOD(RM), REG(RM))
 
-#define notwx_mm(RM, DP)                                                    \
+#define notwx_mx(RM, DP)                                                    \
     ADR REX(0,       RXB(RM)) EMITB(0xF7)                                   \
         MRM(0x02,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 
-#define notxx_rr(RM)                                                        \
+#define notxx_rx(RM)                                                        \
         REW(0,       RXB(RM)) EMITB(0xF7)                                   \
         MRM(0x02,    MOD(RM), REG(RM))
 
-#define notxx_mm(RM, DP)                                                    \
+#define notxx_mx(RM, DP)                                                    \
     ADR REW(0,       RXB(RM)) EMITB(0xF7)                                   \
         MRM(0x02,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -578,35 +578,35 @@
 /* neg
  * set-flags: undefined (*x), yes (*z) */
 
-#define negwx_rr(RM)                                                        \
-        negwz_rr(W(RM))
+#define negwx_rx(RM)                                                        \
+        negwz_rx(W(RM))
 
-#define negwx_mm(RM, DP)                                                    \
-        negwz_mm(W(RM), W(DP))
-
-
-#define negxx_rr(RM)                                                        \
-        negxz_rr(W(RM))
-
-#define negxx_mm(RM, DP)                                                    \
-        negxz_mm(W(RM), W(DP))
+#define negwx_mx(RM, DP)                                                    \
+        negwz_mx(W(RM), W(DP))
 
 
-#define negwz_rr(RM)                                                        \
+#define negxx_rx(RM)                                                        \
+        negxz_rx(W(RM))
+
+#define negxx_mx(RM, DP)                                                    \
+        negxz_mx(W(RM), W(DP))
+
+
+#define negwz_rx(RM)                                                        \
         REX(0,       RXB(RM)) EMITB(0xF7)                                   \
         MRM(0x03,    MOD(RM), REG(RM))
 
-#define negwz_mm(RM, DP)                                                    \
+#define negwz_mx(RM, DP)                                                    \
     ADR REX(0,       RXB(RM)) EMITB(0xF7)                                   \
         MRM(0x03,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 
-#define negxz_rr(RM)                                                        \
+#define negxz_rx(RM)                                                        \
         REW(0,       RXB(RM)) EMITB(0xF7)                                   \
         MRM(0x03,    MOD(RM), REG(RM))
 
-#define negxz_mm(RM, DP)                                                    \
+#define negxz_mx(RM, DP)                                                    \
     ADR REW(0,       RXB(RM)) EMITB(0xF7)                                   \
         MRM(0x03,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)

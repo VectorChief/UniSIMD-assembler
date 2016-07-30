@@ -34,8 +34,8 @@
  *
  * cmdxx_rr - applies [cmd] to [r]egister from [r]egister
  * cmdxx_mm - applies [cmd] to [m]emory   from [m]emory
- * cmdxx_rr - applies [cmd] to [r]egister (one operand cmd)
- * cmdxx_mm - applies [cmd] to [m]emory   (one operand cmd)
+ * cmdxx_rx - applies [cmd] to [r]egister (one-operand cmd)
+ * cmdxx_mx - applies [cmd] to [m]emory   (one-operand cmd)
  *
  * cmdxx_rx - applies [cmd] to [r]egister from x-register
  * cmdxx_mx - applies [cmd] to [m]emory   from x-register
@@ -725,20 +725,20 @@
 /* not
  * set-flags: no */
 
-#define notwx_rr(RM)                                                        \
+#define notwx_rx(RM)                                                        \
         EMITW(0x2A200000 | MRM(REG(RM), TZxx,    REG(RM)))
 
-#define notwx_mm(RM, DP)                                                    \
+#define notwx_mx(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x2A200000 | MRM(TMxx,    TZxx,    TMxx))                     \
         EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 
-#define notxx_rr(RM)                                                        \
+#define notxx_rx(RM)                                                        \
         EMITW(0xAA200000 | MRM(REG(RM), TZxx,    REG(RM)))
 
-#define notxx_mm(RM, DP)                                                    \
+#define notxx_mx(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
         EMITW(0xAA200000 | MRM(TMxx,    TZxx,    TMxx))                     \
@@ -747,40 +747,40 @@
 /* neg
  * set-flags: undefined (*x), yes (*z) */
 
-#define negwx_rr(RM)                                                        \
+#define negwx_rx(RM)                                                        \
         EMITW(0x4B000000 | MRM(REG(RM), TZxx,    REG(RM)))
 
-#define negwx_mm(RM, DP)                                                    \
+#define negwx_mx(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x4B000000 | MRM(TMxx,    TZxx,    TMxx))                     \
         EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 
-#define negxx_rr(RM)                                                        \
+#define negxx_rx(RM)                                                        \
         EMITW(0xCB000000 | MRM(REG(RM), TZxx,    REG(RM)))
 
-#define negxx_mm(RM, DP)                                                    \
+#define negxx_mx(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
         EMITW(0xCB000000 | MRM(TMxx,    TZxx,    TMxx))                     \
         EMITW(0xF9000000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))
 
 
-#define negwz_rr(RM)                                                        \
+#define negwz_rx(RM)                                                        \
         EMITW(0x6B000000 | MRM(REG(RM), TZxx,    REG(RM)))
 
-#define negwz_mm(RM, DP)                                                    \
+#define negwz_mx(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x6B000000 | MRM(TMxx,    TZxx,    TMxx))                     \
         EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 
-#define negxz_rr(RM)                                                        \
+#define negxz_rx(RM)                                                        \
         EMITW(0xEB000000 | MRM(REG(RM), TZxx,    REG(RM)))
 
-#define negxz_mm(RM, DP)                                                    \
+#define negxz_mx(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xF9400000 | MDM(TMxx,    MOD(RM), VXL(DP), B1(DP), P1(DP)))  \
         EMITW(0xEB000000 | MRM(TMxx,    TZxx,    TMxx))                     \

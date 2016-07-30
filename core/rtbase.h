@@ -419,10 +419,10 @@ struct rt_SIMD_REGS
 /* neg */
 
 #define negzx_rr(RM)                                                        \
-        negxz_rr(W(RM))
+        negxz_rx(W(RM))
 
 #define negzx_mm(RM, DP)                                                    \
-        negxz_mm(W(RM), W(DP))
+        negxz_mx(W(RM), W(DP))
 
 
 /* add */
@@ -462,6 +462,26 @@ struct rt_SIMD_REGS
 
 #define subzx_mr(RM, DP, RG)                                                \
         subzx_st(W(RG), W(RM), W(DP))
+
+/***************** original forms of one-operand instructions *****************/
+
+/* not */
+
+#define notxx_rr(RM)                                                        \
+        notxx_rx(W(RM))
+
+#define notxx_mm(RM, DP)                                                    \
+        notxx_mx(W(RM), W(DP))
+
+
+/* neg */
+
+#define negxx_rr(RM)                                                        \
+        negxx_rx(W(RM))
+
+#define negxx_mm(RM, DP)                                                    \
+        negxx_mx(W(RM), W(DP))
+
 
 /******************************************************************************/
 /******************************************************************************/

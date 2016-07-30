@@ -34,8 +34,8 @@
  *
  * cmdxx_rr - applies [cmd] to [r]egister from [r]egister
  * cmdxx_mm - applies [cmd] to [m]emory   from [m]emory
- * cmdxx_rr - applies [cmd] to [r]egister (one operand cmd)
- * cmdxx_mm - applies [cmd] to [m]emory   (one operand cmd)
+ * cmdxx_rx - applies [cmd] to [r]egister (one-operand cmd)
+ * cmdxx_mx - applies [cmd] to [m]emory   (one-operand cmd)
  *
  * cmdxx_rx - applies [cmd] to [r]egister from x-register
  * cmdxx_mx - applies [cmd] to [m]emory   from x-register
@@ -932,48 +932,48 @@
 /* not
  * set-flags: no */
 
-#define notwx_rr(RM)                                                        \
+#define notwx_rx(RM)                                                        \
         EMITW(0x7C0000F8 | MSM(REG(RM), REG(RM), REG(RM)))
 
-#define notwx_mm(RM, DP)                                                    \
+#define notwx_mx(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C0000F8 | MSM(TMxx,    TMxx,    TMxx))                     \
         EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 
-#define notxx_rr(RM)                                                        \
-        notwx_rr(W(RM))
+#define notxx_rx(RM)                                                        \
+        notwx_rx(W(RM))
 
-#define notxx_mm(RM, DP)                                                    \
-        notwx_mm(W(RM), W(DP))
+#define notxx_mx(RM, DP)                                                    \
+        notwx_mx(W(RM), W(DP))
 
 /* neg
  * set-flags: undefined (*x), yes (*z) */
 
-#define negwx_rr(RM)                                                        \
+#define negwx_rx(RM)                                                        \
         EMITW(0x7C0000D0 | MRM(REG(RM), 0x00,    REG(RM)))
 
-#define negwx_mm(RM, DP)                                                    \
+#define negwx_mx(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C0000D0 | MRM(TMxx,    0x00,    TMxx))                     \
         EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 
-#define negxx_rr(RM)                                                        \
-        negwx_rr(W(RM))
+#define negxx_rx(RM)                                                        \
+        negwx_rx(W(RM))
 
-#define negxx_mm(RM, DP)                                                    \
-        negwx_mm(W(RM), W(DP))
+#define negxx_mx(RM, DP)                                                    \
+        negwx_mx(W(RM), W(DP))
 
 
 #if RT_BASE_COMPAT_ZFL == 0 
 
-#define negwz_rr(RM)                                                        \
+#define negwz_rx(RM)                                                        \
         EMITW(0x7C0000D1 | MRM(REG(RM), 0x00,    REG(RM)))
 
-#define negwz_mm(RM, DP)                                                    \
+#define negwz_mx(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C0000D1 | MRM(TMxx,    0x00,    TMxx))                     \
@@ -981,11 +981,11 @@
 
 #else /* RT_BASE_COMPAT_ZFL */
 
-#define negwz_rr(RM)                                                        \
+#define negwz_rx(RM)                                                        \
         EMITW(0x7C0000D0 | MRM(REG(RM), 0x00,    REG(RM)))                  \
         EMITW(0x28000000 | REG(RM) << 16)              /* <- set flags (Z) */
 
-#define negwz_mm(RM, DP)                                                    \
+#define negwz_mx(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C0000D0 | MRM(TMxx,    0x00,    TMxx))                     \
@@ -995,11 +995,11 @@
 #endif /* RT_BASE_COMPAT_ZFL */
 
 
-#define negxz_rr(RM)                                                        \
-        negwz_rr(W(RM))
+#define negxz_rx(RM)                                                        \
+        negwz_rx(W(RM))
 
-#define negxz_mm(RM, DP)                                                    \
-        negwz_mm(W(RM), W(DP))
+#define negxz_mx(RM, DP)                                                    \
+        negwz_mx(W(RM), W(DP))
 
 /* add
  * set-flags: undefined (*x), yes (*z) */
