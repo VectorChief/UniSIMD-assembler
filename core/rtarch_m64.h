@@ -2024,12 +2024,21 @@
 #define orr_x   orr
 #define xor_x   xor
 
+#define neg_x   neg
 #define add_x   add
 #define sub_x   sub
 
 #define EZ_x    J0
 #define NZ_x    J1
 
+
+#define arjwx_rx(RM, OP, CC, lb)                                            \
+        AR1(W(RM), OP, wx_rx)                                               \
+        CMZ(CC, MOD(RM), lb)
+
+#define arjwx_mx(RM, DP, OP, CC, lb)                                        \
+        AR2(W(RM), W(DP), OP, wz_mx)                                        \
+        CMZ(CC, $t8,     lb)
 
 #define arjwx_ri(RM, IM, OP, CC, lb)                                        \
         AR2(W(RM), W(IM), OP, wx_ri)                                        \
@@ -2055,6 +2064,14 @@
         arjwx_st(W(RG), W(RM), W(DP), OP, CC, lb)
 
 
+#define arjxx_rx(RM, OP, CC, lb)                                            \
+        AR1(W(RM), OP, xx_rx)                                               \
+        CMZ(CC, MOD(RM), lb)
+
+#define arjxx_mx(RM, DP, OP, CC, lb)                                        \
+        AR2(W(RM), W(DP), OP, xz_mx)                                        \
+        CMZ(CC, $t8,     lb)
+
 #define arjxx_ri(RM, IM, OP, CC, lb)                                        \
         AR2(W(RM), W(IM), OP, xx_ri)                                        \
         CMZ(CC, MOD(RM), lb)
@@ -2079,6 +2096,9 @@
         arjxx_st(W(RG), W(RM), W(DP), OP, CC, lb)
 
 /* internal definitions for combined-arithmetic-jump (arj) */
+
+#define AR1(P1, OP, SG)                                                     \
+        OP##SG(W(P1))
 
 #define AR2(P1, P2, OP, SG)                                                 \
         OP##SG(W(P1), W(P2))
