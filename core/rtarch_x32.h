@@ -1313,75 +1313,75 @@
 #define NZ_x    jnzxx_lb
 
 
-#define arjwx_rx(RM, OP, CC, lb)                                            \
-        AR1(W(RM), OP, wz_rx)                                               \
-        CMJ(CC, lb)
+#define arjwx_rx(RM, op, cc, lb)                                            \
+        AR1(W(RM), op, wz_rx)                                               \
+        CMJ(cc, lb)
 
-#define arjwx_mx(RM, DP, OP, CC, lb)                                        \
-        AR2(W(RM), W(DP), OP, wz_mx)                                        \
-        CMJ(CC, lb)
+#define arjwx_mx(RM, DP, op, cc, lb)                                        \
+        AR2(W(RM), W(DP), op, wz_mx)                                        \
+        CMJ(cc, lb)
 
-#define arjwx_ri(RM, IM, OP, CC, lb)                                        \
-        AR2(W(RM), W(IM), OP, wz_ri)                                        \
-        CMJ(CC, lb)
+#define arjwx_ri(RM, IM, op, cc, lb)                                        \
+        AR2(W(RM), W(IM), op, wz_ri)                                        \
+        CMJ(cc, lb)
 
-#define arjwx_mi(RM, DP, IM, OP, CC, lb)                                    \
-        AR3(W(RM), W(DP), W(IM), OP, wz_mi)                                 \
-        CMJ(CC, lb)
+#define arjwx_mi(RM, DP, IM, op, cc, lb)                                    \
+        AR3(W(RM), W(DP), W(IM), op, wz_mi)                                 \
+        CMJ(cc, lb)
 
-#define arjwx_rr(RG, RM, OP, CC, lb)                                        \
-        AR2(W(RG), W(RM), OP, wz_rr)                                        \
-        CMJ(CC, lb)
+#define arjwx_rr(RG, RM, op, cc, lb)                                        \
+        AR2(W(RG), W(RM), op, wz_rr)                                        \
+        CMJ(cc, lb)
 
-#define arjwx_ld(RG, RM, DP, OP, CC, lb)                                    \
-        AR3(W(RG), W(RM), W(DP), OP, wz_ld)                                 \
-        CMJ(CC, lb)
+#define arjwx_ld(RG, RM, DP, op, cc, lb)                                    \
+        AR3(W(RG), W(RM), W(DP), op, wz_ld)                                 \
+        CMJ(cc, lb)
 
-#define arjwx_st(RG, RM, DP, OP, CC, lb)                                    \
-        AR3(W(RG), W(RM), W(DP), OP, wz_st)                                 \
-        CMJ(CC, lb)
+#define arjwx_st(RG, RM, DP, op, cc, lb)                                    \
+        AR3(W(RG), W(RM), W(DP), op, wz_st)                                 \
+        CMJ(cc, lb)
 
-#define arjwx_mr(RM, DP, RG, OP, CC, lb)                                    \
-        arjwx_st(W(RG), W(RM), W(DP), OP, CC, lb)
+#define arjwx_mr(RM, DP, RG, op, cc, lb)                                    \
+        arjwx_st(W(RG), W(RM), W(DP), op, cc, lb)
 
 
-#define arjxx_rx(RM, OP, CC, lb)                                            \
-        arjwx_rx(W(RM), OP, CC, lb)
+#define arjxx_rx(RM, op, cc, lb)                                            \
+        arjwx_rx(W(RM), op, cc, lb)
 
-#define arjxx_mx(RM, DP, OP, CC, lb)                                        \
-        arjwx_mx(W(RM), W(DP), OP, CC, lb)
+#define arjxx_mx(RM, DP, op, cc, lb)                                        \
+        arjwx_mx(W(RM), W(DP), op, cc, lb)
 
-#define arjxx_ri(RM, IM, OP, CC, lb)                                        \
-        arjwx_ri(W(RM), W(IM), OP, CC, lb)
+#define arjxx_ri(RM, IM, op, cc, lb)                                        \
+        arjwx_ri(W(RM), W(IM), op, cc, lb)
 
-#define arjxx_mi(RM, DP, IM, OP, CC, lb)                                    \
-        arjwx_mi(W(RM), W(DP), W(IM), OP, CC, lb)
+#define arjxx_mi(RM, DP, IM, op, cc, lb)                                    \
+        arjwx_mi(W(RM), W(DP), W(IM), op, cc, lb)
 
-#define arjxx_rr(RG, RM, OP, CC, lb)                                        \
-        arjwx_rr(W(RG), W(RM), OP, CC, lb)
+#define arjxx_rr(RG, RM, op, cc, lb)                                        \
+        arjwx_rr(W(RG), W(RM), op, cc, lb)
 
-#define arjxx_ld(RG, RM, DP, OP, CC, lb)                                    \
-        arjwx_ld(W(RG), W(RM), W(DP), OP, CC, lb)
+#define arjxx_ld(RG, RM, DP, op, cc, lb)                                    \
+        arjwx_ld(W(RG), W(RM), W(DP), op, cc, lb)
 
-#define arjxx_st(RG, RM, DP, OP, CC, lb)                                    \
-        arjwx_st(W(RG), W(RM), W(DP), OP, CC, lb)
+#define arjxx_st(RG, RM, DP, op, cc, lb)                                    \
+        arjwx_st(W(RG), W(RM), W(DP), op, cc, lb)
 
-#define arjxx_mr(RM, DP, RG, OP, CC, lb)                                    \
-        arjxx_st(W(RG), W(RM), W(DP), OP, CC, lb)
+#define arjxx_mr(RM, DP, RG, op, cc, lb)                                    \
+        arjxx_st(W(RG), W(RM), W(DP), op, cc, lb)
 
 /* internal definitions for combined-arithmetic-jump (arj) */
 
-#define AR1(P1, OP, SG)                                                     \
-        OP##SG(W(P1))
+#define AR1(P1, op, sg)                                                     \
+        op##sg(W(P1))
 
-#define AR2(P1, P2, OP, SG)                                                 \
-        OP##SG(W(P1), W(P2))
+#define AR2(P1, P2, op, sg)                                                 \
+        op##sg(W(P1), W(P2))
 
-#define AR3(P1, P2, P3, OP, SG)                                             \
-        OP##SG(W(P1), W(P2), W(P3))
+#define AR3(P1, P2, P3, op, sg)                                             \
+        op##sg(W(P1), W(P2), W(P3))
 
-#define CMJ(CC, lb)                                                         \
-        CC(lb)
+#define CMJ(cc, lb)                                                         \
+        cc(lb)
 
 /* cmj
  * set-flags: undefined */
@@ -1400,53 +1400,53 @@
 #define GE_n    jgexn_lb
 
 
-#define cmjwx_rz(RM, CC, lb)                                                \
-        cmjwx_ri(W(RM), IC(0), CC, lb)
+#define cmjwx_rz(RM, cc, lb)                                                \
+        cmjwx_ri(W(RM), IC(0), cc, lb)
 
-#define cmjwx_mz(RM, DP, CC, lb)                                            \
-        cmjwx_mi(W(RM), W(DP), IC(0), CC, lb)
+#define cmjwx_mz(RM, DP, cc, lb)                                            \
+        cmjwx_mi(W(RM), W(DP), IC(0), cc, lb)
 
-#define cmjwx_ri(RM, IM, CC, lb)                                            \
+#define cmjwx_ri(RM, IM, cc, lb)                                            \
         cmpwx_ri(W(RM), W(IM))                                              \
-        CMJ(CC, lb)
+        CMJ(cc, lb)
 
-#define cmjwx_mi(RM, DP, IM, CC, lb)                                        \
+#define cmjwx_mi(RM, DP, IM, cc, lb)                                        \
         cmpwx_mi(W(RM), W(DP), W(IM))                                       \
-        CMJ(CC, lb)
+        CMJ(cc, lb)
 
-#define cmjwx_rr(RG, RM, CC, lb)                                            \
+#define cmjwx_rr(RG, RM, cc, lb)                                            \
         cmpwx_rr(W(RG), W(RM))                                              \
-        CMJ(CC, lb)
+        CMJ(cc, lb)
 
-#define cmjwx_rm(RG, RM, DP, CC, lb)                                        \
+#define cmjwx_rm(RG, RM, DP, cc, lb)                                        \
         cmpwx_rm(W(RG), W(RM), W(DP))                                       \
-        CMJ(CC, lb)
+        CMJ(cc, lb)
 
-#define cmjwx_mr(RM, DP, RG, CC, lb)                                        \
+#define cmjwx_mr(RM, DP, RG, cc, lb)                                        \
         cmpwx_mr(W(RM), W(DP), W(RG))                                       \
-        CMJ(CC, lb)
+        CMJ(cc, lb)
 
 
-#define cmjxx_rz(RM, CC, lb)                                                \
-        cmjxx_ri(W(RM), IC(0), CC, lb)
+#define cmjxx_rz(RM, cc, lb)                                                \
+        cmjxx_ri(W(RM), IC(0), cc, lb)
 
-#define cmjxx_mz(RM, DP, CC, lb)                                            \
-        cmjxx_mi(W(RM), W(DP), IC(0), CC, lb)
+#define cmjxx_mz(RM, DP, cc, lb)                                            \
+        cmjxx_mi(W(RM), W(DP), IC(0), cc, lb)
 
-#define cmjxx_ri(RM, IM, CC, lb)                                            \
-        cmjwx_ri(W(RM), W(IM), CC, lb)
+#define cmjxx_ri(RM, IM, cc, lb)                                            \
+        cmjwx_ri(W(RM), W(IM), cc, lb)
 
-#define cmjxx_mi(RM, DP, IM, CC, lb)                                        \
-        cmjwx_mi(W(RM), W(DP), W(IM), CC, lb)
+#define cmjxx_mi(RM, DP, IM, cc, lb)                                        \
+        cmjwx_mi(W(RM), W(DP), W(IM), cc, lb)
 
-#define cmjxx_rr(RG, RM, CC, lb)                                            \
-        cmjwx_rr(W(RG), W(RM), CC, lb)
+#define cmjxx_rr(RG, RM, cc, lb)                                            \
+        cmjwx_rr(W(RG), W(RM), cc, lb)
 
-#define cmjxx_rm(RG, RM, DP, CC, lb)                                        \
-        cmjwx_rm(W(RG), W(RM), W(DP), CC, lb)
+#define cmjxx_rm(RG, RM, DP, cc, lb)                                        \
+        cmjwx_rm(W(RG), W(RM), W(DP), cc, lb)
 
-#define cmjxx_mr(RM, DP, RG, CC, lb)                                        \
-        cmjwx_mr(W(RM), W(DP), W(RG), CC, lb)
+#define cmjxx_mr(RM, DP, RG, cc, lb)                                        \
+        cmjwx_mr(W(RM), W(DP), W(RG), cc, lb)
 
 /* cmp
  * set-flags: yes */
