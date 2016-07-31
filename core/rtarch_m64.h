@@ -1124,7 +1124,16 @@
         subxz_st(W(RG), W(RM), W(DP))
 
 /* shl
- * set-flags: undefined */
+ * set-flags: undefined (*x), yes (*z) */
+
+#define shlwx_rx(RM)                     /* reads Recx for shift value */   \
+        EMITW(0x00000004 | MRM(REG(RM), Tecx,    REG(RM)))
+
+#define shlwx_mx(RM, DP)                 /* reads Recx for shift value */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000004 | MRM(TMxx,    Tecx,    TMxx))                     \
+        EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define shlwx_ri(RM, IM)                                                    \
         EMITW(0x00000000 | MRM(REG(RM), 0x00,    REG(RM)) |                 \
@@ -1154,15 +1163,15 @@
 #define shlwx_mr(RM, DP, RG)                                                \
         shlwx_st(W(RG), W(RM), W(DP))
 
-#define shlwx_rx(RM)                     /* reads Recx for shift value */   \
-        EMITW(0x00000004 | MRM(REG(RM), Tecx,    REG(RM)))
 
-#define shlwx_mx(RM, DP)                 /* reads Recx for shift value */   \
+#define shlxx_rx(RM)                     /* reads Recx for shift value */   \
+        EMITW(0x00000014 | MRM(REG(RM), Tecx,    REG(RM)))
+
+#define shlxx_mx(RM, DP)                 /* reads Recx for shift value */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000004 | MRM(TMxx,    Tecx,    TMxx))                     \
-        EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
-
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000014 | MRM(TMxx,    Tecx,    TMxx))                     \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define shlxx_ri(RM, IM)                                                    \
         EMITW(0x00000000 | MRM(REG(RM), 0x00,    REG(RM)) |                 \
@@ -1195,17 +1204,104 @@
 #define shlxx_mr(RM, DP, RG)                                                \
         shlxx_st(W(RG), W(RM), W(DP))
 
-#define shlxx_rx(RM)                     /* reads Recx for shift value */   \
-        EMITW(0x00000014 | MRM(REG(RM), Tecx,    REG(RM)))
 
-#define shlxx_mx(RM, DP)                 /* reads Recx for shift value */   \
+#define shlwz_rx(RM)                     /* reads Recx for shift value */   \
+        EMITW(0x00000004 | MRM(REG(RM), Tecx,    REG(RM)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))/* <- set flags (Z) */
+
+#define shlwz_mx(RM, DP)                 /* reads Recx for shift value */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000004 | MRM(TMxx,    Tecx,    TMxx))                     \
+        EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define shlwz_ri(RM, IM)                                                    \
+        EMITW(0x00000000 | MRM(REG(RM), 0x00,    REG(RM)) |                 \
+                                                 (0x1F & VAL(IM)) << 6)     \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))/* <- set flags (Z) */
+
+#define shlwz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000000 | MRM(TMxx,    0x00,    TMxx) |                    \
+                                                 (0x1F & VAL(IM)) << 6)     \
+        EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define shlwz_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        EMITW(0x00000004 | MRM(REG(RG), REG(RM), REG(RG)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define shlwz_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000004 | MRM(REG(RG), TMxx,    REG(RG)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define shlwz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000004 | MRM(TMxx,    REG(RG), TMxx))                     \
+        EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define shlwz_mr(RM, DP, RG)                                                \
+        shlwz_st(W(RG), W(RM), W(DP))
+
+
+#define shlxz_rx(RM)                     /* reads Recx for shift value */   \
+        EMITW(0x00000014 | MRM(REG(RM), Tecx,    REG(RM)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))/* <- set flags (Z) */
+
+#define shlxz_mx(RM, DP)                 /* reads Recx for shift value */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x00000014 | MRM(TMxx,    Tecx,    TMxx))                     \
         EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
+#define shlxz_ri(RM, IM)                                                    \
+        EMITW(0x00000000 | MRM(REG(RM), 0x00,    REG(RM)) |                 \
+        (+(VAL(IM) < 32) & (0x00000038 | (0x1F & VAL(IM)) << 6)) |          \
+        (+(VAL(IM) > 31) & (0x0000003C | (0x1F & VAL(IM)) << 6)))           \
+        /* if true ^ equals to -1 (not 1) */                                \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))/* <- set flags (Z) */
+
+#define shlxz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000000 | MRM(TMxx,    0x00,    TMxx) |                    \
+        (+(VAL(IM) < 32) & (0x00000038 | (0x1F & VAL(IM)) << 6)) |          \
+        (+(VAL(IM) > 31) & (0x0000003C | (0x1F & VAL(IM)) << 6)))           \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define shlxz_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        EMITW(0x00000014 | MRM(REG(RG), REG(RM), REG(RG)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define shlxz_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000014 | MRM(REG(RG), TMxx,    REG(RG)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define shlxz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000014 | MRM(TMxx,    REG(RG), TMxx))                     \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define shlxz_mr(RM, DP, RG)                                                \
+        shlxz_st(W(RG), W(RM), W(DP))
+
 /* shr
- * set-flags: undefined */
+ * set-flags: undefined (*x), yes (*z) */
+
+#define shrwx_rx(RM)                     /* reads Recx for shift value */   \
+        EMITW(0x00000006 | MRM(REG(RM), Tecx,    REG(RM)))
+
+#define shrwx_mx(RM, DP)                 /* reads Recx for shift value */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000006 | MRM(TMxx,    Tecx,    TMxx))                     \
+        EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define shrwx_ri(RM, IM)                                                    \
         EMITW(0x00000002 | MRM(REG(RM), 0x00,    REG(RM)) |                 \
@@ -1235,15 +1331,15 @@
 #define shrwx_mr(RM, DP, RG)                                                \
         shrwx_st(W(RG), W(RM), W(DP))
 
-#define shrwx_rx(RM)                     /* reads Recx for shift value */   \
-        EMITW(0x00000006 | MRM(REG(RM), Tecx,    REG(RM)))
 
-#define shrwx_mx(RM, DP)                 /* reads Recx for shift value */   \
+#define shrxx_rx(RM)                     /* reads Recx for shift value */   \
+        EMITW(0x00000016 | MRM(REG(RM), Tecx,    REG(RM)))
+
+#define shrxx_mx(RM, DP)                 /* reads Recx for shift value */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000006 | MRM(TMxx,    Tecx,    TMxx))                     \
-        EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
-
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000016 | MRM(TMxx,    Tecx,    TMxx))                     \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define shrxx_ri(RM, IM)                                                    \
         EMITW(0x00000000 | MRM(REG(RM), 0x00,    REG(RM)) |                 \
@@ -1276,15 +1372,102 @@
 #define shrxx_mr(RM, DP, RG)                                                \
         shrxx_st(W(RG), W(RM), W(DP))
 
-#define shrxx_rx(RM)                     /* reads Recx for shift value */   \
-        EMITW(0x00000016 | MRM(REG(RM), Tecx,    REG(RM)))
 
-#define shrxx_mx(RM, DP)                 /* reads Recx for shift value */   \
+#define shrwz_rx(RM)                     /* reads Recx for shift value */   \
+        EMITW(0x00000006 | MRM(REG(RM), Tecx,    REG(RM)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))/* <- set flags (Z) */
+
+#define shrwz_mx(RM, DP)                 /* reads Recx for shift value */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000006 | MRM(TMxx,    Tecx,    TMxx))                     \
+        EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define shrwz_ri(RM, IM)                                                    \
+        EMITW(0x00000002 | MRM(REG(RM), 0x00,    REG(RM)) |                 \
+                                                 (0x1F & VAL(IM)) << 6)     \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))/* <- set flags (Z) */
+
+#define shrwz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000002 | MRM(TMxx,    0x00,    TMxx) |                    \
+                                                 (0x1F & VAL(IM)) << 6)     \
+        EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define shrwz_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        EMITW(0x00000006 | MRM(REG(RG), REG(RM), REG(RG)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define shrwz_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000006 | MRM(REG(RG), TMxx,    REG(RG)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define shrwz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000006 | MRM(TMxx,    REG(RG), TMxx))                     \
+        EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define shrwz_mr(RM, DP, RG)                                                \
+        shrwz_st(W(RG), W(RM), W(DP))
+
+
+#define shrxz_rx(RM)                     /* reads Recx for shift value */   \
+        EMITW(0x00000016 | MRM(REG(RM), Tecx,    REG(RM)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))/* <- set flags (Z) */
+
+#define shrxz_mx(RM, DP)                 /* reads Recx for shift value */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x00000016 | MRM(TMxx,    Tecx,    TMxx))                     \
         EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
+#define shrxz_ri(RM, IM)                                                    \
+        EMITW(0x00000000 | MRM(REG(RM), 0x00,    REG(RM)) |                 \
+        (+(VAL(IM) < 32) & (0x0000003A | (0x1F & VAL(IM)) << 6)) |          \
+        (+(VAL(IM) > 31) & (0x0000003E | (0x1F & VAL(IM)) << 6)))           \
+        /* if true ^ equals to -1 (not 1) */                                \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))/* <- set flags (Z) */
+
+#define shrxz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000000 | MRM(TMxx,    0x00,    TMxx) |                    \
+        (+(VAL(IM) < 32) & (0x0000003A | (0x1F & VAL(IM)) << 6)) |          \
+        (+(VAL(IM) > 31) & (0x0000003E | (0x1F & VAL(IM)) << 6)))           \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define shrxz_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        EMITW(0x00000016 | MRM(REG(RG), REG(RM), REG(RG)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define shrxz_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000016 | MRM(REG(RG), TMxx,    REG(RG)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define shrxz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000016 | MRM(TMxx,    REG(RG), TMxx))                     \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define shrxz_mr(RM, DP, RG)                                                \
+        shrxz_st(W(RG), W(RM), W(DP))
+
+
+#define shrwn_rx(RM)                     /* reads Recx for shift value */   \
+        EMITW(0x00000007 | MRM(REG(RM), Tecx,    REG(RM)))
+
+#define shrwn_mx(RM, DP)                 /* reads Recx for shift value */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000007 | MRM(TMxx,    Tecx,    TMxx))                     \
+        EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define shrwn_ri(RM, IM)                                                    \
         EMITW(0x00000003 | MRM(REG(RM), 0x00,    REG(RM)) |                 \
@@ -1314,15 +1497,15 @@
 #define shrwn_mr(RM, DP, RG)                                                \
         shrwn_st(W(RG), W(RM), W(DP))
 
-#define shrwn_rx(RM)                     /* reads Recx for shift value */   \
-        EMITW(0x00000007 | MRM(REG(RM), Tecx,    REG(RM)))
 
-#define shrwn_mx(RM, DP)                 /* reads Recx for shift value */   \
+#define shrxn_rx(RM)                     /* reads Recx for shift value */   \
+        EMITW(0x00000017 | MRM(REG(RM), Tecx,    REG(RM)))
+
+#define shrxn_mx(RM, DP)                 /* reads Recx for shift value */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000007 | MRM(TMxx,    Tecx,    TMxx))                     \
-        EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
-
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000017 | MRM(TMxx,    Tecx,    TMxx))                     \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define shrxn_ri(RM, IM)                                                    \
         EMITW(0x00000000 | MRM(REG(RM), 0x00,    REG(RM)) |                 \
@@ -1354,15 +1537,6 @@
 
 #define shrxn_mr(RM, DP, RG)                                                \
         shrxn_st(W(RG), W(RM), W(DP))
-
-#define shrxn_rx(RM)                     /* reads Recx for shift value */   \
-        EMITW(0x00000017 | MRM(REG(RM), Tecx,    REG(RM)))
-
-#define shrxn_mx(RM, DP)                 /* reads Recx for shift value */   \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000017 | MRM(TMxx,    Tecx,    TMxx))                     \
-        EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* pre-r6 */
 #if defined (RT_M64) && RT_M64 < 6
@@ -2027,6 +2201,9 @@
 #define neg_x   neg
 #define add_x   add
 #define sub_x   sub
+
+#define shl_x   shl
+#define shr_x   shr
 
 #define EZ_x    J0
 #define NZ_x    J1

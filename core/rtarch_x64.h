@@ -792,173 +792,282 @@
         subxz_st(W(RG), W(RM), W(DP))
 
 /* shl
- * set-flags: undefined */
+ * set-flags: undefined (*x), yes (*z) */
+
+#define shlwx_rx(RM)                     /* reads Recx for shift value */   \
+        shlwz_rx(W(RM))
+
+#define shlwx_mx(RM, DP)                 /* reads Recx for shift value */   \
+        shlwz_mx(W(RM), W(DP))
 
 #define shlwx_ri(RM, IM)                                                    \
-        REX(0,       RXB(RM)) EMITB(0xC1)                                   \
-        MRM(0x04,    MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+        shlwz_ri(W(RM), W(IM))
 
 #define shlwx_mi(RM, DP, IM)                                                \
-    ADR REX(0,       RXB(RM)) EMITB(0xC1)                                   \
-        MRM(0x04,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
+        shlwz_mi(W(RM), W(DP), W(IM))
 
 #define shlwx_rr(RG, RM)       /* Recx cannot be used as first operand */   \
-        stack_st(Recx)                                                      \
-        movwx_rr(Recx, W(RM))                                               \
-        shlwx_rx(W(RG))                                                     \
-        stack_ld(Recx)
+        shlwz_rr(W(RG), W(RM))
 
 #define shlwx_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
-        stack_st(Recx)                                                      \
-        movwx_ld(Recx, W(RM), W(DP))                                        \
-        shlwx_rx(W(RG))                                                     \
-        stack_ld(Recx)
+        shlwz_ld(W(RG), W(RM), W(DP))
 
 #define shlwx_st(RG, RM, DP)                                                \
-        stack_st(Recx)                                                      \
-        movwx_rr(Recx, W(RG))                                               \
-        shlwx_mx(W(RM), W(DP))                                              \
-        stack_ld(Recx)
+        shlwz_st(W(RG), W(RM), W(DP))
 
 #define shlwx_mr(RM, DP, RG)                                                \
         shlwx_st(W(RG), W(RM), W(DP))
 
-#define shlwx_rx(RM)                     /* reads Recx for shift value */   \
-        REX(0,       RXB(RM)) EMITB(0xD3)                                   \
-        MRM(0x04,    MOD(RM), REG(RM))                                      \
 
-#define shlwx_mx(RM, DP)                 /* reads Recx for shift value */   \
-    ADR REX(0,       RXB(RM)) EMITB(0xD3)                                   \
-        MRM(0x04,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+#define shlxx_rx(RM)                     /* reads Recx for shift value */   \
+        shlxz_rx(W(RM))
 
+#define shlxx_mx(RM, DP)                 /* reads Recx for shift value */   \
+        shlxz_mx(W(RM), W(DP))
 
 #define shlxx_ri(RM, IM)                                                    \
-        REW(0,       RXB(RM)) EMITB(0xC1)                                   \
-        MRM(0x04,    MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x3F))
+        shlxz_ri(W(RM), W(IM))
 
 #define shlxx_mi(RM, DP, IM)                                                \
-    ADR REW(0,       RXB(RM)) EMITB(0xC1)                                   \
-        MRM(0x04,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x3F))
+        shlxz_mi(W(RM), W(DP), W(IM))
 
 #define shlxx_rr(RG, RM)       /* Recx cannot be used as first operand */   \
-        stack_st(Recx)                                                      \
-        movxx_rr(Recx, W(RM))                                               \
-        shlxx_rx(W(RG))                                                     \
-        stack_ld(Recx)
+        shlxz_rr(W(RG), W(RM))
 
 #define shlxx_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
-        stack_st(Recx)                                                      \
-        movxx_ld(Recx, W(RM), W(DP))                                        \
-        shlxx_rx(W(RG))                                                     \
-        stack_ld(Recx)
+        shlxz_ld(W(RG), W(RM), W(DP))
 
 #define shlxx_st(RG, RM, DP)                                                \
-        stack_st(Recx)                                                      \
-        movxx_rr(Recx, W(RG))                                               \
-        shlxx_mx(W(RM), W(DP))                                              \
-        stack_ld(Recx)
+        shlxz_st(W(RG), W(RM), W(DP))
 
 #define shlxx_mr(RM, DP, RG)                                                \
         shlxx_st(W(RG), W(RM), W(DP))
 
-#define shlxx_rx(RM)                     /* reads Recx for shift value */   \
+
+#define shlwz_rx(RM)                     /* reads Recx for shift value */   \
+        REX(0,       RXB(RM)) EMITB(0xD3)                                   \
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+
+#define shlwz_mx(RM, DP)                 /* reads Recx for shift value */   \
+    ADR REX(0,       RXB(RM)) EMITB(0xD3)                                   \
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+#define shlwz_ri(RM, IM)                                                    \
+        REX(0,       RXB(RM)) EMITB(0xC1)                                   \
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+
+#define shlwz_mi(RM, DP, IM)                                                \
+    ADR REX(0,       RXB(RM)) EMITB(0xC1)                                   \
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
+
+#define shlwz_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        stack_st(Recx)                                                      \
+        movwx_rr(Recx, W(RM))                                               \
+        shlwz_rx(W(RG))                                                     \
+        stack_ld(Recx)
+
+#define shlwz_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx, W(RM), W(DP))                                        \
+        shlwz_rx(W(RG))                                                     \
+        stack_ld(Recx)
+
+#define shlwz_st(RG, RM, DP)                                                \
+        stack_st(Recx)                                                      \
+        movwx_rr(Recx, W(RG))                                               \
+        shlwz_mx(W(RM), W(DP))                                              \
+        stack_ld(Recx)
+
+#define shlwz_mr(RM, DP, RG)                                                \
+        shlwz_st(W(RG), W(RM), W(DP))
+
+
+#define shlxz_rx(RM)                     /* reads Recx for shift value */   \
         REW(0,       RXB(RM)) EMITB(0xD3)                                   \
         MRM(0x04,    MOD(RM), REG(RM))                                      \
 
-#define shlxx_mx(RM, DP)                 /* reads Recx for shift value */   \
+#define shlxz_mx(RM, DP)                 /* reads Recx for shift value */   \
     ADR REW(0,       RXB(RM)) EMITB(0xD3)                                   \
         MRM(0x04,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
+#define shlxz_ri(RM, IM)                                                    \
+        REW(0,       RXB(RM)) EMITB(0xC1)                                   \
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x3F))
+
+#define shlxz_mi(RM, DP, IM)                                                \
+    ADR REW(0,       RXB(RM)) EMITB(0xC1)                                   \
+        MRM(0x04,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x3F))
+
+#define shlxz_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        stack_st(Recx)                                                      \
+        movxx_rr(Recx, W(RM))                                               \
+        shlxz_rx(W(RG))                                                     \
+        stack_ld(Recx)
+
+#define shlxz_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        stack_st(Recx)                                                      \
+        movxx_ld(Recx, W(RM), W(DP))                                        \
+        shlxz_rx(W(RG))                                                     \
+        stack_ld(Recx)
+
+#define shlxz_st(RG, RM, DP)                                                \
+        stack_st(Recx)                                                      \
+        movxx_rr(Recx, W(RG))                                               \
+        shlxz_mx(W(RM), W(DP))                                              \
+        stack_ld(Recx)
+
+#define shlxz_mr(RM, DP, RG)                                                \
+        shlxz_st(W(RG), W(RM), W(DP))
+
 /* shr
- * set-flags: undefined */
+ * set-flags: undefined (*x), yes (*z) */
+
+#define shrwx_rx(RM)                     /* reads Recx for shift value */   \
+        shrwz_rx(W(RM))
+
+#define shrwx_mx(RM, DP)                 /* reads Recx for shift value */   \
+        shrwz_mx(W(RM), W(DP))
 
 #define shrwx_ri(RM, IM)                                                    \
-        REX(0,       RXB(RM)) EMITB(0xC1)                                   \
-        MRM(0x05,    MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+        shrwz_ri(W(RM), W(IM))
 
 #define shrwx_mi(RM, DP, IM)                                                \
-    ADR REX(0,       RXB(RM)) EMITB(0xC1)                                   \
-        MRM(0x05,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
+        shrwz_mi(W(RM), W(DP), W(IM))
 
 #define shrwx_rr(RG, RM)       /* Recx cannot be used as first operand */   \
-        stack_st(Recx)                                                      \
-        movwx_rr(Recx, W(RM))                                               \
-        shrwx_rx(W(RG))                                                     \
-        stack_ld(Recx)
+        shrwz_rr(W(RG), W(RM))
 
 #define shrwx_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
-        stack_st(Recx)                                                      \
-        movwx_ld(Recx, W(RM), W(DP))                                        \
-        shrwx_rx(W(RG))                                                     \
-        stack_ld(Recx)
+        shrwz_ld(W(RG), W(RM), W(DP))
 
 #define shrwx_st(RG, RM, DP)                                                \
-        stack_st(Recx)                                                      \
-        movwx_rr(Recx, W(RG))                                               \
-        shrwx_mx(W(RM), W(DP))                                              \
-        stack_ld(Recx)
+        shrwz_st(W(RG), W(RM), W(DP))
 
 #define shrwx_mr(RM, DP, RG)                                                \
         shrwx_st(W(RG), W(RM), W(DP))
 
-#define shrwx_rx(RM)                     /* reads Recx for shift value */   \
-        REX(0,       RXB(RM)) EMITB(0xD3)                                   \
-        MRM(0x05,    MOD(RM), REG(RM))                                      \
 
-#define shrwx_mx(RM, DP)                 /* reads Recx for shift value */   \
-    ADR REX(0,       RXB(RM)) EMITB(0xD3)                                   \
-        MRM(0x05,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+#define shrxx_rx(RM)                     /* reads Recx for shift value */   \
+        shrxz_rx(W(RM))
 
+#define shrxx_mx(RM, DP)                 /* reads Recx for shift value */   \
+        shrxz_mx(W(RM), W(DP))
 
 #define shrxx_ri(RM, IM)                                                    \
-        REW(0,       RXB(RM)) EMITB(0xC1)                                   \
-        MRM(0x05,    MOD(RM), REG(RM))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x3F))
+        shrxz_ri(W(RM), W(IM))
 
 #define shrxx_mi(RM, DP, IM)                                                \
-    ADR REW(0,       RXB(RM)) EMITB(0xC1)                                   \
-        MRM(0x05,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x3F))
+        shrxz_mi(W(RM), W(DP), W(IM))
 
 #define shrxx_rr(RG, RM)       /* Recx cannot be used as first operand */   \
-        stack_st(Recx)                                                      \
-        movxx_rr(Recx, W(RM))                                               \
-        shrxx_rx(W(RG))                                                     \
-        stack_ld(Recx)
+        shrxz_rr(W(RG), W(RM))
 
 #define shrxx_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
-        stack_st(Recx)                                                      \
-        movxx_ld(Recx, W(RM), W(DP))                                        \
-        shrxx_rx(W(RG))                                                     \
-        stack_ld(Recx)
+        shrxz_ld(W(RG), W(RM), W(DP))
 
 #define shrxx_st(RG, RM, DP)                                                \
-        stack_st(Recx)                                                      \
-        movxx_rr(Recx, W(RG))                                               \
-        shrxx_mx(W(RM), W(DP))                                              \
-        stack_ld(Recx)
+        shrxz_st(W(RG), W(RM), W(DP))
 
 #define shrxx_mr(RM, DP, RG)                                                \
         shrxx_st(W(RG), W(RM), W(DP))
 
-#define shrxx_rx(RM)                     /* reads Recx for shift value */   \
+
+#define shrwz_rx(RM)                     /* reads Recx for shift value */   \
+        REX(0,       RXB(RM)) EMITB(0xD3)                                   \
+        MRM(0x05,    MOD(RM), REG(RM))                                      \
+
+#define shrwz_mx(RM, DP)                 /* reads Recx for shift value */   \
+    ADR REX(0,       RXB(RM)) EMITB(0xD3)                                   \
+        MRM(0x05,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
+
+#define shrwz_ri(RM, IM)                                                    \
+        REX(0,       RXB(RM)) EMITB(0xC1)                                   \
+        MRM(0x05,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+
+#define shrwz_mi(RM, DP, IM)                                                \
+    ADR REX(0,       RXB(RM)) EMITB(0xC1)                                   \
+        MRM(0x05,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x1F))
+
+#define shrwz_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        stack_st(Recx)                                                      \
+        movwx_rr(Recx, W(RM))                                               \
+        shrwz_rx(W(RG))                                                     \
+        stack_ld(Recx)
+
+#define shrwz_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx, W(RM), W(DP))                                        \
+        shrwz_rx(W(RG))                                                     \
+        stack_ld(Recx)
+
+#define shrwz_st(RG, RM, DP)                                                \
+        stack_st(Recx)                                                      \
+        movwx_rr(Recx, W(RG))                                               \
+        shrwz_mx(W(RM), W(DP))                                              \
+        stack_ld(Recx)
+
+#define shrwz_mr(RM, DP, RG)                                                \
+        shrwz_st(W(RG), W(RM), W(DP))
+
+
+#define shrxz_rx(RM)                     /* reads Recx for shift value */   \
         REW(0,       RXB(RM)) EMITB(0xD3)                                   \
         MRM(0x05,    MOD(RM), REG(RM))                                      \
 
-#define shrxx_mx(RM, DP)                 /* reads Recx for shift value */   \
+#define shrxz_mx(RM, DP)                 /* reads Recx for shift value */   \
     ADR REW(0,       RXB(RM)) EMITB(0xD3)                                   \
         MRM(0x05,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
+#define shrxz_ri(RM, IM)                                                    \
+        REW(0,       RXB(RM)) EMITB(0xC1)                                   \
+        MRM(0x05,    MOD(RM), REG(RM))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x3F))
+
+#define shrxz_mi(RM, DP, IM)                                                \
+    ADR REW(0,       RXB(RM)) EMITB(0xC1)                                   \
+        MRM(0x05,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMITB(VAL(IM) & 0x3F))
+
+#define shrxz_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        stack_st(Recx)                                                      \
+        movxx_rr(Recx, W(RM))                                               \
+        shrxz_rx(W(RG))                                                     \
+        stack_ld(Recx)
+
+#define shrxz_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        stack_st(Recx)                                                      \
+        movxx_ld(Recx, W(RM), W(DP))                                        \
+        shrxz_rx(W(RG))                                                     \
+        stack_ld(Recx)
+
+#define shrxz_st(RG, RM, DP)                                                \
+        stack_st(Recx)                                                      \
+        movxx_rr(Recx, W(RG))                                               \
+        shrxz_mx(W(RM), W(DP))                                              \
+        stack_ld(Recx)
+
+#define shrxz_mr(RM, DP, RG)                                                \
+        shrxz_st(W(RG), W(RM), W(DP))
+
+
+#define shrwn_rx(RM)                     /* reads Recx for shift value */   \
+        REX(0,       RXB(RM)) EMITB(0xD3)                                   \
+        MRM(0x07,    MOD(RM), REG(RM))                                      \
+
+#define shrwn_mx(RM, DP)                 /* reads Recx for shift value */   \
+    ADR REX(0,       RXB(RM)) EMITB(0xD3)                                   \
+        MRM(0x07,    MOD(RM), REG(RM))                                      \
+        AUX(SIB(RM), CMD(DP), EMPTY)
 
 #define shrwn_ri(RM, IM)                                                    \
         REX(0,       RXB(RM)) EMITB(0xC1)                                   \
@@ -991,15 +1100,15 @@
 #define shrwn_mr(RM, DP, RG)                                                \
         shrwn_st(W(RG), W(RM), W(DP))
 
-#define shrwn_rx(RM)                     /* reads Recx for shift value */   \
-        REX(0,       RXB(RM)) EMITB(0xD3)                                   \
+
+#define shrxn_rx(RM)                     /* reads Recx for shift value */   \
+        REW(0,       RXB(RM)) EMITB(0xD3)                                   \
         MRM(0x07,    MOD(RM), REG(RM))                                      \
 
-#define shrwn_mx(RM, DP)                 /* reads Recx for shift value */   \
-    ADR REX(0,       RXB(RM)) EMITB(0xD3)                                   \
+#define shrxn_mx(RM, DP)                 /* reads Recx for shift value */   \
+    ADR REW(0,       RXB(RM)) EMITB(0xD3)                                   \
         MRM(0x07,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
-
 
 #define shrxn_ri(RM, IM)                                                    \
         REW(0,       RXB(RM)) EMITB(0xC1)                                   \
@@ -1031,15 +1140,6 @@
 
 #define shrxn_mr(RM, DP, RG)                                                \
         shrxn_st(W(RG), W(RM), W(DP))
-
-#define shrxn_rx(RM)                     /* reads Recx for shift value */   \
-        REW(0,       RXB(RM)) EMITB(0xD3)                                   \
-        MRM(0x07,    MOD(RM), REG(RM))                                      \
-
-#define shrxn_mx(RM, DP)                 /* reads Recx for shift value */   \
-    ADR REW(0,       RXB(RM)) EMITB(0xD3)                                   \
-        MRM(0x07,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* mul
  * set-flags: undefined */
@@ -1515,6 +1615,9 @@
 #define neg_x   neg
 #define add_x   add
 #define sub_x   sub
+
+#define shl_x   shl
+#define shr_x   shr
 
 #define EZ_x    jezxx_lb
 #define NZ_x    jnzxx_lb
