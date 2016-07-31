@@ -1601,13 +1601,13 @@
  * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
  * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
 
-#define jmpxx_rr(RM)           /* register-targeted unconditional jump */   \
+#define jmpxx_xr(RM)           /* register-targeted unconditional jump */   \
         REX(0,       RXB(RM)) EMITB(0xFF)   /* <- jump to address in reg */ \
         MRM(0x04,    MOD(RM), REG(RM))
 
 #if defined (RT_X32)
 
-#define jmpxx_mm(RM, DP)         /* memory-targeted unconditional jump */   \
+#define jmpxx_xm(RM, DP)         /* memory-targeted unconditional jump */   \
     ADR REX(1,       RXB(RM)) EMITB(0x8B)   /* <- load r15d from RM/DP */   \
         MRM(0x07,    MOD(RM), REG(RM))      /*    upper half is zeroed */   \
         AUX(SIB(RM), CMD(DP), EMPTY)        /*    as a part of 32-bit op */ \
@@ -1616,7 +1616,7 @@
 
 #elif defined (RT_X64)
 
-#define jmpxx_mm(RM, DP)         /* memory-targeted unconditional jump */   \
+#define jmpxx_xm(RM, DP)         /* memory-targeted unconditional jump */   \
     ADR REX(0,       RXB(RM)) EMITB(0xFF)   /* <- jump to address in mem */ \
         MRM(0x04,    MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)

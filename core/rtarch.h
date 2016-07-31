@@ -118,7 +118,7 @@
  * Signed/unsigned types can be supported orthogonally in cmd*n_**, cmd*x_**.
  *
  * Note that within cmdx*_** subset most of the instructions follow in-heap
- * address size (RT_ADDRESS or A) and only label_ld/st, jmpxx_rr/mm follow
+ * address size (RT_ADDRESS or A) and only label_ld/st, jmpxx_xr/xm follow
  * pointer size (RT_POINTER or P) as code/data/stack segments are fixed.
  *
  * Working with sub-word SIMD elements (byte, half) has not been investigated.
@@ -179,7 +179,7 @@
 #define D   (RT_ENDIAN*(P-1)*4)     /* for cmdw*_** working on P-size field */
 #define E   (RT_ENDIAN*(P-A)*4)     /* for cmdx*_** working on P-size field */
 #define F   (RT_ENDIAN*(A-1)*4)     /* for cmdw*_**, cmdx*_** without C/C++ */
-#define G   (RT_ENDIAN*(2-P)*4)     /* for jmpxx_mm working on 64-bit field */
+#define G   (RT_ENDIAN*(2-P)*4)     /* for jmpxx_xm working on 64-bit field */
 
 /*******************************   WIN32, MSVC   ******************************/
 
