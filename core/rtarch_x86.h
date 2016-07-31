@@ -820,19 +820,19 @@
 
 #define shrwn_rr(RG, RM)       /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
-        movwn_rr(Recx, W(RM))                                               \
+        movwx_rr(Recx, W(RM))                                               \
         shrwn_rx(W(RG))                                                     \
         stack_ld(Recx)
 
 #define shrwn_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
-        movwn_ld(Recx, W(RM), W(DP))                                        \
+        movwx_ld(Recx, W(RM), W(DP))                                        \
         shrwn_rx(W(RG))                                                     \
         stack_ld(Recx)
 
 #define shrwn_st(RG, RM, DP)                                                \
         stack_st(Recx)                                                      \
-        movwn_rr(Recx, W(RG))                                               \
+        movwx_rr(Recx, W(RG))                                               \
         shrwn_mx(W(RM), W(DP))                                              \
         stack_ld(Recx)
 

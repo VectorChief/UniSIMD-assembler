@@ -972,19 +972,19 @@
 
 #define shrwn_rr(RG, RM)       /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
-        movwn_rr(Recx, W(RM))                                               \
+        movwx_rr(Recx, W(RM))                                               \
         shrwn_rx(W(RG))                                                     \
         stack_ld(Recx)
 
 #define shrwn_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
-        movwn_ld(Recx, W(RM), W(DP))                                        \
+        movwx_ld(Recx, W(RM), W(DP))                                        \
         shrwn_rx(W(RG))                                                     \
         stack_ld(Recx)
 
 #define shrwn_st(RG, RM, DP)                                                \
         stack_st(Recx)                                                      \
-        movwn_rr(Recx, W(RG))                                               \
+        movwx_rr(Recx, W(RG))                                               \
         shrwn_mx(W(RM), W(DP))                                              \
         stack_ld(Recx)
 
@@ -1013,19 +1013,19 @@
 
 #define shrxn_rr(RG, RM)       /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
-        movxn_rr(Recx, W(RM))                                               \
+        movxx_rr(Recx, W(RM))                                               \
         shrxn_rx(W(RG))                                                     \
         stack_ld(Recx)
 
 #define shrxn_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
-        movxn_ld(Recx, W(RM), W(DP))                                        \
+        movxx_ld(Recx, W(RM), W(DP))                                        \
         shrxn_rx(W(RG))                                                     \
         stack_ld(Recx)
 
 #define shrxn_st(RG, RM, DP)                                                \
         stack_st(Recx)                                                      \
-        movxn_rr(Recx, W(RG))                                               \
+        movxx_rr(Recx, W(RG))                                               \
         shrxn_mx(W(RM), W(DP))                                              \
         stack_ld(Recx)
 
