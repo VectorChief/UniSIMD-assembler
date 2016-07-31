@@ -797,34 +797,34 @@
 #define GT_n    jgtxn_lb
 #define GE_n    jgexn_lb
 
-#define cmjxx_rz(RM, CC, lb)                                                \
-        cmjxx_ri(W(RM), IC(0), CC, lb)
+#define cmjxx_rz(RM, cc, lb)                                                \
+        cmjxx_ri(W(RM), IC(0), cc, lb)
 
-#define cmjxx_mz(RM, DP, CC, lb)                                            \
-        cmjxx_mi(W(RM), W(DP), IC(0), CC, lb)
+#define cmjxx_mz(RM, DP, cc, lb)                                            \
+        cmjxx_mi(W(RM), W(DP), IC(0), cc, lb)
 
-#define cmjxx_ri(RM, IM, CC, lb)                                            \
+#define cmjxx_ri(RM, IM, cc, lb)                                            \
         cmpxx_ri(W(RM), W(IM))                                              \
-        CMJ(CC, lb)
+        CMJ(cc, lb)
 
-#define cmjxx_mi(RM, DP, IM, CC, lb)                                        \
+#define cmjxx_mi(RM, DP, IM, cc, lb)                                        \
         cmpxx_mi(W(RM), W(DP), W(IM))                                       \
-        CMJ(CC, lb)
+        CMJ(cc, lb)
 
-#define cmjxx_rr(RG, RM, CC, lb)                                            \
+#define cmjxx_rr(RG, RM, cc, lb)                                            \
         cmpxx_rr(W(RG), W(RM))                                              \
-        CMJ(CC, lb)
+        CMJ(cc, lb)
 
-#define cmjxx_rm(RG, RM, DP, CC, lb)                                        \
+#define cmjxx_rm(RG, RM, DP, cc, lb)                                        \
         cmpxx_rm(W(RG), W(RM), W(DP))                                       \
-        CMJ(CC, lb)
+        CMJ(cc, lb)
 
-#define cmjxx_mr(RM, DP, RG, CC, lb)                                        \
+#define cmjxx_mr(RM, DP, RG, cc, lb)                                        \
         cmpxx_mr(W(RM), W(DP), W(RG))                                       \
-        CMJ(CC, lb)
+        CMJ(cc, lb)
 
-#define CMJ(CC, lb) /* internal macro for combined-compare-jump (cmj) */    \
-        CC(lb)
+#define CMJ(cc, lb) /* internal macro for combined-compare-jump (cmj) */    \
+        cc(lb)
 
 /* cmp
  * set-flags: yes */

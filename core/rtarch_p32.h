@@ -1137,32 +1137,32 @@
 #define GT_n    J8
 #define GE_n    J9
 
-#define cmjxx_rz(RM, CC, lb)                                                \
-        cmjxx_ri(W(RM), IC(0), CC, lb)
+#define cmjxx_rz(RM, cc, lb)                                                \
+        cmjxx_ri(W(RM), IC(0), cc, lb)
 
-#define cmjxx_mz(RM, DP, CC, lb)                                            \
-        cmjxx_mi(W(RM), W(DP), IC(0), CC, lb)
+#define cmjxx_mz(RM, DP, cc, lb)                                            \
+        cmjxx_mi(W(RM), W(DP), IC(0), cc, lb)
 
-#define cmjxx_ri(RM, IM, CC, lb)                                            \
-        CMI(CC, MOD(RM), REG(RM), W(IM), lb)
+#define cmjxx_ri(RM, IM, cc, lb)                                            \
+        CMI(cc, MOD(RM), REG(RM), W(IM), lb)
 
-#define cmjxx_mi(RM, DP, IM, CC, lb)                                        \
+#define cmjxx_mi(RM, DP, IM, cc, lb)                                        \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        CMI(CC, %%r24,   TMxx,    W(IM), lb)
+        CMI(cc, %%r24,   TMxx,    W(IM), lb)
 
-#define cmjxx_rr(RG, RM, CC, lb)                                            \
-        CMR(CC, MOD(RG), MOD(RM), lb)
+#define cmjxx_rr(RG, RM, cc, lb)                                            \
+        CMR(cc, MOD(RG), MOD(RM), lb)
 
-#define cmjxx_rm(RG, RM, DP, CC, lb)                                        \
+#define cmjxx_rm(RG, RM, DP, cc, lb)                                        \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        CMR(CC, MOD(RG), %%r24,   lb)
+        CMR(cc, MOD(RG), %%r24,   lb)
 
-#define cmjxx_mr(RM, DP, RG, CC, lb)                                        \
+#define cmjxx_mr(RM, DP, RG, cc, lb)                                        \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        CMR(CC, %%r24,   MOD(RG), lb)
+        CMR(cc, %%r24,   MOD(RG), lb)
 
 /* cmp
  * set-flags: yes */
@@ -1328,8 +1328,8 @@
         (+(TP2(IM) == 0) & 0x2C000000) | (+(TP2(IM) != 0) & 0x7C000000))    \
         ASM_BEG ASM_OP1(bge,   lb) ASM_END
 
-#define CMI(CC, r1, p1, IM, lb)                                             \
-        I##CC(r1, p1, W(IM), lb)
+#define CMI(cc, r1, p1, IM, lb)                                             \
+        I##cc(r1, p1, W(IM), lb)
 
 
 #define RJ0(r1, r2, lb)                                                     \
@@ -1372,8 +1372,8 @@
         ASM_BEG ASM_OP2(cmpw,  r1, r2) ASM_END                              \
         ASM_BEG ASM_OP1(bge,   lb) ASM_END
 
-#define CMR(CC, r1, r2, lb)                                                 \
-        R##CC(r1, r2, lb)
+#define CMR(cc, r1, r2, lb)                                                 \
+        R##cc(r1, r2, lb)
 
 /* ver
  * set-flags: no */

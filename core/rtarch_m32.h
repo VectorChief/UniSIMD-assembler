@@ -1108,34 +1108,34 @@
 #define GT_n    J8
 #define GE_n    J9
 
-#define cmjxx_rz(RM, CC, lb)                                                \
-        CMZ(CC, MOD(RM), lb)
+#define cmjxx_rz(RM, cc, lb)                                                \
+        CMZ(cc, MOD(RM), lb)
 
-#define cmjxx_mz(RM, DP, CC, lb)                                            \
+#define cmjxx_mz(RM, DP, cc, lb)                                            \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        CMZ(CC, $t8,     lb)
+        CMZ(cc, $t8,     lb)
 
-#define cmjxx_ri(RM, IM, CC, lb)                                            \
-        CMI(CC, MOD(RM), REG(RM), W(IM), lb)
+#define cmjxx_ri(RM, IM, cc, lb)                                            \
+        CMI(cc, MOD(RM), REG(RM), W(IM), lb)
 
-#define cmjxx_mi(RM, DP, IM, CC, lb)                                        \
+#define cmjxx_mi(RM, DP, IM, cc, lb)                                        \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        CMI(CC, $t8,     TMxx,    W(IM), lb)
+        CMI(cc, $t8,     TMxx,    W(IM), lb)
 
-#define cmjxx_rr(RG, RM, CC, lb)                                            \
-        CMR(CC, MOD(RG), MOD(RM), lb)
+#define cmjxx_rr(RG, RM, cc, lb)                                            \
+        CMR(cc, MOD(RG), MOD(RM), lb)
 
-#define cmjxx_rm(RG, RM, DP, CC, lb)                                        \
+#define cmjxx_rm(RG, RM, DP, cc, lb)                                        \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        CMR(CC, MOD(RG), $t8,     lb)
+        CMR(cc, MOD(RG), $t8,     lb)
 
-#define cmjxx_mr(RM, DP, RG, CC, lb)                                        \
+#define cmjxx_mr(RM, DP, RG, cc, lb)                                        \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        CMR(CC, $t8,     MOD(RG), lb)
+        CMR(cc, $t8,     MOD(RG), lb)
 
 /* cmp
  * set-flags: yes */
@@ -1272,8 +1272,8 @@
 #define ZJ9(r1, lb)                                                         \
         ASM_BEG ASM_OP2(bgez, r1, lb) ASM_END
 
-#define CMZ(CC, r1, lb)                                                     \
-        Z##CC(r1, lb)
+#define CMZ(cc, r1, lb)                                                     \
+        Z##cc(r1, lb)
 
 
 #define IJ0(r1, p1, IM, lb)                                                 \
@@ -1328,8 +1328,8 @@
         (+(TP1(IM) == 0) & 0x28000000) | (+(TP1(IM) != 0) & 0x0000002A))    \
         ASM_BEG ASM_OP2(beqz, $t8, lb) ASM_END
 
-#define CMI(CC, r1, p1, IM, lb)                                             \
-        I##CC(r1, p1, W(IM), lb)
+#define CMI(cc, r1, p1, IM, lb)                                             \
+        I##cc(r1, p1, W(IM), lb)
 
 
 #define RJ0(r1, r2, lb)                                                     \
@@ -1370,8 +1370,8 @@
         ASM_BEG ASM_OP3(slt,  $t8, r1, r2) ASM_END                          \
         ASM_BEG ASM_OP2(beqz, $t8, lb) ASM_END
 
-#define CMR(CC, r1, r2, lb)                                                 \
-        R##CC(r1, r2, lb)
+#define CMR(cc, r1, r2, lb)                                                 \
+        R##cc(r1, r2, lb)
 
 #else  /* r6 */
 
@@ -1474,8 +1474,8 @@
 #define ZJ9(r1, lb)                                                         \
         ASM_BEG ASM_OP2(bgezc, r1, lb) ASM_END
 
-#define CMZ(CC, r1, lb)                                                     \
-        Z##CC(r1, lb)
+#define CMZ(cc, r1, lb)                                                     \
+        Z##cc(r1, lb)
 
 
 #define IJ0(r1, p1, IM, lb)                                                 \
@@ -1518,8 +1518,8 @@
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
         RJ9(r1, $t9, lb)
 
-#define CMI(CC, r1, p1, IM, lb)                                             \
-        I##CC(r1, p1, W(IM), lb)
+#define CMI(cc, r1, p1, IM, lb)                                             \
+        I##cc(r1, p1, W(IM), lb)
 
 
 #define RJ0(r1, r2, lb)                                                     \
@@ -1552,8 +1552,8 @@
 #define RJ9(r1, r2, lb)                                                     \
         ASM_BEG ASM_OP3(bgec,  r1, r2, lb) ASM_END
 
-#define CMR(CC, r1, r2, lb)                                                 \
-        R##CC(r1, r2, lb)
+#define CMR(cc, r1, r2, lb)                                                 \
+        R##cc(r1, r2, lb)
 
 #endif /* r6 */
 
