@@ -767,7 +767,7 @@
 
 #define CHECK_MASK(lb, mask, RG) /* destroys Reax */                        \
         movsn_rr(Reax, W(RG))                                               \
-        cmpxx_ri(Reax, IH(RT_SIMD_MASK_##mask))                             \
+        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask))                             \
         jeqxx_lb(lb)
 
 /* simd mode
@@ -810,7 +810,7 @@
 #if RT_SIMD_FAST_FCTRL == 0
 
 #define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
-        movxx_mi(Mebp, inf_SCR00, IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))   \
+        movwx_mi(Mebp, inf_SCR00, IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))   \
         mxcsr_ld(Mebp, inf_SCR00)                                           \
 
 #define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
