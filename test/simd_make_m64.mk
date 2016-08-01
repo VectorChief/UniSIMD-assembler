@@ -13,8 +13,8 @@ LIB_LIST =                              \
 simd_test:
 	mips-img-linux-gnu-g++ -O3 -g -static -EL -mabi=64 -mmsa \
         -DRT_LINUX -DRT_M64=6 -DRT_128=1 -DRT_DEBUG=0 \
-        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ENDIAN=0 \
-        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64_32
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64f32
 
 # The up-to-date MIPS toolchain (g++ & QEMU) can be found here:
 # https://community.imgtec.com/developers/mips/tools/codescape-mips-sdk/
@@ -40,10 +40,11 @@ simd_test:
 #
 # Building/running SIMD test:
 # make -f simd_make_m64.mk
-# qemu-mips64el -cpu I6400 simd_test.m64_32
+# qemu-mips64el -cpu I6400 simd_test.m64f32
 
 # For MIPS64 big-endian target use (replace): -EB -DRT_ENDIAN=1
-# qemu-mips64 -cpu I6400 simd_test.m64_32
+# qemu-mips64 -cpu I6400 simd_test.m64f32
 
-# Experimental 64/32-bit hybrid mode is enabled by default
-# until full 64-bit support is implemented in the framework.
+# Experimental 64/32-bit hybrid mode compatible with native 64-bit ABI
+# is available for the original pure 32-bit ISA using 64-bit pointers,
+# use (replace): RT_ADDRESS=32, rename the binary to simd_test.m64_32
