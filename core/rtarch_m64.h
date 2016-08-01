@@ -76,13 +76,20 @@
  * within pointer fields, when (in-heap) address and pointer sizes don't match.
  * Working with 32-bit data in 64-bit fields in any other circumstances must be
  * done consistently within a subset of one size (cmdw*_**, cmdx*_** or C/C++).
+ *
  * Alternatively, data written natively in C/C++ can be worked on from within
  * a given (one) subset if appropriate offset correction is used from rtarch.h.
- * Mixing of cmdw*_** and cmdx*_** without C/C++ is supported via F definition.
+ * Mixing of cmdw*_** and cmdx*_** without C/C++ is supported via F definition,
+ * but requires two offsets for each field, with F for (w*) and plain for (x*).
  *
  * Argument x-register (implied) is fixed by the implementation.
  * Some formal definitions are not given below to encourage
  * use of friendly aliases for better code readability.
+ *
+ * Not all canonical forms of BASE instructions have efficient implementation.
+ * For example, some forms of shifts and division use stack ops on x86 targets,
+ * while standalone remainder operations can only be done natively on MIPS.
+ * Consider using special fixed-register forms for maximum performance.
  */
 
 /******************************************************************************/
@@ -2192,7 +2199,9 @@
 #endif /* r6 */
 
 /* arj
- * set-flags: undefined */
+ * set-flags: undefined
+ * refer to individual instructions' description
+ * to stay within special register limitations */
 
 #define and_x   and
 #define orr_x   orr
