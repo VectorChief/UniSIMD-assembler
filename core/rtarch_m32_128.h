@@ -7,13 +7,17 @@
 #ifndef RT_RTARCH_M32_128_H
 #define RT_RTARCH_M32_128_H
 
-#if RT_ADDRESS == 32
+#if   RT_ADDRESS == 32
 
 #include "rtarch_m32.h"
 
 #elif RT_ADDRESS == 64
 
 #include "rtarch_m64.h"
+
+#else  /* RT_ADDRESS */
+
+#error "unsupported address size, check RT_ADDRESS in makefiles"
 
 #endif /* RT_ADDRESS */
 
