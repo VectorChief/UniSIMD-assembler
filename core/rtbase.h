@@ -958,23 +958,23 @@ struct rt_SIMD_REGS
 
 
 #define remxx_xx()          /* to be placed immediately prior divxx_x* */   \
-                                     /* to prepare for rem calculation */
+        remwx_xx()                   /* to prepare for rem calculation */
 
 #define remxx_xr(RM)        /* to be placed immediately after divxx_xr */   \
-                                     /* to produce remainder Redx<-rem */
+        remwx_xr(W(RM))              /* to produce remainder Redx<-rem */
 
 #define remxx_xm(RM, DP)    /* to be placed immediately after divxx_xm */   \
-                                     /* to produce remainder Redx<-rem */
+        remwx_xm(W(RM), W(DP))       /* to produce remainder Redx<-rem */
 
 
 #define remxn_xx()          /* to be placed immediately prior divxn_x* */   \
-                                     /* to prepare for rem calculation */
+        remwn_xx()                   /* to prepare for rem calculation */
 
 #define remxn_xr(RM)        /* to be placed immediately after divxn_xr */   \
-                                     /* to produce remainder Redx<-rem */
+        remwn_xr(W(RM))              /* to produce remainder Redx<-rem */
 
 #define remxn_xm(RM, DP)    /* to be placed immediately after divxn_xm */   \
-                                     /* to produce remainder Redx<-rem */
+        remwn_xm(W(RM), W(DP))       /* to produce remainder Redx<-rem */
 
 /* arj
  * set-flags: undefined
