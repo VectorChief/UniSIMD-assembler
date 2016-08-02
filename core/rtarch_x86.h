@@ -1043,17 +1043,17 @@
 
 
 #define mulwp_xr(RM)     /* Reax is in/out, prepares Redx for divwn_x* */   \
-        mulwn_xr(W(RM))               /* must not exceed operands size */
+        mulwn_xr(W(RM))       /* product must not exceed operands size */
 
 #define mulwp_xm(RM, DP) /* Reax is in/out, prepares Redx for divwn_x* */   \
-        mulwn_xm(W(RM), W(DP))        /* must not exceed operands size */
+        mulwn_xm(W(RM), W(DP))/* product must not exceed operands size */
 
 
 #define mulxp_xr(RM)     /* Reax is in/out, prepares Redx for divxn_x* */   \
-        mulxn_xr(W(RM))               /* must not exceed operands size */
+        mulxn_xr(W(RM))       /* product must not exceed operands size */
 
 #define mulxp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn_x* */   \
-        mulxn_xm(W(RM), W(DP))        /* must not exceed operands size */
+        mulxn_xm(W(RM), W(DP))/* product must not exceed operands size */
 
 /* div
  * set-flags: undefined */

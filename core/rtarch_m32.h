@@ -1486,14 +1486,14 @@
 
 
 #define mulwp_xr(RM)     /* Reax is in/out, prepares Redx for divwn_x* */   \
-        mulwx_rr(Reax, W(RM))         /* must not exceed operands size */
+        mulwx_rr(Reax, W(RM)) /* product must not exceed operands size */
 
 #define mulwp_xm(RM, DP) /* Reax is in/out, prepares Redx for divwn_x* */   \
         mulwx_ld(Reax, W(RM), W(DP))  /* must not exceed operands size */
 
 
 #define mulxp_xr(RM)     /* Reax is in/out, prepares Redx for divxn_x* */   \
-        mulxx_rr(Reax, W(RM))         /* must not exceed operands size */
+        mulxx_rr(Reax, W(RM)) /* product must not exceed operands size */
 
 #define mulxp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn_x* */   \
         mulxx_ld(Reax, W(RM), W(DP))  /* must not exceed operands size */
@@ -1779,14 +1779,14 @@
 
 
 #define mulwp_xr(RM)     /* Reax is in/out, prepares Redx for divwn_x* */   \
-        mulwx_rr(Reax, W(RM))         /* must not exceed operands size */
+        mulwx_rr(Reax, W(RM)) /* product must not exceed operands size */
 
 #define mulwp_xm(RM, DP) /* Reax is in/out, prepares Redx for divwn_x* */   \
         mulwx_ld(Reax, W(RM), W(DP))  /* must not exceed operands size */
 
 
 #define mulxp_xr(RM)     /* Reax is in/out, prepares Redx for divxn_x* */   \
-        mulxx_rr(Reax, W(RM))         /* must not exceed operands size */
+        mulxx_rr(Reax, W(RM)) /* product must not exceed operands size */
 
 #define mulxp_xm(RM, DP) /* Reax is in/out, prepares Redx for divxn_x* */   \
         mulxx_ld(Reax, W(RM), W(DP))  /* must not exceed operands size */
