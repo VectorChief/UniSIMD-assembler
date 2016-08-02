@@ -402,6 +402,24 @@ struct rt_SIMD_REGS
 /************************   COMMON BASE INSTRUCTIONS   ************************/
 /******************************************************************************/
 
+/***************** original forms of deprecated cmdx* aliases *****************/
+
+/* adr */
+
+#define adrxx_lb(lb) /* load label to Reax */                               \
+        label_ld(lb)
+
+/* mul */
+
+#define mulxn_ri(RM, IM)                                                    \
+        mulxx_ri(W(RM), W(IM))
+
+#define mulxn_rr(RG, RM)                                                    \
+        mulxx_rr(W(RG), W(RM))
+
+#define mulxn_ld(RG, RM, DP)                                                \
+        mulxx_ld(W(RG), W(RM), W(DP))
+
 /***************** original forms of setting-flags arithmetic *****************/
 
 /* and */
