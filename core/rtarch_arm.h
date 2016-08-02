@@ -315,9 +315,6 @@
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C3(DP), EMPTY2)   \
         EMITW(0xE0800000 | MRM(REG(RG), MOD(RM), TDxx))
 
-#define adrxx_lb(lb) /* load label to Reax */                               \
-        label_ld(lb)
-
 /* and
  * set-flags: undefined (*x), yes (*z) */
 

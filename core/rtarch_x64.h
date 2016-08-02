@@ -261,9 +261,6 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define adrxx_lb(lb) /* load label to Reax */                               \
-        label_ld(lb)
-
 /* and
  * set-flags: undefined (*x), yes (*z) */
 
