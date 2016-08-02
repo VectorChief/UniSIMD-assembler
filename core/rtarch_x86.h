@@ -225,20 +225,6 @@
 #define adrxx_lb(lb) /* load label to Reax */                               \
         label_ld(lb)
 
-#define stack_st(RM)                                                        \
-        EMITB(0xFF)                                                         \
-        MRM(0x06,    MOD(RM), REG(RM))
-
-#define stack_ld(RM)                                                        \
-        EMITB(0x8F)                                                         \
-        MRM(0x00,    MOD(RM), REG(RM))
-
-#define stack_sa()   /* save all [Reax - Redi], 8 regs in total */          \
-        EMITB(0x60)
-
-#define stack_la()   /* load all [Redi - Reax], 8 regs in total */          \
-        EMITB(0x61)
-
 /* and
  * set-flags: undefined (*x), yes (*z) */
 
@@ -1628,6 +1614,23 @@
         andwx_rr(Rebx, Redi)                                                \
         orrwx_rr(Resi, Rebx)                                                \
         movwx_st(Resi, Mebp, inf_VER)
+
+/* stack
+ * set-flags: no */
+
+#define stack_st(RM)                                                        \
+        EMITB(0xFF)                                                         \
+        MRM(0x06,    MOD(RM), REG(RM))
+
+#define stack_ld(RM)                                                        \
+        EMITB(0x8F)                                                         \
+        MRM(0x00,    MOD(RM), REG(RM))
+
+#define stack_sa()   /* save all [Reax - Redi], 8 regs in total */          \
+        EMITB(0x60)
+
+#define stack_la()   /* load all [Redi - Reax], 8 regs in total */          \
+        EMITB(0x61)
 
 #endif /* RT_RTARCH_X86_H */
 

@@ -318,30 +318,6 @@
 #define adrxx_lb(lb) /* load label to Reax */                               \
         label_ld(lb)
 
-#define stack_st(RM)                                                        \
-        EMITW(0xE5200004 | MRM(REG(RM), SPxx,    0x00))
-
-#define stack_ld(RM)                                                        \
-        EMITW(0xE4900004 | MRM(REG(RM), SPxx,    0x00))
-
-#if RT_SIMD_FAST_FCTRL == 0
-
-#define stack_sa()   /* save all, [Reax - Redi] + 4 temps, 11 regs total */ \
-        EMITW(0xE9200BFF | MRM(0x00,    SPxx,    0x00))
-
-#define stack_la()   /* load all, 4 temps + [Redi - Reax], 11 regs total */ \
-        EMITW(0xE8B00BFF | MRM(0x00,    SPxx,    0x00))
-
-#else /* RT_SIMD_FAST_FCTRL */
-
-#define stack_sa()   /* save all, [Reax - Redi] + 7 temps, 14 regs total */ \
-        EMITW(0xE9205FFF | MRM(0x00,    SPxx,    0x00))
-
-#define stack_la()   /* load all, 7 temps + [Redi - Reax], 14 regs total */ \
-        EMITW(0xE8B05FFF | MRM(0x00,    SPxx,    0x00))
-
-#endif /* RT_SIMD_FAST_FCTRL */
-
 /* and
  * set-flags: undefined (*x), yes (*z) */
 
@@ -1890,6 +1866,33 @@
 
 #define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
         movwx_mi(Mebp, inf_VER, IB(7)) /* <- NEON to bit0, bit1, bit2 */
+
+/* stack
+ * set-flags: no */
+
+#define stack_st(RM)                                                        \
+        EMITW(0xE5200004 | MRM(REG(RM), SPxx,    0x00))
+
+#define stack_ld(RM)                                                        \
+        EMITW(0xE4900004 | MRM(REG(RM), SPxx,    0x00))
+
+#if RT_SIMD_FAST_FCTRL == 0
+
+#define stack_sa()   /* save all, [Reax - Redi] + 4 temps, 11 regs total */ \
+        EMITW(0xE9200BFF | MRM(0x00,    SPxx,    0x00))
+
+#define stack_la()   /* load all, 4 temps + [Redi - Reax], 11 regs total */ \
+        EMITW(0xE8B00BFF | MRM(0x00,    SPxx,    0x00))
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+#define stack_sa()   /* save all, [Reax - Redi] + 7 temps, 14 regs total */ \
+        EMITW(0xE9205FFF | MRM(0x00,    SPxx,    0x00))
+
+#define stack_la()   /* load all, 7 temps + [Redi - Reax], 14 regs total */ \
+        EMITW(0xE8B05FFF | MRM(0x00,    SPxx,    0x00))
+
+#endif /* RT_SIMD_FAST_FCTRL */
 
 #endif /* RT_RTARCH_ARM_H */
 

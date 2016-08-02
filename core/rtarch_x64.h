@@ -264,50 +264,6 @@
 #define adrxx_lb(lb) /* load label to Reax */                               \
         label_ld(lb)
 
-#define stack_st(RM)                                                        \
-        REX(0,       RXB(RM)) EMITB(0xFF)                                   \
-        MRM(0x06,    MOD(RM), REG(RM))
-
-#define stack_ld(RM)                                                        \
-        REX(0,       RXB(RM)) EMITB(0x8F)                                   \
-        MRM(0x00,    MOD(RM), REG(RM))
-
-#define stack_sa()   /* save all [Reax - RegF], 15 regs in total */         \
-        stack_st(Reax)                                                      \
-        stack_st(Recx)                                                      \
-        stack_st(Redx)                                                      \
-        stack_st(Rebx)                                                      \
-        stack_st(Rebp)                                                      \
-        stack_st(Resi)                                                      \
-        stack_st(Redi)                                                      \
-        stack_st(Reg8)                                                      \
-        stack_st(Reg9)                                                      \
-        stack_st(RegA)                                                      \
-        stack_st(RegB)                                                      \
-        stack_st(RegC)                                                      \
-        stack_st(RegD)                                                      \
-        stack_st(RegE)                                                      \
-        REX(0,             1) EMITB(0xFF)     /* <- save r15 or [RegF] */   \
-        MRM(0x06,       0x03, 0x07)
-
-#define stack_la()   /* load all [RegF - Reax], 15 regs in total */         \
-        REX(0,             1) EMITB(0x8F)     /* <- load r15 or [RegF] */   \
-        MRM(0x00,       0x03, 0x07)                                         \
-        stack_ld(RegE)                                                      \
-        stack_ld(RegD)                                                      \
-        stack_ld(RegC)                                                      \
-        stack_ld(RegB)                                                      \
-        stack_ld(RegA)                                                      \
-        stack_ld(Reg9)                                                      \
-        stack_ld(Reg8)                                                      \
-        stack_ld(Redi)                                                      \
-        stack_ld(Resi)                                                      \
-        stack_ld(Rebp)                                                      \
-        stack_ld(Rebx)                                                      \
-        stack_ld(Redx)                                                      \
-        stack_ld(Recx)                                                      \
-        stack_ld(Reax)
-
 /* and
  * set-flags: undefined (*x), yes (*z) */
 
@@ -1925,6 +1881,53 @@
         andwx_rr(Rebx, Redi)                                                \
         orrwx_rr(Resi, Rebx)                                                \
         movwx_st(Resi, Mebp, inf_VER)
+
+/* stack
+ * set-flags: no */
+
+#define stack_st(RM)                                                        \
+        REX(0,       RXB(RM)) EMITB(0xFF)                                   \
+        MRM(0x06,    MOD(RM), REG(RM))
+
+#define stack_ld(RM)                                                        \
+        REX(0,       RXB(RM)) EMITB(0x8F)                                   \
+        MRM(0x00,    MOD(RM), REG(RM))
+
+#define stack_sa()   /* save all [Reax - RegF], 15 regs in total */         \
+        stack_st(Reax)                                                      \
+        stack_st(Recx)                                                      \
+        stack_st(Redx)                                                      \
+        stack_st(Rebx)                                                      \
+        stack_st(Rebp)                                                      \
+        stack_st(Resi)                                                      \
+        stack_st(Redi)                                                      \
+        stack_st(Reg8)                                                      \
+        stack_st(Reg9)                                                      \
+        stack_st(RegA)                                                      \
+        stack_st(RegB)                                                      \
+        stack_st(RegC)                                                      \
+        stack_st(RegD)                                                      \
+        stack_st(RegE)                                                      \
+        REX(0,             1) EMITB(0xFF)     /* <- save r15 or [RegF] */   \
+        MRM(0x06,       0x03, 0x07)
+
+#define stack_la()   /* load all [RegF - Reax], 15 regs in total */         \
+        REX(0,             1) EMITB(0x8F)     /* <- load r15 or [RegF] */   \
+        MRM(0x00,       0x03, 0x07)                                         \
+        stack_ld(RegE)                                                      \
+        stack_ld(RegD)                                                      \
+        stack_ld(RegC)                                                      \
+        stack_ld(RegB)                                                      \
+        stack_ld(RegA)                                                      \
+        stack_ld(Reg9)                                                      \
+        stack_ld(Reg8)                                                      \
+        stack_ld(Redi)                                                      \
+        stack_ld(Resi)                                                      \
+        stack_ld(Rebp)                                                      \
+        stack_ld(Rebx)                                                      \
+        stack_ld(Redx)                                                      \
+        stack_ld(Recx)                                                      \
+        stack_ld(Reax)
 
 #endif /* RT_RTARCH_X64_H */
 
