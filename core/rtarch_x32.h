@@ -59,7 +59,7 @@
  * cmd*p_** - applies [cmd] to   signed integer args, [p] - part-range
  *
  * cmd*z_** - applies [cmd] while setting condition flags, [z] - zero flag.
- * Regular cmd*x_** instructions may or may not set flags depending
+ * Regular cmd*x_**, cmd*n_** instructions may or may not set flags depending
  * on the target architecture, thus no assumptions can be made for jezxx/jnzxx.
  *
  * The cmdw*_** and cmdx*_** subsets are not easily compatible on all targets,
