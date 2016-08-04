@@ -75,8 +75,6 @@
 #define MPM(reg, brm, vdp, bxx, pxx)                                        \
         (pxx(vdp) | bxx(brm) << 11 | (reg) << 6)
 
-#define ADR (0xC*(A-1))
-
 /* selectors  */
 
 #define  B2(val, tp1, tp2)  B2##tp2

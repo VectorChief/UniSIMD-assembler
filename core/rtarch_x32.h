@@ -99,17 +99,6 @@
 
 /* structural */
 
-#if defined (RT_X32)
-
-#define ADR                                                                 \
-        EMITB(0x67)
-
-#elif defined (RT_X64)
-
-#define ADR
-
-#endif /* defined (RT_X32, RT_X64) */
-
 #define REX(rxg, rxm)                                                       \
         EMITB(0x40 | (rxg) << 2 | (rxm))
 
@@ -120,6 +109,17 @@
         EMITB((mod) << 6 | (reg) << 3 | (rem))
 
 #define AUX(sib, cdp, cim)  sib  cdp  cim
+
+#if   defined (RT_X32)
+
+#define ADR                                                                 \
+        EMITB(0x67)
+
+#elif defined (RT_X64)
+
+#define ADR
+
+#endif /* defined (RT_X32, RT_X64) */
 
 /* selectors  */
 

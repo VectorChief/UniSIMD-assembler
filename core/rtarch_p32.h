@@ -1445,6 +1445,9 @@
 #define CWR(cc, r1, r2, lb)                                                 \
         RW##cc(r1, r2, lb)
 
+
+#if RT_ADDRESS == 32
+
 /* cmp
  * set-flags: yes */
 
@@ -1555,7 +1558,7 @@
  * set-flags: no
  * always adjust stack pointer with 8-byte (64-bit) steps */
 
-#if   defined (RT_P32)
+#if defined (RT_P32)
 
 #define stack_st(RM)                                                        \
         EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x08 & 0xFFFF))  \
@@ -1667,7 +1670,12 @@
 
 #endif /* RT_SIMD_COMPAT_DIV != 0 || RT_SIMD_COMPAT_SQR != 0 */
 
-#elif defined (RT_P64)
+#endif  /* defined (RT_P32) */
+
+#endif /* RT_ADDRESS */
+
+
+#if defined (RT_P64)
 
 #define stack_st(RM)                                                        \
         EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x08 & 0xFFFF))  \
@@ -1779,7 +1787,7 @@
 
 #endif /* RT_SIMD_COMPAT_DIV != 0 || RT_SIMD_COMPAT_SQR != 0 */
 
-#endif /* defined (RT_P32, RT_P64) */
+#endif /* defined (RT_P64) */
 
 /* ver
  * set-flags: no */

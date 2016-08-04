@@ -91,7 +91,7 @@
                              (0xFFF0 & (dp)) << 5)                          \
                     EMITW(0x72A00000 | MXM(TDxx,    0x00,    0x00) |        \
                              (0x7FFF & (dp) >> 16) << 5)                    \
-                    EMITW(0x8B000000 | MXM(TPxx,    (br),    TDxx))
+                    EMITW(0x0B000000 | MXM(TPxx,    (br),    TDxx) | ADR)
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
