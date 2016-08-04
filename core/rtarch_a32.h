@@ -1144,6 +1144,8 @@
         EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x6B000000 | MRM(TZxx,    TMxx,    REG(RG)))
 
+/***************** pointer-sized instructions for hybrid mode *****************/
+
 /* jmp
  * set-flags: no
  * maximum byte-address-range for un/conditional jumps is signed 18/16-bit

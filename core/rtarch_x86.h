@@ -1005,6 +1005,8 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
+/***************** pointer-sized instructions for 32-bit mode *****************/
+
 /* jmp
  * set-flags: no
  * maximum byte-address-range for un/conditional jumps is signed 18/16-bit

@@ -1597,6 +1597,8 @@
 /* pre-r6 */
 #if (defined (RT_M32) && RT_M32 < 6) || (defined (RT_M64) && RT_M64 < 6)
 
+/***************** pointer-sized instructions for hybrid mode *****************/
+
 /* jmp
  * set-flags: no
  * maximum byte-address-range for un/conditional jumps is signed 18/16-bit

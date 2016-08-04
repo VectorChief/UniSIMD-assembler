@@ -1241,6 +1241,8 @@
         EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0xE1500000 | MRM(0x00,    TMxx,    REG(RG)))
 
+/***************** pointer-sized instructions for 32-bit mode *****************/
+
 /* jmp
  * set-flags: no
  * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
