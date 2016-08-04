@@ -321,7 +321,7 @@
 
 #define adrxx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C3(DP), EMPTY2)   \
-        EMITW(0x0B000000 | MRM(REG(RG), MOD(RM), TDxx))
+        EMITW(0x0B000000 | MRM(REG(RG), MOD(RM), TDxx) | ADR)
 
 /* and
  * set-flags: undefined (*x), yes (*z) */

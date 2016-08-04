@@ -134,12 +134,6 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-
-#define adrxx_ld(RG, RM, DP)                                                \
-    ADR REW(RXB(RG), RXB(RM)) EMITB(0x8D)                                   \
-        MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
-
 /* and
  * set-flags: undefined (*x), yes (*z) */
 

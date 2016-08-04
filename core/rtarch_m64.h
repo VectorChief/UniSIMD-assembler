@@ -127,11 +127,6 @@
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xFC000000 | MDM(REG(RG), MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
-
-#define adrxx_ld(RG, RM, DP)                                                \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C3(DP), EMPTY2)   \
-        EMITW(0x0000002D | MRM(REG(RG), MOD(RM), TDxx))
-
 /* and
  * set-flags: undefined (*x), yes (*z) */
 
