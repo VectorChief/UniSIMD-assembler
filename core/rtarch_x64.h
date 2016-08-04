@@ -1843,7 +1843,8 @@
         ASM_BEG ASM_OP0(lb:) ASM_END
 
 /* stack
- * set-flags: no */
+ * set-flags: no
+ * always adjust stack pointer with 8-byte (64-bit) steps */
 
 #define stack_st(RM)                                                        \
         REX(0,       RXB(RM)) EMITB(0xFF)                                   \
@@ -1890,8 +1891,7 @@
         stack_ld(Reax)
 
 /* ver
- * set-flags: no
- * always adjust stack pointer with 8-byte (64-bit) steps */
+ * set-flags: no */
 
 #define cpuid_xx() /* destroys Reax, Recx, Rebx, Redx, reads Reax, Recx */  \
         EMITB(0x0F) EMITB(0xA2)     /* not portable, do not use outside */

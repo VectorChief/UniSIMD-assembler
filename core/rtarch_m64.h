@@ -2261,123 +2261,8 @@
         EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         CMR(cc, $t8,     MOD(RG), lb)
 
-/* cmp
- * set-flags: yes */
-
-#define cmpwx_ri(RM, IM)                                                    \
-        AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
-        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))
-
-#define cmpwx_mi(RM, DP, IM)                                                \
-        AUW(SIB(RM),  VAL(IM), TRxx,    MOD(RM), VAL(DP), C1(DP), G3(IM))   \
-        EMITW(0x8C000000 | MDM(TLxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
-
-#define cmpwx_rr(RG, RM)                                                    \
-        EMITW(0x00000025 | MRM(TRxx,    REG(RM), TZxx))                     \
-        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))
-
-#define cmpwx_rm(RG, RM, DP)                                                \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0x8C000000 | MDM(TRxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))
-
-#define cmpwx_mr(RM, DP, RG)                                                \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0x8C000000 | MDM(TLxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000025 | MRM(TRxx,    REG(RG), TZxx))
-
-
-#define cmpxx_ri(RM, IM)                                                    \
-        AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
-        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))
-
-#define cmpxx_mi(RM, DP, IM)                                                \
-        AUW(SIB(RM),  VAL(IM), TRxx,    MOD(RM), VAL(DP), C1(DP), G3(IM))   \
-        EMITW(0xDC000000 | MDM(TLxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
-
-#define cmpxx_rr(RG, RM)                                                    \
-        EMITW(0x00000025 | MRM(TRxx,    REG(RM), TZxx))                     \
-        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))
-
-#define cmpxx_rm(RG, RM, DP)                                                \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0xDC000000 | MDM(TRxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))
-
-#define cmpxx_mr(RM, DP, RG)                                                \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0xDC000000 | MDM(TLxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000025 | MRM(TRxx,    REG(RG), TZxx))
-
 /* pre-r6 */
-#if defined (RT_M64) && RT_M64 < 6
-
-/* jmp
- * set-flags: no
- * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
- * based on minimum natively-encoded offset across supported targets (u/c)
- * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
- * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
-
-#define jmpxx_xr(RM)           /* register-targeted unconditional jump */   \
-        EMITW(0x00000008 | MRM(0x00,    REG(RM), 0x00))                     \
-        EMITW(0x00000025 | MRM(TPxx,    TPxx,    TZxx)) /* <- branch delay */
-
-#define jmpxx_xm(RM, DP)         /* memory-targeted unconditional jump */   \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000008 | MRM(0x00,    TMxx,    0x00))                     \
-        EMITW(0x00000025 | MRM(TPxx,    TPxx,    TZxx)) /* <- branch delay */
-
-#define jmpxx_lb(lb)              /* label-targeted unconditional jump */   \
-        ASM_BEG ASM_OP1(b, lb) ASM_END
-
-#define jezxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
-        ASM_BEG ASM_OP2(beqz, $t8, lb) ASM_END
-
-#define jnzxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
-        ASM_BEG ASM_OP2(bnez, $t8, lb) ASM_END
-
-#define jeqxx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(beq,  $t8, $t9, lb) ASM_END
-
-#define jnexx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(bne,  $t8, $t9, lb) ASM_END
-
-#define jltxx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(sltu, $t8, $t8, $t9) ASM_END                        \
-        ASM_BEG ASM_OP2(bnez, $t8, lb) ASM_END
-
-#define jlexx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(sltu, $t8, $t9, $t8) ASM_END                        \
-        ASM_BEG ASM_OP2(beqz, $t8, lb) ASM_END
-
-#define jgtxx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(sltu, $t8, $t9, $t8) ASM_END                        \
-        ASM_BEG ASM_OP2(bnez, $t8, lb) ASM_END
-
-#define jgexx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(sltu, $t8, $t8, $t9) ASM_END                        \
-        ASM_BEG ASM_OP2(beqz, $t8, lb) ASM_END
-
-#define jltxn_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(slt,  $t8, $t8, $t9) ASM_END                        \
-        ASM_BEG ASM_OP2(bnez, $t8, lb) ASM_END
-
-#define jlexn_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(slt,  $t8, $t9, $t8) ASM_END                        \
-        ASM_BEG ASM_OP2(beqz, $t8, lb) ASM_END
-
-#define jgtxn_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(slt,  $t8, $t9, $t8) ASM_END                        \
-        ASM_BEG ASM_OP2(bnez, $t8, lb) ASM_END
-
-#define jgexn_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(slt,  $t8, $t8, $t9) ASM_END                        \
-        ASM_BEG ASM_OP2(beqz, $t8, lb) ASM_END
-
-#define LBL(lb)                                          /* code label */   \
-        ASM_BEG ASM_OP0(lb:) ASM_END
+#if (defined (RT_M32) && RT_M32 < 6) || (defined (RT_M64) && RT_M64 < 6)
 
 /* internal definitions for combined-compare-jump (cmj) */
 
@@ -2417,11 +2302,11 @@
 
 #define IJ0(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
-        ASM_BEG ASM_OP3(beq,  r1, $t9, lb) ASM_END
+        ASM_BEG ASM_OP3(beq, r1, $t9, lb) ASM_END
 
 #define IJ1(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
-        ASM_BEG ASM_OP3(bne,  r1, $t9, lb) ASM_END
+        ASM_BEG ASM_OP3(bne, r1, $t9, lb) ASM_END
 
 #define IJ2(r1, p1, IM, lb)                                                 \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
@@ -2513,65 +2398,6 @@
         R##cc(r1, r2, lb)
 
 #else  /* r6 */
-
-/* jmp
- * set-flags: no
- * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
- * based on minimum natively-encoded offset across supported targets (u/c)
- * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
- * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
-
-#define jmpxx_xr(RM)           /* register-targeted unconditional jump */   \
-        EMITW(0x00000009 | MRM(0x00,    REG(RM), 0x00))                     \
-        EMITW(0x00000025 | MRM(TPxx,    TPxx,    TZxx)) /* <- branch delay */
-
-#define jmpxx_xm(RM, DP)         /* memory-targeted unconditional jump */   \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000009 | MRM(0x00,    TMxx,    0x00))                     \
-        EMITW(0x00000025 | MRM(TPxx,    TPxx,    TZxx)) /* <- branch delay */
-
-#define jmpxx_lb(lb)              /* label-targeted unconditional jump */   \
-        ASM_BEG ASM_OP1(b, lb) ASM_END
-
-#define jezxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
-        ASM_BEG ASM_OP2(beqzc, $t8, lb) ASM_END
-
-#define jnzxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
-        ASM_BEG ASM_OP2(bnezc, $t8, lb) ASM_END
-
-#define jeqxx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(beqc,  $t8, $t9, lb) ASM_END
-
-#define jnexx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(bnec,  $t8, $t9, lb) ASM_END
-
-#define jltxx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(bltuc, $t8, $t9, lb) ASM_END
-
-#define jlexx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(bgeuc, $t9, $t8, lb) ASM_END
-
-#define jgtxx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(bltuc, $t9, $t8, lb) ASM_END
-
-#define jgexx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(bgeuc, $t8, $t9, lb) ASM_END
-
-#define jltxn_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(bltc,  $t8, $t9, lb) ASM_END
-
-#define jlexn_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(bgec,  $t9, $t8, lb) ASM_END
-
-#define jgtxn_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(bltc,  $t9, $t8, lb) ASM_END
-
-#define jgexn_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP3(bgec,  $t8, $t9, lb) ASM_END
-
-#define LBL(lb)                                          /* code label */   \
-        ASM_BEG ASM_OP0(lb:) ASM_END
 
 /* internal definitions for combined-compare-jump (cmj) */
 
@@ -2685,6 +2511,211 @@
 
 #define CMR(cc, r1, r2, lb)                                                 \
         R##cc(r1, r2, lb)
+
+#endif /* r6 */
+
+/* cmp
+ * set-flags: yes */
+
+#define cmpwx_ri(RM, IM)                                                    \
+        AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))
+
+#define cmpwx_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TRxx,    MOD(RM), VAL(DP), C1(DP), G3(IM))   \
+        EMITW(0x8C000000 | MDM(TLxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define cmpwx_rr(RG, RM)                                                    \
+        EMITW(0x00000025 | MRM(TRxx,    REG(RM), TZxx))                     \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))
+
+#define cmpwx_rm(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TRxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))
+
+#define cmpwx_mr(RM, DP, RG)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TLxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000025 | MRM(TRxx,    REG(RG), TZxx))
+
+
+#define cmpxx_ri(RM, IM)                                                    \
+        AUW(EMPTY,    VAL(IM), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RM), TZxx))
+
+#define cmpxx_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TRxx,    MOD(RM), VAL(DP), C1(DP), G3(IM))   \
+        EMITW(0xDC000000 | MDM(TLxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define cmpxx_rr(RG, RM)                                                    \
+        EMITW(0x00000025 | MRM(TRxx,    REG(RM), TZxx))                     \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))
+
+#define cmpxx_rm(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TRxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))
+
+#define cmpxx_mr(RM, DP, RG)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TLxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000025 | MRM(TRxx,    REG(RG), TZxx))
+
+/* pre-r6 */
+#if (defined (RT_M32) && RT_M32 < 6) || (defined (RT_M64) && RT_M64 < 6)
+
+/* jmp
+ * set-flags: no
+ * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
+ * based on minimum natively-encoded offset across supported targets (u/c)
+ * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
+ * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
+
+#define jmpxx_xr(RM)           /* register-targeted unconditional jump */   \
+        EMITW(0x00000008 | MRM(0x00,    REG(RM), 0x00))                     \
+        EMITW(0x00000025 | MRM(TPxx,    TPxx,    TZxx)) /* <- branch delay */
+
+#if   defined (RT_M32)
+
+#define jmpxx_xm(RM, DP)         /* memory-targeted unconditional jump */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000008 | MRM(0x00,    TMxx,    0x00))                     \
+        EMITW(0x00000025 | MRM(TPxx,    TPxx,    TZxx)) /* <- branch delay */
+
+#elif defined (RT_M64)
+
+#define jmpxx_xm(RM, DP)         /* memory-targeted unconditional jump */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000008 | MRM(0x00,    TMxx,    0x00))                     \
+        EMITW(0x00000025 | MRM(TPxx,    TPxx,    TZxx)) /* <- branch delay */
+
+#endif /* defined (RT_M32, RT_M64) */
+
+#define jmpxx_lb(lb)              /* label-targeted unconditional jump */   \
+        ASM_BEG ASM_OP1(b, lb) ASM_END
+
+#define jezxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
+        ASM_BEG ASM_OP2(beqz, $t8, lb) ASM_END
+
+#define jnzxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
+        ASM_BEG ASM_OP2(bnez, $t8, lb) ASM_END
+
+#define jeqxx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(beq,  $t8, $t9, lb) ASM_END
+
+#define jnexx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(bne,  $t8, $t9, lb) ASM_END
+
+#define jltxx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(sltu, $t8, $t8, $t9) ASM_END                        \
+        ASM_BEG ASM_OP2(bnez, $t8, lb) ASM_END
+
+#define jlexx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(sltu, $t8, $t9, $t8) ASM_END                        \
+        ASM_BEG ASM_OP2(beqz, $t8, lb) ASM_END
+
+#define jgtxx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(sltu, $t8, $t9, $t8) ASM_END                        \
+        ASM_BEG ASM_OP2(bnez, $t8, lb) ASM_END
+
+#define jgexx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(sltu, $t8, $t8, $t9) ASM_END                        \
+        ASM_BEG ASM_OP2(beqz, $t8, lb) ASM_END
+
+#define jltxn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(slt,  $t8, $t8, $t9) ASM_END                        \
+        ASM_BEG ASM_OP2(bnez, $t8, lb) ASM_END
+
+#define jlexn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(slt,  $t8, $t9, $t8) ASM_END                        \
+        ASM_BEG ASM_OP2(beqz, $t8, lb) ASM_END
+
+#define jgtxn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(slt,  $t8, $t9, $t8) ASM_END                        \
+        ASM_BEG ASM_OP2(bnez, $t8, lb) ASM_END
+
+#define jgexn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(slt,  $t8, $t8, $t9) ASM_END                        \
+        ASM_BEG ASM_OP2(beqz, $t8, lb) ASM_END
+
+#define LBL(lb)                                          /* code label */   \
+        ASM_BEG ASM_OP0(lb:) ASM_END
+
+#else  /* r6 */
+
+/* jmp
+ * set-flags: no
+ * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
+ * based on minimum natively-encoded offset across supported targets (u/c)
+ * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
+ * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
+
+#define jmpxx_xr(RM)           /* register-targeted unconditional jump */   \
+        EMITW(0x00000009 | MRM(0x00,    REG(RM), 0x00))                     \
+        EMITW(0x00000025 | MRM(TPxx,    TPxx,    TZxx)) /* <- branch delay */
+
+#if   defined (RT_M32)
+
+#define jmpxx_xm(RM, DP)         /* memory-targeted unconditional jump */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000009 | MRM(0x00,    TMxx,    0x00))                     \
+        EMITW(0x00000025 | MRM(TPxx,    TPxx,    TZxx)) /* <- branch delay */
+
+#elif defined (RT_M64)
+
+#define jmpxx_xm(RM, DP)         /* memory-targeted unconditional jump */   \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000009 | MRM(0x00,    TMxx,    0x00))                     \
+        EMITW(0x00000025 | MRM(TPxx,    TPxx,    TZxx)) /* <- branch delay */
+
+#endif /* defined (RT_M32, RT_M64) */
+
+#define jmpxx_lb(lb)              /* label-targeted unconditional jump */   \
+        ASM_BEG ASM_OP1(b, lb) ASM_END
+
+#define jezxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
+        ASM_BEG ASM_OP2(beqzc, $t8, lb) ASM_END
+
+#define jnzxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
+        ASM_BEG ASM_OP2(bnezc, $t8, lb) ASM_END
+
+#define jeqxx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(beqc,  $t8, $t9, lb) ASM_END
+
+#define jnexx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(bnec,  $t8, $t9, lb) ASM_END
+
+#define jltxx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(bltuc, $t8, $t9, lb) ASM_END
+
+#define jlexx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(bgeuc, $t9, $t8, lb) ASM_END
+
+#define jgtxx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(bltuc, $t9, $t8, lb) ASM_END
+
+#define jgexx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(bgeuc, $t8, $t9, lb) ASM_END
+
+#define jltxn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(bltc,  $t8, $t9, lb) ASM_END
+
+#define jlexn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(bgec,  $t9, $t8, lb) ASM_END
+
+#define jgtxn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(bltc,  $t9, $t8, lb) ASM_END
+
+#define jgexn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(bgec,  $t8, $t9, lb) ASM_END
+
+#define LBL(lb)                                          /* code label */   \
+        ASM_BEG ASM_OP0(lb:) ASM_END
 
 #endif /* r6 */
 
