@@ -1297,12 +1297,6 @@
 #define LBL(lb)                                          /* code label */   \
         ASM_BEG ASM_OP0(lb:) ASM_END
 
-/* ver
- * set-flags: no */
-
-#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
-        movwx_mi(Mebp, inf_VER, IB(7)) /* <- NEON to bit0, bit1, bit2 */
-
 /* stack
  * set-flags: no */
 
@@ -1329,6 +1323,12 @@
         EMITW(0xE8B05FFF | MRM(0x00,    SPxx,    0x00))
 
 #endif /* RT_SIMD_FAST_FCTRL */
+
+/* ver
+ * set-flags: no */
+
+#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
+        movwx_mi(Mebp, inf_VER, IB(7)) /* <- NEON to bit0, bit1, bit2 */
 
 #endif /* RT_RTARCH_ARM_H */
 

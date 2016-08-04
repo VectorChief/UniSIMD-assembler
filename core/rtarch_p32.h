@@ -1551,14 +1551,9 @@
 #define CMR(cc, r1, r2, lb)                                                 \
         R##cc(r1, r2, lb)
 
-/* ver
- * set-flags: no */
-
-#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
-        movwx_mi(Mebp, inf_VER, IB(3)) /* <- VMX, VSX to bit0, bit1 */
-
 /* stack
- * set-flags: no */
+ * set-flags: no
+ * always adjust stack pointer with 8-byte (64-bit) steps */
 
 #if   defined (RT_P32)
 
@@ -1785,6 +1780,12 @@
 #endif /* RT_SIMD_COMPAT_DIV != 0 || RT_SIMD_COMPAT_SQR != 0 */
 
 #endif /* defined (RT_P32, RT_P64) */
+
+/* ver
+ * set-flags: no */
+
+#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
+        movwx_mi(Mebp, inf_VER, IB(3)) /* <- VMX, VSX to bit0, bit1 */
 
 #endif /* RT_RTARCH_P32_H */
 

@@ -1842,43 +1842,6 @@
 #define LBL(lb)                                          /* code label */   \
         ASM_BEG ASM_OP0(lb:) ASM_END
 
-/* ver
- * set-flags: no */
-
-#define cpuid_xx() /* destroys Reax, Recx, Rebx, Redx, reads Reax, Recx */  \
-        EMITB(0x0F) EMITB(0xA2)     /* not portable, do not use outside */
-
-#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
-        /* request cpuid:eax=1 */                                           \
-        movwx_ri(Reax, IB(1))                                               \
-        cpuid_xx()                                                          \
-        shrwx_ri(Redx, IB(25))  /* <- SSE1, SSE2 to bit0, bit1 */           \
-        andwx_ri(Redx, IB(0x03))                                            \
-        movwx_rr(Resi, Redx)                                                \
-        movwx_rr(Redx, Recx)                                                \
-        shrwx_ri(Redx, IB(17))  /* <- SSE4 to bit2 */                       \
-        andwx_ri(Redx, IB(0x04))                                            \
-        shrwx_ri(Recx, IB(20))  /* <- AVX1 to bit8 */                       \
-        andwx_ri(Recx, IH(0x0100))                                          \
-        orrwx_rr(Resi, Redx)                                                \
-        orrwx_rr(Resi, Recx)                                                \
-        /* request cpuid:eax=0 to test input value eax=7 */                 \
-        movwx_ri(Reax, IB(0))                                               \
-        cpuid_xx()                                                          \
-        subwx_ri(Reax, IB(7))                                               \
-        shrwn_ri(Reax, IB(31))                                              \
-        movwx_rr(Redi, Reax)                                                \
-        notwx_rx(Redi)                                                      \
-        /* request cpuid:eax=7:ecx=0 */                                     \
-        movwx_ri(Reax, IB(7))                                               \
-        movwx_ri(Recx, IB(0))                                               \
-        cpuid_xx()                                                          \
-        shlwx_ri(Rebx, IB(4))   /* <- AVX2 to bit9 */                       \
-        andwx_ri(Rebx, IH(0x0200))                                          \
-        andwx_rr(Rebx, Redi)                                                \
-        orrwx_rr(Resi, Rebx)                                                \
-        movwx_st(Resi, Mebp, inf_VER)
-
 /* stack
  * set-flags: no */
 
@@ -1925,6 +1888,44 @@
         stack_ld(Redx)                                                      \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)
+
+/* ver
+ * set-flags: no
+ * always adjust stack pointer with 8-byte (64-bit) steps */
+
+#define cpuid_xx() /* destroys Reax, Recx, Rebx, Redx, reads Reax, Recx */  \
+        EMITB(0x0F) EMITB(0xA2)     /* not portable, do not use outside */
+
+#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
+        /* request cpuid:eax=1 */                                           \
+        movwx_ri(Reax, IB(1))                                               \
+        cpuid_xx()                                                          \
+        shrwx_ri(Redx, IB(25))  /* <- SSE1, SSE2 to bit0, bit1 */           \
+        andwx_ri(Redx, IB(0x03))                                            \
+        movwx_rr(Resi, Redx)                                                \
+        movwx_rr(Redx, Recx)                                                \
+        shrwx_ri(Redx, IB(17))  /* <- SSE4 to bit2 */                       \
+        andwx_ri(Redx, IB(0x04))                                            \
+        shrwx_ri(Recx, IB(20))  /* <- AVX1 to bit8 */                       \
+        andwx_ri(Recx, IH(0x0100))                                          \
+        orrwx_rr(Resi, Redx)                                                \
+        orrwx_rr(Resi, Recx)                                                \
+        /* request cpuid:eax=0 to test input value eax=7 */                 \
+        movwx_ri(Reax, IB(0))                                               \
+        cpuid_xx()                                                          \
+        subwx_ri(Reax, IB(7))                                               \
+        shrwn_ri(Reax, IB(31))                                              \
+        movwx_rr(Redi, Reax)                                                \
+        notwx_rx(Redi)                                                      \
+        /* request cpuid:eax=7:ecx=0 */                                     \
+        movwx_ri(Reax, IB(7))                                               \
+        movwx_ri(Recx, IB(0))                                               \
+        cpuid_xx()                                                          \
+        shlwx_ri(Rebx, IB(4))   /* <- AVX2 to bit9 */                       \
+        andwx_ri(Rebx, IH(0x0200))                                          \
+        andwx_rr(Rebx, Redi)                                                \
+        orrwx_rr(Resi, Rebx)                                                \
+        movwx_st(Resi, Mebp, inf_VER)
 
 #endif /* RT_RTARCH_X64_H */
 

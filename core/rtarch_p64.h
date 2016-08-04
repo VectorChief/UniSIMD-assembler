@@ -2281,14 +2281,9 @@
 #define CXR(cc, r1, r2, lb)                                                 \
         RX##cc(r1, r2, lb)
 
-/* ver
- * set-flags: no */
-
-#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
-        movwx_mi(Mebp, inf_VER, IB(3)) /* <- VMX, VSX to bit0, bit1 */
-
 /* stack
- * set-flags: no */
+ * set-flags: no
+ * always adjust stack pointer with 8-byte (64-bit) steps */
 
 #define stack_st(RM)                                                        \
         EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x08 & 0xFFFF))  \
@@ -2399,6 +2394,12 @@
         EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0xA0 & 0xFFFF))
 
 #endif /* RT_SIMD_COMPAT_DIV != 0 || RT_SIMD_COMPAT_SQR != 0 */
+
+/* ver
+ * set-flags: no */
+
+#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
+        movwx_mi(Mebp, inf_VER, IB(3)) /* <- VMX, VSX to bit0, bit1 */
 
 #endif /* RT_RTARCH_P64_H */
 

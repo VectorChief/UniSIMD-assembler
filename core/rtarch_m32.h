@@ -1742,14 +1742,9 @@
 
 #endif /* r6 */
 
-/* ver
- * set-flags: no */
-
-#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
-        movwx_mi(Mebp, inf_VER, IB(1)) /* <- MSA to bit0 */
-
 /* stack
- * set-flags: no */
+ * set-flags: no
+ * always adjust stack pointer with 8-byte (64-bit) steps */
 
 #if   defined (RT_M32)
 
@@ -1964,6 +1959,12 @@
 #endif /* RT_SIMD_FAST_FCTRL */
 
 #endif /* defined (RT_M32, RT_M64) */
+
+/* ver
+ * set-flags: no */
+
+#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
+        movwx_mi(Mebp, inf_VER, IB(1)) /* <- MSA to bit0 */
 
 #endif /* RT_RTARCH_M32_H */
 

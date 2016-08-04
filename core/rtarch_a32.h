@@ -1210,14 +1210,9 @@
 #define LBL(lb)                                          /* code label */   \
         ASM_BEG ASM_OP0(lb:) ASM_END
 
-/* ver
- * set-flags: no */
-
-#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
-        movwx_mi(Mebp, inf_VER, IB(1)) /* <- NEON to bit0 */
-
 /* stack
- * set-flags: no */
+ * set-flags: no
+ * always adjust stack pointer with 8-byte (64-bit) steps */
 
 #define stack_st(RM)                                                        \
         EMITW(0xF81F8C00 | MRM(REG(RM), SPxx,    0x00))
@@ -1278,6 +1273,12 @@
         EMITW(0xA8C10000 | MRM(Teax,    SPxx,    0x00) | Tecx << 10)
 
 #endif /* RT_SIMD_FAST_FCTRL */
+
+/* ver
+ * set-flags: no */
+
+#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
+        movwx_mi(Mebp, inf_VER, IB(1)) /* <- NEON to bit0 */
 
 #endif /* RT_RTARCH_A32_H */
 

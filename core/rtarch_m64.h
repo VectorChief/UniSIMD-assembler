@@ -2688,14 +2688,9 @@
 
 #endif /* r6 */
 
-/* ver
- * set-flags: no */
-
-#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
-        movwx_mi(Mebp, inf_VER, IB(1)) /* <- MSA to bit0 */
-
 /* stack
- * set-flags: no */
+ * set-flags: no
+ * always adjust stack pointer with 8-byte (64-bit) steps */
 
 #define stack_st(RM)                                                        \
         EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (-0x08 & 0xFFFF))  \
@@ -2800,6 +2795,12 @@
         EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (+0xA8 & 0xFFFF))
 
 #endif /* RT_SIMD_FAST_FCTRL */
+
+/* ver
+ * set-flags: no */
+
+#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
+        movwx_mi(Mebp, inf_VER, IB(1)) /* <- MSA to bit0 */
 
 #endif /* RT_RTARCH_M64_H */
 
