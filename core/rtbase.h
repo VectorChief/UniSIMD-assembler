@@ -276,7 +276,7 @@ struct rt_SIMD_INFO
 #define inf_SCR02(nx)       DP(Q*0x070 + nx)
 
     rt_ui64 regs[S/2];      /* SIMD reg-file storage */
-#define inf_REGS            DP(Q*0x080+E)
+#define inf_REGS            DP(Q*0x080+C)
 
     rt_real pad02[S*7];     /* reserved, do not use! */
 #define inf_PAD02           DP(Q*0x090)
