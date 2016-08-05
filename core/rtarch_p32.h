@@ -477,15 +477,15 @@
 
 #if RT_BASE_COMPAT_ZFL == 0 
 
-#define orrwx_rr(RG, RM)                                                    \
+#define orrwz_rr(RG, RM)                                                    \
         EMITW(0x7C000379 | MSM(REG(RG), REG(RG), REG(RM)))
 
-#define orrwx_ld(RG, RM, DP)                                                \
+#define orrwz_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C000379 | MSM(REG(RG), REG(RG), TMxx))
 
-#define orrwx_st(RG, RM, DP)                                                \
+#define orrwz_st(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C000379 | MSM(TMxx,    TMxx,    REG(RG)))                  \
@@ -560,15 +560,15 @@
 
 #if RT_BASE_COMPAT_ZFL == 0 
 
-#define xorwx_rr(RG, RM)                                                    \
+#define xorwz_rr(RG, RM)                                                    \
         EMITW(0x7C000279 | MSM(REG(RG), REG(RG), REG(RM)))
 
-#define xorwx_ld(RG, RM, DP)                                                \
+#define xorwz_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C000279 | MSM(REG(RG), REG(RG), TMxx))
 
-#define xorwx_st(RG, RM, DP)                                                \
+#define xorwz_st(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C000279 | MSM(TMxx,    TMxx,    REG(RG)))                  \
