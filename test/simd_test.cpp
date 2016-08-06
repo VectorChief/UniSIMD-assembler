@@ -2675,7 +2675,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     sys_free(info, sizeof(rt_SIMD_INFOX) + MASK);
     sys_free(marr, 10 * ARR_SIZE * sizeof(rt_ui32) + MASK);
 
-#if   defined (RT_WIN32) /* Win32, MSVC ------------------------------------- */
+#if defined (RT_WIN32) || defined (RT_WIN64) /* Win32, MSVC -- Win64, GCC --- */
 
     RT_LOGI("Type any letter and press ENTER to exit:");
     rt_char str[80];
@@ -2704,7 +2704,24 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 #undef F /* short name for RT_ENDIAN*(A-1)*4 */
 #undef G /* short name for RT_ENDIAN*(P-2)*4 */
 
-#if   defined (RT_WIN32) /* Win32, MSVC ------------------------------------- */
+#undef Xmm0 /* external name for SIMD register */
+#undef Xmm1 /* external name for SIMD register */
+#undef Xmm2 /* external name for SIMD register */
+#undef Xmm3 /* external name for SIMD register */
+#undef Xmm4 /* external name for SIMD register */
+#undef Xmm5 /* external name for SIMD register */
+#undef Xmm6 /* external name for SIMD register */
+#undef Xmm7 /* external name for SIMD register */
+#undef Xmm8 /* external name for SIMD register */
+#undef Xmm9 /* external name for SIMD register */
+#undef XmmA /* external name for SIMD register */
+#undef XmmB /* external name for SIMD register */
+#undef XmmC /* external name for SIMD register */
+#undef XmmD /* external name for SIMD register */
+#undef XmmE /* external name for SIMD register */
+#undef XmmF /* external name for SIMD register */
+
+#if defined (RT_WIN32) || defined (RT_WIN64) /* Win32, MSVC -- Win64, GCC --- */
 
 #include <windows.h>
 
