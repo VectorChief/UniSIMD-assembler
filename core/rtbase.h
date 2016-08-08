@@ -255,14 +255,11 @@ struct rt_SIMD_INFO
 {
     /* internal variables */
 
-    rt_ui32 scr00;          /* scratchpad 00 */
+    rt_ui64 scr00;          /* scratchpad 00 */
 #define inf_SCR00           DP(0x000)
 
     rt_ui32 ver;            /* SIMD version <- cpuid */
-#define inf_VER             DP(0x004)
-
-    rt_ui32 pad01;          /* reserved, do not use! */
-#define inf_PAD01           DP(0x008)
+#define inf_VER             DP(0x008)
 
     rt_ui32 fctrl[S-3];     /* reserved, do not use! */
 #define inf_FCTRL(nx)       DP(0x00C + nx)
