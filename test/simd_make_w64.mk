@@ -11,7 +11,7 @@ LIB_LIST =                              \
         -lm
 
 simd_test:
-	g++ -O3 -g -static \
+	g++ -O3 -g -static -m64 \
         -DRT_WIN64 -DRT_X64 -DRT_128=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test_w64f32.exe
@@ -32,3 +32,7 @@ simd_test:
 # For SSE4 build use (replace): RT_128=4
 # For AVX1 build use (replace): RT_256=1
 # For AVX2 build use (replace): RT_256=2
+
+# Experimental 64/32-bit hybrid mode compatible with native 64-bit ABI
+# is available for the original pure 32-bit ISA using 64-bit pointers,
+# use (replace): RT_ADDRESS=32, rename the binary to simd_test_w64_32.exe

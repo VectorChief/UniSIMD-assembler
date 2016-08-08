@@ -2721,6 +2721,24 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 #undef XmmE /* external name for SIMD register */
 #undef XmmF /* external name for SIMD register */
 
+
+#if RT_POINTER == 64
+
+#if RT_ADDRESS == 32
+
+static
+rt_byte *s_ptr = (rt_byte *)0x0000000040000000;
+
+#else /* RT_ADDRESS == 64 */
+
+static
+rt_byte *s_ptr = (rt_byte *)0x0000000140000000;
+
+#endif /* RT_ADDRESS */
+
+#endif /* RT_POINTER */
+
+
 #if defined (RT_WIN32) || defined (RT_WIN64) /* Win32, MSVC -- Win64, GCC --- */
 
 #include <windows.h>
@@ -2737,16 +2755,65 @@ rt_time get_time()
     return (rt_time)(tm.QuadPart * 1000 / fr.QuadPart);
 }
 
+static
+DWORD s_step = 0;
+
+static
+SYSTEM_INFO s_sys = {0};
+
 /*
  * Allocate memory from system heap.
+ * Not thread-safe due to common static ptr.
  */
 rt_pntr sys_alloc(rt_size size)
 {
-    /* use VirtualAlloc/VirtualFree to limit address range to 32-bit
-     * in order to support 64/32-bit hybrid mode (pointer/address) */
-    /* compilation in 64-bit mode requires g++/clang-based toolchain
-     * for proper inline assembly support (hasn't been tested yet) */
-    return malloc(size);
+#if RT_POINTER == 64
+
+#if RT_ADDRESS == 32
+
+    /* loop around 2GB boundary for 32-bit */
+    if (s_ptr >= (rt_byte *)0x0000000080000000 - size)
+    {
+        s_ptr  = (rt_byte *)0x0000000040000000;
+    }
+
+#endif /* RT_ADDRESS */
+
+    if (s_step == 0)
+    {
+        GetSystemInfo(&s_sys);
+        s_step = s_sys.dwAllocationGranularity;
+    }
+
+    rt_pntr ptr = VirtualAlloc(s_ptr, size, MEM_COMMIT | MEM_RESERVE,
+                  PAGE_READWRITE);
+
+    /* advance with allocation granularity */
+    s_ptr = (rt_byte *)ptr + ((size + s_step - 1) / s_step) * s_step;
+
+#else /* RT_POINTER == 32 */
+
+    rt_pntr ptr = malloc(size);
+
+#endif /* RT_POINTER */
+
+#if RT_POINTER == 64 && RT_DEBUG >= 1
+
+    RT_LOGI("ALLOC PTR = %016"RT_PR64"X, size = %ld\n", (rt_full)ptr, size);
+
+#endif /* RT_POINTER && RT_DEBUG */
+
+#if (RT_POINTER - RT_ADDRESS) != 0
+
+    if ((rt_byte *)ptr >= (rt_byte *)0x0000000080000000 - size)
+    {
+        RT_LOGE("address exceeded allowed range, exiting...\n");
+        exit(EXIT_FAILURE);
+    }
+
+#endif /* (RT_POINTER - RT_ADDRESS) */
+
+    return ptr;
 }
 
 /*
@@ -2754,11 +2821,21 @@ rt_pntr sys_alloc(rt_size size)
  */
 rt_void sys_free(rt_pntr ptr, rt_size size)
 {
-    /* use VirtualAlloc/VirtualFree to limit address range to 32-bit
-     * in order to support 64/32-bit hybrid mode (pointer/address) */
-    /* compilation in 64-bit mode requires g++/clang-based toolchain
-     * for proper inline assembly support (hasn't been tested yet) */
+#if RT_POINTER == 64
+
+    VirtualFree(ptr, 0, MEM_RELEASE);
+
+#else /* RT_POINTER == 32 */
+
     free(ptr);
+
+#endif /* RT_POINTER */
+
+#if RT_POINTER == 64 && RT_DEBUG >= 1
+
+    RT_LOGI("FREED PTR = %016"RT_PR64"X, size = %ld\n", (rt_full)ptr, size);
+
+#endif /* RT_POINTER && RT_DEBUG */
 }
 
 #elif defined (RT_LINUX) /* Linux, GCC -------------------------------------- */
@@ -2778,18 +2855,6 @@ rt_time get_time()
 #if RT_POINTER == 64
 
 #include <sys/mman.h>
-
-#if RT_ADDRESS == 32
-
-static
-rt_byte *s_ptr = (rt_byte *)0x0000000040000000;
-
-#else /* RT_ADDRESS == 64 */
-
-static
-rt_byte *s_ptr = (rt_byte *)0x0000000140000000;
-
-#endif /* RT_ADDRESS */
 
 #endif /* RT_POINTER */
 
