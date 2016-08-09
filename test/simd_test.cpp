@@ -2794,6 +2794,12 @@ rt_pntr sys_alloc(rt_size size)
 
 #endif /* (RT_POINTER - RT_ADDRESS) */
 
+    if (ptr == RT_NULL)
+    {
+        RT_LOGE("alloc failed with NULL address, exiting...\n");
+        exit(EXIT_FAILURE);
+    }
+
     return ptr;
 }
 
@@ -2884,6 +2890,12 @@ rt_pntr sys_alloc(rt_size size)
     }
 
 #endif /* (RT_POINTER - RT_ADDRESS) */
+
+    if (ptr == RT_NULL)
+    {
+        RT_LOGE("alloc failed with NULL address, exiting...\n");
+        exit(EXIT_FAILURE);
+    }
 
     return ptr;
 }
