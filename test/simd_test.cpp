@@ -2725,15 +2725,19 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 #if RT_POINTER == 64
 #if RT_ADDRESS == 32
 
-static
-rt_byte *s_ptr = (rt_byte *)0x0000000040000000;
+#define RT_ADDRESS_MIN      ((rt_byte *)0x0000000040000000)
+#define RT_ADDRESS_MAX      ((rt_byte *)0x0000000080000000)
 
 #else /* RT_ADDRESS == 64 */
 
-static
-rt_byte *s_ptr = (rt_byte *)0x0000000140000000;
+#define RT_ADDRESS_MIN      ((rt_byte *)0x0000000140000000)
+#define RT_ADDRESS_MAX      ((rt_byte *)0x0000080000000000)
 
 #endif /* RT_ADDRESS */
+
+static
+rt_byte *s_ptr = RT_ADDRESS_MIN;
+
 #endif /* RT_POINTER */
 
 
@@ -2766,15 +2770,12 @@ SYSTEM_INFO s_sys = {0};
 rt_pntr sys_alloc(rt_size size)
 {
 #if RT_POINTER == 64
-#if RT_ADDRESS == 32
 
-    /* loop around 2GB boundary for 32-bit */
-    if (s_ptr >= (rt_byte *)0x0000000080000000 - size)
+    /* loop around RT_ADDRESS_MAX boundary */
+    if (s_ptr >= RT_ADDRESS_MAX - size)
     {
-        s_ptr  = (rt_byte *)0x0000000040000000;
+        s_ptr  = RT_ADDRESS_MIN;
     }
-
-#endif /* RT_ADDRESS */
 
     if (s_step == 0)
     {
@@ -2802,7 +2803,7 @@ rt_pntr sys_alloc(rt_size size)
 
 #if (RT_POINTER - RT_ADDRESS) != 0
 
-    if ((rt_byte *)ptr >= (rt_byte *)0x0000000080000000 - size)
+    if ((rt_byte *)ptr >= RT_ADDRESS_MAX - size)
     {
         RT_LOGE("address exceeded allowed range, exiting...\n");
         exit(EXIT_FAILURE);
@@ -2868,22 +2869,19 @@ rt_time get_time()
 rt_pntr sys_alloc(rt_size size)
 {
 #if RT_POINTER == 64
-#if RT_ADDRESS == 32
 
-    /* loop around 2GB boundary MAP_32BIT */
+    /* loop around RT_ADDRESS_MAX boundary */
     /* in 64/32-bit hybrid mode addresses can't have sign bit
      * as MIPS64 sign-extends all 32-bit mem-loads by default */
-    if (s_ptr >= (rt_byte *)0x0000000080000000 - size)
+    if (s_ptr >= RT_ADDRESS_MAX - size)
     {
-        s_ptr  = (rt_byte *)0x0000000040000000;
+        s_ptr  = RT_ADDRESS_MIN;
     }
-
-#endif /* RT_ADDRESS */
 
     rt_pntr ptr = mmap(s_ptr, size, PROT_READ | PROT_WRITE,
                   MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 
-    /* advance with page-size granularity */
+    /* advance with allocation granularity */
     /* in case when page-size differs from default 4096 bytes
      * mmap should round toward closest correct page boundary */
     s_ptr = (rt_byte *)ptr + ((size + 4095) / 4096) * 4096;
@@ -2902,7 +2900,7 @@ rt_pntr sys_alloc(rt_size size)
 
 #if (RT_POINTER - RT_ADDRESS) != 0
 
-    if ((rt_byte *)ptr >= (rt_byte *)0x0000000080000000 - size)
+    if ((rt_byte *)ptr >= RT_ADDRESS_MAX - size)
     {
         RT_LOGE("address exceeded allowed range, exiting...\n");
         exit(EXIT_FAILURE);
