@@ -79,6 +79,7 @@ typedef unsigned short      rt_ui16;
 typedef int                 rt_si32;
 typedef unsigned int        rt_ui32;
 
+/* fixed 64-bit integer types */
 #if   defined (RT_WIN32) /* Win32, MSVC -------- for older versions --------- */
 
 typedef __int64             rt_si64;
@@ -86,7 +87,7 @@ typedef unsigned __int64    rt_ui64;
 
 #define RT_PR64 /*printf*/  "I64"
 
-#elif defined (RT_LINUX) /* Linux, GCC --------- for newer versions --------- */
+#else /* --- Win64, GCC --- Linux, GCC -------------------------------------- */
 
 typedef long long           rt_si64;
 typedef unsigned long long  rt_ui64;
@@ -97,18 +98,32 @@ typedef unsigned long long  rt_ui64;
 
 /* adjustable integer types */
 typedef rt_si08             rt_bool;
-typedef long                rt_size;
 typedef rt_si64             rt_time;
 
 typedef rt_si08             rt_char;
 typedef rt_si16             rt_shrt;
-typedef long                rt_cell;
 typedef rt_si64             rt_long;
 
 typedef rt_ui08             rt_byte;
 typedef rt_ui16             rt_half;
-typedef unsigned long       rt_word;
 typedef rt_ui64             rt_full;
+
+/* pointer-size integer types */
+#if   defined (RT_WIN64) /* Win64, GCC -------------------------------------- */
+
+typedef rt_si64             rt_size;
+
+typedef rt_si64             rt_cell;
+typedef rt_ui64             rt_word;
+
+#else /* --- Win32, MSVC -- Linux, GCC -------------------------------------- */
+
+typedef long                rt_size;
+
+typedef long                rt_cell;
+typedef unsigned long       rt_word;
+
+#endif /* ------------- OS specific ----------------------------------------- */
 
 typedef void                rt_void;
 typedef void               *rt_pntr;
