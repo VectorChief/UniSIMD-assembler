@@ -25,8 +25,8 @@
  * corresponding companion files named rtarch_***.h for BASE instructions
  * and rtarch_***_***.h for SIMD instructions.
  *
- * Note that AArch32 mode of ARMv8 ISA is a part of the legacy ARM target,
- * as it brings hw int-div and SIMD fp-convert with explicit round parameter,
+ * Note that AArch32 mode of ARMv8 ISA is a part of legacy ARM target as it
+ * only brings hw int-div and SIMD fp-convert with explicit round parameter,
  * while IEEE-compatible SIMD fp-arithmetic with full square root and divide
  * are exposed via (ILP32 ABI of) AArch64:ARMv8 ISA in (A32 and) A64 target(s).
  *
@@ -81,7 +81,7 @@
  *  - Xmm0, ... , Xmm7, Xmm8, Xmm9, XmmA, ... , XmmV
  *
  * Although register names are fixed, register sizes are not and depend on the
- * chosen target (only 32-bit BASE and 128/256-bit SIMD are implemented now).
+ * chosen target (only 32/64-bit BASE and 128/256-bit SIMD are implemented now).
  * Base registers can be 32-bit/64-bit wide, while their SIMD counterparts
  * depend on the architecture and SIMD version chosen for the target.
  * Fractional sub-registers don't have names and aren't architecturally
@@ -95,15 +95,15 @@
 /*
  * The following instruction namespaces are reserved for current/future use.
  *
- * cmdb*_** - byte-size args, BASE ISA (displacement/alignment may differ)
- * cmdh*_** - half-size args, BASE ISA (displacement/alignment may differ)
- *
  * cmdw*_** - word-size args, BASE ISA (always fixed at 32-bit)
  * cmdx*_** - addr-size args, BASE ISA (32/64-bit configurable with RT_ADDRESS)
  * cmdy*_** - SIMD-elem args, BASE ISA (32/64-bit configurable with RT_ELEMENT)
  *
- * cmdz*_** - usage for setting-flags will be deprecated, reserved for 64-bit
- * cmd*z_** - usage for setting-flags will be implemented orthogonal to size
+ * cmdz*_** - usage for setting-flags is deprecated, reserved for fixed 64-bit
+ * cmd*z_** - usage for setting-flags is implemented orthogonal to size
+ *
+ * cmdb*_** - byte-size args, BASE ISA (displacement/alignment may differ)
+ * cmdh*_** - half-size args, BASE ISA (displacement/alignment may differ)
  *
  * cmdo*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, packed)
  * cmdp*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, packed)
@@ -113,26 +113,54 @@
  * cmds*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, scalar)
  * cmdt*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, scalar)
  *
- * Working with sub-word BASE elements (byte, half) is reserved for future use,
- * however current displacement types may not work due to natural alignment.
- * Signed/unsigned types can be supported orthogonally in cmd*n_**, cmd*x_**.
- *
+ * Mixing of 64/32-bit fields in backend structures may lead to misalignment
+ * of 64-bit fields to 4-byte boundary, which is not supported on some targets.
+ * Place fields carefully to ensure proper alignment for all data types.
  * Note that within cmdx*_** subset most of the instructions follow in-heap
  * address size (RT_ADDRESS or A) and only label_ld/st, jmpxx_xr/xm follow
  * pointer size (RT_POINTER or P) as code/data/stack segments are fixed.
+ * In 64/32-bit (ptr/adr) hybrid mode there is no way to move 64-bit registers,
+ * thus label_ld has very limited use as jmpxx_xr(Reax) is the only matching op.
+ * Stack ops always work with full registers regardless of the mode chosen.
  *
- * Working with sub-word SIMD elements (byte, half) has not been investigated.
- * However, as current major ISAs lack the ability to do sub-word fp-compute,
- * these corresponding subsets cannot be considered valid targets for SPMD.
+ * The cmdw*_** and cmdx*_** subsets are not easily compatible on all targets,
+ * thus any register modified by cmdw*_** cannot be used in cmdx*_** subset.
+ * Alternatively, data flow must not exceed 31-bit range for 32-bit operations
+ * to produce consistent results usable in 64-bit subset across all targets.
+ * Only a64 and x64 have a complete 32-bit support in 64-bit mode both zeroing
+ * the upper half of the result, while m64 sign-extending all 32-bit operations
+ * and p64 overflowing 32-bit arithmetic into the upper half. Similar reasons
+ * of inconsistency prohibit use of IW immediate type within 64-bit subset,
+ * where a64 and p64 zero-extend, while x64 and m64 sign-extend 32-bit value.
  *
- * For fixed 64-bit packed/scalar SIMD ISA there will be no BASE ISA equivalent
- * on native 32-bit processors. Applications requiring 64-bit data flow in SIMD
- * will have to be coded with BASE ISA size limitations in mind.
+ * Note that offset correction for endianness E is only applicable for addresses
+ * within pointer fields, when (in-heap) address and pointer sizes don't match.
+ * Working with 32-bit data in 64-bit fields in any other circumstances must be
+ * done consistently within a subset of one size (cmdw*_**, cmdx*_** or C/C++).
+ * Alternatively, data written natively in C/C++ can be worked on from within
+ * a given (one) subset if appropriate offset correction is used from rtarch.h.
+ * Mixing of cmdw*_** and cmdx*_** without C/C++ is supported via F definition,
+ * but requires two offsets for each field, with F for (w*) and plain for (x*).
  *
  * Setting-flags instructions' naming scheme may change again in the future for
  * better orthogonality with operands size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
- * and maximum efficiency across all supported targets.
+ * and maximum efficiency across all supported targets. For similar reasons
+ * of higher performance on certain targets use combined-compare-jump (cmj).
+ * Not all canonical forms of BASE instructions have efficient implementation.
+ * For example, some forms of shifts and division use stack ops on x86 targets,
+ * while standalone remainder operations can only be done natively on MIPS.
+ * Consider using special fixed-register forms for maximum performance.
+ *
+ * For fixed 64-bit packed/scalar SIMD ISA there will be no BASE ISA equivalent
+ * on native 32-bit processors. Applications requiring 64-bit data flow in SIMD
+ * will have to be coded with BASE ISA size limitations in mind.
+ * Working with sub-word BASE elements (byte, half) is reserved for future use,
+ * however current displacement types may not work due to natural alignment.
+ * Signed/unsigned types can be supported orthogonally in cmd*n_**, cmd*x_**.
+ * Working with sub-word SIMD elements (byte, half) has not been investigated.
+ * However, as current major ISAs lack the ability to do sub-word fp-compute,
+ * these corresponding subsets cannot be considered valid targets for SPMD.
  */
 
 /*
