@@ -2696,7 +2696,10 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 
 #undef P /* short name for RT_POINTER/32 */
 #undef A /* short name for RT_ADDRESS/32 */
-#undef E /* short name for RT_ENDIAN*(P-A)*4 */
+
+#undef C /* for cmdx*_** working on 64-bit field */
+#undef E /* for cmdx*_** working on P-size field */
+#undef G /* for jmpxx_mm working on 64-bit field */
 
 #undef Xmm0 /* external name for SIMD register */
 #undef Xmm1 /* external name for SIMD register */

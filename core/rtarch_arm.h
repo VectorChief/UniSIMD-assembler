@@ -55,10 +55,15 @@
  * cmdx*_** - applies [cmd] to BASE register/memory/immediate args
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
+ * cmd*p_** - applies [cmd] to   signed integer args, [p] - part-range
  *
  * cmdz*_** - applies [cmd] while setting condition flags, [z] - zero flag.
  * Regular cmdxx_** instructions may or may not set flags depending
  * on the target architecture, thus no assumptions can be made for jezxx/jnzxx.
+ *
+ * Note that within cmdx*_** subset most of the instructions follow in-heap
+ * address size (RT_ADDRESS or A) and only label_st/jmpxx_mm follow target's
+ * pointer size (RT_POINTER or P) as code/data/stack segments are fixed.
  *
  * Argument x-register (implied) is fixed by the implementation.
  * Some formal definitions are not given below to encourage
@@ -612,25 +617,25 @@
 /* mul
  * set-flags: undefined */
 
-#define mulxx_ri(RM, IM)                 /* part-range 32-bit multiply */   \
+#define mulxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
         EMITW(0xE0000090 | REG(RM) << 16 | REG(RM) << 8| TIxx)
 
-#define mulxx_rr(RG, RM)                 /* part-range 32-bit multiply */   \
+#define mulxx_rr(RG, RM)                                                    \
         EMITW(0xE0000090 | REG(RG) << 16 | REG(RG) << 8| REG(RM))
 
-#define mulxx_ld(RG, RM, DP)             /* part-range 32-bit multiply */   \
+#define mulxx_ld(RG, RM, DP)                                                \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0xE0000090 | REG(RG) << 16 | REG(RG) << 8| TMxx)
 
-#define mulxn_ri(RM, IM)                 /* part-range 32-bit multiply */   \
+#define mulxn_ri(RM, IM)                                                    \
         mulxx_ri(W(RM), W(IM))
 
-#define mulxn_rr(RG, RM)                 /* part-range 32-bit multiply */   \
+#define mulxn_rr(RG, RM)                                                    \
         mulxx_rr(W(RG), W(RM))
 
-#define mulxn_ld(RG, RM, DP)             /* part-range 32-bit multiply */   \
+#define mulxn_ld(RG, RM, DP)                                                \
         mulxx_ld(W(RG), W(RM), W(DP))
 
 #define mulxx_xr(RM)     /* Reax is in/out, Redx is out(high)-zero-ext */   \

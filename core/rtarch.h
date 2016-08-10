@@ -92,7 +92,7 @@
 /******************************************************************************/
 
 /*
- * Short names Q, S, W for RT_SIMD_QUADS, RT_SIMD_WIDTH, triplet wrapper.
+ * Short names Q, S, W for RT_SIMD_QUADS, RT_SIMD_WIDTH, pass-through wrapper.
  * Used independently for SIMD-fields' sizes and offsets in backend structures.
  * Must be undef'd explicitly after use to avoid collisions with system headers.
  */
@@ -109,7 +109,7 @@
 #endif /* in case W is defined outside */
 
 /*
- * Short names P, A, E for RT_POINTER/32, RT_ADDRESS/32, RT_ENDIAN*(P-A)*4.
+ * Short names P, A and C, E, G for RT_POINTER/32, RT_ADDRESS/32 and offsets.
  * Used independently for SIMD-fields' sizes and offsets in backend structures.
  * Must be undef'd explicitly after use to avoid collisions with system headers.
  */
@@ -121,13 +121,26 @@
 #undef A
 #endif /* in case A is defined outside */
 
+
+#ifdef C
+#undef C
+#endif /* in case C is defined outside */
+
 #ifdef E
 #undef E
 #endif /* in case E is defined outside */
 
+#ifdef G
+#undef G
+#endif /* in case G is defined outside */
+
+
 #define P   (RT_POINTER/32)         /* short name for RT_POINTER/32 */
 #define A   (RT_ADDRESS/32)         /* short name for RT_ADDRESS/32 */
-#define E   (RT_ENDIAN*(P-A)*4)     /* short name for RT_ENDIAN*(P-A)*4 */
+
+#define C   (RT_ENDIAN*(2-A)*4)     /* for cmdx*_** working on 64-bit field */
+#define E   (RT_ENDIAN*(P-A)*4)     /* for cmdx*_** working on P-size field */
+#define G   (RT_ENDIAN*(2-P)*4)     /* for jmpxx_mm working on 64-bit field */
 
 /*******************************   WIN32, MSVC   ******************************/
 
