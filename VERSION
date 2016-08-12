@@ -1,3 +1,24 @@
+v0.8.0: Unified SIMD Assembler, full 64-bit addressing for BASE and SIMD
+  - double original 32-bit BASE ISA to fixed-32-bit and address-sized subsets
+  - original instructions mnemonics follow in-heap/code-segment address size
+  - new instructions mnemonics introduced for fixed-32-bit subset (cmdw*)
+  - setting-flags instructions mnemonics remapped from (cmdz*) to (cmd*z)
+  - add combined-arithmetic-jump wrapper for better API stability/efficiency
+  - add new rtarch headers to house address-sized subset for 64-bit targets
+  - move original (now address-sized) mappings to rtbase for 32-bit targets
+  - add canonical forms for BASE div/rem and shifts (not always efficient)
+  - add setting-flags versions for BASE orr/xor and unsigned shifts
+  - remap one-operand instructions from cmd**_rr/mm to rx/mx and xr/xm
+  - move stack instructions to their own section at the end of rtarch headers
+  - move sregs instructions to their own section at the end of rtarch headers
+  - add config flags for full-precision SIMD rcpps/rsqps instructions
+  - add master flags for SIMD compatibility modes to rtarch main header
+  - add new offset corrections for endianness (from here backported down)
+  - add Win64 support via TDM64-GCC toolchain (tdm64-gcc-5.1.0-2.exe)
+  - add NULL-ptr checks to custom allocators (Linux/mmap, Win64/VirtualAlloc)
+  - fix setting-flags instructions for 64-bit Power running 32-bit ISA
+  - fix non-setting-flags instructions (neg*x) to not set flags on MIPS
+
 v0.7.1: Unified SIMD Assembler, 64/32-bit hybrid mode for native 64-bit ABI
   - use fixed-sized and adjustable integer types in rtbase and SIMD test
   - add a64 (AArch64 native ABI) and x64 (x86_64 native ABI) targets/makefiles
