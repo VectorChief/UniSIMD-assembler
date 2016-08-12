@@ -1,8 +1,8 @@
 v0.8.0: Unified SIMD Assembler, full 64-bit addressing for BASE and SIMD
   - double original 32-bit BASE ISA to fixed-32-bit and address-sized subsets
-  - original instructions mnemonics follow in-heap/code-segment address size
-  - new instructions mnemonics introduced for fixed-32-bit subset (cmdw*)
-  - setting-flags instructions mnemonics remapped from (cmdz*) to (cmd*z)
+  - original instruction mnemonics follow in-heap/code-segment address size
+  - new instruction mnemonics introduced for fixed-32-bit subset (cmdw*)
+  - setting-flags instruction mnemonics remapped from (cmdz*) to (cmd*z)
   - add combined-arithmetic-jump wrapper for better API stability/efficiency
   - add new rtarch headers to house address-sized subset for 64-bit targets
   - move original (now address-sized) mappings to rtbase for 32-bit targets
