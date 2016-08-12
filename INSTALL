@@ -1,7 +1,7 @@
 ================================================================================
 
 To build SIMD test framework on Linux, open terminal window,
-go to QuadRay's test folder,
+go to UniSIMD's test folder,
 make sure necessary tools and libraries are installed
 for native builds (binary ABI matches host):
     sudo apt-get install make g++
@@ -24,14 +24,14 @@ users of RPM-based distributions need to figure out build-deps on their own.
 ================================================================================
 
 To build SIMD test framework on Windows,
-go to QuadRay's test folder and open:
+go to UniSIMD's test folder and open:
     simd_workspace.dsw
 in Visual C++ 6.0 or later, then press F5. In newer versions of VC++ agree to
 convert workspace files, then exit and open newly created solution file.
 
 To build SIMD test framework for 64-bit Windows,
 download and install TDM64-GCC toolchain (tdm64-gcc-5.1.0-2.exe),
-then open QuadRay's test folder and run (from Windows Explorer UI):
+then open UniSIMD's test folder and run (from Windows Explorer UI):
     simd_make_w64.bat
 produced simd_test_w64f32.exe binary file will launch after the build.
 
