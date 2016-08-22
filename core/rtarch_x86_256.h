@@ -39,7 +39,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x86_256.h: Implementation of x86:i386 AVX(1,2) instructions.
+ * rtarch_x86_256.h: Implementation of x86:i386 fp32 AVX(1,2) instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

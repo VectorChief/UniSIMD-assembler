@@ -39,7 +39,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_p32_128.h: Implementation of 32-bit Power VMX/VSX instructions.
+ * rtarch_p32_128.h: Implementation of Power fp32 VMX/VSX instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

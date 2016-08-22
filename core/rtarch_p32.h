@@ -14,7 +14,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_p32.h: Implementation of PowerPC 32-bit BASE instructions.
+ * rtarch_p32.h: Implementation of Power 32-bit BASE instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

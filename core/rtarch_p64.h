@@ -14,7 +14,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_p64.h: Implementation of PowerPC 64-bit BASE instructions.
+ * rtarch_p64.h: Implementation of Power 64-bit BASE instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

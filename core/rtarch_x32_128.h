@@ -39,7 +39,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x32_128.h: Implementation of x86_64:x32 SSE(1,2,4) instructions.
+ * rtarch_x32_128.h: Implementation of x86_64 fp32 SSE(1,2,4) instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

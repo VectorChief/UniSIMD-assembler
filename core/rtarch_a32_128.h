@@ -36,7 +36,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_a32_128.h: Implementation of AArch64:ILP32 NEON instructions.
+ * rtarch_a32_128.h: Implementation of AArch64 fp32 NEON instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
