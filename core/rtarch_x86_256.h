@@ -823,8 +823,6 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#endif /* RT_256 */
-
 /* sregs */
 
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
@@ -862,6 +860,8 @@
         movpx_ld(Xmm6, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
         movpx_ld(Xmm7, Oeax, PLAIN)
+
+#endif /* RT_256 */
 
 #endif /* RT_SIMD_CODE */
 
