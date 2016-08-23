@@ -1110,8 +1110,6 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
 
 #endif /* RT_128 >= 4 */
 
-#endif /* RT_128 */
-
 /* sregs */
 
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
@@ -1181,6 +1179,8 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
         movpx_ld(XmmE, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
         movpx_ld(XmmF, Oeax, PLAIN)
+
+#endif /* RT_128 */
 
 #endif /* RT_SIMD_CODE */
 

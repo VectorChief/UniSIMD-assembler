@@ -1102,8 +1102,6 @@
 
 #endif /* RT_128 >= 4 */
 
-#endif /* RT_128 */
-
 /* sregs */
 
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
@@ -1141,6 +1139,8 @@
         movpx_ld(Xmm6, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
         movpx_ld(Xmm7, Oeax, PLAIN)
+
+#endif /* RT_128 */
 
 #endif /* RT_SIMD_CODE */
 
