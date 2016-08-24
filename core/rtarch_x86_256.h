@@ -449,7 +449,7 @@
 #if (RT_256 < 2)
 
 #define prmpx_rr(RG, RM, IM) /* not portable, do not use outside */         \
-        VX3(REG(RG), 1, 3) EMITB(0x06)                                      \
+        VX3(REG(RG), 1, 3) EMITB(0x46)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM)))
 
