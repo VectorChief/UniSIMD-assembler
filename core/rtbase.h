@@ -58,6 +58,8 @@ typedef float               rt_fp32;
 typedef double              rt_fp64;
 
 /* adjustable floating point types */
+#if   RT_ELEMENT == 32
+
 typedef rt_fp32             rt_real;
 
 typedef rt_fp32             rt_vec2[2];
@@ -68,6 +70,25 @@ typedef rt_fp32             rt_mat3[3][3];
 
 typedef rt_fp32             rt_vec4[4];
 typedef rt_fp32             rt_mat4[4][4];
+
+#elif RT_ELEMENT == 64
+
+typedef rt_fp64             rt_real;
+
+typedef rt_fp64             rt_vec2[2];
+typedef rt_fp64             rt_mat2[2][2];
+
+typedef rt_fp64             rt_vec3[3];
+typedef rt_fp64             rt_mat3[3][3];
+
+typedef rt_fp64             rt_vec4[4];
+typedef rt_fp64             rt_mat4[4][4];
+
+#else  /* RT_ELEMENT */
+
+#error "unsupported element size, check RT_ELEMENT in makefiles"
+
+#endif /* RT_ELEMENT */
 
 /* fixed-size integer types */
 typedef char                rt_si08;
