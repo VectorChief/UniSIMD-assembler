@@ -2690,8 +2690,12 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 /**********************************   UTILS   *********************************/
 /******************************************************************************/
 
-#undef Q /* short name for RT_SIMD_QUADS */
-#undef S /* short name for RT_SIMD_WIDTH */
+#undef Q /* short name for SIMD-quads in structs */
+
+#undef R /* short name for SIMD-width in structs with rt_fp32 SIMD-fields */
+#undef S /* short name for SIMD-width in structs with rt_real SIMD-fields */
+#undef T /* short name for SIMD-width in structs with rt_fp64 SIMD-fields */
+
 #undef W /* triplet pass-through wrapper */
 
 #undef P /* short name for RT_POINTER/32 */

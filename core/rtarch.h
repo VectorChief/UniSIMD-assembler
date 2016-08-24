@@ -181,12 +181,16 @@
 #define RT_SIMD_COMPAT_SQR_MASTER       1 /* for sqrps_** IEEE-compatible */
 
 /*
- * Short names Q, S, W for RT_SIMD_QUADS, RT_SIMD_WIDTH, pass-through wrapper.
+ * Short names Q then R, S, T and W for SIMD-quads, SIMD-widths and wrapper.
  * Used independently for SIMD-fields' sizes and offsets in backend structures.
  * Must be undef'd explicitly after use to avoid collisions with system headers.
  */
 #undef Q /* in case Q is defined outside */
+
+#undef R /* in case R is defined outside */
 #undef S /* in case S is defined outside */
+#undef T /* in case T is defined outside */
+
 #undef W /* in case W is defined outside */
 
 /*
@@ -267,10 +271,10 @@
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
-#define S 8
+#define Q 2
 #include "rtarch_x86_256.h"
 #elif defined (RT_128) && (RT_128 != 0)
-#define S 4
+#define Q 1
 #include "rtarch_x86_128.h"
 #endif /* RT_256, RT_128 */
 
@@ -459,10 +463,10 @@
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
-#define S 8
+#define Q 2
 #include "rtarch_x86_256.h"
 #elif defined (RT_128) && (RT_128 != 0)
-#define S 4
+#define Q 1
 #include "rtarch_x86_128.h"
 #endif /* RT_256, RT_128 */
 
@@ -672,10 +676,10 @@
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
-#define S 8
+#define Q 2
 #include "rtarch_x32_256.h"
 #elif defined (RT_128) && (RT_128 != 0)
-#define S 4
+#define Q 1
 #include "rtarch_x32_128.h"
 #endif /* RT_256, RT_128 */
 
@@ -875,10 +879,10 @@
 #define RT_SIMD_COMPAT_SQR      RT_SIMD_COMPAT_SQR_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
-#define S 8
+#define Q 2
 #error "AArch32 doesn't support SIMD wider than 4, check build flags"
 #elif defined (RT_128) && (RT_128 != 0)
-#define S 4
+#define Q 1
 #include "rtarch_arm_128.h"
 #endif /* RT_256, RT_128 */
 
@@ -1085,10 +1089,10 @@
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
-#define S 8
+#define Q 2
 #error "AArch64 doesn't support SIMD wider than 4, check build flags"
 #elif defined (RT_128) && (RT_128 != 0)
-#define S 4
+#define Q 1
 #include "rtarch_a32_128.h"
 #endif /* RT_256, RT_128 */
 
@@ -1295,10 +1299,10 @@
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
-#define S 8
+#define Q 2
 #error "mipsMSA doesn't support SIMD wider than 4, check build flags"
 #elif defined (RT_128) && (RT_128 != 0)
-#define S 4
+#define Q 1
 #include "rtarch_m32_128.h"
 #endif /* RT_256, RT_128 */
 
@@ -1530,10 +1534,10 @@
 #define RT_BASE_COMPAT_ZFL      1 /* only necessary on Power */
 
 #if   defined (RT_256) && (RT_256 != 0)
-#define S 8
+#define Q 2
 #error "AltiVec doesn't support SIMD wider than 4, check build flags"
 #elif defined (RT_128) && (RT_128 != 0)
-#define S 4
+#define Q 1
 #include "rtarch_p32_128.h"
 #endif /* RT_256, RT_128 */
 
@@ -1665,15 +1669,14 @@
 /*
  * SIMD quad-factor.
  */
-#define RT_SIMD_QUADS       (RT_SIMD_WIDTH / 4)
-#define Q (S / 4)
+#define RT_SIMD_QUADS       ((RT_SIMD_WIDTH * L) / 4)
 
 /*
- * Check SIMD width correctness.
+ * SIMD elements.
  */
-#if Q != RT_SIMD_QUADS || S != RT_SIMD_WIDTH || S % 4 != 0
-#error "SIMD width must be divisible by 4, check definitions"
-#endif /* in case S is not expressed in quads */
+#define R ((Q*4)/1)     /* for cmdo*_** SIMD-subset, rt_fp32 SIMD-fields */
+#define S ((Q*4)/L)     /* for cmdp*_** SIMD-subset, rt_real SIMD-fields */
+#define T ((Q*4)/2)     /* for cmdq*_** SIMD-subset, rt_fp64 SIMD-fields */
 
 #endif /* RT_RTARCH_H */
 
