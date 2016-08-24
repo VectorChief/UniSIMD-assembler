@@ -2696,6 +2696,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 
 #undef P /* short name for RT_POINTER/32 */
 #undef A /* short name for RT_ADDRESS/32 */
+#undef L /* short name for RT_ELEMENT/32 */
 
 #undef B /* short name for RT_ENDIAN*(2-1)*4 */
 #undef C /* short name for RT_ENDIAN*(2-A)*4 */

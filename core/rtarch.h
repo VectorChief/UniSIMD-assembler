@@ -190,12 +190,13 @@
 #undef W /* in case W is defined outside */
 
 /*
- * Short names P, A, B, C, D, E, F, G for RT_POINTER/32, RT_ADDRESS/32, offsets.
+ * Short names P, A, L and B, C, D, E, F, G for sizes and offset corrections.
  * Used independently for SIMD-fields' sizes and offsets in backend structures.
  * Must be undef'd explicitly after use to avoid collisions with system headers.
  */
 #undef P /* in case P is defined outside */
 #undef A /* in case A is defined outside */
+#undef L /* in case L is defined outside */
 
 #undef B /* in case B is defined outside */
 #undef C /* in case C is defined outside */
@@ -207,6 +208,7 @@
 
 #define P   (RT_POINTER/32)         /* short name for RT_POINTER/32 */
 #define A   (RT_ADDRESS/32)         /* short name for RT_ADDRESS/32 */
+#define L   (RT_ELEMENT/32)         /* short name for RT_ELEMENT/32 */
 
 #define B   (RT_ENDIAN*(2-1)*4)     /* for cmdw*_** working on 64-bit field */
 #define C   (RT_ENDIAN*(2-A)*4)     /* for cmdx*_** working on 64-bit field */
