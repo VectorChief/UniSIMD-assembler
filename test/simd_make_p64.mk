@@ -13,7 +13,7 @@ LIB_LIST =                              \
 simd_test:
 	powerpc64le-linux-gnu-g++ -O2 -g -static \
         -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
-        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ENDIAN=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f32
 
 # On Ubuntu 16.04 Live CD add "universe multiverse" to "main restricted"

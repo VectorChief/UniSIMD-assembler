@@ -13,7 +13,7 @@ LIB_LIST =                              \
 simd_test:
 	g++ -O3 -g -static -m32 \
         -DRT_LINUX -DRT_X86 -DRT_128=2 -DRT_DEBUG=0 \
-        -DRT_POINTER=32 -DRT_ADDRESS=32 -DRT_ENDIAN=0 \
+        -DRT_POINTER=32 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x86
 
 # Prerequisites for the build:

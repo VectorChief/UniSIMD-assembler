@@ -13,7 +13,7 @@ LIB_LIST =                              \
 simd_test:
 	g++ -O3 -g -static -m64 \
         -DRT_WIN64 -DRT_X64 -DRT_128=2 -DRT_DEBUG=0 \
-        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ENDIAN=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test_w64f32.exe
 
 # Prerequisites for the build:
