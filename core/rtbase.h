@@ -129,6 +129,36 @@ typedef rt_ui08             rt_byte;
 typedef rt_ui16             rt_half;
 typedef rt_ui64             rt_full;
 
+/* element-size integer types */
+#if   RT_ELEMENT == 32
+
+typedef rt_ui32             rt_elem;
+
+#elif RT_ELEMENT == 64
+
+typedef rt_ui64             rt_elem;
+
+#else  /* RT_ELEMENT */
+
+#error "unsupported element size, check RT_ELEMENT in makefiles"
+
+#endif /* RT_ELEMENT */
+
+/* address-size integer types */
+#if   RT_ADDRESS == 32
+
+typedef rt_ui32             rt_addr;
+
+#elif RT_ADDRESS == 64
+
+typedef rt_ui64             rt_addr;
+
+#else  /* RT_ADDRESS */
+
+#error "unsupported address size, check RT_ADDRESS in makefiles"
+
+#endif /* RT_ADDRESS */
+
 /* pointer-size integer types */
 #if   defined (RT_WIN64) /* Win64, GCC -------------------------------------- */
 
@@ -282,7 +312,7 @@ struct rt_SIMD_INFO
     rt_ui32 ver;            /* SIMD version <- cpuid */
 #define inf_VER             DP(0x008)
 
-    rt_ui32 fctrl[S-3];     /* reserved, do not use! */
+    rt_ui32 fctrl[R-3];     /* reserved, do not use! */
 #define inf_FCTRL(nx)       DP(0x00C + nx)
 
     /* general purpose constants */
@@ -296,19 +326,19 @@ struct rt_SIMD_INFO
     rt_real gpc03[S];       /* +3.0 */
 #define inf_GPC03           DP(Q*0x030)
 
-    rt_ui32 gpc04[S];       /* 0x7FFFFFFF */
+    rt_elem gpc04[S];       /* 0x7FFFFFFF or 0x7FFFFFFFFFFFFFFF */
 #define inf_GPC04           DP(Q*0x040)
 
-    rt_ui32 gpc05[S];       /* 0x3F800000 */
+    rt_elem gpc05[S];       /* 0x3F800000 or 0x3FF0000000000000 */
 #define inf_GPC05           DP(Q*0x050)
 
-    rt_ui32 scr01[S];       /* scratchpad 01 */
+    rt_elem scr01[S];       /* scratchpad 01 */
 #define inf_SCR01(nx)       DP(Q*0x060 + nx)
 
-    rt_ui32 scr02[S];       /* scratchpad 02 */
+    rt_elem scr02[S];       /* scratchpad 02 */
 #define inf_SCR02(nx)       DP(Q*0x070 + nx)
 
-    rt_ui64 regs[S/2];      /* SIMD reg-file storage */
+    rt_ui64 regs[T];        /* SIMD reg-file storage */
 #define inf_REGS            DP(Q*0x080+C)
 
     rt_real pad02[S*7];     /* reserved, do not use! */
@@ -325,6 +355,8 @@ struct rt_SIMD_REGS
 
 };
 
+#if   RT_ELEMENT == 32
+
 #define ASM_INIT(__Info__, __Regs__)                                        \
     RT_SIMD_SET(__Info__->gpc01, +1.0f);                                    \
     RT_SIMD_SET(__Info__->gpc02, -0.5f);                                    \
@@ -334,6 +366,24 @@ struct rt_SIMD_REGS
     __Info__->regs[0] = (rt_ui64)(rt_word)__Regs__;
 
 #define ASM_DONE(__Info__)
+
+#elif RT_ELEMENT == 64
+
+#define ASM_INIT(__Info__, __Regs__)                                        \
+    RT_SIMD_SET(__Info__->gpc01, +1.0);                                     \
+    RT_SIMD_SET(__Info__->gpc02, -0.5);                                     \
+    RT_SIMD_SET(__Info__->gpc03, +3.0);                                     \
+    RT_SIMD_SET(__Info__->gpc04, 0x7FFFFFFFFFFFFFFF);                       \
+    RT_SIMD_SET(__Info__->gpc05, 0x3FF0000000000000);                       \
+    __Info__->regs[0] = (rt_ui64)(rt_word)__Regs__;
+
+#define ASM_DONE(__Info__)
+
+#else  /* RT_ELEMENT */
+
+#error "unsupported element size, check RT_ELEMENT in makefiles"
+
+#endif /* RT_ELEMENT */
 
 /******************************************************************************/
 /************************   COMMON SIMD INSTRUCTIONS   ************************/
