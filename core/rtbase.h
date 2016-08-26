@@ -522,7 +522,6 @@ struct rt_SIMD_REGS
 #define andzx_st(RG, RM, DP)                                                \
         andxz_st(W(RG), W(RM), W(DP))
 
-
 /* neg */
 
 #define negzx_rr(RM)                                                        \
@@ -530,7 +529,6 @@ struct rt_SIMD_REGS
 
 #define negzx_mm(RM, DP)                                                    \
         negxz_mx(W(RM), W(DP))
-
 
 /* add */
 
@@ -548,7 +546,6 @@ struct rt_SIMD_REGS
 
 #define addzx_st(RG, RM, DP)                                                \
         addxz_st(W(RG), W(RM), W(DP))
-
 
 /* sub */
 
@@ -580,7 +577,6 @@ struct rt_SIMD_REGS
 #define notxx_mm(RM, DP)                                                    \
         notxx_mx(W(RM), W(DP))
 
-
 /* neg */
 
 #define negxx_rr(RM)                                                        \
@@ -588,7 +584,6 @@ struct rt_SIMD_REGS
 
 #define negxx_mm(RM, DP)                                                    \
         negxx_mx(W(RM), W(DP))
-
 
 /* jmp */
 
@@ -600,7 +595,7 @@ struct rt_SIMD_REGS
 
 /***************** address-sized instructions for 32-bit mode *****************/
 
-#if RT_ADDRESS == 32
+#if   RT_ADDRESS == 32
 
 /* mov
  * set-flags: no */
@@ -1149,6 +1144,1108 @@ struct rt_SIMD_REGS
         cmpwx_mr(W(RM), W(DP), W(RG))
 
 #endif /* RT_ADDRESS */
+
+/***************** element-sized instructions for 32-bit mode *****************/
+
+#if   RT_ELEMENT == 32
+
+/* mov
+ * set-flags: no */
+
+#define movyx_ri(RM, IM)                                                    \
+        movwx_ri(W(RM), W(IM))
+
+#define movyx_mi(RM, DP, IM)                                                \
+        movwx_mi(W(RM), W(DP), W(IM))
+
+#define movyx_rr(RG, RM)                                                    \
+        movwx_rr(W(RG), W(RM))
+
+#define movyx_ld(RG, RM, DP)                                                \
+        movwx_ld(W(RG), W(RM), W(DP))
+
+#define movyx_st(RG, RM, DP)                                                \
+        movwx_st(W(RG), W(RM), W(DP))
+
+/* and
+ * set-flags: undefined (*x), yes (*z) */
+
+#define andyx_ri(RM, IM)                                                    \
+        andwx_ri(W(RM), W(IM))
+
+#define andyx_mi(RM, DP, IM)                                                \
+        andwx_mi(W(RM), W(DP), W(IM))
+
+#define andyx_rr(RG, RM)                                                    \
+        andwx_rr(W(RG), W(RM))
+
+#define andyx_ld(RG, RM, DP)                                                \
+        andwx_ld(W(RG), W(RM), W(DP))
+
+#define andyx_st(RG, RM, DP)                                                \
+        andwx_st(W(RG), W(RM), W(DP))
+
+
+#define andyz_ri(RM, IM)                                                    \
+        andwz_ri(W(RM), W(IM))
+
+#define andyz_mi(RM, DP, IM)                                                \
+        andwz_mi(W(RM), W(DP), W(IM))
+
+#define andyz_rr(RG, RM)                                                    \
+        andwz_rr(W(RG), W(RM))
+
+#define andyz_ld(RG, RM, DP)                                                \
+        andwz_ld(W(RG), W(RM), W(DP))
+
+#define andyz_st(RG, RM, DP)                                                \
+        andwz_st(W(RG), W(RM), W(DP))
+
+/* orr
+ * set-flags: undefined (*x), yes (*z) */
+
+#define orryx_ri(RM, IM)                                                    \
+        orrwx_ri(W(RM), W(IM))
+
+#define orryx_mi(RM, DP, IM)                                                \
+        orrwx_mi(W(RM), W(DP), W(IM))
+
+#define orryx_rr(RG, RM)                                                    \
+        orrwx_rr(W(RG), W(RM))
+
+#define orryx_ld(RG, RM, DP)                                                \
+        orrwx_ld(W(RG), W(RM), W(DP))
+
+#define orryx_st(RG, RM, DP)                                                \
+        orrwx_st(W(RG), W(RM), W(DP))
+
+
+#define orryz_ri(RM, IM)                                                    \
+        orrwz_ri(W(RM), W(IM))
+
+#define orryz_mi(RM, DP, IM)                                                \
+        orrwz_mi(W(RM), W(DP), W(IM))
+
+#define orryz_rr(RG, RM)                                                    \
+        orrwz_rr(W(RG), W(RM))
+
+#define orryz_ld(RG, RM, DP)                                                \
+        orrwz_ld(W(RG), W(RM), W(DP))
+
+#define orryz_st(RG, RM, DP)                                                \
+        orrwz_st(W(RG), W(RM), W(DP))
+
+/* xor
+ * set-flags: undefined (*x), yes (*z) */
+
+#define xoryx_ri(RM, IM)                                                    \
+        xorwx_ri(W(RM), W(IM))
+
+#define xoryx_mi(RM, DP, IM)                                                \
+        xorwx_mi(W(RM), W(DP), W(IM))
+
+#define xoryx_rr(RG, RM)                                                    \
+        xorwx_rr(W(RG), W(RM))
+
+#define xoryx_ld(RG, RM, DP)                                                \
+        xorwx_ld(W(RG), W(RM), W(DP))
+
+#define xoryx_st(RG, RM, DP)                                                \
+        xorwx_st(W(RG), W(RM), W(DP))
+
+
+#define xoryz_ri(RM, IM)                                                    \
+        xorwz_ri(W(RM), W(IM))
+
+#define xoryz_mi(RM, DP, IM)                                                \
+        xorwz_mi(W(RM), W(DP), W(IM))
+
+#define xoryz_rr(RG, RM)                                                    \
+        xorwz_rr(W(RG), W(RM))
+
+#define xoryz_ld(RG, RM, DP)                                                \
+        xorwz_ld(W(RG), W(RM), W(DP))
+
+#define xoryz_st(RG, RM, DP)                                                \
+        xorwz_st(W(RG), W(RM), W(DP))
+
+/* not
+ * set-flags: no */
+
+#define notyx_rx(RM)                                                        \
+        notwx_rx(W(RM))
+
+#define notyx_mx(RM, DP)                                                    \
+        notwx_mx(W(RM), W(DP))
+
+/* neg
+ * set-flags: undefined (*x), yes (*z) */
+
+#define negyx_rx(RM)                                                        \
+        negwx_rx(W(RM))
+
+#define negyx_mx(RM, DP)                                                    \
+        negwx_mx(W(RM), W(DP))
+
+
+#define negyz_rx(RM)                                                        \
+        negwz_rx(W(RM))
+
+#define negyz_mx(RM, DP)                                                    \
+        negwz_mx(W(RM), W(DP))
+
+/* add
+ * set-flags: undefined (*x), yes (*z) */
+
+#define addyx_ri(RM, IM)                                                    \
+        addwx_ri(W(RM), W(IM))
+
+#define addyx_mi(RM, DP, IM)                                                \
+        addwx_mi(W(RM), W(DP), W(IM))
+
+#define addyx_rr(RG, RM)                                                    \
+        addwx_rr(W(RG), W(RM))
+
+#define addyx_ld(RG, RM, DP)                                                \
+        addwx_ld(W(RG), W(RM), W(DP))
+
+#define addyx_st(RG, RM, DP)                                                \
+        addwx_st(W(RG), W(RM), W(DP))
+
+
+#define addyz_ri(RM, IM)                                                    \
+        addwz_ri(W(RM), W(IM))
+
+#define addyz_mi(RM, DP, IM)                                                \
+        addwz_mi(W(RM), W(DP), W(IM))
+
+#define addyz_rr(RG, RM)                                                    \
+        addwz_rr(W(RG), W(RM))
+
+#define addyz_ld(RG, RM, DP)                                                \
+        addwz_ld(W(RG), W(RM), W(DP))
+
+#define addyz_st(RG, RM, DP)                                                \
+        addwz_st(W(RG), W(RM), W(DP))
+
+/* sub
+ * set-flags: undefined (*x), yes (*z) */
+
+#define subyx_ri(RM, IM)                                                    \
+        subwx_ri(W(RM), W(IM))
+
+#define subyx_mi(RM, DP, IM)                                                \
+        subwx_mi(W(RM), W(DP), W(IM))
+
+#define subyx_rr(RG, RM)                                                    \
+        subwx_rr(W(RG), W(RM))
+
+#define subyx_ld(RG, RM, DP)                                                \
+        subwx_ld(W(RG), W(RM), W(DP))
+
+#define subyx_st(RG, RM, DP)                                                \
+        subwx_st(W(RG), W(RM), W(DP))
+
+#define subyx_mr(RM, DP, RG)                                                \
+        subyx_st(W(RG), W(RM), W(DP))
+
+
+#define subyz_ri(RM, IM)                                                    \
+        subwz_ri(W(RM), W(IM))
+
+#define subyz_mi(RM, DP, IM)                                                \
+        subwz_mi(W(RM), W(DP), W(IM))
+
+#define subyz_rr(RG, RM)                                                    \
+        subwz_rr(W(RG), W(RM))
+
+#define subyz_ld(RG, RM, DP)                                                \
+        subwz_ld(W(RG), W(RM), W(DP))
+
+#define subyz_st(RG, RM, DP)                                                \
+        subwz_st(W(RG), W(RM), W(DP))
+
+#define subyz_mr(RM, DP, RG)                                                \
+        subyz_st(W(RG), W(RM), W(DP))
+
+/* shl
+ * set-flags: undefined (*x), yes (*z) */
+
+#define shlyx_rx(RM)                     /* reads Recx for shift value */   \
+        shlwx_rx(W(RM))
+
+#define shlyx_mx(RM, DP)                 /* reads Recx for shift value */   \
+        shlwx_mx(W(RM), W(DP))
+
+#define shlyx_ri(RM, IM)                                                    \
+        shlwx_ri(W(RM), W(IM))
+
+#define shlyx_mi(RM, DP, IM)                                                \
+        shlwx_mi(W(RM), W(DP), W(IM))
+
+#define shlyx_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        shlwx_rr(W(RG), W(RM))
+
+#define shlyx_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        shlwx_ld(W(RG), W(RM), W(DP))
+
+#define shlyx_st(RG, RM, DP)                                                \
+        shlwx_st(W(RG), W(RM), W(DP))
+
+#define shlyx_mr(RM, DP, RG)                                                \
+        shlyx_st(W(RG), W(RM), W(DP))
+
+
+#define shlyz_rx(RM)                     /* reads Recx for shift value */   \
+        shlwz_rx(W(RM))
+
+#define shlyz_mx(RM, DP)                 /* reads Recx for shift value */   \
+        shlwz_mx(W(RM), W(DP))
+
+#define shlyz_ri(RM, IM)                                                    \
+        shlwz_ri(W(RM), W(IM))
+
+#define shlyz_mi(RM, DP, IM)                                                \
+        shlwz_mi(W(RM), W(DP), W(IM))
+
+#define shlyz_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        shlwz_rr(W(RG), W(RM))
+
+#define shlyz_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        shlwz_ld(W(RG), W(RM), W(DP))
+
+#define shlyz_st(RG, RM, DP)                                                \
+        shlwz_st(W(RG), W(RM), W(DP))
+
+#define shlyz_mr(RM, DP, RG)                                                \
+        shlyz_st(W(RG), W(RM), W(DP))
+
+/* shr
+ * set-flags: undefined (*x), yes (*z) */
+
+#define shryx_rx(RM)                     /* reads Recx for shift value */   \
+        shrwx_rx(W(RM))
+
+#define shryx_mx(RM, DP)                 /* reads Recx for shift value */   \
+        shrwx_mx(W(RM), W(DP))
+
+#define shryx_ri(RM, IM)                                                    \
+        shrwx_ri(W(RM), W(IM))
+
+#define shryx_mi(RM, DP, IM)                                                \
+        shrwx_mi(W(RM), W(DP), W(IM))
+
+#define shryx_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        shrwx_rr(W(RG), W(RM))
+
+#define shryx_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        shrwx_ld(W(RG), W(RM), W(DP))
+
+#define shryx_st(RG, RM, DP)                                                \
+        shrwx_st(W(RG), W(RM), W(DP))
+
+#define shryx_mr(RM, DP, RG)                                                \
+        shryx_st(W(RG), W(RM), W(DP))
+
+
+#define shryz_rx(RM)                     /* reads Recx for shift value */   \
+        shrwz_rx(W(RM))
+
+#define shryz_mx(RM, DP)                 /* reads Recx for shift value */   \
+        shrwz_mx(W(RM), W(DP))
+
+#define shryz_ri(RM, IM)                                                    \
+        shrwz_ri(W(RM), W(IM))
+
+#define shryz_mi(RM, DP, IM)                                                \
+        shrwz_mi(W(RM), W(DP), W(IM))
+
+#define shryz_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        shrwz_rr(W(RG), W(RM))
+
+#define shryz_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        shrwz_ld(W(RG), W(RM), W(DP))
+
+#define shryz_st(RG, RM, DP)                                                \
+        shrwz_st(W(RG), W(RM), W(DP))
+
+#define shryz_mr(RM, DP, RG)                                                \
+        shryz_st(W(RG), W(RM), W(DP))
+
+
+#define shryn_rx(RM)                     /* reads Recx for shift value */   \
+        shrwn_rx(W(RM))
+
+#define shryn_mx(RM, DP)                 /* reads Recx for shift value */   \
+        shrwn_mx(W(RM), W(DP))
+
+#define shryn_ri(RM, IM)                                                    \
+        shrwn_ri(W(RM), W(IM))
+
+#define shryn_mi(RM, DP, IM)                                                \
+        shrwn_mi(W(RM), W(DP), W(IM))
+
+#define shryn_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        shrwn_rr(W(RG), W(RM))
+
+#define shryn_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        shrwn_ld(W(RG), W(RM), W(DP))
+
+#define shryn_st(RG, RM, DP)                                                \
+        shrwn_st(W(RG), W(RM), W(DP))
+
+#define shryn_mr(RM, DP, RG)                                                \
+        shryn_st(W(RG), W(RM), W(DP))
+
+/* mul
+ * set-flags: undefined */
+
+#define mulyx_ri(RM, IM)                                                    \
+        mulwx_ri(W(RM), W(IM))
+
+#define mulyx_rr(RG, RM)                                                    \
+        mulwx_rr(W(RG), W(RM))
+
+#define mulyx_ld(RG, RM, DP)                                                \
+        mulwx_ld(W(RG), W(RM), W(DP))
+
+
+#define mulyx_xr(RM)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
+        mulwx_xr(W(RM))
+
+#define mulyx_xm(RM, DP) /* Reax is in/out, Redx is out(high)-zero-ext */   \
+        mulwx_xm(W(RM), W(DP))
+
+
+#define mulyn_xr(RM)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
+        mulwn_xr(W(RM))
+
+#define mulyn_xm(RM, DP) /* Reax is in/out, Redx is out(high)-sign-ext */   \
+        mulwn_xm(W(RM), W(DP))
+
+
+#define mulyp_xr(RM)     /* Reax is in/out, prepares Redx for divyn_x* */   \
+        mulwp_xr(W(RM))       /* product must not exceed operands size */
+
+#define mulyp_xm(RM, DP) /* Reax is in/out, prepares Redx for divyn_x* */   \
+        mulwp_xm(W(RM), W(DP))/* product must not exceed operands size */
+
+/* div
+ * set-flags: undefined */
+
+#define divyx_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        divwx_ri(W(RM), W(IM))
+
+#define divyx_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        divwx_rr(W(RG), W(RM))
+
+#define divyx_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        divwx_ld(W(RG), W(RM), W(DP))
+
+
+#define divyn_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        divwn_ri(W(RM), W(IM))
+
+#define divyn_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        divwn_rr(W(RG), W(RM))
+
+#define divyn_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        divwn_ld(W(RG), W(RM), W(DP))
+
+
+#define preyx_xx()          /* to be placed immediately prior divyx_x* */   \
+        prewx_xx()                   /* to prepare Redx for int-divide */
+
+#define preyn_xx()          /* to be placed immediately prior divyn_x* */   \
+        prewn_xx()                   /* to prepare Redx for int-divide */
+
+
+#define divyx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+        divwx_xr(W(RM))
+
+#define divyx_xm(RM, DP) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+        divwx_xm(W(RM), W(DP))
+
+
+#define divyn_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divwn_xr(W(RM))
+
+#define divyn_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divwn_xm(W(RM), W(DP))
+
+
+#define divyp_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divwp_xr(W(RM))              /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
+
+#define divyp_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divwp_xm(W(RM), W(DP))       /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
+
+/* rem
+ * set-flags: undefined */
+
+#define remyx_ri(RM, IM)       /* Redx cannot be used as first operand */   \
+        remwx_ri(W(RM), W(IM))
+
+#define remyx_rr(RG, RM)                 /* RG, RM no Redx, RM no Reax */   \
+        remwx_rr(W(RG), W(RM))
+
+#define remyx_ld(RG, RM, DP)   /* Redx cannot be used as first operand */   \
+        remwx_ld(W(RG), W(RM), W(DP))
+
+
+#define remyn_ri(RM, IM)       /* Redx cannot be used as first operand */   \
+        remwn_ri(W(RM), W(IM))
+
+#define remyn_rr(RG, RM)                 /* RG, RM no Redx, RM no Reax */   \
+        remwn_rr(W(RG), W(RM))
+
+#define remyn_ld(RG, RM, DP)   /* Redx cannot be used as first operand */   \
+        remwn_ld(W(RG), W(RM), W(DP))
+
+
+#define remyx_xx()          /* to be placed immediately prior divyx_x* */   \
+        remwx_xx()                   /* to prepare for rem calculation */
+
+#define remyx_xr(RM)        /* to be placed immediately after divyx_xr */   \
+        remwx_xr(W(RM))              /* to produce remainder Redx<-rem */
+
+#define remyx_xm(RM, DP)    /* to be placed immediately after divyx_xm */   \
+        remwx_xm(W(RM), W(DP))       /* to produce remainder Redx<-rem */
+
+
+#define remyn_xx()          /* to be placed immediately prior divyn_x* */   \
+        remwn_xx()                   /* to prepare for rem calculation */
+
+#define remyn_xr(RM)        /* to be placed immediately after divyn_xr */   \
+        remwn_xr(W(RM))              /* to produce remainder Redx<-rem */
+
+#define remyn_xm(RM, DP)    /* to be placed immediately after divyn_xm */   \
+        remwn_xm(W(RM), W(DP))       /* to produce remainder Redx<-rem */
+
+/* arj
+ * set-flags: undefined
+ * refer to individual instructions' description
+ * to stay within special register limitations */
+
+#define arjyx_rx(RM, op, cc, lb)                                            \
+        arjwx_rx(W(RM), op, cc, lb)
+
+#define arjyx_mx(RM, DP, op, cc, lb)                                        \
+        arjwx_mx(W(RM), W(DP), op, cc, lb)
+
+#define arjyx_ri(RM, IM, op, cc, lb)                                        \
+        arjwx_ri(W(RM), W(IM), op, cc, lb)
+
+#define arjyx_mi(RM, DP, IM, op, cc, lb)                                    \
+        arjwx_mi(W(RM), W(DP), W(IM), op, cc, lb)
+
+#define arjyx_rr(RG, RM, op, cc, lb)                                        \
+        arjwx_rr(W(RG), W(RM), op, cc, lb)
+
+#define arjyx_ld(RG, RM, DP, op, cc, lb)                                    \
+        arjwx_ld(W(RG), W(RM), W(DP), op, cc, lb)
+
+#define arjyx_st(RG, RM, DP, op, cc, lb)                                    \
+        arjwx_st(W(RG), W(RM), W(DP), op, cc, lb)
+
+#define arjyx_mr(RM, DP, RG, op, cc, lb)                                    \
+        arjyx_st(W(RG), W(RM), W(DP), op, cc, lb)
+
+/* cmj
+ * set-flags: undefined */
+
+#define cmjyx_rz(RM, cc, lb)                                                \
+        cmjyx_ri(W(RM), IC(0), cc, lb)
+
+#define cmjyx_mz(RM, DP, cc, lb)                                            \
+        cmjyx_mi(W(RM), W(DP), IC(0), cc, lb)
+
+#define cmjyx_ri(RM, IM, cc, lb)                                            \
+        cmjwx_ri(W(RM), W(IM), cc, lb)
+
+#define cmjyx_mi(RM, DP, IM, cc, lb)                                        \
+        cmjwx_mi(W(RM), W(DP), W(IM), cc, lb)
+
+#define cmjyx_rr(RG, RM, cc, lb)                                            \
+        cmjwx_rr(W(RG), W(RM), cc, lb)
+
+#define cmjyx_rm(RG, RM, DP, cc, lb)                                        \
+        cmjwx_rm(W(RG), W(RM), W(DP), cc, lb)
+
+#define cmjyx_mr(RM, DP, RG, cc, lb)                                        \
+        cmjwx_mr(W(RM), W(DP), W(RG), cc, lb)
+
+/* cmp
+ * set-flags: yes */
+
+#define cmpyx_ri(RM, IM)                                                    \
+        cmpwx_ri(W(RM), W(IM))
+
+#define cmpyx_mi(RM, DP, IM)                                                \
+        cmpwx_mi(W(RM), W(DP), W(IM))
+
+#define cmpyx_rr(RG, RM)                                                    \
+        cmpwx_rr(W(RG), W(RM))
+
+#define cmpyx_rm(RG, RM, DP)                                                \
+        cmpwx_rm(W(RG), W(RM), W(DP))
+
+#define cmpyx_mr(RM, DP, RG)                                                \
+        cmpwx_mr(W(RM), W(DP), W(RG))
+
+/***************** element-sized instructions for 64-bit mode *****************/
+
+#elif RT_ELEMENT == 64
+
+/* mov
+ * set-flags: no */
+
+#define movyx_ri(RM, IM)                                                    \
+        movxx_ri(W(RM), W(IM))
+
+#define movyx_mi(RM, DP, IM)                                                \
+        movxx_mi(W(RM), W(DP), W(IM))
+
+#define movyx_rr(RG, RM)                                                    \
+        movxx_rr(W(RG), W(RM))
+
+#define movyx_ld(RG, RM, DP)                                                \
+        movxx_ld(W(RG), W(RM), W(DP))
+
+#define movyx_st(RG, RM, DP)                                                \
+        movxx_st(W(RG), W(RM), W(DP))
+
+/* and
+ * set-flags: undefined (*x), yes (*z) */
+
+#define andyx_ri(RM, IM)                                                    \
+        andxx_ri(W(RM), W(IM))
+
+#define andyx_mi(RM, DP, IM)                                                \
+        andxx_mi(W(RM), W(DP), W(IM))
+
+#define andyx_rr(RG, RM)                                                    \
+        andxx_rr(W(RG), W(RM))
+
+#define andyx_ld(RG, RM, DP)                                                \
+        andxx_ld(W(RG), W(RM), W(DP))
+
+#define andyx_st(RG, RM, DP)                                                \
+        andxx_st(W(RG), W(RM), W(DP))
+
+
+#define andyz_ri(RM, IM)                                                    \
+        andxz_ri(W(RM), W(IM))
+
+#define andyz_mi(RM, DP, IM)                                                \
+        andxz_mi(W(RM), W(DP), W(IM))
+
+#define andyz_rr(RG, RM)                                                    \
+        andxz_rr(W(RG), W(RM))
+
+#define andyz_ld(RG, RM, DP)                                                \
+        andxz_ld(W(RG), W(RM), W(DP))
+
+#define andyz_st(RG, RM, DP)                                                \
+        andxz_st(W(RG), W(RM), W(DP))
+
+/* orr
+ * set-flags: undefined (*x), yes (*z) */
+
+#define orryx_ri(RM, IM)                                                    \
+        orrxx_ri(W(RM), W(IM))
+
+#define orryx_mi(RM, DP, IM)                                                \
+        orrxx_mi(W(RM), W(DP), W(IM))
+
+#define orryx_rr(RG, RM)                                                    \
+        orrxx_rr(W(RG), W(RM))
+
+#define orryx_ld(RG, RM, DP)                                                \
+        orrxx_ld(W(RG), W(RM), W(DP))
+
+#define orryx_st(RG, RM, DP)                                                \
+        orrxx_st(W(RG), W(RM), W(DP))
+
+
+#define orryz_ri(RM, IM)                                                    \
+        orrxz_ri(W(RM), W(IM))
+
+#define orryz_mi(RM, DP, IM)                                                \
+        orrxz_mi(W(RM), W(DP), W(IM))
+
+#define orryz_rr(RG, RM)                                                    \
+        orrxz_rr(W(RG), W(RM))
+
+#define orryz_ld(RG, RM, DP)                                                \
+        orrxz_ld(W(RG), W(RM), W(DP))
+
+#define orryz_st(RG, RM, DP)                                                \
+        orrxz_st(W(RG), W(RM), W(DP))
+
+/* xor
+ * set-flags: undefined (*x), yes (*z) */
+
+#define xoryx_ri(RM, IM)                                                    \
+        xorxx_ri(W(RM), W(IM))
+
+#define xoryx_mi(RM, DP, IM)                                                \
+        xorxx_mi(W(RM), W(DP), W(IM))
+
+#define xoryx_rr(RG, RM)                                                    \
+        xorxx_rr(W(RG), W(RM))
+
+#define xoryx_ld(RG, RM, DP)                                                \
+        xorxx_ld(W(RG), W(RM), W(DP))
+
+#define xoryx_st(RG, RM, DP)                                                \
+        xorxx_st(W(RG), W(RM), W(DP))
+
+
+#define xoryz_ri(RM, IM)                                                    \
+        xorxz_ri(W(RM), W(IM))
+
+#define xoryz_mi(RM, DP, IM)                                                \
+        xorxz_mi(W(RM), W(DP), W(IM))
+
+#define xoryz_rr(RG, RM)                                                    \
+        xorxz_rr(W(RG), W(RM))
+
+#define xoryz_ld(RG, RM, DP)                                                \
+        xorxz_ld(W(RG), W(RM), W(DP))
+
+#define xoryz_st(RG, RM, DP)                                                \
+        xorxz_st(W(RG), W(RM), W(DP))
+
+/* not
+ * set-flags: no */
+
+#define notyx_rx(RM)                                                        \
+        notxx_rx(W(RM))
+
+#define notyx_mx(RM, DP)                                                    \
+        notxx_mx(W(RM), W(DP))
+
+/* neg
+ * set-flags: undefined (*x), yes (*z) */
+
+#define negyx_rx(RM)                                                        \
+        negxx_rx(W(RM))
+
+#define negyx_mx(RM, DP)                                                    \
+        negxx_mx(W(RM), W(DP))
+
+
+#define negyz_rx(RM)                                                        \
+        negxz_rx(W(RM))
+
+#define negyz_mx(RM, DP)                                                    \
+        negxz_mx(W(RM), W(DP))
+
+/* add
+ * set-flags: undefined (*x), yes (*z) */
+
+#define addyx_ri(RM, IM)                                                    \
+        addxx_ri(W(RM), W(IM))
+
+#define addyx_mi(RM, DP, IM)                                                \
+        addxx_mi(W(RM), W(DP), W(IM))
+
+#define addyx_rr(RG, RM)                                                    \
+        addxx_rr(W(RG), W(RM))
+
+#define addyx_ld(RG, RM, DP)                                                \
+        addxx_ld(W(RG), W(RM), W(DP))
+
+#define addyx_st(RG, RM, DP)                                                \
+        addxx_st(W(RG), W(RM), W(DP))
+
+
+#define addyz_ri(RM, IM)                                                    \
+        addxz_ri(W(RM), W(IM))
+
+#define addyz_mi(RM, DP, IM)                                                \
+        addxz_mi(W(RM), W(DP), W(IM))
+
+#define addyz_rr(RG, RM)                                                    \
+        addxz_rr(W(RG), W(RM))
+
+#define addyz_ld(RG, RM, DP)                                                \
+        addxz_ld(W(RG), W(RM), W(DP))
+
+#define addyz_st(RG, RM, DP)                                                \
+        addxz_st(W(RG), W(RM), W(DP))
+
+/* sub
+ * set-flags: undefined (*x), yes (*z) */
+
+#define subyx_ri(RM, IM)                                                    \
+        subxx_ri(W(RM), W(IM))
+
+#define subyx_mi(RM, DP, IM)                                                \
+        subxx_mi(W(RM), W(DP), W(IM))
+
+#define subyx_rr(RG, RM)                                                    \
+        subxx_rr(W(RG), W(RM))
+
+#define subyx_ld(RG, RM, DP)                                                \
+        subxx_ld(W(RG), W(RM), W(DP))
+
+#define subyx_st(RG, RM, DP)                                                \
+        subxx_st(W(RG), W(RM), W(DP))
+
+#define subyx_mr(RM, DP, RG)                                                \
+        subyx_st(W(RG), W(RM), W(DP))
+
+
+#define subyz_ri(RM, IM)                                                    \
+        subxz_ri(W(RM), W(IM))
+
+#define subyz_mi(RM, DP, IM)                                                \
+        subxz_mi(W(RM), W(DP), W(IM))
+
+#define subyz_rr(RG, RM)                                                    \
+        subxz_rr(W(RG), W(RM))
+
+#define subyz_ld(RG, RM, DP)                                                \
+        subxz_ld(W(RG), W(RM), W(DP))
+
+#define subyz_st(RG, RM, DP)                                                \
+        subxz_st(W(RG), W(RM), W(DP))
+
+#define subyz_mr(RM, DP, RG)                                                \
+        subyz_st(W(RG), W(RM), W(DP))
+
+/* shl
+ * set-flags: undefined (*x), yes (*z) */
+
+#define shlyx_rx(RM)                     /* reads Recx for shift value */   \
+        shlxx_rx(W(RM))
+
+#define shlyx_mx(RM, DP)                 /* reads Recx for shift value */   \
+        shlxx_mx(W(RM), W(DP))
+
+#define shlyx_ri(RM, IM)                                                    \
+        shlxx_ri(W(RM), W(IM))
+
+#define shlyx_mi(RM, DP, IM)                                                \
+        shlxx_mi(W(RM), W(DP), W(IM))
+
+#define shlyx_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        shlxx_rr(W(RG), W(RM))
+
+#define shlyx_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        shlxx_ld(W(RG), W(RM), W(DP))
+
+#define shlyx_st(RG, RM, DP)                                                \
+        shlxx_st(W(RG), W(RM), W(DP))
+
+#define shlyx_mr(RM, DP, RG)                                                \
+        shlyx_st(W(RG), W(RM), W(DP))
+
+
+#define shlyz_rx(RM)                     /* reads Recx for shift value */   \
+        shlxz_rx(W(RM))
+
+#define shlyz_mx(RM, DP)                 /* reads Recx for shift value */   \
+        shlxz_mx(W(RM), W(DP))
+
+#define shlyz_ri(RM, IM)                                                    \
+        shlxz_ri(W(RM), W(IM))
+
+#define shlyz_mi(RM, DP, IM)                                                \
+        shlxz_mi(W(RM), W(DP), W(IM))
+
+#define shlyz_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        shlxz_rr(W(RG), W(RM))
+
+#define shlyz_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        shlxz_ld(W(RG), W(RM), W(DP))
+
+#define shlyz_st(RG, RM, DP)                                                \
+        shlxz_st(W(RG), W(RM), W(DP))
+
+#define shlyz_mr(RM, DP, RG)                                                \
+        shlyz_st(W(RG), W(RM), W(DP))
+
+/* shr
+ * set-flags: undefined (*x), yes (*z) */
+
+#define shryx_rx(RM)                     /* reads Recx for shift value */   \
+        shrxx_rx(W(RM))
+
+#define shryx_mx(RM, DP)                 /* reads Recx for shift value */   \
+        shrxx_mx(W(RM), W(DP))
+
+#define shryx_ri(RM, IM)                                                    \
+        shrxx_ri(W(RM), W(IM))
+
+#define shryx_mi(RM, DP, IM)                                                \
+        shrxx_mi(W(RM), W(DP), W(IM))
+
+#define shryx_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        shrxx_rr(W(RG), W(RM))
+
+#define shryx_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        shrxx_ld(W(RG), W(RM), W(DP))
+
+#define shryx_st(RG, RM, DP)                                                \
+        shrxx_st(W(RG), W(RM), W(DP))
+
+#define shryx_mr(RM, DP, RG)                                                \
+        shryx_st(W(RG), W(RM), W(DP))
+
+
+#define shryz_rx(RM)                     /* reads Recx for shift value */   \
+        shrxz_rx(W(RM))
+
+#define shryz_mx(RM, DP)                 /* reads Recx for shift value */   \
+        shrxz_mx(W(RM), W(DP))
+
+#define shryz_ri(RM, IM)                                                    \
+        shrxz_ri(W(RM), W(IM))
+
+#define shryz_mi(RM, DP, IM)                                                \
+        shrxz_mi(W(RM), W(DP), W(IM))
+
+#define shryz_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        shrxz_rr(W(RG), W(RM))
+
+#define shryz_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        shrxz_ld(W(RG), W(RM), W(DP))
+
+#define shryz_st(RG, RM, DP)                                                \
+        shrxz_st(W(RG), W(RM), W(DP))
+
+#define shryz_mr(RM, DP, RG)                                                \
+        shryz_st(W(RG), W(RM), W(DP))
+
+
+#define shryn_rx(RM)                     /* reads Recx for shift value */   \
+        shrxn_rx(W(RM))
+
+#define shryn_mx(RM, DP)                 /* reads Recx for shift value */   \
+        shrxn_mx(W(RM), W(DP))
+
+#define shryn_ri(RM, IM)                                                    \
+        shrxn_ri(W(RM), W(IM))
+
+#define shryn_mi(RM, DP, IM)                                                \
+        shrxn_mi(W(RM), W(DP), W(IM))
+
+#define shryn_rr(RG, RM)       /* Recx cannot be used as first operand */   \
+        shrxn_rr(W(RG), W(RM))
+
+#define shryn_ld(RG, RM, DP)   /* Recx cannot be used as first operand */   \
+        shrxn_ld(W(RG), W(RM), W(DP))
+
+#define shryn_st(RG, RM, DP)                                                \
+        shrxn_st(W(RG), W(RM), W(DP))
+
+#define shryn_mr(RM, DP, RG)                                                \
+        shryn_st(W(RG), W(RM), W(DP))
+
+/* mul
+ * set-flags: undefined */
+
+#define mulyx_ri(RM, IM)                                                    \
+        mulxx_ri(W(RM), W(IM))
+
+#define mulyx_rr(RG, RM)                                                    \
+        mulxx_rr(W(RG), W(RM))
+
+#define mulyx_ld(RG, RM, DP)                                                \
+        mulxx_ld(W(RG), W(RM), W(DP))
+
+
+#define mulyx_xr(RM)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
+        mulxx_xr(W(RM))
+
+#define mulyx_xm(RM, DP) /* Reax is in/out, Redx is out(high)-zero-ext */   \
+        mulxx_xm(W(RM), W(DP))
+
+
+#define mulyn_xr(RM)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
+        mulxn_xr(W(RM))
+
+#define mulyn_xm(RM, DP) /* Reax is in/out, Redx is out(high)-sign-ext */   \
+        mulxn_xm(W(RM), W(DP))
+
+
+#define mulyp_xr(RM)     /* Reax is in/out, prepares Redx for divyn_x* */   \
+        mulxp_xr(W(RM))       /* product must not exceed operands size */
+
+#define mulyp_xm(RM, DP) /* Reax is in/out, prepares Redx for divyn_x* */   \
+        mulxp_xm(W(RM), W(DP))/* product must not exceed operands size */
+
+/* div
+ * set-flags: undefined */
+
+#define divyx_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        divxx_ri(W(RM), W(IM))
+
+#define divyx_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        divxx_rr(W(RG), W(RM))
+
+#define divyx_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        divxx_ld(W(RG), W(RM), W(DP))
+
+
+#define divyn_ri(RM, IM)       /* Reax cannot be used as first operand */   \
+        divxn_ri(W(RM), W(IM))
+
+#define divyn_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+        divxn_rr(W(RG), W(RM))
+
+#define divyn_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+        divxn_ld(W(RG), W(RM), W(DP))
+
+
+#define preyx_xx()          /* to be placed immediately prior divyx_x* */   \
+        prexx_xx()                   /* to prepare Redx for int-divide */
+
+#define preyn_xx()          /* to be placed immediately prior divyn_x* */   \
+        prexn_xx()                   /* to prepare Redx for int-divide */
+
+
+#define divyx_xr(RM)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+        divxx_xr(W(RM))
+
+#define divyx_xm(RM, DP) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+        divxx_xm(W(RM), W(DP))
+
+
+#define divyn_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divxn_xr(W(RM))
+
+#define divyn_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divxn_xm(W(RM), W(DP))
+
+
+#define divyp_xr(RM)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divxp_xr(W(RM))              /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
+
+#define divyp_xm(RM, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divxp_xm(W(RM), W(DP))       /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
+
+/* rem
+ * set-flags: undefined */
+
+#define remyx_ri(RM, IM)       /* Redx cannot be used as first operand */   \
+        remxx_ri(W(RM), W(IM))
+
+#define remyx_rr(RG, RM)                 /* RG, RM no Redx, RM no Reax */   \
+        remxx_rr(W(RG), W(RM))
+
+#define remyx_ld(RG, RM, DP)   /* Redx cannot be used as first operand */   \
+        remxx_ld(W(RG), W(RM), W(DP))
+
+
+#define remyn_ri(RM, IM)       /* Redx cannot be used as first operand */   \
+        remxn_ri(W(RM), W(IM))
+
+#define remyn_rr(RG, RM)                 /* RG, RM no Redx, RM no Reax */   \
+        remxn_rr(W(RG), W(RM))
+
+#define remyn_ld(RG, RM, DP)   /* Redx cannot be used as first operand */   \
+        remxn_ld(W(RG), W(RM), W(DP))
+
+
+#define remyx_xx()          /* to be placed immediately prior divyx_x* */   \
+        remxx_xx()                   /* to prepare for rem calculation */
+
+#define remyx_xr(RM)        /* to be placed immediately after divyx_xr */   \
+        remxx_xr(W(RM))              /* to produce remainder Redx<-rem */
+
+#define remyx_xm(RM, DP)    /* to be placed immediately after divyx_xm */   \
+        remxx_xm(W(RM), W(DP))       /* to produce remainder Redx<-rem */
+
+
+#define remyn_xx()          /* to be placed immediately prior divyn_x* */   \
+        remxn_xx()                   /* to prepare for rem calculation */
+
+#define remyn_xr(RM)        /* to be placed immediately after divyn_xr */   \
+        remxn_xr(W(RM))              /* to produce remainder Redx<-rem */
+
+#define remyn_xm(RM, DP)    /* to be placed immediately after divyn_xm */   \
+        remxn_xm(W(RM), W(DP))       /* to produce remainder Redx<-rem */
+
+/* arj
+ * set-flags: undefined
+ * refer to individual instructions' description
+ * to stay within special register limitations */
+
+#define arjyx_rx(RM, op, cc, lb)                                            \
+        arjxx_rx(W(RM), op, cc, lb)
+
+#define arjyx_mx(RM, DP, op, cc, lb)                                        \
+        arjxx_mx(W(RM), W(DP), op, cc, lb)
+
+#define arjyx_ri(RM, IM, op, cc, lb)                                        \
+        arjxx_ri(W(RM), W(IM), op, cc, lb)
+
+#define arjyx_mi(RM, DP, IM, op, cc, lb)                                    \
+        arjxx_mi(W(RM), W(DP), W(IM), op, cc, lb)
+
+#define arjyx_rr(RG, RM, op, cc, lb)                                        \
+        arjxx_rr(W(RG), W(RM), op, cc, lb)
+
+#define arjyx_ld(RG, RM, DP, op, cc, lb)                                    \
+        arjxx_ld(W(RG), W(RM), W(DP), op, cc, lb)
+
+#define arjyx_st(RG, RM, DP, op, cc, lb)                                    \
+        arjxx_st(W(RG), W(RM), W(DP), op, cc, lb)
+
+#define arjyx_mr(RM, DP, RG, op, cc, lb)                                    \
+        arjyx_st(W(RG), W(RM), W(DP), op, cc, lb)
+
+/* cmj
+ * set-flags: undefined */
+
+#define cmjyx_rz(RM, cc, lb)                                                \
+        cmjyx_ri(W(RM), IC(0), cc, lb)
+
+#define cmjyx_mz(RM, DP, cc, lb)                                            \
+        cmjyx_mi(W(RM), W(DP), IC(0), cc, lb)
+
+#define cmjyx_ri(RM, IM, cc, lb)                                            \
+        cmjxx_ri(W(RM), W(IM), cc, lb)
+
+#define cmjyx_mi(RM, DP, IM, cc, lb)                                        \
+        cmjxx_mi(W(RM), W(DP), W(IM), cc, lb)
+
+#define cmjyx_rr(RG, RM, cc, lb)                                            \
+        cmjxx_rr(W(RG), W(RM), cc, lb)
+
+#define cmjyx_rm(RG, RM, DP, cc, lb)                                        \
+        cmjxx_rm(W(RG), W(RM), W(DP), cc, lb)
+
+#define cmjyx_mr(RM, DP, RG, cc, lb)                                        \
+        cmjxx_mr(W(RM), W(DP), W(RG), cc, lb)
+
+/* cmp
+ * set-flags: yes */
+
+#define cmpyx_ri(RM, IM)                                                    \
+        cmpxx_ri(W(RM), W(IM))
+
+#define cmpyx_mi(RM, DP, IM)                                                \
+        cmpxx_mi(W(RM), W(DP), W(IM))
+
+#define cmpyx_rr(RG, RM)                                                    \
+        cmpxx_rr(W(RG), W(RM))
+
+#define cmpyx_rm(RG, RM, DP)                                                \
+        cmpxx_rm(W(RG), W(RM), W(DP))
+
+#define cmpyx_mr(RM, DP, RG)                                                \
+        cmpxx_mr(W(RM), W(DP), W(RG))
+
+#endif /* RT_ELEMENT */
 
 /******************************************************************************/
 /******************************************************************************/
