@@ -2690,11 +2690,10 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 /**********************************   UTILS   *********************************/
 /******************************************************************************/
 
-#undef Q /* short name for SIMD-quads in structs */
-
-#undef R /* short name for SIMD-width in structs with rt_fp32 SIMD-fields */
-#undef S /* short name for SIMD-width in structs with rt_real SIMD-fields */
-#undef T /* short name for SIMD-width in structs with rt_fp64 SIMD-fields */
+#undef Q /* short name for SIMD-quads in structs (number of 128-bit chunks) */
+#undef R /* short name for SIMD-width in structs (with rt_fp32 SIMD-fields) */
+#undef S /* short name for SIMD-width in structs (with rt_real SIMD-fields) */
+#undef T /* short name for SIMD-width in structs (with rt_fp64 SIMD-fields) */
 
 #undef W /* triplet pass-through wrapper */
 
@@ -2708,6 +2707,8 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 #undef E /* short name for RT_ENDIAN*(P-A)*4 */
 #undef F /* short name for RT_ENDIAN*(A-1)*4 */
 #undef G /* short name for RT_ENDIAN*(P-2)*4 */
+#undef H /* short name for RT_ENDIAN*(L-1)*4 */
+#undef I /* short name for RT_ENDIAN*(2-L)*4 */
 
 #undef Xmm0 /* external name for SIMD register */
 #undef Xmm1 /* external name for SIMD register */
