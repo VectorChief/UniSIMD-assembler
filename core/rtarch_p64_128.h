@@ -499,7 +499,7 @@
 /* shl */
 
 #define shlpx_ri(RM, IM)                                                    \
-        movxx_mi(Mebp, inf_SCR00, W(IM)) /* !use SIMD-elem-sized subset! */ \
+        movyx_mi(Mebp, inf_SCR00, W(IM))     /* !use fixed-64-bit subset! */\
         shlpx_ld(W(RM), Mebp, inf_SCR00)
 
 #define shlpx_ld(RG, RM, DP)                                                \
@@ -511,7 +511,7 @@
 /* shr */
 
 #define shrpx_ri(RM, IM)                                                    \
-        movxx_mi(Mebp, inf_SCR00, W(IM)) /* !use SIMD-elem-sized subset! */ \
+        movyx_mi(Mebp, inf_SCR00, W(IM))     /* !use fixed-64-bit subset! */\
         shrpx_ld(W(RM), Mebp, inf_SCR00)
 
 #define shrpx_ld(RG, RM, DP)                                                \
@@ -521,7 +521,7 @@
         EMITW(0x100006C4 | MXM(REG(RG), REG(RG), Tmm1))/* ^ == -1 if true */
 
 #define shrpn_ri(RM, IM)                                                    \
-        movxx_mi(Mebp, inf_SCR00, W(IM)) /* !use SIMD-elem-sized subset! */ \
+        movyx_mi(Mebp, inf_SCR00, W(IM))     /* !use fixed-64-bit subset! */\
         shrpn_ld(W(RM), Mebp, inf_SCR00)
 
 #define shrpn_ld(RG, RM, DP)                                                \
