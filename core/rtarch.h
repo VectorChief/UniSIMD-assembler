@@ -248,7 +248,7 @@
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
-#define RT_SIMD_FAST_FCTRL      1*(S/8) /* only if AVX is among build targets */
+#define RT_SIMD_FAST_FCTRL      1*(Q/2) /* only if AVX is among build targets */
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
@@ -440,7 +440,7 @@
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
-#define RT_SIMD_FAST_FCTRL      1*(S/8) /* only if AVX is among build targets */
+#define RT_SIMD_FAST_FCTRL      1*(Q/2) /* only if AVX is among build targets */
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
@@ -653,7 +653,7 @@
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
-#define RT_SIMD_FAST_FCTRL      1*(S/8) /* only if AVX is among build targets */
+#define RT_SIMD_FAST_FCTRL      1*(Q/2) /* only if AVX is among build targets */
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
