@@ -271,6 +271,8 @@ typedef const char         *rt_pstr;
 /*
  * Math macros
  */
+#if   RT_ELEMENT == 32
+
 #define RT_ABS(a)           (abs((rt_si32)(a)))
 
 #define RT_FABS(a)          (fabsf(a))
@@ -309,6 +311,49 @@ typedef const char         *rt_pstr;
                              (a) == +180.0f ? -1.0f :                       \
                              (a) == +270.0f ?  0.0f :                       \
                              cosf((rt_real)((a) * RT_PI / 180.0)))
+
+#elif RT_ELEMENT == 64
+
+#define RT_ABS(a)           (abs((rt_si32)(a)))
+
+#define RT_FABS(a)          (fabs(a))
+
+#define RT_FLOOR(a)         ((rt_si32)floor(a))
+
+#define RT_SIGN(a)          ((a)  <    0.0 ? -1 :                           \
+                             (a)  >    0.0 ? +1 :                           \
+                              0)
+
+#define RT_SQRT(a)          ((a)  <=   0.0 ?  0.0 :                         \
+                             sqrt(a))
+
+#define RT_ASIN(a)          ((a)  <=  -1.0 ? -(rt_real)RT_PI_2 :            \
+                             (a)  >=  +1.0 ? +(rt_real)RT_PI_2 :            \
+                             asin(a))
+
+#define RT_ACOS(a)          ((a)  <=  -1.0 ? +(rt_real)RT_PI :              \
+                             (a)  >=  +1.0 ?  0.0 :                         \
+                             acos(a))
+
+#define RT_SINA(a)          ((a) == -270.0 ? +1.0 :                         \
+                             (a) == -180.0 ?  0.0 :                         \
+                             (a) ==  -90.0 ? -1.0 :                         \
+                             (a) ==    0.0 ?  0.0 :                         \
+                             (a) ==  +90.0 ? +1.0 :                         \
+                             (a) == +180.0 ?  0.0 :                         \
+                             (a) == +270.0 ? -1.0 :                         \
+                             sin((rt_real)((a) * RT_PI / 180.0)))
+
+#define RT_COSA(a)          ((a) == -270.0 ?  0.0 :                         \
+                             (a) == -180.0 ? -1.0 :                         \
+                             (a) ==  -90.0 ?  0.0 :                         \
+                             (a) ==    0.0 ? +1.0 :                         \
+                             (a) ==  +90.0 ?  0.0 :                         \
+                             (a) == +180.0 ? -1.0 :                         \
+                             (a) == +270.0 ?  0.0 :                         \
+                             cos((rt_real)((a) * RT_PI / 180.0)))
+
+#endif /* RT_ELEMENT */
 
 /******************************************************************************/
 /*************************   SIMD BACKEND STRUCTURE   *************************/
