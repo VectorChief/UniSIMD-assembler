@@ -105,14 +105,12 @@ typedef unsigned int        rt_ui32;
 
 typedef __int64             rt_si64;
 typedef unsigned __int64    rt_ui64;
-
 #define RT_PR64 /*printf*/  "I64"
 
 #else /* --- Win64, GCC --- Linux, GCC -------------------------------------- */
 
 typedef long long           rt_si64;
 typedef unsigned long long  rt_ui64;
-
 #define RT_PR64 /*printf*/  "ll"
 
 #endif /* ------------- OS specific ----------------------------------------- */
@@ -133,10 +131,18 @@ typedef rt_ui64             rt_full;
 #if   RT_ELEMENT == 32
 
 typedef rt_si32             rt_elem;
+#define RT_PR_L /*printf*/  ""
+
+typedef rt_ui32             rt_uelm;
+#define RT_PRuL /*printf*/  "u"
 
 #elif RT_ELEMENT == 64
 
 typedef rt_si64             rt_elem;
+#define RT_PR_L /*printf*/  "ll"
+
+typedef rt_ui64             rt_uelm;
+#define RT_PRuL /*printf*/  "ull"
 
 #else  /* RT_ELEMENT */
 
@@ -148,10 +154,18 @@ typedef rt_si64             rt_elem;
 #if   RT_ADDRESS == 32
 
 typedef rt_si32             rt_addr;
+#define RT_PR_A /*printf*/  ""
+
+typedef rt_ui32             rt_uadr;
+#define RT_PRuA /*printf*/  "u"
 
 #elif RT_ADDRESS == 64
 
 typedef rt_si64             rt_addr;
+#define RT_PR_A /*printf*/  "ll"
+
+typedef rt_ui64             rt_uadr;
+#define RT_PRuA /*printf*/  "ull"
 
 #else  /* RT_ADDRESS */
 
@@ -162,17 +176,23 @@ typedef rt_si64             rt_addr;
 /* pointer-size integer types */
 #if   defined (RT_WIN64) /* Win64, GCC -------------------------------------- */
 
-typedef rt_si64             rt_size;
-
 typedef rt_si64             rt_cell;
+typedef rt_si64             rt_size;
+#define RT_PR_P /*printf*/  "ll"
+
 typedef rt_ui64             rt_word;
+typedef rt_ui64             rt_uptr;
+#define RT_PRuP /*printf*/  "ull"
 
 #else /* --- Win32, MSVC -- Linux, GCC -------------------------------------- */
 
-typedef long                rt_size;
-
 typedef long                rt_cell;
+typedef long                rt_size;
+#define RT_PR_P /*printf*/  "l"
+
 typedef unsigned long       rt_word;
+typedef unsigned long       rt_uptr;
+#define RT_PRuP /*printf*/  "ul"
 
 #endif /* ------------- OS specific ----------------------------------------- */
 
