@@ -147,11 +147,11 @@ typedef rt_si64             rt_elem;
 /* address-size integer types */
 #if   RT_ADDRESS == 32
 
-typedef rt_ui32             rt_addr;
+typedef rt_si32             rt_addr;
 
 #elif RT_ADDRESS == 64
 
-typedef rt_ui64             rt_addr;
+typedef rt_si64             rt_addr;
 
 #else  /* RT_ADDRESS */
 
