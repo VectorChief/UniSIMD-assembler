@@ -132,11 +132,11 @@ typedef rt_ui64             rt_full;
 /* element-size integer types */
 #if   RT_ELEMENT == 32
 
-typedef rt_ui32             rt_elem;
+typedef rt_si32             rt_elem;
 
 #elif RT_ELEMENT == 64
 
-typedef rt_ui64             rt_elem;
+typedef rt_si64             rt_elem;
 
 #else  /* RT_ELEMENT */
 
