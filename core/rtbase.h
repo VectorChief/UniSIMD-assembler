@@ -105,13 +105,15 @@ typedef unsigned int        rt_ui32;
 
 typedef __int64             rt_si64;
 typedef unsigned __int64    rt_ui64;
-#define RT_PR64 /*printf*/  "I64"
+#define    PR64 /*printf*/  "I64"
+#define RT_PR64 /*printf*/  PR64
 
 #else /* --- Win64, GCC --- Linux, GCC -------------------------------------- */
 
 typedef long long           rt_si64;
 typedef unsigned long long  rt_ui64;
-#define RT_PR64 /*printf*/  "ll"
+#define    PR64 /*printf*/  "ll"
+#define RT_PR64 /*printf*/  PR64
 
 #endif /* ------------- OS specific ----------------------------------------- */
 
@@ -131,18 +133,22 @@ typedef rt_ui64             rt_full;
 #if   RT_ELEMENT == 32
 
 typedef rt_si32             rt_elem;
-#define RT_PR_L /*printf*/  ""
+#define    PR_L /*printf*/  ""
+#define RT_PR_L /*printf*/  PR_L
 
 typedef rt_ui32             rt_uelm;
-#define RT_PRuL /*printf*/  "u"
+#define    PRuL /*printf*/  "u"
+#define RT_PRuL /*printf*/  PRuL
 
 #elif RT_ELEMENT == 64
 
 typedef rt_si64             rt_elem;
-#define RT_PR_L /*printf*/  "ll"
+#define    PR_L /*printf*/  "ll"
+#define RT_PR_L /*printf*/  PR_L
 
 typedef rt_ui64             rt_uelm;
-#define RT_PRuL /*printf*/  "ull"
+#define    PRuL /*printf*/  "ull"
+#define RT_PRuL /*printf*/  PRuL
 
 #else  /* RT_ELEMENT */
 
@@ -154,18 +160,22 @@ typedef rt_ui64             rt_uelm;
 #if   RT_ADDRESS == 32
 
 typedef rt_si32             rt_addr;
-#define RT_PR_A /*printf*/  ""
+#define    PR_A /*printf*/  ""
+#define RT_PR_A /*printf*/  PR_A
 
 typedef rt_ui32             rt_uadr;
-#define RT_PRuA /*printf*/  "u"
+#define    PRuA /*printf*/  "u"
+#define RT_PRuA /*printf*/  PRuA
 
 #elif RT_ADDRESS == 64
 
 typedef rt_si64             rt_addr;
-#define RT_PR_A /*printf*/  "ll"
+#define    PR_A /*printf*/  "ll"
+#define RT_PR_A /*printf*/  PR_A
 
 typedef rt_ui64             rt_uadr;
-#define RT_PRuA /*printf*/  "ull"
+#define    PRuA /*printf*/  "ull"
+#define RT_PRuA /*printf*/  PRuA
 
 #else  /* RT_ADDRESS */
 
@@ -178,21 +188,25 @@ typedef rt_ui64             rt_uadr;
 
 typedef rt_si64             rt_cell;
 typedef rt_si64             rt_size;
-#define RT_PR_P /*printf*/  "ll"
+#define    PR_P /*printf*/  "ll"
+#define RT_PR_P /*printf*/  PR_P
 
 typedef rt_ui64             rt_word;
 typedef rt_ui64             rt_uptr;
-#define RT_PRuP /*printf*/  "ull"
+#define    PRuP /*printf*/  "ull"
+#define RT_PRuP /*printf*/  PRuP
 
 #else /* --- Win32, MSVC -- Linux, GCC -------------------------------------- */
 
 typedef long                rt_cell;
 typedef long                rt_size;
-#define RT_PR_P /*printf*/  "l"
+#define    PR_P /*printf*/  "l"
+#define RT_PR_P /*printf*/  PR_P
 
 typedef unsigned long       rt_word;
 typedef unsigned long       rt_uptr;
-#define RT_PRuP /*printf*/  "ul"
+#define    PRuP /*printf*/  "ul"
+#define RT_PRuP /*printf*/  PRuP
 
 #endif /* ------------- OS specific ----------------------------------------- */
 
