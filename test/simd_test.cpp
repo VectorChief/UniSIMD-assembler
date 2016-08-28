@@ -110,19 +110,19 @@ struct rt_SIMD_INFOX : public rt_SIMD_INFO
 
     /* integer arrays */
 
-    rt_si32*iar0;
+    rt_elem*iar0;
 #define inf_IAR0            DP(Q*0x100+0x010+0x01C*P+E)
 
-    rt_si32*ico1;
+    rt_elem*ico1;
 #define inf_ICO1            DP(Q*0x100+0x010+0x020*P+E)
 
-    rt_si32*ico2;
+    rt_elem*ico2;
 #define inf_ICO2            DP(Q*0x100+0x010+0x024*P+E)
 
-    rt_si32*iso1;
+    rt_elem*iso1;
 #define inf_ISO1            DP(Q*0x100+0x010+0x028*P+E)
 
-    rt_si32*iso2;
+    rt_elem*iso2;
 #define inf_ISO2            DP(Q*0x100+0x010+0x02C*P+E)
 
 };
@@ -344,8 +344,8 @@ rt_void c_test03(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
     rt_real *far0 = info->far0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
 
     i = info->cyc;
     while (i-->0)
@@ -353,8 +353,13 @@ rt_void c_test03(rt_SIMD_INFOX *info)
         j = n;
         while (j-->0)
         {
+#if   RT_ELEMENT == 32
             ico1[j] = (far0[j] >  far0[(j + S) % n]) ? 0xFFFFFFFF : 0x00000000;
             ico2[j] = (far0[j] >= far0[(j + S) % n]) ? 0xFFFFFFFF : 0x00000000;
+#elif RT_ELEMENT == 64
+            ico1[j] = (far0[j] >  far0[(j + S) % n]) ? 0xFFFFFFFFFFFFFFFF : 0L;
+            ico2[j] = (far0[j] >= far0[(j + S) % n]) ? 0xFFFFFFFFFFFFFFFF : 0L;
+#endif /* RT_ELEMENT */
         }
     }
 }
@@ -408,10 +413,10 @@ rt_void p_test03(rt_SIMD_INFOX *info)
     rt_si32 j, n = info->size;
 
     rt_real *far0 = info->far0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
-    rt_si32 *iso1 = info->iso1;
-    rt_si32 *iso2 = info->iso2;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
 
     j = n;
     while (j-->0)
@@ -444,8 +449,8 @@ rt_void c_test04(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
     rt_real *far0 = info->far0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
 
     i = info->cyc;
     while (i-->0)
@@ -453,8 +458,13 @@ rt_void c_test04(rt_SIMD_INFOX *info)
         j = n;
         while (j-->0)
         {
+#if   RT_ELEMENT == 32
             ico1[j] = (far0[j] <  far0[(j + S) % n]) ? 0xFFFFFFFF : 0x00000000;
             ico2[j] = (far0[j] <= far0[(j + S) % n]) ? 0xFFFFFFFF : 0x00000000;
+#elif RT_ELEMENT == 64
+            ico1[j] = (far0[j] <  far0[(j + S) % n]) ? 0xFFFFFFFFFFFFFFFF : 0L;
+            ico2[j] = (far0[j] <= far0[(j + S) % n]) ? 0xFFFFFFFFFFFFFFFF : 0L;
+#endif /* RT_ELEMENT */
         }
     }
 }
@@ -508,10 +518,10 @@ rt_void p_test04(rt_SIMD_INFOX *info)
     rt_si32 j, n = info->size;
 
     rt_real *far0 = info->far0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
-    rt_si32 *iso1 = info->iso1;
-    rt_si32 *iso2 = info->iso2;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
 
     j = n;
     while (j-->0)
@@ -544,8 +554,8 @@ rt_void c_test05(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
     rt_real *far0 = info->far0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
 
     i = info->cyc;
     while (i-->0)
@@ -553,8 +563,13 @@ rt_void c_test05(rt_SIMD_INFOX *info)
         j = n;
         while (j-->0)
         {
+#if   RT_ELEMENT == 32
             ico1[j] = (far0[j] == far0[(j + S) % n]) ? 0xFFFFFFFF : 0x00000000;
             ico2[j] = (far0[j] != far0[(j + S) % n]) ? 0xFFFFFFFF : 0x00000000;
+#elif RT_ELEMENT == 64
+            ico1[j] = (far0[j] == far0[(j + S) % n]) ? 0xFFFFFFFFFFFFFFFF : 0L;
+            ico2[j] = (far0[j] != far0[(j + S) % n]) ? 0xFFFFFFFFFFFFFFFF : 0L;
+#endif /* RT_ELEMENT */
         }
     }
 }
@@ -608,10 +623,10 @@ rt_void p_test05(rt_SIMD_INFOX *info)
     rt_si32 j, n = info->size;
 
     rt_real *far0 = info->far0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
-    rt_si32 *iso1 = info->iso1;
-    rt_si32 *iso2 = info->iso2;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
 
     j = n;
     while (j-->0)
@@ -644,8 +659,8 @@ rt_void c_test06(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
     rt_real *far0 = info->far0;
-    rt_si32 *iar0 = info->iar0;
-    rt_si32 *ico1 = info->ico1;
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
     rt_real *fco2 = info->fco2;
 
     i = info->cyc;
@@ -654,7 +669,7 @@ rt_void c_test06(rt_SIMD_INFOX *info)
         j = n;
         while (j-->0)
         {
-            ico1[j] = (rt_si32)far0[j];
+            ico1[j] = (rt_elem)far0[j];
             fco2[j] = (rt_real)iar0[j];
         }
     }
@@ -704,10 +719,10 @@ rt_void p_test06(rt_SIMD_INFOX *info)
     rt_si32 j, n = info->size;
 
     rt_real *far0 = info->far0;
-    rt_si32 *iar0 = info->iar0;
-    rt_si32 *ico1 = info->ico1;
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
     rt_real *fco2 = info->fco2;
-    rt_si32 *iso1 = info->iso1;
+    rt_elem *iso1 = info->iso1;
     rt_real *fso2 = info->fso2;
 
     j = n;
@@ -721,10 +736,10 @@ rt_void p_test06(rt_SIMD_INFOX *info)
         RT_LOGI("farr[%d] = %e, iarr[%d] = %d\n",
                 j, far0[j], j, iar0[j]);
 
-        RT_LOGI("C (rt_si32)farr[%d] = %d, (rt_real)iarr[%d] = %e\n",
+        RT_LOGI("C (rt_elem)farr[%d] = %d, (rt_real)iarr[%d] = %e\n",
                 j, ico1[j], j, fco2[j]);
 
-        RT_LOGI("S (rt_si32)farr[%d] = %d, (rt_real)iarr[%d] = %e\n",
+        RT_LOGI("S (rt_elem)farr[%d] = %d, (rt_real)iarr[%d] = %e\n",
                 j, iso1[j], j, fso2[j]);
     }
 }
@@ -831,9 +846,9 @@ rt_void p_test07(rt_SIMD_INFOX *info)
 rt_void c_test08(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
-    rt_si32 *iar0 = info->iar0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
 
     i = info->cyc;
     while (i-->0)
@@ -841,8 +856,13 @@ rt_void c_test08(rt_SIMD_INFOX *info)
         j = n;
         while (j-->0)
         {
+#if   RT_ELEMENT == 32
             ico1[j] = iar0[j] + ((rt_ui32)+iar0[j] << 1);
             ico2[j] = iar0[j] - ((rt_ui32)-iar0[j] >> 2);
+#elif RT_ELEMENT == 64
+            ico1[j] = iar0[j] + ((rt_ui64)+iar0[j] << 1);
+            ico2[j] = iar0[j] - ((rt_ui64)-iar0[j] >> 2);
+#endif /* RT_ELEMENT */
         }
     }
 }
@@ -872,18 +892,18 @@ rt_void s_test08(rt_SIMD_INFOX *info)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
 #ifdef RT_BASE_TEST
-        movwx_ld(Reax, Mesi, AJ0)
-        movwx_ld(Recx, Mesi, AJ0)
-        movwx_rr(Redi, Reax)
-        mulwx_ri(Redi, IB(2))
-        movwx_rr(Reax, Redi)
-        addwx_rr(Reax, Recx)
-        movwx_st(Reax, Medx, AJ0)
-        movwx_rr(Reax, Recx)
-        negwx_rx(Reax)
-        shrwx_ri(Reax, IB(2))
-        subwx_rr(Recx, Reax)
-        movwx_st(Recx, Mebx, AJ0)
+        movyx_ld(Reax, Mesi, AJ0)
+        movyx_ld(Recx, Mesi, AJ0)
+        movyx_rr(Redi, Reax)
+        mulyx_ri(Redi, IB(2))
+        movyx_rr(Reax, Redi)
+        addyx_rr(Reax, Recx)
+        movyx_st(Reax, Medx, AJ0)
+        movyx_rr(Reax, Recx)
+        negyx_rx(Reax)
+        shryx_ri(Reax, IB(2))
+        subyx_rr(Recx, Reax)
+        movyx_st(Recx, Mebx, AJ0)
 #endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm0, Mesi, AJ1)
@@ -898,17 +918,17 @@ rt_void s_test08(rt_SIMD_INFOX *info)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
 #ifdef RT_BASE_TEST
-        movwx_ld(Reax, Mesi, AJ1)
-        movwx_ld(Recx, Mesi, AJ1)
-        movwx_st(Reax, Medx, AJ1)
-        shlwx_mi(Medx, AJ1, IB(1))
-        addwx_st(Recx, Medx, AJ1)
-        movwx_st(Recx, Mebx, AJ1)
-        negwx_mx(Mebx, AJ1)
-        shrwx_mi(Mebx, AJ1, IB(2))
-        movwx_ld(Reax, Mebx, AJ1)
-        movwx_st(Recx, Mebx, AJ1)
-        subwx_st(Reax, Mebx, AJ1)
+        movyx_ld(Reax, Mesi, AJ1)
+        movyx_ld(Recx, Mesi, AJ1)
+        movyx_st(Reax, Medx, AJ1)
+        shlyx_mi(Medx, AJ1, IB(1))
+        addyx_st(Recx, Medx, AJ1)
+        movyx_st(Recx, Mebx, AJ1)
+        negyx_mx(Mebx, AJ1)
+        shryx_mi(Mebx, AJ1, IB(2))
+        movyx_ld(Reax, Mebx, AJ1)
+        movyx_st(Recx, Mebx, AJ1)
+        subyx_st(Reax, Mebx, AJ1)
 #endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm0, Mesi, AJ2)
@@ -923,16 +943,16 @@ rt_void s_test08(rt_SIMD_INFOX *info)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
 #ifdef RT_BASE_TEST
-        movwx_ld(Reax, Mesi, AJ2)
-        movwx_ld(Recx, Mesi, AJ2)
-        shlwx_ri(Reax, IB(1))
-        addwx_rr(Reax, Recx)
-        movwx_st(Reax, Medx, AJ2)
-        movwx_rr(Reax, Recx)
-        negwx_rx(Reax)
-        shrwx_ri(Reax, IB(2))
-        subwx_rr(Recx, Reax)
-        movwx_st(Recx, Mebx, AJ2)
+        movyx_ld(Reax, Mesi, AJ2)
+        movyx_ld(Recx, Mesi, AJ2)
+        shlyx_ri(Reax, IB(1))
+        addyx_rr(Reax, Recx)
+        movyx_st(Reax, Medx, AJ2)
+        movyx_rr(Reax, Recx)
+        negyx_rx(Reax)
+        shryx_ri(Reax, IB(2))
+        subyx_rr(Recx, Reax)
+        movyx_st(Recx, Mebx, AJ2)
 #endif /* RT_BASE_TEST */
 
         ASM_LEAVE(info)
@@ -943,11 +963,11 @@ rt_void p_test08(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_si32 *iar0 = info->iar0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
-    rt_si32 *iso1 = info->iso1;
-    rt_si32 *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
 
     j = n;
     while (j-->0)
@@ -960,12 +980,12 @@ rt_void p_test08(rt_SIMD_INFOX *info)
         RT_LOGI("iarr[%d] = %d\n",
                 j, iar0[j]);
 
-        RT_LOGI("C iarr[%d]+((rt_ui32)+iarr[%d]<<1) = %d, "
-                  "iarr[%d]-((rt_ui32)-iarr[%d]>>2) = %d\n",
+        RT_LOGI("C iarr[%d]+((rt_elem)+iarr[%d]<<1) = %d, "
+                  "iarr[%d]-((rt_elem)-iarr[%d]>>2) = %d\n",
                 j, j, ico1[j], j, j, ico2[j]);
 
-        RT_LOGI("S iarr[%d]+((rt_ui32)+iarr[%d]<<1) = %d, "
-                  "iarr[%d]-((rt_ui32)-iarr[%d]>>2) = %d\n",
+        RT_LOGI("S iarr[%d]+((rt_elem)+iarr[%d]<<1) = %d, "
+                  "iarr[%d]-((rt_elem)-iarr[%d]>>2) = %d\n",
                 j, j, iso1[j], j, j, iso2[j]);
     }
 }
@@ -981,9 +1001,9 @@ rt_void p_test08(rt_SIMD_INFOX *info)
 rt_void c_test09(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
-    rt_si32 *iar0 = info->iar0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
 
     i = info->cyc;
     while (i-->0)
@@ -1016,13 +1036,13 @@ rt_void s_test09(rt_SIMD_INFOX *info)
 
     LBL(loc_beg)
 
-        movwx_ld(Reax, Mecx, DP(Q*0x000))
-        mulwn_xm(Mecx, DP(Q*0x010))
-        movwx_st(Reax, Mebx, DP(Q*0x000))
-        movwx_ld(Reax, Mecx, DP(Q*0x000))
-        prewn_xx()
-        divwn_xm(Mecx, DP(Q*0x010))
-        movwx_st(Reax, Mesi, DP(Q*0x000))
+        movyx_ld(Reax, Mecx, DP(Q*0x000))
+        mulyn_xm(Mecx, DP(Q*0x010))
+        movyx_st(Reax, Mebx, DP(Q*0x000))
+        movyx_ld(Reax, Mecx, DP(Q*0x000))
+        preyn_xx()
+        divyn_xm(Mecx, DP(Q*0x010))
+        movyx_st(Reax, Mesi, DP(Q*0x000))
 
         addxx_ri(Recx, IB(4))
         addxx_ri(Rebx, IB(4))
@@ -1036,13 +1056,13 @@ rt_void s_test09(rt_SIMD_INFOX *info)
 
     LBL(smd_beg)
 
-        movwx_ld(Reax, Mecx, DP(Q*0x000))
-        mulwn_xm(Medi, DP(Q*0x000))
-        movwx_st(Reax, Mebx, DP(Q*0x000))
-        movwx_ld(Reax, Mecx, DP(Q*0x000))
-        prewn_xx()
-        divwn_xm(Medi, DP(Q*0x000))
-        movwx_st(Reax, Mesi, DP(Q*0x000))
+        movyx_ld(Reax, Mecx, DP(Q*0x000))
+        mulyn_xm(Medi, DP(Q*0x000))
+        movyx_st(Reax, Mebx, DP(Q*0x000))
+        movyx_ld(Reax, Mecx, DP(Q*0x000))
+        preyn_xx()
+        divyn_xm(Medi, DP(Q*0x000))
+        movyx_st(Reax, Mesi, DP(Q*0x000))
 
         addxx_ri(Recx, IB(4))
         addxx_ri(Rebx, IB(4))
@@ -1067,11 +1087,11 @@ rt_void p_test09(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_si32 *iar0 = info->iar0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
-    rt_si32 *iso1 = info->iso1;
-    rt_si32 *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
 
     j = n;
     while (j-->0)
@@ -1203,9 +1223,9 @@ rt_void p_test10(rt_SIMD_INFOX *info)
 rt_void c_test11(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
-    rt_si32 *iar0 = info->iar0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
 
     i = info->cyc;
     while (i-->0)
@@ -1243,15 +1263,15 @@ rt_void s_test11(rt_SIMD_INFOX *info)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
 #ifdef RT_BASE_TEST
-        movwx_ld(Reax, Mesi, AJ0)
-        movwx_ld(Recx, Mesi, AJ0)
-        shlwx_ri(Reax, IB(7))
-        orrwx_rr(Reax, Recx)
-        movwx_st(Reax, Medx, AJ0)
-        movwx_rr(Reax, Recx)
-        shrwx_ri(Reax, IB(3))
-        xorwx_rr(Reax, Recx)
-        movwx_st(Reax, Mebx, AJ0)
+        movyx_ld(Reax, Mesi, AJ0)
+        movyx_ld(Recx, Mesi, AJ0)
+        shlyx_ri(Reax, IB(7))
+        orryx_rr(Reax, Recx)
+        movyx_st(Reax, Medx, AJ0)
+        movyx_rr(Reax, Recx)
+        shryx_ri(Reax, IB(3))
+        xoryx_rr(Reax, Recx)
+        movyx_st(Reax, Mebx, AJ0)
 #endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm0, Mesi, AJ1)
@@ -1265,14 +1285,14 @@ rt_void s_test11(rt_SIMD_INFOX *info)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
 #ifdef RT_BASE_TEST
-        movwx_ld(Reax, Mesi, AJ1)
-        movwx_ld(Recx, Mesi, AJ1)
-        movwx_st(Reax, Medx, AJ1)
-        shlwx_mi(Medx, AJ1, IB(7))
-        orrwx_st(Recx, Medx, AJ1)
-        movwx_st(Recx, Mebx, AJ1)
-        shrwx_mi(Mebx, AJ1, IB(3))
-        xorwx_st(Recx, Mebx, AJ1)
+        movyx_ld(Reax, Mesi, AJ1)
+        movyx_ld(Recx, Mesi, AJ1)
+        movyx_st(Reax, Medx, AJ1)
+        shlyx_mi(Medx, AJ1, IB(7))
+        orryx_st(Recx, Medx, AJ1)
+        movyx_st(Recx, Mebx, AJ1)
+        shryx_mi(Mebx, AJ1, IB(3))
+        xoryx_st(Recx, Mebx, AJ1)
 #endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm0, Mesi, AJ2)
@@ -1286,15 +1306,15 @@ rt_void s_test11(rt_SIMD_INFOX *info)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
 #ifdef RT_BASE_TEST
-        movwx_ld(Reax, Mesi, AJ2)
-        movwx_ld(Recx, Mesi, AJ2)
-        shlwx_ri(Reax, IB(7))
-        orrwx_rr(Reax, Recx)
-        movwx_st(Reax, Medx, AJ2)
-        movwx_st(Recx, Mebx, AJ2)
-        shrwx_mi(Mebx, AJ2, IB(3))
-        xorwx_ld(Recx, Mebx, AJ2)
-        movwx_st(Recx, Mebx, AJ2)
+        movyx_ld(Reax, Mesi, AJ2)
+        movyx_ld(Recx, Mesi, AJ2)
+        shlyx_ri(Reax, IB(7))
+        orryx_rr(Reax, Recx)
+        movyx_st(Reax, Medx, AJ2)
+        movyx_st(Recx, Mebx, AJ2)
+        shryx_mi(Mebx, AJ2, IB(3))
+        xoryx_ld(Recx, Mebx, AJ2)
+        movyx_st(Recx, Mebx, AJ2)
 #endif /* RT_BASE_TEST */
 
         ASM_LEAVE(info)
@@ -1305,11 +1325,11 @@ rt_void p_test11(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_si32 *iar0 = info->iar0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
-    rt_si32 *iso1 = info->iso1;
-    rt_si32 *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
 
     j = n;
     while (j-->0)
@@ -1341,9 +1361,9 @@ rt_void p_test11(rt_SIMD_INFOX *info)
 rt_void c_test12(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
-    rt_si32 *iar0 = info->iar0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
 
     i = info->cyc;
     while (i-->0)
@@ -1381,16 +1401,16 @@ rt_void s_test12(rt_SIMD_INFOX *info)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
 #ifdef RT_BASE_TEST
-        movwx_ld(Reax, Mesi, AJ0)
-        movwx_ld(Recx, Mesi, AJ0)
-        shlwx_ri(Reax, IB(7))
-        andwx_rr(Reax, Recx)
-        movwx_st(Reax, Medx, AJ0)
-        movwx_rr(Reax, Recx)
-        shrwx_ri(Recx, IB(3))
-        notwx_rx(Reax)
-        andwx_rr(Recx, Reax)
-        movwx_st(Recx, Mebx, AJ0)
+        movyx_ld(Reax, Mesi, AJ0)
+        movyx_ld(Recx, Mesi, AJ0)
+        shlyx_ri(Reax, IB(7))
+        andyx_rr(Reax, Recx)
+        movyx_st(Reax, Medx, AJ0)
+        movyx_rr(Reax, Recx)
+        shryx_ri(Recx, IB(3))
+        notyx_rx(Reax)
+        andyx_rr(Recx, Reax)
+        movyx_st(Recx, Mebx, AJ0)
 #endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm0, Mesi, AJ1)
@@ -1404,17 +1424,17 @@ rt_void s_test12(rt_SIMD_INFOX *info)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
 #ifdef RT_BASE_TEST
-        movwx_ld(Reax, Mesi, AJ1)
-        movwx_ld(Recx, Mesi, AJ1)
-        movwx_st(Reax, Medx, AJ1)
-        shlwx_mi(Medx, AJ1, IB(7))
-        andwx_st(Recx, Medx, AJ1)
-        movwx_st(Recx, Mebx, AJ1)
-        notwx_mx(Mebx, AJ1)
-        movwx_ld(Reax, Mebx, AJ1)
-        movwx_st(Recx, Mebx, AJ1)
-        shrwx_mi(Mebx, AJ1, IB(3))
-        andwx_st(Reax, Mebx, AJ1)
+        movyx_ld(Reax, Mesi, AJ1)
+        movyx_ld(Recx, Mesi, AJ1)
+        movyx_st(Reax, Medx, AJ1)
+        shlyx_mi(Medx, AJ1, IB(7))
+        andyx_st(Recx, Medx, AJ1)
+        movyx_st(Recx, Mebx, AJ1)
+        notyx_mx(Mebx, AJ1)
+        movyx_ld(Reax, Mebx, AJ1)
+        movyx_st(Recx, Mebx, AJ1)
+        shryx_mi(Mebx, AJ1, IB(3))
+        andyx_st(Reax, Mebx, AJ1)
 #endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm0, Mesi, AJ2)
@@ -1428,16 +1448,16 @@ rt_void s_test12(rt_SIMD_INFOX *info)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
 #ifdef RT_BASE_TEST
-        movwx_ld(Reax, Mesi, AJ2)
-        movwx_ld(Recx, Mesi, AJ2)
-        shlwx_ri(Reax, IB(7))
-        andwx_rr(Reax, Recx)
-        movwx_st(Reax, Medx, AJ2)
-        movwx_rr(Reax, Recx)
-        shrwx_ri(Recx, IB(3))
-        notwx_rx(Reax)
-        andwx_rr(Recx, Reax)
-        movwx_st(Recx, Mebx, AJ2)
+        movyx_ld(Reax, Mesi, AJ2)
+        movyx_ld(Recx, Mesi, AJ2)
+        shlyx_ri(Reax, IB(7))
+        andyx_rr(Reax, Recx)
+        movyx_st(Reax, Medx, AJ2)
+        movyx_rr(Reax, Recx)
+        shryx_ri(Recx, IB(3))
+        notyx_rx(Reax)
+        andyx_rr(Recx, Reax)
+        movyx_st(Recx, Mebx, AJ2)
 #endif /* RT_BASE_TEST */
 
         ASM_LEAVE(info)
@@ -1448,11 +1468,11 @@ rt_void p_test12(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_si32 *iar0 = info->iar0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
-    rt_si32 *iso1 = info->iso1;
-    rt_si32 *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
 
     j = n;
     while (j-->0)
@@ -1576,8 +1596,8 @@ rt_void c_test14(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, k, n = info->size;
     rt_real *far0 = info->far0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
 
     i = info->cyc;
     while (i-->0)
@@ -1596,8 +1616,13 @@ rt_void c_test14(rt_SIMD_INFOX *info)
             k = S;
             while (k-->0)
             {
+#if   RT_ELEMENT == 32
                 ico1[j*S + k] = (e == 0) ? 0x00000000 : 0xFFFFFFFF;
                 ico2[j*S + k] = (e == 0) ? 0xFFFFFFFF : 0x00000000;
+#elif RT_ELEMENT == 64
+                ico1[j*S + k] = (e == 0) ? 0L : 0xFFFFFFFFFFFFFFFF;
+                ico2[j*S + k] = (e == 0) ? 0xFFFFFFFFFFFFFFFF : 0L;
+#endif /* RT_ELEMENT */
             }
         }
     }
@@ -1700,10 +1725,10 @@ rt_void p_test14(rt_SIMD_INFOX *info)
     rt_si32 j, k, n = info->size;
 
     rt_real *far0 = info->far0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
-    rt_si32 *iso1 = info->iso1;
-    rt_si32 *iso2 = info->iso2;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
 
     j = n / S;
     while (j-->0)
@@ -1761,9 +1786,9 @@ rt_void p_test14(rt_SIMD_INFOX *info)
 rt_void c_test15(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
-    rt_si32 *iar0 = info->iar0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
 
     i = info->cyc;
     while (i-->0)
@@ -1798,13 +1823,13 @@ rt_void s_test15(rt_SIMD_INFOX *info)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
 #ifdef RT_BASE_TEST
-        movwx_ld(Reax, Mesi, AJ0)
-        xorwx_rr(Recx, Recx)
-        subwx_ld(Recx, Mesi, AJ0)
-        shrwn_ri(Reax, IB(3))
-        shrwn_ri(Recx, IB(5))
-        movwx_st(Reax, Medx, AJ0)
-        movwx_st(Recx, Mebx, AJ0)
+        movyx_ld(Reax, Mesi, AJ0)
+        xoryx_rr(Recx, Recx)
+        subyx_ld(Recx, Mesi, AJ0)
+        shryn_ri(Reax, IB(3))
+        shryn_ri(Recx, IB(5))
+        movyx_st(Reax, Medx, AJ0)
+        movyx_st(Recx, Mebx, AJ0)
 #endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm2, Mesi, AJ1)
@@ -1815,13 +1840,13 @@ rt_void s_test15(rt_SIMD_INFOX *info)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
 #ifdef RT_BASE_TEST
-        movwx_ld(Reax, Mesi, AJ1)
-        xorwx_rr(Recx, Recx)
-        subwx_ld(Recx, Mesi, AJ1)
-        movwx_st(Reax, Medx, AJ1)
-        shrwn_mi(Medx, AJ1, IB(3))
-        movwx_st(Recx, Mebx, AJ1)
-        shrwn_mi(Mebx, AJ1, IB(5))
+        movyx_ld(Reax, Mesi, AJ1)
+        xoryx_rr(Recx, Recx)
+        subyx_ld(Recx, Mesi, AJ1)
+        movyx_st(Reax, Medx, AJ1)
+        shryn_mi(Medx, AJ1, IB(3))
+        movyx_st(Recx, Mebx, AJ1)
+        shryn_mi(Mebx, AJ1, IB(5))
 #endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm2, Mesi, AJ2)
@@ -1832,13 +1857,13 @@ rt_void s_test15(rt_SIMD_INFOX *info)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
 #ifdef RT_BASE_TEST
-        movwx_ld(Reax, Mesi, AJ2)
-        xorwx_rr(Recx, Recx)
-        subwx_ld(Recx, Mesi, AJ2)
-        shrwn_ri(Reax, IB(3))
-        shrwn_ri(Recx, IB(5))
-        movwx_st(Reax, Medx, AJ2)
-        movwx_st(Recx, Mebx, AJ2)
+        movyx_ld(Reax, Mesi, AJ2)
+        xoryx_rr(Recx, Recx)
+        subyx_ld(Recx, Mesi, AJ2)
+        shryn_ri(Reax, IB(3))
+        shryn_ri(Recx, IB(5))
+        movyx_st(Reax, Medx, AJ2)
+        movyx_st(Recx, Mebx, AJ2)
 #endif /* RT_BASE_TEST */
 
         ASM_LEAVE(info)
@@ -1849,11 +1874,11 @@ rt_void p_test15(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_si32 *iar0 = info->iar0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
-    rt_si32 *iso1 = info->iso1;
-    rt_si32 *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
 
     j = n;
     while (j-->0)
@@ -1885,9 +1910,9 @@ rt_void p_test15(rt_SIMD_INFOX *info)
 rt_void c_test16(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
-    rt_si32 *iar0 = info->iar0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
 
     i = info->cyc;
     while (i-->0)
@@ -1928,12 +1953,12 @@ rt_void s_test16(rt_SIMD_INFOX *info)
         movpx_st(Xmm3, Mebx, AJ0)
         movpx_st(Xmm0, Mesi, AJ0)
 #ifdef RT_BASE_TEST
-        movwx_ld(Reax, Mesi, AJ0)
-        shrwx_rx(Reax)
-        movwx_st(Reax, Medx, AJ0)
-        movwx_ld(Reax, Mesi, AJ0)
-        shlwx_rx(Reax)
-        movwx_st(Reax, Mebx, AJ0)
+        movyx_ld(Reax, Mesi, AJ0)
+        shryx_rx(Reax)
+        movyx_st(Reax, Medx, AJ0)
+        movyx_ld(Reax, Mesi, AJ0)
+        shlyx_rx(Reax)
+        movyx_st(Reax, Mebx, AJ0)
 #endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm0, Mesi, AJ1)
@@ -1950,12 +1975,12 @@ rt_void s_test16(rt_SIMD_INFOX *info)
         movpx_st(Xmm3, Mebx, AJ1)
         movpx_st(Xmm0, Mesi, AJ1)
 #ifdef RT_BASE_TEST
-        movwx_ld(Reax, Mesi, AJ1)
-        movwx_st(Reax, Medx, AJ1)
-        shrwx_mx(Medx, AJ1)
-        movwx_ld(Reax, Mesi, AJ1)
-        movwx_st(Reax, Mebx, AJ1)
-        shlwx_mx(Mebx, AJ1)
+        movyx_ld(Reax, Mesi, AJ1)
+        movyx_st(Reax, Medx, AJ1)
+        shryx_mx(Medx, AJ1)
+        movyx_ld(Reax, Mesi, AJ1)
+        movyx_st(Reax, Mebx, AJ1)
+        shlyx_mx(Mebx, AJ1)
 #endif /* RT_BASE_TEST */
 
         movpx_ld(Xmm0, Mesi, AJ2)
@@ -1972,12 +1997,12 @@ rt_void s_test16(rt_SIMD_INFOX *info)
         movpx_st(Xmm3, Mebx, AJ2)
         movpx_st(Xmm0, Mesi, AJ2)
 #ifdef RT_BASE_TEST
-        movwx_ld(Reax, Mesi, AJ2)
-        shrwx_rx(Reax)
-        movwx_st(Reax, Medx, AJ2)
-        movwx_ld(Reax, Mesi, AJ2)
-        shlwx_rx(Reax)
-        movwx_st(Reax, Mebx, AJ2)
+        movyx_ld(Reax, Mesi, AJ2)
+        shryx_rx(Reax)
+        movyx_st(Reax, Medx, AJ2)
+        movyx_ld(Reax, Mesi, AJ2)
+        shlyx_rx(Reax)
+        movyx_st(Reax, Mebx, AJ2)
 #endif /* RT_BASE_TEST */
 
         ASM_LEAVE(info)
@@ -1988,11 +2013,11 @@ rt_void p_test16(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_si32 *iar0 = info->iar0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
-    rt_si32 *iso1 = info->iso1;
-    rt_si32 *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
 
     j = n;
     while (j-->0)
@@ -2115,9 +2140,9 @@ rt_void p_test17(rt_SIMD_INFOX *info)
 rt_void c_test18(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
-    rt_si32 *iar0 = info->iar0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
 
     i = info->cyc;
     while (i-->0)
@@ -2150,15 +2175,15 @@ rt_void s_test18(rt_SIMD_INFOX *info)
 
     LBL(loc_ini)
 
-        movwx_ld(Reax, Mecx, DP(Q*0x000))
-        mulwn_xm(Mecx, DP(Q*0x010))
-        movwx_st(Reax, Mebx, DP(Q*0x000))
-        movwx_ld(Reax, Mecx, DP(Q*0x000))
-        prewn_xx()
-        remwn_xx()
-        divwn_xm(Mecx, DP(Q*0x010))
-        remwn_xm(Mecx, DP(Q*0x010))
-        movwx_st(Redx, Mesi, DP(Q*0x000))
+        movyx_ld(Reax, Mecx, DP(Q*0x000))
+        mulyn_xm(Mecx, DP(Q*0x010))
+        movyx_st(Reax, Mebx, DP(Q*0x000))
+        movyx_ld(Reax, Mecx, DP(Q*0x000))
+        preyn_xx()
+        remyn_xx()
+        divyn_xm(Mecx, DP(Q*0x010))
+        remyn_xm(Mecx, DP(Q*0x010))
+        movyx_st(Redx, Mesi, DP(Q*0x000))
 
         addxx_ri(Recx, IB(4))
         addxx_ri(Rebx, IB(4))
@@ -2172,15 +2197,15 @@ rt_void s_test18(rt_SIMD_INFOX *info)
 
     LBL(smd_ini)
 
-        movwx_ld(Reax, Mecx, DP(Q*0x000))
-        mulwn_xm(Medi, DP(Q*0x000))
-        movwx_st(Reax, Mebx, DP(Q*0x000))
-        movwx_ld(Reax, Mecx, DP(Q*0x000))
-        prewn_xx()
-        remwn_xx()
-        divwn_xm(Medi, DP(Q*0x000))
-        remwn_xm(Mecx, DP(Q*0x010))
-        movwx_st(Redx, Mesi, DP(Q*0x000))
+        movyx_ld(Reax, Mecx, DP(Q*0x000))
+        mulyn_xm(Medi, DP(Q*0x000))
+        movyx_st(Reax, Mebx, DP(Q*0x000))
+        movyx_ld(Reax, Mecx, DP(Q*0x000))
+        preyn_xx()
+        remyn_xx()
+        divyn_xm(Medi, DP(Q*0x000))
+        remyn_xm(Mecx, DP(Q*0x010))
+        movyx_st(Redx, Mesi, DP(Q*0x000))
 
         addxx_ri(Recx, IB(4))
         addxx_ri(Rebx, IB(4))
@@ -2205,11 +2230,11 @@ rt_void p_test18(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_si32 *iar0 = info->iar0;
-    rt_si32 *ico1 = info->ico1;
-    rt_si32 *ico2 = info->ico2;
-    rt_si32 *iso1 = info->iso1;
-    rt_si32 *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
 
     j = n;
     while (j-->0)
@@ -2529,6 +2554,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     memset(marr, 0, 10 * ARR_SIZE * sizeof(rt_ui32) + MASK);
     rt_pntr mar0 = (rt_pntr)(((rt_full)marr + MASK) & ~MASK);
 
+#if   RT_ELEMENT == 32
     rt_real farr[4*3] =
     {
         34.2785,
@@ -2544,6 +2570,17 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
         0.0765376,
         43187.487,
     };
+#elif RT_ELEMENT == 64
+    rt_real farr[2*3] =
+    {
+        34.278543634635234534,
+        0.6543485436532716935,
+        0.0032467678456476578,
+        0.6543485436532716935,
+        8764.7534912638712638,
+        0.0765376764546510983,
+    };
+#endif /* RT_ELEMENT */
 
     rt_real *far0 = (rt_real *)mar0 + ARR_SIZE * 0;
     rt_real *fco1 = (rt_real *)mar0 + ARR_SIZE * 1;
@@ -2556,7 +2593,8 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
         memcpy(far0 + RT_ARR_SIZE(farr) * k, farr, sizeof(farr));
     }
 
-    rt_si32 iarr[4*3] =
+#if   RT_ELEMENT == 32
+    rt_elem iarr[4*3] =
     {
         285,
         113,
@@ -2571,12 +2609,23 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
         7665,
         318773,
     };
+#elif RT_ELEMENT == 64
+    rt_elem iarr[2*3] =
+    {
+        2859873657236487698L,
+        65,
+        3872364823542786534L,
+        71273568176523765L,
+        2347875,
+        7665765419823409823L,
+    };
+#endif /* RT_ELEMENT */
 
-    rt_si32 *iar0 = (rt_si32 *)mar0 + ARR_SIZE * 5;
-    rt_si32 *ico1 = (rt_si32 *)mar0 + ARR_SIZE * 6;
-    rt_si32 *ico2 = (rt_si32 *)mar0 + ARR_SIZE * 7;
-    rt_si32 *iso1 = (rt_si32 *)mar0 + ARR_SIZE * 8;
-    rt_si32 *iso2 = (rt_si32 *)mar0 + ARR_SIZE * 9;
+    rt_elem *iar0 = (rt_elem *)mar0 + ARR_SIZE * 5;
+    rt_elem *ico1 = (rt_elem *)mar0 + ARR_SIZE * 6;
+    rt_elem *ico2 = (rt_elem *)mar0 + ARR_SIZE * 7;
+    rt_elem *iso1 = (rt_elem *)mar0 + ARR_SIZE * 8;
+    rt_elem *iso2 = (rt_elem *)mar0 + ARR_SIZE * 9;
 
     for (k = 0; k < Q; k++)
     {
