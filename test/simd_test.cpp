@@ -778,8 +778,8 @@ rt_void c_test07(rt_SIMD_INFOX *info)
         j = n;
         while (j-->0)
         {
-            fco1[j] = sqrtf(far0[j]);
-            fco2[j] = 1.0f / far0[j];
+            fco1[j] = RT_SQRT(far0[j]);
+            fco2[j] = 1.0 / far0[j];
         }
     }
 }
@@ -840,10 +840,10 @@ rt_void p_test07(rt_SIMD_INFOX *info)
         RT_LOGI("farr[%d] = %e\n",
                 j, far0[j]);
 
-        RT_LOGI("C sqrtf(farr[%d]) = %e, 1.0f/farr[%d] = %e\n",
+        RT_LOGI("C RT_SQRT(farr[%d]) = %e, 1.0/farr[%d] = %e\n",
                 j, fco1[j], j, fco2[j]);
 
-        RT_LOGI("S sqrtf(farr[%d]) = %e, 1.0f/farr[%d] = %e\n",
+        RT_LOGI("S RT_SQRT(farr[%d]) = %e, 1.0/farr[%d] = %e\n",
                 j, fso1[j], j, fso2[j]);
     }
 }
@@ -1054,9 +1054,9 @@ rt_void s_test09(rt_SIMD_INFOX *info)
         divyn_xm(Mecx, DP(Q*0x010))
         movyx_st(Reax, Mesi, DP(Q*0x000))
 
-        addxx_ri(Recx, IB(4))
-        addxx_ri(Rebx, IB(4))
-        addxx_ri(Resi, IB(4))
+        addxx_ri(Recx, IB(4*L))
+        addxx_ri(Rebx, IB(4*L))
+        addxx_ri(Resi, IB(4*L))
         subwx_ri(Redi, IB(1))
         cmjwx_ri(Redi, IB(S),
         /* if */ GT_x, loc_beg)
@@ -1074,10 +1074,10 @@ rt_void s_test09(rt_SIMD_INFOX *info)
         divyn_xm(Medi, DP(Q*0x000))
         movyx_st(Reax, Mesi, DP(Q*0x000))
 
-        addxx_ri(Recx, IB(4))
-        addxx_ri(Rebx, IB(4))
-        addxx_ri(Resi, IB(4))
-        addxx_ri(Redi, IB(4))
+        addxx_ri(Recx, IB(4*L))
+        addxx_ri(Rebx, IB(4*L))
+        addxx_ri(Resi, IB(4*L))
+        addxx_ri(Redi, IB(4*L))
         subwx_mi(Mebp, inf_SIMD, IB(1))
         cmjwx_mz(Mebp, inf_SIMD,
         /* if */ GT_x, smd_beg)
@@ -1534,8 +1534,8 @@ rt_void c_test13(rt_SIMD_INFOX *info)
         j = n;
         while (j-->0)
         {
-            fco1[j] = powf(far0[j], 1.0f / 3.0f);
-            fco2[j] = 1.0f / sqrtf(far0[j]);
+            fco1[j] = RT_POW(far0[j], 1.0 / 3.0);
+            fco2[j] = 1.0 / RT_SQRT(far0[j]);
         }
     }
 }
@@ -1596,10 +1596,10 @@ rt_void p_test13(rt_SIMD_INFOX *info)
         RT_LOGI("farr[%d] = %e\n",
                 j, far0[j]);
 
-        RT_LOGI("C powf(farr[%d],1.0f/3.0f) = %e, 1.0f/sqrtf(farr[%d]) = %e\n",
+        RT_LOGI("C RT_POW(farr[%d],1.0/3.0) = %e, 1.0/RT_SQRT(farr[%d]) = %e\n",
                 j, fco1[j], j, fco2[j]);
 
-        RT_LOGI("S powf(farr[%d],1.0f/3.0f) = %e, 1.0f/sqrtf(farr[%d]) = %e\n",
+        RT_LOGI("S RT_POW(farr[%d],1.0/3.0) = %e, 1.0/RT_SQRT(farr[%d]) = %e\n",
                 j, fso1[j], j, fso2[j]);
     }
 }
@@ -2085,8 +2085,8 @@ rt_void c_test17(rt_SIMD_INFOX *info)
         j = n;
         while (j-->0)
         {
-            fco1[j] = ceilf(far0[j]);
-            fco2[j] = floorf(far0[j]);
+            fco1[j] = RT_CEIL(far0[j]);
+            fco2[j] = RT_FLOOR(far0[j]);
         }
     }
 }
@@ -2147,10 +2147,10 @@ rt_void p_test17(rt_SIMD_INFOX *info)
         RT_LOGI("farr[%d] = %e\n",
                 j, far0[j]);
 
-        RT_LOGI("C ceilf(farr[%d]) = %e, floorf(farr[%d]) = %e\n",
+        RT_LOGI("C RT_CEIL(farr[%d]) = %e, RT_FLOOR(farr[%d]) = %e\n",
                 j, fco1[j], j, fco2[j]);
 
-        RT_LOGI("S ceilf(farr[%d]) = %e, floorf(farr[%d]) = %e\n",
+        RT_LOGI("S RT_CEIL(farr[%d]) = %e, RT_FLOOR(farr[%d]) = %e\n",
                 j, fso1[j], j, fso2[j]);
     }
 }
@@ -2212,9 +2212,9 @@ rt_void s_test18(rt_SIMD_INFOX *info)
         remyn_xm(Mecx, DP(Q*0x010))
         movyx_st(Redx, Mesi, DP(Q*0x000))
 
-        addxx_ri(Recx, IB(4))
-        addxx_ri(Rebx, IB(4))
-        addxx_ri(Resi, IB(4))
+        addxx_ri(Recx, IB(4*L))
+        addxx_ri(Rebx, IB(4*L))
+        addxx_ri(Resi, IB(4*L))
         subwx_ri(Redi, IB(1))
         cmjwx_ri(Redi, IB(S),
         /* if */ GT_x, loc_ini)
@@ -2234,10 +2234,10 @@ rt_void s_test18(rt_SIMD_INFOX *info)
         remyn_xm(Mecx, DP(Q*0x010))
         movyx_st(Redx, Mesi, DP(Q*0x000))
 
-        addxx_ri(Recx, IB(4))
-        addxx_ri(Rebx, IB(4))
-        addxx_ri(Resi, IB(4))
-        addxx_ri(Redi, IB(4))
+        addxx_ri(Recx, IB(4*L))
+        addxx_ri(Rebx, IB(4*L))
+        addxx_ri(Resi, IB(4*L))
+        addxx_ri(Redi, IB(4*L))
         subwx_mi(Mebp, inf_SIMD, IB(1))
         cmjwx_mz(Mebp, inf_SIMD,
         /* if */ GT_x, smd_ini)
@@ -2641,12 +2641,12 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 #elif RT_ELEMENT == 64
     rt_elem iarr[2*3] =
     {
-        2859873657236487698L,
+        28598736572364876L,
         65,
-        3872364823542786534L,
+        38723648235427834L,
         71273568176523765L,
         2347875,
-        7665765419823409823L,
+        76657654198239823L,
     };
 #endif /* RT_ELEMENT */
 
