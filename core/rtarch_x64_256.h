@@ -237,8 +237,9 @@
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rceps_rr(RG, RM)                                                    \
+        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
         movpx_ld(W(RG), Mebp, inf_GPC01)                                    \
-        divps_rr(W(RG), W(RM))
+        divps_ld(W(RG), Mebp, inf_SCR01(0))
 
 #define rcsps_rr(RG, RM) /* destroys RM */
 
@@ -249,11 +250,10 @@
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rseps_rr(RG, RM)                                                    \
+        sqrps_rr(W(RG), W(RM))                                              \
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
         movpx_ld(W(RG), Mebp, inf_GPC01)                                    \
-        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
-        sqrps_rr(W(RM), W(RM))                                              \
-        divps_rr(W(RG), W(RM))                                              \
-        movpx_ld(W(RM), Mebp, inf_SCR01(0))
+        divps_ld(W(RG), Mebp, inf_SCR01(0))
 
 #define rssps_rr(RG, RM) /* destroys RM */
 
