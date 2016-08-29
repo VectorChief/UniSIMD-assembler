@@ -287,15 +287,19 @@ typedef const char         *rt_pstr;
  */
 #if   RT_ELEMENT == 32
 
-#define RT_ABS(a)           (abs((rt_si32)(a)))
+#define RT_ABS(a)           (abs((rt_si32)a))
 
 #define RT_FABS(a)          (fabsf(a))
 
-#define RT_FLOOR(a)         ((rt_si32)floorf(a))
+#define RT_FLOOR(a)         (floorf(a))
+
+#define RT_CEIL(a)          (ceilf(a))
 
 #define RT_SIGN(a)          ((a)  <    0.0f ? -1 :                          \
                              (a)  >    0.0f ? +1 :                          \
                               0)
+
+#define RT_POW(a, b)        (powf(a, b))
 
 #define RT_SQRT(a)          ((a)  <=   0.0f ?  0.0f :                       \
                              sqrtf(a))
@@ -328,15 +332,19 @@ typedef const char         *rt_pstr;
 
 #elif RT_ELEMENT == 64
 
-#define RT_ABS(a)           (abs((rt_si32)(a)))
+#define RT_ABS(a)           (llabs((rt_si64)a))
 
 #define RT_FABS(a)          (fabs(a))
 
-#define RT_FLOOR(a)         ((rt_si32)floor(a))
+#define RT_FLOOR(a)         (floor(a))
+
+#define RT_CEIL(a)          (ceil(a))
 
 #define RT_SIGN(a)          ((a)  <    0.0 ? -1 :                           \
                              (a)  >    0.0 ? +1 :                           \
                               0)
+
+#define RT_POW(a, b)        (pow(a, b))
 
 #define RT_SQRT(a)          ((a)  <=   0.0 ?  0.0 :                         \
                              sqrt(a))
