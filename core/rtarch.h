@@ -175,8 +175,8 @@
  * Refer to individual target sections for flags' detailed description.
  */
 #define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and Power */
-#define RT_SIMD_COMPAT_RCP_MASTER       0 /* for rcpps_** full-precision */
-#define RT_SIMD_COMPAT_RSQ_MASTER       0 /* for rsqps_** full-precision */
+#define RT_SIMD_COMPAT_RCP_MASTER       1 /* for rcpps_** full-precision */
+#define RT_SIMD_COMPAT_RSQ_MASTER       1 /* for rsqps_** full-precision */
 #define RT_SIMD_COMPAT_DIV_MASTER       1 /* for divps_** IEEE-compatible */
 #define RT_SIMD_COMPAT_SQR_MASTER       1 /* for sqrps_** IEEE-compatible */
 
