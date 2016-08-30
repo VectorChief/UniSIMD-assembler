@@ -651,18 +651,18 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xD3)                       \
 
 #define shrpn_ri(RM, IM)                                                    \
         movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
-        shryn_mi(Mebp,  inf_SCR01(0x00), W(IM)) /* <- !use fixed-64-bit! */ \
-        shryn_mi(Mebp,  inf_SCR01(0x08), W(IM)) /* <- !use fixed-64-bit! */ \
+        shryn_mi(Mebp,  inf_SCR01(0x00), W(IM))                             \
+        shryn_mi(Mebp,  inf_SCR01(0x08), W(IM))                             \
         movpx_ld(W(RM), Mebp, inf_SCR01(0))
 
 #define shrpn_ld(RG, RM, DP)                                                \
-        stack_st(Recx)                                                      \
-        movyx_ld(Recx, W(RM), W(DP))        /* !use fixed-64-bit subset! */ \
         movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
-        shryn_mx(Mebp,  inf_SCR01(0x00))    /* !use fixed-64-bit subset! */ \
-        shryn_mx(Mebp,  inf_SCR01(0x08))    /* !use fixed-64-bit subset! */ \
-        movpx_ld(W(RG), Mebp, inf_SCR01(0))                                 \
-        stack_ld(Recx)
+        stack_st(Recx)                                                      \
+        movyx_ld(Recx, W(RM), W(DP))                                        \
+        shryn_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shryn_mx(Mebp,  inf_SCR01(0x08))                                    \
+        stack_ld(Recx)                                                      \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
 
 /**************************   helper macros (SSE2)   **************************/
 

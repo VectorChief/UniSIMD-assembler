@@ -516,7 +516,7 @@
 
 #define CHECK_MASK(lb, mask, RG) /* destroys Reax */                        \
         movms_rr(Reax, W(RG))                                               \
-        addyz_ri(Reax, IB(RT_SIMD_MASK_##mask)) /* <- !use fixed-64-bit! */ \
+        addyz_ri(Reax, IB(RT_SIMD_MASK_##mask))                             \
         jezxx_lb(lb)
 
 /* simd mode
