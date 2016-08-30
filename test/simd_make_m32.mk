@@ -42,6 +42,6 @@ simd_test:
 # For MIPS32 Release 6 emulation use QEMU 2.4.0.1.0 from imgtec.com:
 # qemu-mipsel -cpu mips32r6-generic simd_test.m32
 
-# For MIPS32 big-endian (r5 and r6) use (replace): -EB -DRT_ENDIAN=1
+# For big-endian MIPS32 (r5 and r6) use (replace): -EB -DRT_ENDIAN=1
 # qemu-mips -cpu *** simd_test.m32
 # where *** is P5600 for r5 build and mips32r6-generic for r6 build.

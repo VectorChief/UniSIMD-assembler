@@ -29,5 +29,5 @@ simd_test:
 # make -f simd_make_a32.mk
 # (recent upstream QEMU(-2.6) doesn't currently support AArch64 ILP32 ABI)
 
-# The 32-bit ABI hasn't been fully tested yet due to lack of available libs,
+# 32-bit ABI hasn't been fully tested yet due to lack of available libs,
 # check out an experimental 64/32-bit hybrid mode in simd_make_a64.mk

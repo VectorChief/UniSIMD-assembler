@@ -32,5 +32,5 @@ simd_test:
 # make -f simd_make_p32.mk
 # qemu-ppc -cpu G4 simd_test.p32
 
-# For 32-bit Power(7,7+,8) VSX target use (replace): -DRT_128=2
+# For 32-bit POWER(7,7+,8) VSX target use (replace): -DRT_128=2
 # qemu-ppc64abi32 -cpu POWER7 simd_test.p32
