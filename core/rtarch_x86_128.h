@@ -231,6 +231,8 @@
 /* rcp
  * accuracy/behavior may vary across supported targets, use accordingly */
 
+#if RT_SIMD_COMPAT_RCP == 0
+
 #define rceps_rr(RG, RM)                                                    \
         EMITB(0x0F) EMITB(0x53)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))
@@ -241,11 +243,15 @@
         addps_rr(W(RG), W(RG))                                              \
         subps_rr(W(RG), W(RM))
 
+#endif /* RT_SIMD_COMPAT_RCP */
+
         /* rcp defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rsq
  * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RSQ == 0
 
 #define rseps_rr(RG, RM)                                                    \
         EMITB(0x0F) EMITB(0x52)                                             \
@@ -257,6 +263,8 @@
         subps_ld(W(RM), Mebp, inf_GPC03)                                    \
         mulps_ld(W(RM), Mebp, inf_GPC02)                                    \
         mulps_rr(W(RG), W(RM))
+
+#endif /* RT_SIMD_COMPAT_RSQ */
 
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */

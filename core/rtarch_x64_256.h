@@ -236,6 +236,8 @@
 /* rcp
  * accuracy/behavior may vary across supported targets, use accordingly */
 
+#if RT_SIMD_COMPAT_RCP == 0
+
 #define rceps_rr(RG, RM)                                                    \
         movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
         movpx_ld(W(RG), Mebp, inf_GPC01)                                    \
@@ -243,11 +245,15 @@
 
 #define rcsps_rr(RG, RM) /* destroys RM */
 
+#endif /* RT_SIMD_COMPAT_RCP */
+
         /* rcp defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rsq
  * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RSQ == 0
 
 #define rseps_rr(RG, RM)                                                    \
         sqrps_rr(W(RG), W(RM))                                              \
@@ -256,6 +262,8 @@
         divps_ld(W(RG), Mebp, inf_SCR01(0))
 
 #define rssps_rr(RG, RM) /* destroys RM */
+
+#endif /* RT_SIMD_COMPAT_RSQ */
 
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */

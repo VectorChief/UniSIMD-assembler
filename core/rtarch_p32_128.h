@@ -403,6 +403,8 @@
 /* rcp
  * accuracy/behavior may vary across supported targets, use accordingly */
 
+#if RT_SIMD_COMPAT_RCP == 0
+
 #define rceps_rr(RG, RM)                                                    \
         EMITW(0x1000010A | MXM(REG(RG), 0x00,    REG(RM)))
 
@@ -410,11 +412,15 @@
         EMITW(0x1000002F | MXM(REG(RM), REG(RG), TmmA) | REG(RM) << 6)      \
         EMITW(0x1000002E | MXM(REG(RG), REG(RG), REG(RG)) | REG(RM) << 6)
 
+#endif /* RT_SIMD_COMPAT_RCP */
+
         /* rcp defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rsq
  * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RSQ == 0
 
 #define rseps_rr(RG, RM)                                                    \
         EMITW(0x1000014A | MXM(REG(RG), 0x00,    REG(RM)))
@@ -424,6 +430,8 @@
         EMITW(0x1000002E | MXM(TmmC,    REG(RG), TmmS) | TmmB << 6)         \
         EMITW(0x1000002F | MXM(TmmD,    TmmD,    TmmA) | REG(RM) << 6)      \
         EMITW(0x1000002F | MXM(REG(RG), TmmD,    REG(RG)) | TmmC << 6)
+
+#endif /* RT_SIMD_COMPAT_RSQ */
 
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
@@ -744,7 +752,10 @@
         /* cbe, cbs, cbr defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* rcp */
+/* rcp
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RCP == 0
 
 #define rceps_rr(RG, RM)                                                    \
         EMITW(0xF000026B | MXM(REG(RG), 0x00,    REG(RM)))
@@ -753,10 +764,15 @@
         EMITW(0xF00006CF | MXM(REG(RM), REG(RG), TmmA))                     \
         EMITW(0xF000020F | MXM(REG(RG), REG(RG), REG(RM)))
 
+#endif /* RT_SIMD_COMPAT_RCP */
+
         /* rcp defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* rsq */
+/* rsq
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RSQ == 0
 
 #define rseps_rr(RG, RM)                                                    \
         EMITW(0xF000022B | MXM(REG(RG), 0x00,    REG(RM)))
@@ -766,6 +782,8 @@
         EMITW(0xF0000287 | MXM(TmmC,    REG(RG), TmmB))                     \
         EMITW(0xF00006CF | MXM(TmmD,    REG(RM), TmmA))                     \
         EMITW(0xF000068F | MXM(REG(RG), TmmD,    TmmC))
+
+#endif /* RT_SIMD_COMPAT_RSQ */
 
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
