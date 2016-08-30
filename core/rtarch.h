@@ -28,7 +28,7 @@
  * Note that AArch32 mode of ARMv8 ISA is a part of legacy ARM target as it
  * only brings SIMD fp-convert with round parameter plus other minor tweaks,
  * while IEEE-compatible SIMD fp-arithmetic with full square root and divide
- * are exposed via (ILP32 ABI of) AArch64:ARMv8 ISA in (A32 and) A64 target(s).
+ * is exposed via (ILP32 ABI of) AArch64:ARMv8 ISA in (A32 and) A64 target(s).
  *
  * Preliminary naming scheme for legacy, current and potential future targets.
  *
@@ -42,34 +42,38 @@
  *  - rtarch_x86_256.h     - 32-bit elements, 8 SIMD regs, 8 used, AVX 256-bit
  *
  * Current 32/64-bit BASE
- *    and 32-bit SIMD targets:
+ * and 32/64-bit SIMD targets:
  *
  *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 BASE regs, int-div, fp-cvt-r
  *  - rtarch_a64.h         - AArch64:ARMv8 ISA, 32 BASE regs, int-div, fp-cvt-r
  *  - rtarch_a32_128.h     - 32-bit elements, 32 SIMD regs, IEEE-fp, sqr, div
+ *  - rtarch_a64_128.h     - 64-bit elements, 32 SIMD regs, IEEE-fp, sqr, div
  *  - rtarch_m32.h         - MIPS32 r5/r6 ISA, 32 BASE regs, 14 + 4 used
  *  - rtarch_m64.h         - MIPS64 r5/r6 ISA, 32 BASE regs, 14 + 4 used
  *  - rtarch_m32_128.h     - 32-bit elements, 32 SIMD regs, MSA 128-bit
+ *  - rtarch_m64_128.h     - 64-bit elements, 32 SIMD regs, MSA 128-bit
  *  - rtarch_p32.h         - Power 32-bit ISA, 32 BASE regs, 14 + 5 used
  *  - rtarch_p64.h         - Power 64-bit ISA, 32 BASE regs, 14 + 5 used
  *  - rtarch_p32_128.h     - 32-bit elements, 32 SIMD regs, VMX/VSX 128-bit
+ *  - rtarch_p64_128.h     - 64-bit elements, 32 SIMD regs, VMX/VSX 128-bit
  *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 32-bit ptrs
  *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 64-bit ptrs
  *  - rtarch_x32_128.h     - 32-bit elements, 16 SIMD regs, SSE 128-bit
+ *  - rtarch_x64_128.h     - 64-bit elements, 16 SIMD regs, SSE 128-bit
  *  - rtarch_x32_256.h     - 32-bit elements, 16 SIMD regs, AVX 256-bit
+ *  - rtarch_x64_256.h     - 64-bit elements, 16 SIMD regs, AVX 256-bit
  *
  * Future 32-bit SIMD targets:
  *
- *  - rtarch_x86_512.h     - 32-bit elements,  8 SIMD regs, AVX 512-bit
+ *  - rtarch_a32_256.h     - 32-bit elements, 32 SIMD regs, ARM SVE-256
+ *  - rtarch_a32_512.h     - 32-bit elements, 32 SIMD regs, ARM SVE-512
  *  - rtarch_x32_512.h     - 32-bit elements, 32 SIMD regs, AVX 512-bit
+ *  - rtarch_x86_512.h     - 32-bit elements,  8 SIMD regs, AVX 512-bit
  *
  * Future 64-bit SIMD targets:
  *
- *  - rtarch_a64_128.h     - 64-bit elements, 32 SIMD regs, IEEE-fp, sqr, div
- *  - rtarch_m64_128.h     - 64-bit elements, 32 SIMD regs, MSA 128-bit
- *  - rtarch_p64_128.h     - 64-bit elements, 32 SIMD regs, VMX/VSX 128-bit
- *  - rtarch_x64_128.h     - 64-bit elements, 16 SIMD regs, SSE 128-bit
- *  - rtarch_x64_256.h     - 64-bit elements, 16 SIMD regs, AVX 256-bit
+ *  - rtarch_a64_256.h     - 64-bit elements, 32 SIMD regs, ARM SVE-256
+ *  - rtarch_a64_512.h     - 64-bit elements, 32 SIMD regs, ARM SVE-512
  *  - rtarch_x64_512.h     - 64-bit elements, 32 SIMD regs, AVX 512-bit
  *
  * Preliminary naming scheme for extended BASE and SIMD register files.
@@ -86,10 +90,11 @@
  *  - Reax, ... , Redi, Reg8, Reg9, RegA, ... , RegV
  *  - Xmm0, ... , Xmm7, Xmm8, Xmm9, XmmA, ... , XmmV
  *
- * Although register names are fixed, register sizes are not and depend on the
- * chosen target (32/64-bit BASE and 128/256-bit SIMD are mostly implemented).
- * Base registers can be 32-bit/64-bit wide, while their SIMD counterparts
+ * Although register names are fixed, register sizes are not and depend
+ * on the chosen target (32/64-bit BASE and 128/256-bit SIMD are supported).
+ * Base registers can be 32/64-bit wide, while their SIMD counterparts
  * depend on the architecture and SIMD version chosen for the target.
+ * On 64-bit systems SIMD can be configured to work with 32/64-bit elements.
  * Fractional sub-registers don't have names and aren't architecturally
  * visible in the assembler in order to simplify SPMD programming model.
  */
