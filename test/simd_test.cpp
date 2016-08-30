@@ -356,13 +356,8 @@ rt_void c_test03(rt_SIMD_INFOX *info)
         j = n;
         while (j-->0)
         {
-#if   RT_ELEMENT == 32
-            ico1[j] = (far0[j] >  far0[(j + S) % n]) ? 0xFFFFFFFF : 0x00000000;
-            ico2[j] = (far0[j] >= far0[(j + S) % n]) ? 0xFFFFFFFF : 0x00000000;
-#elif RT_ELEMENT == 64
-            ico1[j] = (far0[j] >  far0[(j + S) % n]) ? 0xFFFFFFFFFFFFFFFF : 0L;
-            ico2[j] = (far0[j] >= far0[(j + S) % n]) ? 0xFFFFFFFFFFFFFFFF : 0L;
-#endif /* RT_ELEMENT */
+            ico1[j] = (far0[j] >  far0[(j + S) % n]) ? -1 : 0;
+            ico2[j] = (far0[j] >= far0[(j + S) % n]) ? -1 : 0;
         }
     }
 }
@@ -464,13 +459,8 @@ rt_void c_test04(rt_SIMD_INFOX *info)
         j = n;
         while (j-->0)
         {
-#if   RT_ELEMENT == 32
-            ico1[j] = (far0[j] <  far0[(j + S) % n]) ? 0xFFFFFFFF : 0x00000000;
-            ico2[j] = (far0[j] <= far0[(j + S) % n]) ? 0xFFFFFFFF : 0x00000000;
-#elif RT_ELEMENT == 64
-            ico1[j] = (far0[j] <  far0[(j + S) % n]) ? 0xFFFFFFFFFFFFFFFF : 0L;
-            ico2[j] = (far0[j] <= far0[(j + S) % n]) ? 0xFFFFFFFFFFFFFFFF : 0L;
-#endif /* RT_ELEMENT */
+            ico1[j] = (far0[j] <  far0[(j + S) % n]) ? -1 : 0;
+            ico2[j] = (far0[j] <= far0[(j + S) % n]) ? -1 : 0;
         }
     }
 }
@@ -572,13 +562,8 @@ rt_void c_test05(rt_SIMD_INFOX *info)
         j = n;
         while (j-->0)
         {
-#if   RT_ELEMENT == 32
-            ico1[j] = (far0[j] == far0[(j + S) % n]) ? 0xFFFFFFFF : 0x00000000;
-            ico2[j] = (far0[j] != far0[(j + S) % n]) ? 0xFFFFFFFF : 0x00000000;
-#elif RT_ELEMENT == 64
-            ico1[j] = (far0[j] == far0[(j + S) % n]) ? 0xFFFFFFFFFFFFFFFF : 0L;
-            ico2[j] = (far0[j] != far0[(j + S) % n]) ? 0xFFFFFFFFFFFFFFFF : 0L;
-#endif /* RT_ELEMENT */
+            ico1[j] = (far0[j] == far0[(j + S) % n]) ? -1 : 0;
+            ico2[j] = (far0[j] != far0[(j + S) % n]) ? -1 : 0;
         }
     }
 }
@@ -1637,13 +1622,8 @@ rt_void c_test14(rt_SIMD_INFOX *info)
             k = S;
             while (k-->0)
             {
-#if   RT_ELEMENT == 32
-                ico1[j*S + k] = (e == 0) ? 0x00000000 : 0xFFFFFFFF;
-                ico2[j*S + k] = (e == 0) ? 0xFFFFFFFF : 0x00000000;
-#elif RT_ELEMENT == 64
-                ico1[j*S + k] = (e == 0) ? 0L : 0xFFFFFFFFFFFFFFFF;
-                ico2[j*S + k] = (e == 0) ? 0xFFFFFFFFFFFFFFFF : 0L;
-#endif /* RT_ELEMENT */
+                ico1[j*S + k] = (e == 0) ? 0 : -1;
+                ico2[j*S + k] = (e != 0) ? 0 : -1;
             }
         }
     }
