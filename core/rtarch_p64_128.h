@@ -484,6 +484,109 @@
 
 /**************************   packed integer (SIMD)   *************************/
 
+#if RT_SIMD_COMPAT_I64 != 0
+
+/* add */
+
+#define addpx_rr(RG, RM)                                                    \
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        movpx_st(W(RM), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movyx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        addyx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
+        movyx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
+        addyx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
+        stack_ld(Reax)                                                      \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
+#define addpx_ld(RG, RM, DP)                                                \
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        movpx_ld(W(RG), W(RM), W(DP))                                       \
+        movpx_st(W(RG), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movyx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        addyx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
+        movyx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
+        addyx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
+        stack_ld(Reax)                                                      \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
+/* sub */
+
+#define subpx_rr(RG, RM)                                                    \
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        movpx_st(W(RM), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movyx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        subyx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
+        movyx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
+        subyx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
+        stack_ld(Reax)                                                      \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
+#define subpx_ld(RG, RM, DP)                                                \
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        movpx_ld(W(RG), W(RM), W(DP))                                       \
+        movpx_st(W(RG), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movyx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        subyx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
+        movyx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
+        subyx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
+        stack_ld(Reax)                                                      \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
+/* shl */
+
+#define shlpx_ri(RM, IM)                                                    \
+        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
+        shlyx_mi(Mebp,  inf_SCR01(0x00), W(IM))                             \
+        shlyx_mi(Mebp,  inf_SCR01(0x08), W(IM))                             \
+        movpx_ld(W(RM), Mebp, inf_SCR01(0))
+
+#define shlpx_ld(RG, RM, DP)                                                \
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movyx_ld(Recx,  W(RM), W(DP))                                       \
+        shlyx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shlyx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        stack_ld(Recx)                                                      \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
+/* shr */
+
+#define shrpx_ri(RM, IM)                                                    \
+        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
+        shryx_mi(Mebp,  inf_SCR01(0x00), W(IM))                             \
+        shryx_mi(Mebp,  inf_SCR01(0x08), W(IM))                             \
+        movpx_ld(W(RM), Mebp, inf_SCR01(0))
+
+#define shrpx_ld(RG, RM, DP)                                                \
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movyx_ld(Recx,  W(RM), W(DP))                                       \
+        shryx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shryx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        stack_ld(Recx)                                                      \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
+#define shrpn_ri(RM, IM)                                                    \
+        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
+        shryn_mi(Mebp,  inf_SCR01(0x00), W(IM))                             \
+        shryn_mi(Mebp,  inf_SCR01(0x08), W(IM))                             \
+        movpx_ld(W(RM), Mebp, inf_SCR01(0))
+
+#define shrpn_ld(RG, RM, DP)                                                \
+        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movyx_ld(Recx,  W(RM), W(DP))                                       \
+        shryn_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shryn_mx(Mebp,  inf_SCR01(0x08))                                    \
+        stack_ld(Recx)                                                      \
+        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+
+#else /* RT_SIMD_COMPAT_I64 */
+
 /* add */
 
 #define addpx_rr(RG, RM)                                                    \
@@ -540,6 +643,8 @@
         EMITW(0x7C000299 | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
         EMITW(0x100003C4 | MXM(REG(RG), REG(RG), Tmm1))/* ^ == -1 if true */
 
+#endif /* RT_SIMD_COMPAT_I64 */
+
 /**************************   helper macros (SIMD)   **************************/
 
 /* simd mask
@@ -555,9 +660,19 @@
 #define SMN(rg, lb) ASM_BEG ASM_OP2(beq, cr6, lb) ASM_END
 #define SMF(rg, lb) ASM_BEG ASM_OP2(blt, cr6, lb) ASM_END
 
+#if RT_SIMD_COMPAT_I64 != 0
+
+#define CHECK_MASK(lb, mask, RG) /* destroys Reax */                        \
+        EMITW(0x10000486 | MXM(REG(RG), REG(RG), TmmQ))                     \
+        AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb, S0(RT_SIMD_MASK_##mask), EMPTY2)
+
+#else /* RT_SIMD_COMPAT_I64 */
+
 #define CHECK_MASK(lb, mask, RG) /* destroys Reax */                        \
         EMITW(0x100004C7 | MXM(REG(RG), REG(RG), TmmQ))                     \
         AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb, S0(RT_SIMD_MASK_##mask), EMPTY2)
+
+#endif /* RT_SIMD_COMPAT_I64 */
 
 /* simd mode
  * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),
