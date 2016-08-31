@@ -126,8 +126,8 @@
         AUW(EMPTY,    VAL(IM), REG(RM), EMPTY,   EMPTY,   EMPTY2, G3(IM))
 
 #define movxx_mi(RM, DP, IM)                                                \
-        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G3(IM))   \
-        EMITW(0xF8000000 | MDM(TIxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+        AUW(SIB(RM),  VAL(IM), TDxx,    MOD(RM), VAL(DP), C1(DP), G3(IM))   \
+        EMITW(0xF8000000 | MDM(TDxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define movxx_rr(RG, RM)                                                    \
         EMITW(0x7C000378 | MSM(REG(RG), REG(RM), REG(RM)))
@@ -326,9 +326,9 @@
 
 #define notxx_mx(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0xE8000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x7C0000F8 | MSM(TMxx,    TMxx,    TMxx))                     \
-        EMITW(0xF8000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+        EMITW(0xE8000000 | MDM(TDxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x7C0000F8 | MSM(TDxx,    TDxx,    TDxx))                     \
+        EMITW(0xF8000000 | MDM(TDxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* neg
  * set-flags: undefined (*x), yes (*z) */
