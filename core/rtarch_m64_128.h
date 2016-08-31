@@ -472,7 +472,7 @@
         EMITW(0x78000009 | MXM(REG(RM), REG(RM), 0x00) |                    \
                                                  (0x3F & VAL(IM)) << 16)
 
-#define shlpx_ld(RG, RM, DP)                                                \
+#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7B03001E | MXM(Tmm1,    TMxx,    0x00))                     \
@@ -484,7 +484,7 @@
         EMITW(0x79000009 | MXM(REG(RM), REG(RM), 0x00) |                    \
                                                  (0x3F & VAL(IM)) << 16)
 
-#define shrpx_ld(RG, RM, DP)                                                \
+#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7B03001E | MXM(Tmm1,    TMxx,    0x00))                     \
@@ -494,7 +494,7 @@
         EMITW(0x78800009 | MXM(REG(RM), REG(RM), 0x00) |                    \
                                                  (0x3F & VAL(IM)) << 16)
 
-#define shrpn_ld(RG, RM, DP)                                                \
+#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7B03001E | MXM(Tmm1,    TMxx,    0x00))                     \

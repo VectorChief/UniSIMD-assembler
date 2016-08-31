@@ -632,7 +632,7 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xFB)                       \
         MRM(0x06,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x3F))
 
-#define shlpx_ld(RG, RM, DP)                                                \
+#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
 ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xF3)                       \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -644,7 +644,7 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xF3)                       \
         MRM(0x02,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x3F))
 
-#define shrpx_ld(RG, RM, DP)                                                \
+#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
 ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xD3)                       \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -655,7 +655,7 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xD3)                       \
         shryn_mi(Mebp,  inf_SCR01(0x08), W(IM))                             \
         movpx_ld(W(RM), Mebp, inf_SCR01(0))
 
-#define shrpn_ld(RG, RM, DP)                                                \
+#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movyx_ld(Recx, W(RM), W(DP))                                        \

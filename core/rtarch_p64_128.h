@@ -544,7 +544,7 @@
         shlyx_mi(Mebp,  inf_SCR01(0x08), W(IM))                             \
         movpx_ld(W(RM), Mebp, inf_SCR01(0))
 
-#define shlpx_ld(RG, RM, DP)                                                \
+#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movyx_ld(Recx,  W(RM), W(DP))                                       \
@@ -561,7 +561,7 @@
         shryx_mi(Mebp,  inf_SCR01(0x08), W(IM))                             \
         movpx_ld(W(RM), Mebp, inf_SCR01(0))
 
-#define shrpx_ld(RG, RM, DP)                                                \
+#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movyx_ld(Recx,  W(RM), W(DP))                                       \
@@ -576,7 +576,7 @@
         shryn_mi(Mebp,  inf_SCR01(0x08), W(IM))                             \
         movpx_ld(W(RM), Mebp, inf_SCR01(0))
 
-#define shrpn_ld(RG, RM, DP)                                                \
+#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movyx_ld(Recx,  W(RM), W(DP))                                       \
@@ -615,7 +615,7 @@
         movyx_mi(Mebp, inf_SCR00, W(IM))                                    \
         shlpx_ld(W(RM), Mebp, inf_SCR00)
 
-#define shlpx_ld(RG, RM, DP)                                                \
+#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x7C000299 | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
@@ -627,7 +627,7 @@
         movyx_mi(Mebp, inf_SCR00, W(IM))                                    \
         shrpx_ld(W(RM), Mebp, inf_SCR00)
 
-#define shrpx_ld(RG, RM, DP)                                                \
+#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x7C000299 | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
@@ -637,7 +637,7 @@
         movyx_mi(Mebp, inf_SCR00, W(IM))                                    \
         shrpn_ld(W(RM), Mebp, inf_SCR00)
 
-#define shrpn_ld(RG, RM, DP)                                                \
+#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x7C000299 | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \

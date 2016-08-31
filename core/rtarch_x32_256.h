@@ -566,7 +566,7 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define shlpx_ld(RG, RM, DP)                                                \
+#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
         shllx_ld(W(RG), W(RM), W(DP))                                       \
         movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
@@ -596,7 +596,7 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define shrpx_ld(RG, RM, DP)                                                \
+#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
         shrlx_ld(W(RG), W(RM), W(DP))                                       \
         movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
@@ -624,7 +624,7 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define shrpn_ld(RG, RM, DP)                                                \
+#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
         shrln_ld(W(RG), W(RM), W(DP))                                       \
         movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
@@ -666,7 +666,7 @@
         MRM(0x06,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
-#define shlpx_ld(RG, RM, DP)                                                \
+#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
     ADR VEX(RXB(RG), RXB(RM), REN(RG), 1, 1, 1) EMITB(0xF2)                 \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -678,7 +678,7 @@
         MRM(0x02,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
-#define shrpx_ld(RG, RM, DP)                                                \
+#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
     ADR VEX(RXB(RG), RXB(RM), REN(RG), 1, 1, 1) EMITB(0xD2)                 \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -688,7 +688,7 @@
         MRM(0x04,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
-#define shrpn_ld(RG, RM, DP)                                                \
+#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
     ADR VEX(RXB(RG), RXB(RM), REN(RG), 1, 1, 1) EMITB(0xE2)                 \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)

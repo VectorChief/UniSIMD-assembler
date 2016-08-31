@@ -689,7 +689,7 @@
         EMITW(0xF2A00550 | MXM(REG(RM), 0x00,    REG(RM)) |                 \
                                                  (0x1F & VAL(IM)) << 16)
 
-#define shlpx_ld(RG, RM, DP)                                                \
+#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0xE0800000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4A00CBF | MXM(Tmm1,    TPxx,    0x00))                     \
@@ -697,24 +697,24 @@
 
 /* shr */
 
-#define shrpx_ri(RM, IM) /* emit shift-left for zero-immediate args */      \
+#define shrpx_ri(RM, IM) /* emits shift-left for zero-immediate args */     \
         EMITW(0xF2A00050 | MXM(REG(RM), 0x00,    REG(RM)) |                 \
         (+(VAL(IM) == 0) & 0x00000500) | (+(VAL(IM) != 0) & 0x01000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IM)) << 16)
 
-#define shrpx_ld(RG, RM, DP)                                                \
+#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0xE0800000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4A00CBF | MXM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF3B903C0 | MXM(Tmm1,    0x00,    Tmm1))                     \
         EMITW(0xF3200440 | MXM(REG(RG), Tmm1,    REG(RG)))
 
-#define shrpn_ri(RM, IM) /* emit shift-left for zero-immediate args */      \
+#define shrpn_ri(RM, IM) /* emits shift-left for zero-immediate args */     \
         EMITW(0xF2A00050 | MXM(REG(RM), 0x00,    REG(RM)) |                 \
         (+(VAL(IM) == 0) & 0x00000500) | (+(VAL(IM) != 0) & 0x00000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IM)) << 16)
 
-#define shrpn_ld(RG, RM, DP)                                                \
+#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0xE0800000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0xF4A00CBF | MXM(Tmm1,    TPxx,    0x00))                     \

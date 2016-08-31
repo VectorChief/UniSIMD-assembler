@@ -555,12 +555,12 @@
         movlx_st(W(RM), Mebp, inf_SCR01(0x10))                              \
         movpx_ld(W(RM), Mebp, inf_SCR01(0))
 
-#define shllx_ld(RG, RM, DP)                                                \
+#define shllx_ld(RG, RM, DP) /* not portable, do not use outside */         \
         VX2(REG(RG), 1, 0) EMITB(0xF2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define shlpx_ld(RG, RM, DP)                                                \
+#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
         shllx_ld(W(RG), W(RM), W(DP))                                       \
         movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
@@ -585,12 +585,12 @@
         movlx_st(W(RM), Mebp, inf_SCR01(0x10))                              \
         movpx_ld(W(RM), Mebp, inf_SCR01(0))
 
-#define shrlx_ld(RG, RM, DP)                                                \
+#define shrlx_ld(RG, RM, DP) /* not portable, do not use outside */         \
         VX2(REG(RG), 1, 0) EMITB(0xD2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define shrpx_ld(RG, RM, DP)                                                \
+#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
         shrlx_ld(W(RG), W(RM), W(DP))                                       \
         movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
@@ -613,12 +613,12 @@
         movlx_st(W(RM), Mebp, inf_SCR01(0x10))                              \
         movpx_ld(W(RM), Mebp, inf_SCR01(0))
 
-#define shrln_ld(RG, RM, DP)                                                \
+#define shrln_ld(RG, RM, DP) /* not portable, do not use outside */         \
         VX2(REG(RG), 1, 0) EMITB(0xE2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define shrpn_ld(RG, RM, DP)                                                \
+#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
         shrln_ld(W(RG), W(RM), W(DP))                                       \
         movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
@@ -660,7 +660,7 @@
         MRM(0x06,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
-#define shlpx_ld(RG, RM, DP)                                                \
+#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         VX2(REG(RG), 1, 1) EMITB(0xF2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -672,7 +672,7 @@
         MRM(0x02,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
-#define shrpx_ld(RG, RM, DP)                                                \
+#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         VX2(REG(RG), 1, 1) EMITB(0xD2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -682,7 +682,7 @@
         MRM(0x04,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
-#define shrpn_ld(RG, RM, DP)                                                \
+#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         VX2(REG(RG), 1, 1) EMITB(0xE2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)

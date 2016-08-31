@@ -598,7 +598,7 @@
         shlwx_mi(Mebp,  inf_SCR01(0x0C), W(IM))                             \
         movpx_ld(W(RM), Mebp, inf_SCR01(0))
 
-#define shlpx_ld(RG, RM, DP)                                                \
+#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movwx_ld(Recx,  W(RM), W(DP))                                       \
@@ -619,7 +619,7 @@
         shrwx_mi(Mebp,  inf_SCR01(0x0C), W(IM))                             \
         movpx_ld(W(RM), Mebp, inf_SCR01(0))
 
-#define shrpx_ld(RG, RM, DP)                                                \
+#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movwx_ld(Recx,  W(RM), W(DP))                                       \
@@ -638,7 +638,7 @@
         shrwn_mi(Mebp,  inf_SCR01(0x0C), W(IM))                             \
         movpx_ld(W(RM), Mebp, inf_SCR01(0))
 
-#define shrpn_ld(RG, RM, DP)                                                \
+#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movwx_ld(Recx,  W(RM), W(DP))                                       \
@@ -863,7 +863,7 @@
         MRM(0x06,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
-#define shlpx_ld(RG, RM, DP)                                                \
+#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
     ESC EMITB(0x0F) EMITB(0xF2)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -875,7 +875,7 @@
         MRM(0x02,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
-#define shrpx_ld(RG, RM, DP)                                                \
+#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
     ESC EMITB(0x0F) EMITB(0xD2)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -885,7 +885,7 @@
         MRM(0x04,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
-#define shrpn_ld(RG, RM, DP)                                                \
+#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
     ESC EMITB(0x0F) EMITB(0xE2)                                             \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
