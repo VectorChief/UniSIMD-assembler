@@ -120,7 +120,8 @@
 /******************************************************************************/
 
 /* mov
- * set-flags: no */
+ * set-flags: no
+ * not to be used between cmp*x_** and j**xx_lb (temporary MIPS limitation) */
 
 #define movxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), REG(RM), EMPTY,   EMPTY,   EMPTY2, G3(IM))
@@ -324,7 +325,8 @@
         EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* not
- * set-flags: no */
+ * set-flags: no
+ * not to be used between cmp*x_** and j**xx_lb (temporary MIPS limitation) */
 
 #define notxx_rx(RM)                                                        \
         EMITW(0x00000027 | MRM(REG(RM), TZxx,    REG(RM)))
