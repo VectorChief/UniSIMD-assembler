@@ -20,11 +20,9 @@ simd_test:
 # TDM64-GCC compiler for Win32/64 is installed and in the PATH variable.
 # Download tdm64-gcc-5.1.0-2.exe from sourceforge and run the installer.
 #
-# Use "MinGW Command Prompt" from "Windows Start Menu" under "TDM-GCC-64".
-# Works with regular "cmd" command prompt too after TDM64-GCC installation.
-#
 # Building/running SIMD test:
-# run simd_make_w64.bat file or
+# run simd_make_w64.bat from Windows UI or
+# run the following from Command Prompt "cmd":
 # mingw32-make -f simd_make_w64.mk
 # simd_test_w64f32.exe
 
