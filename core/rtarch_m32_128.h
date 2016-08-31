@@ -57,8 +57,7 @@
  * cmdps_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
  *
  * The cmdp*_** instructions are intended for SPMD programming model
- * and can potentially be configured per target to work with 32-bit/64-bit
- * data-elements (integers/pointers, floating point).
+ * and can be configured to work with 32/64-bit data-elements (int, fp).
  * In this model data-paths are fixed-width, BASE and SIMD data-elements are
  * width-compatible, code-path divergence is handled via CHECK_MASK macro.
  */

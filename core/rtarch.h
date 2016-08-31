@@ -44,20 +44,20 @@
  * Current 32/64-bit BASE
  * and 32/64-bit SIMD targets:
  *
- *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 BASE regs, int-div, fp-cvt-r
- *  - rtarch_a64.h         - AArch64:ARMv8 ISA, 32 BASE regs, int-div, fp-cvt-r
- *  - rtarch_a32_128.h     - 32-bit elements, 32 SIMD regs, IEEE-fp, sqr, div
- *  - rtarch_a64_128.h     - 64-bit elements, 32 SIMD regs, IEEE-fp, sqr, div
- *  - rtarch_m32.h         - MIPS32 r5/r6 ISA, 32 BASE regs, 14 + 4 used
- *  - rtarch_m64.h         - MIPS64 r5/r6 ISA, 32 BASE regs, 14 + 4 used
+ *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 BASE regs, 14 + temps used
+ *  - rtarch_a64.h         - AArch64:ARMv8 ISA, 32 BASE regs, 14 + temps used
+ *  - rtarch_a32_128.h     - 32-bit elements, 32 SIMD regs, NEON 128-bit
+ *  - rtarch_a64_128.h     - 64-bit elements, 32 SIMD regs, NEON 128-bit
+ *  - rtarch_m32.h         - MIPS32 r5/r6 ISA, 32 BASE regs, 14 + temps used
+ *  - rtarch_m64.h         - MIPS64 r5/r6 ISA, 32 BASE regs, 14 + temps used
  *  - rtarch_m32_128.h     - 32-bit elements, 32 SIMD regs, MSA 128-bit
  *  - rtarch_m64_128.h     - 64-bit elements, 32 SIMD regs, MSA 128-bit
- *  - rtarch_p32.h         - Power 32-bit ISA, 32 BASE regs, 14 + 5 used
- *  - rtarch_p64.h         - Power 64-bit ISA, 32 BASE regs, 14 + 5 used
+ *  - rtarch_p32.h         - Power 32-bit ISA, 32 BASE regs, 14 + temps used
+ *  - rtarch_p64.h         - Power 64-bit ISA, 32 BASE regs, 14 + temps used
  *  - rtarch_p32_128.h     - 32-bit elements, 32 SIMD regs, VMX/VSX 128-bit
  *  - rtarch_p64_128.h     - 64-bit elements, 32 SIMD regs, VMX/VSX 128-bit
- *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 32-bit ptrs
- *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 64-bit ptrs
+ *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 14 + temps used
+ *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 14 + temps used
  *  - rtarch_x32_128.h     - 32-bit elements, 16 SIMD regs, SSE 128-bit
  *  - rtarch_x64_128.h     - 64-bit elements, 16 SIMD regs, SSE 128-bit
  *  - rtarch_x32_256.h     - 32-bit elements, 16 SIMD regs, AVX 256-bit
@@ -65,15 +65,15 @@
  *
  * Future 32-bit SIMD targets:
  *
- *  - rtarch_a32_256.h     - 32-bit elements, 32 SIMD regs, ARM SVE-256
- *  - rtarch_a32_512.h     - 32-bit elements, 32 SIMD regs, ARM SVE-512
+ *  - rtarch_a32_256.h     - 32-bit elements, 32 SIMD regs, SVE 256-bit
+ *  - rtarch_a32_512.h     - 32-bit elements, 32 SIMD regs, SVE 512-bit
  *  - rtarch_x32_512.h     - 32-bit elements, 32 SIMD regs, AVX 512-bit
  *  - rtarch_x86_512.h     - 32-bit elements,  8 SIMD regs, AVX 512-bit
  *
  * Future 64-bit SIMD targets:
  *
- *  - rtarch_a64_256.h     - 64-bit elements, 32 SIMD regs, ARM SVE-256
- *  - rtarch_a64_512.h     - 64-bit elements, 32 SIMD regs, ARM SVE-512
+ *  - rtarch_a64_256.h     - 64-bit elements, 32 SIMD regs, SVE 256-bit
+ *  - rtarch_a64_512.h     - 64-bit elements, 32 SIMD regs, SVE 512-bit
  *  - rtarch_x64_512.h     - 64-bit elements, 32 SIMD regs, AVX 512-bit
  *
  * Preliminary naming scheme for extended BASE and SIMD register files.
@@ -150,8 +150,6 @@
  * done consistently within a subset of one size (cmdw*_**, cmdx*_** or C/C++).
  * Alternatively, data written natively in C/C++ can be worked on from within
  * a given (one) subset if appropriate offset correction is used from rtarch.h.
- * Mixing of cmdw*_** and cmdx*_** without C/C++ is supported via F definition,
- * but requires two offsets for each field, with F for (w*) and plain for (x*).
  *
  * Setting-flags instructions' naming scheme may change again in the future for
  * better orthogonality with operands size, type and args-list. It is therefore
@@ -163,9 +161,6 @@
  * while standalone remainder operations can only be done natively on MIPS.
  * Consider using special fixed-register forms for maximum performance.
  *
- * For fixed 64-bit packed/scalar SIMD ISA there will be no BASE ISA equivalent
- * on native 32-bit processors. Applications requiring 64-bit data flow in SIMD
- * will have to be coded with BASE ISA size limitations in mind.
  * Working with sub-word BASE elements (byte, half) is reserved for future use,
  * however current displacement types may not work due to natural alignment.
  * Signed/unsigned types can be supported orthogonally in cmd*n_**, cmd*x_**.

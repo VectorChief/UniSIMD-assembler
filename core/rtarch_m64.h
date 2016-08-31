@@ -54,6 +54,7 @@
  *
  * cmdw*_** - applies [cmd] to 32-bit BASE register/memory/immediate args
  * cmdx*_** - applies [cmd] to A-size BASE register/memory/immediate args
+ * cmdy*_** - applies [cmd] to L-size BASE register/memory/immediate args
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
  * cmd*p_** - applies [cmd] to   signed integer args, [p] - part-range
@@ -88,8 +89,6 @@
  * done consistently within a subset of one size (cmdw*_**, cmdx*_** or C/C++).
  * Alternatively, data written natively in C/C++ can be worked on from within
  * a given (one) subset if appropriate offset correction is used from rtarch.h.
- * Mixing of cmdw*_** and cmdx*_** without C/C++ is supported via F definition,
- * but requires two offsets for each field, with F for (w*) and plain for (x*).
  *
  * Setting-flags instructions' naming scheme may change again in the future for
  * better orthogonality with operands size, type and args-list. It is therefore
