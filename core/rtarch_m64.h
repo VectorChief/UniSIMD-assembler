@@ -120,15 +120,14 @@
 /******************************************************************************/
 
 /* mov
- * set-flags: no
- * not to be used between cmp*x_** and j**xx_lb (temporary MIPS limitation) */
+ * set-flags: no */
 
 #define movxx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), REG(RM), EMPTY,   EMPTY,   EMPTY2, G3(IM))
 
 #define movxx_mi(RM, DP, IM)                                                \
-        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G3(IM))   \
-        EMITW(0xFC000000 | MDM(TIxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+        AUW(SIB(RM),  VAL(IM), TDxx,    MOD(RM), VAL(DP), C1(DP), G3(IM))   \
+        EMITW(0xFC000000 | MDM(TDxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define movxx_rr(RG, RM)                                                    \
         EMITW(0x00000025 | MRM(REG(RG), REG(RM), TZxx))
@@ -325,17 +324,16 @@
         EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* not
- * set-flags: no
- * not to be used between cmp*x_** and j**xx_lb (temporary MIPS limitation) */
+ * set-flags: no */
 
 #define notxx_rx(RM)                                                        \
         EMITW(0x00000027 | MRM(REG(RM), TZxx,    REG(RM)))
 
 #define notxx_mx(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0xDC000000 | MDM(TIxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000027 | MRM(TIxx,    TZxx,    TIxx))                     \
-        EMITW(0xFC000000 | MDM(TIxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+        EMITW(0xDC000000 | MDM(TDxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000027 | MRM(TDxx,    TZxx,    TDxx))                     \
+        EMITW(0xFC000000 | MDM(TDxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* neg
  * set-flags: undefined (*x), yes (*z) */

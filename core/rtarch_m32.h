@@ -205,10 +205,10 @@
 
 #define TLxx    0x18  /* t8 (r24), left  arg for compare */
 #define TRxx    0x19  /* t9 (r25), right arg for compare */
-#define TMxx    0x18  /* t8 */
-#define TIxx    0x19  /* t9, not used together with TDxx */
-#define TDxx    0x19  /* t9, not used together with TIxx */
-#define TPxx    0x01  /* at (r1) */
+#define TMxx    0x18  /* t8 (r24) */
+#define TIxx    0x19  /* t9 (r25), not used together with TDxx */
+#define TDxx    0x12  /* s2 (r18), not used together with TIxx */
+#define TPxx    0x13  /* s3 (r19) */
 #define TZxx    0x00  /* zero (r0) */
 #define SPxx    0x1D  /* sp (r29) */
 
@@ -308,15 +308,14 @@
 /******************************************************************************/
 
 /* mov
- * set-flags: no
- * not to be used between cmp*x_** and j**xx_lb (temporary MIPS limitation) */
+ * set-flags: no */
 
 #define movwx_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), REG(RM), EMPTY,   EMPTY,   EMPTY2, G3(IM))
 
 #define movwx_mi(RM, DP, IM)                                                \
-        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G3(IM))   \
-        EMITW(0xAC000000 | MDM(TIxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+        AUW(SIB(RM),  VAL(IM), TDxx,    MOD(RM), VAL(DP), C1(DP), G3(IM))   \
+        EMITW(0xAC000000 | MDM(TDxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define movwx_rr(RG, RM)                                                    \
         EMITW(0x00000025 | MRM(REG(RG), REG(RM), TZxx))
@@ -518,17 +517,16 @@
         EMITW(0xAC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* not
- * set-flags: no
- * not to be used between cmp*x_** and j**xx_lb (temporary MIPS limitation) */
+ * set-flags: no */
 
 #define notwx_rx(RM)                                                        \
         EMITW(0x00000027 | MRM(REG(RM), TZxx,    REG(RM)))
 
 #define notwx_mx(RM, DP)                                                    \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0x8C000000 | MDM(TIxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
-        EMITW(0x00000027 | MRM(TIxx,    TZxx,    TIxx))                     \
-        EMITW(0xAC000000 | MDM(TIxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+        EMITW(0x8C000000 | MDM(TDxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000027 | MRM(TDxx,    TZxx,    TDxx))                     \
+        EMITW(0xAC000000 | MDM(TDxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 /* neg
  * set-flags: undefined (*x), yes (*z) */
@@ -1768,7 +1766,7 @@
 #endif /* r6 */
 
 /* stack
- * set-flags: no
+ * set-flags: no (except stack_la, MIPS-specific limitation)
  * always adjust stack pointer with 8-byte (64-bit) steps */
 
 #if   defined (RT_M32)
@@ -1783,8 +1781,8 @@
 
 #if RT_SIMD_FAST_FCTRL == 0
 
-#define stack_sa()   /* save all, [Reax - RegE] + 4 temps, 18 regs total */ \
-        EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (-0x48 & 0xFFFF))  \
+#define stack_sa()   /* save all, [Reax - RegE] + 5 temps, 19 regs total */ \
+        EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (-0x50 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    Tecx) | (+0x04 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    Tedx) | (+0x08 & 0xFFFF))  \
@@ -1801,12 +1799,14 @@
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    TegE) | (+0x34 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    TMxx) | (+0x38 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    TIxx) | (+0x3C & 0xFFFF))  \
-        EMITW(0xAC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x40 & 0xFFFF))  \
-        EMITW(0xAC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x44 & 0xFFFF))
+        EMITW(0xAC000000 | MRM(0x00,    SPxx,    TDxx) | (+0x40 & 0xFFFF))  \
+        EMITW(0xAC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x44 & 0xFFFF))  \
+        EMITW(0xAC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x48 & 0xFFFF))
 
-#define stack_la()   /* load all, 4 temps + [RegE - Reax], 18 regs total */ \
-        EMITW(0x8C000000 | MRM(0x00,    SPxx,    TNxx) | (+0x44 & 0xFFFF))  \
-        EMITW(0x8C000000 | MRM(0x00,    SPxx,    TPxx) | (+0x40 & 0xFFFF))  \
+#define stack_la()   /* load all, 5 temps + [RegE - Reax], 19 regs total */ \
+        EMITW(0x8C000000 | MRM(0x00,    SPxx,    TNxx) | (+0x48 & 0xFFFF))  \
+        EMITW(0x8C000000 | MRM(0x00,    SPxx,    TPxx) | (+0x44 & 0xFFFF))  \
+        EMITW(0x8C000000 | MRM(0x00,    SPxx,    TDxx) | (+0x40 & 0xFFFF))  \
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    TIxx) | (+0x3C & 0xFFFF))  \
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    TMxx) | (+0x38 & 0xFFFF))  \
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    TegE) | (+0x34 & 0xFFFF))  \
@@ -1823,11 +1823,11 @@
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    Tedx) | (+0x08 & 0xFFFF))  \
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    Tecx) | (+0x04 & 0xFFFF))  \
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
-        EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (+0x48 & 0xFFFF))
+        EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (+0x50 & 0xFFFF))
 
 #else /* RT_SIMD_FAST_FCTRL */
 
-#define stack_sa()   /* save all, [Reax - RegE] + 7 temps, 21 regs total */ \
+#define stack_sa()   /* save all, [Reax - RegE] + 8 temps, 22 regs total */ \
         EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (-0x58 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    Tecx) | (+0x04 & 0xFFFF))  \
@@ -1845,18 +1845,20 @@
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    TegE) | (+0x34 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    TMxx) | (+0x38 & 0xFFFF))  \
         EMITW(0xAC000000 | MRM(0x00,    SPxx,    TIxx) | (+0x3C & 0xFFFF))  \
-        EMITW(0xAC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x40 & 0xFFFF))  \
-        EMITW(0xAC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x44 & 0xFFFF))  \
-        EMITW(0xAC000000 | MRM(0x00,    SPxx,  1+TNxx) | (+0x48 & 0xFFFF))  \
-        EMITW(0xAC000000 | MRM(0x00,    SPxx,  2+TNxx) | (+0x4C & 0xFFFF))  \
-        EMITW(0xAC000000 | MRM(0x00,    SPxx,  3+TNxx) | (+0x50 & 0xFFFF))
+        EMITW(0xAC000000 | MRM(0x00,    SPxx,    TDxx) | (+0x40 & 0xFFFF))  \
+        EMITW(0xAC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x44 & 0xFFFF))  \
+        EMITW(0xAC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x48 & 0xFFFF))  \
+        EMITW(0xAC000000 | MRM(0x00,    SPxx,  1+TNxx) | (+0x4C & 0xFFFF))  \
+        EMITW(0xAC000000 | MRM(0x00,    SPxx,  2+TNxx) | (+0x50 & 0xFFFF))  \
+        EMITW(0xAC000000 | MRM(0x00,    SPxx,  3+TNxx) | (+0x54 & 0xFFFF))
 
-#define stack_la()   /* load all, 7 temps + [RegE - Reax], 21 regs total */ \
-        EMITW(0x8C000000 | MRM(0x00,    SPxx,  3+TNxx) | (+0x50 & 0xFFFF))  \
-        EMITW(0x8C000000 | MRM(0x00,    SPxx,  2+TNxx) | (+0x4C & 0xFFFF))  \
-        EMITW(0x8C000000 | MRM(0x00,    SPxx,  1+TNxx) | (+0x48 & 0xFFFF))  \
-        EMITW(0x8C000000 | MRM(0x00,    SPxx,    TNxx) | (+0x44 & 0xFFFF))  \
-        EMITW(0x8C000000 | MRM(0x00,    SPxx,    TPxx) | (+0x40 & 0xFFFF))  \
+#define stack_la()   /* load all, 8 temps + [RegE - Reax], 22 regs total */ \
+        EMITW(0x8C000000 | MRM(0x00,    SPxx,  3+TNxx) | (+0x54 & 0xFFFF))  \
+        EMITW(0x8C000000 | MRM(0x00,    SPxx,  2+TNxx) | (+0x50 & 0xFFFF))  \
+        EMITW(0x8C000000 | MRM(0x00,    SPxx,  1+TNxx) | (+0x4C & 0xFFFF))  \
+        EMITW(0x8C000000 | MRM(0x00,    SPxx,    TNxx) | (+0x48 & 0xFFFF))  \
+        EMITW(0x8C000000 | MRM(0x00,    SPxx,    TPxx) | (+0x44 & 0xFFFF))  \
+        EMITW(0x8C000000 | MRM(0x00,    SPxx,    TDxx) | (+0x40 & 0xFFFF))  \
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    TIxx) | (+0x3C & 0xFFFF))  \
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    TMxx) | (+0x38 & 0xFFFF))  \
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    TegE) | (+0x34 & 0xFFFF))  \
@@ -1889,8 +1891,8 @@
 
 #if RT_SIMD_FAST_FCTRL == 0
 
-#define stack_sa()   /* save all, [Reax - RegE] + 4 temps, 18 regs total */ \
-        EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (-0x90 & 0xFFFF))  \
+#define stack_sa()   /* save all, [Reax - RegE] + 5 temps, 19 regs total */ \
+        EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (-0x98 & 0xFFFF))  \
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    Tecx) | (+0x08 & 0xFFFF))  \
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    Tedx) | (+0x10 & 0xFFFF))  \
@@ -1907,12 +1909,14 @@
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    TegE) | (+0x68 & 0xFFFF))  \
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    TMxx) | (+0x70 & 0xFFFF))  \
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    TIxx) | (+0x78 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x80 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x88 & 0xFFFF))
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TDxx) | (+0x80 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x88 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x90 & 0xFFFF))
 
-#define stack_la()   /* load all, 4 temps + [RegE - Reax], 18 regs total */ \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x88 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x80 & 0xFFFF))  \
+#define stack_la()   /* load all, 5 temps + [RegE - Reax], 19 regs total */ \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x90 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x88 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TDxx) | (+0x80 & 0xFFFF))  \
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    TIxx) | (+0x78 & 0xFFFF))  \
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    TMxx) | (+0x70 & 0xFFFF))  \
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    TegE) | (+0x68 & 0xFFFF))  \
@@ -1929,12 +1933,12 @@
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tedx) | (+0x10 & 0xFFFF))  \
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tecx) | (+0x08 & 0xFFFF))  \
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
-        EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (+0x90 & 0xFFFF))
+        EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (+0x98 & 0xFFFF))
 
 #else /* RT_SIMD_FAST_FCTRL */
 
-#define stack_sa()   /* save all, [Reax - RegE] + 7 temps, 21 regs total */ \
-        EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (-0xA8 & 0xFFFF))  \
+#define stack_sa()   /* save all, [Reax - RegE] + 8 temps, 22 regs total */ \
+        EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (-0xB0 & 0xFFFF))  \
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    Tecx) | (+0x08 & 0xFFFF))  \
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    Tedx) | (+0x10 & 0xFFFF))  \
@@ -1951,18 +1955,20 @@
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    TegE) | (+0x68 & 0xFFFF))  \
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    TMxx) | (+0x70 & 0xFFFF))  \
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    TIxx) | (+0x78 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x80 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x88 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,  1+TNxx) | (+0x90 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,  2+TNxx) | (+0x98 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,  3+TNxx) | (+0xA0 & 0xFFFF))
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TDxx) | (+0x80 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x88 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x90 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,  1+TNxx) | (+0x98 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,  2+TNxx) | (+0xA0 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,  3+TNxx) | (+0xA8 & 0xFFFF))
 
-#define stack_la()   /* load all, 7 temps + [RegE - Reax], 21 regs total */ \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,  3+TNxx) | (+0xA0 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,  2+TNxx) | (+0x98 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,  1+TNxx) | (+0x90 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x88 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x80 & 0xFFFF))  \
+#define stack_la()   /* load all, 8 temps + [RegE - Reax], 22 regs total */ \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,  3+TNxx) | (+0xA8 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,  2+TNxx) | (+0xA0 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,  1+TNxx) | (+0x98 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x90 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x88 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TDxx) | (+0x80 & 0xFFFF))  \
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    TIxx) | (+0x78 & 0xFFFF))  \
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    TMxx) | (+0x70 & 0xFFFF))  \
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    TegE) | (+0x68 & 0xFFFF))  \
@@ -1979,7 +1985,7 @@
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tedx) | (+0x10 & 0xFFFF))  \
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tecx) | (+0x08 & 0xFFFF))  \
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
-        EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (+0xA8 & 0xFFFF))
+        EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (+0xB0 & 0xFFFF))
 
 #endif /* RT_SIMD_FAST_FCTRL */
 
