@@ -26,14 +26,15 @@ users of RPM-based distributions need to figure out build-deps on their own.
 To build SIMD test framework on Windows,
 go to UniSIMD's test folder and open:
     simd_workspace.dsw
-in Visual C++ 6.0 or later, then press F5. In newer versions of VC++ agree to
-convert workspace files, then exit and open newly created solution file.
+in Visual C++ 6.0 or later. In newer versions of VC++ agree to convert
+workspace files (exit and open newly created solution file for development).
+Select "Release" build target in drop-down list/menus, then press F5.
 
 To build SIMD test framework for 64-bit Windows,
 download and install TDM64-GCC toolchain (tdm64-gcc-5.1.0-2.exe),
-then open UniSIMD's test folder and run (from Windows Explorer UI):
+then open UniSIMD's test folder and run (from Windows UI):
     simd_make_w64.bat
-produced simd_test_w64f32.exe binary file will launch after the build.
+produced simd_test_w64f32.exe binary file will launch upon build completion.
 
 ================================================================================
 
