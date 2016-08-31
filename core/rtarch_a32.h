@@ -208,8 +208,8 @@
 #define TExx    0x19  /* w25, extra reg for FAST_FCTRL */
 
 #define TMxx    0x1A  /* w26 */
-#define TIxx    0x1B  /* w27, not used together with TDxx */
-#define TDxx    0x1B  /* w27, not used together with TIxx */
+#define TIxx    0x1B  /* w27, not used at the same time with TDxx */
+#define TDxx    0x1B  /* w27, not used at the same time with TIxx */
 #define TPxx    0x1C  /* w28 */
 #define TZxx    0x1F  /* w31 */
 #define SPxx    0x1F  /* w31 */
@@ -1227,8 +1227,8 @@
         ASM_BEG ASM_OP0(lb:) ASM_END
 
 /* stack
- * set-flags: no
- * always adjust stack pointer with 8-byte (64-bit) steps */
+ * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & Power)
+ * adjust stack pointer with 8-byte (64-bit) steps on all current targets */
 
 #define stack_st(RM)                                                        \
         EMITW(0xF81F8C00 | MRM(REG(RM), SPxx,    0x00))

@@ -1078,7 +1078,8 @@
         ASM_BEG ASM_OP0(lb:) ASM_END
 
 /* stack
- * set-flags: no */
+ * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & Power)
+ * adjust stack pointer with 4-byte (32-bit) steps on legacy 32-bit targets */
 
 #define stack_st(RM)                                                        \
         EMITB(0xFF)                                                         \

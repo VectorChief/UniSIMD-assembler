@@ -1130,8 +1130,8 @@
         ASM_BEG ASM_OP0(lb:) ASM_END
 
 /* stack
- * set-flags: no
- * always adjust stack pointer with 8-byte (64-bit) steps */
+ * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & Power)
+ * adjust stack pointer with 8-byte (64-bit) steps on all current targets */
 
 #define stack_st(RM)                                                        \
         REX(0,       RXB(RM)) EMITB(0xFF)                                   \

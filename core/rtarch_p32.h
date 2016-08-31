@@ -216,8 +216,8 @@
 #define TLxx    0x18  /* r24, left  arg for compare */
 #define TRxx    0x19  /* r25, right arg for compare */
 #define TMxx    0x18  /* r24 */
-#define TIxx    0x19  /* r25, not used together with TDxx */
-#define TDxx    0x1D  /* r29, not used together with TIxx */
+#define TIxx    0x19  /* r25, not used at the same time with TDxx */
+#define TDxx    0x1D  /* r29, not used at the same time with TIxx */
 #define TPxx    0x1A  /* r26 */
 #define TCxx    0x1B  /* r27 */
 #define TVxx    0x1C  /* r28 */
@@ -1569,8 +1569,8 @@
         ASM_BEG ASM_OP0(lb:) ASM_END
 
 /* stack
- * set-flags: no (except stack_la, Power-specific limitation)
- * always adjust stack pointer with 8-byte (64-bit) steps */
+ * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & Power)
+ * adjust stack pointer with 8-byte (64-bit) steps on all current targets */
 
 #if defined (RT_P32)
 

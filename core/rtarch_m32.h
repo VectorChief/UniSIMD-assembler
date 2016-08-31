@@ -206,8 +206,8 @@
 #define TLxx    0x18  /* t8 (r24), left  arg for compare */
 #define TRxx    0x19  /* t9 (r25), right arg for compare */
 #define TMxx    0x18  /* t8 (r24) */
-#define TIxx    0x19  /* t9 (r25), not used together with TDxx */
-#define TDxx    0x12  /* s2 (r18), not used together with TIxx */
+#define TIxx    0x19  /* t9 (r25), not used at the same time with TDxx */
+#define TDxx    0x12  /* s2 (r18), not used at the same time with TIxx */
 #define TPxx    0x13  /* s3 (r19) */
 #define TZxx    0x00  /* zero (r0) */
 #define SPxx    0x1D  /* sp (r29) */
@@ -1766,8 +1766,8 @@
 #endif /* r6 */
 
 /* stack
- * set-flags: no (except stack_la, MIPS-specific limitation)
- * always adjust stack pointer with 8-byte (64-bit) steps */
+ * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & Power)
+ * adjust stack pointer with 8-byte (64-bit) steps on all current targets */
 
 #if   defined (RT_M32)
 
