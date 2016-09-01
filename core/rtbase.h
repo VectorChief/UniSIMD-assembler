@@ -105,15 +105,15 @@ typedef unsigned int        rt_ui32;
 
 typedef __int64             rt_si64;
 typedef unsigned __int64    rt_ui64;
-#define    PR64 /*printf*/  "I64"
-#define RT_PR64 /*printf*/  PR64
+#define    PR_Z /*printf*/  "I64"
+#define RT_PR64 /*printf*/  PR_Z
 
 #else /* --- Win64, GCC --- Linux, GCC -------------------------------------- */
 
 typedef long long           rt_si64;
 typedef unsigned long long  rt_ui64;
-#define    PR64 /*printf*/  "ll"
-#define RT_PR64 /*printf*/  PR64
+#define    PR_Z /*printf*/  "ll"
+#define RT_PR64 /*printf*/  PR_Z
 
 #endif /* ------------- OS specific ----------------------------------------- */
 
