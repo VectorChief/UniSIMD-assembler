@@ -73,8 +73,8 @@
  * thus label_ld has very limited use as jmpxx_xr(Reax) is the only matching op.
  * Stack ops always work with full registers regardless of the mode chosen.
  *
- * The cmdw*_** and cmdx*_** subsets are not easily compatible on all targets,
- * thus any register modified by cmdw*_** cannot be used in cmdx*_** subset.
+ * 32-bit and 64-bit BASE subsets are not easily compatible on all targets,
+ * thus any register modified with 32-bit op cannot be used in 64-bit subset.
  * Alternatively, data flow must not exceed 31-bit range for 32-bit operations
  * to produce consistent results usable in 64-bit subset across all targets.
  * Only a64 and x64 have a complete 32-bit support in 64-bit mode both zeroing
@@ -86,7 +86,7 @@
  * Note that offset correction for endianness E is only applicable for addresses
  * within pointer fields, when (in-heap) address and pointer sizes don't match.
  * Working with 32-bit data in 64-bit fields in any other circumstances must be
- * done consistently within a subset of one size (cmdw*_**, cmdx*_** or C/C++).
+ * done consistently within a subset of one size (32-bit, 64-bit or C/C++).
  * Alternatively, data written natively in C/C++ can be worked on from within
  * a given (one) subset if appropriate offset correction is used from rtarch.h.
  *
