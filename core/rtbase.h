@@ -541,9 +541,9 @@ struct rt_SIMD_REGS
         divps_rr(W(RG), W(RM))
 
 #define rceps_rr(RG, RM)                                                    \
-        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
+        movpx_st(W(RM), Mebp, inf_SCR02(0))                                 \
         movpx_ld(W(RG), Mebp, inf_GPC01)                                    \
-        divps_ld(W(RG), Mebp, inf_SCR01(0))
+        divps_ld(W(RG), Mebp, inf_SCR02(0))
 
 #define rcsps_rr(RG, RM) /* destroys RM */
 
@@ -561,15 +561,15 @@ struct rt_SIMD_REGS
 #else /* RT_SIMD_COMPAT_RSQ */
 
 #define rsqps_rr(RG, RM) /* destroys RM */                                  \
-        movpx_ld(W(RG), Mebp, inf_GPC01)                                    \
         sqrps_rr(W(RM), W(RM))                                              \
+        movpx_ld(W(RG), Mebp, inf_GPC01)                                    \
         divps_rr(W(RG), W(RM))
 
 #define rseps_rr(RG, RM)                                                    \
         sqrps_rr(W(RG), W(RM))                                              \
-        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        movpx_st(W(RG), Mebp, inf_SCR02(0))                                 \
         movpx_ld(W(RG), Mebp, inf_GPC01)                                    \
-        divps_ld(W(RG), Mebp, inf_SCR01(0))
+        divps_ld(W(RG), Mebp, inf_SCR02(0))
 
 #define rssps_rr(RG, RM) /* destroys RM */
 
