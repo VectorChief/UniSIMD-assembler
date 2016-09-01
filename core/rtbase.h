@@ -272,6 +272,8 @@ typedef const char         *rt_pstr;
 
 /*
  * Math macros
+ * RT_*** macros follow SIMD-element size, RT_***32/RT_***64 names are
+ * reserved for future versions with both fixed-sized subsets present.
  */
 #define RT_ABS32(a)         (abs((rt_si32)(a)))
 

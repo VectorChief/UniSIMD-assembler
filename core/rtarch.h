@@ -113,9 +113,6 @@
  * cmdz*_** - usage for setting-flags is deprecated, reserved for fixed 64-bit
  * cmd*z_** - usage for setting-flags is implemented orthogonal to size
  *
- * cmdb*_** - byte-size args, BASE ISA (displacement/alignment may differ)
- * cmdh*_** - half-size args, BASE ISA (displacement/alignment may differ)
- *
  * cmdo*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, packed)
  * cmdp*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, packed)
  * cmdq*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, packed)
@@ -123,6 +120,16 @@
  * cmdr*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, scalar)
  * cmds*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, scalar)
  * cmdt*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, scalar)
+ *
+ * The following instruction namespaces are reserved for potential future use.
+ *
+ * cmdb*_** - byte-size args, BASE ISA (displacement/alignment may differ)
+ * cmdh*_** - half-size args, BASE ISA (displacement/alignment may differ)
+ *
+ * cmdpb_** - SIMD-elem args, SIMD ISA (packed byte-int subset)
+ * cmdph_** - SIMD-elem args, SIMD ISA (packed half-int subset)
+ *
+ * cmdn*_** - SIMD-elem args, SIMD ISA (packed fp16/int subset)
  *
  * Mixing of 64/32-bit fields in backend structures may lead to misalignment
  * of 64-bit fields to 4-byte boundary, which is not supported on some targets.
@@ -1727,6 +1734,8 @@
  * Short names R, S, T represent maximal width for given build config.
  * RT_SIMD_WIDTH and S may differ for builds with runtime SIMD target
  * selection in backend's ASM code sections, S is used in SIMD structs.
+ * RT_SIMD_WIDTH32/RT_SIMD_WIDTH64 and RT_SIMD_SET32/RT_SIMD_SET64 are
+ * reserved for future versions with both fixed-sized subsets present.
  */
 #define R   ((Q*4)/1)   /* for cmdo*_** SIMD-subset, rt_fp32 SIMD-fields */
 #define S   ((Q*4)/L)   /* for cmdp*_** SIMD-subset, rt_real SIMD-fields */
