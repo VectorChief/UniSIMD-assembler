@@ -134,21 +134,17 @@ typedef rt_ui64             rt_full;
 
 typedef rt_si32             rt_elem;
 #define    PR_L /*printf*/  ""
-#define RT_PR_L /*printf*/  PR_L
 
 typedef rt_ui32             rt_uelm;
 #define    PRuL /*printf*/  "u"
-#define RT_PRuL /*printf*/  PRuL
 
 #elif RT_ELEMENT == 64
 
 typedef rt_si64             rt_elem;
 #define    PR_L /*printf*/  "ll"
-#define RT_PR_L /*printf*/  PR_L
 
 typedef rt_ui64             rt_uelm;
 #define    PRuL /*printf*/  "ull"
-#define RT_PRuL /*printf*/  PRuL
 
 #else  /* RT_ELEMENT */
 
@@ -161,21 +157,17 @@ typedef rt_ui64             rt_uelm;
 
 typedef rt_si32             rt_addr;
 #define    PR_A /*printf*/  ""
-#define RT_PR_A /*printf*/  PR_A
 
 typedef rt_ui32             rt_uadr;
 #define    PRuA /*printf*/  "u"
-#define RT_PRuA /*printf*/  PRuA
 
 #elif RT_ADDRESS == 64
 
 typedef rt_si64             rt_addr;
 #define    PR_A /*printf*/  "ll"
-#define RT_PR_A /*printf*/  PR_A
 
 typedef rt_ui64             rt_uadr;
 #define    PRuA /*printf*/  "ull"
-#define RT_PRuA /*printf*/  PRuA
 
 #else  /* RT_ADDRESS */
 
@@ -189,24 +181,20 @@ typedef rt_ui64             rt_uadr;
 typedef rt_si64             rt_cell;
 typedef rt_si64             rt_size;
 #define    PR_P /*printf*/  "ll"
-#define RT_PR_P /*printf*/  PR_P
 
 typedef rt_ui64             rt_word;
 typedef rt_ui64             rt_uptr;
 #define    PRuP /*printf*/  "ull"
-#define RT_PRuP /*printf*/  PRuP
 
 #else /* --- Win32, MSVC -- Linux, GCC -------------------------------------- */
 
 typedef long                rt_cell;
 typedef long                rt_size;
 #define    PR_P /*printf*/  "l"
-#define RT_PR_P /*printf*/  PR_P
 
 typedef unsigned long       rt_word;
 typedef unsigned long       rt_uptr;
 #define    PRuP /*printf*/  "ul"
-#define RT_PRuP /*printf*/  PRuP
 
 #endif /* ------------- OS specific ----------------------------------------- */
 
@@ -285,11 +273,11 @@ typedef const char         *rt_pstr;
 /*
  * Math macros
  */
-#define ABS32(a)            (abs((rt_si32)(a)))
+#define RT_ABS32(a)         (abs((rt_si32)(a)))
 
 #if   RT_ELEMENT == 32
 
-#define RT_ABS(a)           ABS32(a)
+#define RT_ABS(a)           RT_ABS32(a)
 
 #define RT_FABS(a)          (fabsf(a))
 
