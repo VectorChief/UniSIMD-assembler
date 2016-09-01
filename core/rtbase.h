@@ -263,21 +263,18 @@ typedef const char         *rt_pstr;
 
 /*
  * Math definitions
- */
-#define RT_INF              FLT_MAX
-
-#define RT_PI               3.14159265358
-#define RT_2_PI             (2.0 * RT_PI)
-#define RT_PI_2             (RT_PI / 2.0)
-
-/*
- * Math macros
  * RT_*** macros follow SIMD-element size, RT_***32/RT_***64 names are
  * reserved for future versions with both fixed-sized subsets present.
  */
 #define RT_ABS32(a)         (abs((rt_si32)(a)))
 
 #if   RT_ELEMENT == 32
+
+#define RT_INF              FLT_MAX
+
+#define RT_PI               3.14159265358979323846
+#define RT_2_PI             (2.0 * RT_PI)
+#define RT_PI_2             (RT_PI / 2.0)
 
 #define RT_ABS(a)           RT_ABS32(a)
 
@@ -323,6 +320,12 @@ typedef const char         *rt_pstr;
                              cosf((rt_real)((a) * RT_PI / 180.0)))
 
 #elif RT_ELEMENT == 64
+
+#define RT_INF              DBL_MAX
+
+#define RT_PI               3.14159265358979323846
+#define RT_2_PI             (2.0 * RT_PI)
+#define RT_PI_2             (RT_PI / 2.0)
 
 #define RT_ABS(a)           (llabs((rt_si64)(a)))
 
