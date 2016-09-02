@@ -129,7 +129,13 @@
  * cmdpb_** - SIMD-elem args, SIMD ISA (packed byte-int subset)
  * cmdph_** - SIMD-elem args, SIMD ISA (packed half-int subset)
  *
- * cmdn*_** - SIMD-elem args, SIMD ISA (packed fp16/int subset)
+ * cmdn*_** - SIMD-elem args, SIMD ISA (packed fp16/int subset, half-precision)
+ * cmdl*_** - SIMD-elem args, SIMD ISA (scalar fp16/int subset, half-precision)
+ *
+ * cmdu*_** - SIMD-elem args, SIMD ISA (packed f128/int subset, quad-precision)
+ * cmdv*_** - SIMD-elem args, SIMD ISA (scalar f128/int subset, quad-precision)
+ *
+ * cmdk*_** - 128b-size args, BASE ISA (reserved for beyond 64-bit computing)
  *
  * Mixing of 64/32-bit fields in backend structures may lead to misalignment
  * of 64-bit fields to 4-byte boundary, which is not supported on some targets.

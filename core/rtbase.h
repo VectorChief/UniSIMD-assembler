@@ -266,15 +266,15 @@ typedef const char         *rt_pstr;
  * RT_*** macros follow SIMD-element size, RT_***32/RT_***64 names are
  * reserved for future versions with both fixed-sized subsets present.
  */
+#define RT_PI               3.14159265358979323846
+#define RT_2_PI             (2.0 * RT_PI)
+#define RT_PI_2             (RT_PI / 2.0)
+
 #define RT_ABS32(a)         (abs((rt_si32)(a)))
 
 #if   RT_ELEMENT == 32
 
 #define RT_INF              FLT_MAX
-
-#define RT_PI               3.14159265358979323846
-#define RT_2_PI             (2.0 * RT_PI)
-#define RT_PI_2             (RT_PI / 2.0)
 
 #define RT_ABS(a)           RT_ABS32(a)
 
@@ -322,10 +322,6 @@ typedef const char         *rt_pstr;
 #elif RT_ELEMENT == 64
 
 #define RT_INF              DBL_MAX
-
-#define RT_PI               3.14159265358979323846
-#define RT_2_PI             (2.0 * RT_PI)
-#define RT_PI_2             (RT_PI / 2.0)
 
 #define RT_ABS(a)           (llabs((rt_si64)(a)))
 
@@ -379,6 +375,8 @@ typedef const char         *rt_pstr;
 /*
  * SIMD info structure for asm enter/leave contains internal variables
  * and general purpose constants used internally by some instructions.
+ * General purpose constants (fields and offsets) will be replicated
+ * in future versions with both fixed-sized subsets (32/64-bit) present.
  * Note that DP offsets below accept only 12-bit values (0xFFF),
  * use DF, DG, DH and DV for 14, 15, 16 and 31-bit offsets respectively.
  * SIMD width is taken into account via S and Q defined in rtarch.h.
