@@ -180,6 +180,10 @@
  * Working with sub-word SIMD elements (byte, half) has not been investigated.
  * However, as current major ISAs lack the ability to do sub-word fp-compute,
  * these corresponding subsets cannot be considered valid targets for SPMD.
+ *
+ * Fused-multiply-add (FMA3), scalar SIMD subset, horizontal SIMD reductions,
+ * constructive 3-operand syntax (potentially with zeroing/merging predicates)
+ * are being considered as extensions to current SPMD-driven vertical SIMD ISA.
  */
 
 /*
