@@ -894,9 +894,10 @@
 /**************************   helper macros (SSE1)   **************************/
 
 /* simd mask
- * only use first 8 SIMD registers (Xmm0 - Xmm7) as SIMD masks
- * for "potential" future compatibility with wider SIMD (AVX3),
- * which may also require additional macros for SIMD mask ops */
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in CHECK_MASK to facilitate branching on a given condition value */
 
 #define RT_SIMD_MASK_NONE       0x00    /* none satisfy the condition */
 #define RT_SIMD_MASK_FULL       0x0F    /*  all satisfy the condition */
