@@ -109,8 +109,8 @@
  * cmdw*_** - word-size args, BASE ISA (always fixed at 32-bit)
  * cmdx*_** - addr-size args, BASE ISA (32/64-bit configurable with RT_ADDRESS)
  * cmdy*_** - SIMD-elem args, BASE ISA (32/64-bit configurable with RT_ELEMENT)
+ * cmdz*_** - full-size args, BASE ISA (always fixed at 64-bit)
  *
- * cmdz*_** - usage for setting-flags is deprecated, reserved for fixed 64-bit
  * cmd*z_** - usage for setting-flags is implemented orthogonal to size
  *
  * cmdo*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, packed)
