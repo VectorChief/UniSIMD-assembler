@@ -55,6 +55,8 @@
  * cmdw*_** - applies [cmd] to 32-bit BASE register/memory/immediate args
  * cmdx*_** - applies [cmd] to A-size BASE register/memory/immediate args
  * cmdy*_** - applies [cmd] to L-size BASE register/memory/immediate args
+ * cmdz*_** - applies [cmd] to 64-bit BASE register/memory/immediate args
+ *
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
  * cmd*p_** - applies [cmd] to   signed integer args, [p] - part-range
