@@ -56,6 +56,10 @@
  * cmdpn_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
  * cmdps_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
  *
+ * cmdo*_** - applies [cmd] to 32-bit SIMD register/memory/immediate args
+ * cmdp*_** - applies [cmd] to L-size SIMD register/memory/immediate args
+ * cmdq*_** - applies [cmd] to 64-bit SIMD register/memory/immediate args
+ *
  * The cmdp*_** instructions are intended for SPMD programming model
  * and can be configured to work with 32/64-bit data-elements (int, fp).
  * In this model data-paths are fixed-width, BASE and SIMD data-elements are
