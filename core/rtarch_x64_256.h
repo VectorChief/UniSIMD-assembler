@@ -189,7 +189,7 @@
 
 #define rceqs_rr(RG, RM)                                                    \
         movqx_st(W(RM), Mebp, inf_SCR01(0))                                 \
-        movqx_ld(W(RG), Mebp, inf_GPC01)                                    \
+        movqx_ld(W(RG), Mebp, inf_GPC01_64)                                 \
         divqs_ld(W(RG), Mebp, inf_SCR01(0))
 
 #define rcsqs_rr(RG, RM) /* destroys RM */
@@ -207,7 +207,7 @@
 #define rseqs_rr(RG, RM)                                                    \
         sqrqs_rr(W(RG), W(RM))                                              \
         movqx_st(W(RG), Mebp, inf_SCR01(0))                                 \
-        movqx_ld(W(RG), Mebp, inf_GPC01)                                    \
+        movqx_ld(W(RG), Mebp, inf_GPC01_64)                                 \
         divqs_ld(W(RG), Mebp, inf_SCR01(0))
 
 #define rssqs_rr(RG, RM) /* destroys RM */

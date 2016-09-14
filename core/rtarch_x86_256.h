@@ -264,8 +264,8 @@
 #define rssos_rr(RG, RM) /* destroys RM */                                  \
         mulos_rr(W(RM), W(RG))                                              \
         mulos_rr(W(RM), W(RG))                                              \
-        subos_ld(W(RM), Mebp, inf_GPC03)                                    \
-        mulos_ld(W(RM), Mebp, inf_GPC02)                                    \
+        subos_ld(W(RM), Mebp, inf_GPC03_32)                                 \
+        mulos_ld(W(RM), Mebp, inf_GPC02_32)                                 \
         mulos_rr(W(RG), W(RM))
 
 #endif /* RT_SIMD_COMPAT_RSQ */
