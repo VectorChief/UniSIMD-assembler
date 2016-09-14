@@ -51,11 +51,32 @@
 
 /*
  * Generic types
+ * rt_32mMxN, rt_64mMxN and rt_matMxN, where M and N are integers {1, 2, 3, 4},
+ * are reserved for rectangular matrices of rt_fp32, rt_fp64 and rt_real types.
  */
 
 /* fixed-size floating point types */
 typedef float               rt_fp32;
+
+typedef rt_fp32             rt_32v2[2];
+typedef rt_fp32             rt_32m2[2][2];
+
+typedef rt_fp32             rt_32v3[3];
+typedef rt_fp32             rt_32m3[3][3];
+
+typedef rt_fp32             rt_32v4[4];
+typedef rt_fp32             rt_32m4[4][4];
+
 typedef double              rt_fp64;
+
+typedef rt_fp64             rt_64v2[2];
+typedef rt_fp64             rt_64m2[2][2];
+
+typedef rt_fp64             rt_64v3[3];
+typedef rt_fp64             rt_64m3[3][3];
+
+typedef rt_fp64             rt_64v4[4];
+typedef rt_fp64             rt_64m4[4][4];
 
 /* adjustable floating point types */
 #if   RT_ELEMENT == 32
@@ -104,16 +125,18 @@ typedef unsigned int        rt_ui32;
 #if   defined (RT_WIN32) /* Win32, MSVC -------- for older versions --------- */
 
 typedef __int64             rt_si64;
-typedef unsigned __int64    rt_ui64;
 #define    PR_Z /*printf*/  "I64"
-#define RT_PR64 /*printf*/  PR_Z
+
+typedef unsigned __int64    rt_ui64;
+#define    PRuZ /*printf*/  "I64u"
 
 #else /* --- Win64, GCC --- Linux, GCC -------------------------------------- */
 
 typedef long long           rt_si64;
-typedef unsigned long long  rt_ui64;
 #define    PR_Z /*printf*/  "ll"
-#define RT_PR64 /*printf*/  PR_Z
+
+typedef unsigned long long  rt_ui64;
+#define    PRuZ /*printf*/  "llu"
 
 #endif /* ------------- OS specific ----------------------------------------- */
 
@@ -144,7 +167,7 @@ typedef rt_si64             rt_elem;
 #define    PR_L /*printf*/  "ll"
 
 typedef rt_ui64             rt_uelm;
-#define    PRuL /*printf*/  "ull"
+#define    PRuL /*printf*/  "llu"
 
 #else  /* RT_ELEMENT */
 
@@ -167,7 +190,7 @@ typedef rt_si64             rt_addr;
 #define    PR_A /*printf*/  "ll"
 
 typedef rt_ui64             rt_uadr;
-#define    PRuA /*printf*/  "ull"
+#define    PRuA /*printf*/  "llu"
 
 #else  /* RT_ADDRESS */
 
@@ -184,7 +207,7 @@ typedef rt_si64             rt_size;
 
 typedef rt_ui64             rt_word;
 typedef rt_ui64             rt_uptr;
-#define    PRuP /*printf*/  "ull"
+#define    PRuP /*printf*/  "llu"
 
 #else /* --- Win32, MSVC -- Linux, GCC -------------------------------------- */
 
@@ -194,7 +217,7 @@ typedef long                rt_size;
 
 typedef unsigned long       rt_word;
 typedef unsigned long       rt_uptr;
-#define    PRuP /*printf*/  "ul"
+#define    PRuP /*printf*/  "lu"
 
 #endif /* ------------- OS specific ----------------------------------------- */
 
@@ -263,108 +286,132 @@ typedef const char         *rt_pstr;
 
 /*
  * Math definitions
- * RT_*** macros follow SIMD-element size, RT_***32/RT_***64 names are
- * reserved for future versions with both fixed-sized subsets present.
  */
-#define RT_PI               3.14159265358979323846
+#define RT_PI               (3.14159265358979323846)
 #define RT_2_PI             (2.0 * RT_PI)
 #define RT_PI_2             (RT_PI / 2.0)
 
+
+#define RT_INF32            (FLT_MAX)
+
 #define RT_ABS32(a)         (abs((rt_si32)(a)))
 
-#if   RT_ELEMENT == 32
+#define RT_FABS32(a)        (fabsf(a))
 
-#define RT_INF              FLT_MAX
+#define RT_FLOOR32(a)       (floorf(a))
 
-#define RT_ABS(a)           RT_ABS32(a)
+#define RT_CEIL32(a)        (ceilf(a))
 
-#define RT_FABS(a)          (fabsf(a))
-
-#define RT_FLOOR(a)         (floorf(a))
-
-#define RT_CEIL(a)          (ceilf(a))
-
-#define RT_SIGN(a)          ((a)  <    0.0f ? -1 :                          \
+#define RT_SIGN32(a)        ((a)  <    0.0f ? -1 :                          \
                              (a)  >    0.0f ? +1 :                          \
                               0)
 
-#define RT_POW(a, b)        (powf(a, b))
+#define RT_POW32(a, b)      (powf(a, b))
 
-#define RT_SQRT(a)          ((a)  <=   0.0f ?  0.0f :                       \
+#define RT_SQRT32(a)        ((a)  <=   0.0f ?  0.0f :                       \
                              sqrtf(a))
 
-#define RT_ASIN(a)          ((a)  <=  -1.0f ? -(rt_real)RT_PI_2 :           \
-                             (a)  >=  +1.0f ? +(rt_real)RT_PI_2 :           \
+#define RT_ASIN32(a)        ((a)  <=  -1.0f ? -(rt_fp32)RT_PI_2 :           \
+                             (a)  >=  +1.0f ? +(rt_fp32)RT_PI_2 :           \
                              asinf(a))
 
-#define RT_ACOS(a)          ((a)  <=  -1.0f ? +(rt_real)RT_PI :             \
+#define RT_ACOS32(a)        ((a)  <=  -1.0f ? +(rt_fp32)RT_PI :             \
                              (a)  >=  +1.0f ?  0.0f :                       \
                              acosf(a))
 
-#define RT_SINA(a)          ((a) == -270.0f ? +1.0f :                       \
+#define RT_SINA32(a)        ((a) == -270.0f ? +1.0f :                       \
                              (a) == -180.0f ?  0.0f :                       \
                              (a) ==  -90.0f ? -1.0f :                       \
                              (a) ==    0.0f ?  0.0f :                       \
                              (a) ==  +90.0f ? +1.0f :                       \
                              (a) == +180.0f ?  0.0f :                       \
                              (a) == +270.0f ? -1.0f :                       \
-                             sinf((rt_real)((a) * RT_PI / 180.0)))
+                             sinf((rt_fp32)((a) * RT_PI / 180.0)))
 
-#define RT_COSA(a)          ((a) == -270.0f ?  0.0f :                       \
+#define RT_COSA32(a)        ((a) == -270.0f ?  0.0f :                       \
                              (a) == -180.0f ? -1.0f :                       \
                              (a) ==  -90.0f ?  0.0f :                       \
                              (a) ==    0.0f ? +1.0f :                       \
                              (a) ==  +90.0f ?  0.0f :                       \
                              (a) == +180.0f ? -1.0f :                       \
                              (a) == +270.0f ?  0.0f :                       \
-                             cosf((rt_real)((a) * RT_PI / 180.0)))
+                             cosf((rt_fp32)((a) * RT_PI / 180.0)))
 
-#elif RT_ELEMENT == 64
 
-#define RT_INF              DBL_MAX
+#define RT_INF64            (DBL_MAX)
 
-#define RT_ABS(a)           (llabs((rt_si64)(a)))
+#define RT_ABS64(a)         (llabs((rt_si64)(a)))
 
-#define RT_FABS(a)          (fabs(a))
+#define RT_FABS64(a)        (fabs(a))
 
-#define RT_FLOOR(a)         (floor(a))
+#define RT_FLOOR64(a)       (floor(a))
 
-#define RT_CEIL(a)          (ceil(a))
+#define RT_CEIL64(a)        (ceil(a))
 
-#define RT_SIGN(a)          ((a)  <    0.0 ? -1 :                           \
+#define RT_SIGN64(a)        ((a)  <    0.0 ? -1 :                           \
                              (a)  >    0.0 ? +1 :                           \
                               0)
 
-#define RT_POW(a, b)        (pow(a, b))
+#define RT_POW64(a, b)      (pow(a, b))
 
-#define RT_SQRT(a)          ((a)  <=   0.0 ?  0.0 :                         \
+#define RT_SQRT64(a)        ((a)  <=   0.0 ?  0.0 :                         \
                              sqrt(a))
 
-#define RT_ASIN(a)          ((a)  <=  -1.0 ? -(rt_real)RT_PI_2 :            \
-                             (a)  >=  +1.0 ? +(rt_real)RT_PI_2 :            \
+#define RT_ASIN64(a)        ((a)  <=  -1.0 ? -(rt_fp64)RT_PI_2 :            \
+                             (a)  >=  +1.0 ? +(rt_fp64)RT_PI_2 :            \
                              asin(a))
 
-#define RT_ACOS(a)          ((a)  <=  -1.0 ? +(rt_real)RT_PI :              \
+#define RT_ACOS64(a)        ((a)  <=  -1.0 ? +(rt_fp64)RT_PI :              \
                              (a)  >=  +1.0 ?  0.0 :                         \
                              acos(a))
 
-#define RT_SINA(a)          ((a) == -270.0 ? +1.0 :                         \
+#define RT_SINA64(a)        ((a) == -270.0 ? +1.0 :                         \
                              (a) == -180.0 ?  0.0 :                         \
                              (a) ==  -90.0 ? -1.0 :                         \
                              (a) ==    0.0 ?  0.0 :                         \
                              (a) ==  +90.0 ? +1.0 :                         \
                              (a) == +180.0 ?  0.0 :                         \
                              (a) == +270.0 ? -1.0 :                         \
-                             sin((rt_real)((a) * RT_PI / 180.0)))
+                             sin((rt_fp64)((a) * RT_PI / 180.0)))
 
-#define RT_COSA(a)          ((a) == -270.0 ?  0.0 :                         \
+#define RT_COSA64(a)        ((a) == -270.0 ?  0.0 :                         \
                              (a) == -180.0 ? -1.0 :                         \
                              (a) ==  -90.0 ?  0.0 :                         \
                              (a) ==    0.0 ? +1.0 :                         \
                              (a) ==  +90.0 ?  0.0 :                         \
                              (a) == +180.0 ? -1.0 :                         \
                              (a) == +270.0 ?  0.0 :                         \
-                             cos((rt_real)((a) * RT_PI / 180.0)))
+                             cos((rt_fp64)((a) * RT_PI / 180.0)))
+
+#if   RT_ELEMENT == 32
+
+#define RT_INF              RT_INF32
+#define RT_ABS(a)           RT_ABS32(a)
+#define RT_FABS(a)          RT_FABS32(a)
+#define RT_FLOOR(a)         RT_FLOOR32(a)
+#define RT_CEIL(a)          RT_CEIL32(a)
+#define RT_SIGN(a)          RT_SIGN32(a)
+#define RT_POW(a, b)        RT_POW32(a, b)
+#define RT_SQRT(a)          RT_SQRT32(a)
+#define RT_ASIN(a)          RT_ASIN32(a)
+#define RT_ACOS(a)          RT_ACOS32(a)
+#define RT_SINA(a)          RT_SINA32(a)
+#define RT_COSA(a)          RT_COSA32(a)
+
+#elif RT_ELEMENT == 64
+
+#define RT_INF              RT_INF64
+#define RT_ABS(a)           RT_ABS64(a)
+#define RT_FABS(a)          RT_FABS64(a)
+#define RT_FLOOR(a)         RT_FLOOR64(a)
+#define RT_CEIL(a)          RT_CEIL64(a)
+#define RT_SIGN(a)          RT_SIGN64(a)
+#define RT_POW(a, b)        RT_POW64(a, b)
+#define RT_SQRT(a)          RT_SQRT64(a)
+#define RT_ASIN(a)          RT_ASIN64(a)
+#define RT_ACOS(a)          RT_ACOS64(a)
+#define RT_SINA(a)          RT_SINA64(a)
+#define RT_COSA(a)          RT_COSA64(a)
 
 #endif /* RT_ELEMENT */
 
@@ -375,8 +422,6 @@ typedef const char         *rt_pstr;
 /*
  * SIMD info structure for asm enter/leave contains internal variables
  * and general purpose constants used internally by some instructions.
- * General purpose constants (fields and offsets) will be replicated
- * in future versions with both fixed-sized subsets (32/64-bit) present.
  * Note that DP offsets below accept only 12-bit values (0xFFF),
  * use DF, DG, DH and DV for 14, 15, 16 and 31-bit offsets respectively.
  * SIMD width is taken into account via S and Q defined in rtarch.h.
@@ -386,7 +431,7 @@ struct rt_SIMD_INFO
 {
     /* internal variables */
 
-    rt_ui64 scr00;          /* scratchpad 00 */
+    rt_ui64 scr00;          /* scratchpad0, BASE ISA */
 #define inf_SCR00           DP(0x000)
 
     rt_ui32 ver;            /* SIMD version <- cpuid */
@@ -395,36 +440,83 @@ struct rt_SIMD_INFO
     rt_ui32 fctrl[R-3];     /* reserved, do not use! */
 #define inf_FCTRL(nx)       DP(0x00C + nx)
 
-    /* general purpose constants */
+    /* general purpose constants (32-bit) */
 
-    rt_real gpc01[S];       /* +1.0 */
-#define inf_GPC01           DP(Q*0x010)
+    rt_fp32 gpc01_32[R];    /* +1.0f */
+#define inf_GPC01_32        DP(Q*0x010)
 
-    rt_real gpc02[S];       /* -0.5 */
-#define inf_GPC02           DP(Q*0x020)
+    rt_fp32 gpc02_32[R];    /* -0.5f */
+#define inf_GPC02_32        DP(Q*0x020)
 
-    rt_real gpc03[S];       /* +3.0 */
-#define inf_GPC03           DP(Q*0x030)
+    rt_fp32 gpc03_32[R];    /* +3.0f */
+#define inf_GPC03_32        DP(Q*0x030)
 
-    rt_elem gpc04[S];       /* 0x7FFFFFFF or 0x7FFFFFFFFFFFFFFF */
-#define inf_GPC04           DP(Q*0x040)
+    rt_si32 gpc04_32[R];    /* 0x7FFFFFFF */
+#define inf_GPC04_32        DP(Q*0x040)
 
-    rt_elem gpc05[S];       /* 0x3F800000 or 0x3FF0000000000000 */
-#define inf_GPC05           DP(Q*0x050)
+    rt_si32 gpc05_32[R];    /* 0x3F800000 */
+#define inf_GPC05_32        DP(Q*0x050)
 
-    rt_elem scr01[S];       /* scratchpad 01 */
-#define inf_SCR01(nx)       DP(Q*0x060 + nx)
+    rt_fp32 pad01_32[R];    /* reserved, do not use! */
+#define inf_PAD01_32        DP(Q*0x060)
 
-    rt_elem scr02[S];       /* scratchpad 02 */
-#define inf_SCR02(nx)       DP(Q*0x070 + nx)
+    /* internal variables */
+
+    rt_elem scr01[S];       /* scratchpad1, SIMD ISA */
+#define inf_SCR01(nx)       DP(Q*0x070 + nx)
+
+    rt_elem scr02[S];       /* scratchpad2, SIMD ISA */
+#define inf_SCR02(nx)       DP(Q*0x080 + nx)
 
     rt_ui64 regs[T];        /* SIMD reg-file storage */
-#define inf_REGS            DP(Q*0x080+C)
+#define inf_REGS            DP(Q*0x090+C)
 
-    rt_real pad02[S*7];     /* reserved, do not use! */
-#define inf_PAD02           DP(Q*0x090)
+    /* general purpose constants (64-bit) */
+
+    rt_fp64 gpc01_64[T];    /* +1.0 */
+#define inf_GPC01_64        DP(Q*0x0A0)
+
+    rt_fp64 gpc02_64[T];    /* -0.5 */
+#define inf_GPC02_64        DP(Q*0x0B0)
+
+    rt_fp64 gpc03_64[T];    /* +3.0 */
+#define inf_GPC03_64        DP(Q*0x0C0)
+
+    rt_si64 gpc04_64[T];    /* 0x7FFFFFFFFFFFFFFF */
+#define inf_GPC04_64        DP(Q*0x0D0)
+
+    rt_si64 gpc05_64[T];    /* 0x3FF0000000000000 */
+#define inf_GPC05_64        DP(Q*0x0E0)
+
+    rt_fp64 pad02_64[T];    /* reserved, do not use! */
+#define inf_PAD02_64        DP(Q*0x0F0)
 
 };
+
+#if   RT_ELEMENT == 32
+
+#define inf_GPC01           inf_GPC01_32
+#define inf_GPC02           inf_GPC02_32
+#define inf_GPC03           inf_GPC03_32
+#define inf_GPC04           inf_GPC04_32
+#define inf_GPC05           inf_GPC05_32
+
+#define RT_SIMD_WIDTH       RT_SIMD_WIDTH32
+#define RT_SIMD_SET(s, v)   RT_SIMD_SET32(s, v)
+
+#elif RT_ELEMENT == 64
+
+#define inf_GPC01           inf_GPC01_64
+#define inf_GPC02           inf_GPC02_64
+#define inf_GPC03           inf_GPC03_64
+#define inf_GPC04           inf_GPC04_64
+#define inf_GPC05           inf_GPC05_64
+
+#define RT_SIMD_WIDTH       RT_SIMD_WIDTH64
+#define RT_SIMD_SET(s, v)   RT_SIMD_SET64(s, v)
+
+#endif /* RT_ELEMENT */
+
 
 struct rt_SIMD_REGS
 {
@@ -435,39 +527,26 @@ struct rt_SIMD_REGS
 
 };
 
-#if   RT_ELEMENT == 32
-
 #define ASM_INIT(__Info__, __Regs__)                                        \
-    RT_SIMD_SET(__Info__->gpc01, +1.0f);                                    \
-    RT_SIMD_SET(__Info__->gpc02, -0.5f);                                    \
-    RT_SIMD_SET(__Info__->gpc03, +3.0f);                                    \
-    RT_SIMD_SET(__Info__->gpc04, 0x7FFFFFFF);                               \
-    RT_SIMD_SET(__Info__->gpc05, 0x3F800000);                               \
+    RT_SIMD_SET32(__Info__->gpc01_32, +1.0f);                               \
+    RT_SIMD_SET32(__Info__->gpc02_32, -0.5f);                               \
+    RT_SIMD_SET32(__Info__->gpc03_32, +3.0f);                               \
+    RT_SIMD_SET32(__Info__->gpc04_32, 0x7FFFFFFF);                          \
+    RT_SIMD_SET32(__Info__->gpc05_32, 0x3F800000);                          \
+    RT_SIMD_SET64(__Info__->gpc01_64, +1.0);                                \
+    RT_SIMD_SET64(__Info__->gpc02_64, -0.5);                                \
+    RT_SIMD_SET64(__Info__->gpc03_64, +3.0);                                \
+    RT_SIMD_SET64(__Info__->gpc04_64, 0x7FFFFFFFFFFFFFFF);                  \
+    RT_SIMD_SET64(__Info__->gpc05_64, 0x3FF0000000000000);                  \
     __Info__->regs[0] = (rt_ui64)(rt_word)__Regs__;
 
 #define ASM_DONE(__Info__)
-
-#elif RT_ELEMENT == 64
-
-#define ASM_INIT(__Info__, __Regs__)                                        \
-    RT_SIMD_SET(__Info__->gpc01, +1.0);                                     \
-    RT_SIMD_SET(__Info__->gpc02, -0.5);                                     \
-    RT_SIMD_SET(__Info__->gpc03, +3.0);                                     \
-    RT_SIMD_SET(__Info__->gpc04, 0x7FFFFFFFFFFFFFFF);                       \
-    RT_SIMD_SET(__Info__->gpc05, 0x3FF0000000000000);                       \
-    __Info__->regs[0] = (rt_ui64)(rt_word)__Regs__;
-
-#define ASM_DONE(__Info__)
-
-#else  /* RT_ELEMENT */
-
-#error "unsupported element size, check RT_ELEMENT in makefiles"
-
-#endif /* RT_ELEMENT */
 
 /******************************************************************************/
 /************************   COMMON SIMD INSTRUCTIONS   ************************/
 /******************************************************************************/
+
+/***************** element-sized adjustable SIMD instructions *****************/
 
 /* cbr */
 
@@ -566,6 +645,204 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
+/****************** instructions for fixed-sized 32-bit SIMD ******************/
+
+/* cbr */
+
+/*
+ * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
+ * available at http://www.musicdsp.org/showone.php?id=206
+ * converted to S-way SIMD version by VectorChief.
+ */
+#define cbeos_rr(RG, R1, R2, RM) /* destroys R1, R2 (temp regs) */          \
+        /* cube root estimate, the exponent is divided by three             \
+         * in such a way that remainder bits get shoved into                \
+         * the top of the normalized mantissa */                            \
+        movox_ld(W(R2), Mebp, inf_GPC04_32)                                 \
+        movox_rr(W(RG), W(RM))                                              \
+        andox_rr(W(RG), W(R2))   /* exponent & mantissa in biased-127 */    \
+        subox_ld(W(RG), Mebp, inf_GPC05_32) /* convert to 2's complement */ \
+        shron_ri(W(RG), IB(10))  /* RG / 1024 */                            \
+        movox_rr(W(R1), W(RG))   /* RG * 341 (next 8 ops) */                \
+        shlox_ri(W(R1), IB(2))                                              \
+        addox_rr(W(RG), W(R1))                                              \
+        shlox_ri(W(R1), IB(2))                                              \
+        addox_rr(W(RG), W(R1))                                              \
+        shlox_ri(W(R1), IB(2))                                              \
+        addox_rr(W(RG), W(R1))                                              \
+        shlox_ri(W(R1), IB(2))                                              \
+        addox_rr(W(RG), W(R1))   /* RG * (341/1024) ~= RG * (0.333) */      \
+        addox_ld(W(RG), Mebp, inf_GPC05_32) /* back to biased-127 */        \
+        andox_rr(W(RG), W(R2))   /* remask exponent & mantissa */           \
+        annox_rr(W(R2), W(RM))   /* original sign */                        \
+        orrox_rr(W(RG), W(R2))   /* new exponent & mantissa, old sign */
+
+#define cbsos_rr(RG, R1, R2, RM) /* destroys R1, R2 (temp regs) */          \
+        movox_rr(W(R1), W(RG))                                              \
+        mulos_rr(W(R1), W(RG))                                              \
+        movox_rr(W(R2), W(R1))                                              \
+        mulos_ld(W(R1), Mebp, inf_GPC03_32)                                 \
+        rceos_rr(W(R1), W(R1))                                              \
+        mulos_rr(W(R2), W(RG))                                              \
+        subos_rr(W(R2), W(RM))                                              \
+        mulos_rr(W(R2), W(R1))                                              \
+        subos_rr(W(RG), W(R2))
+
+#define cbros_rr(RG, R1, R2, RM) /* destroys R1, R2 (temp regs) */          \
+        cbeos_rr(W(RG), W(R1), W(R2), W(RM))                                \
+        cbsos_rr(W(RG), W(R1), W(R2), W(RM))                                \
+        cbsos_rr(W(RG), W(R1), W(R2), W(RM))                                \
+        cbsos_rr(W(RG), W(R1), W(R2), W(RM))
+
+/* rcp
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RCP == 0
+
+#define rcpos_rr(RG, RM) /* destroys RM */                                  \
+        rceos_rr(W(RG), W(RM))                                              \
+        rcsos_rr(W(RG), W(RM)) /* <- not reusable without extra temp reg */
+
+#else /* RT_SIMD_COMPAT_RCP */
+
+#define rcpos_rr(RG, RM) /* destroys RM */                                  \
+        movox_ld(W(RG), Mebp, inf_GPC01_32)                                 \
+        divos_rr(W(RG), W(RM))
+
+#define rceos_rr(RG, RM)                                                    \
+        movox_st(W(RM), Mebp, inf_SCR02(0))                                 \
+        movox_ld(W(RG), Mebp, inf_GPC01_32)                                 \
+        divos_ld(W(RG), Mebp, inf_SCR02(0))
+
+#define rcsos_rr(RG, RM) /* destroys RM */
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+/* rsq
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RSQ == 0
+
+#define rsqos_rr(RG, RM) /* destroys RM */                                  \
+        rseos_rr(W(RG), W(RM))                                              \
+        rssos_rr(W(RG), W(RM)) /* <- not reusable without extra temp reg */
+
+#else /* RT_SIMD_COMPAT_RSQ */
+
+#define rsqos_rr(RG, RM) /* destroys RM */                                  \
+        sqros_rr(W(RM), W(RM))                                              \
+        movox_ld(W(RG), Mebp, inf_GPC01_32)                                 \
+        divos_rr(W(RG), W(RM))
+
+#define rseos_rr(RG, RM)                                                    \
+        sqros_rr(W(RG), W(RM))                                              \
+        movox_st(W(RG), Mebp, inf_SCR02(0))                                 \
+        movox_ld(W(RG), Mebp, inf_GPC01_32)                                 \
+        divos_ld(W(RG), Mebp, inf_SCR02(0))
+
+#define rssos_rr(RG, RM) /* destroys RM */
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+/****************** instructions for fixed-sized 64-bit SIMD ******************/
+
+/* cbr */
+
+/*
+ * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
+ * available at http://www.musicdsp.org/showone.php?id=206
+ * converted to S-way SIMD version by VectorChief.
+ */
+#define cbeqs_rr(RG, R1, R2, RM) /* destroys R1, R2 (temp regs) */          \
+        /* cube root estimate, the exponent is divided by three             \
+         * in such a way that remainder bits get shoved into                \
+         * the top of the normalized mantissa */                            \
+        movqx_ld(W(R2), Mebp, inf_GPC04_64)                                 \
+        movqx_rr(W(RG), W(RM))                                              \
+        andqx_rr(W(RG), W(R2))   /* exponent & mantissa in biased-127 */    \
+        subqx_ld(W(RG), Mebp, inf_GPC05_64) /* convert to 2's complement */ \
+        shrqn_ri(W(RG), IB(10))  /* RG / 1024 */                            \
+        movqx_rr(W(R1), W(RG))   /* RG * 341 (next 8 ops) */                \
+        shlqx_ri(W(R1), IB(2))                                              \
+        addqx_rr(W(RG), W(R1))                                              \
+        shlqx_ri(W(R1), IB(2))                                              \
+        addqx_rr(W(RG), W(R1))                                              \
+        shlqx_ri(W(R1), IB(2))                                              \
+        addqx_rr(W(RG), W(R1))                                              \
+        shlqx_ri(W(R1), IB(2))                                              \
+        addqx_rr(W(RG), W(R1))   /* RG * (341/1024) ~= RG * (0.333) */      \
+        addqx_ld(W(RG), Mebp, inf_GPC05_64) /* back to biased-127 */        \
+        andqx_rr(W(RG), W(R2))   /* remask exponent & mantissa */           \
+        annqx_rr(W(R2), W(RM))   /* original sign */                        \
+        orrqx_rr(W(RG), W(R2))   /* new exponent & mantissa, old sign */
+
+#define cbsqs_rr(RG, R1, R2, RM) /* destroys R1, R2 (temp regs) */          \
+        movqx_rr(W(R1), W(RG))                                              \
+        mulqs_rr(W(R1), W(RG))                                              \
+        movqx_rr(W(R2), W(R1))                                              \
+        mulqs_ld(W(R1), Mebp, inf_GPC03_64)                                 \
+        rceqs_rr(W(R1), W(R1))                                              \
+        mulqs_rr(W(R2), W(RG))                                              \
+        subqs_rr(W(R2), W(RM))                                              \
+        mulqs_rr(W(R2), W(R1))                                              \
+        subqs_rr(W(RG), W(R2))
+
+#define cbrqs_rr(RG, R1, R2, RM) /* destroys R1, R2 (temp regs) */          \
+        cbeqs_rr(W(RG), W(R1), W(R2), W(RM))                                \
+        cbsqs_rr(W(RG), W(R1), W(R2), W(RM))                                \
+        cbsqs_rr(W(RG), W(R1), W(R2), W(RM))                                \
+        cbsqs_rr(W(RG), W(R1), W(R2), W(RM))
+
+/* rcp
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RCP == 0
+
+#define rcpqs_rr(RG, RM) /* destroys RM */                                  \
+        rceqs_rr(W(RG), W(RM))                                              \
+        rcsqs_rr(W(RG), W(RM)) /* <- not reusable without extra temp reg */
+
+#else /* RT_SIMD_COMPAT_RCP */
+
+#define rcpqs_rr(RG, RM) /* destroys RM */                                  \
+        movqx_ld(W(RG), Mebp, inf_GPC01_64)                                 \
+        divqs_rr(W(RG), W(RM))
+
+#define rceqs_rr(RG, RM)                                                    \
+        movqx_st(W(RM), Mebp, inf_SCR02(0))                                 \
+        movqx_ld(W(RG), Mebp, inf_GPC01_64)                                 \
+        divqs_ld(W(RG), Mebp, inf_SCR02(0))
+
+#define rcsqs_rr(RG, RM) /* destroys RM */
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+/* rsq
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RSQ == 0
+
+#define rsqqs_rr(RG, RM) /* destroys RM */                                  \
+        rseqs_rr(W(RG), W(RM))                                              \
+        rssqs_rr(W(RG), W(RM)) /* <- not reusable without extra temp reg */
+
+#else /* RT_SIMD_COMPAT_RSQ */
+
+#define rsqqs_rr(RG, RM) /* destroys RM */                                  \
+        sqrqs_rr(W(RM), W(RM))                                              \
+        movqx_ld(W(RG), Mebp, inf_GPC01_64)                                 \
+        divqs_rr(W(RG), W(RM))
+
+#define rseqs_rr(RG, RM)                                                    \
+        sqrqs_rr(W(RG), W(RM))                                              \
+        movqx_st(W(RG), Mebp, inf_SCR02(0))                                 \
+        movqx_ld(W(RG), Mebp, inf_GPC01_64)                                 \
+        divqs_ld(W(RG), Mebp, inf_SCR02(0))
+
+#define rssqs_rr(RG, RM) /* destroys RM */
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
 /****************** original FCTRL blocks (cannot be nested) ******************/
 
 #define FCTRL_ENTER(mode) /* assumes default mode (ROUNDN) upon entry */    \
@@ -573,6 +850,700 @@ struct rt_SIMD_REGS
 
 #define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */    \
         FCTRL_RESET()
+
+/***************** instructions for element-sized 32-bit SIMD *****************/
+
+#if   RT_ELEMENT == 32
+
+/* mov */
+
+#define movpx_rr(RG, RM)                                                    \
+        movox_rr(W(RG), W(RM))
+
+#define movpx_ld(RG, RM, DP)                                                \
+        movox_ld(W(RG), W(RM), W(DP))
+
+#define movpx_st(RG, RM, DP)                                                \
+        movox_st(W(RG), W(RM), W(DP))
+
+/* and */
+
+#define andpx_rr(RG, RM)                                                    \
+        andox_rr(W(RG), W(RM))
+
+#define andpx_ld(RG, RM, DP)                                                \
+        andox_ld(W(RG), W(RM), W(DP))
+
+/* ann */
+
+#define annpx_rr(RG, RM)                                                    \
+        annox_rr(W(RG), W(RM))
+
+#define annpx_ld(RG, RM, DP)                                                \
+        annox_ld(W(RG), W(RM), W(DP))
+
+/* orr */
+
+#define orrpx_rr(RG, RM)                                                    \
+        orrox_rr(W(RG), W(RM))
+
+#define orrpx_ld(RG, RM, DP)                                                \
+        orrox_ld(W(RG), W(RM), W(DP))
+
+/* xor */
+
+#define xorpx_rr(RG, RM)                                                    \
+        xorox_rr(W(RG), W(RM))
+
+#define xorpx_ld(RG, RM, DP)                                                \
+        xorox_ld(W(RG), W(RM), W(DP))
+
+
+/* add */
+
+#define addps_rr(RG, RM)                                                    \
+        addos_rr(W(RG), W(RM))
+
+#define addps_ld(RG, RM, DP)                                                \
+        addos_ld(W(RG), W(RM), W(DP))
+
+/* sub */
+
+#define subps_rr(RG, RM)                                                    \
+        subos_rr(W(RG), W(RM))
+
+#define subps_ld(RG, RM, DP)                                                \
+        subos_ld(W(RG), W(RM), W(DP))
+
+/* mul */
+
+#define mulps_rr(RG, RM)                                                    \
+        mulos_rr(W(RG), W(RM))
+
+#define mulps_ld(RG, RM, DP)                                                \
+        mulos_ld(W(RG), W(RM), W(DP))
+
+/* div */
+
+#define divps_rr(RG, RM)                                                    \
+        divos_rr(W(RG), W(RM))
+
+#define divps_ld(RG, RM, DP)                                                \
+        divos_ld(W(RG), W(RM), W(DP))
+
+/* sqr */
+
+#define sqrps_rr(RG, RM)                                                    \
+        sqros_rr(W(RG), W(RM))
+
+#define sqrps_ld(RG, RM, DP)                                                \
+        sqros_ld(W(RG), W(RM), W(DP))
+
+/* cbr */
+
+        /* cbe, cbs, cbr defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rcp
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RCP == 0
+
+#define rceps_rr(RG, RM)                                                    \
+        rceos_rr(W(RG), W(RM))
+
+#define rcsps_rr(RG, RM) /* destroys RM */                                  \
+        rcsos_rr(W(RG), W(RM))
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+        /* rcp defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rsq
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RSQ == 0
+
+#define rseps_rr(RG, RM)                                                    \
+        rseos_rr(W(RG), W(RM))
+
+#define rssps_rr(RG, RM) /* destroys RM */                                  \
+        rssos_rr(W(RG), W(RM))
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+        /* rsq defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* min */
+
+#define minps_rr(RG, RM)                                                    \
+        minos_rr(W(RG), W(RM))
+
+#define minps_ld(RG, RM, DP)                                                \
+        minos_ld(W(RG), W(RM), W(DP))
+
+/* max */
+
+#define maxps_rr(RG, RM)                                                    \
+        maxos_rr(W(RG), W(RM))
+
+#define maxps_ld(RG, RM, DP)                                                \
+        maxos_ld(W(RG), W(RM), W(DP))
+
+/* cmp */
+
+#define ceqps_rr(RG, RM)                                                    \
+        ceqos_rr(W(RG), W(RM))
+
+#define ceqps_ld(RG, RM, DP)                                                \
+        ceqos_ld(W(RG), W(RM), W(DP))
+
+#define cneps_rr(RG, RM)                                                    \
+        cneos_rr(W(RG), W(RM))
+
+#define cneps_ld(RG, RM, DP)                                                \
+        cneos_ld(W(RG), W(RM), W(DP))
+
+#define cltps_rr(RG, RM)                                                    \
+        cltos_rr(W(RG), W(RM))
+
+#define cltps_ld(RG, RM, DP)                                                \
+        cltos_ld(W(RG), W(RM), W(DP))
+
+#define cleps_rr(RG, RM)                                                    \
+        cleos_rr(W(RG), W(RM))
+
+#define cleps_ld(RG, RM, DP)                                                \
+        cleos_ld(W(RG), W(RM), W(DP))
+
+#define cgtps_rr(RG, RM)                                                    \
+        cgtos_rr(W(RG), W(RM))
+
+#define cgtps_ld(RG, RM, DP)                                                \
+        cgtos_ld(W(RG), W(RM), W(DP))
+
+#define cgeps_rr(RG, RM)                                                    \
+        cgeos_rr(W(RG), W(RM))
+
+#define cgeps_ld(RG, RM, DP)                                                \
+        cgeos_ld(W(RG), W(RM), W(DP))
+
+
+/* cvz (fp-to-signed-int)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnzps_rr(RG, RM)     /* round towards zero */                       \
+        rnzos_rr(W(RG), W(RM))
+
+#define rnzps_ld(RG, RM, DP) /* round towards zero */                       \
+        rnzos_ld(W(RG), W(RM), W(DP))
+
+#define cvzps_rr(RG, RM)     /* round towards zero */                       \
+        cvzos_rr(W(RG), W(RM))
+
+#define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
+        cvzos_ld(W(RG), W(RM), W(DP))
+
+/* cvp (fp-to-signed-int)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnpps_rr(RG, RM)     /* round towards +inf */                       \
+        rnpos_rr(W(RG), W(RM))
+
+#define rnpps_ld(RG, RM, DP) /* round towards +inf */                       \
+        rnpos_ld(W(RG), W(RM), W(DP))
+
+#define cvpps_rr(RG, RM)     /* round towards +inf */                       \
+        cvpos_rr(W(RG), W(RM))
+
+#define cvpps_ld(RG, RM, DP) /* round towards +inf */                       \
+        cvpos_ld(W(RG), W(RM), W(DP))
+
+/* cvm (fp-to-signed-int)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnmps_rr(RG, RM)     /* round towards -inf */                       \
+        rnmos_rr(W(RG), W(RM))
+
+#define rnmps_ld(RG, RM, DP) /* round towards -inf */                       \
+        rnmos_ld(W(RG), W(RM), W(DP))
+
+#define cvmps_rr(RG, RM)     /* round towards -inf */                       \
+        cvmos_rr(W(RG), W(RM))
+
+#define cvmps_ld(RG, RM, DP) /* round towards -inf */                       \
+        cvmos_ld(W(RG), W(RM), W(DP))
+
+/* cvn (fp-to-signed-int)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnnps_rr(RG, RM)     /* round towards near */                       \
+        rnnos_rr(W(RG), W(RM))
+
+#define rnnps_ld(RG, RM, DP) /* round towards near */                       \
+        rnnos_ld(W(RG), W(RM), W(DP))
+
+#define cvnps_rr(RG, RM)     /* round towards near */                       \
+        cvnos_rr(W(RG), W(RM))
+
+#define cvnps_ld(RG, RM, DP) /* round towards near */                       \
+        cvnos_ld(W(RG), W(RM), W(DP))
+
+/* cvn (signed-int-to-fp)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnpn_rr(RG, RM)     /* round towards near */                       \
+        cvnon_rr(W(RG), W(RM))
+
+#define cvnpn_ld(RG, RM, DP) /* round towards near */                       \
+        cvnon_ld(W(RG), W(RM), W(DP))
+
+/* add */
+
+#define addpx_rr(RG, RM)                                                    \
+        addox_rr(W(RG), W(RM))
+
+#define addpx_ld(RG, RM, DP)                                                \
+        addox_ld(W(RG), W(RM), W(DP))
+
+/* sub */
+
+#define subpx_rr(RG, RM)                                                    \
+        subox_rr(W(RG), W(RM))
+
+#define subpx_ld(RG, RM, DP)                                                \
+        subox_ld(W(RG), W(RM), W(DP))
+
+/* shl */
+
+#define shlpx_ri(RM, IM)                                                    \
+        shlox_ri(W(RM), W(IM))
+
+#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+        shlox_ld(W(RG), W(RM), W(DP))
+
+/* shr */
+
+#define shrpx_ri(RM, IM)                                                    \
+        shrox_ri(W(RM), W(IM))
+
+#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+        shrox_ld(W(RG), W(RM), W(DP))
+
+#define shrpn_ri(RM, IM)                                                    \
+        shron_ri(W(RM), W(IM))
+
+#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+        shron_ld(W(RG), W(RM), W(DP))
+
+
+/* cvt (fp-to-signed-int)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rndps_rr(RG, RM)                                                    \
+        rndos_rr(W(RG), W(RM))
+
+#define rndps_ld(RG, RM, DP)                                                \
+        rndos_ld(W(RG), W(RM), W(DP))
+
+#define cvtps_rr(RG, RM)                                                    \
+        cvtos_rr(W(RG), W(RM))
+
+#define cvtps_ld(RG, RM, DP)                                                \
+        cvtos_ld(W(RG), W(RM), W(DP))
+
+/* cvt (signed-int-to-fp)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+
+#define cvtpn_rr(RG, RM)                                                    \
+        cvton_rr(W(RG), W(RM))
+
+#define cvtpn_ld(RG, RM, DP)                                                \
+        cvton_ld(W(RG), W(RM), W(DP))
+
+/* cvr (fp-to-signed-int)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrps_rr(RG, RM, mode)                                              \
+        rnros_rr(W(RG), W(RM), mode)
+
+#define cvrps_rr(RG, RM, mode)                                              \
+        cvros_rr(W(RG), W(RM), mode)
+
+/* mmv
+ * uses Xmm0 implicitly as a mask register */
+
+#define mmvpx_ld(RG, RM, DP) /* not portable, use conditionally */          \
+        mmvox_ld(W(RG), W(RM), W(DP))
+
+#define mmvpx_st(RG, RM, DP) /* not portable, use conditionally */          \
+        mmvox_st(W(RG), W(RM), W(DP))
+
+/***************** instructions for element-sized 64-bit SIMD *****************/
+
+#elif RT_ELEMENT == 64
+
+/* mov */
+
+#define movpx_rr(RG, RM)                                                    \
+        movqx_rr(W(RG), W(RM))
+
+#define movpx_ld(RG, RM, DP)                                                \
+        movqx_ld(W(RG), W(RM), W(DP))
+
+#define movpx_st(RG, RM, DP)                                                \
+        movqx_st(W(RG), W(RM), W(DP))
+
+/* and */
+
+#define andpx_rr(RG, RM)                                                    \
+        andqx_rr(W(RG), W(RM))
+
+#define andpx_ld(RG, RM, DP)                                                \
+        andqx_ld(W(RG), W(RM), W(DP))
+
+/* ann */
+
+#define annpx_rr(RG, RM)                                                    \
+        annqx_rr(W(RG), W(RM))
+
+#define annpx_ld(RG, RM, DP)                                                \
+        annqx_ld(W(RG), W(RM), W(DP))
+
+/* orr */
+
+#define orrpx_rr(RG, RM)                                                    \
+        orrqx_rr(W(RG), W(RM))
+
+#define orrpx_ld(RG, RM, DP)                                                \
+        orrqx_ld(W(RG), W(RM), W(DP))
+
+/* xor */
+
+#define xorpx_rr(RG, RM)                                                    \
+        xorqx_rr(W(RG), W(RM))
+
+#define xorpx_ld(RG, RM, DP)                                                \
+        xorqx_ld(W(RG), W(RM), W(DP))
+
+
+/* add */
+
+#define addps_rr(RG, RM)                                                    \
+        addqs_rr(W(RG), W(RM))
+
+#define addps_ld(RG, RM, DP)                                                \
+        addqs_ld(W(RG), W(RM), W(DP))
+
+/* sub */
+
+#define subps_rr(RG, RM)                                                    \
+        subqs_rr(W(RG), W(RM))
+
+#define subps_ld(RG, RM, DP)                                                \
+        subqs_ld(W(RG), W(RM), W(DP))
+
+/* mul */
+
+#define mulps_rr(RG, RM)                                                    \
+        mulqs_rr(W(RG), W(RM))
+
+#define mulps_ld(RG, RM, DP)                                                \
+        mulqs_ld(W(RG), W(RM), W(DP))
+
+/* div */
+
+#define divps_rr(RG, RM)                                                    \
+        divqs_rr(W(RG), W(RM))
+
+#define divps_ld(RG, RM, DP)                                                \
+        divqs_ld(W(RG), W(RM), W(DP))
+
+/* sqr */
+
+#define sqrps_rr(RG, RM)                                                    \
+        sqrqs_rr(W(RG), W(RM))
+
+#define sqrps_ld(RG, RM, DP)                                                \
+        sqrqs_ld(W(RG), W(RM), W(DP))
+
+/* cbr */
+
+        /* cbe, cbs, cbr defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rcp
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RCP == 0
+
+#define rceps_rr(RG, RM)                                                    \
+        rceqs_rr(W(RG), W(RM))
+
+#define rcsps_rr(RG, RM) /* destroys RM */                                  \
+        rcsqs_rr(W(RG), W(RM))
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+        /* rcp defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rsq
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RSQ == 0
+
+#define rseps_rr(RG, RM)                                                    \
+        rseqs_rr(W(RG), W(RM))
+
+#define rssps_rr(RG, RM) /* destroys RM */                                  \
+        rssqs_rr(W(RG), W(RM))
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+        /* rsq defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* min */
+
+#define minps_rr(RG, RM)                                                    \
+        minqs_rr(W(RG), W(RM))
+
+#define minps_ld(RG, RM, DP)                                                \
+        minqs_ld(W(RG), W(RM), W(DP))
+
+/* max */
+
+#define maxps_rr(RG, RM)                                                    \
+        maxqs_rr(W(RG), W(RM))
+
+#define maxps_ld(RG, RM, DP)                                                \
+        maxqs_ld(W(RG), W(RM), W(DP))
+
+/* cmp */
+
+#define ceqps_rr(RG, RM)                                                    \
+        ceqqs_rr(W(RG), W(RM))
+
+#define ceqps_ld(RG, RM, DP)                                                \
+        ceqqs_ld(W(RG), W(RM), W(DP))
+
+#define cneps_rr(RG, RM)                                                    \
+        cneqs_rr(W(RG), W(RM))
+
+#define cneps_ld(RG, RM, DP)                                                \
+        cneqs_ld(W(RG), W(RM), W(DP))
+
+#define cltps_rr(RG, RM)                                                    \
+        cltqs_rr(W(RG), W(RM))
+
+#define cltps_ld(RG, RM, DP)                                                \
+        cltqs_ld(W(RG), W(RM), W(DP))
+
+#define cleps_rr(RG, RM)                                                    \
+        cleqs_rr(W(RG), W(RM))
+
+#define cleps_ld(RG, RM, DP)                                                \
+        cleqs_ld(W(RG), W(RM), W(DP))
+
+#define cgtps_rr(RG, RM)                                                    \
+        cgtqs_rr(W(RG), W(RM))
+
+#define cgtps_ld(RG, RM, DP)                                                \
+        cgtqs_ld(W(RG), W(RM), W(DP))
+
+#define cgeps_rr(RG, RM)                                                    \
+        cgeqs_rr(W(RG), W(RM))
+
+#define cgeps_ld(RG, RM, DP)                                                \
+        cgeqs_ld(W(RG), W(RM), W(DP))
+
+
+/* cvz (fp-to-signed-int)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnzps_rr(RG, RM)     /* round towards zero */                       \
+        rnzqs_rr(W(RG), W(RM))
+
+#define rnzps_ld(RG, RM, DP) /* round towards zero */                       \
+        rnzqs_ld(W(RG), W(RM), W(DP))
+
+#define cvzps_rr(RG, RM)     /* round towards zero */                       \
+        cvzqs_rr(W(RG), W(RM))
+
+#define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
+        cvzqs_ld(W(RG), W(RM), W(DP))
+
+/* cvp (fp-to-signed-int)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnpps_rr(RG, RM)     /* round towards +inf */                       \
+        rnpqs_rr(W(RG), W(RM))
+
+#define rnpps_ld(RG, RM, DP) /* round towards +inf */                       \
+        rnpqs_ld(W(RG), W(RM), W(DP))
+
+#define cvpps_rr(RG, RM)     /* round towards +inf */                       \
+        cvpqs_rr(W(RG), W(RM))
+
+#define cvpps_ld(RG, RM, DP) /* round towards +inf */                       \
+        cvpqs_ld(W(RG), W(RM), W(DP))
+
+/* cvm (fp-to-signed-int)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnmps_rr(RG, RM)     /* round towards -inf */                       \
+        rnmqs_rr(W(RG), W(RM))
+
+#define rnmps_ld(RG, RM, DP) /* round towards -inf */                       \
+        rnmqs_ld(W(RG), W(RM), W(DP))
+
+#define cvmps_rr(RG, RM)     /* round towards -inf */                       \
+        cvmqs_rr(W(RG), W(RM))
+
+#define cvmps_ld(RG, RM, DP) /* round towards -inf */                       \
+        cvmqs_ld(W(RG), W(RM), W(DP))
+
+/* cvn (fp-to-signed-int)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnnps_rr(RG, RM)     /* round towards near */                       \
+        rnnqs_rr(W(RG), W(RM))
+
+#define rnnps_ld(RG, RM, DP) /* round towards near */                       \
+        rnnqs_ld(W(RG), W(RM), W(DP))
+
+#define cvnps_rr(RG, RM)     /* round towards near */                       \
+        cvnqs_rr(W(RG), W(RM))
+
+#define cvnps_ld(RG, RM, DP) /* round towards near */                       \
+        cvnqs_ld(W(RG), W(RM), W(DP))
+
+/* cvn (signed-int-to-fp)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnpn_rr(RG, RM)     /* round towards near */                       \
+        cvnqn_rr(W(RG), W(RM))
+
+#define cvnpn_ld(RG, RM, DP) /* round towards near */                       \
+        cvnqn_ld(W(RG), W(RM), W(DP))
+
+/* add */
+
+#define addpx_rr(RG, RM)                                                    \
+        addqx_rr(W(RG), W(RM))
+
+#define addpx_ld(RG, RM, DP)                                                \
+        addqx_ld(W(RG), W(RM), W(DP))
+
+/* sub */
+
+#define subpx_rr(RG, RM)                                                    \
+        subqx_rr(W(RG), W(RM))
+
+#define subpx_ld(RG, RM, DP)                                                \
+        subqx_ld(W(RG), W(RM), W(DP))
+
+/* shl */
+
+#define shlpx_ri(RM, IM)                                                    \
+        shlqx_ri(W(RM), W(IM))
+
+#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+        shlqx_ld(W(RG), W(RM), W(DP))
+
+/* shr */
+
+#define shrpx_ri(RM, IM)                                                    \
+        shrqx_ri(W(RM), W(IM))
+
+#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+        shrqx_ld(W(RG), W(RM), W(DP))
+
+#define shrpn_ri(RM, IM)                                                    \
+        shrqn_ri(W(RM), W(IM))
+
+#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+        shrqn_ld(W(RG), W(RM), W(DP))
+
+
+/* cvt (fp-to-signed-int)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rndps_rr(RG, RM)                                                    \
+        rndqs_rr(W(RG), W(RM))
+
+#define rndps_ld(RG, RM, DP)                                                \
+        rndqs_ld(W(RG), W(RM), W(DP))
+
+#define cvtps_rr(RG, RM)                                                    \
+        cvtqs_rr(W(RG), W(RM))
+
+#define cvtps_ld(RG, RM, DP)                                                \
+        cvtqs_ld(W(RG), W(RM), W(DP))
+
+/* cvt (signed-int-to-fp)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+
+#define cvtpn_rr(RG, RM)                                                    \
+        cvtqn_rr(W(RG), W(RM))
+
+#define cvtpn_ld(RG, RM, DP)                                                \
+        cvtqn_ld(W(RG), W(RM), W(DP))
+
+/* cvr (fp-to-signed-int)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrps_rr(RG, RM, mode)                                              \
+        rnrqs_rr(W(RG), W(RM), mode)
+
+#define cvrps_rr(RG, RM, mode)                                              \
+        cvrqs_rr(W(RG), W(RM), mode)
+
+/* mmv
+ * uses Xmm0 implicitly as a mask register */
+
+#define mmvpx_ld(RG, RM, DP) /* not portable, use conditionally */          \
+        mmvqx_ld(W(RG), W(RM), W(DP))
+
+#define mmvpx_st(RG, RM, DP) /* not portable, use conditionally */          \
+        mmvqx_st(W(RG), W(RM), W(DP))
+
+#endif /* RT_ELEMENT */
 
 /******************************************************************************/
 /************************   COMMON BASE INSTRUCTIONS   ************************/

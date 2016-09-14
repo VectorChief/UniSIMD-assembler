@@ -22,9 +22,11 @@
 #endif /* RT_ADDRESS */
 
 #define RT_SIMD_REGS        8
-#define RT_SIMD_WIDTH       8
 #define RT_SIMD_ALIGN       32
-#define RT_SIMD_SET(s, v)   s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=v
+#define RT_SIMD_WIDTH32     8
+#define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=v
+#define RT_SIMD_WIDTH64     4
+#define RT_SIMD_SET64(s, v) s[0]=s[1]=s[2]=s[3]=v
 
 #if defined (RT_SIMD_CODE)
 
@@ -105,16 +107,16 @@
 
 /* mov */
 
-#define movpx_rr(RG, RM)                                                    \
+#define movox_rr(RG, RM)                                                    \
         VX2(0x0,     0, 1) EMITB(0x28)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define movpx_ld(RG, RM, DP)                                                \
+#define movox_ld(RG, RM, DP)                                                \
         VX2(0x0,     0, 1) EMITB(0x28)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define movpx_st(RG, RM, DP)                                                \
+#define movox_st(RG, RM, DP)                                                \
         VX2(0x0,     0, 1) EMITB(0x29)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -126,44 +128,44 @@
 
 /* and */
 
-#define andpx_rr(RG, RM)                                                    \
+#define andox_rr(RG, RM)                                                    \
         VX2(REG(RG), 0, 1) EMITB(0x54)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define andpx_ld(RG, RM, DP)                                                \
+#define andox_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 0, 1) EMITB(0x54)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* ann */
 
-#define annpx_rr(RG, RM)                                                    \
+#define annox_rr(RG, RM)                                                    \
         VX2(REG(RG), 0, 1) EMITB(0x55)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define annpx_ld(RG, RM, DP)                                                \
+#define annox_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 0, 1) EMITB(0x55)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* orr */
 
-#define orrpx_rr(RG, RM)                                                    \
+#define orrox_rr(RG, RM)                                                    \
         VX2(REG(RG), 0, 1) EMITB(0x56)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define orrpx_ld(RG, RM, DP)                                                \
+#define orrox_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 0, 1) EMITB(0x56)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* xor */
 
-#define xorpx_rr(RG, RM)                                                    \
+#define xorox_rr(RG, RM)                                                    \
         VX2(REG(RG), 0, 1) EMITB(0x57)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define xorpx_ld(RG, RM, DP)                                                \
+#define xorox_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 0, 1) EMITB(0x57)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -172,55 +174,55 @@
 
 /* add */
 
-#define addps_rr(RG, RM)                                                    \
+#define addos_rr(RG, RM)                                                    \
         VX2(REG(RG), 0, 1) EMITB(0x58)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define addps_ld(RG, RM, DP)                                                \
+#define addos_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 0, 1) EMITB(0x58)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* sub */
 
-#define subps_rr(RG, RM)                                                    \
+#define subos_rr(RG, RM)                                                    \
         VX2(REG(RG), 0, 1) EMITB(0x5C)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define subps_ld(RG, RM, DP)                                                \
+#define subos_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 0, 1) EMITB(0x5C)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* mul */
 
-#define mulps_rr(RG, RM)                                                    \
+#define mulos_rr(RG, RM)                                                    \
         VX2(REG(RG), 0, 1) EMITB(0x59)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define mulps_ld(RG, RM, DP)                                                \
+#define mulos_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 0, 1) EMITB(0x59)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* div */
 
-#define divps_rr(RG, RM)                                                    \
+#define divos_rr(RG, RM)                                                    \
         VX2(REG(RG), 0, 1) EMITB(0x5E)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define divps_ld(RG, RM, DP)                                                \
+#define divos_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 0, 1) EMITB(0x5E)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* sqr */
 
-#define sqrps_rr(RG, RM)                                                    \
+#define sqros_rr(RG, RM)                                                    \
         VX2(0x0,     0, 1) EMITB(0x51)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define sqrps_ld(RG, RM, DP)                                                \
+#define sqros_ld(RG, RM, DP)                                                \
         VX2(0x0,     0, 1) EMITB(0x51)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -235,15 +237,15 @@
 
 #if RT_SIMD_COMPAT_RCP == 0
 
-#define rceps_rr(RG, RM)                                                    \
+#define rceos_rr(RG, RM)                                                    \
         VX2(0x0,     0, 1) EMITB(0x53)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define rcsps_rr(RG, RM) /* destroys RM */                                  \
-        mulps_rr(W(RM), W(RG))                                              \
-        mulps_rr(W(RM), W(RG))                                              \
-        addps_rr(W(RG), W(RG))                                              \
-        subps_rr(W(RG), W(RM))
+#define rcsos_rr(RG, RM) /* destroys RM */                                  \
+        mulos_rr(W(RM), W(RG))                                              \
+        mulos_rr(W(RM), W(RG))                                              \
+        addos_rr(W(RG), W(RG))                                              \
+        subos_rr(W(RG), W(RM))
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
@@ -255,16 +257,16 @@
 
 #if RT_SIMD_COMPAT_RSQ == 0
 
-#define rseps_rr(RG, RM)                                                    \
+#define rseos_rr(RG, RM)                                                    \
         VX2(0x0,     0, 1) EMITB(0x52)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define rssps_rr(RG, RM) /* destroys RM */                                  \
-        mulps_rr(W(RM), W(RG))                                              \
-        mulps_rr(W(RM), W(RG))                                              \
-        subps_ld(W(RM), Mebp, inf_GPC03)                                    \
-        mulps_ld(W(RM), Mebp, inf_GPC02)                                    \
-        mulps_rr(W(RG), W(RM))
+#define rssos_rr(RG, RM) /* destroys RM */                                  \
+        mulos_rr(W(RM), W(RG))                                              \
+        mulos_rr(W(RM), W(RG))                                              \
+        subos_ld(W(RM), Mebp, inf_GPC03)                                    \
+        mulos_ld(W(RM), Mebp, inf_GPC02)                                    \
+        mulos_rr(W(RG), W(RM))
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
@@ -273,84 +275,84 @@
 
 /* min */
 
-#define minps_rr(RG, RM)                                                    \
+#define minos_rr(RG, RM)                                                    \
         VX2(REG(RG), 0, 1) EMITB(0x5D)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define minps_ld(RG, RM, DP)                                                \
+#define minos_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 0, 1) EMITB(0x5D)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* max */
 
-#define maxps_rr(RG, RM)                                                    \
+#define maxos_rr(RG, RM)                                                    \
         VX2(REG(RG), 0, 1) EMITB(0x5F)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define maxps_ld(RG, RM, DP)                                                \
+#define maxos_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 0, 1) EMITB(0x5F)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* cmp */
 
-#define ceqps_rr(RG, RM)                                                    \
+#define ceqos_rr(RG, RM)                                                    \
         VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))
 
-#define ceqps_ld(RG, RM, DP)                                                \
+#define ceqos_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x00))
 
-#define cneps_rr(RG, RM)                                                    \
+#define cneos_rr(RG, RM)                                                    \
         VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x04))
 
-#define cneps_ld(RG, RM, DP)                                                \
+#define cneos_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x04))
 
-#define cltps_rr(RG, RM)                                                    \
+#define cltos_rr(RG, RM)                                                    \
         VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x01))
 
-#define cltps_ld(RG, RM, DP)                                                \
+#define cltos_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x01))
 
-#define cleps_rr(RG, RM)                                                    \
+#define cleos_rr(RG, RM)                                                    \
         VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x02))
 
-#define cleps_ld(RG, RM, DP)                                                \
+#define cleos_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x02))
 
-#define cgtps_rr(RG, RM)                                                    \
+#define cgtos_rr(RG, RM)                                                    \
         VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x06))
 
-#define cgtps_ld(RG, RM, DP)                                                \
+#define cgtos_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x06))
 
-#define cgeps_rr(RG, RM)                                                    \
+#define cgeos_rr(RG, RM)                                                    \
         VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x05))
 
-#define cgeps_ld(RG, RM, DP)                                                \
+#define cgeos_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 0, 1) EMITB(0xC2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x05))
@@ -360,21 +362,21 @@
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
-#define rnzps_rr(RG, RM)     /* round towards zero */                       \
+#define rnzos_rr(RG, RM)     /* round towards zero */                       \
         VX3(0x0,     1, 3) EMITB(0x08)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x03))
 
-#define rnzps_ld(RG, RM, DP) /* round towards zero */                       \
+#define rnzos_ld(RG, RM, DP) /* round towards zero */                       \
         VX3(0x0,     1, 3) EMITB(0x08)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x03))
 
-#define cvzps_rr(RG, RM)     /* round towards zero */                       \
+#define cvzos_rr(RG, RM)     /* round towards zero */                       \
         VX2(0x0,     2, 1) EMITB(0x5B)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
+#define cvzos_ld(RG, RM, DP) /* round towards zero */                       \
         VX2(0x0,     2, 1) EMITB(0x5B)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -384,82 +386,82 @@
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
-#define rnpps_rr(RG, RM)     /* round towards +inf */                       \
+#define rnpos_rr(RG, RM)     /* round towards +inf */                       \
         VX3(0x0,     1, 3) EMITB(0x08)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x02))
 
-#define rnpps_ld(RG, RM, DP) /* round towards +inf */                       \
+#define rnpos_ld(RG, RM, DP) /* round towards +inf */                       \
         VX3(0x0,     1, 3) EMITB(0x08)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x02))
 
-#define cvpps_rr(RG, RM)     /* round towards +inf */                       \
-        rnpps_rr(W(RG), W(RM))                                              \
-        cvzps_rr(W(RG), W(RG))
+#define cvpos_rr(RG, RM)     /* round towards +inf */                       \
+        rnpos_rr(W(RG), W(RM))                                              \
+        cvzos_rr(W(RG), W(RG))
 
-#define cvpps_ld(RG, RM, DP) /* round towards +inf */                       \
-        rnpps_ld(W(RG), W(RM), W(DP))                                       \
-        cvzps_rr(W(RG), W(RG))
+#define cvpos_ld(RG, RM, DP) /* round towards +inf */                       \
+        rnpos_ld(W(RG), W(RM), W(DP))                                       \
+        cvzos_rr(W(RG), W(RG))
 
 /* cvm (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
-#define rnmps_rr(RG, RM)     /* round towards -inf */                       \
+#define rnmos_rr(RG, RM)     /* round towards -inf */                       \
         VX3(0x0,     1, 3) EMITB(0x08)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x01))
 
-#define rnmps_ld(RG, RM, DP) /* round towards -inf */                       \
+#define rnmos_ld(RG, RM, DP) /* round towards -inf */                       \
         VX3(0x0,     1, 3) EMITB(0x08)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x01))
 
-#define cvmps_rr(RG, RM)     /* round towards -inf */                       \
-        rnmps_rr(W(RG), W(RM))                                              \
-        cvzps_rr(W(RG), W(RG))
+#define cvmos_rr(RG, RM)     /* round towards -inf */                       \
+        rnmos_rr(W(RG), W(RM))                                              \
+        cvzos_rr(W(RG), W(RG))
 
-#define cvmps_ld(RG, RM, DP) /* round towards -inf */                       \
-        rnmps_ld(W(RG), W(RM), W(DP))                                       \
-        cvzps_rr(W(RG), W(RG))
+#define cvmos_ld(RG, RM, DP) /* round towards -inf */                       \
+        rnmos_ld(W(RG), W(RM), W(DP))                                       \
+        cvzos_rr(W(RG), W(RG))
 
 /* cvn (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
-#define rnnps_rr(RG, RM)     /* round towards near */                       \
+#define rnnos_rr(RG, RM)     /* round towards near */                       \
         VX3(0x0,     1, 3) EMITB(0x08)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))
 
-#define rnnps_ld(RG, RM, DP) /* round towards near */                       \
+#define rnnos_ld(RG, RM, DP) /* round towards near */                       \
         VX3(0x0,     1, 3) EMITB(0x08)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x00))
 
-#define cvnps_rr(RG, RM)     /* round towards near */                       \
-        cvtps_rr(W(RG), W(RM))
+#define cvnos_rr(RG, RM)     /* round towards near */                       \
+        cvtos_rr(W(RG), W(RM))
 
-#define cvnps_ld(RG, RM, DP) /* round towards near */                       \
-        cvtps_ld(W(RG), W(RM), W(DP))
+#define cvnos_ld(RG, RM, DP) /* round towards near */                       \
+        cvtos_ld(W(RG), W(RM), W(DP))
 
 /* cvn (signed-int-to-fp)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
-#define cvnpn_rr(RG, RM)     /* round towards near */                       \
-        cvtpn_rr(W(RG), W(RM))
+#define cvnon_rr(RG, RM)     /* round towards near */                       \
+        cvton_rr(W(RG), W(RM))
 
-#define cvnpn_ld(RG, RM, DP) /* round towards near */                       \
-        cvtpn_ld(W(RG), W(RM), W(DP))
+#define cvnon_ld(RG, RM, DP) /* round towards near */                       \
+        cvton_ld(W(RG), W(RM), W(DP))
 
 /**************************   packed integer (AVX1)   *************************/
 
 #if (RT_256 < 2)
 
-#define prmpx_rr(RG, RM, IM) /* not portable, do not use outside */         \
+#define prmox_rr(RG, RM, IM) /* not portable, do not use outside */         \
         VX3(REG(RG), 1, 3) EMITB(0x46)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM)))
@@ -480,33 +482,33 @@
         VX2(REG(RG), 1, 0) EMITB(0xFE)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define addpx_rr(RG, RM)                                                    \
-        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+#define addox_rr(RG, RM)                                                    \
+        movox_st(W(RG), Mebp, inf_SCR01(0))                                 \
         addlx_rr(W(RG), W(RM))                                              \
         movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
         movlx_ld(W(RG), Mebp, inf_SCR01(0x10))                              \
-        prmpx_rr(W(RM), W(RM), IB(1))                                       \
+        prmox_rr(W(RM), W(RM), IB(1))                                       \
         addlx_rr(W(RG), W(RM))                                              \
-        prmpx_rr(W(RM), W(RM), IB(1))                                       \
+        prmox_rr(W(RM), W(RM), IB(1))                                       \
         movlx_st(W(RG), Mebp, inf_SCR01(0x10))                              \
-        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+        movox_ld(W(RG), Mebp, inf_SCR01(0))
 
 #define addlx_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 1, 0) EMITB(0xFE)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define addpx_ld(RG, RM, DP)                                                \
-        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
-        movpx_ld(W(RG), W(RM), W(DP))                                       \
-        movpx_st(W(RG), Mebp, inf_SCR02(0))                                 \
+#define addox_ld(RG, RM, DP)                                                \
+        movox_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(RG), W(RM), W(DP))                                       \
+        movox_st(W(RG), Mebp, inf_SCR02(0))                                 \
         movlx_ld(W(RG), Mebp, inf_SCR01(0x00))                              \
         addlx_ld(W(RG), Mebp, inf_SCR02(0x00))                              \
         movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
         movlx_ld(W(RG), Mebp, inf_SCR01(0x10))                              \
         addlx_ld(W(RG), Mebp, inf_SCR02(0x10))                              \
         movlx_st(W(RG), Mebp, inf_SCR01(0x10))                              \
-        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+        movox_ld(W(RG), Mebp, inf_SCR01(0))
 
 /* sub */
 
@@ -514,33 +516,33 @@
         VX2(REG(RG), 1, 0) EMITB(0xFA)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define subpx_rr(RG, RM)                                                    \
-        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+#define subox_rr(RG, RM)                                                    \
+        movox_st(W(RG), Mebp, inf_SCR01(0))                                 \
         sublx_rr(W(RG), W(RM))                                              \
         movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
         movlx_ld(W(RG), Mebp, inf_SCR01(0x10))                              \
-        prmpx_rr(W(RM), W(RM), IB(1))                                       \
+        prmox_rr(W(RM), W(RM), IB(1))                                       \
         sublx_rr(W(RG), W(RM))                                              \
-        prmpx_rr(W(RM), W(RM), IB(1))                                       \
+        prmox_rr(W(RM), W(RM), IB(1))                                       \
         movlx_st(W(RG), Mebp, inf_SCR01(0x10))                              \
-        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+        movox_ld(W(RG), Mebp, inf_SCR01(0))
 
 #define sublx_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 1, 0) EMITB(0xFA)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define subpx_ld(RG, RM, DP)                                                \
-        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
-        movpx_ld(W(RG), W(RM), W(DP))                                       \
-        movpx_st(W(RG), Mebp, inf_SCR02(0))                                 \
+#define subox_ld(RG, RM, DP)                                                \
+        movox_st(W(RG), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(RG), W(RM), W(DP))                                       \
+        movox_st(W(RG), Mebp, inf_SCR02(0))                                 \
         movlx_ld(W(RG), Mebp, inf_SCR01(0x00))                              \
         sublx_ld(W(RG), Mebp, inf_SCR02(0x00))                              \
         movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
         movlx_ld(W(RG), Mebp, inf_SCR01(0x10))                              \
         sublx_ld(W(RG), Mebp, inf_SCR02(0x10))                              \
         movlx_st(W(RG), Mebp, inf_SCR01(0x10))                              \
-        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+        movox_ld(W(RG), Mebp, inf_SCR01(0))
 
 /* shl */
 
@@ -549,28 +551,28 @@
         MRM(0x06,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
-#define shlpx_ri(RM, IM)                                                    \
-        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
+#define shlox_ri(RM, IM)                                                    \
+        movox_st(W(RM), Mebp, inf_SCR01(0))                                 \
         shllx_ri(W(RM), W(IM))                                              \
         movlx_st(W(RM), Mebp, inf_SCR01(0x00))                              \
         movlx_ld(W(RM), Mebp, inf_SCR01(0x10))                              \
         shllx_ri(W(RM), W(IM))                                              \
         movlx_st(W(RM), Mebp, inf_SCR01(0x10))                              \
-        movpx_ld(W(RM), Mebp, inf_SCR01(0))
+        movox_ld(W(RM), Mebp, inf_SCR01(0))
 
 #define shllx_ld(RG, RM, DP) /* not portable, do not use outside */         \
         VX2(REG(RG), 1, 0) EMITB(0xF2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
-        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+#define shlox_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+        movox_st(W(RG), Mebp, inf_SCR01(0))                                 \
         shllx_ld(W(RG), W(RM), W(DP))                                       \
         movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
         movlx_ld(W(RG), Mebp, inf_SCR01(0x10))                              \
         shllx_ld(W(RG), W(RM), W(DP))                                       \
         movlx_st(W(RG), Mebp, inf_SCR01(0x10))                              \
-        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+        movox_ld(W(RG), Mebp, inf_SCR01(0))
 
 /* shr */
 
@@ -579,56 +581,56 @@
         MRM(0x02,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
-#define shrpx_ri(RM, IM)                                                    \
-        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
+#define shrox_ri(RM, IM)                                                    \
+        movox_st(W(RM), Mebp, inf_SCR01(0))                                 \
         shrlx_ri(W(RM), W(IM))                                              \
         movlx_st(W(RM), Mebp, inf_SCR01(0x00))                              \
         movlx_ld(W(RM), Mebp, inf_SCR01(0x10))                              \
         shrlx_ri(W(RM), W(IM))                                              \
         movlx_st(W(RM), Mebp, inf_SCR01(0x10))                              \
-        movpx_ld(W(RM), Mebp, inf_SCR01(0))
+        movox_ld(W(RM), Mebp, inf_SCR01(0))
 
 #define shrlx_ld(RG, RM, DP) /* not portable, do not use outside */         \
         VX2(REG(RG), 1, 0) EMITB(0xD2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
-        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+#define shrox_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+        movox_st(W(RG), Mebp, inf_SCR01(0))                                 \
         shrlx_ld(W(RG), W(RM), W(DP))                                       \
         movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
         movlx_ld(W(RG), Mebp, inf_SCR01(0x10))                              \
         shrlx_ld(W(RG), W(RM), W(DP))                                       \
         movlx_st(W(RG), Mebp, inf_SCR01(0x10))                              \
-        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+        movox_ld(W(RG), Mebp, inf_SCR01(0))
 
 #define shrln_ri(RM, IM)     /* not portable, do not use outside */         \
         VX2(REG(RM), 1, 0) EMITB(0x72)                                      \
         MRM(0x04,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
-#define shrpn_ri(RM, IM)                                                    \
-        movpx_st(W(RM), Mebp, inf_SCR01(0))                                 \
+#define shron_ri(RM, IM)                                                    \
+        movox_st(W(RM), Mebp, inf_SCR01(0))                                 \
         shrln_ri(W(RM), W(IM))                                              \
         movlx_st(W(RM), Mebp, inf_SCR01(0x00))                              \
         movlx_ld(W(RM), Mebp, inf_SCR01(0x10))                              \
         shrln_ri(W(RM), W(IM))                                              \
         movlx_st(W(RM), Mebp, inf_SCR01(0x10))                              \
-        movpx_ld(W(RM), Mebp, inf_SCR01(0))
+        movox_ld(W(RM), Mebp, inf_SCR01(0))
 
 #define shrln_ld(RG, RM, DP) /* not portable, do not use outside */         \
         VX2(REG(RG), 1, 0) EMITB(0xE2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
-        movpx_st(W(RG), Mebp, inf_SCR01(0))                                 \
+#define shron_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+        movox_st(W(RG), Mebp, inf_SCR01(0))                                 \
         shrln_ld(W(RG), W(RM), W(DP))                                       \
         movlx_st(W(RG), Mebp, inf_SCR01(0x00))                              \
         movlx_ld(W(RG), Mebp, inf_SCR01(0x10))                              \
         shrln_ld(W(RG), W(RM), W(DP))                                       \
         movlx_st(W(RG), Mebp, inf_SCR01(0x10))                              \
-        movpx_ld(W(RG), Mebp, inf_SCR01(0))
+        movox_ld(W(RG), Mebp, inf_SCR01(0))
 
 /**************************   packed integer (AVX2)   *************************/
 
@@ -636,56 +638,56 @@
 
 /* add */
 
-#define addpx_rr(RG, RM)                                                    \
+#define addox_rr(RG, RM)                                                    \
         VX2(REG(RG), 1, 1) EMITB(0xFE)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define addpx_ld(RG, RM, DP)                                                \
+#define addox_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 1, 1) EMITB(0xFE)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* sub */
 
-#define subpx_rr(RG, RM)                                                    \
+#define subox_rr(RG, RM)                                                    \
         VX2(REG(RG), 1, 1) EMITB(0xFA)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define subpx_ld(RG, RM, DP)                                                \
+#define subox_ld(RG, RM, DP)                                                \
         VX2(REG(RG), 1, 1) EMITB(0xFA)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* shl */
 
-#define shlpx_ri(RM, IM)                                                    \
+#define shlox_ri(RM, IM)                                                    \
         VX2(REG(RM), 1, 1) EMITB(0x72)                                      \
         MRM(0x06,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
-#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+#define shlox_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         VX2(REG(RG), 1, 1) EMITB(0xF2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
 /* shr */
 
-#define shrpx_ri(RM, IM)                                                    \
+#define shrox_ri(RM, IM)                                                    \
         VX2(REG(RM), 1, 1) EMITB(0x72)                                      \
         MRM(0x02,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
-#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+#define shrox_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         VX2(REG(RG), 1, 1) EMITB(0xD2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define shrpn_ri(RM, IM)                                                    \
+#define shron_ri(RM, IM)                                                    \
         VX2(REG(RM), 1, 1) EMITB(0x72)                                      \
         MRM(0x04,    MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
 
-#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+#define shron_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         VX2(REG(RG), 1, 1) EMITB(0xE2)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -774,21 +776,21 @@
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
-#define rndps_rr(RG, RM)                                                    \
+#define rndos_rr(RG, RM)                                                    \
         VX3(0x0,     1, 3) EMITB(0x08)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x04))
 
-#define rndps_ld(RG, RM, DP)                                                \
+#define rndos_ld(RG, RM, DP)                                                \
         VX3(0x0,     1, 3) EMITB(0x08)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMITB(0x04))
 
-#define cvtps_rr(RG, RM)                                                    \
+#define cvtos_rr(RG, RM)                                                    \
         VX2(0x0,     1, 1) EMITB(0x5B)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define cvtps_ld(RG, RM, DP)                                                \
+#define cvtos_ld(RG, RM, DP)                                                \
         VX2(0x0,     1, 1) EMITB(0x5B)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -797,11 +799,11 @@
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
 
-#define cvtpn_rr(RG, RM)                                                    \
+#define cvton_rr(RG, RM)                                                    \
         VX2(0x0,     0, 1) EMITB(0x5B)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))
 
-#define cvtpn_ld(RG, RM, DP)                                                \
+#define cvton_ld(RG, RM, DP)                                                \
         VX2(0x0,     0, 1) EMITB(0x5B)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -813,24 +815,24 @@
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
-#define rnrps_rr(RG, RM, mode)                                              \
+#define rnros_rr(RG, RM, mode)                                              \
         VX3(0x0,     1, 3) EMITB(0x08)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
 
-#define cvrps_rr(RG, RM, mode)                                              \
-        rnrps_rr(W(RG), W(RM), mode)                                        \
-        cvzps_rr(W(RG), W(RG))
+#define cvros_rr(RG, RM, mode)                                              \
+        rnros_rr(W(RG), W(RM), mode)                                        \
+        cvzos_rr(W(RG), W(RG))
 
 /* mmv
  * uses Xmm0 implicitly as a mask register */
 
-#define mmvpx_ld(RG, RM, DP) /* not portable, use conditionally */          \
+#define mmvox_ld(RG, RM, DP) /* not portable, use conditionally */          \
         VX3(0x0,     1, 2) EMITB(0x2C)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
-#define mmvpx_st(RG, RM, DP) /* not portable, use conditionally */          \
+#define mmvox_st(RG, RM, DP) /* not portable, use conditionally */          \
         VX3(0x0,     1, 2) EMITB(0x2E)                                      \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
@@ -839,39 +841,39 @@
 
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
-        movpx_st(Xmm0, Oeax, PLAIN)                                         \
+        movox_st(Xmm0, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
-        movpx_st(Xmm1, Oeax, PLAIN)                                         \
+        movox_st(Xmm1, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
-        movpx_st(Xmm2, Oeax, PLAIN)                                         \
+        movox_st(Xmm2, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
-        movpx_st(Xmm3, Oeax, PLAIN)                                         \
+        movox_st(Xmm3, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
-        movpx_st(Xmm4, Oeax, PLAIN)                                         \
+        movox_st(Xmm4, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
-        movpx_st(Xmm5, Oeax, PLAIN)                                         \
+        movox_st(Xmm5, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
-        movpx_st(Xmm6, Oeax, PLAIN)                                         \
+        movox_st(Xmm6, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
-        movpx_st(Xmm7, Oeax, PLAIN)
+        movox_st(Xmm7, Oeax, PLAIN)
 
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
-        movpx_ld(Xmm0, Oeax, PLAIN)                                         \
+        movox_ld(Xmm0, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
-        movpx_ld(Xmm1, Oeax, PLAIN)                                         \
+        movox_ld(Xmm1, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
-        movpx_ld(Xmm2, Oeax, PLAIN)                                         \
+        movox_ld(Xmm2, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
-        movpx_ld(Xmm3, Oeax, PLAIN)                                         \
+        movox_ld(Xmm3, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
-        movpx_ld(Xmm4, Oeax, PLAIN)                                         \
+        movox_ld(Xmm4, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
-        movpx_ld(Xmm5, Oeax, PLAIN)                                         \
+        movox_ld(Xmm5, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
-        movpx_ld(Xmm6, Oeax, PLAIN)                                         \
+        movox_ld(Xmm6, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH*4))                                 \
-        movpx_ld(Xmm7, Oeax, PLAIN)
+        movox_ld(Xmm7, Oeax, PLAIN)
 
 #endif /* RT_256 */
 

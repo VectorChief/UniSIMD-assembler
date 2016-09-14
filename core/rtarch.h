@@ -681,18 +681,6 @@
  * of rsqps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 
-#if   RT_ELEMENT == 32
-
-#if   defined (RT_256) && (RT_256 != 0)
-#define Q 2
-#include "rtarch_x32_256.h"
-#elif defined (RT_128) && (RT_128 != 0)
-#define Q 1
-#include "rtarch_x32_128.h"
-#endif /* RT_256, RT_128 */
-
-#elif RT_ELEMENT == 64
-
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
 #include "rtarch_x64_256.h"
@@ -700,8 +688,6 @@
 #define Q 1
 #include "rtarch_x64_128.h"
 #endif /* RT_256, RT_128 */
-
-#endif /* RT_ELEMENT */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
@@ -1108,18 +1094,6 @@
  * of rsqps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 
-#if   RT_ELEMENT == 32
-
-#if   defined (RT_256) && (RT_256 != 0)
-#define Q 2
-#error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
-#elif defined (RT_128) && (RT_128 != 0)
-#define Q 1
-#include "rtarch_a32_128.h"
-#endif /* RT_256, RT_128 */
-
-#elif RT_ELEMENT == 64
-
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
 #error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
@@ -1127,8 +1101,6 @@
 #define Q 1
 #include "rtarch_a64_128.h"
 #endif /* RT_256, RT_128 */
-
-#endif /* RT_ELEMENT */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
@@ -1332,18 +1304,6 @@
  * of rsqps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 
-#if   RT_ELEMENT == 32
-
-#if   defined (RT_256) && (RT_256 != 0)
-#define Q 2
-#error "mipsMSA doesn't support SIMD wider than 128-bit, check build flags"
-#elif defined (RT_128) && (RT_128 != 0)
-#define Q 1
-#include "rtarch_m32_128.h"
-#endif /* RT_256, RT_128 */
-
-#elif RT_ELEMENT == 64
-
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
 #error "mipsMSA doesn't support SIMD wider than 128-bit, check build flags"
@@ -1351,8 +1311,6 @@
 #define Q 1
 #include "rtarch_m64_128.h"
 #endif /* RT_256, RT_128 */
-
-#endif /* RT_ELEMENT */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
@@ -1584,18 +1542,6 @@
  * compatible with 64-bit processors running 32-bit ISA mode */
 #define RT_BASE_COMPAT_ZFL      1 /* only necessary on Power */
 
-#if   RT_ELEMENT == 32
-
-#if   defined (RT_256) && (RT_256 != 0)
-#define Q 2
-#error "AltiVec doesn't support SIMD wider than 128-bit, check build flags"
-#elif defined (RT_128) && (RT_128 != 0)
-#define Q 1
-#include "rtarch_p32_128.h"
-#endif /* RT_256, RT_128 */
-
-#elif RT_ELEMENT == 64
-
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
 #error "AltiVec doesn't support SIMD wider than 128-bit, check build flags"
@@ -1603,8 +1549,6 @@
 #define Q 1
 #include "rtarch_p64_128.h"
 #endif /* RT_256, RT_128 */
-
-#endif /* RT_ELEMENT */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
@@ -1744,8 +1688,6 @@
  * Short names R, S, T represent maximal width for given build config.
  * RT_SIMD_WIDTH and S may differ for builds with runtime SIMD target
  * selection in backend's ASM code sections, S is used in SIMD structs.
- * RT_SIMD_WIDTH32/RT_SIMD_WIDTH64 and RT_SIMD_SET32/RT_SIMD_SET64 are
- * reserved for future versions with both fixed-sized subsets present.
  */
 #define R   ((Q*4)/1)   /* for cmdo*_** SIMD-subset, rt_fp32 SIMD-fields */
 #define S   ((Q*4)/L)   /* for cmdp*_** SIMD-subset, rt_real SIMD-fields */
