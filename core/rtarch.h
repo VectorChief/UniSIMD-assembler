@@ -1681,7 +1681,7 @@
  * RT_SIMD_QUADS and Q may differ for builds with runtime SIMD target
  * selection in backend's ASM code sections, Q is used in SIMD structs.
  */
-#define RT_SIMD_QUADS       ((RT_SIMD_WIDTH * L) / 4)
+#define RT_SIMD_QUADS       (RT_SIMD_WIDTH32 / 4)
 
 /*
  * SIMD width (number of scalar elements) for given SIMD element size.
