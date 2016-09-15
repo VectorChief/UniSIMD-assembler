@@ -54,6 +54,8 @@
 
 #if (RT_128 >= 2)
 
+#undef  movqx_ld
+
 /******************************************************************************/
 /**********************************   VSX   ***********************************/
 /******************************************************************************/
@@ -192,7 +194,7 @@
         EMITW(0xF000036B | MXM(REG(RG), 0x00,    REG(RM)))
 
 #define rcsqs_rr(RG, RM) /* destroys RM */                                  \
-        EMITW(0xF00007CF | MXM(REG(RM), REG(RG), TmmA))                     \
+        EMITW(0xF00007CF | MXM(REG(RM), REG(RG), TmmX))                     \
         EMITW(0xF000030F | MXM(REG(RG), REG(RG), REG(RM)))
 
 #endif /* RT_SIMD_COMPAT_RCP */
@@ -210,8 +212,8 @@
 
 #define rssqs_rr(RG, RM) /* destroys RM */                                  \
         EMITW(0xF0000387 | MXM(TmmD,    REG(RG), REG(RG)))                  \
-        EMITW(0xF0000387 | MXM(TmmC,    REG(RG), TmmB))                     \
-        EMITW(0xF00007CF | MXM(TmmD,    REG(RM), TmmA))                     \
+        EMITW(0xF0000387 | MXM(TmmC,    REG(RG), TmmY))                     \
+        EMITW(0xF00007CF | MXM(TmmD,    REG(RM), TmmX))                     \
         EMITW(0xF000078F | MXM(REG(RG), TmmD,    TmmC))
 
 #endif /* RT_SIMD_COMPAT_RSQ */

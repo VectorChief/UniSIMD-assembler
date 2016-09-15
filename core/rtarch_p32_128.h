@@ -32,7 +32,9 @@
 
 #undef  sregs_sa
 #undef  sregs_la
-#undef  movpx_ld
+#undef  movox_ld
+#undef  movqx_ld
+#define movqx_ld(RG, RM, DP)
 #undef  EMITS
 #define EMITS(w) EMITW(w)
 
@@ -105,11 +107,13 @@
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
+#define TmmX    0x15  /* v21, +1.0 64-bit */
+#define TmmY    0x16  /* v22, -0.5 64-bit */
 #define TmmR    0x17  /* v23, Rounding Mode */
-#define TmmS    0x18  /* v24, SIGN */
-#define TmmQ    0x19  /* v25, QNAN */
-#define TmmA    0x1A  /* v26, +1.0 */
-#define TmmB    0x1B  /* v27, -0.5 */
+#define TmmS    0x18  /* v24,-ZERO sign-bit */
+#define TmmQ    0x19  /* v25,-QNAN all 1s */
+#define TmmA    0x1A  /* v26, +1.0 32-bit */
+#define TmmB    0x1B  /* v27, -0.5 32-bit */
 #define TmmC    0x1C  /* v28 */
 #define TmmD    0x1D  /* v29 */
 #define TmmE    0x1E  /* v30 */
@@ -647,7 +651,7 @@
         EMITW(0x7C000719 | MXM(REG(RG), Teax & (MOD(RM) == TPxx), TPxx))    \
                                                        /* ^ == -1 if true */
 
-#define adrox_ld(RG, RM, DP) /* RG is a BASE reg, DP is SIMD-aligned */     \
+#define adrpx_ld(RG, RM, DP) /* RG is a BASE reg, DP is SIMD-aligned */     \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0x38000000 | MPM(REG(RG), MOD(RM), VAL(DP), B2(DP), P2(DP)))
 

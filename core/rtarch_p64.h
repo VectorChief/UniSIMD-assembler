@@ -1089,62 +1089,62 @@
  * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
  * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
 
-#define jmpzx_xr(RM)           /* register-targeted unconditional jump */   \
+#define jmpxx_xr(RM)           /* register-targeted unconditional jump */   \
         EMITW(0x7C0003A6 | MRM(REG(RM), 0x00,    0x09)) /* ctr <- reg */    \
         EMITW(0x4C000420 | MTM(0x0C,    0x0A,    0x00)) /* beqctr cr2 */
 
-#define jmpzx_xm(RM, DP)         /* memory-targeted unconditional jump */   \
+#define jmpxx_xm(RM, DP)         /* memory-targeted unconditional jump */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0xE8000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C0003A6 | MRM(TMxx,    0x00,    0x09)) /* ctr <- r24 */    \
         EMITW(0x4C000420 | MTM(0x0C,    0x0A,    0x00)) /* beqctr cr2 */
 
-#define jmpzx_lb(lb)              /* label-targeted unconditional jump */   \
+#define jmpxx_lb(lb)              /* label-targeted unconditional jump */   \
         ASM_BEG ASM_OP1(b, lb) ASM_END
 
-#define jezzx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
+#define jezxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
         ASM_BEG ASM_OP1(beq,   lb) ASM_END
 
-#define jnzzx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
+#define jnzxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
         ASM_BEG ASM_OP1(bne,   lb) ASM_END
 
-#define jeqzx_lb(lb)                                /* compare -> jump */   \
+#define jeqxx_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         ASM_BEG ASM_OP1(beq,   lb) ASM_END
 
-#define jnezx_lb(lb)                                /* compare -> jump */   \
+#define jnexx_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         ASM_BEG ASM_OP1(bne,   lb) ASM_END
 
-#define jltzx_lb(lb)                                /* compare -> jump */   \
+#define jltxx_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         ASM_BEG ASM_OP1(blt,   lb) ASM_END
 
-#define jlezx_lb(lb)                                /* compare -> jump */   \
+#define jlexx_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         ASM_BEG ASM_OP1(ble,   lb) ASM_END
 
-#define jgtzx_lb(lb)                                /* compare -> jump */   \
+#define jgtxx_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         ASM_BEG ASM_OP1(bgt,   lb) ASM_END
 
-#define jgezx_lb(lb)                                /* compare -> jump */   \
+#define jgexx_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         ASM_BEG ASM_OP1(bge,   lb) ASM_END
 
-#define jltzn_lb(lb)                                /* compare -> jump */   \
+#define jltxn_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         ASM_BEG ASM_OP1(blt,   lb) ASM_END
 
-#define jlezn_lb(lb)                                /* compare -> jump */   \
+#define jlexn_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         ASM_BEG ASM_OP1(ble,   lb) ASM_END
 
-#define jgtzn_lb(lb)                                /* compare -> jump */   \
+#define jgtxn_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         ASM_BEG ASM_OP1(bgt,   lb) ASM_END
 
-#define jgezn_lb(lb)                                /* compare -> jump */   \
+#define jgexn_lb(lb)                                /* compare -> jump */   \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         ASM_BEG ASM_OP1(bge,   lb) ASM_END
 
