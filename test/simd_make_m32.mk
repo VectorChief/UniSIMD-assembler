@@ -10,11 +10,22 @@ LIB_PATH =
 LIB_LIST =                              \
         -lm
 
-simd_test:
+
+build: simd_test_m32
+
+strip:
+	mips-mti-linux-gnu-strip simd_test.m32
+
+clean:
+	rm simd_test.m32
+
+
+simd_test_m32:
 	mips-mti-linux-gnu-g++ -O3 -g -static -EL -mips32r5 -mmsa \
         -DRT_LINUX -DRT_M32 -DRT_128=1 -DRT_DEBUG=0 \
         -DRT_POINTER=32 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m32
+
 
 # The up-to-date MIPS toolchain (g++ & QEMU) can be found here:
 # https://community.imgtec.com/developers/mips/tools/codescape-mips-sdk/
