@@ -129,8 +129,8 @@
  * cmdpb_** - SIMD-elem args, SIMD ISA (packed byte-int subset)
  * cmdph_** - SIMD-elem args, SIMD ISA (packed half-int subset)
  *
- * cmdn*_** - SIMD-elem args, SIMD ISA (packed fp16/int subset, half-precision)
- * cmdl*_** - SIMD-elem args, SIMD ISA (scalar fp16/int subset, half-precision)
+ * cmdm*_** - SIMD-elem args, SIMD ISA (packed fp16/int subset, half-precision)
+ * cmdn*_** - SIMD-elem args, SIMD ISA (scalar fp16/int subset, half-precision)
  *
  * cmdu*_** - SIMD-elem args, SIMD ISA (packed f128/int subset, quad-precision)
  * cmdv*_** - SIMD-elem args, SIMD ISA (scalar f128/int subset, quad-precision)
@@ -203,6 +203,7 @@
  * Must be undef'd explicitly after use to avoid collisions with system headers.
  */
 #undef Q /* in case Q is defined outside */
+#undef N /* in case N is defined outside */
 #undef R /* in case R is defined outside */
 #undef S /* in case S is defined outside */
 #undef T /* in case T is defined outside */
@@ -1747,6 +1748,7 @@
  * RT_SIMD_WIDTH32/RT_SIMD_WIDTH64 and RT_SIMD_SET32/RT_SIMD_SET64 are
  * reserved for future versions with both fixed-sized subsets present.
  */
+#define N   ((Q*4)*2)   /* for cmdm*_** SIMD-subset, rt_fp16 SIMD-fields */
 #define R   ((Q*4)/1)   /* for cmdo*_** SIMD-subset, rt_fp32 SIMD-fields */
 #define S   ((Q*4)/L)   /* for cmdp*_** SIMD-subset, rt_real SIMD-fields */
 #define T   ((Q*4)/2)   /* for cmdq*_** SIMD-subset, rt_fp64 SIMD-fields */

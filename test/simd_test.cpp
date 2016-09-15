@@ -2749,6 +2749,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 /******************************************************************************/
 
 #undef Q /* short name for SIMD-quads in structs (number of 128-bit chunks) */
+#undef N /* short name for SIMD-width in structs (with rt_fp16 SIMD-fields) */
 #undef R /* short name for SIMD-width in structs (with rt_fp32 SIMD-fields) */
 #undef S /* short name for SIMD-width in structs (with rt_real SIMD-fields) */
 #undef T /* short name for SIMD-width in structs (with rt_fp64 SIMD-fields) */
