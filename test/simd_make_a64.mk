@@ -10,11 +10,34 @@ LIB_PATH =
 LIB_LIST =                              \
         -lm
 
-simd_test:
+
+build: simd_test_a64_32 simd_test_a64f32 simd_test_a64f64
+
+strip:
+	aarch64-linux-gnu-strip simd_test.a64*
+
+clean:
+	rm simd_test.a64*
+
+
+simd_test_a64_32:
+	aarch64-linux-gnu-g++ -O3 -g -static \
+        -DRT_LINUX -DRT_A64 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64_32
+
+simd_test_a64f32:
 	aarch64-linux-gnu-g++ -O3 -g -static \
         -DRT_LINUX -DRT_A64 -DRT_128=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64f32
+
+simd_test_a64f64:
+	aarch64-linux-gnu-g++ -O3 -g -static \
+        -DRT_LINUX -DRT_A64 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64f64
+
 
 # On Ubuntu 16.04 Live CD add "universe multiverse" to "main restricted"
 # in /etc/apt/sources.list (sudo gedit /etc/apt/sources.list) then run:

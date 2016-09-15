@@ -10,11 +10,34 @@ LIB_PATH =
 LIB_LIST =                              \
         -lm
 
-simd_test:
+
+build: simd_test_m64_32 simd_test_m64f32 simd_test_m64f64
+
+strip:
+	mips-img-linux-gnu-strip simd_test.m64*
+
+clean:
+	rm simd_test.m64*
+
+
+simd_test_m64_32:
+	mips-img-linux-gnu-g++ -O3 -g -static -EL -mabi=64 -mmsa \
+        -DRT_LINUX -DRT_M64=6 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64_32
+
+simd_test_m64f32:
 	mips-img-linux-gnu-g++ -O3 -g -static -EL -mabi=64 -mmsa \
         -DRT_LINUX -DRT_M64=6 -DRT_128=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64f32
+
+simd_test_m64f64:
+	mips-img-linux-gnu-g++ -O3 -g -static -EL -mabi=64 -mmsa \
+        -DRT_LINUX -DRT_M64=6 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64f64
+
 
 # The up-to-date MIPS toolchain (g++ & QEMU) can be found here:
 # https://community.imgtec.com/developers/mips/tools/codescape-mips-sdk/
