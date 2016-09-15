@@ -129,8 +129,8 @@
  * cmdpb_** - SIMD-elem args, SIMD ISA (packed byte-int subset)
  * cmdph_** - SIMD-elem args, SIMD ISA (packed half-int subset)
  *
- * cmdn*_** - SIMD-elem args, SIMD ISA (packed fp16/int subset, half-precision)
- * cmdl*_** - SIMD-elem args, SIMD ISA (scalar fp16/int subset, half-precision)
+ * cmdm*_** - SIMD-elem args, SIMD ISA (packed fp16/int subset, half-precision)
+ * cmdn*_** - SIMD-elem args, SIMD ISA (scalar fp16/int subset, half-precision)
  *
  * cmdu*_** - SIMD-elem args, SIMD ISA (packed f128/int subset, quad-precision)
  * cmdv*_** - SIMD-elem args, SIMD ISA (scalar f128/int subset, quad-precision)
@@ -186,6 +186,10 @@
  * are being considered as extensions to current SPMD-driven vertical SIMD ISA.
  */
 
+/******************************************************************************/
+/*******************************   DEFINITIONS   ******************************/
+/******************************************************************************/
+
 /*
  * Master config flags for SIMD compatibility modes across all targets.
  * Each target can be configured individually regardless of the master flag.
@@ -197,35 +201,47 @@
 #define RT_SIMD_COMPAT_DIV_MASTER       1 /* for divps_** IEEE-compatible */
 #define RT_SIMD_COMPAT_SQR_MASTER       1 /* for sqrps_** IEEE-compatible */
 
-/*
- * Short names Q then R, S, T and W for SIMD-quads, SIMD-widths and wrapper.
- * Used independently for SIMD-fields' sizes and offsets in backend structures.
- * Must be undef'd explicitly after use to avoid collisions with system headers.
- */
-#undef Q /* in case Q is defined outside */
-#undef R /* in case R is defined outside */
-#undef S /* in case S is defined outside */
-#undef T /* in case T is defined outside */
-
-#undef W /* in case W is defined outside */
+#include "rtzero.h"
 
 /*
- * Short names P, A, L and B, C, ... , H, I for sizes and offset corrections.
- * Used independently for SIMD-fields' sizes and offsets in backend structures.
- * Must be undef'd explicitly after use to avoid collisions with system headers.
+ * SIMD quad-factor (number of 128-bit chunks) for chosen SIMD target.
+ * Short name Q represents maximal quad-factor for given build config.
+ * RT_SIMD_QUADS and Q may differ for builds with runtime SIMD target
+ * selection in backend's ASM code sections, Q is used in SIMD structs.
  */
-#undef P /* in case P is defined outside */
-#undef A /* in case A is defined outside */
-#undef L /* in case L is defined outside */
+#define RT_SIMD_QUADS       (RT_SIMD_WIDTH32/4)
 
-#undef B /* in case B is defined outside */
-#undef C /* in case C is defined outside */
-#undef D /* in case D is defined outside */
-#undef E /* in case E is defined outside */
-#undef F /* in case F is defined outside */
-#undef G /* in case G is defined outside */
-#undef H /* in case H is defined outside */
-#undef I /* in case I is defined outside */
+/*
+ * SIMD width (number of scalar elements) for given SIMD element size.
+ * Short names R, S, T represent maximal width for given build config.
+ * RT_SIMD_WIDTH and S may differ for builds with runtime SIMD target
+ * selection in backend's ASM code sections, S is used in SIMD structs.
+ */
+#define R   (Q*4)       /* for cmdo*_** SIMD-subset, rt_fp32 SIMD-fields */
+#define S   (Q*4/L)     /* for cmdp*_** SIMD-subset, rt_real SIMD-fields */
+#define T   (Q*2)       /* for cmdq*_** SIMD-subset, rt_fp64 SIMD-fields */
+
+#define N   (Q*8)       /* for cmdm*_** SIMD-subset, rt_fp16 SIMD-fields */
+#define V   (Q*1)       /* for cmdu*_** SIMD-subset, rt_f128 SIMD-fields */
+
+/*
+ * Short names for pointer, address and SIMD element sizes (in 32-bit chunks).
+ */
+#define P   (RT_POINTER/32)         /* short name for RT_POINTER/32 */
+#define A   (RT_ADDRESS/32)         /* short name for RT_ADDRESS/32 */
+#define L   (RT_ELEMENT/32)         /* short name for RT_ELEMENT/32 */
+
+/*
+ * Offset corrections for endianness (used in backend's structs and BASE ISA).
+ */
+#define B   (RT_ENDIAN*(2-1)*4)     /* for cmdw*_** working on 64-bit field */
+#define C   (RT_ENDIAN*(2-A)*4)     /* for cmdx*_** working on 64-bit field */
+#define D   (RT_ENDIAN*(P-1)*4)     /* for cmdw*_** working on P-size field */
+#define E   (RT_ENDIAN*(P-A)*4)     /* for cmdx*_** working on P-size field */
+#define F   (RT_ENDIAN*(A-1)*4)     /* for cmdw*_** working on A-size field */
+#define G   (RT_ENDIAN*(2-P)*4)     /* for jmpxx_xm working on 64-bit field */
+#define H   (RT_ENDIAN*(L-1)*4)     /* for cmdw*_** working on L-size field */
+#define I   (RT_ENDIAN*(2-L)*4)     /* for cmdy*_** working on 64-bit field */
 
 /*******************************   WIN32, MSVC   ******************************/
 
@@ -1670,47 +1686,6 @@
 #endif /* RT_X86, RT_X32/X64, RT_ARM, RT_A32/A64, RT_M32/M64, RT_P32/P64 */
 
 #endif /* OS, COMPILER, ARCH */
-
-/******************************************************************************/
-/*******************************   DEFINITIONS   ******************************/
-/******************************************************************************/
-
-/*
- * SIMD quad-factor (number of 128-bit chunks) for chosen SIMD target.
- * Short name Q represents maximal quad-factor for given build config.
- * RT_SIMD_QUADS and Q may differ for builds with runtime SIMD target
- * selection in backend's ASM code sections, Q is used in SIMD structs.
- */
-#define RT_SIMD_QUADS       (RT_SIMD_WIDTH32 / 4)
-
-/*
- * SIMD width (number of scalar elements) for given SIMD element size.
- * Short names R, S, T represent maximal width for given build config.
- * RT_SIMD_WIDTH and S may differ for builds with runtime SIMD target
- * selection in backend's ASM code sections, S is used in SIMD structs.
- */
-#define R   ((Q*4)/1)   /* for cmdo*_** SIMD-subset, rt_fp32 SIMD-fields */
-#define S   ((Q*4)/L)   /* for cmdp*_** SIMD-subset, rt_real SIMD-fields */
-#define T   ((Q*4)/2)   /* for cmdq*_** SIMD-subset, rt_fp64 SIMD-fields */
-
-/*
- * Short names for pointer, address and SIMD element sizes (in 32-bit chunks).
- */
-#define P   (RT_POINTER/32)         /* short name for RT_POINTER/32 */
-#define A   (RT_ADDRESS/32)         /* short name for RT_ADDRESS/32 */
-#define L   (RT_ELEMENT/32)         /* short name for RT_ELEMENT/32 */
-
-/*
- * Offset corrections for endianness (used in backend's structs and BASE ISA).
- */
-#define B   (RT_ENDIAN*(2-1)*4)     /* for cmdw*_** working on 64-bit field */
-#define C   (RT_ENDIAN*(2-A)*4)     /* for cmdx*_** working on 64-bit field */
-#define D   (RT_ENDIAN*(P-1)*4)     /* for cmdw*_** working on P-size field */
-#define E   (RT_ENDIAN*(P-A)*4)     /* for cmdx*_** working on P-size field */
-#define F   (RT_ENDIAN*(A-1)*4)     /* for cmdw*_** working on A-size field */
-#define G   (RT_ENDIAN*(2-P)*4)     /* for jmpxx_xm working on 64-bit field */
-#define H   (RT_ENDIAN*(L-1)*4)     /* for cmdw*_** working on L-size field */
-#define I   (RT_ENDIAN*(2-L)*4)     /* for cmdy*_** working on 64-bit field */
 
 #endif /* RT_RTARCH_H */
 

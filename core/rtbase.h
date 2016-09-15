@@ -53,6 +53,8 @@
  * Generic types
  * rt_32mMxN, rt_64mMxN and rt_matMxN, where M and N are integers {1, 2, 3, 4},
  * are reserved for rectangular matrices of rt_fp32, rt_fp64 and rt_real types.
+ * rt_fp16 and rt_f128 are reserved for half and quad precision floating point.
+ * rt_s128 and rt_u128 are reserved for signed and unsigned 128b integer types.
  */
 
 /* fixed-size floating point types */
