@@ -11,32 +11,56 @@ LIB_LIST =                              \
         -lm
 
 
-build: simd_test_p64_32 simd_test_p64f32 simd_test_p64f64
+build: build_le build_be
 
 strip:
-	powerpc64le-linux-gnu-strip simd_test.p64*
+	powerpc64le-linux-gnu-strip simd_test.p64???L*
+	powerpc64-linux-gnu-strip simd_test.p64???B*
 
 clean:
 	rm simd_test.p64*
 
 
-simd_test_p64_32:
+build_le: simd_test_p64_32Lp8 simd_test_p64f32Lp8 simd_test_p64f64Lp8
+
+simd_test_p64_32Lp8:
 	powerpc64le-linux-gnu-g++ -O2 -g -static \
         -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
-        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64_32
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64_32Lp8
 
-simd_test_p64f32:
+simd_test_p64f32Lp8:
 	powerpc64le-linux-gnu-g++ -O2 -g -static \
         -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
-        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f32
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f32Lp8
 
-simd_test_p64f64:
+simd_test_p64f64Lp8:
 	powerpc64le-linux-gnu-g++ -O2 -g -static \
         -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
-        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f64
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f64Lp8
+
+
+build_be: simd_test_p64_32Bp7 simd_test_p64f32Bp7 simd_test_p64f64Bp8
+
+simd_test_p64_32Bp7:
+	powerpc64-linux-gnu-g++ -O2 -g -static \
+        -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=1 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64_32Bp7
+
+simd_test_p64f32Bp7:
+	powerpc64-linux-gnu-g++ -O2 -g -static \
+        -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=1 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f32Bp7
+
+simd_test_p64f64Bp8:
+	powerpc64-linux-gnu-g++ -O2 -g -static \
+        -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=1 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f64Bp8
 
 
 # On Ubuntu 16.04 Live CD add "universe multiverse" to "main restricted"
@@ -54,12 +78,12 @@ simd_test_p64f64:
 #
 # Building/running SIMD test:
 # make -f simd_make_p64.mk
-# qemu-ppc64le -cpu POWER8 simd_test.p64f32
+# qemu-ppc64le -cpu POWER8 simd_test.p64f32Lp8
 
 # For big-endian 64-bit POWER(7,7+,8) VSX target use (replace):
 # powerpc64-linux-gnu-g++ -DRT_ENDIAN=1
 # (enable RT_SIMD_COMPAT_I64 in core/rtarch.h for POWER7 64-bit SIMD)
-# qemu-ppc64 -cpu POWER7 simd_test.p64f32
+# qemu-ppc64 -cpu POWER7 simd_test.p64f32Bp7
 
 # 64/32-bit (ptr/adr) hybrid mode compatible with native 64-bit ABI
 # is available for the original pure 32-bit ISA using 64-bit pointers,
