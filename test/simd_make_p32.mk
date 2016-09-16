@@ -10,11 +10,28 @@ LIB_PATH =
 LIB_LIST =                              \
         -lm
 
-simd_test:
+
+build: simd_test_p32Bg4 simd_test_p32Bp7
+
+strip:
+	powerpc-linux-gnu-strip simd_test.p32*
+
+clean:
+	rm simd_test.p32*
+
+
+simd_test_p32Bg4:
 	powerpc-linux-gnu-g++ -O3 -g -static \
         -DRT_LINUX -DRT_P32 -DRT_128=1 -DRT_DEBUG=0 \
         -DRT_POINTER=32 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=1 \
-        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p32
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p32Bg4
+
+simd_test_p32Bp7:
+	powerpc-linux-gnu-g++ -O3 -g -static \
+        -DRT_LINUX -DRT_P32 -DRT_128=2 -DRT_DEBUG=0 \
+        -DRT_POINTER=32 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=1 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p32Bp7
+
 
 # On Ubuntu 16.04 Live CD add "universe multiverse" to "main restricted"
 # in /etc/apt/sources.list (sudo gedit /etc/apt/sources.list) then run:
@@ -30,7 +47,7 @@ simd_test:
 #
 # Building/running SIMD test:
 # make -f simd_make_p32.mk
-# qemu-ppc -cpu G4 simd_test.p32
+# qemu-ppc -cpu G4 simd_test.p32Bg4
 
 # For 32-bit POWER(7,7+,8) VSX target use (replace): -DRT_128=2
-# qemu-ppc64abi32 -cpu POWER7 simd_test.p32
+# qemu-ppc64abi32 -cpu POWER7 simd_test.p32Bp7
