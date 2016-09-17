@@ -9,6 +9,8 @@ v0.8.1: Unified SIMD Assembler, full 64-bit fp/int SIMD compute elements
   - add new custom-sized integer types (address, element) with printf mods
   - make current adjustable fp types follow SIMD element size (RT_ELEMENT)
   - adjust math macros and definitions to support double-precision arithmetic
+  - add build/clean scripts, update makefiles with extra targets, MIPS notes
+  - remove unnecessary limitation on SIMD masks (add AVX-512/ARM-SVE notes)
   - fix non-setting-flags instructions to not interfere with cmp on MIPS, Power
 
 v0.8.0: Unified SIMD Assembler, full 64-bit addressing for BASE and SIMD
