@@ -213,6 +213,9 @@
         notzx_rx(W(RM), W(DP))                                              \
         andzx_st(W(RG), W(RM), W(DP))
 
+#define annzx_mr(RM, DP, RG)                                                \
+        annzx_st(W(RG), W(RM), W(DP))
+
 
 #define annzz_ri(RM, IM)                                                    \
         notzx_rx(W(RM))                                                     \
@@ -233,6 +236,9 @@
 #define annzz_st(RG, RM, DP)                                                \
         notzx_rx(W(RM), W(DP))                                              \
         andzz_st(W(RG), W(RM), W(DP))
+
+#define annzz_mr(RM, DP, RG)                                                \
+        annzz_st(W(RG), W(RM), W(DP))
 
 /* orr
  * set-flags: undefined (*x), yes (*z) */

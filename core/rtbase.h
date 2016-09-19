@@ -1692,6 +1692,9 @@ struct rt_SIMD_REGS
 #define annxx_st(RG, RM, DP)                                                \
         annwx_st(W(RG), W(RM), W(DP))
 
+#define annxx_mr(RM, DP, RG)                                                \
+        annxx_st(W(RG), W(RM), W(DP))
+
 
 #define annxz_ri(RM, IM)                                                    \
         annwz_ri(W(RM), W(IM))
@@ -1707,6 +1710,9 @@ struct rt_SIMD_REGS
 
 #define annxz_st(RG, RM, DP)                                                \
         annwz_st(W(RG), W(RM), W(DP))
+
+#define annxz_mr(RM, DP, RG)                                                \
+        annxz_st(W(RG), W(RM), W(DP))
 
 /* orr
  * set-flags: undefined (*x), yes (*z) */
@@ -2276,6 +2282,9 @@ struct rt_SIMD_REGS
 #define annxx_st(RG, RM, DP)                                                \
         annzx_st(W(RG), W(RM), W(DP))
 
+#define annxx_mr(RM, DP, RG)                                                \
+        annxx_st(W(RG), W(RM), W(DP))
+
 
 #define annxz_ri(RM, IM)                                                    \
         annzz_ri(W(RM), W(IM))
@@ -2291,6 +2300,9 @@ struct rt_SIMD_REGS
 
 #define annxz_st(RG, RM, DP)                                                \
         annzz_st(W(RG), W(RM), W(DP))
+
+#define annxz_mr(RM, DP, RG)                                                \
+        annxz_st(W(RG), W(RM), W(DP))
 
 /* orr
  * set-flags: undefined (*x), yes (*z) */
@@ -2862,6 +2874,9 @@ struct rt_SIMD_REGS
 #define annyx_st(RG, RM, DP)                                                \
         annwx_st(W(RG), W(RM), W(DP))
 
+#define annyx_mr(RM, DP, RG)                                                \
+        annyx_st(W(RG), W(RM), W(DP))
+
 
 #define annyz_ri(RM, IM)                                                    \
         annwz_ri(W(RM), W(IM))
@@ -2877,6 +2892,9 @@ struct rt_SIMD_REGS
 
 #define annyz_st(RG, RM, DP)                                                \
         annwz_st(W(RG), W(RM), W(DP))
+
+#define annyz_mr(RM, DP, RG)                                                \
+        annyz_st(W(RG), W(RM), W(DP))
 
 /* orr
  * set-flags: undefined (*x), yes (*z) */
@@ -3446,6 +3464,9 @@ struct rt_SIMD_REGS
 #define annyx_st(RG, RM, DP)                                                \
         annzx_st(W(RG), W(RM), W(DP))
 
+#define annyx_mr(RM, DP, RG)                                                \
+        annyx_st(W(RG), W(RM), W(DP))
+
 
 #define annyz_ri(RM, IM)                                                    \
         annzz_ri(W(RM), W(IM))
@@ -3461,6 +3482,9 @@ struct rt_SIMD_REGS
 
 #define annyz_st(RG, RM, DP)                                                \
         annzz_st(W(RG), W(RM), W(DP))
+
+#define annyz_mr(RM, DP, RG)                                                \
+        annyz_st(W(RG), W(RM), W(DP))
 
 /* orr
  * set-flags: undefined (*x), yes (*z) */

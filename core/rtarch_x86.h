@@ -285,6 +285,9 @@
         notwx_mx(W(RM), W(DP))                                              \
         andwx_st(W(RG), W(RM), W(DP))
 
+#define annwx_mr(RM, DP, RG)                                                \
+        annwx_st(W(RG), W(RM), W(DP))
+
 
 #define annwz_ri(RM, IM)                                                    \
         notwx_rx(W(RM))                                                     \
@@ -305,6 +308,9 @@
 #define annwz_st(RG, RM, DP)                                                \
         notwx_mx(W(RM), W(DP))                                              \
         andwz_st(W(RG), W(RM), W(DP))
+
+#define annwz_mr(RM, DP, RG)                                                \
+        annwz_st(W(RG), W(RM), W(DP))
 
 /* orr
  * set-flags: undefined (*x), yes (*z) */
@@ -933,6 +939,7 @@
  * to stay within special register limitations */
 
 #define and_x   and
+#define ann_x   ann
 #define orr_x   orr
 #define xor_x   xor
 

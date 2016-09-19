@@ -1187,6 +1187,7 @@
  * to stay within special register limitations */
 
 #define and_x   and
+#define ann_x   ann
 #define orr_x   orr
 #define xor_x   xor
 
