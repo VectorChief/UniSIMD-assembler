@@ -198,14 +198,14 @@
 /* not */
 
 #define notox_rx(RM)                                                        \
-        annox_ld(W(RM), Mebp, inf_GPC07)
+        EMITW(0xF2B005C0 | MXM(REG(RM), 0x00,    REG(RM)))
 
 /**************   packed single precision floating point (NEON)   *************/
 
 /* neg */
 
 #define negos_rx(RM)                                                        \
-        xorox_ld(W(RM), Mebp, inf_GPC06_32)
+        EMITW(0xF2B907C0 | MXM(REG(RM), 0x00,    REG(RM)))
 
 /* add */
 

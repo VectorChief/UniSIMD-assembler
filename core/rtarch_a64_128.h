@@ -114,14 +114,14 @@
 /* not */
 
 #define notqx_rx(RM)                                                        \
-        annqx_ld(W(RM), Mebp, inf_GPC07)
+        EMITW(0x6E205800 | MXM(REG(RM), REG(RM), 0x00))
 
 /**************   packed double precision floating point (NEON)   *************/
 
 /* neg */
 
 #define negqs_rx(RM)                                                        \
-        xorqx_ld(W(RM), Mebp, inf_GPC06_64)
+        EMITW(0x6EE0F800 | MXM(REG(RM), REG(RM), 0x00))
 
 /* add */
 
