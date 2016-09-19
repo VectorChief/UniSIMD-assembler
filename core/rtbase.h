@@ -433,8 +433,8 @@ struct rt_SIMD_INFO
 {
     /* internal variables */
 
-    rt_ui64 scr00;          /* scratchpad0, BASE ISA */
-#define inf_SCR00           DP(0x000)
+    rt_ui64 regs;           /* SIMD reg-file storage */
+#define inf_REGS            DP(0x000+C)
 
     rt_ui32 ver;            /* SIMD version <- cpuid */
 #define inf_VER             DP(0x008)
@@ -459,8 +459,8 @@ struct rt_SIMD_INFO
     rt_si32 gpc05_32[R];    /* 0x3F800000 */
 #define inf_GPC05_32        DP(Q*0x050)
 
-    rt_fp32 pad01_32[R];    /* reserved, do not use! */
-#define inf_PAD01_32        DP(Q*0x060)
+    rt_si32 gpc06_32[R];    /* 0x80000000 */
+#define inf_GPC06_32        DP(Q*0x060)
 
     /* internal variables */
 
@@ -470,8 +470,8 @@ struct rt_SIMD_INFO
     rt_elem scr02[S];       /* scratchpad2, SIMD ISA */
 #define inf_SCR02(nx)       DP(Q*0x080 + nx)
 
-    rt_ui64 regs[T];        /* SIMD reg-file storage */
-#define inf_REGS            DP(Q*0x090+C)
+    rt_si32 gpc07[R];       /* 0xFFFFFFFF */
+#define inf_GPC07           DP(Q*0x090)
 
     /* general purpose constants (64-bit) */
 
@@ -490,8 +490,8 @@ struct rt_SIMD_INFO
     rt_si64 gpc05_64[T];    /* 0x3FF0000000000000 */
 #define inf_GPC05_64        DP(Q*0x0E0)
 
-    rt_fp64 pad02_64[T];    /* reserved, do not use! */
-#define inf_PAD02_64        DP(Q*0x0F0)
+    rt_si64 gpc06_64[T];    /* 0x8000000000000000 */
+#define inf_GPC06_64        DP(Q*0x0F0)
 
 };
 
@@ -502,6 +502,7 @@ struct rt_SIMD_INFO
 #define inf_GPC03           inf_GPC03_32
 #define inf_GPC04           inf_GPC04_32
 #define inf_GPC05           inf_GPC05_32
+#define inf_GPC06           inf_GPC06_32
 
 #define RT_SIMD_WIDTH       RT_SIMD_WIDTH32
 #define RT_SIMD_SET(s, v)   RT_SIMD_SET32(s, v)
@@ -513,6 +514,7 @@ struct rt_SIMD_INFO
 #define inf_GPC03           inf_GPC03_64
 #define inf_GPC04           inf_GPC04_64
 #define inf_GPC05           inf_GPC05_64
+#define inf_GPC06           inf_GPC06_64
 
 #define RT_SIMD_WIDTH       RT_SIMD_WIDTH64
 #define RT_SIMD_SET(s, v)   RT_SIMD_SET64(s, v)
@@ -535,12 +537,15 @@ struct rt_SIMD_REGS
     RT_SIMD_SET32(__Info__->gpc03_32, +3.0f);                               \
     RT_SIMD_SET32(__Info__->gpc04_32, 0x7FFFFFFF);                          \
     RT_SIMD_SET32(__Info__->gpc05_32, 0x3F800000);                          \
+    RT_SIMD_SET32(__Info__->gpc06_32, 0x80000000);                          \
+    RT_SIMD_SET32(__Info__->gpc07,    0xFFFFFFFF);                          \
     RT_SIMD_SET64(__Info__->gpc01_64, +1.0);                                \
     RT_SIMD_SET64(__Info__->gpc02_64, -0.5);                                \
     RT_SIMD_SET64(__Info__->gpc03_64, +3.0);                                \
     RT_SIMD_SET64(__Info__->gpc04_64, 0x7FFFFFFFFFFFFFFF);                  \
     RT_SIMD_SET64(__Info__->gpc05_64, 0x3FF0000000000000);                  \
-    __Info__->regs[0] = (rt_ui64)(rt_word)__Regs__;
+    RT_SIMD_SET64(__Info__->gpc06_64, 0x8000000000000000);                  \
+    __Info__->regs = (rt_ui64)(rt_word)__Regs__;
 
 #define ASM_DONE(__Info__)
 
