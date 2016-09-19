@@ -198,7 +198,7 @@
 /* not */
 
 #define notox_rx(RM)                                                        \
-        annox_ld(W(RM), Mebp, inf_GPC07)
+        EMITW(0x7840001E | MXM(REG(RM), TmmZ,    REG(RM)))
 
 /**************   packed single precision floating point (SIMD)   *************/
 

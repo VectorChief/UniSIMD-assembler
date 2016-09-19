@@ -126,14 +126,14 @@
 /* not */
 
 #define notqx_rx(RM)                                                        \
-        annqx_ld(W(RM), Mebp, inf_GPC07)
+        EMITW(0xF0000517 | MXM(REG(RM), REG(RM), REG(RM)))
 
 /**************   packed double precision floating point (SIMD)   *************/
 
 /* neg */
 
 #define negqs_rx(RM)                                                        \
-        xorqx_ld(W(RM), Mebp, inf_GPC06_64)
+        EMITW(0xF00007E7 | MXM(REG(RM), 0x00,    REG(RM)))
 
 /* add */
 

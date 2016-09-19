@@ -218,7 +218,7 @@
 /* not */
 
 #define notox_rx(RM)                                                        \
-        annox_ld(W(RM), Mebp, inf_GPC07)
+        EMITW(0x10000504 | MXM(REG(RM), REG(RM), REG(RM)))
 
 /**************   packed single precision floating point (SIMD)   *************/
 
@@ -709,7 +709,17 @@
         EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
         EMITW(0xF00004D7 | MXM(REG(RG), REG(RG), Tmm1))/* ^ == -1 if true */
 
+/* not */
+
+#define notox_rx(RM)                                                        \
+        EMITW(0xF0000517 | MXM(REG(RM), REG(RM), REG(RM)))
+
 /**************   packed single precision floating point (SIMD)   *************/
+
+/* neg */
+
+#define negos_rx(RM)                                                        \
+        EMITW(0xF00006E7 | MXM(REG(RM), 0x00,    REG(RM)))
 
 /* add */
 

@@ -114,7 +114,7 @@
 /* not */
 
 #define notqx_rx(RM)                                                        \
-        annqx_ld(W(RM), Mebp, inf_GPC07)
+        EMITW(0x7840001E | MXM(REG(RM), TmmZ,    REG(RM)))
 
 /**************   packed double precision floating point (SIMD)   *************/
 
