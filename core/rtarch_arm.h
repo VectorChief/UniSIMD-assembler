@@ -372,20 +372,28 @@
         andwx_ri(W(RM), W(IM))
 
 #define annwx_mi(RM, DP, IM)                                                \
-        notwx_mx(W(RM), W(DP))                                              \
-        andwx_mi(W(RM), W(DP), W(IM))
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
+        EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xE1E00000 | MRM(TMxx,    0x00,    TMxx))                     \
+        EMITW(0xE0000000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)))  \
+        EMITW(0xE5800000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define annwx_rr(RG, RM)                                                    \
-        notwx_rx(W(RG))                                                     \
-        andwx_rr(W(RG), W(RM))
+        EMITW(0xE1C00000 | MRM(REG(RG), REG(RM), REG(RG)))
 
 #define annwx_ld(RG, RM, DP)                                                \
-        notwx_rx(W(RG))                                                     \
-        andwx_ld(W(RG), W(RM), W(DP))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xE1C00000 | MRM(REG(RG), TMxx,    REG(RG)))
 
 #define annwx_st(RG, RM, DP)                                                \
-        notwx_mx(W(RM), W(DP))                                              \
-        andwx_st(W(RG), W(RM), W(DP))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xE1C00000 | MRM(TMxx,    REG(RG), TMxx))                     \
+        EMITW(0xE5800000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define annwx_mr(RM, DP, RG)                                                \
+        annwx_st(W(RG), W(RM), W(DP))
 
 
 #define annwz_ri(RM, IM)                                                    \
@@ -393,20 +401,28 @@
         andwz_ri(W(RM), W(IM))
 
 #define annwz_mi(RM, DP, IM)                                                \
-        notwx_mx(W(RM), W(DP))                                              \
-        andwz_mi(W(RM), W(DP), W(IM))
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
+        EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xE1E00000 | MRM(TMxx,    0x00,    TMxx))                     \
+        EMITW(0xE0100000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)))  \
+        EMITW(0xE5800000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 #define annwz_rr(RG, RM)                                                    \
-        notwx_rx(W(RG))                                                     \
-        andwz_rr(W(RG), W(RM))
+        EMITW(0xE1D00000 | MRM(REG(RG), REG(RM), REG(RG)))
 
 #define annwz_ld(RG, RM, DP)                                                \
-        notwx_rx(W(RG))                                                     \
-        andwz_ld(W(RG), W(RM), W(DP))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xE1D00000 | MRM(REG(RG), TMxx,    REG(RG)))
 
 #define annwz_st(RG, RM, DP)                                                \
-        notwx_mx(W(RM), W(DP))                                              \
-        andwz_st(W(RG), W(RM), W(DP))
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xE5900000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0xE1D00000 | MRM(TMxx,    REG(RG), TMxx))                     \
+        EMITW(0xE5800000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define annwz_mr(RM, DP, RG)                                                \
+        annwz_st(W(RG), W(RM), W(DP))
 
 /* orr
  * set-flags: undefined (*x), yes (*z) */
