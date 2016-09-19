@@ -188,7 +188,17 @@
         EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x6E201C00 | MXM(REG(RG), REG(RG), Tmm1))
 
+/* not */
+
+#define notox_rx(RM)                                                        \
+        annox_ld(W(RM), Mebp, inf_GPC07)
+
 /**************   packed single precision floating point (NEON)   *************/
+
+/* neg */
+
+#define negos_rx(RM)                                                        \
+        xorox_ld(W(RM), Mebp, inf_GPC06_32)
 
 /* add */
 

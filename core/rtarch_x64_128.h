@@ -122,7 +122,17 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x57)                       \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
+/* not */
+
+#define notqx_rx(RM)                                                        \
+        annqx_ld(W(RM), Mebp, inf_GPC07)
+
 /**************   packed double precision floating point (SSE2)   *************/
+
+/* neg */
+
+#define negqs_rx(RM)                                                        \
+        xorqx_ld(W(RM), Mebp, inf_GPC06_64)
 
 /* add */
 

@@ -905,6 +905,15 @@ struct rt_SIMD_REGS
 #define xorpx_ld(RG, RM, DP)                                                \
         xorox_ld(W(RG), W(RM), W(DP))
 
+/* not */
+
+#define notpx_rx(RM)                                                        \
+        notox_rx(W(RM))
+
+/* neg */
+
+#define negps_rx(RM)                                                        \
+        negos_rx(W(RM))
 
 /* add */
 
@@ -1251,6 +1260,15 @@ struct rt_SIMD_REGS
 #define xorpx_ld(RG, RM, DP)                                                \
         xorqx_ld(W(RG), W(RM), W(DP))
 
+/* not */
+
+#define notpx_rx(RM)                                                        \
+        notqx_rx(W(RM))
+
+/* neg */
+
+#define negps_rx(RM)                                                        \
+        negqs_rx(W(RM))
 
 /* add */
 

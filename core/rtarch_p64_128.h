@@ -123,7 +123,17 @@
         EMITW(0x7C000699 | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
         EMITW(0xF00004D7 | MXM(REG(RG), REG(RG), Tmm1))/* ^ == -1 if true */
 
+/* not */
+
+#define notqx_rx(RM)                                                        \
+        annqx_ld(W(RM), Mebp, inf_GPC07)
+
 /**************   packed double precision floating point (SIMD)   *************/
+
+/* neg */
+
+#define negqs_rx(RM)                                                        \
+        xorqx_ld(W(RM), Mebp, inf_GPC06_64)
 
 /* add */
 

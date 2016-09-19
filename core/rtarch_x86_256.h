@@ -170,7 +170,17 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
+/* not */
+
+#define notox_rx(RM)                                                        \
+        annox_ld(W(RM), Mebp, inf_GPC07)
+
 /**************   packed single precision floating point (AVX1)   *************/
+
+/* neg */
+
+#define negos_rx(RM)                                                        \
+        xorox_ld(W(RM), Mebp, inf_GPC06_32)
 
 /* add */
 

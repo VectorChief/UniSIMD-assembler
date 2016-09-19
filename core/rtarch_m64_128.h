@@ -111,7 +111,17 @@
         EMITW(0x78000023 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x7860001E | MXM(REG(RG), REG(RG), Tmm1))
 
+/* not */
+
+#define notqx_rx(RM)                                                        \
+        annqx_ld(W(RM), Mebp, inf_GPC07)
+
 /**************   packed double precision floating point (SIMD)   *************/
+
+/* neg */
+
+#define negqs_rx(RM)                                                        \
+        xorqx_ld(W(RM), Mebp, inf_GPC06_64)
 
 /* add */
 
