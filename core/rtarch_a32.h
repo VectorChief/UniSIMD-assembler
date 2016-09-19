@@ -396,7 +396,7 @@
         andwx_ri(W(RM), W(IM))
 
 #define annwx_mi(RM, DP, IM)                                                \
-        notwx_rx(W(RM))                                                     \
+        notwx_mx(W(RM), W(DP))                                              \
         andwx_mi(W(RM), W(DP), W(IM))
 
 #define annwx_rr(RG, RM)                                                    \
@@ -408,7 +408,7 @@
         andwx_ld(W(RG), W(RM), W(DP))
 
 #define annwx_st(RG, RM, DP)                                                \
-        notwx_rx(W(RG))                                                     \
+        notwx_mx(W(RM), W(DP))                                              \
         andwx_st(W(RG), W(RM), W(DP))
 
 
@@ -417,7 +417,7 @@
         andwz_ri(W(RM), W(IM))
 
 #define annwz_mi(RM, DP, IM)                                                \
-        notwx_rx(W(RM))                                                     \
+        notwx_mx(W(RM), W(DP))                                              \
         andwz_mi(W(RM), W(DP), W(IM))
 
 #define annwz_rr(RG, RM)                                                    \
@@ -429,7 +429,7 @@
         andwz_ld(W(RG), W(RM), W(DP))
 
 #define annwz_st(RG, RM, DP)                                                \
-        notwx_rx(W(RG))                                                     \
+        notwx_mx(W(RM), W(DP))                                              \
         andwz_st(W(RG), W(RM), W(DP))
 
 /* orr
