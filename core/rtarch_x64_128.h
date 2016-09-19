@@ -346,7 +346,7 @@ FWT ADR REX(0,       RXB(RM)) EMITB(0xD9)                                   \
  * round instructions are only accurate within 64-bit signed int range */
 
 #define fpurz_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR00)                                          \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
         movwx_mi(Mebp,  inf_SCR02(0), IH(0x0C7F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))
 
@@ -392,7 +392,7 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
  * round instructions are only accurate within 64-bit signed int range */
 
 #define fpurp_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR00)                                          \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
         movwx_mi(Mebp,  inf_SCR02(0), IH(0x087F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))
 
@@ -444,7 +444,7 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
  * round instructions are only accurate within 64-bit signed int range */
 
 #define fpurm_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR00)                                          \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
         movwx_mi(Mebp,  inf_SCR02(0), IH(0x047F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))
 
@@ -496,7 +496,7 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
  * round instructions are only accurate within 64-bit signed int range */
 
 #define fpurn_xx()       /* not portable, do not use outside */             \
-        fpucw_ld(Mebp,  inf_SCR00)
+        fpucw_ld(Mebp,  inf_SCR02(4))
 
 #if (RT_128 < 4)
 
@@ -629,14 +629,14 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xD3)                       \
         cvnqn_rr(W(RG), W(RG))
 
 #define cvtqs_rr(RG, RM)                                                    \
-        fpucw_st(Mebp,  inf_SCR00)                                          \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
         mxcsr_st(Mebp,  inf_SCR02(0))                                       \
         shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
         andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
         orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
         cvnqs_rr(W(RG), W(RM))                                              \
-        fpucw_ld(Mebp,  inf_SCR00)
+        fpucw_ld(Mebp,  inf_SCR02(4))
 
 #define cvtqs_ld(RG, RM, DP)                                                \
         movqx_ld(W(RG), W(RM), W(DP))                                       \
@@ -675,14 +675,14 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
  * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
 
 #define cvtqn_rr(RG, RM)                                                    \
-        fpucw_st(Mebp,  inf_SCR00)                                          \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
         mxcsr_st(Mebp,  inf_SCR02(0))                                       \
         shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
         andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
         orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
         cvnqn_rr(W(RG), W(RM))                                              \
-        fpucw_ld(Mebp,  inf_SCR00)
+        fpucw_ld(Mebp,  inf_SCR02(4))
 
 #define cvtqn_ld(RG, RM, DP)                                                \
         movqx_ld(W(RG), W(RM), W(DP))                                       \

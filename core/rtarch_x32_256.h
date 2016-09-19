@@ -760,8 +760,8 @@
 #if RT_SIMD_FAST_FCTRL == 0
 
 #define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
-        movwx_mi(Mebp, inf_SCR00, IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))   \
-        mxcsr_ld(Mebp, inf_SCR00)                                           \
+        movwx_mi(Mebp, inf_SCR02(4), IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))\
+        mxcsr_ld(Mebp, inf_SCR02(4))
 
 #define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
         mxcsr_ld(Mebp, inf_FCTRL((RT_SIMD_MODE_ROUNDN&3)*4))

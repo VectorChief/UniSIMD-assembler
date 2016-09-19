@@ -406,7 +406,7 @@ FWT ADR REX(0,       RXB(RM)) EMITB(0xD9)                                   \
  * round instructions are only accurate within 32-bit signed int range */
 
 #define fpurz_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR00)                                          \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
         movwx_mi(Mebp,  inf_SCR02(0), IH(0x0C7F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))
 
@@ -434,7 +434,7 @@ FWT ADR REX(0,       RXB(RM)) EMITB(0xD9)                                   \
  * round instructions are only accurate within 32-bit signed int range */
 
 #define fpurp_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR00)                                          \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
         movwx_mi(Mebp,  inf_SCR02(0), IH(0x087F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))
 
@@ -462,7 +462,7 @@ FWT ADR REX(0,       RXB(RM)) EMITB(0xD9)                                   \
  * round instructions are only accurate within 32-bit signed int range */
 
 #define fpurm_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR00)                                          \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
         movwx_mi(Mebp,  inf_SCR02(0), IH(0x047F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))
 
@@ -490,7 +490,7 @@ FWT ADR REX(0,       RXB(RM)) EMITB(0xD9)                                   \
  * round instructions are only accurate within 32-bit signed int range */
 
 #define fpurn_xx()       /* not portable, do not use outside */             \
-        fpucw_ld(Mebp,  inf_SCR00)
+        fpucw_ld(Mebp,  inf_SCR02(4))
 
 #define rnnos_rr(RG, RM)     /* round towards near */                       \
         cvnos_rr(W(RG), W(RM))                                              \
@@ -965,8 +965,8 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xE2)                       \
 #if RT_SIMD_FAST_FCTRL == 0
 
 #define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
-        movwx_mi(Mebp, inf_SCR00, IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))   \
-        mxcsr_ld(Mebp, inf_SCR00)                                           \
+        movwx_mi(Mebp, inf_SCR02(4), IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))\
+        mxcsr_ld(Mebp, inf_SCR02(4))
 
 #define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
         mxcsr_ld(Mebp, inf_FCTRL((RT_SIMD_MODE_ROUNDN&3)*4))
@@ -998,14 +998,14 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xE2)                       \
         cvnon_rr(W(RG), W(RG))
 
 #define cvtos_rr(RG, RM)                                                    \
-        fpucw_st(Mebp,  inf_SCR00)                                          \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
         mxcsr_st(Mebp,  inf_SCR02(0))                                       \
         shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
         andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
         orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
         cvnos_rr(W(RG), W(RM))                                              \
-        fpucw_ld(Mebp,  inf_SCR00)
+        fpucw_ld(Mebp,  inf_SCR02(4))
 
 #define cvtos_ld(RG, RM, DP)                                                \
         movox_ld(W(RG), W(RM), W(DP))                                       \
@@ -1016,14 +1016,14 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0xE2)                       \
  * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
 
 #define cvton_rr(RG, RM)                                                    \
-        fpucw_st(Mebp,  inf_SCR00)                                          \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
         mxcsr_st(Mebp,  inf_SCR02(0))                                       \
         shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
         andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
         orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
         cvnon_rr(W(RG), W(RM))                                              \
-        fpucw_ld(Mebp,  inf_SCR00)
+        fpucw_ld(Mebp,  inf_SCR02(4))
 
 #define cvton_ld(RG, RM, DP)                                                \
         movox_ld(W(RG), W(RM), W(DP))                                       \

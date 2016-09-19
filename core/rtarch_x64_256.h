@@ -714,14 +714,14 @@ FWT ADR REX(0,       RXB(RM)) EMITB(0xD9)                                   \
  * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
 
 #define cvtqn_rr(RG, RM)                                                    \
-        fpucw_st(Mebp,  inf_SCR00)                                          \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
         mxcsr_st(Mebp,  inf_SCR02(0))                                       \
         shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
         andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
         orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
         cvnqn_rr(W(RG), W(RM))                                              \
-        fpucw_ld(Mebp,  inf_SCR00)
+        fpucw_ld(Mebp,  inf_SCR02(4))
 
 #define cvtqn_ld(RG, RM, DP)                                                \
         movqx_ld(W(RG), W(RM), W(DP))                                       \

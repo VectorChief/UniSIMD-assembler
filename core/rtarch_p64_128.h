@@ -529,8 +529,8 @@
 /* shl */
 
 #define shlqx_ri(RM, IM)                                                    \
-        movzx_mi(Mebp, inf_SCR00, W(IM))                                    \
-        shlqx_ld(W(RM), Mebp, inf_SCR00)
+        movzx_mi(Mebp, inf_SCR01(0), W(IM))                                 \
+        shlqx_ld(W(RM), Mebp, inf_SCR01(0))
 
 #define shlqx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -541,8 +541,8 @@
 /* shr */
 
 #define shrqx_ri(RM, IM)                                                    \
-        movzx_mi(Mebp, inf_SCR00, W(IM))                                    \
-        shrqx_ld(W(RM), Mebp, inf_SCR00)
+        movzx_mi(Mebp, inf_SCR01(0), W(IM))                                 \
+        shrqx_ld(W(RM), Mebp, inf_SCR01(0))
 
 #define shrqx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
@@ -551,8 +551,8 @@
         EMITW(0x100006C4 | MXM(REG(RG), REG(RG), Tmm1))/* ^ == -1 if true */
 
 #define shrqn_ri(RM, IM)                                                    \
-        movzx_mi(Mebp, inf_SCR00, W(IM))                                    \
-        shrqn_ld(W(RM), Mebp, inf_SCR00)
+        movzx_mi(Mebp, inf_SCR01(0), W(IM))                                 \
+        shrqn_ld(W(RM), Mebp, inf_SCR01(0))
 
 #define shrqn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
