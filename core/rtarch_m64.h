@@ -202,6 +202,50 @@
         EMITW(0x00000024 | MRM(TMxx,    TMxx,    REG(RG)))                  \
         EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
+/* ann
+ * set-flags: undefined (*x), yes (*z) */
+
+#define annzx_ri(RM, IM)                                                    \
+        notzx_rx(W(RM))                                                     \
+        andzx_ri(W(RM), W(IM))
+
+#define annzx_mi(RM, DP, IM)                                                \
+        notzx_rx(W(RM))                                                     \
+        andzx_mi(W(RM), W(DP), W(IM))
+
+#define annzx_rr(RG, RM)                                                    \
+        notzx_rx(W(RG))                                                     \
+        andzx_rr(W(RG), W(RM))
+
+#define annzx_ld(RG, RM, DP)                                                \
+        notzx_rx(W(RG))                                                     \
+        andzx_ld(W(RG), W(RM), W(DP))
+
+#define annzx_st(RG, RM, DP)                                                \
+        notzx_rx(W(RG))                                                     \
+        andzx_st(W(RG), W(RM), W(DP))
+
+
+#define annzz_ri(RM, IM)                                                    \
+        notzx_rx(W(RM))                                                     \
+        andzz_ri(W(RM), W(IM))
+
+#define annzz_mi(RM, DP, IM)                                                \
+        notzx_rx(W(RM))                                                     \
+        andzz_mi(W(RM), W(DP), W(IM))
+
+#define annzz_rr(RG, RM)                                                    \
+        notzx_rx(W(RG))                                                     \
+        andzz_rr(W(RG), W(RM))
+
+#define annzz_ld(RG, RM, DP)                                                \
+        notzx_rx(W(RG))                                                     \
+        andzz_ld(W(RG), W(RM), W(DP))
+
+#define annzz_st(RG, RM, DP)                                                \
+        notzx_rx(W(RG))                                                     \
+        andzz_st(W(RG), W(RM), W(DP))
+
 /* orr
  * set-flags: undefined (*x), yes (*z) */
 

@@ -442,6 +442,50 @@
 
 #endif /* RT_BASE_COMPAT_ZFL */
 
+/* ann
+ * set-flags: undefined (*x), yes (*z) */
+
+#define annwx_ri(RM, IM)                                                    \
+        notwx_rx(W(RM))                                                     \
+        andwx_ri(W(RM), W(IM))
+
+#define annwx_mi(RM, DP, IM)                                                \
+        notwx_rx(W(RM))                                                     \
+        andwx_mi(W(RM), W(DP), W(IM))
+
+#define annwx_rr(RG, RM)                                                    \
+        notwx_rx(W(RG))                                                     \
+        andwx_rr(W(RG), W(RM))
+
+#define annwx_ld(RG, RM, DP)                                                \
+        notwx_rx(W(RG))                                                     \
+        andwx_ld(W(RG), W(RM), W(DP))
+
+#define annwx_st(RG, RM, DP)                                                \
+        notwx_rx(W(RG))                                                     \
+        andwx_st(W(RG), W(RM), W(DP))
+
+
+#define annwz_ri(RM, IM)                                                    \
+        notwx_rx(W(RM))                                                     \
+        andwz_ri(W(RM), W(IM))
+
+#define annwz_mi(RM, DP, IM)                                                \
+        notwx_rx(W(RM))                                                     \
+        andwz_mi(W(RM), W(DP), W(IM))
+
+#define annwz_rr(RG, RM)                                                    \
+        notwx_rx(W(RG))                                                     \
+        andwz_rr(W(RG), W(RM))
+
+#define annwz_ld(RG, RM, DP)                                                \
+        notwx_rx(W(RG))                                                     \
+        andwz_ld(W(RG), W(RM), W(DP))
+
+#define annwz_st(RG, RM, DP)                                                \
+        notwx_rx(W(RG))                                                     \
+        andwz_st(W(RG), W(RM), W(DP))
+
 /* orr
  * set-flags: undefined (*x), yes (*z) */
 
