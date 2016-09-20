@@ -184,6 +184,17 @@
         EMITW(0xF4200AAF | MXM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF2200150 | MXM(REG(RG), REG(RG), Tmm1))
 
+/* orn */
+
+#define ornox_rr(RG, RM)                                                    \
+        EMITW(0xF2300150 | MXM(REG(RG), REG(RM), REG(RG)))
+
+#define ornox_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0xF4200AAF | MXM(Tmm1,    TPxx,    0x00))                     \
+        EMITW(0xF2300150 | MXM(REG(RG), Tmm1,    REG(RG)))
+
 /* xor */
 
 #define xorox_rr(RG, RM)                                                    \

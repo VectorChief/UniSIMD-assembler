@@ -168,6 +168,16 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
+/* orn */
+
+#define ornox_rr(RG, RM)                                                    \
+        notox_rx(W(RG))                                                     \
+        orrox_rr(W(RG), W(RM))
+
+#define ornox_ld(RG, RM, DP)                                                \
+        notox_rx(W(RG))                                                     \
+        orrox_ld(W(RG), W(RM), W(DP))
+
 /* xor */
 
 #define xorox_rr(RG, RM)                                                    \

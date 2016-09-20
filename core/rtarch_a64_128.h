@@ -101,6 +101,16 @@
         EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x4EA01C00 | MXM(REG(RG), REG(RG), Tmm1))
 
+/* orn */
+
+#define ornqx_rr(RG, RM)                                                    \
+        EMITW(0x4EE01C00 | MXM(REG(RG), REG(RM), REG(RG)))
+
+#define ornqx_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x4EE01C00 | MXM(REG(RG), Tmm1,    REG(RG)))
+
 /* xor */
 
 #define xorqx_rr(RG, RM)                                                    \

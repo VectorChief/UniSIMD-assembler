@@ -204,6 +204,17 @@
         EMITW(0x7C0000CE | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
         EMITW(0x10000484 | MXM(REG(RG), REG(RG), Tmm1))/* ^ == -1 if true */
 
+/* orn */
+
+#define ornox_rr(RG, RM)                                                    \
+        EMITW(0x10000544 | MXM(REG(RG), REG(RM), REG(RG)))
+
+#define ornox_ld(RG, RM, DP)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x7C0000CE | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
+        EMITW(0x10000544 | MXM(REG(RG), Tmm1,    REG(RG)))/* ^ == -1 if true */
+
 /* xor */
 
 #define xorox_rr(RG, RM)                                                    \
@@ -697,6 +708,17 @@
         EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
         EMITW(0xF0000497 | MXM(REG(RG), REG(RG), Tmm1))/* ^ == -1 if true */
+
+/* orn */
+
+#define ornox_rr(RG, RM)                                                    \
+        EMITW(0xF0000557 | MXM(REG(RG), REG(RM), REG(RG)))
+
+#define ornox_ld(RG, RM, DP)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
+        EMITW(0xF0000557 | MXM(REG(RG), Tmm1,    REG(RG)))/* ^ == -1 if true */
 
 /* xor */
 

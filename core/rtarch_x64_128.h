@@ -111,6 +111,16 @@ ADR ESC REX(RXB(RG), RXB(RM)) EMITB(0x0F) EMITB(0x56)                       \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
+/* orn */
+
+#define ornqx_rr(RG, RM)                                                    \
+        notqx_rx(W(RG))                                                     \
+        orrqx_rr(W(RG), W(RM))
+
+#define ornqx_ld(RG, RM, DP)                                                \
+        notqx_rx(W(RG))                                                     \
+        orrqx_ld(W(RG), W(RM), W(DP))
+
 /* xor */
 
 #define xorqx_rr(RG, RM)                                                    \

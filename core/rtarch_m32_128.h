@@ -190,6 +190,16 @@
         EMITW(0x78000023 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x7820001E | MXM(REG(RG), REG(RG), Tmm1))
 
+/* orn */
+
+#define ornox_rr(RG, RM)                                                    \
+        notox_rx(W(RG))                                                     \
+        orrox_rr(W(RG), W(RM))
+
+#define ornox_ld(RG, RM, DP)                                                \
+        notox_rx(W(RG))                                                     \
+        orrox_ld(W(RG), W(RM), W(DP))
+
 /* xor */
 
 #define xorox_rr(RG, RM)                                                    \

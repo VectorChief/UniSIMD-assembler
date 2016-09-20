@@ -103,6 +103,16 @@
         EMITW(0x78000023 | MPM(Tmm1,    MOD(RM), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x7820001E | MXM(REG(RG), REG(RG), Tmm1))
 
+/* orn */
+
+#define ornqx_rr(RG, RM)                                                    \
+        notqx_rx(W(RG))                                                     \
+        orrqx_rr(W(RG), W(RM))
+
+#define ornqx_ld(RG, RM, DP)                                                \
+        notqx_rx(W(RG))                                                     \
+        orrqx_ld(W(RG), W(RM), W(DP))
+
 /* xor */
 
 #define xorqx_rr(RG, RM)                                                    \
