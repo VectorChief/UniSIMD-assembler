@@ -32,6 +32,9 @@
 
 #undef  sregs_sa
 #undef  sregs_la
+#undef  movox_ld
+#undef  movqx_ld
+#define movqx_ld(RG, RM, DP)
 #undef  EMITS
 #define EMITS(w) EMITW(w)
 
@@ -106,7 +109,9 @@
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
-#define TmmZ    0x1E  /* w30 */
+#define TmmS    0x1C  /* w28, sign-mask 32-bit */
+#define TmmT    0x1D  /* w29, sign-mask 64-bit */
+#define TmmZ    0x1E  /* w30, zero-mask all 0s */
 #define Tmm1    0x1F  /* w31 */
 
 /******************************************************************************/
@@ -205,7 +210,7 @@
 /* neg */
 
 #define negos_rx(RM)                                                        \
-        xorox_ld(W(RM), Mebp, inf_GPC06_32)
+        EMITW(0x7860001E | MXM(REG(RM), REG(RM), TmmS))
 
 /* add */
 

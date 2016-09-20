@@ -1350,6 +1350,10 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
+        movox_ld(Xmm8, Mebp, inf_GPC06_32)        /* w8  <- -0.0 32-bit */  \
+        movqx_ld(Xmm9, Mebp, inf_GPC06_64)        /* w9  <- -0.0 64-bit */  \
+        EMITS(0x78BE0019 | MXM(TmmS, 0x08, 0x00)) /* w28 <- w8 */           \
+        EMITS(0x78BE0019 | MXM(TmmT, 0x09, 0x00)) /* w29 <- w9 */           \
         EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
         EMITW(0x3C000000 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(0 << 24) */
 
@@ -1377,6 +1381,10 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
+        movox_ld(Xmm8, Mebp, inf_GPC06_32)        /* w8  <- -0.0 32-bit */  \
+        movqx_ld(Xmm9, Mebp, inf_GPC06_64)        /* w9  <- -0.0 64-bit */  \
+        EMITS(0x78BE0019 | MXM(TmmS, 0x08, 0x00)) /* w28 <- w8 */           \
+        EMITS(0x78BE0019 | MXM(TmmT, 0x09, 0x00)) /* w29 <- w9 */           \
         EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
         EMITW(0x3C000000 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(0 << 24) */  \
         EMITW(0x34000001 | MRM(0x00, TNxx, TAxx)) /* r21 <- 1|(0 << 24) */  \
@@ -1423,6 +1431,10 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
+        movox_ld(Xmm8, Mebp, inf_GPC06_32)        /* w8  <- -0.0 32-bit */  \
+        movqx_ld(Xmm9, Mebp, inf_GPC06_64)        /* w9  <- -0.0 64-bit */  \
+        EMITS(0x78BE0019 | MXM(TmmS, 0x08, 0x00)) /* w28 <- w8 */           \
+        EMITS(0x78BE0019 | MXM(TmmT, 0x09, 0x00)) /* w29 <- w9 */           \
         EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
         EMITW(0x3C000100 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(1 << 24) */  \
         EMITW(0x44C0F800 | MRM(0x00, 0x00, TNxx)) /* fcsr <- r20 */         \
@@ -1455,6 +1467,10 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
+        movox_ld(Xmm8, Mebp, inf_GPC06_32)        /* w8  <- -0.0 32-bit */  \
+        movqx_ld(Xmm9, Mebp, inf_GPC06_64)        /* w9  <- -0.0 64-bit */  \
+        EMITS(0x78BE0019 | MXM(TmmS, 0x08, 0x00)) /* w28 <- w8 */           \
+        EMITS(0x78BE0019 | MXM(TmmT, 0x09, 0x00)) /* w29 <- w9 */           \
         EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
         EMITW(0x3C000100 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(1 << 24) */  \
         EMITW(0x34000001 | MRM(0x00, TNxx, TAxx)) /* r21 <- 1|(1 << 24) */  \
@@ -1481,6 +1497,8 @@
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
 #define sregs_la()
+#define movox_ld(RG, RM, DP)
+#define movqx_ld(RG, RM, DP)
 #define EMITS(w) /* EMPTY */
 #else  /* RT_SIMD_CODE */
 #define EMITS(w)    EMITW(w)
@@ -1604,7 +1622,7 @@
         movqx_ld(Xmm4, Mebp, inf_GPC02_64)        /* v4  <- -0.5  64-bit */ \
         EMITS(0x10000484 | MXM(TmmX, 0x02, 0x02)) /* v21 <- v2 */           \
         EMITS(0x10000484 | MXM(TmmY, 0x04, 0x04)) /* v22 <- v4 */           \
-        EMITS(0x1000004A | MXM(TmmR, TmmS, TmmS)) /* v23 <- v24 - v24 */
+        EMITS(0x100004C4 | MXM(TmmR, TmmS, TmmS)) /* v23 <- v24 xor v24 */
 
 #define ASM_LEAVE(__Info__)                                                 \
         EMITW(0x7C0003A6 | MRM(TCxx, 0x00, 0x09)) /* ctr <- r27 */          \
@@ -1662,7 +1680,7 @@
         movqx_ld(Xmm4, Mebp, inf_GPC02_64)        /* v4  <- -0.5  64-bit */ \
         EMITS(0x10000484 | MXM(TmmX, 0x02, 0x02)) /* v21 <- v2 */           \
         EMITS(0x10000484 | MXM(TmmY, 0x04, 0x04)) /* v22 <- v4 */           \
-        EMITS(0x1000004A | MXM(TmmR, TmmS, TmmS)) /* v23 <- v24 - v24 */    \
+        EMITS(0x100004C4 | MXM(TmmR, TmmS, TmmS)) /* v23 <- v24 xor v24 */  \
         EMITW(0xFC00010C | MRM(0x1C, 0x08, 0x00)) /* fpscr <- NI(4) */      \
         EMITS(0x1000034C | MXM(Tmm1, 0x01, 0x00)) /* v31 <- splt-half(1) */ \
         EMITS(0x10000644 | MXM(0x00, 0x00, Tmm1)) /* vscr <- v31, NJ(16) */

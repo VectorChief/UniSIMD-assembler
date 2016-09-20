@@ -110,8 +110,8 @@
 #define TmmX    0x15  /* v21, +1.0 64-bit */
 #define TmmY    0x16  /* v22, -0.5 64-bit */
 #define TmmR    0x17  /* v23, Rounding Mode */
-#define TmmS    0x18  /* v24,-ZERO sign-bit */
-#define TmmQ    0x19  /* v25,-QNAN all 1s */
+#define TmmS    0x18  /* v24, sign-mask 32-bit */
+#define TmmQ    0x19  /* v25, full-mask all 1s */
 #define TmmA    0x1A  /* v26, +1.0 32-bit */
 #define TmmB    0x1B  /* v27, -0.5 32-bit */
 #define TmmC    0x1C  /* v28 */
@@ -225,7 +225,7 @@
 /* neg */
 
 #define negos_rx(RM)                                                        \
-        xorox_ld(W(RM), Mebp, inf_GPC06_32)
+        EMITW(0x100004C4 | MXM(REG(RM), REG(RM), TmmS))
 
 /* add */
 
