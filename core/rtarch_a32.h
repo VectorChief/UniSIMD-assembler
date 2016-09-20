@@ -505,6 +505,70 @@
         EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x71000000 | TMxx << 5)                  /* <- set flags (Z) */
 
+/* orn
+ * set-flags: undefined (*x), yes (*z) */
+
+#define ornwx_ri(RM, IM)                                                    \
+        notwx_rx(W(RM))                                                     \
+        orrwx_ri(W(RM), W(IM))
+
+#define ornwx_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x2A200000 | MRM(TMxx,    TZxx,    TMxx))                     \
+        EMITW(0x20000000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)))  \
+        EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define ornwx_rr(RG, RM)                                                    \
+        EMITW(0x2A200000 | MRM(REG(RG), REG(RM), REG(RG)))
+
+#define ornwx_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x2A200000 | MRM(REG(RG), TMxx,    REG(RG)))
+
+#define ornwx_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x2A200000 | MRM(TMxx,    REG(RG), TMxx))                     \
+        EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define ornwx_mr(RM, DP, RG)                                                \
+        ornwx_st(W(RG), W(RM), W(DP))
+
+
+#define ornwz_ri(RM, IM)                                                    \
+        notwx_rx(W(RM))                                                     \
+        orrwz_ri(W(RM), W(IM))
+
+#define ornwz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x2A200000 | MRM(TMxx,    TZxx,    TMxx))                     \
+        EMITW(0x20000000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)))  \
+        EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x71000000 | TMxx << 5)                  /* <- set flags (Z) */
+
+#define ornwz_rr(RG, RM)                                                    \
+        EMITW(0x2A200000 | MRM(REG(RG), REG(RM), REG(RG)))                  \
+        EMITW(0x71000000 | REG(RG) << 5)               /* <- set flags (Z) */
+
+#define ornwz_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x2A200000 | MRM(REG(RG), TMxx,    REG(RG)))                  \
+        EMITW(0x71000000 | REG(RG) << 5)               /* <- set flags (Z) */
+
+#define ornwz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xB9400000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x2A200000 | MRM(TMxx,    REG(RG), TMxx))                     \
+        EMITW(0xB9000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x71000000 | TMxx << 5)                  /* <- set flags (Z) */
+
+#define ornwz_mr(RM, DP, RG)                                                \
+        ornwz_st(W(RG), W(RM), W(DP))
+
 /* xor
  * set-flags: undefined (*x), yes (*z) */
 
@@ -1092,6 +1156,7 @@
 #define and_x   and
 #define ann_x   ann
 #define orr_x   orr
+#define orn_x   orn
 #define xor_x   xor
 
 #define neg_x   neg

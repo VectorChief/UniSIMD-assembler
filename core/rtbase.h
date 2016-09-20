@@ -1748,6 +1748,46 @@ struct rt_SIMD_REGS
 #define orrxz_st(RG, RM, DP)                                                \
         orrwz_st(W(RG), W(RM), W(DP))
 
+/* orn
+ * set-flags: undefined (*x), yes (*z) */
+
+#define ornxx_ri(RM, IM)                                                    \
+        ornwx_ri(W(RM), W(IM))
+
+#define ornxx_mi(RM, DP, IM)                                                \
+        ornwx_mi(W(RM), W(DP), W(IM))
+
+#define ornxx_rr(RG, RM)                                                    \
+        ornwx_rr(W(RG), W(RM))
+
+#define ornxx_ld(RG, RM, DP)                                                \
+        ornwx_ld(W(RG), W(RM), W(DP))
+
+#define ornxx_st(RG, RM, DP)                                                \
+        ornwx_st(W(RG), W(RM), W(DP))
+
+#define ornxx_mr(RM, DP, RG)                                                \
+        ornxx_st(W(RG), W(RM), W(DP))
+
+
+#define ornxz_ri(RM, IM)                                                    \
+        ornwz_ri(W(RM), W(IM))
+
+#define ornxz_mi(RM, DP, IM)                                                \
+        ornwz_mi(W(RM), W(DP), W(IM))
+
+#define ornxz_rr(RG, RM)                                                    \
+        ornwz_rr(W(RG), W(RM))
+
+#define ornxz_ld(RG, RM, DP)                                                \
+        ornwz_ld(W(RG), W(RM), W(DP))
+
+#define ornxz_st(RG, RM, DP)                                                \
+        ornwz_st(W(RG), W(RM), W(DP))
+
+#define ornxz_mr(RM, DP, RG)                                                \
+        ornxz_st(W(RG), W(RM), W(DP))
+
 /* xor
  * set-flags: undefined (*x), yes (*z) */
 
@@ -2337,6 +2377,46 @@ struct rt_SIMD_REGS
 
 #define orrxz_st(RG, RM, DP)                                                \
         orrzz_st(W(RG), W(RM), W(DP))
+
+/* orn
+ * set-flags: undefined (*x), yes (*z) */
+
+#define ornxx_ri(RM, IM)                                                    \
+        ornzx_ri(W(RM), W(IM))
+
+#define ornxx_mi(RM, DP, IM)                                                \
+        ornzx_mi(W(RM), W(DP), W(IM))
+
+#define ornxx_rr(RG, RM)                                                    \
+        ornzx_rr(W(RG), W(RM))
+
+#define ornxx_ld(RG, RM, DP)                                                \
+        ornzx_ld(W(RG), W(RM), W(DP))
+
+#define ornxx_st(RG, RM, DP)                                                \
+        ornzx_st(W(RG), W(RM), W(DP))
+
+#define ornxx_mr(RM, DP, RG)                                                \
+        ornxx_st(W(RG), W(RM), W(DP))
+
+
+#define ornxz_ri(RM, IM)                                                    \
+        ornzz_ri(W(RM), W(IM))
+
+#define ornxz_mi(RM, DP, IM)                                                \
+        ornzz_mi(W(RM), W(DP), W(IM))
+
+#define ornxz_rr(RG, RM)                                                    \
+        ornzz_rr(W(RG), W(RM))
+
+#define ornxz_ld(RG, RM, DP)                                                \
+        ornzz_ld(W(RG), W(RM), W(DP))
+
+#define ornxz_st(RG, RM, DP)                                                \
+        ornzz_st(W(RG), W(RM), W(DP))
+
+#define ornxz_mr(RM, DP, RG)                                                \
+        ornxz_st(W(RG), W(RM), W(DP))
 
 /* xor
  * set-flags: undefined (*x), yes (*z) */
@@ -2930,6 +3010,46 @@ struct rt_SIMD_REGS
 #define orryz_st(RG, RM, DP)                                                \
         orrwz_st(W(RG), W(RM), W(DP))
 
+/* orn
+ * set-flags: undefined (*x), yes (*z) */
+
+#define ornyx_ri(RM, IM)                                                    \
+        ornwx_ri(W(RM), W(IM))
+
+#define ornyx_mi(RM, DP, IM)                                                \
+        ornwx_mi(W(RM), W(DP), W(IM))
+
+#define ornyx_rr(RG, RM)                                                    \
+        ornwx_rr(W(RG), W(RM))
+
+#define ornyx_ld(RG, RM, DP)                                                \
+        ornwx_ld(W(RG), W(RM), W(DP))
+
+#define ornyx_st(RG, RM, DP)                                                \
+        ornwx_st(W(RG), W(RM), W(DP))
+
+#define ornyx_mr(RM, DP, RG)                                                \
+        ornyx_st(W(RG), W(RM), W(DP))
+
+
+#define ornyz_ri(RM, IM)                                                    \
+        ornwz_ri(W(RM), W(IM))
+
+#define ornyz_mi(RM, DP, IM)                                                \
+        ornwz_mi(W(RM), W(DP), W(IM))
+
+#define ornyz_rr(RG, RM)                                                    \
+        ornwz_rr(W(RG), W(RM))
+
+#define ornyz_ld(RG, RM, DP)                                                \
+        ornwz_ld(W(RG), W(RM), W(DP))
+
+#define ornyz_st(RG, RM, DP)                                                \
+        ornwz_st(W(RG), W(RM), W(DP))
+
+#define ornyz_mr(RM, DP, RG)                                                \
+        ornyz_st(W(RG), W(RM), W(DP))
+
 /* xor
  * set-flags: undefined (*x), yes (*z) */
 
@@ -3519,6 +3639,46 @@ struct rt_SIMD_REGS
 
 #define orryz_st(RG, RM, DP)                                                \
         orrzz_st(W(RG), W(RM), W(DP))
+
+/* orn
+ * set-flags: undefined (*x), yes (*z) */
+
+#define ornyx_ri(RM, IM)                                                    \
+        ornzx_ri(W(RM), W(IM))
+
+#define ornyx_mi(RM, DP, IM)                                                \
+        ornzx_mi(W(RM), W(DP), W(IM))
+
+#define ornyx_rr(RG, RM)                                                    \
+        ornzx_rr(W(RG), W(RM))
+
+#define ornyx_ld(RG, RM, DP)                                                \
+        ornzx_ld(W(RG), W(RM), W(DP))
+
+#define ornyx_st(RG, RM, DP)                                                \
+        ornzx_st(W(RG), W(RM), W(DP))
+
+#define ornyx_mr(RM, DP, RG)                                                \
+        ornyx_st(W(RG), W(RM), W(DP))
+
+
+#define ornyz_ri(RM, IM)                                                    \
+        ornzz_ri(W(RM), W(IM))
+
+#define ornyz_mi(RM, DP, IM)                                                \
+        ornzz_mi(W(RM), W(DP), W(IM))
+
+#define ornyz_rr(RG, RM)                                                    \
+        ornzz_rr(W(RG), W(RM))
+
+#define ornyz_ld(RG, RM, DP)                                                \
+        ornzz_ld(W(RG), W(RM), W(DP))
+
+#define ornyz_st(RG, RM, DP)                                                \
+        ornzz_st(W(RG), W(RM), W(DP))
+
+#define ornyz_mr(RM, DP, RG)                                                \
+        ornyz_st(W(RG), W(RM), W(DP))
 
 /* xor
  * set-flags: undefined (*x), yes (*z) */

@@ -327,6 +327,70 @@
         EMITW(0x00000025 | MRM(TMxx,    TMxx,    REG(RG)))                  \
         EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
+/* orn
+ * set-flags: undefined (*x), yes (*z) */
+
+#define ornzx_ri(RM, IM)                                                    \
+        notzx_rx(W(RM))                                                     \
+        orrzx_ri(W(RM), W(IM))
+
+#define ornzx_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000027 | MRM(TMxx,    TZxx,    TMxx))                     \
+        EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)) | \
+        (+(TP2(IM) == 0) & 0x34000000) | (+(TP2(IM) != 0) & 0x00000025))    \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define ornzx_rr(RG, RM)                                                    \
+        notzx_rx(W(RG))                                                     \
+        orrzx_rr(W(RG), W(RM))
+
+#define ornzx_ld(RG, RM, DP)                                                \
+        notzx_rx(W(RG))                                                     \
+        orrzx_ld(W(RG), W(RM), W(DP))
+
+#define ornzx_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000027 | MRM(TMxx,    TZxx,    TMxx))                     \
+        EMITW(0x00000025 | MRM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define ornzx_mr(RM, DP, RG)                                                \
+        ornzx_st(W(RG), W(RM), W(DP))
+
+
+#define ornzz_ri(RM, IM)                                                    \
+        notzx_rx(W(RM))                                                     \
+        orrzz_ri(W(RM), W(IM))
+
+#define ornzz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000027 | MRM(TMxx,    TZxx,    TMxx))                     \
+        EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)) | \
+        (+(TP2(IM) == 0) & 0x34000000) | (+(TP2(IM) != 0) & 0x00000025))    \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define ornzz_rr(RG, RM)                                                    \
+        notzx_rx(W(RG))                                                     \
+        orrzz_rr(W(RG), W(RM))
+
+#define ornzz_ld(RG, RM, DP)                                                \
+        notzx_rx(W(RG))                                                     \
+        orrzz_ld(W(RG), W(RM), W(DP))
+
+#define ornzz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x00000027 | MRM(TMxx,    TZxx,    TMxx))                     \
+        EMITW(0x00000025 | MRM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define ornzz_mr(RM, DP, RG)                                                \
+        ornzz_st(W(RG), W(RM), W(DP))
+
 /* xor
  * set-flags: undefined (*x), yes (*z) */
 

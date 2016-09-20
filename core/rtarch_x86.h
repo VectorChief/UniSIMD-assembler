@@ -355,6 +355,56 @@
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(SIB(RM), CMD(DP), EMPTY)
 
+/* orn
+ * set-flags: undefined (*x), yes (*z) */
+
+#define ornwx_ri(RM, IM)                                                    \
+        notwx_rx(W(RM))                                                     \
+        orrwx_ri(W(RM), W(IM))
+
+#define ornwx_mi(RM, DP, IM)                                                \
+        notwx_mx(W(RM), W(DP))                                              \
+        orrwx_mi(W(RM), W(DP), W(IM))
+
+#define ornwx_rr(RG, RM)                                                    \
+        notwx_rx(W(RG))                                                     \
+        orrwx_rr(W(RG), W(RM))
+
+#define ornwx_ld(RG, RM, DP)                                                \
+        notwx_rx(W(RG))                                                     \
+        orrwx_ld(W(RG), W(RM), W(DP))
+
+#define ornwx_st(RG, RM, DP)                                                \
+        notwx_mx(W(RM), W(DP))                                              \
+        orrwx_st(W(RG), W(RM), W(DP))
+
+#define ornwx_mr(RM, DP, RG)                                                \
+        ornwx_st(W(RG), W(RM), W(DP))
+
+
+#define ornwz_ri(RM, IM)                                                    \
+        notwx_rx(W(RM))                                                     \
+        orrwz_ri(W(RM), W(IM))
+
+#define ornwz_mi(RM, DP, IM)                                                \
+        notwx_mx(W(RM), W(DP))                                              \
+        orrwz_mi(W(RM), W(DP), W(IM))
+
+#define ornwz_rr(RG, RM)                                                    \
+        notwx_rx(W(RG))                                                     \
+        orrwz_rr(W(RG), W(RM))
+
+#define ornwz_ld(RG, RM, DP)                                                \
+        notwx_rx(W(RG))                                                     \
+        orrwz_ld(W(RG), W(RM), W(DP))
+
+#define ornwz_st(RG, RM, DP)                                                \
+        notwx_mx(W(RM), W(DP))                                              \
+        orrwz_st(W(RG), W(RM), W(DP))
+
+#define ornwz_mr(RM, DP, RG)                                                \
+        ornwz_st(W(RG), W(RM), W(DP))
+
 /* xor
  * set-flags: undefined (*x), yes (*z) */
 
@@ -941,6 +991,7 @@
 #define and_x   and
 #define ann_x   ann
 #define orr_x   orr
+#define orn_x   orn
 #define xor_x   xor
 
 #define neg_x   neg

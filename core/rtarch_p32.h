@@ -377,7 +377,7 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 
-#if RT_BASE_COMPAT_ZFL == 0 
+#if RT_BASE_COMPAT_ZFL == 0
 
 #define andwz_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IM))   \
@@ -479,7 +479,7 @@
         notwx_rx(W(RM))                                                     \
         andwz_ri(W(RM), W(IM))
 
-#if RT_BASE_COMPAT_ZFL == 0 
+#if RT_BASE_COMPAT_ZFL == 0
 
 #define annwz_mi(RM, DP, IM)                                                \
         AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
@@ -502,9 +502,6 @@
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C000079 | MSM(TMxx,    TMxx,    REG(RG)))                  \
         EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
-
-#define annwz_mr(RM, DP, RG)                                                \
-        annwz_st(W(RG), W(RM), W(DP))
 
 #else /* RT_BASE_COMPAT_ZFL */
 
@@ -534,10 +531,10 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
 
+#endif /* RT_BASE_COMPAT_ZFL */
+
 #define annwz_mr(RM, DP, RG)                                                \
         annwz_st(W(RG), W(RM), W(DP))
-
-#endif /* RT_BASE_COMPAT_ZFL */
 
 /* orr
  * set-flags: undefined (*x), yes (*z) */
@@ -585,7 +582,7 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
 
-#if RT_BASE_COMPAT_ZFL == 0 
+#if RT_BASE_COMPAT_ZFL == 0
 
 #define orrwz_rr(RG, RM)                                                    \
         EMITW(0x7C000379 | MSM(REG(RG), REG(RG), REG(RM)))
@@ -621,6 +618,92 @@
         EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
 
 #endif /* RT_BASE_COMPAT_ZFL */
+
+/* orn
+ * set-flags: undefined (*x), yes (*z) */
+
+#define ornwx_ri(RM, IM)                                                    \
+        notwx_rx(W(RM))                                                     \
+        orrwx_ri(W(RM), W(IM))
+
+#define ornwx_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x7C0000F8 | MSM(TMxx,    TMxx,    TMxx))                     \
+        EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)) | \
+        (+(TP2(IM) == 0) & 0x60000000) | (+(TP2(IM) != 0) & 0x7C000378))    \
+        EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define ornwx_rr(RG, RM)                                                    \
+        EMITW(0x7C000338 | MSM(REG(RG), REG(RG), REG(RM)))
+
+#define ornwx_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x7C000338 | MSM(REG(RG), REG(RG), TMxx))
+
+#define ornwx_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x7C000338 | MSM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#define ornwx_mr(RM, DP, RG)                                                \
+        ornwx_st(W(RG), W(RM), W(DP))
+
+
+#define ornwz_ri(RM, IM)                                                    \
+        notwx_rx(W(RM))                                                     \
+        orrwz_ri(W(RM), W(IM))
+
+#define ornwz_mi(RM, DP, IM)                                                \
+        AUW(SIB(RM),  VAL(IM), TIxx,    MOD(RM), VAL(DP), C1(DP), G2(IM))   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x7C0000F8 | MSM(TMxx,    TMxx,    TMxx))                     \
+        EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IM), T2(IM), M2(IM)) | \
+        (+(TP2(IM) == 0) & 0x60000000) | (+(TP2(IM) != 0) & 0x7C000378))    \
+        EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
+
+#if RT_BASE_COMPAT_ZFL == 0
+
+#define ornwz_rr(RG, RM)                                                    \
+        EMITW(0x7C000339 | MSM(REG(RG), REG(RG), REG(RM)))
+
+#define ornwz_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x7C000339 | MSM(REG(RG), REG(RG), TMxx))
+
+#define ornwz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x7C000339 | MSM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+
+#else /* RT_BASE_COMPAT_ZFL */
+
+#define ornwz_rr(RG, RM)                                                    \
+        EMITW(0x7C000338 | MSM(REG(RG), REG(RG), REG(RM)))                  \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define ornwz_ld(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x7C000338 | MSM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define ornwz_st(RG, RM, DP)                                                \
+        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x7C000338 | MSM(TMxx,    TMxx,    REG(RG)))                  \
+        EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
+        EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
+
+#endif /* RT_BASE_COMPAT_ZFL */
+
+#define ornwz_mr(RM, DP, RG)                                                \
+        ornwz_st(W(RG), W(RM), W(DP))
 
 /* xor
  * set-flags: undefined (*x), yes (*z) */
@@ -668,7 +751,7 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
 
-#if RT_BASE_COMPAT_ZFL == 0 
+#if RT_BASE_COMPAT_ZFL == 0
 
 #define xorwz_rr(RG, RM)                                                    \
         EMITW(0x7C000279 | MSM(REG(RG), REG(RG), REG(RM)))
@@ -730,7 +813,7 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 
-#if RT_BASE_COMPAT_ZFL == 0 
+#if RT_BASE_COMPAT_ZFL == 0
 
 #define negwz_rx(RM)                                                        \
         EMITW(0x7C0000D1 | MRM(REG(RM), 0x00,    REG(RM)))
@@ -787,7 +870,7 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
 
 
-#if RT_BASE_COMPAT_ZFL == 0 
+#if RT_BASE_COMPAT_ZFL == 0
 
 #define addwz_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
@@ -888,7 +971,7 @@
         subwx_st(W(RG), W(RM), W(DP))
 
 
-#if RT_BASE_COMPAT_ZFL == 0 
+#if RT_BASE_COMPAT_ZFL == 0
 
 #define subwz_ri(RM, IM)                                                    \
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IM))   \
@@ -1345,6 +1428,7 @@
 #define and_x   and
 #define ann_x   ann
 #define orr_x   orr
+#define orn_x   orn
 #define xor_x   xor
 
 #define neg_x   neg
