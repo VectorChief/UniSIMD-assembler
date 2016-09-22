@@ -433,7 +433,7 @@
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
 #define sregs_la()
-#define mxcsr_ld(RM, DP)
+#define mxcsr_ld(MS, DP)
 #endif /* RT_SIMD_CODE */
 
 #endif /* RT_X86 */
@@ -637,7 +637,7 @@
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
 #define sregs_la()
-#define mxcsr_ld(RM, DP)
+#define mxcsr_ld(MS, DP)
 #endif /* RT_SIMD_CODE */
 
 /* ------------------------------   X32, X64   ------------------------------ */
@@ -850,7 +850,7 @@
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
 #define sregs_la()
-#define mxcsr_ld(RM, DP)
+#define mxcsr_ld(MS, DP)
 #endif /* RT_SIMD_CODE */
 
 /* ---------------------------------   ARM   -------------------------------- */
@@ -1497,8 +1497,8 @@
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
 #define sregs_la()
-#define movox_ld(RG, RM, DP)
-#define movqx_ld(RG, RM, DP)
+#define movox_ld(XD, MS, DP)
+#define movqx_ld(XD, MS, DP)
 #define EMITS(w) /* EMPTY */
 #else  /* RT_SIMD_CODE */
 #define EMITS(w)    EMITW(w)
@@ -1703,8 +1703,8 @@
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
 #define sregs_la()
-#define movox_ld(RG, RM, DP)
-#define movqx_ld(RG, RM, DP)
+#define movox_ld(XD, MS, DP)
+#define movqx_ld(XD, MS, DP)
 #define EMITS(w) /* EMPTY */
 #else  /* RT_SIMD_CODE */
 #define EMITS(w)    EMITW(w)
