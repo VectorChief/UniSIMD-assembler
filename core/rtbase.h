@@ -2220,16 +2220,16 @@ struct rt_SIMD_REGS
         arjwx_st(W(RG), W(RM), W(DP), op, cc, lb)
 
 #define arjxx_mr(RM, DP, RG, op, cc, lb)                                    \
-        arjxx_st(W(RG), W(RM), W(DP), op, cc, lb)
+        arjwx_mr(W(RM), W(DP), W(RG), op, cc, lb)
 
 /* cmj
  * set-flags: undefined */
 
 #define cmjxx_rz(RM, cc, lb)                                                \
-        cmjxx_ri(W(RM), IC(0), cc, lb)
+        cmjwx_rz(W(RM), cc, lb)
 
 #define cmjxx_mz(RM, DP, cc, lb)                                            \
-        cmjxx_mi(W(RM), W(DP), IC(0), cc, lb)
+        cmjwx_mz(W(RM), W(DP), cc, lb)
 
 #define cmjxx_ri(RM, IM, cc, lb)                                            \
         cmjwx_ri(W(RM), W(IM), cc, lb)
@@ -2850,16 +2850,16 @@ struct rt_SIMD_REGS
         arjzx_st(W(RG), W(RM), W(DP), op, cc, lb)
 
 #define arjxx_mr(RM, DP, RG, op, cc, lb)                                    \
-        arjxx_st(W(RG), W(RM), W(DP), op, cc, lb)
+        arjzx_mr(W(RM), W(DP), W(RG), op, cc, lb)
 
 /* cmj
  * set-flags: undefined */
 
 #define cmjxx_rz(RM, cc, lb)                                                \
-        cmjxx_ri(W(RM), IC(0), cc, lb)
+        cmjzx_rz(W(RM), cc, lb)
 
 #define cmjxx_mz(RM, DP, cc, lb)                                            \
-        cmjxx_mi(W(RM), W(DP), IC(0), cc, lb)
+        cmjzx_mz(W(RM), W(DP), cc, lb)
 
 #define cmjxx_ri(RM, IM, cc, lb)                                            \
         cmjzx_ri(W(RM), W(IM), cc, lb)
@@ -3482,16 +3482,16 @@ struct rt_SIMD_REGS
         arjwx_st(W(RG), W(RM), W(DP), op, cc, lb)
 
 #define arjyx_mr(RM, DP, RG, op, cc, lb)                                    \
-        arjyx_st(W(RG), W(RM), W(DP), op, cc, lb)
+        arjwx_mr(W(RM), W(DP), W(RG), op, cc, lb)
 
 /* cmj
  * set-flags: undefined */
 
 #define cmjyx_rz(RM, cc, lb)                                                \
-        cmjyx_ri(W(RM), IC(0), cc, lb)
+        cmjwx_rz(W(RM), cc, lb)
 
 #define cmjyx_mz(RM, DP, cc, lb)                                            \
-        cmjyx_mi(W(RM), W(DP), IC(0), cc, lb)
+        cmjwx_mz(W(RM), W(DP), cc, lb)
 
 #define cmjyx_ri(RM, IM, cc, lb)                                            \
         cmjwx_ri(W(RM), W(IM), cc, lb)
@@ -4112,16 +4112,16 @@ struct rt_SIMD_REGS
         arjzx_st(W(RG), W(RM), W(DP), op, cc, lb)
 
 #define arjyx_mr(RM, DP, RG, op, cc, lb)                                    \
-        arjyx_st(W(RG), W(RM), W(DP), op, cc, lb)
+        arjzx_mr(W(RM), W(DP), W(RG), op, cc, lb)
 
 /* cmj
  * set-flags: undefined */
 
 #define cmjyx_rz(RM, cc, lb)                                                \
-        cmjyx_ri(W(RM), IC(0), cc, lb)
+        cmjzx_rz(W(RM), cc, lb)
 
 #define cmjyx_mz(RM, DP, cc, lb)                                            \
-        cmjyx_mi(W(RM), W(DP), IC(0), cc, lb)
+        cmjzx_mz(W(RM), W(DP), cc, lb)
 
 #define cmjyx_ri(RM, IM, cc, lb)                                            \
         cmjzx_ri(W(RM), W(IM), cc, lb)
