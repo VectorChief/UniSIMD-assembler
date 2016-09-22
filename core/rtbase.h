@@ -562,67 +562,67 @@ struct rt_SIMD_REGS
  * available at http://www.musicdsp.org/showone.php?id=206
  * converted to S-way SIMD version by VectorChief.
  */
-#define cbeps_rr(RG, R1, R2, RM) /* destroys R1, R2 (temp regs) */          \
+#define cbeps_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
         /* cube root estimate, the exponent is divided by three             \
          * in such a way that remainder bits get shoved into                \
          * the top of the normalized mantissa */                            \
-        movpx_ld(W(R2), Mebp, inf_GPC04)                                    \
-        movpx_rr(W(RG), W(RM))                                              \
-        andpx_rr(W(RG), W(R2))   /* exponent & mantissa in biased-127 */    \
-        subpx_ld(W(RG), Mebp, inf_GPC05) /* convert to 2's complement */    \
-        shrpn_ri(W(RG), IB(10))  /* RG / 1024 */                            \
-        movpx_rr(W(R1), W(RG))   /* RG * 341 (next 8 ops) */                \
-        shlpx_ri(W(R1), IB(2))                                              \
-        addpx_rr(W(RG), W(R1))                                              \
-        shlpx_ri(W(R1), IB(2))                                              \
-        addpx_rr(W(RG), W(R1))                                              \
-        shlpx_ri(W(R1), IB(2))                                              \
-        addpx_rr(W(RG), W(R1))                                              \
-        shlpx_ri(W(R1), IB(2))                                              \
-        addpx_rr(W(RG), W(R1))   /* RG * (341/1024) ~= RG * (0.333) */      \
-        addpx_ld(W(RG), Mebp, inf_GPC05) /* back to biased-127 */           \
-        andpx_rr(W(RG), W(R2))   /* remask exponent & mantissa */           \
-        annpx_rr(W(R2), W(RM))   /* original sign */                        \
-        orrpx_rr(W(RG), W(R2))   /* new exponent & mantissa, old sign */
+        movpx_ld(W(X2), Mebp, inf_GPC04)                                    \
+        movpx_rr(W(XG), W(XS))                                              \
+        andpx_rr(W(XG), W(X2))   /* exponent & mantissa in biased-127 */    \
+        subpx_ld(W(XG), Mebp, inf_GPC05) /* convert to 2's complement */    \
+        shrpn_ri(W(XG), IB(10))  /* XG / 1024 */                            \
+        movpx_rr(W(X1), W(XG))   /* XG * 341 (next 8 ops) */                \
+        shlpx_ri(W(X1), IB(2))                                              \
+        addpx_rr(W(XG), W(X1))                                              \
+        shlpx_ri(W(X1), IB(2))                                              \
+        addpx_rr(W(XG), W(X1))                                              \
+        shlpx_ri(W(X1), IB(2))                                              \
+        addpx_rr(W(XG), W(X1))                                              \
+        shlpx_ri(W(X1), IB(2))                                              \
+        addpx_rr(W(XG), W(X1))   /* XG * (341/1024) ~= XG * (0.333) */      \
+        addpx_ld(W(XG), Mebp, inf_GPC05) /* back to biased-127 */           \
+        andpx_rr(W(XG), W(X2))   /* remask exponent & mantissa */           \
+        annpx_rr(W(X2), W(XS))   /* original sign */                        \
+        orrpx_rr(W(XG), W(X2))   /* new exponent & mantissa, old sign */
 
-#define cbsps_rr(RG, R1, R2, RM) /* destroys R1, R2 (temp regs) */          \
-        movpx_rr(W(R1), W(RG))                                              \
-        mulps_rr(W(R1), W(RG))                                              \
-        movpx_rr(W(R2), W(R1))                                              \
-        mulps_ld(W(R1), Mebp, inf_GPC03)                                    \
-        rceps_rr(W(R1), W(R1))                                              \
-        mulps_rr(W(R2), W(RG))                                              \
-        subps_rr(W(R2), W(RM))                                              \
-        mulps_rr(W(R2), W(R1))                                              \
-        subps_rr(W(RG), W(R2))
+#define cbsps_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        movpx_rr(W(X1), W(XG))                                              \
+        mulps_rr(W(X1), W(XG))                                              \
+        movpx_rr(W(X2), W(X1))                                              \
+        mulps_ld(W(X1), Mebp, inf_GPC03)                                    \
+        rceps_rr(W(X1), W(X1))                                              \
+        mulps_rr(W(X2), W(XG))                                              \
+        subps_rr(W(X2), W(XS))                                              \
+        mulps_rr(W(X2), W(X1))                                              \
+        subps_rr(W(XG), W(X2))
 
-#define cbrps_rr(RG, R1, R2, RM) /* destroys R1, R2 (temp regs) */          \
-        cbeps_rr(W(RG), W(R1), W(R2), W(RM))                                \
-        cbsps_rr(W(RG), W(R1), W(R2), W(RM))                                \
-        cbsps_rr(W(RG), W(R1), W(R2), W(RM))                                \
-        cbsps_rr(W(RG), W(R1), W(R2), W(RM))
+#define cbrps_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbeps_rr(W(XG), W(X1), W(X2), W(XS))                                \
+        cbsps_rr(W(XG), W(X1), W(X2), W(XS))                                \
+        cbsps_rr(W(XG), W(X1), W(X2), W(XS))                                \
+        cbsps_rr(W(XG), W(X1), W(X2), W(XS))
 
 /* rcp
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #if RT_SIMD_COMPAT_RCP == 0
 
-#define rcpps_rr(RG, RM) /* destroys RM */                                  \
-        rceps_rr(W(RG), W(RM))                                              \
-        rcsps_rr(W(RG), W(RM)) /* <- not reusable without extra temp reg */
+#define rcpps_rr(XG, XS) /* destroys XS */                                  \
+        rceps_rr(W(XG), W(XS))                                              \
+        rcsps_rr(W(XG), W(XS)) /* <- not reusable without extra temp reg */
 
 #else /* RT_SIMD_COMPAT_RCP */
 
-#define rcpps_rr(RG, RM) /* destroys RM */                                  \
-        movpx_ld(W(RG), Mebp, inf_GPC01)                                    \
-        divps_rr(W(RG), W(RM))
+#define rcpps_rr(XG, XS) /* destroys XS */                                  \
+        movpx_ld(W(XG), Mebp, inf_GPC01)                                    \
+        divps_rr(W(XG), W(XS))
 
-#define rceps_rr(RG, RM)                                                    \
-        movpx_st(W(RM), Mebp, inf_SCR02(0))                                 \
-        movpx_ld(W(RG), Mebp, inf_GPC01)                                    \
-        divps_ld(W(RG), Mebp, inf_SCR02(0))
+#define rceps_rr(XG, XS)                                                    \
+        movpx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movpx_ld(W(XG), Mebp, inf_GPC01)                                    \
+        divps_ld(W(XG), Mebp, inf_SCR02(0))
 
-#define rcsps_rr(RG, RM) /* destroys RM */
+#define rcsps_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
@@ -631,24 +631,24 @@ struct rt_SIMD_REGS
 
 #if RT_SIMD_COMPAT_RSQ == 0
 
-#define rsqps_rr(RG, RM) /* destroys RM */                                  \
-        rseps_rr(W(RG), W(RM))                                              \
-        rssps_rr(W(RG), W(RM)) /* <- not reusable without extra temp reg */
+#define rsqps_rr(XG, XS) /* destroys XS */                                  \
+        rseps_rr(W(XG), W(XS))                                              \
+        rssps_rr(W(XG), W(XS)) /* <- not reusable without extra temp reg */
 
 #else /* RT_SIMD_COMPAT_RSQ */
 
-#define rsqps_rr(RG, RM) /* destroys RM */                                  \
-        sqrps_rr(W(RM), W(RM))                                              \
-        movpx_ld(W(RG), Mebp, inf_GPC01)                                    \
-        divps_rr(W(RG), W(RM))
+#define rsqps_rr(XG, XS) /* destroys XS */                                  \
+        sqrps_rr(W(XS), W(XS))                                              \
+        movpx_ld(W(XG), Mebp, inf_GPC01)                                    \
+        divps_rr(W(XG), W(XS))
 
-#define rseps_rr(RG, RM)                                                    \
-        sqrps_rr(W(RG), W(RM))                                              \
-        movpx_st(W(RG), Mebp, inf_SCR02(0))                                 \
-        movpx_ld(W(RG), Mebp, inf_GPC01)                                    \
-        divps_ld(W(RG), Mebp, inf_SCR02(0))
+#define rseps_rr(XG, XS)                                                    \
+        sqrps_rr(W(XG), W(XS))                                              \
+        movpx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        movpx_ld(W(XG), Mebp, inf_GPC01)                                    \
+        divps_ld(W(XG), Mebp, inf_SCR02(0))
 
-#define rssps_rr(RG, RM) /* destroys RM */
+#define rssps_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
@@ -661,67 +661,67 @@ struct rt_SIMD_REGS
  * available at http://www.musicdsp.org/showone.php?id=206
  * converted to S-way SIMD version by VectorChief.
  */
-#define cbeos_rr(RG, R1, R2, RM) /* destroys R1, R2 (temp regs) */          \
+#define cbeos_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
         /* cube root estimate, the exponent is divided by three             \
          * in such a way that remainder bits get shoved into                \
          * the top of the normalized mantissa */                            \
-        movox_ld(W(R2), Mebp, inf_GPC04_32)                                 \
-        movox_rr(W(RG), W(RM))                                              \
-        andox_rr(W(RG), W(R2))   /* exponent & mantissa in biased-127 */    \
-        subox_ld(W(RG), Mebp, inf_GPC05_32) /* convert to 2's complement */ \
-        shron_ri(W(RG), IB(10))  /* RG / 1024 */                            \
-        movox_rr(W(R1), W(RG))   /* RG * 341 (next 8 ops) */                \
-        shlox_ri(W(R1), IB(2))                                              \
-        addox_rr(W(RG), W(R1))                                              \
-        shlox_ri(W(R1), IB(2))                                              \
-        addox_rr(W(RG), W(R1))                                              \
-        shlox_ri(W(R1), IB(2))                                              \
-        addox_rr(W(RG), W(R1))                                              \
-        shlox_ri(W(R1), IB(2))                                              \
-        addox_rr(W(RG), W(R1))   /* RG * (341/1024) ~= RG * (0.333) */      \
-        addox_ld(W(RG), Mebp, inf_GPC05_32) /* back to biased-127 */        \
-        andox_rr(W(RG), W(R2))   /* remask exponent & mantissa */           \
-        annox_rr(W(R2), W(RM))   /* original sign */                        \
-        orrox_rr(W(RG), W(R2))   /* new exponent & mantissa, old sign */
+        movox_ld(W(X2), Mebp, inf_GPC04_32)                                 \
+        movox_rr(W(XG), W(XS))                                              \
+        andox_rr(W(XG), W(X2))   /* exponent & mantissa in biased-127 */    \
+        subox_ld(W(XG), Mebp, inf_GPC05_32) /* convert to 2's complement */ \
+        shron_ri(W(XG), IB(10))  /* XG / 1024 */                            \
+        movox_rr(W(X1), W(XG))   /* XG * 341 (next 8 ops) */                \
+        shlox_ri(W(X1), IB(2))                                              \
+        addox_rr(W(XG), W(X1))                                              \
+        shlox_ri(W(X1), IB(2))                                              \
+        addox_rr(W(XG), W(X1))                                              \
+        shlox_ri(W(X1), IB(2))                                              \
+        addox_rr(W(XG), W(X1))                                              \
+        shlox_ri(W(X1), IB(2))                                              \
+        addox_rr(W(XG), W(X1))   /* XG * (341/1024) ~= XG * (0.333) */      \
+        addox_ld(W(XG), Mebp, inf_GPC05_32) /* back to biased-127 */        \
+        andox_rr(W(XG), W(X2))   /* remask exponent & mantissa */           \
+        annox_rr(W(X2), W(XS))   /* original sign */                        \
+        orrox_rr(W(XG), W(X2))   /* new exponent & mantissa, old sign */
 
-#define cbsos_rr(RG, R1, R2, RM) /* destroys R1, R2 (temp regs) */          \
-        movox_rr(W(R1), W(RG))                                              \
-        mulos_rr(W(R1), W(RG))                                              \
-        movox_rr(W(R2), W(R1))                                              \
-        mulos_ld(W(R1), Mebp, inf_GPC03_32)                                 \
-        rceos_rr(W(R1), W(R1))                                              \
-        mulos_rr(W(R2), W(RG))                                              \
-        subos_rr(W(R2), W(RM))                                              \
-        mulos_rr(W(R2), W(R1))                                              \
-        subos_rr(W(RG), W(R2))
+#define cbsos_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        movox_rr(W(X1), W(XG))                                              \
+        mulos_rr(W(X1), W(XG))                                              \
+        movox_rr(W(X2), W(X1))                                              \
+        mulos_ld(W(X1), Mebp, inf_GPC03_32)                                 \
+        rceos_rr(W(X1), W(X1))                                              \
+        mulos_rr(W(X2), W(XG))                                              \
+        subos_rr(W(X2), W(XS))                                              \
+        mulos_rr(W(X2), W(X1))                                              \
+        subos_rr(W(XG), W(X2))
 
-#define cbros_rr(RG, R1, R2, RM) /* destroys R1, R2 (temp regs) */          \
-        cbeos_rr(W(RG), W(R1), W(R2), W(RM))                                \
-        cbsos_rr(W(RG), W(R1), W(R2), W(RM))                                \
-        cbsos_rr(W(RG), W(R1), W(R2), W(RM))                                \
-        cbsos_rr(W(RG), W(R1), W(R2), W(RM))
+#define cbros_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbeos_rr(W(XG), W(X1), W(X2), W(XS))                                \
+        cbsos_rr(W(XG), W(X1), W(X2), W(XS))                                \
+        cbsos_rr(W(XG), W(X1), W(X2), W(XS))                                \
+        cbsos_rr(W(XG), W(X1), W(X2), W(XS))
 
 /* rcp
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #if RT_SIMD_COMPAT_RCP == 0
 
-#define rcpos_rr(RG, RM) /* destroys RM */                                  \
-        rceos_rr(W(RG), W(RM))                                              \
-        rcsos_rr(W(RG), W(RM)) /* <- not reusable without extra temp reg */
+#define rcpos_rr(XG, XS) /* destroys XS */                                  \
+        rceos_rr(W(XG), W(XS))                                              \
+        rcsos_rr(W(XG), W(XS)) /* <- not reusable without extra temp reg */
 
 #else /* RT_SIMD_COMPAT_RCP */
 
-#define rcpos_rr(RG, RM) /* destroys RM */                                  \
-        movox_ld(W(RG), Mebp, inf_GPC01_32)                                 \
-        divos_rr(W(RG), W(RM))
+#define rcpos_rr(XG, XS) /* destroys XS */                                  \
+        movox_ld(W(XG), Mebp, inf_GPC01_32)                                 \
+        divos_rr(W(XG), W(XS))
 
-#define rceos_rr(RG, RM)                                                    \
-        movox_st(W(RM), Mebp, inf_SCR02(0))                                 \
-        movox_ld(W(RG), Mebp, inf_GPC01_32)                                 \
-        divos_ld(W(RG), Mebp, inf_SCR02(0))
+#define rceos_rr(XG, XS)                                                    \
+        movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movox_ld(W(XG), Mebp, inf_GPC01_32)                                 \
+        divos_ld(W(XG), Mebp, inf_SCR02(0))
 
-#define rcsos_rr(RG, RM) /* destroys RM */
+#define rcsos_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
@@ -730,24 +730,24 @@ struct rt_SIMD_REGS
 
 #if RT_SIMD_COMPAT_RSQ == 0
 
-#define rsqos_rr(RG, RM) /* destroys RM */                                  \
-        rseos_rr(W(RG), W(RM))                                              \
-        rssos_rr(W(RG), W(RM)) /* <- not reusable without extra temp reg */
+#define rsqos_rr(XG, XS) /* destroys XS */                                  \
+        rseos_rr(W(XG), W(XS))                                              \
+        rssos_rr(W(XG), W(XS)) /* <- not reusable without extra temp reg */
 
 #else /* RT_SIMD_COMPAT_RSQ */
 
-#define rsqos_rr(RG, RM) /* destroys RM */                                  \
-        sqros_rr(W(RM), W(RM))                                              \
-        movox_ld(W(RG), Mebp, inf_GPC01_32)                                 \
-        divos_rr(W(RG), W(RM))
+#define rsqos_rr(XG, XS) /* destroys XS */                                  \
+        sqros_rr(W(XS), W(XS))                                              \
+        movox_ld(W(XG), Mebp, inf_GPC01_32)                                 \
+        divos_rr(W(XG), W(XS))
 
-#define rseos_rr(RG, RM)                                                    \
-        sqros_rr(W(RG), W(RM))                                              \
-        movox_st(W(RG), Mebp, inf_SCR02(0))                                 \
-        movox_ld(W(RG), Mebp, inf_GPC01_32)                                 \
-        divos_ld(W(RG), Mebp, inf_SCR02(0))
+#define rseos_rr(XG, XS)                                                    \
+        sqros_rr(W(XG), W(XS))                                              \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        movox_ld(W(XG), Mebp, inf_GPC01_32)                                 \
+        divos_ld(W(XG), Mebp, inf_SCR02(0))
 
-#define rssos_rr(RG, RM) /* destroys RM */
+#define rssos_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
@@ -760,67 +760,67 @@ struct rt_SIMD_REGS
  * available at http://www.musicdsp.org/showone.php?id=206
  * converted to S-way SIMD version by VectorChief.
  */
-#define cbeqs_rr(RG, R1, R2, RM) /* destroys R1, R2 (temp regs) */          \
+#define cbeqs_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
         /* cube root estimate, the exponent is divided by three             \
          * in such a way that remainder bits get shoved into                \
          * the top of the normalized mantissa */                            \
-        movqx_ld(W(R2), Mebp, inf_GPC04_64)                                 \
-        movqx_rr(W(RG), W(RM))                                              \
-        andqx_rr(W(RG), W(R2))   /* exponent & mantissa in biased-127 */    \
-        subqx_ld(W(RG), Mebp, inf_GPC05_64) /* convert to 2's complement */ \
-        shrqn_ri(W(RG), IB(10))  /* RG / 1024 */                            \
-        movqx_rr(W(R1), W(RG))   /* RG * 341 (next 8 ops) */                \
-        shlqx_ri(W(R1), IB(2))                                              \
-        addqx_rr(W(RG), W(R1))                                              \
-        shlqx_ri(W(R1), IB(2))                                              \
-        addqx_rr(W(RG), W(R1))                                              \
-        shlqx_ri(W(R1), IB(2))                                              \
-        addqx_rr(W(RG), W(R1))                                              \
-        shlqx_ri(W(R1), IB(2))                                              \
-        addqx_rr(W(RG), W(R1))   /* RG * (341/1024) ~= RG * (0.333) */      \
-        addqx_ld(W(RG), Mebp, inf_GPC05_64) /* back to biased-127 */        \
-        andqx_rr(W(RG), W(R2))   /* remask exponent & mantissa */           \
-        annqx_rr(W(R2), W(RM))   /* original sign */                        \
-        orrqx_rr(W(RG), W(R2))   /* new exponent & mantissa, old sign */
+        movqx_ld(W(X2), Mebp, inf_GPC04_64)                                 \
+        movqx_rr(W(XG), W(XS))                                              \
+        andqx_rr(W(XG), W(X2))   /* exponent & mantissa in biased-127 */    \
+        subqx_ld(W(XG), Mebp, inf_GPC05_64) /* convert to 2's complement */ \
+        shrqn_ri(W(XG), IB(10))  /* XG / 1024 */                            \
+        movqx_rr(W(X1), W(XG))   /* XG * 341 (next 8 ops) */                \
+        shlqx_ri(W(X1), IB(2))                                              \
+        addqx_rr(W(XG), W(X1))                                              \
+        shlqx_ri(W(X1), IB(2))                                              \
+        addqx_rr(W(XG), W(X1))                                              \
+        shlqx_ri(W(X1), IB(2))                                              \
+        addqx_rr(W(XG), W(X1))                                              \
+        shlqx_ri(W(X1), IB(2))                                              \
+        addqx_rr(W(XG), W(X1))   /* XG * (341/1024) ~= XG * (0.333) */      \
+        addqx_ld(W(XG), Mebp, inf_GPC05_64) /* back to biased-127 */        \
+        andqx_rr(W(XG), W(X2))   /* remask exponent & mantissa */           \
+        annqx_rr(W(X2), W(XS))   /* original sign */                        \
+        orrqx_rr(W(XG), W(X2))   /* new exponent & mantissa, old sign */
 
-#define cbsqs_rr(RG, R1, R2, RM) /* destroys R1, R2 (temp regs) */          \
-        movqx_rr(W(R1), W(RG))                                              \
-        mulqs_rr(W(R1), W(RG))                                              \
-        movqx_rr(W(R2), W(R1))                                              \
-        mulqs_ld(W(R1), Mebp, inf_GPC03_64)                                 \
-        rceqs_rr(W(R1), W(R1))                                              \
-        mulqs_rr(W(R2), W(RG))                                              \
-        subqs_rr(W(R2), W(RM))                                              \
-        mulqs_rr(W(R2), W(R1))                                              \
-        subqs_rr(W(RG), W(R2))
+#define cbsqs_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        movqx_rr(W(X1), W(XG))                                              \
+        mulqs_rr(W(X1), W(XG))                                              \
+        movqx_rr(W(X2), W(X1))                                              \
+        mulqs_ld(W(X1), Mebp, inf_GPC03_64)                                 \
+        rceqs_rr(W(X1), W(X1))                                              \
+        mulqs_rr(W(X2), W(XG))                                              \
+        subqs_rr(W(X2), W(XS))                                              \
+        mulqs_rr(W(X2), W(X1))                                              \
+        subqs_rr(W(XG), W(X2))
 
-#define cbrqs_rr(RG, R1, R2, RM) /* destroys R1, R2 (temp regs) */          \
-        cbeqs_rr(W(RG), W(R1), W(R2), W(RM))                                \
-        cbsqs_rr(W(RG), W(R1), W(R2), W(RM))                                \
-        cbsqs_rr(W(RG), W(R1), W(R2), W(RM))                                \
-        cbsqs_rr(W(RG), W(R1), W(R2), W(RM))
+#define cbrqs_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbeqs_rr(W(XG), W(X1), W(X2), W(XS))                                \
+        cbsqs_rr(W(XG), W(X1), W(X2), W(XS))                                \
+        cbsqs_rr(W(XG), W(X1), W(X2), W(XS))                                \
+        cbsqs_rr(W(XG), W(X1), W(X2), W(XS))
 
 /* rcp
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #if RT_SIMD_COMPAT_RCP == 0
 
-#define rcpqs_rr(RG, RM) /* destroys RM */                                  \
-        rceqs_rr(W(RG), W(RM))                                              \
-        rcsqs_rr(W(RG), W(RM)) /* <- not reusable without extra temp reg */
+#define rcpqs_rr(XG, XS) /* destroys XS */                                  \
+        rceqs_rr(W(XG), W(XS))                                              \
+        rcsqs_rr(W(XG), W(XS)) /* <- not reusable without extra temp reg */
 
 #else /* RT_SIMD_COMPAT_RCP */
 
-#define rcpqs_rr(RG, RM) /* destroys RM */                                  \
-        movqx_ld(W(RG), Mebp, inf_GPC01_64)                                 \
-        divqs_rr(W(RG), W(RM))
+#define rcpqs_rr(XG, XS) /* destroys XS */                                  \
+        movqx_ld(W(XG), Mebp, inf_GPC01_64)                                 \
+        divqs_rr(W(XG), W(XS))
 
-#define rceqs_rr(RG, RM)                                                    \
-        movqx_st(W(RM), Mebp, inf_SCR02(0))                                 \
-        movqx_ld(W(RG), Mebp, inf_GPC01_64)                                 \
-        divqs_ld(W(RG), Mebp, inf_SCR02(0))
+#define rceqs_rr(XG, XS)                                                    \
+        movqx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movqx_ld(W(XG), Mebp, inf_GPC01_64)                                 \
+        divqs_ld(W(XG), Mebp, inf_SCR02(0))
 
-#define rcsqs_rr(RG, RM) /* destroys RM */
+#define rcsqs_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
@@ -829,24 +829,24 @@ struct rt_SIMD_REGS
 
 #if RT_SIMD_COMPAT_RSQ == 0
 
-#define rsqqs_rr(RG, RM) /* destroys RM */                                  \
-        rseqs_rr(W(RG), W(RM))                                              \
-        rssqs_rr(W(RG), W(RM)) /* <- not reusable without extra temp reg */
+#define rsqqs_rr(XG, XS) /* destroys XS */                                  \
+        rseqs_rr(W(XG), W(XS))                                              \
+        rssqs_rr(W(XG), W(XS)) /* <- not reusable without extra temp reg */
 
 #else /* RT_SIMD_COMPAT_RSQ */
 
-#define rsqqs_rr(RG, RM) /* destroys RM */                                  \
-        sqrqs_rr(W(RM), W(RM))                                              \
-        movqx_ld(W(RG), Mebp, inf_GPC01_64)                                 \
-        divqs_rr(W(RG), W(RM))
+#define rsqqs_rr(XG, XS) /* destroys XS */                                  \
+        sqrqs_rr(W(XS), W(XS))                                              \
+        movqx_ld(W(XG), Mebp, inf_GPC01_64)                                 \
+        divqs_rr(W(XG), W(XS))
 
-#define rseqs_rr(RG, RM)                                                    \
-        sqrqs_rr(W(RG), W(RM))                                              \
-        movqx_st(W(RG), Mebp, inf_SCR02(0))                                 \
-        movqx_ld(W(RG), Mebp, inf_GPC01_64)                                 \
-        divqs_ld(W(RG), Mebp, inf_SCR02(0))
+#define rseqs_rr(XG, XS)                                                    \
+        sqrqs_rr(W(XG), W(XS))                                              \
+        movqx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        movqx_ld(W(XG), Mebp, inf_GPC01_64)                                 \
+        divqs_ld(W(XG), Mebp, inf_SCR02(0))
 
-#define rssqs_rr(RG, RM) /* destroys RM */
+#define rssqs_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
@@ -864,54 +864,54 @@ struct rt_SIMD_REGS
 
 /* mov */
 
-#define movpx_rr(RG, RM)                                                    \
-        movox_rr(W(RG), W(RM))
+#define movpx_rr(XG, XS)                                                    \
+        movox_rr(W(XG), W(XS))
 
-#define movpx_ld(RG, RM, DP)                                                \
-        movox_ld(W(RG), W(RM), W(DP))
+#define movpx_ld(XG, RM, DP)                                                \
+        movox_ld(W(XG), W(RM), W(DP))
 
-#define movpx_st(RG, RM, DP)                                                \
-        movox_st(W(RG), W(RM), W(DP))
+#define movpx_st(XG, RM, DP)                                                \
+        movox_st(W(XG), W(RM), W(DP))
 
 /* and */
 
-#define andpx_rr(RG, RM)                                                    \
-        andox_rr(W(RG), W(RM))
+#define andpx_rr(XG, XS)                                                    \
+        andox_rr(W(XG), W(XS))
 
-#define andpx_ld(RG, RM, DP)                                                \
-        andox_ld(W(RG), W(RM), W(DP))
+#define andpx_ld(XG, RM, DP)                                                \
+        andox_ld(W(XG), W(RM), W(DP))
 
-/* ann */
+/* ann (~XG & XS) */
 
-#define annpx_rr(RG, RM)                                                    \
-        annox_rr(W(RG), W(RM))
+#define annpx_rr(XG, XS)                                                    \
+        annox_rr(W(XG), W(XS))
 
-#define annpx_ld(RG, RM, DP)                                                \
-        annox_ld(W(RG), W(RM), W(DP))
+#define annpx_ld(XG, RM, DP)                                                \
+        annox_ld(W(XG), W(RM), W(DP))
 
 /* orr */
 
-#define orrpx_rr(RG, RM)                                                    \
-        orrox_rr(W(RG), W(RM))
+#define orrpx_rr(XG, XS)                                                    \
+        orrox_rr(W(XG), W(XS))
 
-#define orrpx_ld(RG, RM, DP)                                                \
-        orrox_ld(W(RG), W(RM), W(DP))
+#define orrpx_ld(XG, RM, DP)                                                \
+        orrox_ld(W(XG), W(RM), W(DP))
 
-/* orn */
+/* orn (~XG | XS) */
 
-#define ornpx_rr(RG, RM)                                                    \
-        ornox_rr(W(RG), W(RM))
+#define ornpx_rr(XG, XS)                                                    \
+        ornox_rr(W(XG), W(XS))
 
-#define ornpx_ld(RG, RM, DP)                                                \
-        ornox_ld(W(RG), W(RM), W(DP))
+#define ornpx_ld(XG, RM, DP)                                                \
+        ornox_ld(W(XG), W(RM), W(DP))
 
 /* xor */
 
-#define xorpx_rr(RG, RM)                                                    \
-        xorox_rr(W(RG), W(RM))
+#define xorpx_rr(XG, XS)                                                    \
+        xorox_rr(W(XG), W(XS))
 
-#define xorpx_ld(RG, RM, DP)                                                \
-        xorox_ld(W(RG), W(RM), W(DP))
+#define xorpx_ld(XG, RM, DP)                                                \
+        xorox_ld(W(XG), W(RM), W(DP))
 
 /* not */
 
@@ -925,43 +925,43 @@ struct rt_SIMD_REGS
 
 /* add */
 
-#define addps_rr(RG, RM)                                                    \
-        addos_rr(W(RG), W(RM))
+#define addps_rr(XG, XS)                                                    \
+        addos_rr(W(XG), W(XS))
 
-#define addps_ld(RG, RM, DP)                                                \
-        addos_ld(W(RG), W(RM), W(DP))
+#define addps_ld(XG, RM, DP)                                                \
+        addos_ld(W(XG), W(RM), W(DP))
 
 /* sub */
 
-#define subps_rr(RG, RM)                                                    \
-        subos_rr(W(RG), W(RM))
+#define subps_rr(XG, XS)                                                    \
+        subos_rr(W(XG), W(XS))
 
-#define subps_ld(RG, RM, DP)                                                \
-        subos_ld(W(RG), W(RM), W(DP))
+#define subps_ld(XG, RM, DP)                                                \
+        subos_ld(W(XG), W(RM), W(DP))
 
 /* mul */
 
-#define mulps_rr(RG, RM)                                                    \
-        mulos_rr(W(RG), W(RM))
+#define mulps_rr(XG, XS)                                                    \
+        mulos_rr(W(XG), W(XS))
 
-#define mulps_ld(RG, RM, DP)                                                \
-        mulos_ld(W(RG), W(RM), W(DP))
+#define mulps_ld(XG, RM, DP)                                                \
+        mulos_ld(W(XG), W(RM), W(DP))
 
 /* div */
 
-#define divps_rr(RG, RM)                                                    \
-        divos_rr(W(RG), W(RM))
+#define divps_rr(XG, XS)                                                    \
+        divos_rr(W(XG), W(XS))
 
-#define divps_ld(RG, RM, DP)                                                \
-        divos_ld(W(RG), W(RM), W(DP))
+#define divps_ld(XG, RM, DP)                                                \
+        divos_ld(W(XG), W(RM), W(DP))
 
 /* sqr */
 
-#define sqrps_rr(RG, RM)                                                    \
-        sqros_rr(W(RG), W(RM))
+#define sqrps_rr(XG, XS)                                                    \
+        sqros_rr(W(XG), W(XS))
 
-#define sqrps_ld(RG, RM, DP)                                                \
-        sqros_ld(W(RG), W(RM), W(DP))
+#define sqrps_ld(XG, RM, DP)                                                \
+        sqros_ld(W(XG), W(RM), W(DP))
 
 /* cbr */
 
@@ -973,11 +973,11 @@ struct rt_SIMD_REGS
 
 #if RT_SIMD_COMPAT_RCP == 0
 
-#define rceps_rr(RG, RM)                                                    \
-        rceos_rr(W(RG), W(RM))
+#define rceps_rr(XG, XS)                                                    \
+        rceos_rr(W(XG), W(XS))
 
-#define rcsps_rr(RG, RM) /* destroys RM */                                  \
-        rcsos_rr(W(RG), W(RM))
+#define rcsps_rr(XG, XS) /* destroys RM */                                  \
+        rcsos_rr(W(XG), W(XS))
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
@@ -989,11 +989,11 @@ struct rt_SIMD_REGS
 
 #if RT_SIMD_COMPAT_RSQ == 0
 
-#define rseps_rr(RG, RM)                                                    \
-        rseos_rr(W(RG), W(RM))
+#define rseps_rr(XG, XS)                                                    \
+        rseos_rr(W(XG), W(XS))
 
-#define rssps_rr(RG, RM) /* destroys RM */                                  \
-        rssos_rr(W(RG), W(RM))
+#define rssps_rr(XG, XS) /* destroys RM */                                  \
+        rssos_rr(W(XG), W(XS))
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
@@ -1002,57 +1002,57 @@ struct rt_SIMD_REGS
 
 /* min */
 
-#define minps_rr(RG, RM)                                                    \
-        minos_rr(W(RG), W(RM))
+#define minps_rr(XG, XS)                                                    \
+        minos_rr(W(XG), W(XS))
 
-#define minps_ld(RG, RM, DP)                                                \
-        minos_ld(W(RG), W(RM), W(DP))
+#define minps_ld(XG, RM, DP)                                                \
+        minos_ld(W(XG), W(RM), W(DP))
 
 /* max */
 
-#define maxps_rr(RG, RM)                                                    \
-        maxos_rr(W(RG), W(RM))
+#define maxps_rr(XG, XS)                                                    \
+        maxos_rr(W(XG), W(XS))
 
-#define maxps_ld(RG, RM, DP)                                                \
-        maxos_ld(W(RG), W(RM), W(DP))
+#define maxps_ld(XG, RM, DP)                                                \
+        maxos_ld(W(XG), W(RM), W(DP))
 
 /* cmp */
 
-#define ceqps_rr(RG, RM)                                                    \
-        ceqos_rr(W(RG), W(RM))
+#define ceqps_rr(XG, XS)                                                    \
+        ceqos_rr(W(XG), W(XS))
 
-#define ceqps_ld(RG, RM, DP)                                                \
-        ceqos_ld(W(RG), W(RM), W(DP))
+#define ceqps_ld(XG, RM, DP)                                                \
+        ceqos_ld(W(XG), W(RM), W(DP))
 
-#define cneps_rr(RG, RM)                                                    \
-        cneos_rr(W(RG), W(RM))
+#define cneps_rr(XG, XS)                                                    \
+        cneos_rr(W(XG), W(XS))
 
-#define cneps_ld(RG, RM, DP)                                                \
-        cneos_ld(W(RG), W(RM), W(DP))
+#define cneps_ld(XG, RM, DP)                                                \
+        cneos_ld(W(XG), W(RM), W(DP))
 
-#define cltps_rr(RG, RM)                                                    \
-        cltos_rr(W(RG), W(RM))
+#define cltps_rr(XG, XS)                                                    \
+        cltos_rr(W(XG), W(XS))
 
-#define cltps_ld(RG, RM, DP)                                                \
-        cltos_ld(W(RG), W(RM), W(DP))
+#define cltps_ld(XG, RM, DP)                                                \
+        cltos_ld(W(XG), W(RM), W(DP))
 
-#define cleps_rr(RG, RM)                                                    \
-        cleos_rr(W(RG), W(RM))
+#define cleps_rr(XG, XS)                                                    \
+        cleos_rr(W(XG), W(XS))
 
-#define cleps_ld(RG, RM, DP)                                                \
-        cleos_ld(W(RG), W(RM), W(DP))
+#define cleps_ld(XG, RM, DP)                                                \
+        cleos_ld(W(XG), W(RM), W(DP))
 
-#define cgtps_rr(RG, RM)                                                    \
-        cgtos_rr(W(RG), W(RM))
+#define cgtps_rr(XG, XS)                                                    \
+        cgtos_rr(W(XG), W(XS))
 
-#define cgtps_ld(RG, RM, DP)                                                \
-        cgtos_ld(W(RG), W(RM), W(DP))
+#define cgtps_ld(XG, RM, DP)                                                \
+        cgtos_ld(W(XG), W(RM), W(DP))
 
-#define cgeps_rr(RG, RM)                                                    \
-        cgeos_rr(W(RG), W(RM))
+#define cgeps_rr(XG, XS)                                                    \
+        cgeos_rr(W(XG), W(XS))
 
-#define cgeps_ld(RG, RM, DP)                                                \
-        cgeos_ld(W(RG), W(RM), W(DP))
+#define cgeps_ld(XG, RM, DP)                                                \
+        cgeos_ld(W(XG), W(RM), W(DP))
 
 
 /* cvz (fp-to-signed-int)
@@ -1060,115 +1060,115 @@ struct rt_SIMD_REGS
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rnzps_rr(RG, RM)     /* round towards zero */                       \
-        rnzos_rr(W(RG), W(RM))
+#define rnzps_rr(XG, XS)     /* round towards zero */                       \
+        rnzos_rr(W(XG), W(XS))
 
-#define rnzps_ld(RG, RM, DP) /* round towards zero */                       \
-        rnzos_ld(W(RG), W(RM), W(DP))
+#define rnzps_ld(XG, RM, DP) /* round towards zero */                       \
+        rnzos_ld(W(XG), W(RM), W(DP))
 
-#define cvzps_rr(RG, RM)     /* round towards zero */                       \
-        cvzos_rr(W(RG), W(RM))
+#define cvzps_rr(XG, XS)     /* round towards zero */                       \
+        cvzos_rr(W(XG), W(XS))
 
-#define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
-        cvzos_ld(W(RG), W(RM), W(DP))
+#define cvzps_ld(XG, RM, DP) /* round towards zero */                       \
+        cvzos_ld(W(XG), W(RM), W(DP))
 
 /* cvp (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rnpps_rr(RG, RM)     /* round towards +inf */                       \
-        rnpos_rr(W(RG), W(RM))
+#define rnpps_rr(XG, XS)     /* round towards +inf */                       \
+        rnpos_rr(W(XG), W(XS))
 
-#define rnpps_ld(RG, RM, DP) /* round towards +inf */                       \
-        rnpos_ld(W(RG), W(RM), W(DP))
+#define rnpps_ld(XG, RM, DP) /* round towards +inf */                       \
+        rnpos_ld(W(XG), W(RM), W(DP))
 
-#define cvpps_rr(RG, RM)     /* round towards +inf */                       \
-        cvpos_rr(W(RG), W(RM))
+#define cvpps_rr(XG, XS)     /* round towards +inf */                       \
+        cvpos_rr(W(XG), W(XS))
 
-#define cvpps_ld(RG, RM, DP) /* round towards +inf */                       \
-        cvpos_ld(W(RG), W(RM), W(DP))
+#define cvpps_ld(XG, RM, DP) /* round towards +inf */                       \
+        cvpos_ld(W(XG), W(RM), W(DP))
 
 /* cvm (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rnmps_rr(RG, RM)     /* round towards -inf */                       \
-        rnmos_rr(W(RG), W(RM))
+#define rnmps_rr(XG, XS)     /* round towards -inf */                       \
+        rnmos_rr(W(XG), W(XS))
 
-#define rnmps_ld(RG, RM, DP) /* round towards -inf */                       \
-        rnmos_ld(W(RG), W(RM), W(DP))
+#define rnmps_ld(XG, RM, DP) /* round towards -inf */                       \
+        rnmos_ld(W(XG), W(RM), W(DP))
 
-#define cvmps_rr(RG, RM)     /* round towards -inf */                       \
-        cvmos_rr(W(RG), W(RM))
+#define cvmps_rr(XG, XS)     /* round towards -inf */                       \
+        cvmos_rr(W(XG), W(XS))
 
-#define cvmps_ld(RG, RM, DP) /* round towards -inf */                       \
-        cvmos_ld(W(RG), W(RM), W(DP))
+#define cvmps_ld(XG, RM, DP) /* round towards -inf */                       \
+        cvmos_ld(W(XG), W(RM), W(DP))
 
 /* cvn (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rnnps_rr(RG, RM)     /* round towards near */                       \
-        rnnos_rr(W(RG), W(RM))
+#define rnnps_rr(XG, XS)     /* round towards near */                       \
+        rnnos_rr(W(XG), W(XS))
 
-#define rnnps_ld(RG, RM, DP) /* round towards near */                       \
-        rnnos_ld(W(RG), W(RM), W(DP))
+#define rnnps_ld(XG, RM, DP) /* round towards near */                       \
+        rnnos_ld(W(XG), W(RM), W(DP))
 
-#define cvnps_rr(RG, RM)     /* round towards near */                       \
-        cvnos_rr(W(RG), W(RM))
+#define cvnps_rr(XG, XS)     /* round towards near */                       \
+        cvnos_rr(W(XG), W(XS))
 
-#define cvnps_ld(RG, RM, DP) /* round towards near */                       \
-        cvnos_ld(W(RG), W(RM), W(DP))
+#define cvnps_ld(XG, RM, DP) /* round towards near */                       \
+        cvnos_ld(W(XG), W(RM), W(DP))
 
 /* cvn (signed-int-to-fp)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
-#define cvnpn_rr(RG, RM)     /* round towards near */                       \
-        cvnon_rr(W(RG), W(RM))
+#define cvnpn_rr(XG, XS)     /* round towards near */                       \
+        cvnon_rr(W(XG), W(XS))
 
-#define cvnpn_ld(RG, RM, DP) /* round towards near */                       \
-        cvnon_ld(W(RG), W(RM), W(DP))
+#define cvnpn_ld(XG, RM, DP) /* round towards near */                       \
+        cvnon_ld(W(XG), W(RM), W(DP))
 
 /* add */
 
-#define addpx_rr(RG, RM)                                                    \
-        addox_rr(W(RG), W(RM))
+#define addpx_rr(XG, XS)                                                    \
+        addox_rr(W(XG), W(XS))
 
-#define addpx_ld(RG, RM, DP)                                                \
-        addox_ld(W(RG), W(RM), W(DP))
+#define addpx_ld(XG, RM, DP)                                                \
+        addox_ld(W(XG), W(RM), W(DP))
 
 /* sub */
 
-#define subpx_rr(RG, RM)                                                    \
-        subox_rr(W(RG), W(RM))
+#define subpx_rr(XG, XS)                                                    \
+        subox_rr(W(XG), W(XS))
 
-#define subpx_ld(RG, RM, DP)                                                \
-        subox_ld(W(RG), W(RM), W(DP))
+#define subpx_ld(XG, RM, DP)                                                \
+        subox_ld(W(XG), W(RM), W(DP))
 
 /* shl */
 
-#define shlpx_ri(RM, IM)                                                    \
-        shlox_ri(W(RM), W(IM))
+#define shlpx_ri(XG, IM)                                                    \
+        shlox_ri(W(XG), W(IM))
 
-#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
-        shlox_ld(W(RG), W(RM), W(DP))
+#define shlpx_ld(XG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+        shlox_ld(W(XG), W(RM), W(DP))
 
 /* shr */
 
-#define shrpx_ri(RM, IM)                                                    \
-        shrox_ri(W(RM), W(IM))
+#define shrpx_ri(XG, IM)                                                    \
+        shrox_ri(W(XG), W(IM))
 
-#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
-        shrox_ld(W(RG), W(RM), W(DP))
+#define shrpx_ld(XG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+        shrox_ld(W(XG), W(RM), W(DP))
 
-#define shrpn_ri(RM, IM)                                                    \
-        shron_ri(W(RM), W(IM))
+#define shrpn_ri(XG, IM)                                                    \
+        shron_ri(W(XG), W(IM))
 
-#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
-        shron_ld(W(RG), W(RM), W(DP))
+#define shrpn_ld(XG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+        shron_ld(W(XG), W(RM), W(DP))
 
 
 /* cvt (fp-to-signed-int)
@@ -1177,27 +1177,27 @@ struct rt_SIMD_REGS
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rndps_rr(RG, RM)                                                    \
-        rndos_rr(W(RG), W(RM))
+#define rndps_rr(XG, XS)                                                    \
+        rndos_rr(W(XG), W(XS))
 
-#define rndps_ld(RG, RM, DP)                                                \
-        rndos_ld(W(RG), W(RM), W(DP))
+#define rndps_ld(XG, RM, DP)                                                \
+        rndos_ld(W(XG), W(RM), W(DP))
 
-#define cvtps_rr(RG, RM)                                                    \
-        cvtos_rr(W(RG), W(RM))
+#define cvtps_rr(XG, XS)                                                    \
+        cvtos_rr(W(XG), W(XS))
 
-#define cvtps_ld(RG, RM, DP)                                                \
-        cvtos_ld(W(RG), W(RM), W(DP))
+#define cvtps_ld(XG, RM, DP)                                                \
+        cvtos_ld(W(XG), W(RM), W(DP))
 
 /* cvt (signed-int-to-fp)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
 
-#define cvtpn_rr(RG, RM)                                                    \
-        cvton_rr(W(RG), W(RM))
+#define cvtpn_rr(XG, XS)                                                    \
+        cvton_rr(W(XG), W(XS))
 
-#define cvtpn_ld(RG, RM, DP)                                                \
-        cvton_ld(W(RG), W(RM), W(DP))
+#define cvtpn_ld(XG, RM, DP)                                                \
+        cvton_ld(W(XG), W(RM), W(DP))
 
 /* cvr (fp-to-signed-int)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
@@ -1206,20 +1206,20 @@ struct rt_SIMD_REGS
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rnrps_rr(RG, RM, mode)                                              \
-        rnros_rr(W(RG), W(RM), mode)
+#define rnrps_rr(XG, XS, mode)                                              \
+        rnros_rr(W(XG), W(XS), mode)
 
-#define cvrps_rr(RG, RM, mode)                                              \
-        cvros_rr(W(RG), W(RM), mode)
+#define cvrps_rr(XG, XS, mode)                                              \
+        cvros_rr(W(XG), W(XS), mode)
 
 /* mmv
  * uses Xmm0 implicitly as a mask register */
 
-#define mmvpx_ld(RG, RM, DP) /* not portable, use conditionally */          \
-        mmvox_ld(W(RG), W(RM), W(DP))
+#define mmvpx_ld(XG, RM, DP) /* not portable, use conditionally */          \
+        mmvox_ld(W(XG), W(RM), W(DP))
 
-#define mmvpx_st(RG, RM, DP) /* not portable, use conditionally */          \
-        mmvox_st(W(RG), W(RM), W(DP))
+#define mmvpx_st(XG, RM, DP) /* not portable, use conditionally */          \
+        mmvox_st(W(XG), W(RM), W(DP))
 
 /***************** instructions for element-sized 64-bit SIMD *****************/
 
@@ -1227,54 +1227,54 @@ struct rt_SIMD_REGS
 
 /* mov */
 
-#define movpx_rr(RG, RM)                                                    \
-        movqx_rr(W(RG), W(RM))
+#define movpx_rr(XG, XS)                                                    \
+        movqx_rr(W(XG), W(XS))
 
-#define movpx_ld(RG, RM, DP)                                                \
-        movqx_ld(W(RG), W(RM), W(DP))
+#define movpx_ld(XG, RM, DP)                                                \
+        movqx_ld(W(XG), W(RM), W(DP))
 
-#define movpx_st(RG, RM, DP)                                                \
-        movqx_st(W(RG), W(RM), W(DP))
+#define movpx_st(XG, RM, DP)                                                \
+        movqx_st(W(XG), W(RM), W(DP))
 
 /* and */
 
-#define andpx_rr(RG, RM)                                                    \
-        andqx_rr(W(RG), W(RM))
+#define andpx_rr(XG, XS)                                                    \
+        andqx_rr(W(XG), W(XS))
 
-#define andpx_ld(RG, RM, DP)                                                \
-        andqx_ld(W(RG), W(RM), W(DP))
+#define andpx_ld(XG, RM, DP)                                                \
+        andqx_ld(W(XG), W(RM), W(DP))
 
-/* ann */
+/* ann (~XG & XS) */
 
-#define annpx_rr(RG, RM)                                                    \
-        annqx_rr(W(RG), W(RM))
+#define annpx_rr(XG, XS)                                                    \
+        annqx_rr(W(XG), W(XS))
 
-#define annpx_ld(RG, RM, DP)                                                \
-        annqx_ld(W(RG), W(RM), W(DP))
+#define annpx_ld(XG, RM, DP)                                                \
+        annqx_ld(W(XG), W(RM), W(DP))
 
 /* orr */
 
-#define orrpx_rr(RG, RM)                                                    \
-        orrqx_rr(W(RG), W(RM))
+#define orrpx_rr(XG, XS)                                                    \
+        orrqx_rr(W(XG), W(XS))
 
-#define orrpx_ld(RG, RM, DP)                                                \
-        orrqx_ld(W(RG), W(RM), W(DP))
+#define orrpx_ld(XG, RM, DP)                                                \
+        orrqx_ld(W(XG), W(RM), W(DP))
 
-/* orn */
+/* orn (~XG | XS) */
 
-#define ornpx_rr(RG, RM)                                                    \
-        ornqx_rr(W(RG), W(RM))
+#define ornpx_rr(XG, XS)                                                    \
+        ornqx_rr(W(XG), W(XS))
 
-#define ornpx_ld(RG, RM, DP)                                                \
-        ornqx_ld(W(RG), W(RM), W(DP))
+#define ornpx_ld(XG, RM, DP)                                                \
+        ornqx_ld(W(XG), W(RM), W(DP))
 
 /* xor */
 
-#define xorpx_rr(RG, RM)                                                    \
-        xorqx_rr(W(RG), W(RM))
+#define xorpx_rr(XG, XS)                                                    \
+        xorqx_rr(W(XG), W(XS))
 
-#define xorpx_ld(RG, RM, DP)                                                \
-        xorqx_ld(W(RG), W(RM), W(DP))
+#define xorpx_ld(XG, RM, DP)                                                \
+        xorqx_ld(W(XG), W(RM), W(DP))
 
 /* not */
 
@@ -1288,43 +1288,43 @@ struct rt_SIMD_REGS
 
 /* add */
 
-#define addps_rr(RG, RM)                                                    \
-        addqs_rr(W(RG), W(RM))
+#define addps_rr(XG, XS)                                                    \
+        addqs_rr(W(XG), W(XS))
 
-#define addps_ld(RG, RM, DP)                                                \
-        addqs_ld(W(RG), W(RM), W(DP))
+#define addps_ld(XG, RM, DP)                                                \
+        addqs_ld(W(XG), W(RM), W(DP))
 
 /* sub */
 
-#define subps_rr(RG, RM)                                                    \
-        subqs_rr(W(RG), W(RM))
+#define subps_rr(XG, XS)                                                    \
+        subqs_rr(W(XG), W(XS))
 
-#define subps_ld(RG, RM, DP)                                                \
-        subqs_ld(W(RG), W(RM), W(DP))
+#define subps_ld(XG, RM, DP)                                                \
+        subqs_ld(W(XG), W(RM), W(DP))
 
 /* mul */
 
-#define mulps_rr(RG, RM)                                                    \
-        mulqs_rr(W(RG), W(RM))
+#define mulps_rr(XG, XS)                                                    \
+        mulqs_rr(W(XG), W(XS))
 
-#define mulps_ld(RG, RM, DP)                                                \
-        mulqs_ld(W(RG), W(RM), W(DP))
+#define mulps_ld(XG, RM, DP)                                                \
+        mulqs_ld(W(XG), W(RM), W(DP))
 
 /* div */
 
-#define divps_rr(RG, RM)                                                    \
-        divqs_rr(W(RG), W(RM))
+#define divps_rr(XG, XS)                                                    \
+        divqs_rr(W(XG), W(XS))
 
-#define divps_ld(RG, RM, DP)                                                \
-        divqs_ld(W(RG), W(RM), W(DP))
+#define divps_ld(XG, RM, DP)                                                \
+        divqs_ld(W(XG), W(RM), W(DP))
 
 /* sqr */
 
-#define sqrps_rr(RG, RM)                                                    \
-        sqrqs_rr(W(RG), W(RM))
+#define sqrps_rr(XG, XS)                                                    \
+        sqrqs_rr(W(XG), W(XS))
 
-#define sqrps_ld(RG, RM, DP)                                                \
-        sqrqs_ld(W(RG), W(RM), W(DP))
+#define sqrps_ld(XG, RM, DP)                                                \
+        sqrqs_ld(W(XG), W(RM), W(DP))
 
 /* cbr */
 
@@ -1336,11 +1336,11 @@ struct rt_SIMD_REGS
 
 #if RT_SIMD_COMPAT_RCP == 0
 
-#define rceps_rr(RG, RM)                                                    \
-        rceqs_rr(W(RG), W(RM))
+#define rceps_rr(XG, XS)                                                    \
+        rceqs_rr(W(XG), W(XS))
 
-#define rcsps_rr(RG, RM) /* destroys RM */                                  \
-        rcsqs_rr(W(RG), W(RM))
+#define rcsps_rr(XG, XS) /* destroys RM */                                  \
+        rcsqs_rr(W(XG), W(XS))
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
@@ -1352,11 +1352,11 @@ struct rt_SIMD_REGS
 
 #if RT_SIMD_COMPAT_RSQ == 0
 
-#define rseps_rr(RG, RM)                                                    \
-        rseqs_rr(W(RG), W(RM))
+#define rseps_rr(XG, XS)                                                    \
+        rseqs_rr(W(XG), W(XS))
 
-#define rssps_rr(RG, RM) /* destroys RM */                                  \
-        rssqs_rr(W(RG), W(RM))
+#define rssps_rr(XG, XS) /* destroys RM */                                  \
+        rssqs_rr(W(XG), W(XS))
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
@@ -1365,57 +1365,57 @@ struct rt_SIMD_REGS
 
 /* min */
 
-#define minps_rr(RG, RM)                                                    \
-        minqs_rr(W(RG), W(RM))
+#define minps_rr(XG, XS)                                                    \
+        minqs_rr(W(XG), W(XS))
 
-#define minps_ld(RG, RM, DP)                                                \
-        minqs_ld(W(RG), W(RM), W(DP))
+#define minps_ld(XG, RM, DP)                                                \
+        minqs_ld(W(XG), W(RM), W(DP))
 
 /* max */
 
-#define maxps_rr(RG, RM)                                                    \
-        maxqs_rr(W(RG), W(RM))
+#define maxps_rr(XG, XS)                                                    \
+        maxqs_rr(W(XG), W(XS))
 
-#define maxps_ld(RG, RM, DP)                                                \
-        maxqs_ld(W(RG), W(RM), W(DP))
+#define maxps_ld(XG, RM, DP)                                                \
+        maxqs_ld(W(XG), W(RM), W(DP))
 
 /* cmp */
 
-#define ceqps_rr(RG, RM)                                                    \
-        ceqqs_rr(W(RG), W(RM))
+#define ceqps_rr(XG, XS)                                                    \
+        ceqqs_rr(W(XG), W(XS))
 
-#define ceqps_ld(RG, RM, DP)                                                \
-        ceqqs_ld(W(RG), W(RM), W(DP))
+#define ceqps_ld(XG, RM, DP)                                                \
+        ceqqs_ld(W(XG), W(RM), W(DP))
 
-#define cneps_rr(RG, RM)                                                    \
-        cneqs_rr(W(RG), W(RM))
+#define cneps_rr(XG, XS)                                                    \
+        cneqs_rr(W(XG), W(XS))
 
-#define cneps_ld(RG, RM, DP)                                                \
-        cneqs_ld(W(RG), W(RM), W(DP))
+#define cneps_ld(XG, RM, DP)                                                \
+        cneqs_ld(W(XG), W(RM), W(DP))
 
-#define cltps_rr(RG, RM)                                                    \
-        cltqs_rr(W(RG), W(RM))
+#define cltps_rr(XG, XS)                                                    \
+        cltqs_rr(W(XG), W(XS))
 
-#define cltps_ld(RG, RM, DP)                                                \
-        cltqs_ld(W(RG), W(RM), W(DP))
+#define cltps_ld(XG, RM, DP)                                                \
+        cltqs_ld(W(XG), W(RM), W(DP))
 
-#define cleps_rr(RG, RM)                                                    \
-        cleqs_rr(W(RG), W(RM))
+#define cleps_rr(XG, XS)                                                    \
+        cleqs_rr(W(XG), W(XS))
 
-#define cleps_ld(RG, RM, DP)                                                \
-        cleqs_ld(W(RG), W(RM), W(DP))
+#define cleps_ld(XG, RM, DP)                                                \
+        cleqs_ld(W(XG), W(RM), W(DP))
 
-#define cgtps_rr(RG, RM)                                                    \
-        cgtqs_rr(W(RG), W(RM))
+#define cgtps_rr(XG, XS)                                                    \
+        cgtqs_rr(W(XG), W(XS))
 
-#define cgtps_ld(RG, RM, DP)                                                \
-        cgtqs_ld(W(RG), W(RM), W(DP))
+#define cgtps_ld(XG, RM, DP)                                                \
+        cgtqs_ld(W(XG), W(RM), W(DP))
 
-#define cgeps_rr(RG, RM)                                                    \
-        cgeqs_rr(W(RG), W(RM))
+#define cgeps_rr(XG, XS)                                                    \
+        cgeqs_rr(W(XG), W(XS))
 
-#define cgeps_ld(RG, RM, DP)                                                \
-        cgeqs_ld(W(RG), W(RM), W(DP))
+#define cgeps_ld(XG, RM, DP)                                                \
+        cgeqs_ld(W(XG), W(RM), W(DP))
 
 
 /* cvz (fp-to-signed-int)
@@ -1423,115 +1423,115 @@ struct rt_SIMD_REGS
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rnzps_rr(RG, RM)     /* round towards zero */                       \
-        rnzqs_rr(W(RG), W(RM))
+#define rnzps_rr(XG, XS)     /* round towards zero */                       \
+        rnzqs_rr(W(XG), W(XS))
 
-#define rnzps_ld(RG, RM, DP) /* round towards zero */                       \
-        rnzqs_ld(W(RG), W(RM), W(DP))
+#define rnzps_ld(XG, RM, DP) /* round towards zero */                       \
+        rnzqs_ld(W(XG), W(RM), W(DP))
 
-#define cvzps_rr(RG, RM)     /* round towards zero */                       \
-        cvzqs_rr(W(RG), W(RM))
+#define cvzps_rr(XG, XS)     /* round towards zero */                       \
+        cvzqs_rr(W(XG), W(XS))
 
-#define cvzps_ld(RG, RM, DP) /* round towards zero */                       \
-        cvzqs_ld(W(RG), W(RM), W(DP))
+#define cvzps_ld(XG, RM, DP) /* round towards zero */                       \
+        cvzqs_ld(W(XG), W(RM), W(DP))
 
 /* cvp (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rnpps_rr(RG, RM)     /* round towards +inf */                       \
-        rnpqs_rr(W(RG), W(RM))
+#define rnpps_rr(XG, XS)     /* round towards +inf */                       \
+        rnpqs_rr(W(XG), W(XS))
 
-#define rnpps_ld(RG, RM, DP) /* round towards +inf */                       \
-        rnpqs_ld(W(RG), W(RM), W(DP))
+#define rnpps_ld(XG, RM, DP) /* round towards +inf */                       \
+        rnpqs_ld(W(XG), W(RM), W(DP))
 
-#define cvpps_rr(RG, RM)     /* round towards +inf */                       \
-        cvpqs_rr(W(RG), W(RM))
+#define cvpps_rr(XG, XS)     /* round towards +inf */                       \
+        cvpqs_rr(W(XG), W(XS))
 
-#define cvpps_ld(RG, RM, DP) /* round towards +inf */                       \
-        cvpqs_ld(W(RG), W(RM), W(DP))
+#define cvpps_ld(XG, RM, DP) /* round towards +inf */                       \
+        cvpqs_ld(W(XG), W(RM), W(DP))
 
 /* cvm (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rnmps_rr(RG, RM)     /* round towards -inf */                       \
-        rnmqs_rr(W(RG), W(RM))
+#define rnmps_rr(XG, XS)     /* round towards -inf */                       \
+        rnmqs_rr(W(XG), W(XS))
 
-#define rnmps_ld(RG, RM, DP) /* round towards -inf */                       \
-        rnmqs_ld(W(RG), W(RM), W(DP))
+#define rnmps_ld(XG, RM, DP) /* round towards -inf */                       \
+        rnmqs_ld(W(XG), W(RM), W(DP))
 
-#define cvmps_rr(RG, RM)     /* round towards -inf */                       \
-        cvmqs_rr(W(RG), W(RM))
+#define cvmps_rr(XG, XS)     /* round towards -inf */                       \
+        cvmqs_rr(W(XG), W(XS))
 
-#define cvmps_ld(RG, RM, DP) /* round towards -inf */                       \
-        cvmqs_ld(W(RG), W(RM), W(DP))
+#define cvmps_ld(XG, RM, DP) /* round towards -inf */                       \
+        cvmqs_ld(W(XG), W(RM), W(DP))
 
 /* cvn (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rnnps_rr(RG, RM)     /* round towards near */                       \
-        rnnqs_rr(W(RG), W(RM))
+#define rnnps_rr(XG, XS)     /* round towards near */                       \
+        rnnqs_rr(W(XG), W(XS))
 
-#define rnnps_ld(RG, RM, DP) /* round towards near */                       \
-        rnnqs_ld(W(RG), W(RM), W(DP))
+#define rnnps_ld(XG, RM, DP) /* round towards near */                       \
+        rnnqs_ld(W(XG), W(RM), W(DP))
 
-#define cvnps_rr(RG, RM)     /* round towards near */                       \
-        cvnqs_rr(W(RG), W(RM))
+#define cvnps_rr(XG, XS)     /* round towards near */                       \
+        cvnqs_rr(W(XG), W(XS))
 
-#define cvnps_ld(RG, RM, DP) /* round towards near */                       \
-        cvnqs_ld(W(RG), W(RM), W(DP))
+#define cvnps_ld(XG, RM, DP) /* round towards near */                       \
+        cvnqs_ld(W(XG), W(RM), W(DP))
 
 /* cvn (signed-int-to-fp)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
-#define cvnpn_rr(RG, RM)     /* round towards near */                       \
-        cvnqn_rr(W(RG), W(RM))
+#define cvnpn_rr(XG, XS)     /* round towards near */                       \
+        cvnqn_rr(W(XG), W(XS))
 
-#define cvnpn_ld(RG, RM, DP) /* round towards near */                       \
-        cvnqn_ld(W(RG), W(RM), W(DP))
+#define cvnpn_ld(XG, RM, DP) /* round towards near */                       \
+        cvnqn_ld(W(XG), W(RM), W(DP))
 
 /* add */
 
-#define addpx_rr(RG, RM)                                                    \
-        addqx_rr(W(RG), W(RM))
+#define addpx_rr(XG, XS)                                                    \
+        addqx_rr(W(XG), W(XS))
 
-#define addpx_ld(RG, RM, DP)                                                \
-        addqx_ld(W(RG), W(RM), W(DP))
+#define addpx_ld(XG, RM, DP)                                                \
+        addqx_ld(W(XG), W(RM), W(DP))
 
 /* sub */
 
-#define subpx_rr(RG, RM)                                                    \
-        subqx_rr(W(RG), W(RM))
+#define subpx_rr(XG, XS)                                                    \
+        subqx_rr(W(XG), W(XS))
 
-#define subpx_ld(RG, RM, DP)                                                \
-        subqx_ld(W(RG), W(RM), W(DP))
+#define subpx_ld(XG, RM, DP)                                                \
+        subqx_ld(W(XG), W(RM), W(DP))
 
 /* shl */
 
-#define shlpx_ri(RM, IM)                                                    \
-        shlqx_ri(W(RM), W(IM))
+#define shlpx_ri(XG, IM)                                                    \
+        shlqx_ri(W(XG), W(IM))
 
-#define shlpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
-        shlqx_ld(W(RG), W(RM), W(DP))
+#define shlpx_ld(XG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+        shlqx_ld(W(XG), W(RM), W(DP))
 
 /* shr */
 
-#define shrpx_ri(RM, IM)                                                    \
-        shrqx_ri(W(RM), W(IM))
+#define shrpx_ri(XG, IM)                                                    \
+        shrqx_ri(W(XG), W(IM))
 
-#define shrpx_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
-        shrqx_ld(W(RG), W(RM), W(DP))
+#define shrpx_ld(XG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+        shrqx_ld(W(XG), W(RM), W(DP))
 
-#define shrpn_ri(RM, IM)                                                    \
-        shrqn_ri(W(RM), W(IM))
+#define shrpn_ri(XG, IM)                                                    \
+        shrqn_ri(W(XG), W(IM))
 
-#define shrpn_ld(RG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
-        shrqn_ld(W(RG), W(RM), W(DP))
+#define shrpn_ld(XG, RM, DP) /* loads SIMD, uses 1 elem at given address */ \
+        shrqn_ld(W(XG), W(RM), W(DP))
 
 
 /* cvt (fp-to-signed-int)
@@ -1540,27 +1540,27 @@ struct rt_SIMD_REGS
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rndps_rr(RG, RM)                                                    \
-        rndqs_rr(W(RG), W(RM))
+#define rndps_rr(XG, XS)                                                    \
+        rndqs_rr(W(XG), W(XS))
 
-#define rndps_ld(RG, RM, DP)                                                \
-        rndqs_ld(W(RG), W(RM), W(DP))
+#define rndps_ld(XG, RM, DP)                                                \
+        rndqs_ld(W(XG), W(RM), W(DP))
 
-#define cvtps_rr(RG, RM)                                                    \
-        cvtqs_rr(W(RG), W(RM))
+#define cvtps_rr(XG, XS)                                                    \
+        cvtqs_rr(W(XG), W(XS))
 
-#define cvtps_ld(RG, RM, DP)                                                \
-        cvtqs_ld(W(RG), W(RM), W(DP))
+#define cvtps_ld(XG, RM, DP)                                                \
+        cvtqs_ld(W(XG), W(RM), W(DP))
 
 /* cvt (signed-int-to-fp)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
 
-#define cvtpn_rr(RG, RM)                                                    \
-        cvtqn_rr(W(RG), W(RM))
+#define cvtpn_rr(XG, XS)                                                    \
+        cvtqn_rr(W(XG), W(XS))
 
-#define cvtpn_ld(RG, RM, DP)                                                \
-        cvtqn_ld(W(RG), W(RM), W(DP))
+#define cvtpn_ld(XG, RM, DP)                                                \
+        cvtqn_ld(W(XG), W(RM), W(DP))
 
 /* cvr (fp-to-signed-int)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
@@ -1569,20 +1569,20 @@ struct rt_SIMD_REGS
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rnrps_rr(RG, RM, mode)                                              \
-        rnrqs_rr(W(RG), W(RM), mode)
+#define rnrps_rr(XG, XS, mode)                                              \
+        rnrqs_rr(W(XG), W(XS), mode)
 
-#define cvrps_rr(RG, RM, mode)                                              \
-        cvrqs_rr(W(RG), W(RM), mode)
+#define cvrps_rr(XG, XS, mode)                                              \
+        cvrqs_rr(W(XG), W(XS), mode)
 
 /* mmv
  * uses Xmm0 implicitly as a mask register */
 
-#define mmvpx_ld(RG, RM, DP) /* not portable, use conditionally */          \
-        mmvqx_ld(W(RG), W(RM), W(DP))
+#define mmvpx_ld(XG, RM, DP) /* not portable, use conditionally */          \
+        mmvqx_ld(W(XG), W(RM), W(DP))
 
-#define mmvpx_st(RG, RM, DP) /* not portable, use conditionally */          \
-        mmvqx_st(W(RG), W(RM), W(DP))
+#define mmvpx_st(XG, RM, DP) /* not portable, use conditionally */          \
+        mmvqx_st(W(XG), W(RM), W(DP))
 
 #endif /* RT_ELEMENT */
 
