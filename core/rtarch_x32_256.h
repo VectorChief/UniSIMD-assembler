@@ -166,7 +166,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DP), EMPTY)
 
-/* ann (~XG & XS) */
+/* ann (G = ~G & S) */
 
 #define annox_rr(XG, XS)                                                    \
         VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x55)                 \
@@ -188,7 +188,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DP), EMPTY)
 
-/* orn (~XG | XS) */
+/* orn (G = ~G | S) */
 
 #define ornox_rr(XG, XS)                                                    \
         notox_rx(W(XG))                                                     \

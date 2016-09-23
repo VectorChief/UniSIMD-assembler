@@ -106,7 +106,7 @@
         EMITW(0x78000023 | MPM(Tmm1,    MOD(MS), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x7800001E | MXM(REG(XG), REG(XG), Tmm1))
 
-/* ann (~XG & XS) */
+/* ann (G = ~G & S) */
 
 #define annqx_rr(XG, XS)                                                    \
         EMITW(0x78C0001E | MXM(REG(XG), REG(XS), TmmZ))
@@ -126,7 +126,7 @@
         EMITW(0x78000023 | MPM(Tmm1,    MOD(MS), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x7820001E | MXM(REG(XG), REG(XG), Tmm1))
 
-/* orn (~XG | XS) */
+/* orn (G = ~G | S) */
 
 #define ornqx_rr(XG, XS)                                                    \
         notqx_rx(W(XG))                                                     \

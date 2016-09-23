@@ -34,7 +34,7 @@
 #undef  sregs_la
 #undef  movox_ld
 #undef  movqx_ld
-#define movqx_ld(XG, MS, DP)
+#define movqx_ld(XD, MS, DP)
 #undef  EMITS
 #define EMITS(w) EMITW(w)
 
@@ -193,7 +193,7 @@
         EMITW(0x78000023 | MPM(Tmm1,    MOD(MS), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x7800001E | MXM(REG(XG), REG(XG), Tmm1))
 
-/* ann (~XG & XS) */
+/* ann (G = ~G & S) */
 
 #define annox_rr(XG, XS)                                                    \
         EMITW(0x78C0001E | MXM(REG(XG), REG(XS), TmmZ))
@@ -213,7 +213,7 @@
         EMITW(0x78000023 | MPM(Tmm1,    MOD(MS), VAL(DP), B2(DP), P2(DP)))  \
         EMITW(0x7820001E | MXM(REG(XG), REG(XG), Tmm1))
 
-/* orn (~XG | XS) */
+/* orn (G = ~G | S) */
 
 #define ornox_rr(XG, XS)                                                    \
         notox_rx(W(XG))                                                     \

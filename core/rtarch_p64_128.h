@@ -113,7 +113,7 @@
         EMITW(0x7C000699 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0xF0000417 | MXM(REG(XG), REG(XG), Tmm1))/* ^ == -1 if true */
 
-/* ann (~XG & XS) */
+/* ann (G = ~G & S) */
 
 #define annqx_rr(XG, XS)                                                    \
         EMITW(0xF0000457 | MXM(REG(XG), REG(XS), REG(XG)))
@@ -135,7 +135,7 @@
         EMITW(0x7C000699 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0xF0000497 | MXM(REG(XG), REG(XG), Tmm1))/* ^ == -1 if true */
 
-/* orn (~XG | XS) */
+/* orn (G = ~G | S) */
 
 #define ornqx_rr(XG, XS)                                                    \
         EMITW(0xF0000557 | MXM(REG(XG), REG(XS), REG(XG)))

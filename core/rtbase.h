@@ -881,7 +881,7 @@ struct rt_SIMD_REGS
 #define andpx_ld(XG, MS, DP)                                                \
         andox_ld(W(XG), W(MS), W(DP))
 
-/* ann (~XG & XS) */
+/* ann (G = ~G & S) */
 
 #define annpx_rr(XG, XS)                                                    \
         annox_rr(W(XG), W(XS))
@@ -897,7 +897,7 @@ struct rt_SIMD_REGS
 #define orrpx_ld(XG, MS, DP)                                                \
         orrox_ld(W(XG), W(MS), W(DP))
 
-/* orn (~XG | XS) */
+/* orn (G = ~G | S) */
 
 #define ornpx_rr(XG, XS)                                                    \
         ornox_rr(W(XG), W(XS))
@@ -1244,7 +1244,7 @@ struct rt_SIMD_REGS
 #define andpx_ld(XG, MS, DP)                                                \
         andqx_ld(W(XG), W(MS), W(DP))
 
-/* ann (~XG & XS) */
+/* ann (G = ~G & S) */
 
 #define annpx_rr(XG, XS)                                                    \
         annqx_rr(W(XG), W(XS))
@@ -1260,7 +1260,7 @@ struct rt_SIMD_REGS
 #define orrpx_ld(XG, MS, DP)                                                \
         orrqx_ld(W(XG), W(MS), W(DP))
 
-/* orn (~XG | XS) */
+/* orn (G = ~G | S) */
 
 #define ornpx_rr(XG, XS)                                                    \
         ornqx_rr(W(XG), W(XS))

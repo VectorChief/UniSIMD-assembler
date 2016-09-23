@@ -112,7 +112,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x54)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DP), EMPTY)
 
-/* ann (~XG & XS) */
+/* ann (G = ~G & S) */
 
 #define annqx_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x55)                       \
@@ -134,7 +134,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x56)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DP), EMPTY)
 
-/* orn (~XG | XS) */
+/* orn (G = ~G | S) */
 
 #define ornqx_rr(XG, XS)                                                    \
         notqx_rx(W(XG))                                                     \

@@ -110,7 +110,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DP), EMPTY)
 
-/* ann (~XG & XS) */
+/* ann (G = ~G & S) */
 
 #define annqx_rr(XG, XS)                                                    \
         VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x55)                 \
@@ -132,7 +132,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DP), EMPTY)
 
-/* orn (~XG | XS) */
+/* orn (G = ~G | S) */
 
 #define ornqx_rr(XG, XS)                                                    \
         notqx_rx(W(XG))                                                     \

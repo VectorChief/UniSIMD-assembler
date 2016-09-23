@@ -185,7 +185,7 @@
         EMITW(0xF4200AAF | MXM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF2000150 | MXM(REG(XG), REG(XG), Tmm1))
 
-/* ann (~XG & XS) */
+/* ann (G = ~G & S) */
 
 #define annox_rr(XG, XS)                                                    \
         EMITW(0xF2100150 | MXM(REG(XG), REG(XS), REG(XG)))
@@ -207,7 +207,7 @@
         EMITW(0xF4200AAF | MXM(Tmm1,    TPxx,    0x00))                     \
         EMITW(0xF2200150 | MXM(REG(XG), REG(XG), Tmm1))
 
-/* orn (~XG | XS) */
+/* orn (G = ~G | S) */
 
 #define ornox_rr(XG, XS)                                                    \
         EMITW(0xF2300150 | MXM(REG(XG), REG(XS), REG(XG)))

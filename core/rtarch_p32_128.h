@@ -34,7 +34,7 @@
 #undef  sregs_la
 #undef  movox_ld
 #undef  movqx_ld
-#define movqx_ld(XG, MS, DP)
+#define movqx_ld(XD, MS, DP)
 #undef  EMITS
 #define EMITS(w) EMITW(w)
 
@@ -205,7 +205,7 @@
         EMITW(0x7C0000CE | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0x10000404 | MXM(REG(XG), REG(XG), Tmm1))/* ^ == -1 if true */
 
-/* ann (~XG & XS) */
+/* ann (G = ~G & S) */
 
 #define annox_rr(XG, XS)                                                    \
         EMITW(0x10000444 | MXM(REG(XG), REG(XS), REG(XG)))
@@ -227,7 +227,7 @@
         EMITW(0x7C0000CE | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0x10000484 | MXM(REG(XG), REG(XG), Tmm1))/* ^ == -1 if true */
 
-/* orn (~XG | XS) */
+/* orn (G = ~G | S) */
 
 #define ornox_rr(XG, XS)                                                    \
         EMITW(0x10000544 | MXM(REG(XG), REG(XS), REG(XG)))
@@ -710,7 +710,7 @@
         EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0xF0000417 | MXM(REG(XG), REG(XG), Tmm1))/* ^ == -1 if true */
 
-/* ann */
+/* ann (G = ~G & S) */
 
 #define annox_rr(XG, XS)                                                    \
         EMITW(0xF0000457 | MXM(REG(XG), REG(XS), REG(XG)))
@@ -732,7 +732,7 @@
         EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0xF0000497 | MXM(REG(XG), REG(XG), Tmm1))/* ^ == -1 if true */
 
-/* orn */
+/* orn (G = ~G | S) */
 
 #define ornox_rr(XG, XS)                                                    \
         EMITW(0xF0000557 | MXM(REG(XG), REG(XS), REG(XG)))
