@@ -90,8 +90,9 @@
  * MS - BASE addressing mode (Oeax, M***, I***) (memory-src2)
  * MT - BASE addressing mode (Oeax, M***, I***) (memory-src3)
  *
- * IM - immediate value (smallest size IC is used for shifts)
  * DP - displacement value (of given size DP, DF, DG, DH, DV)
+ * IS - immediate value (is used as a second or first source)
+ * IT - immediate value (is used as a third or second source)
  */
 
 /******************************************************************************/
@@ -521,9 +522,9 @@
 
 /* shl */
 
-#define shlox_ri(XG, IM)                                                    \
+#define shlox_ri(XG, IS)                                                    \
         EMITW(0x78400009 | MXM(REG(XG), REG(XG), 0x00) |                    \
-                                                 (0x1F & VAL(IM)) << 16)
+                                                 (0x1F & VAL(IS)) << 16)
 
 #define shlox_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DP), C1(DP), EMPTY2)   \
@@ -533,9 +534,9 @@
 
 /* shr */
 
-#define shrox_ri(XG, IM)                                                    \
+#define shrox_ri(XG, IS)                                                    \
         EMITW(0x79400009 | MXM(REG(XG), REG(XG), 0x00) |                    \
-                                                 (0x1F & VAL(IM)) << 16)
+                                                 (0x1F & VAL(IS)) << 16)
 
 #define shrox_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DP), C1(DP), EMPTY2)   \
@@ -543,9 +544,9 @@
         EMITW(0x7B02001E | MXM(Tmm1,    TMxx,    0x00))                     \
         EMITW(0x7940000D | MXM(REG(XG), REG(XG), Tmm1))
 
-#define shron_ri(XG, IM)                                                    \
+#define shron_ri(XG, IS)                                                    \
         EMITW(0x78C00009 | MXM(REG(XG), REG(XG), 0x00) |                    \
-                                                 (0x1F & VAL(IM)) << 16)
+                                                 (0x1F & VAL(IS)) << 16)
 
 #define shron_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DP), C1(DP), EMPTY2)   \

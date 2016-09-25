@@ -63,8 +63,9 @@
  * MS - BASE addressing mode (Oeax, M***, I***) (memory-src2)
  * MT - BASE addressing mode (Oeax, M***, I***) (memory-src3)
  *
- * IM - immediate value (smallest size IC is used for shifts)
  * DP - displacement value (of given size DP, DF, DG, DH, DV)
+ * IS - immediate value (is used as a second or first source)
+ * IT - immediate value (is used as a third or second source)
  */
 
 /******************************************************************************/
@@ -435,9 +436,9 @@
 
 /* shl */
 
-#define shlqx_ri(XG, IM)                                                    \
+#define shlqx_ri(XG, IS)                                                    \
         EMITW(0x4F405400 | MXM(REG(XG), REG(XG), 0x00) |                    \
-                                                 (0x3F & VAL(IM)) << 16)
+                                                 (0x3F & VAL(IS)) << 16)
 
 #define shlqx_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DP), C2(DP), EMPTY2)   \
@@ -447,10 +448,10 @@
 
 /* shr */
 
-#define shrqx_ri(XG, IM) /* emits shift-left for zero-immediate args */     \
+#define shrqx_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
         EMITW(0x4F400400 | MXM(REG(XG), REG(XG), 0x00) |                    \
-        (+(VAL(IM) == 0) & 0x00005000) | (+(VAL(IM) != 0) & 0x20000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x3F &-VAL(IM)) << 16)
+        (+(VAL(IS) == 0) & 0x00005000) | (+(VAL(IS) != 0) & 0x20000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x3F &-VAL(IS)) << 16)
 
 #define shrqx_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DP), C2(DP), EMPTY2)   \
@@ -459,10 +460,10 @@
         EMITW(0x6EE0B800 | MXM(Tmm1,    Tmm1,    0x00))                     \
         EMITW(0x6EE04400 | MXM(REG(XG), REG(XG), Tmm1))
 
-#define shrqn_ri(XG, IM) /* emits shift-left for zero-immediate args */     \
+#define shrqn_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
         EMITW(0x4F400400 | MXM(REG(XG), REG(XG), 0x00) |                    \
-        (+(VAL(IM) == 0) & 0x00005000) | (+(VAL(IM) != 0) & 0x00000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x3F &-VAL(IM)) << 16)
+        (+(VAL(IS) == 0) & 0x00005000) | (+(VAL(IS) != 0) & 0x00000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x3F &-VAL(IS)) << 16)
 
 #define shrqn_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DP), C2(DP), EMPTY2)   \

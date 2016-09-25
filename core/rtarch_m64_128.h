@@ -63,8 +63,9 @@
  * MS - BASE addressing mode (Oeax, M***, I***) (memory-src2)
  * MT - BASE addressing mode (Oeax, M***, I***) (memory-src3)
  *
- * IM - immediate value (smallest size IC is used for shifts)
  * DP - displacement value (of given size DP, DF, DG, DH, DV)
+ * IS - immediate value (is used as a second or first source)
+ * IT - immediate value (is used as a third or second source)
  */
 
 /******************************************************************************/
@@ -434,9 +435,9 @@
 
 /* shl */
 
-#define shlqx_ri(XG, IM)                                                    \
+#define shlqx_ri(XG, IS)                                                    \
         EMITW(0x78000009 | MXM(REG(XG), REG(XG), 0x00) |                    \
-                                                 (0x3F & VAL(IM)) << 16)
+                                                 (0x3F & VAL(IS)) << 16)
 
 #define shlqx_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DP), C1(DP), EMPTY2)   \
@@ -446,9 +447,9 @@
 
 /* shr */
 
-#define shrqx_ri(XG, IM)                                                    \
+#define shrqx_ri(XG, IS)                                                    \
         EMITW(0x79000009 | MXM(REG(XG), REG(XG), 0x00) |                    \
-                                                 (0x3F & VAL(IM)) << 16)
+                                                 (0x3F & VAL(IS)) << 16)
 
 #define shrqx_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DP), C1(DP), EMPTY2)   \
@@ -456,9 +457,9 @@
         EMITW(0x7B03001E | MXM(Tmm1,    TMxx,    0x00))                     \
         EMITW(0x7960000D | MXM(REG(XG), REG(XG), Tmm1))
 
-#define shrqn_ri(XG, IM)                                                    \
+#define shrqn_ri(XG, IS)                                                    \
         EMITW(0x78800009 | MXM(REG(XG), REG(XG), 0x00) |                    \
-                                                 (0x3F & VAL(IM)) << 16)
+                                                 (0x3F & VAL(IS)) << 16)
 
 #define shrqn_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DP), C1(DP), EMPTY2)   \

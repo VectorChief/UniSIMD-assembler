@@ -65,8 +65,9 @@
  * MS - BASE addressing mode (Oeax, M***, I***) (memory-src2)
  * MT - BASE addressing mode (Oeax, M***, I***) (memory-src3)
  *
- * IM - immediate value (smallest size IC is used for shifts)
  * DP - displacement value (of given size DP, DF, DG, DH, DV)
+ * IS - immediate value (is used as a second or first source)
+ * IT - immediate value (is used as a third or second source)
  */
 
 /******************************************************************************/
@@ -512,10 +513,10 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 
 #if (RT_256 < 2)
 
-#define prmqx_rr(XD, XS, IM) /* not portable, do not use outside */         \
+#define prmqx_rr(XD, XS, IT) /* not portable, do not use outside */         \
         VEX(RXB(XD), RXB(XS), REN(XD), 1, 1, 3) EMITB(0x46)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM)))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define movjx_ld(XD, MS, DP) /* not portable, do not use outside */         \
     ADR VEX(RXB(XD), RXB(MS),     0x0, 0, 1, 1) EMITB(0x28)                 \
@@ -597,17 +598,17 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 
 /* shl */
 
-#define shljx_ri(XG, IM)     /* not portable, do not use outside */         \
+#define shljx_ri(XG, IS)     /* not portable, do not use outside */         \
         VEX(0,       RXB(XG), REN(XG), 0, 1, 1) EMITB(0x73)                 \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
 
-#define shlqx_ri(XG, IM)                                                    \
+#define shlqx_ri(XG, IS)                                                    \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        shljx_ri(W(XG), W(IM))                                              \
+        shljx_ri(W(XG), W(IS))                                              \
         movjx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
         movjx_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        shljx_ri(W(XG), W(IM))                                              \
+        shljx_ri(W(XG), W(IS))                                              \
         movjx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
@@ -627,17 +628,17 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 
 /* shr */
 
-#define shrjx_ri(XG, IM)     /* not portable, do not use outside */         \
+#define shrjx_ri(XG, IS)     /* not portable, do not use outside */         \
         VEX(0,       RXB(XG), REN(XG), 0, 1, 1) EMITB(0x73)                 \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
 
-#define shrqx_ri(XG, IM)                                                    \
+#define shrqx_ri(XG, IS)                                                    \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        shrjx_ri(W(XG), W(IM))                                              \
+        shrjx_ri(W(XG), W(IS))                                              \
         movjx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
         movjx_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        shrjx_ri(W(XG), W(IM))                                              \
+        shrjx_ri(W(XG), W(IS))                                              \
         movjx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
@@ -683,10 +684,10 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 
 /* shl */
 
-#define shlqx_ri(XG, IM)                                                    \
+#define shlqx_ri(XG, IS)                                                    \
         VEX(0,       RXB(XG), REN(XG), 1, 1, 1) EMITB(0x73)                 \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
 
 #define shlqx_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
     ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0xF3)                 \
@@ -695,10 +696,10 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 
 /* shr */
 
-#define shrqx_ri(XG, IM)                                                    \
+#define shrqx_ri(XG, IS)                                                    \
         VEX(0,       RXB(XG), REN(XG), 1, 1, 1) EMITB(0x73)                 \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
 
 #define shrqx_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
     ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0xD3)                 \
@@ -707,12 +708,12 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 
 #endif /* RT_256 >= 2 */
 
-#define shrqn_ri(XG, IM)                                                    \
+#define shrqn_ri(XG, IS)                                                    \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        shrzn_mi(Mebp,  inf_SCR01(0x00), W(IM))                             \
-        shrzn_mi(Mebp,  inf_SCR01(0x08), W(IM))                             \
-        shrzn_mi(Mebp,  inf_SCR01(0x10), W(IM))                             \
-        shrzn_mi(Mebp,  inf_SCR01(0x18), W(IM))                             \
+        shrzn_mi(Mebp,  inf_SCR01(0x00), W(IS))                             \
+        shrzn_mi(Mebp,  inf_SCR01(0x08), W(IS))                             \
+        shrzn_mi(Mebp,  inf_SCR01(0x10), W(IS))                             \
+        shrzn_mi(Mebp,  inf_SCR01(0x18), W(IS))                             \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
 #define shrqn_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \

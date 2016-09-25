@@ -88,8 +88,9 @@
  * MS - BASE addressing mode (Oeax, M***, I***) (memory-src2)
  * MT - BASE addressing mode (Oeax, M***, I***) (memory-src3)
  *
- * IM - immediate value (smallest size IC is used for shifts)
  * DP - displacement value (of given size DP, DF, DG, DH, DV)
+ * IS - immediate value (is used as a second or first source)
+ * IT - immediate value (is used as a third or second source)
  */
 
 /******************************************************************************/
@@ -638,12 +639,12 @@
 
 /* shl */
 
-#define shlox_ri(XG, IM)                                                    \
+#define shlox_ri(XG, IS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        shlwx_mi(Mebp,  inf_SCR01(0x00), W(IM))                             \
-        shlwx_mi(Mebp,  inf_SCR01(0x04), W(IM))                             \
-        shlwx_mi(Mebp,  inf_SCR01(0x08), W(IM))                             \
-        shlwx_mi(Mebp,  inf_SCR01(0x0C), W(IM))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x00), W(IS))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x04), W(IS))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x08), W(IS))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x0C), W(IS))                             \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 #define shlox_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
@@ -659,12 +660,12 @@
 
 /* shr */
 
-#define shrox_ri(XG, IM)                                                    \
+#define shrox_ri(XG, IS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        shrwx_mi(Mebp,  inf_SCR01(0x00), W(IM))                             \
-        shrwx_mi(Mebp,  inf_SCR01(0x04), W(IM))                             \
-        shrwx_mi(Mebp,  inf_SCR01(0x08), W(IM))                             \
-        shrwx_mi(Mebp,  inf_SCR01(0x0C), W(IM))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x00), W(IS))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x04), W(IS))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x08), W(IS))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x0C), W(IS))                             \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 #define shrox_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
@@ -678,12 +679,12 @@
         stack_ld(Recx)                                                      \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-#define shron_ri(XG, IM)                                                    \
+#define shron_ri(XG, IS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        shrwn_mi(Mebp,  inf_SCR01(0x00), W(IM))                             \
-        shrwn_mi(Mebp,  inf_SCR01(0x04), W(IM))                             \
-        shrwn_mi(Mebp,  inf_SCR01(0x08), W(IM))                             \
-        shrwn_mi(Mebp,  inf_SCR01(0x0C), W(IM))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x00), W(IS))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x04), W(IS))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x08), W(IS))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x0C), W(IS))                             \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 #define shron_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
@@ -906,10 +907,10 @@
 
 /* shl */
 
-#define shlox_ri(XG, IM)                                                    \
+#define shlox_ri(XG, IS)                                                    \
     ESC EMITB(0x0F) EMITB(0x72)                                             \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
 #define shlox_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
     ESC EMITB(0x0F) EMITB(0xF2)                                             \
@@ -918,20 +919,20 @@
 
 /* shr */
 
-#define shrox_ri(XG, IM)                                                    \
+#define shrox_ri(XG, IS)                                                    \
     ESC EMITB(0x0F) EMITB(0x72)                                             \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
 #define shrox_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
     ESC EMITB(0x0F) EMITB(0xD2)                                             \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DP), EMPTY)
 
-#define shron_ri(XG, IM)                                                    \
+#define shron_ri(XG, IS)                                                    \
     ESC EMITB(0x0F) EMITB(0x72)                                             \
         MRM(0x04,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
 #define shron_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
     ESC EMITB(0x0F) EMITB(0xE2)                                             \

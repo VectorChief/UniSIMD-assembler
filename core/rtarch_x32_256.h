@@ -88,8 +88,9 @@
  * MS - BASE addressing mode (Oeax, M***, I***) (memory-src2)
  * MT - BASE addressing mode (Oeax, M***, I***) (memory-src3)
  *
- * IM - immediate value (smallest size IC is used for shifts)
  * DP - displacement value (of given size DP, DF, DG, DH, DV)
+ * IS - immediate value (is used as a second or first source)
+ * IT - immediate value (is used as a third or second source)
  */
 
 /******************************************************************************/
@@ -510,10 +511,10 @@
 
 #if (RT_256 < 2)
 
-#define prmox_rr(XD, XS, IM) /* not portable, do not use outside */         \
+#define prmox_rr(XD, XS, IT) /* not portable, do not use outside */         \
         VEX(RXB(XD), RXB(XS), REN(XD), 1, 1, 3) EMITB(0x46)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM)))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define movix_ld(XD, MS, DP) /* not portable, do not use outside */         \
     ADR VEX(RXB(XD), RXB(MS),     0x0, 0, 0, 1) EMITB(0x28)                 \
@@ -595,17 +596,17 @@
 
 /* shl */
 
-#define shlix_ri(XG, IM)     /* not portable, do not use outside */         \
+#define shlix_ri(XG, IS)     /* not portable, do not use outside */         \
         VEX(0,       RXB(XG), REN(XG), 0, 1, 1) EMITB(0x72)                 \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
-#define shlox_ri(XG, IM)                                                    \
+#define shlox_ri(XG, IS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        shlix_ri(W(XG), W(IM))                                              \
+        shlix_ri(W(XG), W(IS))                                              \
         movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
         movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        shlix_ri(W(XG), W(IM))                                              \
+        shlix_ri(W(XG), W(IS))                                              \
         movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
@@ -625,17 +626,17 @@
 
 /* shr */
 
-#define shrix_ri(XG, IM)     /* not portable, do not use outside */         \
+#define shrix_ri(XG, IS)     /* not portable, do not use outside */         \
         VEX(0,       RXB(XG), REN(XG), 0, 1, 1) EMITB(0x72)                 \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
-#define shrox_ri(XG, IM)                                                    \
+#define shrox_ri(XG, IS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        shrix_ri(W(XG), W(IM))                                              \
+        shrix_ri(W(XG), W(IS))                                              \
         movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
         movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        shrix_ri(W(XG), W(IM))                                              \
+        shrix_ri(W(XG), W(IS))                                              \
         movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
@@ -653,17 +654,17 @@
         movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-#define shrin_ri(XG, IM)     /* not portable, do not use outside */         \
+#define shrin_ri(XG, IS)     /* not portable, do not use outside */         \
         VEX(0,       RXB(XG), REN(XG), 0, 1, 1) EMITB(0x72)                 \
         MRM(0x04,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
-#define shron_ri(XG, IM)                                                    \
+#define shron_ri(XG, IS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        shrin_ri(W(XG), W(IM))                                              \
+        shrin_ri(W(XG), W(IS))                                              \
         movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
         movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        shrin_ri(W(XG), W(IM))                                              \
+        shrin_ri(W(XG), W(IS))                                              \
         movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
@@ -709,10 +710,10 @@
 
 /* shl */
 
-#define shlox_ri(XG, IM)                                                    \
+#define shlox_ri(XG, IS)                                                    \
         VEX(0,       RXB(XG), REN(XG), 1, 1, 1) EMITB(0x72)                 \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
 #define shlox_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
     ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0xF2)                 \
@@ -721,20 +722,20 @@
 
 /* shr */
 
-#define shrox_ri(XG, IM)                                                    \
+#define shrox_ri(XG, IS)                                                    \
         VEX(0,       RXB(XG), REN(XG), 1, 1, 1) EMITB(0x72)                 \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
 #define shrox_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
     ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0xD2)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DP), EMPTY)
 
-#define shron_ri(XG, IM)                                                    \
+#define shron_ri(XG, IS)                                                    \
         VEX(0,       RXB(XG), REN(XG), 1, 1, 1) EMITB(0x72)                 \
         MRM(0x04,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IM) & 0x1F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
 #define shron_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
     ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0xE2)                 \

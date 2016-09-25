@@ -85,8 +85,9 @@
  * MS - BASE addressing mode (Oeax, M***, I***) (memory-src2)
  * MT - BASE addressing mode (Oeax, M***, I***) (memory-src3)
  *
- * IM - immediate value (smallest size IC is used for shifts)
  * DP - displacement value (of given size DP, DF, DG, DH, DV)
+ * IS - immediate value (is used as a second or first source)
+ * IT - immediate value (is used as a third or second source)
  */
 
 /******************************************************************************/
@@ -512,9 +513,9 @@
 
 /* shl */
 
-#define shlox_ri(XG, IM)                                                    \
+#define shlox_ri(XG, IS)                                                    \
         EMITW(0x4F205400 | MXM(REG(XG), REG(XG), 0x00) |                    \
-                                                 (0x1F & VAL(IM)) << 16)
+                                                 (0x1F & VAL(IS)) << 16)
 
 #define shlox_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DP), C2(DP), EMPTY2)   \
@@ -524,10 +525,10 @@
 
 /* shr */
 
-#define shrox_ri(XG, IM) /* emits shift-left for zero-immediate args */     \
+#define shrox_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
         EMITW(0x4F200400 | MXM(REG(XG), REG(XG), 0x00) |                    \
-        (+(VAL(IM) == 0) & 0x00005000) | (+(VAL(IM) != 0) & 0x20000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IM)) << 16)
+        (+(VAL(IS) == 0) & 0x00005000) | (+(VAL(IS) != 0) & 0x20000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IS)) << 16)
 
 #define shrox_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DP), C2(DP), EMPTY2)   \
@@ -536,10 +537,10 @@
         EMITW(0x6EA0B800 | MXM(Tmm1,    Tmm1,    0x00))                     \
         EMITW(0x6EA04400 | MXM(REG(XG), REG(XG), Tmm1))
 
-#define shron_ri(XG, IM) /* emits shift-left for zero-immediate args */     \
+#define shron_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
         EMITW(0x4F200400 | MXM(REG(XG), REG(XG), 0x00) |                    \
-        (+(VAL(IM) == 0) & 0x00005000) | (+(VAL(IM) != 0) & 0x00000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IM)) << 16)
+        (+(VAL(IS) == 0) & 0x00005000) | (+(VAL(IS) != 0) & 0x00000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IS)) << 16)
 
 #define shron_ld(XG, MS, DP) /* loads SIMD, uses 1 elem at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DP), C2(DP), EMPTY2)   \
