@@ -272,11 +272,11 @@
 #define label_ld(lb)/*Reax*/                                                \
         ASM_BEG ASM_OP2(lea, eax, lb) ASM_END
 
-#define label_st(lb, RM, DP)                                                \
+#define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
         EMITB(0x89)                                                         \
-        MRM(0x00,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(0x00,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
 
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
@@ -433,7 +433,7 @@
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
 #define sregs_la()
-#define mxcsr_ld(MS, DP)
+#define mxcsr_ld(MS, DS)
 #endif /* RT_SIMD_CODE */
 
 #endif /* RT_X86 */
@@ -464,11 +464,11 @@
 #define label_ld(lb)/*Reax*/                                                \
         ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
 
-#define label_st(lb, RM, DP)                                                \
+#define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
         EMITB(0x89)                                                         \
-        MRM(0x00,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+        MRM(0x00,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
 
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
@@ -637,7 +637,7 @@
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
 #define sregs_la()
-#define mxcsr_ld(MS, DP)
+#define mxcsr_ld(MS, DS)
 #endif /* RT_SIMD_CODE */
 
 /* ------------------------------   X32, X64   ------------------------------ */
@@ -664,22 +664,22 @@
 #define label_ld(lb)/*Reax*/                                                \
         ASM_BEG ASM_OP2(leaq, %%rax, lb) ASM_END
 
-#define label_st(lb, RM, DP)                                                \
+#define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
-    ADR REX(0,       RXB(RM)) EMITB(0x89)                                   \
-        MRM(0x00,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+    ADR REX(0,       RXB(MD)) EMITB(0x89)                                   \
+        MRM(0x00,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
 
 #elif defined (RT_X64)
 
 #define label_ld(lb)/*Reax*/                                                \
         ASM_BEG ASM_OP2(leaq, %%rax, lb) ASM_END
 
-#define label_st(lb, RM, DP)                                                \
+#define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
-    ADR REW(0,       RXB(RM)) EMITB(0x89)                                   \
-        MRM(0x00,    MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+    ADR REW(0,       RXB(MD)) EMITB(0x89)                                   \
+        MRM(0x00,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
 
 #endif /* defined (RT_X32, RT_X64) */
 
@@ -850,7 +850,7 @@
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
 #define sregs_la()
-#define mxcsr_ld(MS, DP)
+#define mxcsr_ld(MS, DS)
 #endif /* RT_SIMD_CODE */
 
 /* ---------------------------------   ARM   -------------------------------- */
@@ -875,10 +875,10 @@
 #define label_ld(lb)/*Reax*/                                                \
         ASM_BEG ASM_OP2(adr, r0, lb) ASM_END
 
-#define label_st(lb, RM, DP)                                                \
+#define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0xE5800000 | MDM(Teax,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
+        EMITW(0xE5800000 | MDM(Teax,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
@@ -1079,20 +1079,20 @@
 #define label_ld(lb)/*Reax*/                                                \
         ASM_BEG ASM_OP2(adr, x0, lb) ASM_END
 
-#define label_st(lb, RM, DP)                                                \
+#define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0xB9000000 | MDM(Teax,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
+        EMITW(0xB9000000 | MDM(Teax,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
 #elif defined (RT_A64)
 
 #define label_ld(lb)/*Reax*/                                                \
         ASM_BEG ASM_OP2(adr, x0, lb) ASM_END
 
-#define label_st(lb, RM, DP)                                                \
+#define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0xF9000000 | MDM(Teax,    MOD(RM), VXL(DP), B1(DP), P1(DP)))
+        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
+        EMITW(0xF9000000 | MDM(Teax,    MOD(MD), VXL(DD), B1(DD), P1(DD)))
 
 #endif /* defined (RT_A32, RT_A64) */
 
@@ -1289,20 +1289,20 @@
 #define label_ld(lb)/*Reax*/                                                \
         ASM_BEG ASM_OP2(la, $a0, lb) ASM_END
 
-#define label_st(lb, RM, DP)                                                \
+#define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0xAC000000 | MDM(Teax,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
+        EMITW(0xAC000000 | MDM(Teax,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
 #elif defined (RT_M64)
 
 #define label_ld(lb)/*Reax*/                                                \
         ASM_BEG ASM_OP2(dla, $a0, lb) ASM_END
 
-#define label_st(lb, RM, DP)                                                \
+#define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0xFC000000 | MDM(Teax,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
+        EMITW(0xFC000000 | MDM(Teax,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
 #endif /* defined (RT_M32, RT_M64) */
 
@@ -1497,8 +1497,8 @@
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
 #define sregs_la()
-#define movox_ld(XD, MS, DP)
-#define movqx_ld(XD, MS, DP)
+#define movox_ld(XD, MS, DS)
+#define movqx_ld(XD, MS, DS)
 #define EMITS(w) /* EMPTY */
 #else  /* RT_SIMD_CODE */
 #define EMITS(w)    EMITW(w)
@@ -1529,10 +1529,10 @@
         ASM_BEG ASM_OP2(lis, %%r4, lb@h) ASM_END                            \
         ASM_BEG ASM_OP3(ori, %%r4, %%r4, lb@l) ASM_END
 
-#define label_st(lb, RM, DP)                                                \
+#define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0x90000000 | MDM(Teax,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
+        EMITW(0x90000000 | MDM(Teax,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
 #elif defined (RT_P64)
 
@@ -1543,10 +1543,10 @@
         ASM_BEG ASM_OP3(oris, %%r4, %%r4, lb@h) ASM_END                     \
         ASM_BEG ASM_OP3(ori, %%r4, %%r4, lb@l) ASM_END
 
-#define label_st(lb, RM, DP)                                                \
+#define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
-        AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
-        EMITW(0xF8000000 | MDM(Teax,    MOD(RM), VAL(DP), B1(DP), P1(DP)))
+        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
+        EMITW(0xF8000000 | MDM(Teax,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
 #endif /* defined (RT_P32, RT_P64) */
 
@@ -1703,8 +1703,8 @@
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
 #define sregs_la()
-#define movox_ld(XD, MS, DP)
-#define movqx_ld(XD, MS, DP)
+#define movox_ld(XD, MS, DS)
+#define movqx_ld(XD, MS, DS)
 #define EMITS(w) /* EMPTY */
 #else  /* RT_SIMD_CODE */
 #define EMITS(w)    EMITW(w)
