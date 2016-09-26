@@ -80,7 +80,11 @@
  * MS - BASE addressing mode (Oeax, M***, I***) (memory-src2)
  * MT - BASE addressing mode (Oeax, M***, I***) (memory-src3)
  *
- * DP - displacement value (of given size DP, DF, DG, DH, DV)
+ * DD - displacement value (DP, DF, DG, DH, DV) (memory-dest)
+ * DG - displacement value (DP, DF, DG, DH, DV) (memory-dsrc)
+ * DS - displacement value (DP, DF, DG, DH, DV) (memory-src2)
+ * DT - displacement value (DP, DF, DG, DH, DV) (memory-src3)
+ *
  * IS - immediate value (is used as a second or first source)
  * IT - immediate value (is used as a third or second source)
  *
@@ -147,24 +151,24 @@
         MRM(0x00,    MOD(RD), REG(RD))   /* truncate IC with TYP below */   \
         AUX(EMPTY,   EMPTY,   EMITW(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
-#define movzx_mi(MD, DP, IS)                                                \
+#define movzx_mi(MD, DD, IS)                                                \
     ADR REW(0,       RXB(MD)) EMITB(0xC7)                                   \
         MRM(0x00,    MOD(MD), REG(MD))   /* truncate IC with TYP below */   \
-        AUX(SIB(MD), CMD(DP), EMITW(VAL(IS) & ((TYP(IS) << 6) - 1)))
+        AUX(SIB(MD), CMD(DD), EMITW(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define movzx_rr(RD, RS)                                                    \
         REW(RXB(RD), RXB(RS)) EMITB(0x8B)                                   \
         MRM(REG(RD), MOD(RS), REG(RS))
 
-#define movzx_ld(RD, MS, DP)                                                \
+#define movzx_ld(RD, MS, DS)                                                \
     ADR REW(RXB(RD), RXB(MS)) EMITB(0x8B)                                   \
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DP), EMPTY)
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define movzx_st(RS, MD, DP)                                                \
+#define movzx_st(RS, MD, DD)                                                \
     ADR REW(RXB(RS), RXB(MD)) EMITB(0x89)                                   \
         MRM(REG(RS), MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DP), EMPTY)
+        AUX(SIB(MD), CMD(DD), EMPTY)
 
 /* and
  * set-flags: undefined (*x), yes (*z) */
@@ -172,17 +176,17 @@
 #define andzx_ri(RG, IS)                                                    \
         andzz_ri(W(RG), W(IS))
 
-#define andzx_mi(MG, DP, IS)                                                \
-        andzz_mi(W(MG), W(DP), W(IS))
+#define andzx_mi(MG, DG, IS)                                                \
+        andzz_mi(W(MG), W(DG), W(IS))
 
 #define andzx_rr(RG, RS)                                                    \
         andzz_rr(W(RG), W(RS))
 
-#define andzx_ld(RG, MS, DP)                                                \
-        andzz_ld(W(RG), W(MS), W(DP))
+#define andzx_ld(RG, MS, DS)                                                \
+        andzz_ld(W(RG), W(MS), W(DS))
 
-#define andzx_st(RS, MG, DP)                                                \
-        andzz_st(W(RS), W(MG), W(DP))
+#define andzx_st(RS, MG, DG)                                                \
+        andzz_st(W(RS), W(MG), W(DG))
 
 
 #define andzz_ri(RG, IS)                                                    \
@@ -190,24 +194,24 @@
         MRM(0x04,    MOD(RG), REG(RG))                                      \
         AUX(EMPTY,   EMPTY,   CMD(IS))
 
-#define andzz_mi(MG, DP, IS)                                                \
+#define andzz_mi(MG, DG, IS)                                                \
     ADR REW(0,       RXB(MG)) EMITB(0x81 | TYP(IS))                         \
         MRM(0x04,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), CMD(IS))
+        AUX(SIB(MG), CMD(DG), CMD(IS))
 
 #define andzz_rr(RG, RS)                                                    \
         REW(RXB(RG), RXB(RS)) EMITB(0x23)                                   \
         MRM(REG(RG), MOD(RS), REG(RS))
 
-#define andzz_ld(RG, MS, DP)                                                \
+#define andzz_ld(RG, MS, DS)                                                \
     ADR REW(RXB(RG), RXB(MS)) EMITB(0x23)                                   \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DP), EMPTY)
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define andzz_st(RS, MG, DP)                                                \
+#define andzz_st(RS, MG, DG)                                                \
     ADR REW(RXB(RS), RXB(MG)) EMITB(0x21)                                   \
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), EMPTY)
+        AUX(SIB(MG), CMD(DG), EMPTY)
 
 /* ann (G = ~G & S)
  * set-flags: undefined (*x), yes (*z) */
@@ -216,48 +220,48 @@
         notzx_rx(W(RG))                                                     \
         andzx_ri(W(RG), W(IS))
 
-#define annzx_mi(MG, DP, IS)                                                \
-        notzx_rx(W(MG), W(DP))                                              \
-        andzx_mi(W(MG), W(DP), W(IS))
+#define annzx_mi(MG, DG, IS)                                                \
+        notzx_rx(W(MG), W(DG))                                              \
+        andzx_mi(W(MG), W(DG), W(IS))
 
 #define annzx_rr(RG, RS)                                                    \
         notzx_rx(W(RG))                                                     \
         andzx_rr(W(RG), W(RS))
 
-#define annzx_ld(RG, MS, DP)                                                \
+#define annzx_ld(RG, MS, DS)                                                \
         notzx_rx(W(RG))                                                     \
-        andzx_ld(W(RG), W(MS), W(DP))
+        andzx_ld(W(RG), W(MS), W(DS))
 
-#define annzx_st(RS, MG, DP)                                                \
-        notzx_rx(W(MG), W(DP))                                              \
-        andzx_st(W(RS), W(MG), W(DP))
+#define annzx_st(RS, MG, DG)                                                \
+        notzx_rx(W(MG), W(DG))                                              \
+        andzx_st(W(RS), W(MG), W(DG))
 
-#define annzx_mr(MG, DP, RS)                                                \
-        annzx_st(W(RS), W(MG), W(DP))
+#define annzx_mr(MG, DG, RS)                                                \
+        annzx_st(W(RS), W(MG), W(DG))
 
 
 #define annzz_ri(RG, IS)                                                    \
         notzx_rx(W(RG))                                                     \
         andzz_ri(W(RG), W(IS))
 
-#define annzz_mi(MG, DP, IS)                                                \
-        notzx_rx(W(MG), W(DP))                                              \
-        andzz_mi(W(MG), W(DP), W(IS))
+#define annzz_mi(MG, DG, IS)                                                \
+        notzx_rx(W(MG), W(DG))                                              \
+        andzz_mi(W(MG), W(DG), W(IS))
 
 #define annzz_rr(RG, RS)                                                    \
         notzx_rx(W(RG))                                                     \
         andzz_rr(W(RG), W(RS))
 
-#define annzz_ld(RG, MS, DP)                                                \
+#define annzz_ld(RG, MS, DS)                                                \
         notzx_rx(W(RG))                                                     \
-        andzz_ld(W(RG), W(MS), W(DP))
+        andzz_ld(W(RG), W(MS), W(DS))
 
-#define annzz_st(RS, MG, DP)                                                \
-        notzx_rx(W(MG), W(DP))                                              \
-        andzz_st(W(RS), W(MG), W(DP))
+#define annzz_st(RS, MG, DG)                                                \
+        notzx_rx(W(MG), W(DG))                                              \
+        andzz_st(W(RS), W(MG), W(DG))
 
-#define annzz_mr(MG, DP, RS)                                                \
-        annzz_st(W(RS), W(MG), W(DP))
+#define annzz_mr(MG, DG, RS)                                                \
+        annzz_st(W(RS), W(MG), W(DG))
 
 /* orr
  * set-flags: undefined (*x), yes (*z) */
@@ -265,17 +269,17 @@
 #define orrzx_ri(RG, IS)                                                    \
         orrzz_ri(W(RG), W(IS))
 
-#define orrzx_mi(MG, DP, IS)                                                \
-        orrzz_mi(W(MG), W(DP), W(IS))
+#define orrzx_mi(MG, DG, IS)                                                \
+        orrzz_mi(W(MG), W(DG), W(IS))
 
 #define orrzx_rr(RG, RS)                                                    \
         orrzz_rr(W(RG), W(RS))
 
-#define orrzx_ld(RG, MS, DP)                                                \
-        orrzz_ld(W(RG), W(MS), W(DP))
+#define orrzx_ld(RG, MS, DS)                                                \
+        orrzz_ld(W(RG), W(MS), W(DS))
 
-#define orrzx_st(RS, MG, DP)                                                \
-        orrzz_st(W(RS), W(MG), W(DP))
+#define orrzx_st(RS, MG, DG)                                                \
+        orrzz_st(W(RS), W(MG), W(DG))
 
 
 #define orrzz_ri(RG, IS)                                                    \
@@ -283,24 +287,24 @@
         MRM(0x01,    MOD(RG), REG(RG))                                      \
         AUX(EMPTY,   EMPTY,   CMD(IS))
 
-#define orrzz_mi(MG, DP, IS)                                                \
+#define orrzz_mi(MG, DG, IS)                                                \
     ADR REW(0,       RXB(MG)) EMITB(0x81 | TYP(IS))                         \
         MRM(0x01,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), CMD(IS))
+        AUX(SIB(MG), CMD(DG), CMD(IS))
 
 #define orrzz_rr(RG, RS)                                                    \
         REW(RXB(RG), RXB(RS)) EMITB(0x0B)                                   \
         MRM(REG(RG), MOD(RS), REG(RS))
 
-#define orrzz_ld(RG, MS, DP)                                                \
+#define orrzz_ld(RG, MS, DS)                                                \
     ADR REW(RXB(RG), RXB(MS)) EMITB(0x0B)                                   \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DP), EMPTY)
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define orrzz_st(RS, MG, DP)                                                \
+#define orrzz_st(RS, MG, DG)                                                \
     ADR REW(RXB(RS), RXB(MG)) EMITB(0x09)                                   \
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), EMPTY)
+        AUX(SIB(MG), CMD(DG), EMPTY)
 
 /* orn (G = ~G | S)
  * set-flags: undefined (*x), yes (*z) */
@@ -309,48 +313,48 @@
         notzx_rx(W(RG))                                                     \
         orrzx_ri(W(RG), W(IS))
 
-#define ornzx_mi(MG, DP, IS)                                                \
-        notzx_mx(W(MG), W(DP))                                              \
-        orrzx_mi(W(MG), W(DP), W(IS))
+#define ornzx_mi(MG, DG, IS)                                                \
+        notzx_mx(W(MG), W(DG))                                              \
+        orrzx_mi(W(MG), W(DG), W(IS))
 
 #define ornzx_rr(RG, RS)                                                    \
         notzx_rx(W(RG))                                                     \
         orrzx_rr(W(RG), W(RS))
 
-#define ornzx_ld(RG, MS, DP)                                                \
+#define ornzx_ld(RG, MS, DS)                                                \
         notzx_rx(W(RG))                                                     \
-        orrzx_ld(W(RG), W(MS), W(DP))
+        orrzx_ld(W(RG), W(MS), W(DS))
 
-#define ornzx_st(RS, MG, DP)                                                \
-        notzx_mx(W(MG), W(DP))                                              \
-        orrzx_st(W(RS), W(MG), W(DP))
+#define ornzx_st(RS, MG, DG)                                                \
+        notzx_mx(W(MG), W(DG))                                              \
+        orrzx_st(W(RS), W(MG), W(DG))
 
-#define ornzx_mr(MG, DP, RS)                                                \
-        ornzx_st(W(RS), W(MG), W(DP))
+#define ornzx_mr(MG, DG, RS)                                                \
+        ornzx_st(W(RS), W(MG), W(DG))
 
 
 #define ornzz_ri(RG, IS)                                                    \
         notzx_rx(W(RG))                                                     \
         orrzz_ri(W(RG), W(IS))
 
-#define ornzz_mi(MG, DP, IS)                                                \
-        notzx_mx(W(MG), W(DP))                                              \
-        orrzz_mi(W(MG), W(DP), W(IS))
+#define ornzz_mi(MG, DG, IS)                                                \
+        notzx_mx(W(MG), W(DG))                                              \
+        orrzz_mi(W(MG), W(DG), W(IS))
 
 #define ornzz_rr(RG, RS)                                                    \
         notzx_rx(W(RG))                                                     \
         orrzz_rr(W(RG), W(RS))
 
-#define ornzz_ld(RG, MS, DP)                                                \
+#define ornzz_ld(RG, MS, DS)                                                \
         notzx_rx(W(RG))                                                     \
-        orrzz_ld(W(RG), W(MS), W(DP))
+        orrzz_ld(W(RG), W(MS), W(DS))
 
-#define ornzz_st(RS, MG, DP)                                                \
-        notzx_mx(W(MG), W(DP))                                              \
-        orrzz_st(W(RS), W(MG), W(DP))
+#define ornzz_st(RS, MG, DG)                                                \
+        notzx_mx(W(MG), W(DG))                                              \
+        orrzz_st(W(RS), W(MG), W(DG))
 
-#define ornzz_mr(MG, DP, RS)                                                \
-        ornzz_st(W(RS), W(MG), W(DP))
+#define ornzz_mr(MG, DG, RS)                                                \
+        ornzz_st(W(RS), W(MG), W(DG))
 
 /* xor
  * set-flags: undefined (*x), yes (*z) */
@@ -358,17 +362,17 @@
 #define xorzx_ri(RG, IS)                                                    \
         xorzz_ri(W(RG), W(IS))
 
-#define xorzx_mi(MG, DP, IS)                                                \
-        xorzz_mi(W(MG), W(DP), W(IS))
+#define xorzx_mi(MG, DG, IS)                                                \
+        xorzz_mi(W(MG), W(DG), W(IS))
 
 #define xorzx_rr(RG, RS)                                                    \
         xorzz_rr(W(RG), W(RS))
 
-#define xorzx_ld(RG, MS, DP)                                                \
-        xorzz_ld(W(RG), W(MS), W(DP))
+#define xorzx_ld(RG, MS, DS)                                                \
+        xorzz_ld(W(RG), W(MS), W(DS))
 
-#define xorzx_st(RS, MG, DP)                                                \
-        xorzz_st(W(RS), W(MG), W(DP))
+#define xorzx_st(RS, MG, DG)                                                \
+        xorzz_st(W(RS), W(MG), W(DG))
 
 
 #define xorzz_ri(RG, IS)                                                    \
@@ -376,24 +380,24 @@
         MRM(0x06,    MOD(RG), REG(RG))                                      \
         AUX(EMPTY,   EMPTY,   CMD(IS))
 
-#define xorzz_mi(MG, DP, IS)                                                \
+#define xorzz_mi(MG, DG, IS)                                                \
     ADR REW(0,       RXB(MG)) EMITB(0x81 | TYP(IS))                         \
         MRM(0x06,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), CMD(IS))
+        AUX(SIB(MG), CMD(DG), CMD(IS))
 
 #define xorzz_rr(RG, RS)                                                    \
         REW(RXB(RG), RXB(RS)) EMITB(0x33)                                   \
         MRM(REG(RG), MOD(RS), REG(RS))
 
-#define xorzz_ld(RG, MS, DP)                                                \
+#define xorzz_ld(RG, MS, DS)                                                \
     ADR REW(RXB(RG), RXB(MS)) EMITB(0x33)                                   \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DP), EMPTY)
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define xorzz_st(RS, MG, DP)                                                \
+#define xorzz_st(RS, MG, DG)                                                \
     ADR REW(RXB(RS), RXB(MG)) EMITB(0x31)                                   \
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), EMPTY)
+        AUX(SIB(MG), CMD(DG), EMPTY)
 
 /* not
  * set-flags: no */
@@ -402,10 +406,10 @@
         REW(0,       RXB(RG)) EMITB(0xF7)                                   \
         MRM(0x02,    MOD(RG), REG(RG))
 
-#define notzx_mx(MG, DP)                                                    \
+#define notzx_mx(MG, DG)                                                    \
     ADR REW(0,       RXB(MG)) EMITB(0xF7)                                   \
         MRM(0x02,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), EMPTY)
+        AUX(SIB(MG), CMD(DG), EMPTY)
 
 /* neg
  * set-flags: undefined (*x), yes (*z) */
@@ -413,18 +417,18 @@
 #define negzx_rx(RG)                                                        \
         negzz_rx(W(RG))
 
-#define negzx_mx(MG, DP)                                                    \
-        negzz_mx(W(MG), W(DP))
+#define negzx_mx(MG, DG)                                                    \
+        negzz_mx(W(MG), W(DG))
 
 
 #define negzz_rx(RG)                                                        \
         REW(0,       RXB(RG)) EMITB(0xF7)                                   \
         MRM(0x03,    MOD(RG), REG(RG))
 
-#define negzz_mx(MG, DP)                                                    \
+#define negzz_mx(MG, DG)                                                    \
     ADR REW(0,       RXB(MG)) EMITB(0xF7)                                   \
         MRM(0x03,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), EMPTY)
+        AUX(SIB(MG), CMD(DG), EMPTY)
 
 /* add
  * set-flags: undefined (*x), yes (*z) */
@@ -432,17 +436,17 @@
 #define addzx_ri(RG, IS)                                                    \
         addzz_ri(W(RG), W(IS))
 
-#define addzx_mi(MG, DP, IS)                                                \
-        addzz_mi(W(MG), W(DP), W(IS))
+#define addzx_mi(MG, DG, IS)                                                \
+        addzz_mi(W(MG), W(DG), W(IS))
 
 #define addzx_rr(RG, RS)                                                    \
         addzz_rr(W(RG), W(RS))
 
-#define addzx_ld(RG, MS, DP)                                                \
-        addzz_ld(W(RG), W(MS), W(DP))
+#define addzx_ld(RG, MS, DS)                                                \
+        addzz_ld(W(RG), W(MS), W(DS))
 
-#define addzx_st(RS, MG, DP)                                                \
-        addzz_st(W(RS), W(MG), W(DP))
+#define addzx_st(RS, MG, DG)                                                \
+        addzz_st(W(RS), W(MG), W(DG))
 
 
 #define addzz_ri(RG, IS)                                                    \
@@ -450,24 +454,24 @@
         MRM(0x00,    MOD(RG), REG(RG))                                      \
         AUX(EMPTY,   EMPTY,   CMD(IS))
 
-#define addzz_mi(MG, DP, IS)                                                \
+#define addzz_mi(MG, DG, IS)                                                \
     ADR REW(0,       RXB(MG)) EMITB(0x81 | TYP(IS))                         \
         MRM(0x00,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), CMD(IS))
+        AUX(SIB(MG), CMD(DG), CMD(IS))
 
 #define addzz_rr(RG, RS)                                                    \
         REW(RXB(RG), RXB(RS)) EMITB(0x03)                                   \
         MRM(REG(RG), MOD(RS), REG(RS))
 
-#define addzz_ld(RG, MS, DP)                                                \
+#define addzz_ld(RG, MS, DS)                                                \
     ADR REW(RXB(RG), RXB(MS)) EMITB(0x03)                                   \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DP), EMPTY)
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define addzz_st(RS, MG, DP)                                                \
+#define addzz_st(RS, MG, DG)                                                \
     ADR REW(RXB(RS), RXB(MG)) EMITB(0x01)                                   \
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), EMPTY)
+        AUX(SIB(MG), CMD(DG), EMPTY)
 
 /* sub
  * set-flags: undefined (*x), yes (*z) */
@@ -475,20 +479,20 @@
 #define subzx_ri(RG, IS)                                                    \
         subzz_ri(W(RG), W(IS))
 
-#define subzx_mi(MG, DP, IS)                                                \
-        subzz_mi(W(MG), W(DP), W(IS))
+#define subzx_mi(MG, DG, IS)                                                \
+        subzz_mi(W(MG), W(DG), W(IS))
 
 #define subzx_rr(RG, RS)                                                    \
         subzz_rr(W(RG), W(RS))
 
-#define subzx_ld(RG, MS, DP)                                                \
-        subzz_ld(W(RG), W(MS), W(DP))
+#define subzx_ld(RG, MS, DS)                                                \
+        subzz_ld(W(RG), W(MS), W(DS))
 
-#define subzx_st(RS, MG, DP)                                                \
-        subzz_st(W(RS), W(MG), W(DP))
+#define subzx_st(RS, MG, DG)                                                \
+        subzz_st(W(RS), W(MG), W(DG))
 
-#define subzx_mr(MG, DP, RS)                                                \
-        subzx_st(W(RS), W(MG), W(DP))
+#define subzx_mr(MG, DG, RS)                                                \
+        subzx_st(W(RS), W(MG), W(DG))
 
 
 #define subzz_ri(RG, IS)                                                    \
@@ -496,27 +500,27 @@
         MRM(0x05,    MOD(RG), REG(RG))                                      \
         AUX(EMPTY,   EMPTY,   CMD(IS))
 
-#define subzz_mi(MG, DP, IS)                                                \
+#define subzz_mi(MG, DG, IS)                                                \
     ADR REW(0,       RXB(MG)) EMITB(0x81 | TYP(IS))                         \
         MRM(0x05,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), CMD(IS))
+        AUX(SIB(MG), CMD(DG), CMD(IS))
 
 #define subzz_rr(RG, RS)                                                    \
         REW(RXB(RG), RXB(RS)) EMITB(0x2B)                                   \
         MRM(REG(RG), MOD(RS), REG(RS))
 
-#define subzz_ld(RG, MS, DP)                                                \
+#define subzz_ld(RG, MS, DS)                                                \
     ADR REW(RXB(RG), RXB(MS)) EMITB(0x2B)                                   \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DP), EMPTY)
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define subzz_st(RS, MG, DP)                                                \
+#define subzz_st(RS, MG, DG)                                                \
     ADR REW(RXB(RS), RXB(MG)) EMITB(0x29)                                   \
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), EMPTY)
+        AUX(SIB(MG), CMD(DG), EMPTY)
 
-#define subzz_mr(MG, DP, RS)                                                \
-        subzz_st(W(RS), W(MG), W(DP))
+#define subzz_mr(MG, DG, RS)                                                \
+        subzz_st(W(RS), W(MG), W(DG))
 
 /* shl
  * set-flags: undefined (*x), yes (*z) */
@@ -524,46 +528,46 @@
 #define shlzx_rx(RG)                     /* reads Recx for shift value */   \
         shlzz_rx(W(RG))
 
-#define shlzx_mx(MG, DP)                 /* reads Recx for shift value */   \
-        shlzz_mx(W(MG), W(DP))
+#define shlzx_mx(MG, DG)                 /* reads Recx for shift value */   \
+        shlzz_mx(W(MG), W(DG))
 
 #define shlzx_ri(RG, IS)                                                    \
         shlzz_ri(W(RG), W(IS))
 
-#define shlzx_mi(MG, DP, IS)                                                \
-        shlzz_mi(W(MG), W(DP), W(IS))
+#define shlzx_mi(MG, DG, IS)                                                \
+        shlzz_mi(W(MG), W(DG), W(IS))
 
 #define shlzx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         shlzz_rr(W(RG), W(RS))
 
-#define shlzx_ld(RG, MS, DP)   /* Recx cannot be used as first operand */   \
-        shlzz_ld(W(RG), W(MS), W(DP))
+#define shlzx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        shlzz_ld(W(RG), W(MS), W(DS))
 
-#define shlzx_st(RS, MG, DP)                                                \
-        shlzz_st(W(RS), W(MG), W(DP))
+#define shlzx_st(RS, MG, DG)                                                \
+        shlzz_st(W(RS), W(MG), W(DG))
 
-#define shlzx_mr(MG, DP, RS)                                                \
-        shlzx_st(W(RS), W(MG), W(DP))
+#define shlzx_mr(MG, DG, RS)                                                \
+        shlzx_st(W(RS), W(MG), W(DG))
 
 
 #define shlzz_rx(RG)                     /* reads Recx for shift value */   \
         REW(0,       RXB(RG)) EMITB(0xD3)                                   \
         MRM(0x04,    MOD(RG), REG(RG))                                      \
 
-#define shlzz_mx(MG, DP)                 /* reads Recx for shift value */   \
+#define shlzz_mx(MG, DG)                 /* reads Recx for shift value */   \
     ADR REW(0,       RXB(MG)) EMITB(0xD3)                                   \
         MRM(0x04,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), EMPTY)
+        AUX(SIB(MG), CMD(DG), EMPTY)
 
 #define shlzz_ri(RG, IS)                                                    \
         REW(0,       RXB(RG)) EMITB(0xC1)                                   \
         MRM(0x04,    MOD(RG), REG(RG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
 
-#define shlzz_mi(MG, DP, IS)                                                \
+#define shlzz_mi(MG, DG, IS)                                                \
     ADR REW(0,       RXB(MG)) EMITB(0xC1)                                   \
         MRM(0x04,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), EMITB(VAL(IS) & 0x3F))
+        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS) & 0x3F))
 
 #define shlzz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
@@ -571,20 +575,20 @@
         shlzz_rx(W(RG))                                                     \
         stack_ld(Recx)
 
-#define shlzz_ld(RG, MS, DP)   /* Recx cannot be used as first operand */   \
+#define shlzz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
-        movzx_ld(Recx, W(MS), W(DP))                                        \
+        movzx_ld(Recx, W(MS), W(DS))                                        \
         shlzz_rx(W(RG))                                                     \
         stack_ld(Recx)
 
-#define shlzz_st(RS, MG, DP)                                                \
+#define shlzz_st(RS, MG, DG)                                                \
         stack_st(Recx)                                                      \
         movzx_rr(Recx, W(RS))                                               \
-        shlzz_mx(W(MG), W(DP))                                              \
+        shlzz_mx(W(MG), W(DG))                                              \
         stack_ld(Recx)
 
-#define shlzz_mr(MG, DP, RS)                                                \
-        shlzz_st(W(RS), W(MG), W(DP))
+#define shlzz_mr(MG, DG, RS)                                                \
+        shlzz_st(W(RS), W(MG), W(DG))
 
 /* shr
  * set-flags: undefined (*x), yes (*z) */
@@ -592,46 +596,46 @@
 #define shrzx_rx(RG)                     /* reads Recx for shift value */   \
         shrzz_rx(W(RG))
 
-#define shrzx_mx(MG, DP)                 /* reads Recx for shift value */   \
-        shrzz_mx(W(MG), W(DP))
+#define shrzx_mx(MG, DG)                 /* reads Recx for shift value */   \
+        shrzz_mx(W(MG), W(DG))
 
 #define shrzx_ri(RG, IS)                                                    \
         shrzz_ri(W(RG), W(IS))
 
-#define shrzx_mi(MG, DP, IS)                                                \
-        shrzz_mi(W(MG), W(DP), W(IS))
+#define shrzx_mi(MG, DG, IS)                                                \
+        shrzz_mi(W(MG), W(DG), W(IS))
 
 #define shrzx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         shrzz_rr(W(RG), W(RS))
 
-#define shrzx_ld(RG, MS, DP)   /* Recx cannot be used as first operand */   \
-        shrzz_ld(W(RG), W(MS), W(DP))
+#define shrzx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        shrzz_ld(W(RG), W(MS), W(DS))
 
-#define shrzx_st(RS, MG, DP)                                                \
-        shrzz_st(W(RS), W(MG), W(DP))
+#define shrzx_st(RS, MG, DG)                                                \
+        shrzz_st(W(RS), W(MG), W(DG))
 
-#define shrzx_mr(MG, DP, RS)                                                \
-        shrzx_st(W(RS), W(MG), W(DP))
+#define shrzx_mr(MG, DG, RS)                                                \
+        shrzx_st(W(RS), W(MG), W(DG))
 
 
 #define shrzz_rx(RG)                     /* reads Recx for shift value */   \
         REW(0,       RXB(RG)) EMITB(0xD3)                                   \
         MRM(0x05,    MOD(RG), REG(RG))                                      \
 
-#define shrzz_mx(MG, DP)                 /* reads Recx for shift value */   \
+#define shrzz_mx(MG, DG)                 /* reads Recx for shift value */   \
     ADR REW(0,       RXB(MG)) EMITB(0xD3)                                   \
         MRM(0x05,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), EMPTY)
+        AUX(SIB(MG), CMD(DG), EMPTY)
 
 #define shrzz_ri(RG, IS)                                                    \
         REW(0,       RXB(RG)) EMITB(0xC1)                                   \
         MRM(0x05,    MOD(RG), REG(RG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
 
-#define shrzz_mi(MG, DP, IS)                                                \
+#define shrzz_mi(MG, DG, IS)                                                \
     ADR REW(0,       RXB(MG)) EMITB(0xC1)                                   \
         MRM(0x05,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), EMITB(VAL(IS) & 0x3F))
+        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS) & 0x3F))
 
 #define shrzz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
@@ -639,40 +643,40 @@
         shrzz_rx(W(RG))                                                     \
         stack_ld(Recx)
 
-#define shrzz_ld(RG, MS, DP)   /* Recx cannot be used as first operand */   \
+#define shrzz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
-        movzx_ld(Recx, W(MS), W(DP))                                        \
+        movzx_ld(Recx, W(MS), W(DS))                                        \
         shrzz_rx(W(RG))                                                     \
         stack_ld(Recx)
 
-#define shrzz_st(RS, MG, DP)                                                \
+#define shrzz_st(RS, MG, DG)                                                \
         stack_st(Recx)                                                      \
         movzx_rr(Recx, W(RS))                                               \
-        shrzz_mx(W(MG), W(DP))                                              \
+        shrzz_mx(W(MG), W(DG))                                              \
         stack_ld(Recx)
 
-#define shrzz_mr(MG, DP, RS)                                                \
-        shrzz_st(W(RS), W(MG), W(DP))
+#define shrzz_mr(MG, DG, RS)                                                \
+        shrzz_st(W(RS), W(MG), W(DG))
 
 
 #define shrzn_rx(RG)                     /* reads Recx for shift value */   \
         REW(0,       RXB(RG)) EMITB(0xD3)                                   \
         MRM(0x07,    MOD(RG), REG(RG))                                      \
 
-#define shrzn_mx(MG, DP)                 /* reads Recx for shift value */   \
+#define shrzn_mx(MG, DG)                 /* reads Recx for shift value */   \
     ADR REW(0,       RXB(MG)) EMITB(0xD3)                                   \
         MRM(0x07,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), EMPTY)
+        AUX(SIB(MG), CMD(DG), EMPTY)
 
 #define shrzn_ri(RG, IS)                                                    \
         REW(0,       RXB(RG)) EMITB(0xC1)                                   \
         MRM(0x07,    MOD(RG), REG(RG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
 
-#define shrzn_mi(MG, DP, IS)                                                \
+#define shrzn_mi(MG, DG, IS)                                                \
     ADR REW(0,       RXB(MG)) EMITB(0xC1)                                   \
         MRM(0x07,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DP), EMITB(VAL(IS) & 0x3F))
+        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS) & 0x3F))
 
 #define shrzn_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
@@ -680,20 +684,20 @@
         shrzn_rx(W(RG))                                                     \
         stack_ld(Recx)
 
-#define shrzn_ld(RG, MS, DP)   /* Recx cannot be used as first operand */   \
+#define shrzn_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
-        movzx_ld(Recx, W(MS), W(DP))                                        \
+        movzx_ld(Recx, W(MS), W(DS))                                        \
         shrzn_rx(W(RG))                                                     \
         stack_ld(Recx)
 
-#define shrzn_st(RS, MG, DP)                                                \
+#define shrzn_st(RS, MG, DG)                                                \
         stack_st(Recx)                                                      \
         movzx_rr(Recx, W(RS))                                               \
-        shrzn_mx(W(MG), W(DP))                                              \
+        shrzn_mx(W(MG), W(DG))                                              \
         stack_ld(Recx)
 
-#define shrzn_mr(MG, DP, RS)                                                \
-        shrzn_st(W(RS), W(MG), W(DP))
+#define shrzn_mr(MG, DG, RS)                                                \
+        shrzn_st(W(RS), W(MG), W(DG))
 
 /* mul
  * set-flags: undefined */
@@ -707,37 +711,37 @@
         REW(RXB(RG), RXB(RS)) EMITB(0x0F) EMITB(0xAF)                       \
         MRM(REG(RG), MOD(RS), REG(RS))
 
-#define mulzx_ld(RG, MS, DP)                                                \
+#define mulzx_ld(RG, MS, DS)                                                \
     ADR REW(RXB(RG), RXB(MS)) EMITB(0x0F) EMITB(0xAF)                       \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DP), EMPTY)
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
 
 #define mulzx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
     ADR REW(0,       RXB(RS)) EMITB(0xF7)                                   \
         MRM(0x04,    MOD(RS), REG(RS))                                      \
 
-#define mulzx_xm(MS, DP) /* Reax is in/out, Redx is out(high)-zero-ext */   \
+#define mulzx_xm(MS, DS) /* Reax is in/out, Redx is out(high)-zero-ext */   \
     ADR REW(0,       RXB(MS)) EMITB(0xF7)                                   \
         MRM(0x04,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DP), EMPTY)
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
 
 #define mulzn_xr(RS)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
     ADR REW(0,       RXB(RS)) EMITB(0xF7)                                   \
         MRM(0x05,    MOD(RS), REG(RS))                                      \
 
-#define mulzn_xm(MS, DP) /* Reax is in/out, Redx is out(high)-sign-ext */   \
+#define mulzn_xm(MS, DS) /* Reax is in/out, Redx is out(high)-sign-ext */   \
     ADR REW(0,       RXB(MS)) EMITB(0xF7)                                   \
         MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DP), EMPTY)
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
 
 #define mulzp_xr(RS)     /* Reax is in/out, prepares Redx for divzn_x* */   \
         mulzn_xr(W(RS))       /* product must not exceed operands size */
 
-#define mulzp_xm(MS, DP) /* Reax is in/out, prepares Redx for divzn_x* */   \
-        mulzn_xm(W(MS), W(DP))/* product must not exceed operands size */
+#define mulzp_xm(MS, DS) /* Reax is in/out, prepares Redx for divzn_x* */   \
+        mulzn_xm(W(MS), W(DS))/* product must not exceed operands size */
 
 /* div
  * set-flags: undefined */
@@ -763,12 +767,12 @@
         movzx_rr(W(RG), Reax)                                               \
         stack_ld(Reax)
 
-#define divzx_ld(RG, MS, DP)   /* Reax cannot be used as first operand */   \
+#define divzx_ld(RG, MS, DS)   /* Reax cannot be used as first operand */   \
         stack_st(Reax)                                                      \
         stack_st(Redx)                                                      \
         movzx_rr(Reax, W(RG))                                               \
         prezx_rr()                                                          \
-        divzx_xm(W(MS), W(DP))                                              \
+        divzx_xm(W(MS), W(DS))                                              \
         stack_ld(Redx)                                                      \
         movzx_rr(W(RG), Reax)                                               \
         stack_ld(Reax)
@@ -795,12 +799,12 @@
         movzx_rr(W(RG), Reax)                                               \
         stack_ld(Reax)
 
-#define divzn_ld(RG, MS, DP)   /* Reax cannot be used as first operand */   \
+#define divzn_ld(RG, MS, DS)   /* Reax cannot be used as first operand */   \
         stack_st(Reax)                                                      \
         stack_st(Redx)                                                      \
         movzx_rr(Reax, W(RG))                                               \
         prezn_rr()                                                          \
-        divzn_xm(W(MS), W(DP))                                              \
+        divzn_xm(W(MS), W(DS))                                              \
         stack_ld(Redx)                                                      \
         movzx_rr(W(RG), Reax)                                               \
         stack_ld(Reax)
@@ -819,10 +823,10 @@
         MRM(0x06,    MOD(RS), REG(RS))                                      \
         AUX(EMPTY,   EMPTY,   EMPTY)
 
-#define divzx_xm(MS, DP) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+#define divzx_xm(MS, DS) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
     ADR REW(0,       RXB(MS)) EMITB(0xF7)                                   \
         MRM(0x06,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DP), EMPTY)
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
 
 #define divzn_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
@@ -830,18 +834,18 @@
         MRM(0x07,    MOD(RS), REG(RS))                                      \
         AUX(EMPTY,   EMPTY,   EMPTY)
 
-#define divzn_xm(MS, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+#define divzn_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
     ADR REW(0,       RXB(MS)) EMITB(0xF7)                                   \
         MRM(0x07,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DP), EMPTY)
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
 
 #define divzp_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
         divzn_xr(W(RS))              /* destroys Redx, Xmm0 (in ARMv7) */   \
                                      /* 24-bit int (fp32 div in ARMv7) */
 
-#define divzp_xm(MS, DP) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divzn_xm(W(MS), W(DP))       /* destroys Redx, Xmm0 (in ARMv7) */   \
+#define divzp_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divzn_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
                                      /* 24-bit int (fp32 div in ARMv7) */
 
 /* rem
@@ -868,12 +872,12 @@
         movzx_rr(W(RG), Redx)                                               \
         stack_ld(Redx)
 
-#define remzx_ld(RG, MS, DP)   /* Redx cannot be used as first operand */   \
+#define remzx_ld(RG, MS, DS)   /* Redx cannot be used as first operand */   \
         stack_st(Redx)                                                      \
         stack_st(Reax)                                                      \
         movzx_rr(Reax, W(RG))                                               \
         prezx_rr()                                                          \
-        divzx_xm(W(MS), W(DP))                                              \
+        divzx_xm(W(MS), W(DS))                                              \
         stack_ld(Reax)                                                      \
         movzx_rr(W(RG), Redx)                                               \
         stack_ld(Redx)
@@ -900,12 +904,12 @@
         movzx_rr(W(RG), Redx)                                               \
         stack_ld(Redx)
 
-#define remzn_ld(RG, MS, DP)   /* Redx cannot be used as first operand */   \
+#define remzn_ld(RG, MS, DS)   /* Redx cannot be used as first operand */   \
         stack_st(Redx)                                                      \
         stack_st(Reax)                                                      \
         movzx_rr(Reax, W(RG))                                               \
         prezn_rr()                                                          \
-        divzn_xm(W(MS), W(DP))                                              \
+        divzn_xm(W(MS), W(DS))                                              \
         stack_ld(Reax)                                                      \
         movzx_rr(W(RG), Redx)                                               \
         stack_ld(Redx)
@@ -917,7 +921,7 @@
 #define remzx_xr(RS)        /* to be placed immediately after divzx_xr */   \
                                      /* to produce remainder Redx<-rem */
 
-#define remzx_xm(MS, DP)    /* to be placed immediately after divzx_xm */   \
+#define remzx_xm(MS, DS)    /* to be placed immediately after divzx_xm */   \
                                      /* to produce remainder Redx<-rem */
 
 
@@ -927,7 +931,7 @@
 #define remzn_xr(RS)        /* to be placed immediately after divzn_xr */   \
                                      /* to produce remainder Redx<-rem */
 
-#define remzn_xm(MS, DP)    /* to be placed immediately after divzn_xm */   \
+#define remzn_xm(MS, DS)    /* to be placed immediately after divzn_xm */   \
                                      /* to produce remainder Redx<-rem */
 
 /* arj
@@ -939,32 +943,32 @@
         AR1(W(RG), op, zz_rx)                                               \
         CMJ(cc, lb)
 
-#define arjzx_mx(MG, DP, op, cc, lb)                                        \
-        AR2(W(MG), W(DP), op, zz_mx)                                        \
+#define arjzx_mx(MG, DG, op, cc, lb)                                        \
+        AR2(W(MG), W(DG), op, zz_mx)                                        \
         CMJ(cc, lb)
 
 #define arjzx_ri(RG, IS, op, cc, lb)                                        \
         AR2(W(RG), W(IS), op, zz_ri)                                        \
         CMJ(cc, lb)
 
-#define arjzx_mi(MG, DP, IS, op, cc, lb)                                    \
-        AR3(W(MG), W(DP), W(IS), op, zz_mi)                                 \
+#define arjzx_mi(MG, DG, IS, op, cc, lb)                                    \
+        AR3(W(MG), W(DG), W(IS), op, zz_mi)                                 \
         CMJ(cc, lb)
 
 #define arjzx_rr(RG, RS, op, cc, lb)                                        \
         AR2(W(RG), W(RS), op, zz_rr)                                        \
         CMJ(cc, lb)
 
-#define arjzx_ld(RG, MS, DP, op, cc, lb)                                    \
-        AR3(W(RG), W(MS), W(DP), op, zz_ld)                                 \
+#define arjzx_ld(RG, MS, DS, op, cc, lb)                                    \
+        AR3(W(RG), W(MS), W(DS), op, zz_ld)                                 \
         CMJ(cc, lb)
 
-#define arjzx_st(RS, MG, DP, op, cc, lb)                                    \
-        AR3(W(RS), W(MG), W(DP), op, zz_st)                                 \
+#define arjzx_st(RS, MG, DG, op, cc, lb)                                    \
+        AR3(W(RS), W(MG), W(DG), op, zz_st)                                 \
         CMJ(cc, lb)
 
-#define arjzx_mr(MG, DP, RS, op, cc, lb)                                    \
-        arjzx_st(W(RS), W(MG), W(DP), op, cc, lb)
+#define arjzx_mr(MG, DG, RS, op, cc, lb)                                    \
+        arjzx_st(W(RS), W(MG), W(DG), op, cc, lb)
 
 /* cmj
  * set-flags: undefined */
@@ -972,27 +976,27 @@
 #define cmjzx_rz(RS, cc, lb)                                                \
         cmjzx_ri(W(RS), IC(0), cc, lb)
 
-#define cmjzx_mz(MS, DP, cc, lb)                                            \
-        cmjzx_mi(W(MS), W(DP), IC(0), cc, lb)
+#define cmjzx_mz(MS, DS, cc, lb)                                            \
+        cmjzx_mi(W(MS), W(DS), IC(0), cc, lb)
 
 #define cmjzx_ri(RS, IT, cc, lb)                                            \
         cmpzx_ri(W(RS), W(IT))                                              \
         CMJ(cc, lb)
 
-#define cmjzx_mi(MS, DP, IT, cc, lb)                                        \
-        cmpzx_mi(W(MS), W(DP), W(IT))                                       \
+#define cmjzx_mi(MS, DS, IT, cc, lb)                                        \
+        cmpzx_mi(W(MS), W(DS), W(IT))                                       \
         CMJ(cc, lb)
 
 #define cmjzx_rr(RS, RT, cc, lb)                                            \
         cmpzx_rr(W(RS), W(RT))                                              \
         CMJ(cc, lb)
 
-#define cmjzx_rm(RS, MT, DP, cc, lb)                                        \
-        cmpzx_rm(W(RS), W(MT), W(DP))                                       \
+#define cmjzx_rm(RS, MT, DT, cc, lb)                                        \
+        cmpzx_rm(W(RS), W(MT), W(DT))                                       \
         CMJ(cc, lb)
 
-#define cmjzx_mr(MS, DP, RT, cc, lb)                                        \
-        cmpzx_mr(W(MS), W(DP), W(RT))                                       \
+#define cmjzx_mr(MS, DS, RT, cc, lb)                                        \
+        cmpzx_mr(W(MS), W(DS), W(RT))                                       \
         CMJ(cc, lb)
 
 /* cmp
@@ -1003,24 +1007,24 @@
         MRM(0x07,    MOD(RS), REG(RS))                                      \
         AUX(EMPTY,   EMPTY,   CMD(IT))
 
-#define cmpzx_mi(MS, DP, IT)                                                \
+#define cmpzx_mi(MS, DS, IT)                                                \
     ADR REW(0,       RXB(MS)) EMITB(0x81 | TYP(IT))                         \
         MRM(0x07,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DP), CMD(IT))
+        AUX(SIB(MS), CMD(DS), CMD(IT))
 
 #define cmpzx_rr(RS, RT)                                                    \
         REW(RXB(RS), RXB(RT)) EMITB(0x3B)                                   \
         MRM(REG(RS), MOD(RT), REG(RT))
 
-#define cmpzx_rm(RS, MT, DP)                                                \
+#define cmpzx_rm(RS, MT, DT)                                                \
     ADR REW(RXB(RS), RXB(MT)) EMITB(0x3B)                                   \
         MRM(REG(RS), MOD(MT), REG(MT))                                      \
-        AUX(SIB(MT), CMD(DP), EMPTY)
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
-#define cmpzx_mr(MS, DP, RT)                                                \
+#define cmpzx_mr(MS, DS, RT)                                                \
     ADR REW(RXB(RT), RXB(MS)) EMITB(0x39)                                   \
         MRM(REG(RT), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DP), EMPTY)
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
 #endif /* RT_RTARCH_X64_H */
 
