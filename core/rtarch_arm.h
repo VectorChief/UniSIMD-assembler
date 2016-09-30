@@ -1469,23 +1469,11 @@
 #define stack_ld(RD)                                                        \
         EMITW(0xE4900004 | MRM(REG(RD), SPxx,    0x00))
 
-#if RT_SIMD_FAST_FCTRL == 0
-
-#define stack_sa()   /* save all, [Reax - Redi] + 4 temps, 11 regs total */ \
-        EMITW(0xE9200BFF | MRM(0x00,    SPxx,    0x00))
-
-#define stack_la()   /* load all, 4 temps + [Redi - Reax], 11 regs total */ \
-        EMITW(0xE8B00BFF | MRM(0x00,    SPxx,    0x00))
-
-#else /* RT_SIMD_FAST_FCTRL */
-
 #define stack_sa()   /* save all, [Reax - Redi] + 7 temps, 14 regs total */ \
         EMITW(0xE9205FFF | MRM(0x00,    SPxx,    0x00))
 
 #define stack_la()   /* load all, 7 temps + [Redi - Reax], 14 regs total */ \
         EMITW(0xE8B05FFF | MRM(0x00,    SPxx,    0x00))
-
-#endif /* RT_SIMD_FAST_FCTRL */
 
 /* ver
  * set-flags: no */

@@ -1303,54 +1303,6 @@
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    REG(RD)))                  \
         EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (+0x08 & 0xFFFF))
 
-#if RT_SIMD_FAST_FCTRL == 0
-
-#define stack_sa()   /* save all, [Reax - RegE] + 5 temps, 19 regs total */ \
-        EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (-0x98 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Tecx) | (+0x08 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Tedx) | (+0x10 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Tebx) | (+0x18 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Tebp) | (+0x20 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Tesi) | (+0x28 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Tedi) | (+0x30 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Teg8) | (+0x38 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Teg9) | (+0x40 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TegA) | (+0x48 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TegB) | (+0x50 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TegC) | (+0x58 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TegD) | (+0x60 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TegE) | (+0x68 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TMxx) | (+0x70 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TIxx) | (+0x78 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TDxx) | (+0x80 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x88 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x90 & 0xFFFF))
-
-#define stack_la()   /* load all, 5 temps + [RegE - Reax], 19 regs total */ \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x90 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x88 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TDxx) | (+0x80 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TIxx) | (+0x78 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TMxx) | (+0x70 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TegE) | (+0x68 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TegD) | (+0x60 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TegC) | (+0x58 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TegB) | (+0x50 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TegA) | (+0x48 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Teg9) | (+0x40 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Teg8) | (+0x38 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tedi) | (+0x30 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tesi) | (+0x28 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tebp) | (+0x20 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tebx) | (+0x18 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tedx) | (+0x10 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tecx) | (+0x08 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
-        EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (+0x98 & 0xFFFF))
-
-#else /* RT_SIMD_FAST_FCTRL */
-
 #define stack_sa()   /* save all, [Reax - RegE] + 8 temps, 22 regs total */ \
         EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (-0xB0 & 0xFFFF))  \
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
@@ -1400,8 +1352,6 @@
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tecx) | (+0x08 & 0xFFFF))  \
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
         EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (+0xB0 & 0xFFFF))
-
-#endif /* RT_SIMD_FAST_FCTRL */
 
 #endif /* defined (RT_M64) */
 

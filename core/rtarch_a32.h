@@ -1386,32 +1386,6 @@
 #define stack_ld(RD)                                                        \
         EMITW(0xF8408400 | MRM(REG(RD), SPxx,    0x00))
 
-#if RT_SIMD_FAST_FCTRL == 0
-
-#define stack_sa()   /* save all, [Reax - RegE] + 4 temps, 18 regs total */ \
-        EMITW(0xA9BF0000 | MRM(Teax,    SPxx,    0x00) | Tecx << 10)        \
-        EMITW(0xA9BF0000 | MRM(Tedx,    SPxx,    0x00) | Tebx << 10)        \
-        EMITW(0xA9BF0000 | MRM(Tebp,    SPxx,    0x00) | Tesi << 10)        \
-        EMITW(0xA9BF0000 | MRM(Tedi,    SPxx,    0x00) | Teg8 << 10)        \
-        EMITW(0xA9BF0000 | MRM(Teg9,    SPxx,    0x00) | TegA << 10)        \
-        EMITW(0xA9BF0000 | MRM(TegB,    SPxx,    0x00) | TegC << 10)        \
-        EMITW(0xA9BF0000 | MRM(TegD,    SPxx,    0x00) | TegE << 10)        \
-        EMITW(0xA9BF0000 | MRM(TMxx,    SPxx,    0x00) | TIxx << 10)        \
-        EMITW(0xA9BF0000 | MRM(TPxx,    SPxx,    0x00) | TNxx << 10)
-
-#define stack_la()   /* load all, 4 temps + [RegE - Reax], 18 regs total */ \
-        EMITW(0xA8C10000 | MRM(TPxx,    SPxx,    0x00) | TNxx << 10)        \
-        EMITW(0xA8C10000 | MRM(TMxx,    SPxx,    0x00) | TIxx << 10)        \
-        EMITW(0xA8C10000 | MRM(TegD,    SPxx,    0x00) | TegE << 10)        \
-        EMITW(0xA8C10000 | MRM(TegB,    SPxx,    0x00) | TegC << 10)        \
-        EMITW(0xA8C10000 | MRM(Teg9,    SPxx,    0x00) | TegA << 10)        \
-        EMITW(0xA8C10000 | MRM(Tedi,    SPxx,    0x00) | Teg8 << 10)        \
-        EMITW(0xA8C10000 | MRM(Tebp,    SPxx,    0x00) | Tesi << 10)        \
-        EMITW(0xA8C10000 | MRM(Tedx,    SPxx,    0x00) | Tebx << 10)        \
-        EMITW(0xA8C10000 | MRM(Teax,    SPxx,    0x00) | Tecx << 10)
-
-#else /* RT_SIMD_FAST_FCTRL */
-
 #define stack_sa()   /* save all, [Reax - RegE] + 7 temps, 21 regs total */ \
         EMITW(0xA9BF0000 | MRM(Teax,    SPxx,    0x00) | Tecx << 10)        \
         EMITW(0xA9BF0000 | MRM(Tedx,    SPxx,    0x00) | Tebx << 10)        \
@@ -1437,8 +1411,6 @@
         EMITW(0xA8C10000 | MRM(Tebp,    SPxx,    0x00) | Tesi << 10)        \
         EMITW(0xA8C10000 | MRM(Tedx,    SPxx,    0x00) | Tebx << 10)        \
         EMITW(0xA8C10000 | MRM(Teax,    SPxx,    0x00) | Tecx << 10)
-
-#endif /* RT_SIMD_FAST_FCTRL */
 
 /* ver
  * set-flags: no */
