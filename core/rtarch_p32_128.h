@@ -7,19 +7,7 @@
 #ifndef RT_RTARCH_P32_128_H
 #define RT_RTARCH_P32_128_H
 
-#if   RT_ADDRESS == 32
-
-#include "rtarch_p32.h"
-
-#elif RT_ADDRESS == 64
-
 #include "rtarch_p64.h"
-
-#else  /* RT_ADDRESS */
-
-#error "unsupported address size, check RT_ADDRESS in makefiles"
-
-#endif /* RT_ADDRESS */
 
 #define RT_SIMD_REGS        16
 #define RT_SIMD_ALIGN       16
