@@ -239,6 +239,26 @@
 #define negos_rx(XG)                                                        \
         EMITW(0x7860001E | MXM(REG(XG), REG(XG), TmmS))
 
+/* fma (G = G + S * T) */
+
+#define fmaos_rr(XG, XS, XT)                                                \
+        EMITW(0x7900001B | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmaos_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(Tmm1,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7900001B | MXM(REG(XG), REG(XS), Tmm1))
+
+/* fms (G = G - S * T) */
+
+#define fmsos_rr(XG, XS, XT)                                                \
+        EMITW(0x7940001B | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmsos_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(Tmm1,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7940001B | MXM(REG(XG), REG(XS), Tmm1))
+
 /* add */
 
 #define addos_rr(XG, XS)                                                    \
