@@ -161,6 +161,26 @@
 #define negqs_rx(XG)                                                        \
         EMITW(0x6EE0F800 | MXM(REG(XG), REG(XG), 0x00))
 
+/* fma (G = G + S * T) */
+
+#define fmaqs_rr(XG, XS, XT)                                                \
+        EMITW(0x4E60CC00 | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmaqs_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x4E60CC00 | MXM(REG(XG), REG(XS), Tmm1))
+
+/* fms (G = G - S * T) */
+
+#define fmsqs_rr(XG, XS, XT)                                                \
+        EMITW(0x4EE0CC00 | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmsqs_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(Tmm1,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x4EE0CC00 | MXM(REG(XG), REG(XS), Tmm1))
+
 /* add */
 
 #define addqs_rr(XG, XS)                                                    \

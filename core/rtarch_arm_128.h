@@ -235,6 +235,36 @@
 #define negos_rx(XG)                                                        \
         EMITW(0xF2B907C0 | MXM(REG(XG), 0x00,    REG(XG)))
 
+#if (RT_128 < 2) /* vector FMA is available in processors with ASIMDv2 */
+
+/* NOTE: implement later via VFP using scalar double-precision */
+
+#else /* RT_128 >= 2 */
+
+/* fma (G = G + S * T) */
+
+#define fmaos_rr(XG, XS, XT)                                                \
+        EMITW(0xF2000C50 | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmaos_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(Tmm1,    TPxx,    0x00))                     \
+        EMITW(0xF2000C50 | MXM(REG(XG), REG(XS), Tmm1))
+
+/* fms (G = G - S * T) */
+
+#define fmsos_rr(XG, XS, XT)                                                \
+        EMITW(0xF2200C50 | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmsos_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(Tmm1,    TPxx,    0x00))                     \
+        EMITW(0xF2200C50 | MXM(REG(XG), REG(XS), Tmm1))
+
+#endif /* RT_128 >= 2 */
+
 /* add */
 
 #define addos_rr(XG, XS)                                                    \
