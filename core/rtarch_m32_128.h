@@ -249,7 +249,9 @@
         EMITW(0x78000023 | MPM(Tmm1,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x7900001B | MXM(REG(XG), REG(XS), Tmm1))
 
-/* fms (G = G - S * T) */
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsos_rr(XG, XS, XT)                                                \
         EMITW(0x7940001B | MXM(REG(XG), REG(XS), REG(XT)))

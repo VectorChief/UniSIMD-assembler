@@ -222,7 +222,9 @@
 
 /* NOTE: implement later using double-precision (x87/SIMD) */
 
-/* fms (G = G - S * T) */
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 /* NOTE: implement later using double-precision (x87/SIMD) */
 
