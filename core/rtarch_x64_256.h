@@ -78,6 +78,12 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
+/* 3-byte VEX prefix with full customization (W1) */
+#define VEW(rxg, rxm, ren, len, pfx, aux)                                   \
+        EMITB(0xC4)                                                         \
+        EMITB((1 - (rxg)) << 7 | 1 << 6 | (1 - (rxm)) << 5 | (aux))         \
+        EMITB((len) << 2 | (0x0F - (ren)) << 3 | (pfx) | 0x80)
+
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -169,6 +175,36 @@
 
 #define negqs_rx(XG)                                                        \
         xorqx_ld(W(XG), Mebp, inf_GPC06_64)
+
+#if (RT_256 < 2) /* vector FMA is available in processors with AVX2 */
+
+/* NOTE: implement later using long-double-precision (x87) */
+
+#else /* RT_256 >= 2 */
+
+/* fma (G = G + S * T) */
+
+#define fmaqs_rr(XG, XS, XT)                                                \
+    ADR VEW(RXB(XG), RXB(XT), REN(XS), 1, 1, 2) EMITB(0xB8)                 \
+        MRM(REG(XG), MOD(XT), REG(XT))
+
+#define fmaqs_ld(XG, XS, MT, DT)                                            \
+    ADR VEW(RXB(XG), RXB(MT), REN(XS), 1, 1, 2) EMITB(0xB8)                 \
+        MRM(REG(XG), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* fms (G = G - S * T) */
+
+#define fmsqs_rr(XG, XS, XT)                                                \
+    ADR VEW(RXB(XG), RXB(XT), REN(XS), 1, 1, 2) EMITB(0xBC)                 \
+        MRM(REG(XG), MOD(XT), REG(XT))
+
+#define fmsqs_ld(XG, XS, MT, DT)                                            \
+    ADR VEW(RXB(XG), RXB(MT), REN(XS), 1, 1, 2) EMITB(0xBC)                 \
+        MRM(REG(XG), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+#endif /* RT_256 >= 2 */
 
 /* add */
 

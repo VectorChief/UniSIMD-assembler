@@ -209,6 +209,36 @@
 #define negos_rx(XG)                                                        \
         xorox_ld(W(XG), Mebp, inf_GPC06_32)
 
+#if (RT_256 < 2) /* vector FMA is available in processors with AVX2 */
+
+/* NOTE: implement later using double-precision (x87/SIMD) */
+
+#else /* RT_256 >= 2 */
+
+/* fma (G = G + S * T) */
+
+#define fmaos_rr(XG, XS, XT)                                                \
+    ADR VX3(REG(XS), 1, 2) EMITB(0xB8)                                      \
+        MRM(REG(XG), MOD(XT), REG(XT))
+
+#define fmaos_ld(XG, XS, MT, DT)                                            \
+    ADR VX3(REG(XS), 1, 2) EMITB(0xB8)                                      \
+        MRM(REG(XG), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* fms (G = G - S * T) */
+
+#define fmsos_rr(XG, XS, XT)                                                \
+    ADR VX3(REG(XS), 1, 2) EMITB(0xBC)                                      \
+        MRM(REG(XG), MOD(XT), REG(XT))
+
+#define fmsos_ld(XG, XS, MT, DT)                                            \
+    ADR VX3(REG(XS), 1, 2) EMITB(0xBC)                                      \
+        MRM(REG(XG), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+#endif /* RT_256 >= 2 */
+
 /* add */
 
 #define addos_rr(XG, XS)                                                    \

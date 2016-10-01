@@ -218,6 +218,14 @@
 #define negos_rx(XG)                                                        \
         xorox_ld(W(XG), Mebp, inf_GPC06_32)
 
+/* fma (G = G + S * T) */
+
+/* NOTE: implement later using double-precision (x87/SIMD) */
+
+/* fms (G = G - S * T) */
+
+/* NOTE: implement later using double-precision (x87/SIMD) */
+
 /* add */
 
 #define addos_rr(XG, XS)                                                    \

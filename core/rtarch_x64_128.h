@@ -172,6 +172,14 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x57)                       \
 #define negqs_rx(XG)                                                        \
         xorqx_ld(W(XG), Mebp, inf_GPC06_64)
 
+/* fma (G = G + S * T) */
+
+/* NOTE: implement later using long-double-precision (x87) */
+
+/* fms (G = G - S * T) */
+
+/* NOTE: implement later using long-double-precision (x87) */
+
 /* add */
 
 #define addqs_rr(XG, XS)                                                    \
