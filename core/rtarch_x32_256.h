@@ -532,6 +532,96 @@
 #define cvnon_ld(XD, MS, DS) /* round towards near */                       \
         cvton_ld(W(XD), W(MS), W(DS))
 
+/**************************   extended float (x87)   **************************/
+
+#define fpuws_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD9)                                   \
+        MRM(0x00,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define fpuws_st(MD, DD) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
+        MRM(0x03,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+
+#define fpuwn_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDB)                                   \
+        MRM(0x00,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define fpuwn_st(MD, DD) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MD)) EMITB(0xDB)                                   \
+        MRM(0x03,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+#define fpuwt_st(MD, DD) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MD)) EMITB(0xDB)                                   \
+        MRM(0x01,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+
+#define addws_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
+        MRM(0x00,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define subws_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
+        MRM(0x04,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define sbrws_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+
+#define mulws_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
+        MRM(0x01,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define divws_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
+        MRM(0x06,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define dvrws_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
+        MRM(0x07,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+
+#define fpucw_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD9)                                   \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define fpucw_st(MD, DD) /* not portable, do not use outside */             \
+FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
+        MRM(0x07,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+
+#define fpurz_xx()       /* not portable, do not use outside */             \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x0C7F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#define fpurp_xx()       /* not portable, do not use outside */             \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x087F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#define fpurm_xx()       /* not portable, do not use outside */             \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x047F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#define fpurn_xx()       /* not portable, do not use outside */             \
+        fpucw_ld(Mebp,  inf_SCR02(4))
+
 /**************************   packed integer (AVX1)   *************************/
 
 #if (RT_256 < 2)

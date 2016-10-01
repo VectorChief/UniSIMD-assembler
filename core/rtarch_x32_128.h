@@ -413,49 +413,12 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x05))
 
-/**************************   packed integer (SSE1)   *************************/
-
 #if (RT_128 < 2)
-
-#define fpuws_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xD9)                                   \
-        MRM(0x00,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define fpuws_st(MD, DD) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
-        MRM(0x03,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-#define fpuwn_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xDB)                                   \
-        MRM(0x00,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define fpuwn_st(MD, DD) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MD)) EMITB(0xDB)                                   \
-        MRM(0x03,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-#define fpucw_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xD9)                                   \
-        MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define fpucw_st(MD, DD) /* not portable, do not use outside */             \
-FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
-        MRM(0x07,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
 
 /* cvz (fp-to-signed-int)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
-
-#define fpurz_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        movwx_mi(Mebp,  inf_SCR02(0), IH(0x0C7F))                           \
-        fpucw_ld(Mebp,  inf_SCR02(0))
 
 #define rnzos_rr(XD, XS)     /* round towards zero */                       \
         cvzos_rr(W(XD), W(XS))                                              \
@@ -466,24 +429,25 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         cvnon_rr(W(XD), W(XD))
 
 #define cvzos_rr(XD, XS)     /* round towards zero */                       \
-        fpurz_xx()                                                          \
-        cvnos_rr(W(XD), W(XS))                                              \
-        fpurn_xx()
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        fpuws_ld(Mebp,  inf_SCR01(0x00))                                    \
+        fpuwt_st(Mebp,  inf_SCR01(0x00))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x04))                                    \
+        fpuwt_st(Mebp,  inf_SCR01(0x04))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x08))                                    \
+        fpuwt_st(Mebp,  inf_SCR01(0x08))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x0C))                                    \
+        fpuwt_st(Mebp,  inf_SCR01(0x0C))                                    \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define cvzos_ld(XD, MS, DS) /* round towards zero */                       \
-        fpurz_xx()                                                          \
-        cvnos_ld(W(XD), W(MS), W(DS))                                       \
-        fpurn_xx()
+        movox_ld(W(XD), W(MS), W(DS))                                       \
+        cvzos_rr(W(XD), W(XD))
 
 /* cvp (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
-
-#define fpurp_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        movwx_mi(Mebp,  inf_SCR02(0), IH(0x087F))                           \
-        fpucw_ld(Mebp,  inf_SCR02(0))
 
 #define rnpos_rr(XD, XS)     /* round towards +inf */                       \
         cvpos_rr(W(XD), W(XS))                                              \
@@ -508,11 +472,6 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
-#define fpurm_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        movwx_mi(Mebp,  inf_SCR02(0), IH(0x047F))                           \
-        fpucw_ld(Mebp,  inf_SCR02(0))
-
 #define rnmos_rr(XD, XS)     /* round towards -inf */                       \
         cvmos_rr(W(XD), W(XS))                                              \
         cvnon_rr(W(XD), W(XD))
@@ -535,9 +494,6 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
-
-#define fpurn_xx()       /* not portable, do not use outside */             \
-        fpucw_ld(Mebp,  inf_SCR02(4))
 
 #define rnnos_rr(XD, XS)     /* round towards near */                       \
         cvnos_rr(W(XD), W(XS))                                              \
@@ -582,141 +538,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         movox_ld(W(XD), W(MS), W(DS))                                       \
         cvnon_rr(W(XD), W(XD))
 
-/* add */
-
-#define addox_rr(XG, XS)                                                    \
-        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        stack_st(Reax)                                                      \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
-        addwx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x04))                              \
-        addwx_st(Reax,  Mebp, inf_SCR01(0x04))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
-        addwx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x0C))                              \
-        addwx_st(Reax,  Mebp, inf_SCR01(0x0C))                              \
-        stack_ld(Reax)                                                      \
-        movox_ld(W(XG), Mebp, inf_SCR01(0))
-
-#define addox_ld(XG, MS, DS)                                                \
-        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movox_ld(W(XG), W(MS), W(DS))                                       \
-        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        stack_st(Reax)                                                      \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
-        addwx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x04))                              \
-        addwx_st(Reax,  Mebp, inf_SCR01(0x04))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
-        addwx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x0C))                              \
-        addwx_st(Reax,  Mebp, inf_SCR01(0x0C))                              \
-        stack_ld(Reax)                                                      \
-        movox_ld(W(XG), Mebp, inf_SCR01(0))
-
-/* sub */
-
-#define subox_rr(XG, XS)                                                    \
-        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        stack_st(Reax)                                                      \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
-        subwx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x04))                              \
-        subwx_st(Reax,  Mebp, inf_SCR01(0x04))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
-        subwx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x0C))                              \
-        subwx_st(Reax,  Mebp, inf_SCR01(0x0C))                              \
-        stack_ld(Reax)                                                      \
-        movox_ld(W(XG), Mebp, inf_SCR01(0))
-
-#define subox_ld(XG, MS, DS)                                                \
-        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movox_ld(W(XG), W(MS), W(DS))                                       \
-        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        stack_st(Reax)                                                      \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
-        subwx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x04))                              \
-        subwx_st(Reax,  Mebp, inf_SCR01(0x04))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
-        subwx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x0C))                              \
-        subwx_st(Reax,  Mebp, inf_SCR01(0x0C))                              \
-        stack_ld(Reax)                                                      \
-        movox_ld(W(XG), Mebp, inf_SCR01(0))
-
-/* shl */
-
-#define shlox_ri(XG, IS)                                                    \
-        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        shlwx_mi(Mebp,  inf_SCR01(0x00), W(IS))                             \
-        shlwx_mi(Mebp,  inf_SCR01(0x04), W(IS))                             \
-        shlwx_mi(Mebp,  inf_SCR01(0x08), W(IS))                             \
-        shlwx_mi(Mebp,  inf_SCR01(0x0C), W(IS))                             \
-        movox_ld(W(XG), Mebp, inf_SCR01(0))
-
-#define shlox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
-        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        stack_st(Recx)                                                      \
-        movwx_ld(Recx,  W(MS), W(DS))                                       \
-        shlwx_mx(Mebp,  inf_SCR01(0x00))                                    \
-        shlwx_mx(Mebp,  inf_SCR01(0x04))                                    \
-        shlwx_mx(Mebp,  inf_SCR01(0x08))                                    \
-        shlwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
-        stack_ld(Recx)                                                      \
-        movox_ld(W(XG), Mebp, inf_SCR01(0))
-
-/* shr */
-
-#define shrox_ri(XG, IS)                                                    \
-        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        shrwx_mi(Mebp,  inf_SCR01(0x00), W(IS))                             \
-        shrwx_mi(Mebp,  inf_SCR01(0x04), W(IS))                             \
-        shrwx_mi(Mebp,  inf_SCR01(0x08), W(IS))                             \
-        shrwx_mi(Mebp,  inf_SCR01(0x0C), W(IS))                             \
-        movox_ld(W(XG), Mebp, inf_SCR01(0))
-
-#define shrox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
-        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        stack_st(Recx)                                                      \
-        movwx_ld(Recx,  W(MS), W(DS))                                       \
-        shrwx_mx(Mebp,  inf_SCR01(0x00))                                    \
-        shrwx_mx(Mebp,  inf_SCR01(0x04))                                    \
-        shrwx_mx(Mebp,  inf_SCR01(0x08))                                    \
-        shrwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
-        stack_ld(Recx)                                                      \
-        movox_ld(W(XG), Mebp, inf_SCR01(0))
-
-#define shron_ri(XG, IS)                                                    \
-        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        shrwn_mi(Mebp,  inf_SCR01(0x00), W(IS))                             \
-        shrwn_mi(Mebp,  inf_SCR01(0x04), W(IS))                             \
-        shrwn_mi(Mebp,  inf_SCR01(0x08), W(IS))                             \
-        shrwn_mi(Mebp,  inf_SCR01(0x0C), W(IS))                             \
-        movox_ld(W(XG), Mebp, inf_SCR01(0))
-
-#define shron_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
-        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        stack_st(Recx)                                                      \
-        movwx_ld(Recx,  W(MS), W(DS))                                       \
-        shrwn_mx(Mebp,  inf_SCR01(0x00))                                    \
-        shrwn_mx(Mebp,  inf_SCR01(0x04))                                    \
-        shrwn_mx(Mebp,  inf_SCR01(0x08))                                    \
-        shrwn_mx(Mebp,  inf_SCR01(0x0C))                                    \
-        stack_ld(Recx)                                                      \
-        movox_ld(W(XG), Mebp, inf_SCR01(0))
-
-/**************************   packed integer (SSE2)   *************************/
-
 #else /* RT_128 >= 2 */
-
-#define mxcsr_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0xAE)                       \
-        MRM(0x02,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* cvz (fp-to-signed-int)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -893,6 +715,233 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
 
 #define cvnon_ld(XD, MS, DS) /* round towards near */                       \
         cvton_ld(W(XD), W(MS), W(DS))
+
+#endif /* RT_128 >= 2 */
+
+/**************************   extended float (x87)   **************************/
+
+#define fpuws_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD9)                                   \
+        MRM(0x00,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define fpuws_st(MD, DD) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
+        MRM(0x03,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+
+#define fpuwn_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDB)                                   \
+        MRM(0x00,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define fpuwn_st(MD, DD) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MD)) EMITB(0xDB)                                   \
+        MRM(0x03,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+#define fpuwt_st(MD, DD) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MD)) EMITB(0xDB)                                   \
+        MRM(0x01,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+
+#define addws_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
+        MRM(0x00,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define subws_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
+        MRM(0x04,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define sbrws_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+
+#define mulws_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
+        MRM(0x01,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define divws_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
+        MRM(0x06,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define dvrws_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
+        MRM(0x07,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+
+#define fpucw_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD9)                                   \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define fpucw_st(MD, DD) /* not portable, do not use outside */             \
+FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
+        MRM(0x07,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+
+#define fpurz_xx()       /* not portable, do not use outside */             \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x0C7F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#define fpurp_xx()       /* not portable, do not use outside */             \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x087F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#define fpurm_xx()       /* not portable, do not use outside */             \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x047F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#define fpurn_xx()       /* not portable, do not use outside */             \
+        fpucw_ld(Mebp,  inf_SCR02(4))
+
+/**************************   packed integer (SSE1)   *************************/
+
+#if (RT_128 < 2)
+
+/* add */
+
+#define addox_rr(XG, XS)                                                    \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        addwx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x04))                              \
+        addwx_st(Reax,  Mebp, inf_SCR01(0x04))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
+        addwx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        addwx_st(Reax,  Mebp, inf_SCR01(0x0C))                              \
+        stack_ld(Reax)                                                      \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+#define addox_ld(XG, MS, DS)                                                \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XG), W(MS), W(DS))                                       \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        addwx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x04))                              \
+        addwx_st(Reax,  Mebp, inf_SCR01(0x04))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
+        addwx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        addwx_st(Reax,  Mebp, inf_SCR01(0x0C))                              \
+        stack_ld(Reax)                                                      \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+/* sub */
+
+#define subox_rr(XG, XS)                                                    \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        subwx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x04))                              \
+        subwx_st(Reax,  Mebp, inf_SCR01(0x04))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
+        subwx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        subwx_st(Reax,  Mebp, inf_SCR01(0x0C))                              \
+        stack_ld(Reax)                                                      \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+#define subox_ld(XG, MS, DS)                                                \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XG), W(MS), W(DS))                                       \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        subwx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x04))                              \
+        subwx_st(Reax,  Mebp, inf_SCR01(0x04))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
+        subwx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        subwx_st(Reax,  Mebp, inf_SCR01(0x0C))                              \
+        stack_ld(Reax)                                                      \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+/* shl */
+
+#define shlox_ri(XG, IS)                                                    \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        shlwx_mi(Mebp,  inf_SCR01(0x00), W(IS))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x04), W(IS))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x08), W(IS))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x0C), W(IS))                             \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+#define shlox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  W(MS), W(DS))                                       \
+        shlwx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shlwx_mx(Mebp,  inf_SCR01(0x04))                                    \
+        shlwx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        shlwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        stack_ld(Recx)                                                      \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+/* shr */
+
+#define shrox_ri(XG, IS)                                                    \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        shrwx_mi(Mebp,  inf_SCR01(0x00), W(IS))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x04), W(IS))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x08), W(IS))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x0C), W(IS))                             \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+#define shrox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  W(MS), W(DS))                                       \
+        shrwx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shrwx_mx(Mebp,  inf_SCR01(0x04))                                    \
+        shrwx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        shrwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        stack_ld(Recx)                                                      \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+#define shron_ri(XG, IS)                                                    \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        shrwn_mi(Mebp,  inf_SCR01(0x00), W(IS))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x04), W(IS))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x08), W(IS))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x0C), W(IS))                             \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+#define shron_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  W(MS), W(DS))                                       \
+        shrwn_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shrwn_mx(Mebp,  inf_SCR01(0x04))                                    \
+        shrwn_mx(Mebp,  inf_SCR01(0x08))                                    \
+        shrwn_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        stack_ld(Recx)                                                      \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+/**************************   packed integer (SSE2)   *************************/
+
+#else /* RT_128 >= 2 */
 
 /* add */
 
