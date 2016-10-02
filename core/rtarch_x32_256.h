@@ -215,11 +215,111 @@
 #define negos_rx(XG)                                                        \
         xorox_ld(W(XG), Mebp, inf_GPC06_32)
 
-#if (RT_256 < 2) /* vector FMA is available in processors with AVX2 */
+#if (RT_256 < 2) /* NOTE: implement 2-pass fp32<->fp64 SIMD variant later */
 
-/* NOTE: implement later using double-precision (x87/SIMD) */
+/* fma (G = G + S * T) */
 
-#else /* RT_256 >= 2 */
+#define fmaos_rr(XG, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        fmaos_rx(W(XG))
+
+#define fmaos_ld(XG, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XS), W(MT), W(DT))                                       \
+        movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movox_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        fmaos_rx(W(XG))
+
+#define fmaos_rx(XG) /* not portable, do not use outside */                 \
+        fpuws_ld(Mebp,  inf_SCR01(0x00))                                    \
+        mulws_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x04))                                    \
+        mulws_ld(Mebp,  inf_SCR02(0x04))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x08))                                    \
+        mulws_ld(Mebp,  inf_SCR02(0x08))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x0C))                                    \
+        mulws_ld(Mebp,  inf_SCR02(0x0C))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x10))                                    \
+        mulws_ld(Mebp,  inf_SCR02(0x10))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x14))                                    \
+        mulws_ld(Mebp,  inf_SCR02(0x14))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x18))                                    \
+        mulws_ld(Mebp,  inf_SCR02(0x18))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x1C))                                    \
+        mulws_ld(Mebp,  inf_SCR02(0x1C))                                    \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        addws_ld(Mebp,  inf_SCR02(0x1C))                                    \
+        fpuws_st(Mebp,  inf_SCR02(0x1C))                                    \
+        addws_ld(Mebp,  inf_SCR02(0x18))                                    \
+        fpuws_st(Mebp,  inf_SCR02(0x18))                                    \
+        addws_ld(Mebp,  inf_SCR02(0x14))                                    \
+        fpuws_st(Mebp,  inf_SCR02(0x14))                                    \
+        addws_ld(Mebp,  inf_SCR02(0x10))                                    \
+        fpuws_st(Mebp,  inf_SCR02(0x10))                                    \
+        addws_ld(Mebp,  inf_SCR02(0x0C))                                    \
+        fpuws_st(Mebp,  inf_SCR02(0x0C))                                    \
+        addws_ld(Mebp,  inf_SCR02(0x08))                                    \
+        fpuws_st(Mebp,  inf_SCR02(0x08))                                    \
+        addws_ld(Mebp,  inf_SCR02(0x04))                                    \
+        fpuws_st(Mebp,  inf_SCR02(0x04))                                    \
+        addws_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR02(0x00))                                    \
+        movox_ld(W(XG), Mebp, inf_SCR02(0))
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsos_rr(XG, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        fmsos_rx(W(XG))
+
+#define fmsos_ld(XG, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XS), W(MT), W(DT))                                       \
+        movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movox_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        fmsos_rx(W(XG))
+
+#define fmsos_rx(XG) /* not portable, do not use outside */                 \
+        fpuws_ld(Mebp,  inf_SCR01(0x00))                                    \
+        mulws_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x04))                                    \
+        mulws_ld(Mebp,  inf_SCR02(0x04))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x08))                                    \
+        mulws_ld(Mebp,  inf_SCR02(0x08))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x0C))                                    \
+        mulws_ld(Mebp,  inf_SCR02(0x0C))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x10))                                    \
+        mulws_ld(Mebp,  inf_SCR02(0x10))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x14))                                    \
+        mulws_ld(Mebp,  inf_SCR02(0x14))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x18))                                    \
+        mulws_ld(Mebp,  inf_SCR02(0x18))                                    \
+        fpuws_ld(Mebp,  inf_SCR01(0x1C))                                    \
+        mulws_ld(Mebp,  inf_SCR02(0x1C))                                    \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        sbrws_ld(Mebp,  inf_SCR02(0x1C))                                    \
+        fpuws_st(Mebp,  inf_SCR02(0x1C))                                    \
+        sbrws_ld(Mebp,  inf_SCR02(0x18))                                    \
+        fpuws_st(Mebp,  inf_SCR02(0x18))                                    \
+        sbrws_ld(Mebp,  inf_SCR02(0x14))                                    \
+        fpuws_st(Mebp,  inf_SCR02(0x14))                                    \
+        sbrws_ld(Mebp,  inf_SCR02(0x10))                                    \
+        fpuws_st(Mebp,  inf_SCR02(0x10))                                    \
+        sbrws_ld(Mebp,  inf_SCR02(0x0C))                                    \
+        fpuws_st(Mebp,  inf_SCR02(0x0C))                                    \
+        sbrws_ld(Mebp,  inf_SCR02(0x08))                                    \
+        fpuws_st(Mebp,  inf_SCR02(0x08))                                    \
+        sbrws_ld(Mebp,  inf_SCR02(0x04))                                    \
+        fpuws_st(Mebp,  inf_SCR02(0x04))                                    \
+        sbrws_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR02(0x00))                                    \
+        movox_ld(W(XG), Mebp, inf_SCR02(0))
+
+#else /* RT_256 >= 2 */ /* NOTE: FMA is available in processors with AVX2 */
 
 /* fma (G = G + S * T) */
 

@@ -174,13 +174,57 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x57)                       \
 
 /* fma (G = G + S * T) */
 
-/* NOTE: implement later using long-double-precision (x87) */
+#define fmaqs_rr(XG, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        fmaqs_rx(W(XG))
+
+#define fmaqs_ld(XG, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XS), W(MT), W(DT))                                       \
+        movqx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movqx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        fmaqs_rx(W(XG))
+
+#define fmaqs_rx(XG) /* not portable, do not use outside */                 \
+        fpuzs_ld(Mebp,  inf_SCR01(0x00))                                    \
+        mulzs_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_ld(Mebp,  inf_SCR01(0x08))                                    \
+        mulzs_ld(Mebp,  inf_SCR02(0x08))                                    \
+        movqx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        addzs_ld(Mebp,  inf_SCR02(0x08))                                    \
+        fpuzs_st(Mebp,  inf_SCR02(0x08))                                    \
+        addzs_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_st(Mebp,  inf_SCR02(0x00))                                    \
+        movqx_ld(W(XG), Mebp, inf_SCR02(0))
 
 /* fms (G = G - S * T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
-/* NOTE: implement later using long-double-precision (x87) */
+#define fmsqs_rr(XG, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        fmsqs_rx(W(XG))
+
+#define fmsqs_ld(XG, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XS), W(MT), W(DT))                                       \
+        movqx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movqx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        fmsqs_rx(W(XG))
+
+#define fmsqs_rx(XG) /* not portable, do not use outside */                 \
+        fpuzs_ld(Mebp,  inf_SCR01(0x00))                                    \
+        mulzs_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_ld(Mebp,  inf_SCR01(0x08))                                    \
+        mulzs_ld(Mebp,  inf_SCR02(0x08))                                    \
+        movqx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        sbrzs_ld(Mebp,  inf_SCR02(0x08))                                    \
+        fpuzs_st(Mebp,  inf_SCR02(0x08))                                    \
+        sbrzs_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_st(Mebp,  inf_SCR02(0x00))                                    \
+        movqx_ld(W(XG), Mebp, inf_SCR02(0))
 
 /* add */
 
