@@ -126,6 +126,8 @@
 #define Tmm1    0x10  /* q8 */
 #define Tmm2    0x12  /* q9 */
 #define Tmm3    0x14  /* q10 */
+#define Tmm4    0x16  /* q11 */
+#define Tmm5    0x18  /* q12 */
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -235,11 +237,85 @@
 #define negos_rx(XG)                                                        \
         EMITW(0xF2B907C0 | MXM(REG(XG), 0x00,    REG(XG)))
 
-#if (RT_128 < 2) /* vector FMA is available in processors with ASIMDv2 */
+#if (RT_128 < 2) /* NOTE: only VFP fpu fallback is available for fp32 FMA */
 
-/* NOTE: implement later via VFP using scalar double-precision */
+/* fma (G = G + S * T) */
 
-#else /* RT_128 >= 2 */
+#define fmaos_rr(XG, XS, XT)                                                \
+        fmaos_rx(W(XG), W(XS), REG(XT))
+
+#define fmaos_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(Tmm1,    TPxx,    0x00))                     \
+        fmaos_rx(W(XG), W(XS), Tmm1)
+
+#define fmaos_rx(XG, XS, TmmT) /* not portable, do not use outside */       \
+        EMITW(0xEEB70AC0 | MXM(Tmm2+0,  0x00,    REG(XS)+0))                \
+        EMITW(0xEEB70AE0 | MXM(Tmm3+0,  0x00,    REG(XS)+0))                \
+        EMITW(0xEEB70AC0 | MXM(Tmm4+0,  0x00,    REG(XS)+1))                \
+        EMITW(0xEEB70AE0 | MXM(Tmm5+0,  0x00,    REG(XS)+1))                \
+        EMITW(0xEEB70AC0 | MXM(Tmm2+1,  0x00,    TmmT+0))                   \
+        EMITW(0xEEB70AE0 | MXM(Tmm3+1,  0x00,    TmmT+0))                   \
+        EMITW(0xEEB70AC0 | MXM(Tmm4+1,  0x00,    TmmT+1))                   \
+        EMITW(0xEEB70AE0 | MXM(Tmm5+1,  0x00,    TmmT+1))                   \
+        EMITW(0xEE200B00 | MXM(Tmm2+0,  Tmm2+0,  Tmm2+1))                   \
+        EMITW(0xEE200B00 | MXM(Tmm3+0,  Tmm3+0,  Tmm3+1))                   \
+        EMITW(0xEE200B00 | MXM(Tmm4+0,  Tmm4+0,  Tmm4+1))                   \
+        EMITW(0xEE200B00 | MXM(Tmm5+0,  Tmm5+0,  Tmm5+1))                   \
+        EMITW(0xEEB70AC0 | MXM(Tmm2+1,  0x00,    REG(XG)+0))                \
+        EMITW(0xEEB70AE0 | MXM(Tmm3+1,  0x00,    REG(XG)+0))                \
+        EMITW(0xEEB70AC0 | MXM(Tmm4+1,  0x00,    REG(XG)+1))                \
+        EMITW(0xEEB70AE0 | MXM(Tmm5+1,  0x00,    REG(XG)+1))                \
+        EMITW(0xEE300B00 | MXM(Tmm2+1,  Tmm2+1,  Tmm2+0))                   \
+        EMITW(0xEE300B00 | MXM(Tmm3+1,  Tmm3+1,  Tmm3+0))                   \
+        EMITW(0xEE300B00 | MXM(Tmm4+1,  Tmm4+1,  Tmm4+0))                   \
+        EMITW(0xEE300B00 | MXM(Tmm5+1,  Tmm5+1,  Tmm5+0))                   \
+        EMITW(0xEEB70BC0 | MXM(REG(XG)+0, 0x00,  Tmm2+1))                   \
+        EMITW(0xEEF70BC0 | MXM(REG(XG)+0, 0x00,  Tmm3+1))                   \
+        EMITW(0xEEB70BC0 | MXM(REG(XG)+1, 0x00,  Tmm4+1))                   \
+        EMITW(0xEEF70BC0 | MXM(REG(XG)+1, 0x00,  Tmm5+1))
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsos_rr(XG, XS, XT)                                                \
+        fmsos_rx(W(XG), W(XS), REG(XT))
+
+#define fmsos_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(Tmm1,    TPxx,    0x00))                     \
+        fmsos_rx(W(XG), W(XS), Tmm1)
+
+#define fmsos_rx(XG, XS, TmmT) /* not portable, do not use outside */       \
+        EMITW(0xEEB70AC0 | MXM(Tmm2+0,  0x00,    REG(XS)+0))                \
+        EMITW(0xEEB70AE0 | MXM(Tmm3+0,  0x00,    REG(XS)+0))                \
+        EMITW(0xEEB70AC0 | MXM(Tmm4+0,  0x00,    REG(XS)+1))                \
+        EMITW(0xEEB70AE0 | MXM(Tmm5+0,  0x00,    REG(XS)+1))                \
+        EMITW(0xEEB70AC0 | MXM(Tmm2+1,  0x00,    TmmT+0))                   \
+        EMITW(0xEEB70AE0 | MXM(Tmm3+1,  0x00,    TmmT+0))                   \
+        EMITW(0xEEB70AC0 | MXM(Tmm4+1,  0x00,    TmmT+1))                   \
+        EMITW(0xEEB70AE0 | MXM(Tmm5+1,  0x00,    TmmT+1))                   \
+        EMITW(0xEE200B00 | MXM(Tmm2+0,  Tmm2+0,  Tmm2+1))                   \
+        EMITW(0xEE200B00 | MXM(Tmm3+0,  Tmm3+0,  Tmm3+1))                   \
+        EMITW(0xEE200B00 | MXM(Tmm4+0,  Tmm4+0,  Tmm4+1))                   \
+        EMITW(0xEE200B00 | MXM(Tmm5+0,  Tmm5+0,  Tmm5+1))                   \
+        EMITW(0xEEB70AC0 | MXM(Tmm2+1,  0x00,    REG(XG)+0))                \
+        EMITW(0xEEB70AE0 | MXM(Tmm3+1,  0x00,    REG(XG)+0))                \
+        EMITW(0xEEB70AC0 | MXM(Tmm4+1,  0x00,    REG(XG)+1))                \
+        EMITW(0xEEB70AE0 | MXM(Tmm5+1,  0x00,    REG(XG)+1))                \
+        EMITW(0xEE300B40 | MXM(Tmm2+1,  Tmm2+1,  Tmm2+0))                   \
+        EMITW(0xEE300B40 | MXM(Tmm3+1,  Tmm3+1,  Tmm3+0))                   \
+        EMITW(0xEE300B40 | MXM(Tmm4+1,  Tmm4+1,  Tmm4+0))                   \
+        EMITW(0xEE300B40 | MXM(Tmm5+1,  Tmm5+1,  Tmm5+0))                   \
+        EMITW(0xEEB70BC0 | MXM(REG(XG)+0, 0x00,  Tmm2+1))                   \
+        EMITW(0xEEF70BC0 | MXM(REG(XG)+0, 0x00,  Tmm3+1))                   \
+        EMITW(0xEEB70BC0 | MXM(REG(XG)+1, 0x00,  Tmm4+1))                   \
+        EMITW(0xEEF70BC0 | MXM(REG(XG)+1, 0x00,  Tmm5+1))
+
+#else /* RT_128 >= 2 */ /* NOTE: FMA is available in processors with ASIMDv2 */
 
 /* fma (G = G + S * T) */
 
@@ -318,7 +394,7 @@
 
 #else /* RT_SIMD_COMPAT_DIV */
 
-#if (RT_128 < 2) /* vector FMA is available in processors with ASIMDv2 */
+#if (RT_128 < 2)
 
 #define divos_rr(XG, XS)                                                    \
         EMITW(0xF3BB0540 | MXM(Tmm1,    0x00,    REG(XS))) /* estimate */   \
@@ -349,7 +425,7 @@
         EMITW(0xF2000D50 | MXM(Tmm2,    REG(XG), Tmm1))    /* correction */ \
         EMITW(0xF2200150 | MXM(REG(XG), Tmm2,    Tmm2))
 
-#else /* RT_128 >= 2 */
+#else /* RT_128 >= 2 */ /* NOTE: FMA is available in processors with ASIMDv2 */
 
 #define divos_rr(XG, XS)                                                    \
         EMITW(0xF3BB0540 | MXM(Tmm1,    0x00,    REG(XS))) /* estimate */   \
@@ -993,7 +1069,11 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         EMITW(0xF4000AAF | MXM(Tmm2,    Teax,    0x00))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        EMITW(0xF4000AAF | MXM(Tmm3,    Teax,    0x00))
+        EMITW(0xF4000AAF | MXM(Tmm3,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0xF4000AAF | MXM(Tmm4,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0xF4000AAF | MXM(Tmm5,    Teax,    0x00))
 
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
@@ -1017,7 +1097,11 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         EMITW(0xF4200AAF | MXM(Tmm2,    Teax,    0x00))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        EMITW(0xF4200AAF | MXM(Tmm3,    Teax,    0x00))
+        EMITW(0xF4200AAF | MXM(Tmm3,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0xF4200AAF | MXM(Tmm4,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0xF4200AAF | MXM(Tmm5,    Teax,    0x00))
 
 #endif /* RT_SIMD_CODE */
 
