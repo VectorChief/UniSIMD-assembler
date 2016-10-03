@@ -209,14 +209,63 @@
 #define negos_rx(XG)                                                        \
         xorox_ld(W(XG), Mebp, inf_GPC06_32)
 
-#if (RT_256 < 2) /* NOTE: implement 2-pass fp32<->fp64 SIMD variant later */
+#if (RT_256 < 2) /* NOTE: implement 2-pass fp32<->fp64 FMA fallback below */
+
+#define cvqos_rr(XD, XS)     /* not portable, do not use outside */         \
+        VX2(0x0,     0, 1) EMITB(0x5A)                                      \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define cvqos_ld(XD, MS, DS) /* not portable, do not use outside */         \
+        VX2(0x0,     0, 1) EMITB(0x5A)                                      \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define cvoqs_rr(XD, XS)     /* not portable, do not use outside */         \
+        VX2(0x0,     1, 1) EMITB(0x5A)                                      \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define addqs_ld(XG, MS, DS) /* not portable, do not use outside */         \
+        VX2(REG(XG), 1, 1) EMITB(0x58)                                      \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define subqs_ld(XG, MS, DS) /* not portable, do not use outside */         \
+        VX2(REG(XG), 1, 1) EMITB(0x5C)                                      \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define mulqs_ld(XG, MS, DS) /* not portable, do not use outside */         \
+        VX2(REG(XG), 1, 1) EMITB(0x59)                                      \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* fma (G = G + S * T) */
 
 #define fmaos_rr(XG, XS, XT)                                                \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        fmaos_rx(W(XG))
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        cvqos_rr(W(XG), W(XT))                     /* 1st-pass -> */        \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvqos_rr(W(XG), W(XS))                                              \
+        mulqs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvqos_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
+        addqs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvoqs_rr(W(XG), W(XG))                                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        prmox_rr(W(XS), W(XS), IB(1))                                       \
+        prmox_rr(W(XT), W(XT), IB(1))              /* 1st-pass <- */        \
+        cvqos_rr(W(XG), W(XT))                     /* 2nd-pass -> */        \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvqos_rr(W(XG), W(XS))                                              \
+        mulqs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvqos_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
+        addqs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvoqs_rr(W(XG), W(XG))                                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
+        prmox_rr(W(XS), W(XS), IB(1))                                       \
+        prmox_rr(W(XT), W(XT), IB(1))              /* 2nd-pass <- */        \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 #define fmaos_ld(XG, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -266,9 +315,30 @@
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsos_rr(XG, XS, XT)                                                \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        fmsos_rx(W(XG))
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        cvqos_rr(W(XG), W(XT))                     /* 1st-pass -> */        \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvqos_rr(W(XG), W(XS))                                              \
+        mulqs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvqos_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
+        subqs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvoqs_rr(W(XG), W(XG))                                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        prmox_rr(W(XS), W(XS), IB(1))                                       \
+        prmox_rr(W(XT), W(XT), IB(1))              /* 1st-pass <- */        \
+        cvqos_rr(W(XG), W(XT))                     /* 2nd-pass -> */        \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvqos_rr(W(XG), W(XS))                                              \
+        mulqs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvqos_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
+        subqs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvoqs_rr(W(XG), W(XG))                                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
+        prmox_rr(W(XS), W(XS), IB(1))                                       \
+        prmox_rr(W(XT), W(XT), IB(1))              /* 2nd-pass <- */        \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 #define fmsos_ld(XG, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -725,34 +795,34 @@
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
-#define movlx_ld(XD, MS, DS) /* not portable, do not use outside */         \
+#define movix_ld(XD, MS, DS) /* not portable, do not use outside */         \
         VX2(0x0,     0, 0) EMITB(0x28)                                      \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define movlx_st(XS, MD, DD) /* not portable, do not use outside */         \
+#define movix_st(XS, MD, DD) /* not portable, do not use outside */         \
         VX2(0x0,     0, 0) EMITB(0x29)                                      \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
 /* add */
 
-#define addlx_rr(XG, XS)     /* not portable, do not use outside */         \
+#define addix_rr(XG, XS)     /* not portable, do not use outside */         \
         VX2(REG(XG), 1, 0) EMITB(0xFE)                                      \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define addox_rr(XG, XS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        addlx_rr(W(XG), W(XS))                                              \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movlx_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
+        addix_rr(W(XG), W(XS))                                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
         prmox_rr(W(XS), W(XS), IB(1))                                       \
-        addlx_rr(W(XG), W(XS))                                              \
+        addix_rr(W(XG), W(XS))                                              \
         prmox_rr(W(XS), W(XS), IB(1))                                       \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-#define addlx_ld(XG, MS, DS)                                                \
+#define addix_ld(XG, MS, DS) /* not portable, do not use outside */         \
         VX2(REG(XG), 1, 0) EMITB(0xFE)                                      \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
@@ -761,32 +831,32 @@
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
         movox_ld(W(XG), W(MS), W(DS))                                       \
         movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        movlx_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
-        addlx_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movlx_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        addlx_ld(W(XG), Mebp, inf_SCR02(0x10))                              \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
+        movix_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
+        addix_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
+        addix_ld(W(XG), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 /* sub */
 
-#define sublx_rr(XG, XS)     /* not portable, do not use outside */         \
+#define subix_rr(XG, XS)     /* not portable, do not use outside */         \
         VX2(REG(XG), 1, 0) EMITB(0xFA)                                      \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define subox_rr(XG, XS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        sublx_rr(W(XG), W(XS))                                              \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movlx_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
+        subix_rr(W(XG), W(XS))                                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
         prmox_rr(W(XS), W(XS), IB(1))                                       \
-        sublx_rr(W(XG), W(XS))                                              \
+        subix_rr(W(XG), W(XS))                                              \
         prmox_rr(W(XS), W(XS), IB(1))                                       \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-#define sublx_ld(XG, MS, DS)                                                \
+#define subix_ld(XG, MS, DS) /* not portable, do not use outside */         \
         VX2(REG(XG), 1, 0) EMITB(0xFA)                                      \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
@@ -795,72 +865,72 @@
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
         movox_ld(W(XG), W(MS), W(DS))                                       \
         movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        movlx_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
-        sublx_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movlx_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        sublx_ld(W(XG), Mebp, inf_SCR02(0x10))                              \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
+        movix_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
+        subix_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
+        subix_ld(W(XG), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 /* shl */
 
-#define shllx_ri(XG, IS)     /* not portable, do not use outside */         \
+#define shlix_ri(XG, IS)     /* not portable, do not use outside */         \
         VX2(REG(XG), 1, 0) EMITB(0x72)                                      \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
 #define shlox_ri(XG, IS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        shllx_ri(W(XG), W(IS))                                              \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movlx_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        shllx_ri(W(XG), W(IS))                                              \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
+        shlix_ri(W(XG), W(IS))                                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
+        shlix_ri(W(XG), W(IS))                                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-#define shllx_ld(XG, MS, DS) /* not portable, do not use outside */         \
+#define shlix_ld(XG, MS, DS) /* not portable, do not use outside */         \
         VX2(REG(XG), 1, 0) EMITB(0xF2)                                      \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define shlox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        shllx_ld(W(XG), W(MS), W(DS))                                       \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movlx_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        shllx_ld(W(XG), W(MS), W(DS))                                       \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
+        shlix_ld(W(XG), W(MS), W(DS))                                       \
+        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
+        shlix_ld(W(XG), W(MS), W(DS))                                       \
+        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 /* shr */
 
-#define shrlx_ri(XG, IS)     /* not portable, do not use outside */         \
+#define shrix_ri(XG, IS)     /* not portable, do not use outside */         \
         VX2(REG(XG), 1, 0) EMITB(0x72)                                      \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
 #define shrox_ri(XG, IS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        shrlx_ri(W(XG), W(IS))                                              \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movlx_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        shrlx_ri(W(XG), W(IS))                                              \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
+        shrix_ri(W(XG), W(IS))                                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
+        shrix_ri(W(XG), W(IS))                                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-#define shrlx_ld(XG, MS, DS) /* not portable, do not use outside */         \
+#define shrix_ld(XG, MS, DS) /* not portable, do not use outside */         \
         VX2(REG(XG), 1, 0) EMITB(0xD2)                                      \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define shrox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        shrlx_ld(W(XG), W(MS), W(DS))                                       \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movlx_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        shrlx_ld(W(XG), W(MS), W(DS))                                       \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
+        shrix_ld(W(XG), W(MS), W(DS))                                       \
+        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
+        shrix_ld(W(XG), W(MS), W(DS))                                       \
+        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 #define shrln_ri(XG, IS)     /* not portable, do not use outside */         \
@@ -871,10 +941,10 @@
 #define shron_ri(XG, IS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
         shrln_ri(W(XG), W(IS))                                              \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movlx_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
         shrln_ri(W(XG), W(IS))                                              \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 #define shrln_ld(XG, MS, DS) /* not portable, do not use outside */         \
@@ -885,10 +955,10 @@
 #define shron_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
         shrln_ld(W(XG), W(MS), W(DS))                                       \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movlx_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
         shrln_ld(W(XG), W(MS), W(DS))                                       \
-        movlx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 /**************************   packed integer (AVX2)   *************************/

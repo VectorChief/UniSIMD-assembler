@@ -215,14 +215,48 @@
 #define negos_rx(XG)                                                        \
         xorox_ld(W(XG), Mebp, inf_GPC06_32)
 
-#if (RT_256 < 2) /* NOTE: implement 2-pass fp32<->fp64 SIMD variant later */
+#if (RT_256 < 2) /* NOTE: implement 2-pass fp32<->fp64 FMA fallback below */
+
+#define cvqos_rr(XD, XS)     /* not portable, do not use outside */         \
+        VEX(RXB(XD), RXB(XS),     0x0, 1, 0, 1) EMITB(0x5A)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define cvqos_ld(XD, MS, DS) /* not portable, do not use outside */         \
+    ADR VEX(RXB(XD), RXB(MS),     0x0, 1, 0, 1) EMITB(0x5A)                 \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define cvoqs_rr(XD, XS)     /* not portable, do not use outside */         \
+        VEX(RXB(XD), RXB(XS),     0x0, 1, 1, 1) EMITB(0x5A)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
 
 /* fma (G = G + S * T) */
 
 #define fmaos_rr(XG, XS, XT)                                                \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        fmaos_rx(W(XG))
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        cvqos_rr(W(XG), W(XT))                     /* 1st-pass -> */        \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvqos_rr(W(XG), W(XS))                                              \
+        mulqs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvqos_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
+        addqs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvoqs_rr(W(XG), W(XG))                                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        prmox_rr(W(XS), W(XS), IB(1))                                       \
+        prmox_rr(W(XT), W(XT), IB(1))              /* 1st-pass <- */        \
+        cvqos_rr(W(XG), W(XT))                     /* 2nd-pass -> */        \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvqos_rr(W(XG), W(XS))                                              \
+        mulqs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvqos_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
+        addqs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvoqs_rr(W(XG), W(XG))                                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
+        prmox_rr(W(XS), W(XS), IB(1))                                       \
+        prmox_rr(W(XT), W(XT), IB(1))              /* 2nd-pass <- */        \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 #define fmaos_ld(XG, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -272,9 +306,30 @@
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsos_rr(XG, XS, XT)                                                \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        fmsos_rx(W(XG))
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        cvqos_rr(W(XG), W(XT))                     /* 1st-pass -> */        \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvqos_rr(W(XG), W(XS))                                              \
+        mulqs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvqos_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
+        subqs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvoqs_rr(W(XG), W(XG))                                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        prmox_rr(W(XS), W(XS), IB(1))                                       \
+        prmox_rr(W(XT), W(XT), IB(1))              /* 1st-pass <- */        \
+        cvqos_rr(W(XG), W(XT))                     /* 2nd-pass -> */        \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvqos_rr(W(XG), W(XS))                                              \
+        mulqs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvqos_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
+        subqs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvoqs_rr(W(XG), W(XG))                                              \
+        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
+        prmox_rr(W(XS), W(XS), IB(1))                                       \
+        prmox_rr(W(XT), W(XT), IB(1))              /* 2nd-pass <- */        \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 #define fmsos_ld(XG, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
