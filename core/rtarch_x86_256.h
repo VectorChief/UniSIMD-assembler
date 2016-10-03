@@ -721,7 +721,7 @@
 #if (RT_256 < 2)
 
 #define prmox_rr(XD, XS, IT) /* not portable, do not use outside */         \
-        VX3(REG(XD), 1, 3) EMITB(0x46)                                      \
+        VX3(REG(XD), 1, 3) EMITB(0x06)                                      \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 

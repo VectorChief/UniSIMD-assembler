@@ -677,7 +677,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 #if (RT_256 < 2)
 
 #define prmqx_rr(XD, XS, IT) /* not portable, do not use outside */         \
-        VEX(RXB(XD), RXB(XS), REN(XD), 1, 1, 3) EMITB(0x46)                 \
+        VEX(RXB(XD), RXB(XS), REN(XD), 1, 1, 3) EMITB(0x06)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
