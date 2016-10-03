@@ -520,7 +520,7 @@ FWT ADR REX(0,       RXB(RM)) EMITB(0xD9)                                   \
 #if (RT_256 < 2)
 
 #define prmpx_rr(RG, RM, IM) /* not portable, do not use outside */         \
-        VEX(RXB(RG), RXB(RM), REN(RG), 1, 1, 3) EMITB(0x46)                 \
+        VEX(RXB(RG), RXB(RM), REN(RG), 1, 1, 3) EMITB(0x06)                 \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IM)))
 
