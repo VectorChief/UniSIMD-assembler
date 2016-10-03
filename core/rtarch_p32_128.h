@@ -792,7 +792,7 @@
 #define fmaos_ld(XG, XS, MT, DT)                                            \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000020F | MXM(REG(XG), REG(XS), Tmm1))
 
 /* fms (G = G - S * T)
@@ -805,7 +805,7 @@
 #define fmsos_ld(XG, XS, MT, DT)                                            \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000068F | MXM(REG(XG), REG(XS), Tmm1))
 
 /* add */

@@ -318,11 +318,11 @@
 /* fma (G = G + S * T) */
 
 #define fmaos_rr(XG, XS, XT)                                                \
-    ADR VX3(REG(XS), 1, 2) EMITB(0xB8)                                      \
+        VX3(REG(XS), 1, 2) EMITB(0xB8)                                      \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmaos_ld(XG, XS, MT, DT)                                            \
-    ADR VX3(REG(XS), 1, 2) EMITB(0xB8)                                      \
+        VX3(REG(XS), 1, 2) EMITB(0xB8)                                      \
         MRM(REG(XG), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -331,11 +331,11 @@
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsos_rr(XG, XS, XT)                                                \
-    ADR VX3(REG(XS), 1, 2) EMITB(0xBC)                                      \
+        VX3(REG(XS), 1, 2) EMITB(0xBC)                                      \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmsos_ld(XG, XS, MT, DT)                                            \
-    ADR VX3(REG(XS), 1, 2) EMITB(0xBC)                                      \
+        VX3(REG(XS), 1, 2) EMITB(0xBC)                                      \
         MRM(REG(XG), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
