@@ -18,7 +18,7 @@
 /*******************************   DEFINITIONS   ******************************/
 /******************************************************************************/
 
-#define RUN_LEVEL           18
+#define RUN_LEVEL           20
 #define CYC_SIZE            1000000
 
 #define ARR_SIZE            S*3 /* hardcoded in asm sections, S = SIMD width */
@@ -26,12 +26,12 @@
 
 /* NOTE: floating point values are not tested for equality precisely due to
  * the slight difference in SIMD/FPU implementations across supported targets */
-#define FRK(f)              (f < 10.0       ?    0.0001     :               \
-                             f < 100.0      ?    0.001      :               \
-                             f < 1000.0     ?    0.01       :               \
-                             f < 10000.0    ?    0.1        :               \
-                             f < 100000.0   ?    1.0        :               \
-                             f < 1000000.0  ?   10.0        :  100.0)
+#define FRK(f)              (RT_FABS(f) < 10.0       ?   0.0001   :         \
+                             RT_FABS(f) < 100.0      ?   0.001    :         \
+                             RT_FABS(f) < 1000.0     ?   0.01     :         \
+                             RT_FABS(f) < 10000.0    ?   0.1      :         \
+                             RT_FABS(f) < 100000.0   ?   1.0      :         \
+                             RT_FABS(f) < 1000000.0  ?  10.0      :  100.0)
 
 #define IEQ(i1, i2)         (i1 == i2)
 
@@ -2267,6 +2267,244 @@ rt_void p_test18(rt_SIMD_INFOX *info)
 #endif /* RUN_LEVEL 18 */
 
 /******************************************************************************/
+/******************************   RUN LEVEL 19   ******************************/
+/******************************************************************************/
+
+#if RUN_LEVEL >= 19
+
+rt_void c_test19(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            ico1[j] = ~iar0[j] | (iar0[j] << 7);
+            ico2[j] = ~iar0[j];
+        }
+    }
+}
+
+rt_void s_test19(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Resi, Mebp, inf_IAR0)
+        movxx_ld(Redx, Mebp, inf_ISO1)
+        movxx_ld(Rebx, Mebp, inf_ISO2)
+
+        movpx_ld(Xmm0, Mesi, AJ0)
+        movpx_rr(Xmm1, Xmm0)
+        movpx_rr(Xmm2, Xmm0)
+        shlpx_ri(Xmm0, IB(7))
+        ornpx_rr(Xmm1, Xmm0)
+        notpx_rx(Xmm2)
+        movpx_st(Xmm1, Medx, AJ0)
+        movpx_st(Xmm2, Mebx, AJ0)
+#ifdef RT_BASE_TEST
+        movyx_ld(Reax, Mesi, AJ0)
+        movyx_rr(Recx, Reax)
+        movyx_rr(Redi, Reax)
+        shlyx_ri(Reax, IB(7))
+        ornyx_rr(Recx, Reax)
+        notyx_rx(Redi)
+        movyx_st(Recx, Medx, AJ0)
+        movyx_st(Redi, Mebx, AJ0)
+#endif /* RT_BASE_TEST */
+
+        movpx_ld(Xmm0, Mesi, AJ1)
+        movpx_rr(Xmm1, Xmm0)
+        movpx_rr(Xmm2, Xmm0)
+        shlpx_ri(Xmm0, IB(7))
+        ornpx_rr(Xmm1, Xmm0)
+        notpx_rx(Xmm2)
+        movpx_st(Xmm1, Medx, AJ1)
+        movpx_st(Xmm2, Mebx, AJ1)
+#ifdef RT_BASE_TEST
+        movyx_ld(Reax, Mesi, AJ1)
+        movyx_rr(Recx, Reax)
+        movyx_rr(Redi, Reax)
+        movyx_st(Recx, Medx, AJ1)
+        movyx_st(Redi, Mebx, AJ1)
+        shlyx_ri(Reax, IB(7))
+        ornyx_st(Reax, Medx, AJ1)
+        notyx_mx(Mebx, AJ1)
+#endif /* RT_BASE_TEST */
+
+        movpx_ld(Xmm0, Mesi, AJ2)
+        movpx_rr(Xmm1, Xmm0)
+        movpx_rr(Xmm2, Xmm0)
+        shlpx_ri(Xmm0, IB(7))
+        ornpx_rr(Xmm1, Xmm0)
+        notpx_rx(Xmm2)
+        movpx_st(Xmm1, Medx, AJ2)
+        movpx_st(Xmm2, Mebx, AJ2)
+#ifdef RT_BASE_TEST
+        movyx_ld(Reax, Mesi, AJ2)
+        movyx_rr(Recx, Reax)
+        movyx_rr(Redi, Reax)
+        shlyx_ri(Reax, IB(7))
+        ornyx_rr(Recx, Reax)
+        notyx_rx(Redi)
+        movyx_st(Recx, Medx, AJ2)
+        movyx_st(Redi, Mebx, AJ2)
+#endif /* RT_BASE_TEST */
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test19(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(ico1[j], iso1[j]) && IEQ(ico2[j], iso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("iarr[%d] = %"PR_L"d\n",
+                j, iar0[j]);
+
+        RT_LOGI("C ~iarr[%d]|(iarr[%d]<<7) = %"PR_L"d, "
+                  "~iarr[%d] = %"PR_L"d\n",
+                j, j, ico1[j], j, ico2[j]);
+
+        RT_LOGI("S ~iarr[%d]|(iarr[%d]<<7) = %"PR_L"d, "
+                  "~iarr[%d] = %"PR_L"d\n",
+                j, j, iso1[j], j, iso2[j]);
+    }
+}
+
+#endif /* RUN_LEVEL 19 */
+
+/******************************************************************************/
+/******************************   RUN LEVEL 20   ******************************/
+/******************************************************************************/
+
+#if RUN_LEVEL >= 20
+
+rt_void c_test20(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = info->size;
+
+    rt_real *far0 = info->far0;
+    rt_real *fco1 = info->fco1;
+    rt_real *fco2 = info->fco2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            fco1[j] = far0[j] + far0[(j + S) % n] * far0[(j + 2*S) % n];
+            fco2[j] = far0[j] - far0[(j + S) % n] * far0[(j + 2*S) % n];
+        }
+    }
+}
+
+rt_void s_test20(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Recx, Mebp, inf_FAR0)
+        movxx_ld(Redx, Mebp, inf_FSO1)
+        movxx_ld(Rebx, Mebp, inf_FSO2)
+
+        movpx_ld(Xmm0, Mecx, AJ0)
+        movpx_ld(Xmm1, Mecx, AJ1)
+        movpx_ld(Xmm2, Mecx, AJ2)
+        movpx_rr(Xmm3, Xmm0)
+        fmaps_rr(Xmm0, Xmm1, Xmm2)
+        fmsps_rr(Xmm3, Xmm1, Xmm2)
+        movpx_st(Xmm0, Medx, AJ0)
+        movpx_st(Xmm3, Mebx, AJ0)
+
+        movpx_ld(Xmm0, Mecx, AJ1)
+        movpx_ld(Xmm1, Mecx, AJ2)
+        movpx_rr(Xmm3, Xmm0)
+        fmaps_ld(Xmm0, Xmm1, Mecx, AJ0)
+        fmsps_ld(Xmm3, Xmm1, Mecx, AJ0)
+        movpx_st(Xmm0, Medx, AJ1)
+        movpx_st(Xmm3, Mebx, AJ1)
+
+        movpx_ld(Xmm0, Mecx, AJ2)
+        movpx_ld(Xmm1, Mecx, AJ0)
+        movpx_ld(Xmm2, Mecx, AJ1)
+        movpx_rr(Xmm3, Xmm0)
+        fmaps_rr(Xmm0, Xmm1, Xmm2)
+        fmsps_rr(Xmm3, Xmm1, Xmm2)
+        movpx_st(Xmm0, Medx, AJ2)
+        movpx_st(Xmm3, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test20(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = info->size;
+
+    rt_real *far0 = info->far0;
+    rt_real *fco1 = info->fco1;
+    rt_real *fco2 = info->fco2;
+    rt_real *fso1 = info->fso1;
+    rt_real *fso2 = info->fso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (FEQ(fco1[j], fso1[j]) && FEQ(fco2[j], fso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("farr[%d] = %e, farr[%d] = %e, farr[%d] = %e\n",
+                j, far0[j], (j + S) % n, far0[(j + S) % n],
+                (j + 2*S) % n, far0[(j + 2*S) % n]);
+
+        RT_LOGI("C farr[%d]+farr[%d]*farr[%d] = %+.25e, "
+                  "farr[%d]-farr[%d]*farr[%d] = %+.25e\n",
+                j, (j + S) % n, (j + 2*S) % n, fco1[j],
+                j, (j + S) % n, (j + 2*S) % n, fco2[j]);
+
+        RT_LOGI("S farr[%d]+farr[%d]*farr[%d] = %+.25e, "
+                  "farr[%d]-farr[%d]*farr[%d] = %+.25e\n",
+                j, (j + S) % n, (j + 2*S) % n, fso1[j],
+                j, (j + S) % n, (j + 2*S) % n, fso2[j]);
+    }
+}
+
+#endif /* RUN_LEVEL 20 */
+
+/******************************************************************************/
 /*********************************   TABLES   *********************************/
 /******************************************************************************/
 
@@ -2345,6 +2583,14 @@ testXX c_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 18
     c_test18,
 #endif /* RUN_LEVEL 18 */
+
+#if RUN_LEVEL >= 19
+    c_test19,
+#endif /* RUN_LEVEL 19 */
+
+#if RUN_LEVEL >= 20
+    c_test20,
+#endif /* RUN_LEVEL 20 */
 };
 
 testXX s_test[RUN_LEVEL] =
@@ -2420,6 +2666,14 @@ testXX s_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 18
     s_test18,
 #endif /* RUN_LEVEL 18 */
+
+#if RUN_LEVEL >= 19
+    s_test19,
+#endif /* RUN_LEVEL 19 */
+
+#if RUN_LEVEL >= 20
+    s_test20,
+#endif /* RUN_LEVEL 20 */
 };
 
 testXX p_test[RUN_LEVEL] =
@@ -2495,6 +2749,14 @@ testXX p_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 18
     p_test18,
 #endif /* RUN_LEVEL 18 */
+
+#if RUN_LEVEL >= 19
+    p_test19,
+#endif /* RUN_LEVEL 19 */
+
+#if RUN_LEVEL >= 20
+    p_test20,
+#endif /* RUN_LEVEL 20 */
 };
 
 /******************************************************************************/
