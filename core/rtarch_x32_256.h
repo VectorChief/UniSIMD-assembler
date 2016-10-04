@@ -231,12 +231,12 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define addzm_ri(MG, IS)     /* not portable, do not use outside */         \
-        REW(0,       RXB(MG)) EMITB(0x81 | TYP(IS))                         \
+        REW(0,       RXB(MG) & (REG(MG) != 4)) EMITB(0x81 | TYP(IS))        \
         MRM(0x00,    0x03,    REG(MG) & (REG(MG) != 4))                     \
         AUX(EMPTY,   EMPTY,   CMD(IS))
 
 #define subzm_ri(MG, IS)     /* not portable, do not use outside */         \
-        REW(0,       RXB(MG)) EMITB(0x81 | TYP(IS))                         \
+        REW(0,       RXB(MG) & (REG(MG) != 4)) EMITB(0x81 | TYP(IS))        \
         MRM(0x05,    0x03,    REG(MG) & (REG(MG) != 4))                     \
         AUX(EMPTY,   EMPTY,   CMD(IS))
 

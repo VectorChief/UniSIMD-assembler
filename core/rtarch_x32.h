@@ -159,8 +159,8 @@
 
 /* selectors  */
 
-#define RXB(reg, mod, sib)  (reg >> 3 & 0x01) /* register-extension-bit */
-#define REG(reg, mod, sib)  (reg >> 0 & 0x07) /* register, lower 3-bits */
+#define RXB(reg, mod, sib)  ((reg) >> 3 & 0x01) /* register-extension-bit */
+#define REG(reg, mod, sib)  ((reg) >> 0 & 0x07) /* register, lower 3-bits */
 #define MOD(reg, mod, sib)  mod
 #define SIB(reg, mod, sib)  sib
 
