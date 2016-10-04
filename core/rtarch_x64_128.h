@@ -172,6 +172,24 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x57)                       \
 #define negqs_rx(XG)                                                        \
         xorqx_ld(W(XG), Mebp, inf_GPC06_64)
 
+#if RT_SIMD_COMPAT_FMA == 0
+
+/* fma (G = G + S * T) */
+
+#define fmaqs_rr(XG, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulqs_rr(W(XS), W(XT))                                              \
+        addqs_rr(W(XG), W(XS))                                              \
+        movqx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmaqs_ld(XG, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulqs_ld(W(XS), W(MT), W(DT))                                       \
+        addqs_rr(W(XG), W(XS))                                              \
+        movqx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#else /* RT_SIMD_COMPAT_FMA */
+
 /* fma (G = G + S * T) */
 
 #define fmaqs_rr(XG, XS, XT)                                                \
@@ -197,6 +215,28 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x57)                       \
         addzs_ld(Mebp,  inf_SCR02(0x00))                                    \
         fpuzs_st(Mebp,  inf_SCR02(0x00))                                    \
         movqx_ld(W(XG), Mebp, inf_SCR02(0))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+#if RT_SIMD_COMPAT_FMS == 0
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsqs_rr(XG, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulqs_rr(W(XS), W(XT))                                              \
+        subqs_rr(W(XG), W(XS))                                              \
+        movqx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmsqs_ld(XG, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulqs_ld(W(XS), W(MT), W(DT))                                       \
+        subqs_rr(W(XG), W(XS))                                              \
+        movqx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#else /* RT_SIMD_COMPAT_FMS */
 
 /* fms (G = G - S * T)
  * NOTE: due to final negation being outside of rounding on all Power systems
@@ -225,6 +265,8 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x57)                       \
         sbrzs_ld(Mebp,  inf_SCR02(0x00))                                    \
         fpuzs_st(Mebp,  inf_SCR02(0x00))                                    \
         movqx_ld(W(XG), Mebp, inf_SCR02(0))
+
+#endif /* RT_SIMD_COMPAT_FMS */
 
 /* add */
 

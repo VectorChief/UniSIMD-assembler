@@ -210,6 +210,24 @@
 #define negos_rx(XG)                                                        \
         xorox_ld(W(XG), Mebp, inf_GPC06_32)
 
+#if RT_SIMD_COMPAT_FMA == 0
+
+/* fma (G = G + S * T) */
+
+#define fmaos_rr(XG, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulos_rr(W(XS), W(XT))                                              \
+        addos_rr(W(XG), W(XS))                                              \
+        movox_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmaos_ld(XG, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulos_ld(W(XS), W(MT), W(DT))                                       \
+        addos_rr(W(XG), W(XS))                                              \
+        movox_ld(W(XS), Mebp, inf_SCR01(0))
+
+#else /* RT_SIMD_COMPAT_FMA */
+
 /* fma (G = G + S * T) */
 
 #define fmaos_rr(XG, XS, XT)                                                \
@@ -243,6 +261,28 @@
         addws_ld(Mebp,  inf_SCR02(0x00))                                    \
         fpuws_st(Mebp,  inf_SCR02(0x00))                                    \
         movox_ld(W(XG), Mebp, inf_SCR02(0))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+#if RT_SIMD_COMPAT_FMS == 0
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsos_rr(XG, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulos_rr(W(XS), W(XT))                                              \
+        subos_rr(W(XG), W(XS))                                              \
+        movox_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmsos_ld(XG, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulos_ld(W(XS), W(MT), W(DT))                                       \
+        subos_rr(W(XG), W(XS))                                              \
+        movox_ld(W(XS), Mebp, inf_SCR01(0))
+
+#else /* RT_SIMD_COMPAT_FMS */
 
 /* fms (G = G - S * T)
  * NOTE: due to final negation being outside of rounding on all Power systems
@@ -279,6 +319,8 @@
         sbrws_ld(Mebp,  inf_SCR02(0x00))                                    \
         fpuws_st(Mebp,  inf_SCR02(0x00))                                    \
         movox_ld(W(XG), Mebp, inf_SCR02(0))
+
+#endif /* RT_SIMD_COMPAT_FMS */
 
 /* add */
 

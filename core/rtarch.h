@@ -193,13 +193,15 @@
 /*
  * Master config flags for SIMD compatibility modes across all targets.
  * Each target can be configured individually regardless of the master flag.
- * Refer to individual target sections for flags' detailed description.
+ * Refer to individual target sections below for flags' detailed description.
  */
 #define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and Power */
-#define RT_SIMD_COMPAT_RCP_MASTER       1 /* for rcpps_** full-precision */
-#define RT_SIMD_COMPAT_RSQ_MASTER       1 /* for rsqps_** full-precision */
-#define RT_SIMD_COMPAT_DIV_MASTER       1 /* for divps_** IEEE-compatible */
-#define RT_SIMD_COMPAT_SQR_MASTER       1 /* for sqrps_** IEEE-compatible */
+#define RT_SIMD_COMPAT_RCP_MASTER       1 /* for full-precision rcpps_** */
+#define RT_SIMD_COMPAT_RSQ_MASTER       1 /* for full-precision rsqps_** */
+#define RT_SIMD_COMPAT_FMA_MASTER       1 /* for full-precision fmaps_** */
+#define RT_SIMD_COMPAT_FMS_MASTER       1 /* for full-precision fmsps_** */
+#define RT_SIMD_COMPAT_DIV_MASTER       1 /* for full-precision divps_** */
+#define RT_SIMD_COMPAT_SQR_MASTER       1 /* for full-precision sqrps_** */
 
 #include "rtzero.h"
 
@@ -291,6 +293,12 @@
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
+/* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
+ * of fmaps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
+/* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
+ * of fmsps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
@@ -483,6 +491,12 @@
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
+/* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
+ * of fmaps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
+/* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
+ * of fmsps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
@@ -696,6 +710,12 @@
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
+/* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
+ * of fmaps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
+/* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
+ * of fmsps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
@@ -893,6 +913,12 @@
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
+/* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
+ * of fmaps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
+/* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
+ * of fmsps_** instructions to their full-precision fallback */
+#define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
 /* RT_SIMD_COMPAT_DIV when enabled changes the default behavior
  * of divps_** to the corresponding IEEE-compatible fallback */
 #define RT_SIMD_COMPAT_DIV      RT_SIMD_COMPAT_DIV_MASTER

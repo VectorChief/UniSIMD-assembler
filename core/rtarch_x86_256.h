@@ -224,6 +224,16 @@
         VX2(0x0,     1, 1) EMITB(0x5A)                                      \
         MRM(REG(XD), MOD(XS), REG(XS))
 
+#define addwm_ri(MG, IS)     /* not portable, do not use outside */         \
+        EMITB(0x81 | TYP(IS))                                               \
+        MRM(0x00,    0x03,    REG(MG) & (REG(MG) != 4))                     \
+        AUX(EMPTY,   EMPTY,   CMD(IS))
+
+#define subwm_ri(MG, IS)     /* not portable, do not use outside */         \
+        EMITB(0x81 | TYP(IS))                                               \
+        MRM(0x05,    0x03,    REG(MG) & (REG(MG) != 4))                     \
+        AUX(EMPTY,   EMPTY,   CMD(IS))
+
 #define addqs_ld(XG, MS, DS) /* not portable, do not use outside */         \
         VX2(REG(XG), 1, 1) EMITB(0x58)                                      \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
@@ -239,15 +249,23 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define addwm_ri(MG, IS)     /* not portable, do not use outside */         \
-        EMITB(0x81 | TYP(IS))                                               \
-        MRM(0x00,    0x03,    REG(MG) & (REG(MG) != 4))                     \
-        AUX(EMPTY,   EMPTY,   CMD(IS))
+#if RT_SIMD_COMPAT_FMA == 0
 
-#define subwm_ri(MG, IS)     /* not portable, do not use outside */         \
-        EMITB(0x81 | TYP(IS))                                               \
-        MRM(0x05,    0x03,    REG(MG) & (REG(MG) != 4))                     \
-        AUX(EMPTY,   EMPTY,   CMD(IS))
+/* fma (G = G + S * T) */
+
+#define fmaos_rr(XG, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulos_rr(W(XS), W(XT))                                              \
+        addos_rr(W(XG), W(XS))                                              \
+        movox_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmaos_ld(XG, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulos_ld(W(XS), W(MT), W(DT))                                       \
+        addos_rr(W(XG), W(XS))                                              \
+        movox_ld(W(XS), Mebp, inf_SCR01(0))
+
+#else /* RT_SIMD_COMPAT_FMA */
 
 /* fma (G = G + S * T) */
 
@@ -302,6 +320,28 @@
         prmox_rr(W(XS), W(XS), IB(1))                                       \
         subwm_ri(W(MT), IC(0x10))                  /* 2st-pass <- */        \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+#if RT_SIMD_COMPAT_FMS == 0
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsos_rr(XG, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulos_rr(W(XS), W(XT))                                              \
+        subos_rr(W(XG), W(XS))                                              \
+        movox_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmsos_ld(XG, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulos_ld(W(XS), W(MT), W(DT))                                       \
+        subos_rr(W(XG), W(XS))                                              \
+        movox_ld(W(XS), Mebp, inf_SCR01(0))
+
+#else /* RT_SIMD_COMPAT_FMS */
 
 /* fms (G = G - S * T)
  * NOTE: due to final negation being outside of rounding on all Power systems
@@ -358,6 +398,8 @@
         prmox_rr(W(XS), W(XS), IB(1))                                       \
         subwm_ri(W(MT), IC(0x10))                  /* 2st-pass <- */        \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMS */
 
 #else /* RT_256 >= 2 */ /* NOTE: FMA is available in processors with AVX2 */
 

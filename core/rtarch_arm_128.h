@@ -239,6 +239,21 @@
 
 #if (RT_128 < 2) /* NOTE: only VFP fpu fallback is available for fp32 FMA */
 
+#if RT_SIMD_COMPAT_FMA == 0
+
+/* fma (G = G + S * T) */
+
+#define fmaos_rr(XG, XS, XT)                                                \
+        EMITW(0xF2000D50 | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmaos_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(Tmm1,    TPxx,    0x00))                     \
+        EMITW(0xF2000D50 | MXM(REG(XG), REG(XS), Tmm1))
+
+#else /* RT_SIMD_COMPAT_FMA */
+
 /* fma (G = G + S * T) */
 
 #define fmaos_rr(XG, XS, XT)                                                \
@@ -275,6 +290,25 @@
         EMITW(0xEEF70BC0 | MXM(REG(XG)+0, 0x00,  Tmm3+1))                   \
         EMITW(0xEEB70BC0 | MXM(REG(XG)+1, 0x00,  Tmm4+1))                   \
         EMITW(0xEEF70BC0 | MXM(REG(XG)+1, 0x00,  Tmm5+1))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+#if RT_SIMD_COMPAT_FMS == 0
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsos_rr(XG, XS, XT)                                                \
+        EMITW(0xF2200D50 | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmsos_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(Tmm1,    TPxx,    0x00))                     \
+        EMITW(0xF2200D50 | MXM(REG(XG), REG(XS), Tmm1))
+
+#else /* RT_SIMD_COMPAT_FMS */
 
 /* fms (G = G - S * T)
  * NOTE: due to final negation being outside of rounding on all Power systems
@@ -314,6 +348,8 @@
         EMITW(0xEEF70BC0 | MXM(REG(XG)+0, 0x00,  Tmm3+1))                   \
         EMITW(0xEEB70BC0 | MXM(REG(XG)+1, 0x00,  Tmm4+1))                   \
         EMITW(0xEEF70BC0 | MXM(REG(XG)+1, 0x00,  Tmm5+1))
+
+#endif /* RT_SIMD_COMPAT_FMS */
 
 #else /* RT_128 >= 2 */ /* NOTE: FMA is available in processors with ASIMDv2 */
 
@@ -381,10 +417,10 @@
 #if RT_SIMD_COMPAT_DIV != 0
 
 #define divos_rr(XG, XS)                                                    \
-        EMITW(0xEE800A00 | MRM(REG(XG)+0, REG(XG)+0, REG(XS)+0))            \
-        EMITW(0xEEC00AA0 | MRM(REG(XG)+0, REG(XG)+0, REG(XS)+0))            \
-        EMITW(0xEE800A00 | MRM(REG(XG)+1, REG(XG)+1, REG(XS)+1))            \
-        EMITW(0xEEC00AA0 | MRM(REG(XG)+1, REG(XG)+1, REG(XS)+1))
+        EMITW(0xEE800A00 | MXM(REG(XG)+0, REG(XG)+0, REG(XS)+0))            \
+        EMITW(0xEEC00AA0 | MXM(REG(XG)+0, REG(XG)+0, REG(XS)+0))            \
+        EMITW(0xEE800A00 | MXM(REG(XG)+1, REG(XG)+1, REG(XS)+1))            \
+        EMITW(0xEEC00AA0 | MXM(REG(XG)+1, REG(XG)+1, REG(XS)+1))
 
 #define divos_ld(XG, MS, DS)                                                \
         movox_st(Xmm0, Mebp, inf_SCR01(0))                                  \
@@ -457,10 +493,10 @@
 #if RT_SIMD_COMPAT_SQR != 0
 
 #define sqros_rr(XD, XS)                                                    \
-        EMITW(0xEEB10AC0 | MRM(REG(XD)+0, 0x00, REG(XS)+0))                 \
-        EMITW(0xEEF10AE0 | MRM(REG(XD)+0, 0x00, REG(XS)+0))                 \
-        EMITW(0xEEB10AC0 | MRM(REG(XD)+1, 0x00, REG(XS)+1))                 \
-        EMITW(0xEEF10AE0 | MRM(REG(XD)+1, 0x00, REG(XS)+1))
+        EMITW(0xEEB10AC0 | MXM(REG(XD)+0, 0x00, REG(XS)+0))                 \
+        EMITW(0xEEF10AE0 | MXM(REG(XD)+0, 0x00, REG(XS)+0))                 \
+        EMITW(0xEEB10AC0 | MXM(REG(XD)+1, 0x00, REG(XS)+1))                 \
+        EMITW(0xEEF10AE0 | MXM(REG(XD)+1, 0x00, REG(XS)+1))
 
 #define sqros_ld(XD, MS, DS)                                                \
         movox_ld(W(XD), W(MS), W(DS))                                       \
