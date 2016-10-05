@@ -617,6 +617,10 @@ struct rt_SIMD_REGS
         movpx_ld(W(XD), Mebp, inf_GPC01)                                    \
         divps_rr(W(XD), W(XS))
 
+#endif /* RT_SIMD_COMPAT_RCP */
+
+#if RT_SIMD_COMPAT_RCP == 1
+
 #define rceps_rr(XD, XS)                                                    \
         movpx_st(W(XS), Mebp, inf_SCR02(0))                                 \
         movpx_ld(W(XD), Mebp, inf_GPC01)                                    \
@@ -642,6 +646,10 @@ struct rt_SIMD_REGS
         movpx_ld(W(XD), Mebp, inf_GPC01)                                    \
         divps_rr(W(XD), W(XS))
 
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+#if RT_SIMD_COMPAT_RSQ == 1
+
 #define rseps_rr(XD, XS)                                                    \
         sqrps_rr(W(XD), W(XS))                                              \
         movpx_st(W(XD), Mebp, inf_SCR02(0))                                 \
@@ -651,6 +659,44 @@ struct rt_SIMD_REGS
 #define rssps_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RSQ */
+
+/* fma (G = G + S * T) */
+
+#if RT_SIMD_COMPAT_FMA == 2
+
+#define fmaps_rr(XG, XS, XT)                                                \
+        movpx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulps_rr(W(XS), W(XT))                                              \
+        addps_rr(W(XG), W(XS))                                              \
+        movpx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmaps_ld(XG, XS, MT, DT)                                            \
+        movpx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulps_ld(W(XS), W(MT), W(DT))                                       \
+        addps_rr(W(XG), W(XS))                                              \
+        movpx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS == 2
+
+#define fmsps_rr(XG, XS, XT)                                                \
+        movpx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulps_rr(W(XS), W(XT))                                              \
+        subps_rr(W(XG), W(XS))                                              \
+        movpx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmsps_ld(XG, XS, MT, DT)                                            \
+        movpx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulps_ld(W(XS), W(MT), W(DT))                                       \
+        subps_rr(W(XG), W(XS))                                              \
+        movpx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMS */
 
 /****************** instructions for fixed-sized 32-bit SIMD ******************/
 
@@ -716,6 +762,10 @@ struct rt_SIMD_REGS
         movox_ld(W(XD), Mebp, inf_GPC01_32)                                 \
         divos_rr(W(XD), W(XS))
 
+#endif /* RT_SIMD_COMPAT_RCP */
+
+#if RT_SIMD_COMPAT_RCP == 1
+
 #define rceos_rr(XD, XS)                                                    \
         movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
         movox_ld(W(XD), Mebp, inf_GPC01_32)                                 \
@@ -741,6 +791,10 @@ struct rt_SIMD_REGS
         movox_ld(W(XD), Mebp, inf_GPC01_32)                                 \
         divos_rr(W(XD), W(XS))
 
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+#if RT_SIMD_COMPAT_RSQ == 1
+
 #define rseos_rr(XD, XS)                                                    \
         sqros_rr(W(XD), W(XS))                                              \
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
@@ -750,6 +804,44 @@ struct rt_SIMD_REGS
 #define rssos_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RSQ */
+
+/* fma (G = G + S * T) */
+
+#if RT_SIMD_COMPAT_FMA == 2
+
+#define fmaos_rr(XG, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulos_rr(W(XS), W(XT))                                              \
+        addos_rr(W(XG), W(XS))                                              \
+        movox_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmaos_ld(XG, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulos_ld(W(XS), W(MT), W(DT))                                       \
+        addos_rr(W(XG), W(XS))                                              \
+        movox_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS == 2
+
+#define fmsos_rr(XG, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulos_rr(W(XS), W(XT))                                              \
+        subos_rr(W(XG), W(XS))                                              \
+        movox_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmsos_ld(XG, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulos_ld(W(XS), W(MT), W(DT))                                       \
+        subos_rr(W(XG), W(XS))                                              \
+        movox_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMS */
 
 /****************** instructions for fixed-sized 64-bit SIMD ******************/
 
@@ -815,6 +907,10 @@ struct rt_SIMD_REGS
         movqx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
         divqs_rr(W(XD), W(XS))
 
+#endif /* RT_SIMD_COMPAT_RCP */
+
+#if RT_SIMD_COMPAT_RCP == 1
+
 #define rceqs_rr(XD, XS)                                                    \
         movqx_st(W(XS), Mebp, inf_SCR02(0))                                 \
         movqx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
@@ -840,6 +936,10 @@ struct rt_SIMD_REGS
         movqx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
         divqs_rr(W(XD), W(XS))
 
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+#if RT_SIMD_COMPAT_RSQ == 1
+
 #define rseqs_rr(XD, XS)                                                    \
         sqrqs_rr(W(XD), W(XS))                                              \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
@@ -849,6 +949,44 @@ struct rt_SIMD_REGS
 #define rssqs_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RSQ */
+
+/* fma (G = G + S * T) */
+
+#if RT_SIMD_COMPAT_FMA == 2
+
+#define fmaqs_rr(XG, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulqs_rr(W(XS), W(XT))                                              \
+        addqs_rr(W(XG), W(XS))                                              \
+        movqx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmaqs_ld(XG, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulqs_ld(W(XS), W(MT), W(DT))                                       \
+        addqs_rr(W(XG), W(XS))                                              \
+        movqx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS == 2
+
+#define fmsqs_rr(XG, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulqs_rr(W(XS), W(XT))                                              \
+        subqs_rr(W(XG), W(XS))                                              \
+        movqx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmsqs_ld(XG, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulqs_ld(W(XS), W(MT), W(DT))                                       \
+        subqs_rr(W(XG), W(XS))                                              \
+        movqx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMS */
 
 /****************** original FCTRL blocks (cannot be nested) ******************/
 

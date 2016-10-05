@@ -281,7 +281,7 @@
 /* rcp
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RCP == 0
+#if RT_SIMD_COMPAT_RCP != 1
 
 #define rceos_rr(XD, XS)                                                    \
         REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x53)                       \
@@ -301,7 +301,7 @@
 /* rsq
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RSQ == 0
+#if RT_SIMD_COMPAT_RSQ != 1
 
 #define rseos_rr(XD, XS)                                                    \
         REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x52)                       \
@@ -335,7 +335,7 @@
         addos_rr(W(XG), W(XS))                                              \
         movox_ld(W(XS), Mebp, inf_SCR01(0))
 
-#else /* RT_SIMD_COMPAT_FMA */
+#elif RT_SIMD_COMPAT_FMA == 1
 
 /* fma (G = G + S * T) */
 
@@ -391,7 +391,7 @@
         subos_rr(W(XG), W(XS))                                              \
         movox_ld(W(XS), Mebp, inf_SCR01(0))
 
-#else /* RT_SIMD_COMPAT_FMS */
+#elif RT_SIMD_COMPAT_FMS == 1
 
 /* fms (G = G - S * T)
  * NOTE: due to final negation being outside of rounding on all Power systems

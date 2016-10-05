@@ -235,7 +235,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 /* rcp
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RCP == 0
+#if RT_SIMD_COMPAT_RCP != 1
 
 #define rceqs_rr(XD, XS)                                                    \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -252,7 +252,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 /* rsq
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RSQ == 0
+#if RT_SIMD_COMPAT_RSQ != 1
 
 #define rseqs_rr(XD, XS)                                                    \
         sqrqs_rr(W(XD), W(XS))                                              \
@@ -283,7 +283,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
         addqs_rr(W(XG), W(XS))                                              \
         movqx_ld(W(XS), Mebp, inf_SCR01(0))
 
-#else /* RT_SIMD_COMPAT_FMA */
+#elif RT_SIMD_COMPAT_FMA == 1
 
 /* fma (G = G + S * T) */
 
@@ -331,7 +331,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
         subqs_rr(W(XG), W(XS))                                              \
         movqx_ld(W(XS), Mebp, inf_SCR01(0))
 
-#else /* RT_SIMD_COMPAT_FMS */
+#elif RT_SIMD_COMPAT_FMS == 1
 
 /* fms (G = G - S * T)
  * NOTE: due to final negation being outside of rounding on all Power systems

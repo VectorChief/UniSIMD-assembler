@@ -305,7 +305,7 @@
 
 /* div */
 
-#if RT_SIMD_COMPAT_DIV != 0
+#if RT_SIMD_COMPAT_DIV == 1
 
 #define divos_rr(XG, XS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -375,7 +375,7 @@
 
 /* sqr */
 
-#if RT_SIMD_COMPAT_SQR != 0
+#if RT_SIMD_COMPAT_SQR == 1
 
 #define sqros_rr(XD, XS)                                                    \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -449,7 +449,7 @@
 /* rcp
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RCP == 0
+#if RT_SIMD_COMPAT_RCP != 1
 
 #define rceos_rr(XD, XS)                                                    \
         EMITW(0x1000010A | MXM(REG(XD), 0x00,    REG(XS)))
@@ -466,7 +466,7 @@
 /* rsq
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RSQ == 0
+#if RT_SIMD_COMPAT_RSQ != 1
 
 #define rseos_rr(XD, XS)                                                    \
         EMITW(0x1000014A | MXM(REG(XD), 0x00,    REG(XS)))
@@ -484,6 +484,8 @@
 
 /* fma (G = G + S * T) */
 
+#if RT_SIMD_COMPAT_FMA <= 1
+
 #define fmaos_rr(XG, XS, XT)                                                \
         EMITW(0x1000002E | MXM(REG(XG), REG(XS), REG(XG)) | REG(XT) << 6)
 
@@ -493,9 +495,13 @@
         EMITW(0x7C0000CE | MXM(Tmm1,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x1000002E | MXM(REG(XG), REG(XS), REG(XG)) | Tmm1 << 6)
 
+#endif /* RT_SIMD_COMPAT_FMA */
+
 /* fms (G = G - S * T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS <= 1
 
 #define fmsos_rr(XG, XS, XT)                                                \
         EMITW(0x1000002F | MXM(REG(XG), REG(XS), REG(XG)) | REG(XT) << 6)
@@ -505,6 +511,8 @@
         EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x7C0000CE | MXM(Tmm1,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x1000002F | MXM(REG(XG), REG(XS), REG(XG)) | Tmm1 << 6)
+
+#endif /* RT_SIMD_COMPAT_FMS */
 
 /* min */
 
@@ -847,7 +855,7 @@
 /* rcp
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RCP == 0
+#if RT_SIMD_COMPAT_RCP != 1
 
 #define rceos_rr(XD, XS)                                                    \
         EMITW(0xF000026B | MXM(REG(XD), 0x00,    REG(XS)))
@@ -864,7 +872,7 @@
 /* rsq
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RSQ == 0
+#if RT_SIMD_COMPAT_RSQ != 1
 
 #define rseos_rr(XD, XS)                                                    \
         EMITW(0xF000022B | MXM(REG(XD), 0x00,    REG(XS)))
@@ -882,6 +890,8 @@
 
 /* fma (G = G + S * T) */
 
+#if RT_SIMD_COMPAT_FMA <= 1
+
 #define fmaos_rr(XG, XS, XT)                                                \
         EMITW(0xF000020F | MXM(REG(XG), REG(XS), REG(XT)))
 
@@ -891,9 +901,13 @@
         EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000020F | MXM(REG(XG), REG(XS), Tmm1))
 
+#endif /* RT_SIMD_COMPAT_FMA */
+
 /* fms (G = G - S * T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS <= 1
 
 #define fmsos_rr(XG, XS, XT)                                                \
         EMITW(0xF000068F | MXM(REG(XG), REG(XS), REG(XT)))
@@ -903,6 +917,8 @@
         EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000068F | MXM(REG(XG), REG(XS), Tmm1))
+
+#endif /* RT_SIMD_COMPAT_FMS */
 
 /* min */
 

@@ -194,14 +194,16 @@
  * Master config flags for SIMD compatibility modes across all targets.
  * Each target can be configured individually regardless of the master flag.
  * Refer to individual target sections below for flags' detailed description.
+ * General rule for interpretation of RT_SIMD_COMPAT_* values is as following:
+ * 0 - non-compat (fastest), 1 - max-compat (slower), 2 - min-compat (faster).
  */
-#define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and Power */
 #define RT_SIMD_COMPAT_RCP_MASTER       1 /* for full-precision rcpps_** */
 #define RT_SIMD_COMPAT_RSQ_MASTER       1 /* for full-precision rsqps_** */
 #define RT_SIMD_COMPAT_FMA_MASTER       1 /* for full-precision fmaps_** */
 #define RT_SIMD_COMPAT_FMS_MASTER       1 /* for full-precision fmsps_** */
 #define RT_SIMD_COMPAT_DIV_MASTER       1 /* for full-precision divps_** */
 #define RT_SIMD_COMPAT_SQR_MASTER       1 /* for full-precision sqrps_** */
+#define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and Power */
 
 #include "rtzero.h"
 

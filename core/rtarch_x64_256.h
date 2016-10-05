@@ -239,7 +239,7 @@
 /* rcp
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RCP == 0
+#if RT_SIMD_COMPAT_RCP != 1
 
 #define rceqs_rr(XD, XS)                                                    \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -256,7 +256,7 @@
 /* rsq
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RSQ == 0
+#if RT_SIMD_COMPAT_RSQ != 1
 
 #define rseqs_rr(XD, XS)                                                    \
         sqrqs_rr(W(XD), W(XS))                                              \
@@ -289,7 +289,7 @@
         addqs_rr(W(XG), W(XS))                                              \
         movqx_ld(W(XS), Mebp, inf_SCR01(0))
 
-#else /* RT_SIMD_COMPAT_FMA */
+#elif RT_SIMD_COMPAT_FMA == 1
 
 /* fma (G = G + S * T) */
 
@@ -345,7 +345,7 @@
         subqs_rr(W(XG), W(XS))                                              \
         movqx_ld(W(XS), Mebp, inf_SCR01(0))
 
-#else /* RT_SIMD_COMPAT_FMS */
+#elif RT_SIMD_COMPAT_FMS == 1
 
 /* fms (G = G - S * T)
  * NOTE: due to final negation being outside of rounding on all Power systems
@@ -389,6 +389,8 @@
 
 /* fma (G = G + S * T) */
 
+#if RT_SIMD_COMPAT_FMA <= 1
+
 #define fmaqs_rr(XG, XS, XT)                                                \
     ADR VEW(RXB(XG), RXB(XT), REN(XS), 1, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
@@ -398,9 +400,13 @@
         MRM(REG(XG), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+#endif /* RT_SIMD_COMPAT_FMA */
+
 /* fms (G = G - S * T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS <= 1
 
 #define fmsqs_rr(XG, XS, XT)                                                \
     ADR VEW(RXB(XG), RXB(XT), REN(XS), 1, 1, 2) EMITB(0xBC)                 \
@@ -410,6 +416,8 @@
     ADR VEW(RXB(XG), RXB(MT), REN(XS), 1, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
+
+#endif /* RT_SIMD_COMPAT_FMS */
 
 #endif /* RT_256 >= 2 */
 
