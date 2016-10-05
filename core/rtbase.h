@@ -923,24 +923,6 @@ struct rt_SIMD_REGS
 #define negps_rx(XG)                                                        \
         negos_rx(W(XG))
 
-/* fma (G = G + S * T) */
-
-#define fmaps_rr(XG, XS, XT)                                                \
-        fmaos_rr(W(XG), W(XS), W(XT))
-
-#define fmaps_ld(XG, XS, MT, DT)                                            \
-        fmaos_ld(W(XG), W(XS), W(MT), W(DT))
-
-/* fms (G = G - S * T)
- * NOTE: due to final negation being outside of rounding on all Power systems
- * only symmetric rounding modes (RN, RZ) are compatible across all targets */
-
-#define fmsps_rr(XG, XS, XT)                                                \
-        fmsos_rr(W(XG), W(XS), W(XT))
-
-#define fmsps_ld(XG, XS, MT, DT)                                            \
-        fmsos_ld(W(XG), W(XS), W(MT), W(DT))
-
 /* add */
 
 #define addps_rr(XG, XS)                                                    \
@@ -1017,6 +999,24 @@ struct rt_SIMD_REGS
 
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* fma (G = G + S * T) */
+
+#define fmaps_rr(XG, XS, XT)                                                \
+        fmaos_rr(W(XG), W(XS), W(XT))
+
+#define fmaps_ld(XG, XS, MT, DT)                                            \
+        fmaos_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsps_rr(XG, XS, XT)                                                \
+        fmsos_rr(W(XG), W(XS), W(XT))
+
+#define fmsps_ld(XG, XS, MT, DT)                                            \
+        fmsos_ld(W(XG), W(XS), W(MT), W(DT))
 
 /* min */
 
@@ -1304,24 +1304,6 @@ struct rt_SIMD_REGS
 #define negps_rx(XG)                                                        \
         negqs_rx(W(XG))
 
-/* fma (G = G + S * T) */
-
-#define fmaps_rr(XG, XS, XT)                                                \
-        fmaqs_rr(W(XG), W(XS), W(XT))
-
-#define fmaps_ld(XG, XS, MT, DT)                                            \
-        fmaqs_ld(W(XG), W(XS), W(MT), W(DT))
-
-/* fms (G = G - S * T)
- * NOTE: due to final negation being outside of rounding on all Power systems
- * only symmetric rounding modes (RN, RZ) are compatible across all targets */
-
-#define fmsps_rr(XG, XS, XT)                                                \
-        fmsqs_rr(W(XG), W(XS), W(XT))
-
-#define fmsps_ld(XG, XS, MT, DT)                                            \
-        fmsqs_ld(W(XG), W(XS), W(MT), W(DT))
-
 /* add */
 
 #define addps_rr(XG, XS)                                                    \
@@ -1398,6 +1380,24 @@ struct rt_SIMD_REGS
 
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* fma (G = G + S * T) */
+
+#define fmaps_rr(XG, XS, XT)                                                \
+        fmaqs_rr(W(XG), W(XS), W(XT))
+
+#define fmaps_ld(XG, XS, MT, DT)                                            \
+        fmaqs_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsps_rr(XG, XS, XT)                                                \
+        fmsqs_rr(W(XG), W(XS), W(XT))
+
+#define fmsps_ld(XG, XS, MT, DT)                                            \
+        fmsqs_ld(W(XG), W(XS), W(MT), W(DT))
 
 /* min */
 

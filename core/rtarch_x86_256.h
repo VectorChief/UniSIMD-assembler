@@ -209,6 +209,107 @@
 #define negos_rx(XG)                                                        \
         xorox_ld(W(XG), Mebp, inf_GPC06_32)
 
+/* add */
+
+#define addos_rr(XG, XS)                                                    \
+        VX2(REG(XG), 0, 1) EMITB(0x58)                                      \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define addos_ld(XG, MS, DS)                                                \
+        VX2(REG(XG), 0, 1) EMITB(0x58)                                      \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* sub */
+
+#define subos_rr(XG, XS)                                                    \
+        VX2(REG(XG), 0, 1) EMITB(0x5C)                                      \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define subos_ld(XG, MS, DS)                                                \
+        VX2(REG(XG), 0, 1) EMITB(0x5C)                                      \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* mul */
+
+#define mulos_rr(XG, XS)                                                    \
+        VX2(REG(XG), 0, 1) EMITB(0x59)                                      \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define mulos_ld(XG, MS, DS)                                                \
+        VX2(REG(XG), 0, 1) EMITB(0x59)                                      \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* div */
+
+#define divos_rr(XG, XS)                                                    \
+        VX2(REG(XG), 0, 1) EMITB(0x5E)                                      \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define divos_ld(XG, MS, DS)                                                \
+        VX2(REG(XG), 0, 1) EMITB(0x5E)                                      \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* sqr */
+
+#define sqros_rr(XD, XS)                                                    \
+        VX2(0x0,     0, 1) EMITB(0x51)                                      \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define sqros_ld(XD, MS, DS)                                                \
+        VX2(0x0,     0, 1) EMITB(0x51)                                      \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* cbr */
+
+        /* cbe, cbs, cbr defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rcp
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RCP == 0
+
+#define rceos_rr(XD, XS)                                                    \
+        VX2(0x0,     0, 1) EMITB(0x53)                                      \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define rcsos_rr(XG, XS) /* destroys MS */                                  \
+        mulos_rr(W(XS), W(XG))                                              \
+        mulos_rr(W(XS), W(XG))                                              \
+        addos_rr(W(XG), W(XG))                                              \
+        subos_rr(W(XG), W(XS))
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+        /* rcp defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rsq
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RSQ == 0
+
+#define rseos_rr(XD, XS)                                                    \
+        VX2(0x0,     0, 1) EMITB(0x52)                                      \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define rssos_rr(XG, XS) /* destroys MS */                                  \
+        mulos_rr(W(XS), W(XG))                                              \
+        mulos_rr(W(XS), W(XG))                                              \
+        subos_ld(W(XS), Mebp, inf_GPC03_32)                                 \
+        mulos_ld(W(XS), Mebp, inf_GPC02_32)                                 \
+        mulos_rr(W(XG), W(XS))
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+        /* rsq defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
 #if (RT_256 < 2) /* NOTE: implement 2-pass fp32<->fp64 FMA fallback below */
 
 #define cvqos_rr(XD, XS)     /* not portable, do not use outside */         \
@@ -428,107 +529,6 @@
         AUX(SIB(MT), CMD(DT), EMPTY)
 
 #endif /* RT_256 >= 2 */
-
-/* add */
-
-#define addos_rr(XG, XS)                                                    \
-        VX2(REG(XG), 0, 1) EMITB(0x58)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define addos_ld(XG, MS, DS)                                                \
-        VX2(REG(XG), 0, 1) EMITB(0x58)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-/* sub */
-
-#define subos_rr(XG, XS)                                                    \
-        VX2(REG(XG), 0, 1) EMITB(0x5C)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define subos_ld(XG, MS, DS)                                                \
-        VX2(REG(XG), 0, 1) EMITB(0x5C)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-/* mul */
-
-#define mulos_rr(XG, XS)                                                    \
-        VX2(REG(XG), 0, 1) EMITB(0x59)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define mulos_ld(XG, MS, DS)                                                \
-        VX2(REG(XG), 0, 1) EMITB(0x59)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-/* div */
-
-#define divos_rr(XG, XS)                                                    \
-        VX2(REG(XG), 0, 1) EMITB(0x5E)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define divos_ld(XG, MS, DS)                                                \
-        VX2(REG(XG), 0, 1) EMITB(0x5E)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-/* sqr */
-
-#define sqros_rr(XD, XS)                                                    \
-        VX2(0x0,     0, 1) EMITB(0x51)                                      \
-        MRM(REG(XD), MOD(XS), REG(XS))
-
-#define sqros_ld(XD, MS, DS)                                                \
-        VX2(0x0,     0, 1) EMITB(0x51)                                      \
-        MRM(REG(XD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-/* cbr */
-
-        /* cbe, cbs, cbr defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
-
-/* rcp
- * accuracy/behavior may vary across supported targets, use accordingly */
-
-#if RT_SIMD_COMPAT_RCP == 0
-
-#define rceos_rr(XD, XS)                                                    \
-        VX2(0x0,     0, 1) EMITB(0x53)                                      \
-        MRM(REG(XD), MOD(XS), REG(XS))
-
-#define rcsos_rr(XG, XS) /* destroys MS */                                  \
-        mulos_rr(W(XS), W(XG))                                              \
-        mulos_rr(W(XS), W(XG))                                              \
-        addos_rr(W(XG), W(XG))                                              \
-        subos_rr(W(XG), W(XS))
-
-#endif /* RT_SIMD_COMPAT_RCP */
-
-        /* rcp defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
-
-/* rsq
- * accuracy/behavior may vary across supported targets, use accordingly */
-
-#if RT_SIMD_COMPAT_RSQ == 0
-
-#define rseos_rr(XD, XS)                                                    \
-        VX2(0x0,     0, 1) EMITB(0x52)                                      \
-        MRM(REG(XD), MOD(XS), REG(XS))
-
-#define rssos_rr(XG, XS) /* destroys MS */                                  \
-        mulos_rr(W(XS), W(XG))                                              \
-        mulos_rr(W(XS), W(XG))                                              \
-        subos_ld(W(XS), Mebp, inf_GPC03_32)                                 \
-        mulos_ld(W(XS), Mebp, inf_GPC02_32)                                 \
-        mulos_rr(W(XG), W(XS))
-
-#endif /* RT_SIMD_COMPAT_RSQ */
-
-        /* rsq defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* min */
 

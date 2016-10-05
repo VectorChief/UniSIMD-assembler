@@ -176,6 +176,101 @@
 #define negqs_rx(XG)                                                        \
         xorqx_ld(W(XG), Mebp, inf_GPC06_64)
 
+/* add */
+
+#define addqs_rr(XG, XS)                                                    \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x58)                 \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define addqs_ld(XG, MS, DS)                                                \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0x58)                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* sub */
+
+#define subqs_rr(XG, XS)                                                    \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x5C)                 \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define subqs_ld(XG, MS, DS)                                                \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0x5C)                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* mul */
+
+#define mulqs_rr(XG, XS)                                                    \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x59)                 \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define mulqs_ld(XG, MS, DS)                                                \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0x59)                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* div */
+
+#define divqs_rr(XG, XS)                                                    \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x5E)                 \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define divqs_ld(XG, MS, DS)                                                \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0x5E)                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* sqr */
+
+#define sqrqs_rr(XD, XS)                                                    \
+        VEX(RXB(XD), RXB(XS),     0x0, 1, 1, 1) EMITB(0x51)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define sqrqs_ld(XD, MS, DS)                                                \
+    ADR VEX(RXB(XD), RXB(MS),     0x0, 1, 1, 1) EMITB(0x51)                 \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* cbr */
+
+        /* cbe, cbs, cbr defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rcp
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RCP == 0
+
+#define rceqs_rr(XD, XS)                                                    \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divqs_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define rcsqs_rr(XG, XS) /* destroys MS */
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+        /* rcp defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rsq
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RSQ == 0
+
+#define rseqs_rr(XD, XS)                                                    \
+        sqrqs_rr(W(XD), W(XS))                                              \
+        movqx_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divqs_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define rssqs_rr(XG, XS) /* destroys MS */
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+        /* rsq defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
 #if (RT_256 < 2) /* NOTE: only x87 fpu fallback is available for fp64 FMA */
 
 #if RT_SIMD_COMPAT_FMA == 0
@@ -317,101 +412,6 @@
         AUX(SIB(MT), CMD(DT), EMPTY)
 
 #endif /* RT_256 >= 2 */
-
-/* add */
-
-#define addqs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x58)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define addqs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0x58)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-/* sub */
-
-#define subqs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x5C)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define subqs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0x5C)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-/* mul */
-
-#define mulqs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x59)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define mulqs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0x59)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-/* div */
-
-#define divqs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x5E)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define divqs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0x5E)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-/* sqr */
-
-#define sqrqs_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),     0x0, 1, 1, 1) EMITB(0x51)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))
-
-#define sqrqs_ld(XD, MS, DS)                                                \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, 1, 1, 1) EMITB(0x51)                 \
-        MRM(REG(XD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-/* cbr */
-
-        /* cbe, cbs, cbr defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
-
-/* rcp
- * accuracy/behavior may vary across supported targets, use accordingly */
-
-#if RT_SIMD_COMPAT_RCP == 0
-
-#define rceqs_rr(XD, XS)                                                    \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
-        divqs_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define rcsqs_rr(XG, XS) /* destroys MS */
-
-#endif /* RT_SIMD_COMPAT_RCP */
-
-        /* rcp defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
-
-/* rsq
- * accuracy/behavior may vary across supported targets, use accordingly */
-
-#if RT_SIMD_COMPAT_RSQ == 0
-
-#define rseqs_rr(XD, XS)                                                    \
-        sqrqs_rr(W(XD), W(XS))                                              \
-        movqx_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movqx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
-        divqs_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define rssqs_rr(XG, XS) /* destroys MS */
-
-#endif /* RT_SIMD_COMPAT_RSQ */
-
-        /* rsq defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* min */
 

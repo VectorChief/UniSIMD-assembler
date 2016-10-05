@@ -163,28 +163,6 @@
 #define negqs_rx(XG)                                                        \
         EMITW(0x7860001E | MXM(REG(XG), REG(XG), TmmT))
 
-/* fma (G = G + S * T) */
-
-#define fmaqs_rr(XG, XS, XT)                                                \
-        EMITW(0x7920001B | MXM(REG(XG), REG(XS), REG(XT)))
-
-#define fmaqs_ld(XG, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0x78000023 | MPM(Tmm1,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMITW(0x7920001B | MXM(REG(XG), REG(XS), Tmm1))
-
-/* fms (G = G - S * T)
- * NOTE: due to final negation being outside of rounding on all Power systems
- * only symmetric rounding modes (RN, RZ) are compatible across all targets */
-
-#define fmsqs_rr(XG, XS, XT)                                                \
-        EMITW(0x7960001B | MXM(REG(XG), REG(XS), REG(XT)))
-
-#define fmsqs_ld(XG, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0x78000023 | MPM(Tmm1,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMITW(0x7960001B | MXM(REG(XG), REG(XS), Tmm1))
-
 /* add */
 
 #define addqs_rr(XG, XS)                                                    \
@@ -269,6 +247,28 @@
 
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* fma (G = G + S * T) */
+
+#define fmaqs_rr(XG, XS, XT)                                                \
+        EMITW(0x7920001B | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmaqs_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(Tmm1,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7920001B | MXM(REG(XG), REG(XS), Tmm1))
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsqs_rr(XG, XS, XT)                                                \
+        EMITW(0x7960001B | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmsqs_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(Tmm1,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7960001B | MXM(REG(XG), REG(XS), Tmm1))
 
 /* min */
 
