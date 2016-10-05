@@ -1072,11 +1072,10 @@ struct rt_SIMD_REGS
 #define cgeps_ld(XG, MS, DS)                                                \
         cgeos_ld(W(XG), W(MS), W(DS))
 
-
 /* cvz (fp-to-signed-int)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnzps_rr(XD, XS)     /* round towards zero */                       \
         rnzos_rr(W(XD), W(XS))
@@ -1093,7 +1092,7 @@ struct rt_SIMD_REGS
 /* cvp (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnpps_rr(XD, XS)     /* round towards +inf */                       \
         rnpos_rr(W(XD), W(XS))
@@ -1110,7 +1109,7 @@ struct rt_SIMD_REGS
 /* cvm (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnmps_rr(XD, XS)     /* round towards -inf */                       \
         rnmos_rr(W(XD), W(XS))
@@ -1127,7 +1126,7 @@ struct rt_SIMD_REGS
 /* cvn (fp-to-signed-int)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnnps_rr(XD, XS)     /* round towards near */                       \
         rnnos_rr(W(XD), W(XS))
@@ -1188,12 +1187,11 @@ struct rt_SIMD_REGS
 #define shrpn_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         shron_ld(W(XG), W(MS), W(DS))
 
-
 /* cvt (fp-to-signed-int)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rndps_rr(XD, XS)                                                    \
         rndos_rr(W(XD), W(XS))
@@ -1222,7 +1220,7 @@ struct rt_SIMD_REGS
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnrps_rr(XD, XS, mode)                                              \
         rnros_rr(W(XD), W(XS), mode)
@@ -1453,7 +1451,6 @@ struct rt_SIMD_REGS
 #define cgeps_ld(XG, MS, DS)                                                \
         cgeqs_ld(W(XG), W(MS), W(DS))
 
-
 /* cvz (fp-to-signed-int)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -1568,7 +1565,6 @@ struct rt_SIMD_REGS
 
 #define shrpn_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         shrqn_ld(W(XG), W(MS), W(DS))
-
 
 /* cvt (fp-to-signed-int)
  * rounding mode comes from fp control register (set in FCTRL blocks)
