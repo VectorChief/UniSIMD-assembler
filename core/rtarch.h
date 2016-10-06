@@ -1578,9 +1578,6 @@
 /* RT_SIMD_COMPAT_SQR when enabled changes the default behavior
  * of sqrps_** to the corresponding IEEE-compatible fallback */
 #define RT_SIMD_COMPAT_SQR      RT_SIMD_COMPAT_SQR_MASTER
-/* RT_SIMD_COMPAT_I64 when enabled makes 64-bit int SIMD subset
- * compatible with POWER7 processors lacking 64-bit int SIMD */
-#define RT_SIMD_COMPAT_I64      0 /* only necessary on Power */
 /* RT_BASE_COMPAT_ZFL when enabled makes setting-flags BASE ops
  * compatible with 64-bit processors running 32-bit ISA mode */
 #define RT_BASE_COMPAT_ZFL      1 /* only necessary on Power */

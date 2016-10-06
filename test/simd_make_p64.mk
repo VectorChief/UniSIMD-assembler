@@ -25,24 +25,24 @@ build_le: simd_test_p64_32Lp8 simd_test_p64f32Lp8 simd_test_p64f64Lp8
 
 simd_test_p64_32Lp8:
 	powerpc64le-linux-gnu-g++ -O2 -g -static \
-        -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_P64 -DRT_128=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64_32Lp8
 
 simd_test_p64f32Lp8:
 	powerpc64le-linux-gnu-g++ -O2 -g -static \
-        -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_P64 -DRT_128=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f32Lp8
 
 simd_test_p64f64Lp8:
 	powerpc64le-linux-gnu-g++ -O2 -g -static \
-        -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_P64 -DRT_128=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f64Lp8
 
 
-build_be: simd_test_p64_32Bp7 simd_test_p64f32Bp7 simd_test_p64f64Bp8
+build_be: simd_test_p64_32Bp7 simd_test_p64f32Bp7 simd_test_p64f64Bp7
 
 simd_test_p64_32Bp7:
 	powerpc64-linux-gnu-g++ -O2 -g -static \
@@ -56,11 +56,11 @@ simd_test_p64f32Bp7:
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f32Bp7
 
-simd_test_p64f64Bp8:
+simd_test_p64f64Bp7:
 	powerpc64-linux-gnu-g++ -O2 -g -static \
         -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=1 \
-        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f64Bp8
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f64Bp7
 
 
 # On Ubuntu 16.04 Live CD add "universe multiverse" to "main restricted"
@@ -81,8 +81,7 @@ simd_test_p64f64Bp8:
 # qemu-ppc64le -cpu POWER8 simd_test.p64f32Lp8
 
 # For big-endian 64-bit POWER(7,7+,8) VSX target use (replace):
-# powerpc64-linux-gnu-g++ -DRT_ENDIAN=1
-# (enable RT_SIMD_COMPAT_I64 in core/rtarch.h for POWER7 64-bit SIMD)
+# powerpc64-linux-gnu-g++ -DRT_128=2 -DRT_ENDIAN=1
 # qemu-ppc64 -cpu POWER7 simd_test.p64f32Bp7
 
 # 64/32-bit (ptr/adr) hybrid mode compatible with native 64-bit ABI
