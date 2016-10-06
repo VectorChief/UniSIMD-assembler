@@ -11,20 +11,26 @@ LIB_LIST =                              \
         -lm
 
 
-build: simd_test_arm
+build: simd_test_arm_v1 simd_test_arm_v2
 
 strip:
-	arm-linux-gnueabi-strip simd_test.arm
+	arm-linux-gnueabi-strip simd_test.arm_v*
 
 clean:
-	rm simd_test.arm
+	rm simd_test.arm_v*
 
 
-simd_test_arm:
+simd_test_arm_v1:
 	arm-linux-gnueabi-g++ -O3 -g -static \
         -DRT_LINUX -DRT_ARM -DRT_128=1 -DRT_DEBUG=0 \
         -DRT_POINTER=32 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
-        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.arm
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.arm_v1
+
+simd_test_arm_v2:
+	arm-linux-gnueabi-g++ -O3 -g -static \
+        -DRT_LINUX -DRT_ARM -DRT_128=2 -DRT_DEBUG=0 \
+        -DRT_POINTER=32 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.arm_v2
 
 
 build_n900: simd_test_arm_n900
@@ -79,7 +85,8 @@ simd_test_arm_rpi3:
 #
 # Building/running SIMD test:
 # make -f simd_make_arm.mk
-# qemu-arm -cpu cortex-a8 simd_test.arm
+# qemu-arm -cpu cortex-a8  simd_test.arm_v1
+# qemu-arm -cpu cortex-a15 simd_test.arm_v2
 
 # 0) Build flags above are intended for default "vanilla" ARMv7 target, while
 # settings suitable for specific hardware platforms are given below (replace).
