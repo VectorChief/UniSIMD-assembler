@@ -660,19 +660,19 @@
 #define SMN(rg, lb) ASM_BEG ASM_OP2(beq, cr6, lb) ASM_END
 #define SMF(rg, lb) ASM_BEG ASM_OP2(blt, cr6, lb) ASM_END
 
-#if RT_SIMD_COMPAT_I64 != 0
+#if (RT_128 < 4)
 
 #define CHECK_MASK(lb, mask, RG) /* destroys Reax */                        \
         EMITW(0x10000486 | MXM(REG(RG), REG(RG), TmmQ))                     \
         AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb, S0(RT_SIMD_MASK_##mask), EMPTY2)
 
-#else /* RT_SIMD_COMPAT_I64 */
+#else /* RT_128 >= 4 */
 
 #define CHECK_MASK(lb, mask, RG) /* destroys Reax */                        \
         EMITW(0x100004C7 | MXM(REG(RG), REG(RG), TmmQ))                     \
         AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb, S0(RT_SIMD_MASK_##mask), EMPTY2)
 
-#endif /* RT_SIMD_COMPAT_I64 */
+#endif /* RT_128 >= 4 */
 
 /* simd mode
  * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),
