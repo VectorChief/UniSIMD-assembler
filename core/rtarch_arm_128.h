@@ -105,6 +105,10 @@
 #define Tmm2    0x12  /* q9 */
 #define Tmm3    0x14  /* q10 */
 
+/* register pass-through variator */
+
+#define   V(reg, mod, sib)  ((reg + 0x02) & 0x0F), mod, sib
+
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -235,10 +239,10 @@
         EMITW(0xEEC00AA0 | MRM(REG(RG)+1, REG(RG)+1, REG(RM)+1))
 
 #define divps_ld(RG, RM, DP)                                                \
-        movpx_st(Xmm0, Mebp, inf_SCR01(0))                                  \
-        movpx_ld(Xmm0, W(RM), W(DP))                                        \
-        divps_rr(W(RG), Xmm0)                                               \
-        movpx_ld(Xmm0, Mebp, inf_SCR01(0))
+        movpx_st(V(RG), Mebp, inf_SCR01(0))                                 \
+        movpx_ld(V(RG), W(RM), W(DP))                                       \
+        divps_rr(W(RG), V(RG))                                              \
+        movpx_ld(V(RG), Mebp, inf_SCR01(0))
 
 #else /* RT_SIMD_COMPAT_DIV */
 
