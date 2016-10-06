@@ -11,7 +11,10 @@ v0.8.1: Unified SIMD Assembler, full 64-bit fp/int SIMD compute elements
   - adjust math macros and definitions to support double-precision arithmetic
   - add build/clean scripts, update makefiles with extra targets, MIPS notes
   - remove unnecessary limitation on SIMD masks (add AVX-512/ARM-SVE notes)
+  - distinguish SIMD NEONv1/v2 vanilla ARM builds (cortex-a8/cortex-a15)
+  - distinguish SIMD v2/v4 64-bit Power builds (POWER7+VSX/POWER8+VSX2)
   - fix non-setting-flags instructions to not interfere with cmp on MIPS, Power
+  - fix full-precision IEEE-compat divps_ld on ARMv7 targets (backported down)
 
 v0.8.0: Unified SIMD Assembler, full 64-bit addressing for BASE and SIMD
   - double original 32-bit BASE ISA to fixed-32-bit and address-sized subsets
