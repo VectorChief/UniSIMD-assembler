@@ -660,44 +660,6 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-/* fma (G = G + S * T) */
-
-#if RT_SIMD_COMPAT_FMA == 2
-
-#define fmaps_rr(XG, XS, XT)                                                \
-        movpx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        mulps_rr(W(XS), W(XT))                                              \
-        addps_rr(W(XG), W(XS))                                              \
-        movpx_ld(W(XS), Mebp, inf_SCR01(0))
-
-#define fmaps_ld(XG, XS, MT, DT)                                            \
-        movpx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        mulps_ld(W(XS), W(MT), W(DT))                                       \
-        addps_rr(W(XG), W(XS))                                              \
-        movpx_ld(W(XS), Mebp, inf_SCR01(0))
-
-#endif /* RT_SIMD_COMPAT_FMA */
-
-/* fms (G = G - S * T)
- * NOTE: due to final negation being outside of rounding on all Power systems
- * only symmetric rounding modes (RN, RZ) are compatible across all targets */
-
-#if RT_SIMD_COMPAT_FMS == 2
-
-#define fmsps_rr(XG, XS, XT)                                                \
-        movpx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        mulps_rr(W(XS), W(XT))                                              \
-        subps_rr(W(XG), W(XS))                                              \
-        movpx_ld(W(XS), Mebp, inf_SCR01(0))
-
-#define fmsps_ld(XG, XS, MT, DT)                                            \
-        movpx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        mulps_ld(W(XS), W(MT), W(DT))                                       \
-        subps_rr(W(XG), W(XS))                                              \
-        movpx_ld(W(XS), Mebp, inf_SCR01(0))
-
-#endif /* RT_SIMD_COMPAT_FMS */
-
 /****************** instructions for fixed-sized 32-bit SIMD ******************/
 
 /* cbr */

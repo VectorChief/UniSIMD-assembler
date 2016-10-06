@@ -142,6 +142,18 @@
 
 /* orn (G = ~G | S) */
 
+#if (RT_128 < 4)
+
+#define ornqx_rr(XG, XS)                                                    \
+        notqx_rx(W(XG))                                                     \
+        orrqx_rr(W(XG), W(XS))
+
+#define ornqx_ld(XG, MS, DS)                                                \
+        notqx_rx(W(XG))                                                     \
+        orrqx_ld(W(XG), W(MS), W(DS))
+
+#else /* RT_128 >= 4 */
+
 #define ornqx_rr(XG, XS)                                                    \
         EMITW(0xF0000557 | MXM(REG(XG), REG(XS), REG(XG)))
 
@@ -150,6 +162,8 @@
         EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x7C000699 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0xF0000557 | MXM(REG(XG), Tmm1,    REG(XG)))/* ^ == -1 if true */
+
+#endif /* RT_128 >= 4 */
 
 /* xor */
 
@@ -482,7 +496,7 @@
 
 /**************************   packed integer (SIMD)   *************************/
 
-#if RT_SIMD_COMPAT_I64 != 0
+#if (RT_128 < 4)
 
 /* add */
 
@@ -583,7 +597,7 @@
         stack_ld(Recx)                                                      \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-#else /* RT_SIMD_COMPAT_I64 */
+#else /* RT_128 >= 4 */
 
 /* add */
 
@@ -641,7 +655,7 @@
         EMITW(0x7C000299 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0x100003C4 | MXM(REG(XG), REG(XG), Tmm1))/* ^ == -1 if true */
 
-#endif /* RT_SIMD_COMPAT_I64 */
+#endif /* RT_128 >= 4 */
 
 /**************************   helper macros (SIMD)   **************************/
 

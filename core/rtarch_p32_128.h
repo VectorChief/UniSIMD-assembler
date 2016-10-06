@@ -222,6 +222,18 @@
 
 /* orn (G = ~G | S) */
 
+#if (RT_128 < 4)
+
+#define ornox_rr(XG, XS)                                                    \
+        notox_rx(W(XG))                                                     \
+        orrox_rr(W(XG), W(XS))
+
+#define ornox_ld(XG, MS, DS)                                                \
+        notox_rx(W(XG))                                                     \
+        orrox_ld(W(XG), W(MS), W(DS))
+
+#else /* RT_128 >= 4 */
+
 #define ornox_rr(XG, XS)                                                    \
         EMITW(0x10000544 | MXM(REG(XG), REG(XS), REG(XG)))
 
@@ -230,6 +242,8 @@
         EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x7C0000CE | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0x10000544 | MXM(REG(XG), Tmm1,    REG(XG)))/* ^ == -1 if true */
+
+#endif /* RT_128 >= 4 */
 
 /* xor */
 
@@ -760,6 +774,18 @@
 
 /* orn (G = ~G | S) */
 
+#if (RT_128 < 4)
+
+#define ornox_rr(XG, XS)                                                    \
+        notox_rx(W(XG))                                                     \
+        orrox_rr(W(XG), W(XS))
+
+#define ornox_ld(XG, MS, DS)                                                \
+        notox_rx(W(XG))                                                     \
+        orrox_ld(W(XG), W(MS), W(DS))
+
+#else /* RT_128 >= 4 */
+
 #define ornox_rr(XG, XS)                                                    \
         EMITW(0xF0000557 | MXM(REG(XG), REG(XS), REG(XG)))
 
@@ -768,6 +794,8 @@
         EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0xF0000557 | MXM(REG(XG), Tmm1,    REG(XG)))/* ^ == -1 if true */
+
+#endif /* RT_128 >= 4 */
 
 /* xor */
 

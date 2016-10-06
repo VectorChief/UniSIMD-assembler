@@ -221,12 +221,10 @@
  * RT_SIMD_WIDTH and S may differ for builds with runtime SIMD target
  * selection in backend's ASM code sections, S is used in SIMD structs.
  */
+#define N   (Q*8)       /* for cmdm*_** SIMD-subset, rt_fp16 SIMD-fields */
 #define R   (Q*4)       /* for cmdo*_** SIMD-subset, rt_fp32 SIMD-fields */
 #define S   (Q*4/L)     /* for cmdp*_** SIMD-subset, rt_real SIMD-fields */
 #define T   (Q*2)       /* for cmdq*_** SIMD-subset, rt_fp64 SIMD-fields */
-
-#define N   (Q*8)       /* for cmdm*_** SIMD-subset, rt_fp16 SIMD-fields */
-#define V   (Q*1)       /* for cmdu*_** SIMD-subset, rt_f128 SIMD-fields */
 
 /*
  * Short names for pointer, address and SIMD element sizes (in 32-bit chunks).
@@ -1597,9 +1595,6 @@
 /* RT_SIMD_COMPAT_SQR when enabled changes the default behavior
  * of sqrps_** to the corresponding IEEE-compatible fallback */
 #define RT_SIMD_COMPAT_SQR      RT_SIMD_COMPAT_SQR_MASTER
-/* RT_SIMD_COMPAT_I64 when enabled makes 64-bit int SIMD subset
- * compatible with POWER7 processors lacking 64-bit int SIMD */
-#define RT_SIMD_COMPAT_I64      0 /* only necessary on Power */
 /* RT_BASE_COMPAT_ZFL when enabled makes setting-flags BASE ops
  * compatible with 64-bit processors running 32-bit ISA mode */
 #define RT_BASE_COMPAT_ZFL      1 /* only necessary on Power */

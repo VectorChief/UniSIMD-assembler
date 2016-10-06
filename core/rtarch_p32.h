@@ -1828,7 +1828,7 @@
  * set-flags: no */
 
 #define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
-        movwx_mi(Mebp, inf_VER, IB(3)) /* <- VMX, VSX to bit0, bit1 */
+        movwx_mi(Mebp, inf_VER, IB(7)) /* <- VMX, VSX, VSX2 to bit0, 1, 2 */
 
 #endif /* RT_RTARCH_P32_H */
 
