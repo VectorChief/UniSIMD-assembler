@@ -42,7 +42,8 @@ To build QEMU emulator from source on Linux, download the latest version from
     http://wiki.qemu.org/Download
 and unpack the archive, open terminal window, go to QEMU's root folder,
 make sure necessary tools and libraries are installed:
-    sudo apt-get install make g++ zlib1g-dev libglib2.0-dev libpixman-1-dev
+    sudo apt-get install make g++
+    sudo apt-get install libfdt-dev libglib2.0-dev libpixman-1-dev zlib1g-dev
 run configure script:
     ./configure
 run multithreaded make:

@@ -78,11 +78,11 @@ simd_test_m64f64Br6:
 # Prerequisites for emulation:
 # QEMU 2.5.0.2.0 from imgtec.com is built from source and in the PATH variable.
 # Unpack qemu-rel-2.5.0.2.0 archive and change to its root folder, then run:
-# sudo apt-get install zlib1g-dev libglib2.0-dev libpixman-1-dev
+# sudo apt-get install libfdt-dev libglib2.0-dev libpixman-1-dev zlib1g-dev
+# (remove --target-list option from ./configure below to build all targets)
 # ./configure --target-list=mips64el-linux-user,mips64-linux-user
 # make -j8
 # sudo make install
-# (building from source makes QEMU's mmap forwarding honour address hint)
 #
 # Building/running SIMD test:
 # make -f simd_make_m64.mk
