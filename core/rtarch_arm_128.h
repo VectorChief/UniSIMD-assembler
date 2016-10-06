@@ -102,8 +102,6 @@
 #define  P2(val, tp1, tp2)  P2##tp2
 #define  C2(val, tp1, tp2)  C2##tp2
 
-#define   V(reg, mod, sib)  ((reg+2)&0xF), mod, sib
-
 /* displacement encoding SIMD(TP2) */
 
 #define B20(br) (br)
@@ -130,6 +128,10 @@
 #define Tmm3    0x14  /* q10 */
 #define Tmm4    0x16  /* q11 */
 #define Tmm5    0x18  /* q12 */
+
+/* register pass-through variator */
+
+#define   V(reg, mod, sib)  ((reg + 0x02) & 0x0F), mod, sib
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
