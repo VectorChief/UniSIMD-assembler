@@ -525,10 +525,10 @@
 /* shl
  * set-flags: undefined (*x), yes (*z) */
 
-#define shlzx_rx(RG)                     /* reads Recx for shift value */   \
+#define shlzx_rx(RG)                     /* reads Recx for shift count */   \
         shlzz_rx(W(RG))
 
-#define shlzx_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shlzx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shlzz_mx(W(MG), W(DG))
 
 #define shlzx_ri(RG, IS)                                                    \
@@ -550,11 +550,11 @@
         shlzx_st(W(RS), W(MG), W(DG))
 
 
-#define shlzz_rx(RG)                     /* reads Recx for shift value */   \
+#define shlzz_rx(RG)                     /* reads Recx for shift count */   \
         REW(0,       RXB(RG)) EMITB(0xD3)                                   \
         MRM(0x04,    MOD(RG), REG(RG))                                      \
 
-#define shlzz_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shlzz_mx(MG, DG)                 /* reads Recx for shift count */   \
     ADR REW(0,       RXB(MG)) EMITB(0xD3)                                   \
         MRM(0x04,    MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
@@ -593,10 +593,10 @@
 /* shr
  * set-flags: undefined (*x), yes (*z) */
 
-#define shrzx_rx(RG)                     /* reads Recx for shift value */   \
+#define shrzx_rx(RG)                     /* reads Recx for shift count */   \
         shrzz_rx(W(RG))
 
-#define shrzx_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shrzx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrzz_mx(W(MG), W(DG))
 
 #define shrzx_ri(RG, IS)                                                    \
@@ -618,11 +618,11 @@
         shrzx_st(W(RS), W(MG), W(DG))
 
 
-#define shrzz_rx(RG)                     /* reads Recx for shift value */   \
+#define shrzz_rx(RG)                     /* reads Recx for shift count */   \
         REW(0,       RXB(RG)) EMITB(0xD3)                                   \
         MRM(0x05,    MOD(RG), REG(RG))                                      \
 
-#define shrzz_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shrzz_mx(MG, DG)                 /* reads Recx for shift count */   \
     ADR REW(0,       RXB(MG)) EMITB(0xD3)                                   \
         MRM(0x05,    MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
@@ -659,11 +659,11 @@
         shrzz_st(W(RS), W(MG), W(DG))
 
 
-#define shrzn_rx(RG)                     /* reads Recx for shift value */   \
+#define shrzn_rx(RG)                     /* reads Recx for shift count */   \
         REW(0,       RXB(RG)) EMITB(0xD3)                                   \
         MRM(0x07,    MOD(RG), REG(RG))                                      \
 
-#define shrzn_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shrzn_mx(MG, DG)                 /* reads Recx for shift count */   \
     ADR REW(0,       RXB(MG)) EMITB(0xD3)                                   \
         MRM(0x07,    MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
@@ -757,7 +757,7 @@
         movzx_rr(W(RG), Reax)                                               \
         stack_ld(Reax)
 
-#define divzx_rr(RG, RS)                 /* RG, RS no Reax, RS no Redx */   \
+#define divzx_rr(RG, RS)                /* RG no Reax, RS no Reax/Redx */   \
         stack_st(Reax)                                                      \
         stack_st(Redx)                                                      \
         movzx_rr(Reax, W(RG))                                               \
@@ -767,7 +767,7 @@
         movzx_rr(W(RG), Reax)                                               \
         stack_ld(Reax)
 
-#define divzx_ld(RG, MS, DS)   /* Reax cannot be used as first operand */   \
+#define divzx_ld(RG, MS, DS)            /* RG no Reax, MS no Oeax/Medx */   \
         stack_st(Reax)                                                      \
         stack_st(Redx)                                                      \
         movzx_rr(Reax, W(RG))                                               \
@@ -789,7 +789,7 @@
         movzx_rr(W(RG), Reax)                                               \
         stack_ld(Reax)
 
-#define divzn_rr(RG, RS)                 /* RG, RS no Reax, RS no Redx */   \
+#define divzn_rr(RG, RS)                /* RG no Reax, RS no Reax/Redx */   \
         stack_st(Reax)                                                      \
         stack_st(Redx)                                                      \
         movzx_rr(Reax, W(RG))                                               \
@@ -799,7 +799,7 @@
         movzx_rr(W(RG), Reax)                                               \
         stack_ld(Reax)
 
-#define divzn_ld(RG, MS, DS)   /* Reax cannot be used as first operand */   \
+#define divzn_ld(RG, MS, DS)            /* RG no Reax, MS no Oeax/Medx */   \
         stack_st(Reax)                                                      \
         stack_st(Redx)                                                      \
         movzx_rr(Reax, W(RG))                                               \
@@ -862,7 +862,7 @@
         movzx_rr(W(RG), Redx)                                               \
         stack_ld(Redx)
 
-#define remzx_rr(RG, RS)                 /* RG, RS no Redx, RS no Reax */   \
+#define remzx_rr(RG, RS)                /* RG no Redx, RS no Reax/Redx */   \
         stack_st(Redx)                                                      \
         stack_st(Reax)                                                      \
         movzx_rr(Reax, W(RG))                                               \
@@ -872,7 +872,7 @@
         movzx_rr(W(RG), Redx)                                               \
         stack_ld(Redx)
 
-#define remzx_ld(RG, MS, DS)   /* Redx cannot be used as first operand */   \
+#define remzx_ld(RG, MS, DS)            /* RG no Redx, MS no Oeax/Medx */   \
         stack_st(Redx)                                                      \
         stack_st(Reax)                                                      \
         movzx_rr(Reax, W(RG))                                               \
@@ -894,7 +894,7 @@
         movzx_rr(W(RG), Redx)                                               \
         stack_ld(Redx)
 
-#define remzn_rr(RG, RS)                 /* RG, RS no Redx, RS no Reax */   \
+#define remzn_rr(RG, RS)                /* RG no Redx, RS no Reax/Redx */   \
         stack_st(Redx)                                                      \
         stack_st(Reax)                                                      \
         movzx_rr(Reax, W(RG))                                               \
@@ -904,7 +904,7 @@
         movzx_rr(W(RG), Redx)                                               \
         stack_ld(Redx)
 
-#define remzn_ld(RG, MS, DS)   /* Redx cannot be used as first operand */   \
+#define remzn_ld(RG, MS, DS)            /* RG no Redx, MS no Oeax/Medx */   \
         stack_st(Redx)                                                      \
         stack_st(Reax)                                                      \
         movzx_rr(Reax, W(RG))                                               \
