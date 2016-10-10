@@ -823,7 +823,7 @@
         stack_st(Redx)                                                      \
         movwx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
         movwx_rr(Reax, W(RG))                                               \
-        prewx_rr()                                                          \
+        prewx_xx()                                                          \
         divwx_xm(Mebp, inf_SCR01(0))                                        \
         stack_ld(Redx)                                                      \
         movwx_rr(W(RG), Reax)                                               \
@@ -833,7 +833,7 @@
         stack_st(Reax)                                                      \
         stack_st(Redx)                                                      \
         movwx_rr(Reax, W(RG))                                               \
-        prewx_rr()                                                          \
+        prewx_xx()                                                          \
         divwx_xr(W(RS))                                                     \
         stack_ld(Redx)                                                      \
         movwx_rr(W(RG), Reax)                                               \
@@ -843,7 +843,7 @@
         stack_st(Reax)                                                      \
         stack_st(Redx)                                                      \
         movwx_rr(Reax, W(RG))                                               \
-        prewx_rr()                                                          \
+        prewx_xx()                                                          \
         divwx_xm(W(MS), W(DS))                                              \
         stack_ld(Redx)                                                      \
         movwx_rr(W(RG), Reax)                                               \
@@ -855,7 +855,7 @@
         stack_st(Redx)                                                      \
         movwx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
         movwx_rr(Reax, W(RG))                                               \
-        prewn_rr()                                                          \
+        prewn_xx()                                                          \
         divwn_xm(Mebp, inf_SCR01(0))                                        \
         stack_ld(Redx)                                                      \
         movwx_rr(W(RG), Reax)                                               \
@@ -865,7 +865,7 @@
         stack_st(Reax)                                                      \
         stack_st(Redx)                                                      \
         movwx_rr(Reax, W(RG))                                               \
-        prewn_rr()                                                          \
+        prewn_xx()                                                          \
         divwn_xr(W(RS))                                                     \
         stack_ld(Redx)                                                      \
         movwx_rr(W(RG), Reax)                                               \
@@ -875,7 +875,7 @@
         stack_st(Reax)                                                      \
         stack_st(Redx)                                                      \
         movwx_rr(Reax, W(RG))                                               \
-        prewn_rr()                                                          \
+        prewn_xx()                                                          \
         divwn_xm(W(MS), W(DS))                                              \
         stack_ld(Redx)                                                      \
         movwx_rr(W(RG), Reax)                                               \
@@ -928,7 +928,7 @@
         stack_st(Reax)                                                      \
         movwx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
         movwx_rr(Reax, W(RG))                                               \
-        prewx_rr()                                                          \
+        prewx_xx()                                                          \
         divwx_xm(Mebp, inf_SCR01(0))                                        \
         stack_ld(Reax)                                                      \
         movwx_rr(W(RG), Redx)                                               \
@@ -938,7 +938,7 @@
         stack_st(Redx)                                                      \
         stack_st(Reax)                                                      \
         movwx_rr(Reax, W(RG))                                               \
-        prewx_rr()                                                          \
+        prewx_xx()                                                          \
         divwx_xr(W(RS))                                                     \
         stack_ld(Reax)                                                      \
         movwx_rr(W(RG), Redx)                                               \
@@ -948,7 +948,7 @@
         stack_st(Redx)                                                      \
         stack_st(Reax)                                                      \
         movwx_rr(Reax, W(RG))                                               \
-        prewx_rr()                                                          \
+        prewx_xx()                                                          \
         divwx_xm(W(MS), W(DS))                                              \
         stack_ld(Reax)                                                      \
         movwx_rr(W(RG), Redx)                                               \
@@ -960,7 +960,7 @@
         stack_st(Reax)                                                      \
         movwx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
         movwx_rr(Reax, W(RG))                                               \
-        prewn_rr()                                                          \
+        prewn_xx()                                                          \
         divwn_xm(Mebp, inf_SCR01(0))                                        \
         stack_ld(Reax)                                                      \
         movwx_rr(W(RG), Redx)                                               \
@@ -970,7 +970,7 @@
         stack_st(Redx)                                                      \
         stack_st(Reax)                                                      \
         movwx_rr(Reax, W(RG))                                               \
-        prewn_rr()                                                          \
+        prewn_xx()                                                          \
         divwn_xr(W(RS))                                                     \
         stack_ld(Reax)                                                      \
         movwx_rr(W(RG), Redx)                                               \
@@ -980,7 +980,7 @@
         stack_st(Redx)                                                      \
         stack_st(Reax)                                                      \
         movwx_rr(Reax, W(RG))                                               \
-        prewn_rr()                                                          \
+        prewn_xx()                                                          \
         divwn_xm(W(MS), W(DS))                                              \
         stack_ld(Reax)                                                      \
         movwx_rr(W(RG), Redx)                                               \
