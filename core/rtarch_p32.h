@@ -867,10 +867,10 @@
 /* shl
  * set-flags: undefined (*x), yes (*z) */
 
-#define shlwx_rx(RM)                     /* reads Recx for shift value */   \
+#define shlwx_rx(RM)                     /* reads Recx for shift count */   \
         EMITW(0x7C000030 | MSM(REG(RM), Tecx,    REG(RM)))
 
-#define shlwx_mx(RM, DP)                 /* reads Recx for shift value */   \
+#define shlwx_mx(RM, DP)                 /* reads Recx for shift count */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C000030 | MSM(TMxx,    Tecx,    TMxx))                     \
@@ -905,10 +905,10 @@
         shlwx_st(W(RG), W(RM), W(DP))
 
 
-#define shlwz_rx(RM)                     /* reads Recx for shift value */   \
+#define shlwz_rx(RM)                     /* reads Recx for shift count */   \
         EMITW(0x7C000031 | MSM(REG(RM), Tecx,    REG(RM)))
 
-#define shlwz_mx(RM, DP)                 /* reads Recx for shift value */   \
+#define shlwz_mx(RM, DP)                 /* reads Recx for shift count */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C000031 | MSM(TMxx,    Tecx,    TMxx))                     \
@@ -945,10 +945,10 @@
 /* shr
  * set-flags: undefined (*x), yes (*z) */
 
-#define shrwx_rx(RM)                     /* reads Recx for shift value */   \
+#define shrwx_rx(RM)                     /* reads Recx for shift count */   \
         EMITW(0x7C000430 | MSM(REG(RM), Tecx,    REG(RM)))
 
-#define shrwx_mx(RM, DP)                 /* reads Recx for shift value */   \
+#define shrwx_mx(RM, DP)                 /* reads Recx for shift count */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C000430 | MSM(TMxx,    Tecx,    TMxx))                     \
@@ -983,10 +983,10 @@
         shrwx_st(W(RG), W(RM), W(DP))
 
 
-#define shrwz_rx(RM)                     /* reads Recx for shift value */   \
+#define shrwz_rx(RM)                     /* reads Recx for shift count */   \
         EMITW(0x7C000431 | MSM(REG(RM), Tecx,    REG(RM)))
 
-#define shrwz_mx(RM, DP)                 /* reads Recx for shift value */   \
+#define shrwz_mx(RM, DP)                 /* reads Recx for shift count */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C000431 | MSM(TMxx,    Tecx,    TMxx))                     \
@@ -1021,10 +1021,10 @@
         shrwz_st(W(RG), W(RM), W(DP))
 
 
-#define shrwn_rx(RM)                     /* reads Recx for shift value */   \
+#define shrwn_rx(RM)                     /* reads Recx for shift count */   \
         EMITW(0x7C000630 | MSM(REG(RM), Tecx,    REG(RM)))
 
-#define shrwn_mx(RM, DP)                 /* reads Recx for shift value */   \
+#define shrwn_mx(RM, DP)                 /* reads Recx for shift count */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C000630 | MSM(TMxx,    Tecx,    TMxx))                     \
@@ -1107,10 +1107,10 @@
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
         EMITW(0x7C000396 | MTM(REG(RM), REG(RM), TIxx))
 
-#define divwx_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+#define divwx_rr(RG, RM)                /* RG no Reax, RM no Reax/Redx */   \
         EMITW(0x7C000396 | MTM(REG(RG), REG(RG), REG(RM)))
 
-#define divwx_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+#define divwx_ld(RG, RM, DP)            /* RG no Reax, RM no Oeax/Medx */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C000396 | MTM(REG(RG), REG(RG), TMxx))
@@ -1120,10 +1120,10 @@
         AUW(EMPTY,    VAL(IM), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IM))   \
         EMITW(0x7C0003D6 | MTM(REG(RM), REG(RM), TIxx))
 
-#define divwn_rr(RG, RM)                 /* RG, RM no Reax, RM no Redx */   \
+#define divwn_rr(RG, RM)                /* RG no Reax, RM no Reax/Redx */   \
         EMITW(0x7C0003D6 | MTM(REG(RG), REG(RG), REG(RM)))
 
-#define divwn_ld(RG, RM, DP)   /* Reax cannot be used as first operand */   \
+#define divwn_ld(RG, RM, DP)            /* RG no Reax, RM no Oeax/Medx */   \
         AUW(SIB(RM),  EMPTY,  EMPTY,    MOD(RM), VAL(DP), C1(DP), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(RM), VAL(DP), B1(DP), P1(DP)))  \
         EMITW(0x7C0003D6 | MTM(REG(RG), REG(RG), TMxx))
@@ -1173,7 +1173,7 @@
         EMITW(0x7C000050 | MRM(REG(RM), Tedx,    TMxx))                     \
         stack_ld(Redx)
 
-#define remwx_rr(RG, RM)                 /* RG, RM no Redx, RM no Reax */   \
+#define remwx_rr(RG, RM)                /* RG no Redx, RM no Reax/Redx */   \
         stack_st(Redx)                                                      \
         movwx_rr(Redx, W(RG))                                               \
         divwx_rr(W(RG), W(RM))                                              \
@@ -1181,7 +1181,7 @@
         EMITW(0x7C000050 | MRM(REG(RG), Tedx,    TMxx))                     \
         stack_ld(Redx)
 
-#define remwx_ld(RG, RM, DP)   /* Redx cannot be used as first operand */   \
+#define remwx_ld(RG, RM, DP)            /* RG no Redx, RM no Oeax/Medx */   \
         stack_st(Redx)                                                      \
         movwx_rr(Redx, W(RG))                                               \
         divwx_ld(W(RG), W(RM), W(DP))                                       \
@@ -1198,7 +1198,7 @@
         EMITW(0x7C000050 | MRM(REG(RM), Tedx,    TMxx))                     \
         stack_ld(Redx)
 
-#define remwn_rr(RG, RM)                 /* RG, RM no Redx, RM no Reax */   \
+#define remwn_rr(RG, RM)                /* RG no Redx, RM no Reax/Redx */   \
         stack_st(Redx)                                                      \
         movwx_rr(Redx, W(RG))                                               \
         divwn_rr(W(RG), W(RM))                                              \
@@ -1206,7 +1206,7 @@
         EMITW(0x7C000050 | MRM(REG(RG), Tedx,    TMxx))                     \
         stack_ld(Redx)
 
-#define remwn_ld(RG, RM, DP)   /* Redx cannot be used as first operand */   \
+#define remwn_ld(RG, RM, DP)            /* RG no Redx, RM no Oeax/Medx */   \
         stack_st(Redx)                                                      \
         movwx_rr(Redx, W(RG))                                               \
         divwn_ld(W(RG), W(RM), W(DP))                                       \
