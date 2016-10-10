@@ -18,7 +18,7 @@
 /*******************************   DEFINITIONS   ******************************/
 /******************************************************************************/
 
-#define RUN_LEVEL           20
+#define RUN_LEVEL           22
 #define CYC_SIZE            1000000
 
 #define ARR_SIZE            S*3 /* hardcoded in asm sections, S = SIMD width */
@@ -2500,6 +2500,244 @@ rt_void p_test20(rt_SIMD_INFOX *info)
 #endif /* RUN_LEVEL 20 */
 
 /******************************************************************************/
+/******************************   RUN LEVEL 21   ******************************/
+/******************************************************************************/
+
+#if RUN_LEVEL >= 21
+
+rt_void c_test21(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            ico1[j] =  iar0[j] / 117;
+            ico2[j] = -iar0[j] / 289;
+        }
+    }
+}
+
+rt_void s_test21(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Resi, Mebp, inf_IAR0)
+        movxx_ld(Redx, Mebp, inf_ISO1)
+        movxx_ld(Rebx, Mebp, inf_ISO2)
+
+        movwx_mi(Mebp, inf_SIMD, IB(S))
+
+    LBL(div_ini)
+
+        movyx_ld(Reax, Mesi, AJ0)
+        movyx_rr(Recx, Reax)
+        divyx_ri(Recx, IB(117))
+        movyx_st(Recx, Medx, AJ0)
+        movyx_rr(Recx, Reax)
+        negyx_rx(Recx)
+        divyn_ri(Recx, IH(289))
+        movyx_st(Recx, Mebx, AJ0)
+
+        movyx_ld(Reax, Mesi, AJ1)
+        movyx_rr(Recx, Reax)
+        movyx_ri(Redi, IB(117))
+        divyx_rr(Recx, Redi)
+        movyx_st(Recx, Medx, AJ1)
+        movyx_rr(Recx, Reax)
+        negyx_rx(Recx)
+        movyx_ri(Redi, IH(289))
+        divyn_rr(Recx, Redi)
+        movyx_st(Recx, Mebx, AJ1)
+
+        movyx_ld(Reax, Mesi, AJ2)
+        movyx_rr(Recx, Reax)
+        movxx_rr(Redi, Redx)
+        movyx_mi(Medi, AJ2, IB(117))
+        divyx_ld(Recx, Medi, AJ2)
+        movyx_st(Recx, Medi, AJ2)
+        movyx_rr(Recx, Reax)
+        negyx_rx(Recx)
+        movyx_mi(Mebx, AJ2, IH(289))
+        divyn_ld(Recx, Mebx, AJ2)
+        movyx_st(Recx, Mebx, AJ2)
+
+        addxx_ri(Resi, IB(L*4))
+        addxx_ri(Redx, IB(L*4))
+        addxx_ri(Rebx, IB(L*4))
+
+        arjwx_mi(Mebp, inf_SIMD, IB(1),
+        sub_x,   NZ_x, div_ini)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test21(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(ico1[j], iso1[j]) && IEQ(ico2[j], iso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("iarr[%d] = %"PR_L"d\n",
+                j, iar0[j]);
+
+        RT_LOGI("C iarr[%d]/117 = %"PR_L"d, "
+                 "-iarr[%d]/289 = %"PR_L"d\n",
+                j, ico1[j], j, ico2[j]);
+
+        RT_LOGI("S iarr[%d]/117 = %"PR_L"d, "
+                 "-iarr[%d]/289 = %"PR_L"d\n",
+                j, iso1[j], j, iso2[j]);
+    }
+}
+
+#endif /* RUN_LEVEL 21 */
+
+/******************************************************************************/
+/******************************   RUN LEVEL 22   ******************************/
+/******************************************************************************/
+
+#if RUN_LEVEL >= 22
+
+rt_void c_test22(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            ico1[j] =  iar0[j] % 117;
+            ico2[j] = -iar0[j] % 289;
+        }
+    }
+}
+
+rt_void s_test22(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Resi, Mebp, inf_IAR0)
+        movxx_ld(Redx, Mebp, inf_ISO1)
+        movxx_ld(Rebx, Mebp, inf_ISO2)
+
+        movwx_mi(Mebp, inf_SIMD, IB(S))
+
+    LBL(rem_ini)
+
+        movyx_ld(Reax, Mesi, AJ0)
+        movyx_rr(Recx, Reax)
+        remyx_ri(Recx, IB(117))
+        movyx_st(Recx, Medx, AJ0)
+        movyx_rr(Recx, Reax)
+        negyx_rx(Recx)
+        remyn_ri(Recx, IH(289))
+        movyx_st(Recx, Mebx, AJ0)
+
+        movyx_ld(Reax, Mesi, AJ1)
+        movyx_rr(Recx, Reax)
+        movyx_ri(Redi, IB(117))
+        remyx_rr(Recx, Redi)
+        movyx_st(Recx, Medx, AJ1)
+        movyx_rr(Recx, Reax)
+        negyx_rx(Recx)
+        movyx_ri(Redi, IH(289))
+        remyn_rr(Recx, Redi)
+        movyx_st(Recx, Mebx, AJ1)
+
+        movyx_ld(Reax, Mesi, AJ2)
+        movyx_rr(Recx, Reax)
+        movxx_rr(Redi, Redx)
+        movyx_mi(Medi, AJ2, IB(117))
+        remyx_ld(Recx, Medi, AJ2)
+        movyx_st(Recx, Medi, AJ2)
+        movyx_rr(Recx, Reax)
+        negyx_rx(Recx)
+        movyx_mi(Mebx, AJ2, IH(289))
+        remyn_ld(Recx, Mebx, AJ2)
+        movyx_st(Recx, Mebx, AJ2)
+
+        addxx_ri(Resi, IB(L*4))
+        addxx_ri(Redx, IB(L*4))
+        addxx_ri(Rebx, IB(L*4))
+
+        arjwx_mi(Mebp, inf_SIMD, IB(1),
+        sub_x,   NZ_x, rem_ini)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test22(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(ico1[j], iso1[j]) && IEQ(ico2[j], iso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("iarr[%d] = %"PR_L"d\n",
+                j, iar0[j]);
+
+        RT_LOGI("C iarr[%d]%%117 = %"PR_L"d, "
+                 "-iarr[%d]%%289 = %"PR_L"d\n",
+                j, ico1[j], j, ico2[j]);
+
+        RT_LOGI("S iarr[%d]%%117 = %"PR_L"d, "
+                 "-iarr[%d]%%289 = %"PR_L"d\n",
+                j, iso1[j], j, iso2[j]);
+    }
+}
+
+#endif /* RUN_LEVEL 22 */
+
+/******************************************************************************/
 /*********************************   TABLES   *********************************/
 /******************************************************************************/
 
@@ -2586,6 +2824,14 @@ testXX c_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 20
     c_test20,
 #endif /* RUN_LEVEL 20 */
+
+#if RUN_LEVEL >= 21
+    c_test21,
+#endif /* RUN_LEVEL 21 */
+
+#if RUN_LEVEL >= 22
+    c_test22,
+#endif /* RUN_LEVEL 22 */
 };
 
 testXX s_test[RUN_LEVEL] =
@@ -2669,6 +2915,14 @@ testXX s_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 20
     s_test20,
 #endif /* RUN_LEVEL 20 */
+
+#if RUN_LEVEL >= 21
+    s_test21,
+#endif /* RUN_LEVEL 21 */
+
+#if RUN_LEVEL >= 22
+    s_test22,
+#endif /* RUN_LEVEL 22 */
 };
 
 testXX p_test[RUN_LEVEL] =
@@ -2752,6 +3006,14 @@ testXX p_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 20
     p_test20,
 #endif /* RUN_LEVEL 20 */
+
+#if RUN_LEVEL >= 21
+    p_test21,
+#endif /* RUN_LEVEL 21 */
+
+#if RUN_LEVEL >= 22
+    p_test22,
+#endif /* RUN_LEVEL 22 */
 };
 
 /******************************************************************************/
