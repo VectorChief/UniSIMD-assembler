@@ -221,7 +221,7 @@
         andzx_ri(W(RG), W(IS))
 
 #define annzx_mi(MG, DG, IS)                                                \
-        notzx_rx(W(MG), W(DG))                                              \
+        notzx_mx(W(MG), W(DG))                                              \
         andzx_mi(W(MG), W(DG), W(IS))
 
 #define annzx_rr(RG, RS)                                                    \
@@ -233,7 +233,7 @@
         andzx_ld(W(RG), W(MS), W(DS))
 
 #define annzx_st(RS, MG, DG)                                                \
-        notzx_rx(W(MG), W(DG))                                              \
+        notzx_mx(W(MG), W(DG))                                              \
         andzx_st(W(RS), W(MG), W(DG))
 
 #define annzx_mr(MG, DG, RS)                                                \
@@ -245,7 +245,7 @@
         andzz_ri(W(RG), W(IS))
 
 #define annzz_mi(MG, DG, IS)                                                \
-        notzx_rx(W(MG), W(DG))                                              \
+        notzx_mx(W(MG), W(DG))                                              \
         andzz_mi(W(MG), W(DG), W(IS))
 
 #define annzz_rr(RG, RS)                                                    \
@@ -257,7 +257,7 @@
         andzz_ld(W(RG), W(MS), W(DS))
 
 #define annzz_st(RS, MG, DG)                                                \
-        notzx_rx(W(MG), W(DG))                                              \
+        notzx_mx(W(MG), W(DG))                                              \
         andzz_st(W(RS), W(MG), W(DG))
 
 #define annzz_mr(MG, DG, RS)                                                \
