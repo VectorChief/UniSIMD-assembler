@@ -166,6 +166,23 @@
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0xF8000000 | MDM(REG(RS), MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
+
+#define movzx_rj(RD, IT, IS)     /* IT - upper 32-bit, IS - lower 32-bit */ \
+        AUW(EMPTY,    VAL(IT), REG(RD), EMPTY,   EMPTY,   EMPTY2, G3(IT))   \
+        EMITW(0x780007C6 | MSM(REG(RD), 0x00,    REG(RD)))                  \
+        AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IS))   \
+        EMITW(0x00000000 | MIM(REG(RD), REG(RD), VAL(IS), T2(IS), M2(IS)) | \
+        (+(TP2(IS) == 0) & 0x60000000) | (+(TP2(IS) != 0) & 0x7C000378))    \
+        /* if true ^ equals to -1 (not 1) */
+
+#define movzx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
+        AUW(EMPTY,    VAL(IT), TMxx,    EMPTY,   EMPTY,   EMPTY2, G3(IT))   \
+        EMITW(0x780007C6 | MSM(TMxx,    0x00,    TMxx))                     \
+        AUW(SIB(MD),  VAL(IS), TIxx,    MOD(MD), VAL(DD), C1(DD), G2(IS))   \
+        EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IS), T2(IS), M2(IS)) | \
+        (+(TP2(IS) == 0) & 0x60000000) | (+(TP2(IS) != 0) & 0x7C000378))    \
+        EMITW(0xF8000000 | MDM(TMxx,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
+
 /* and
  * set-flags: undefined (*x), yes (*z) */
 

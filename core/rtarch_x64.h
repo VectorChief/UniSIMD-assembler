@@ -170,6 +170,18 @@
         MRM(REG(RS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
+
+#define movzx_rj(RD, IT, IS)     /* IT - upper 32-bit, IS - lower 32-bit */ \
+        REW(0,       RXB(RD)) EMITB(0xB8 + REG(RD))                         \
+        AUX(EMPTY,   EMITW(VAL(IS)), EMITW(VAL(IT)))
+
+#define movzx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
+        REW(0,          0x01) EMITB(0xB8 + 0x07)                            \
+        AUX(EMPTY,   EMITW(VAL(IS)), EMITW(VAL(IT)))                        \
+    ADR REW(0x01,    RXB(MD)) EMITB(0x89)                                   \
+        MRM(0x07,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
 /* and
  * set-flags: undefined (*x), yes (*z) */
 
