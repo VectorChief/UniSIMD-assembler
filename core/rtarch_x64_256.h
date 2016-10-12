@@ -763,131 +763,131 @@
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 
-#define addfs_xn(n)      /* not portable, do not use outside */             \
+#define addfs_xn(n)      /* ST(0) = ST(0) + ST(n), don't pop */             \
         EMITB(0xD8) EMITB(0xC0+(n))
 
-#define addfs_nx(n)      /* not portable, do not use outside */             \
+#define addfs_nx(n)      /* ST(n) = ST(n) + ST(0), don't pop */             \
         EMITB(0xDC) EMITB(0xC0+(n))
 
-#define addfs_np(n)      /* not portable, do not use outside */             \
+#define addfs_np(n)      /* ST(n) = ST(n) + ST(0), pop stack */             \
         EMITB(0xDE) EMITB(0xC0+(n))
 
 
-#define subfs_xn(n)      /* not portable, do not use outside */             \
+#define subfs_xn(n)      /* ST(0) = ST(0) - ST(n), don't pop */             \
         EMITB(0xD8) EMITB(0xE0+(n))
 
-#define subfs_nx(n)      /* not portable, do not use outside */             \
+#define subfs_nx(n)      /* ST(n) = ST(n) - ST(0), don't pop */             \
         EMITB(0xDC) EMITB(0xE8+(n))
 
-#define subfs_np(n)      /* not portable, do not use outside */             \
+#define subfs_np(n)      /* ST(n) = ST(n) - ST(0), pop stack */             \
         EMITB(0xDE) EMITB(0xE8+(n))
 
 
-#define sbrfs_xn(n)      /* not portable, do not use outside */             \
+#define sbrfs_xn(n)      /* ST(0) = ST(n) - ST(0), don't pop */             \
         EMITB(0xD8) EMITB(0xE8+(n))
 
-#define sbrfs_nx(n)      /* not portable, do not use outside */             \
+#define sbrfs_nx(n)      /* ST(n) = ST(0) - ST(n), don't pop */             \
         EMITB(0xDC) EMITB(0xE0+(n))
 
-#define sbrfs_np(n)      /* not portable, do not use outside */             \
+#define sbrfs_np(n)      /* ST(n) = ST(0) - ST(n), pop stack */             \
         EMITB(0xDE) EMITB(0xE0+(n))
 
 
-#define mulfs_xn(n)      /* not portable, do not use outside */             \
+#define mulfs_xn(n)      /* ST(0) = ST(0) * ST(n), don't pop */             \
         EMITB(0xD8) EMITB(0xC8+(n))
 
-#define mulfs_nx(n)      /* not portable, do not use outside */             \
+#define mulfs_nx(n)      /* ST(n) = ST(n) * ST(0), don't pop */             \
         EMITB(0xDC) EMITB(0xC8+(n))
 
-#define mulfs_np(n)      /* not portable, do not use outside */             \
+#define mulfs_np(n)      /* ST(n) = ST(n) * ST(0), pop stack */             \
         EMITB(0xDE) EMITB(0xC8+(n))
 
 
-#define divfs_xn(n)      /* not portable, do not use outside */             \
+#define divfs_xn(n)      /* ST(0) = ST(0) / ST(n), don't pop */             \
         EMITB(0xD8) EMITB(0xF0+(n))
 
-#define divfs_nx(n)      /* not portable, do not use outside */             \
+#define divfs_nx(n)      /* ST(n) = ST(n) / ST(0), don't pop */             \
         EMITB(0xDC) EMITB(0xF8+(n))
 
-#define divfs_np(n)      /* not portable, do not use outside */             \
+#define divfs_np(n)      /* ST(n) = ST(n) / ST(0), pop stack */             \
         EMITB(0xDE) EMITB(0xF8+(n))
 
 
-#define dvrfs_xn(n)      /* not portable, do not use outside */             \
+#define dvrfs_xn(n)      /* ST(0) = ST(n) / ST(0), don't pop */             \
         EMITB(0xD8) EMITB(0xF8+(n))
 
-#define dvrfs_nx(n)      /* not portable, do not use outside */             \
+#define dvrfs_nx(n)      /* ST(n) = ST(0) / ST(n), don't pop */             \
         EMITB(0xDC) EMITB(0xF0+(n))
 
-#define dvrfs_np(n)      /* not portable, do not use outside */             \
+#define dvrfs_np(n)      /* ST(n) = ST(0) / ST(n), pop stack */             \
         EMITB(0xDE) EMITB(0xF0+(n))
 
 
-#define sqrfs_xx()       /* not portable, do not use outside */             \
+#define sqrfs_xx()       /* ST(0) = sqr ST(0), don't pop */                 \
         EMITB(0xD9) EMITB(0xFA)
 
-#define negfs_xx()       /* not portable, do not use outside */             \
+#define negfs_xx()       /* ST(0) = neg ST(0), don't pop */                 \
         EMITB(0xD9) EMITB(0xE0)
 
-#define absfs_xx()       /* not portable, do not use outside */             \
+#define absfs_xx()       /* ST(0) = abs ST(0), don't pop */                 \
         EMITB(0xD9) EMITB(0xE1)
 
 
-#define xm2fs_xx()       /* not portable, do not use outside */             \
+#define xm2fs_xx()       /* ST(0) = 2^ST(0)-1, don't pop, [-1.0 : +1.0] */  \
         EMITB(0xD9) EMITB(0xF0)
 
-#define lg2fs_xx()       /* not portable, do not use outside */             \
+#define lg2fs_xx()       /* ST(1) = ST(1)*lg2 ST(0), pop stack */           \
         EMITB(0xD9) EMITB(0xF1)
 
-#define lp2fs_xx()       /* not portable, do not use outside */             \
+#define lp2fs_xx()       /* ST(1) = ST(1)*lg2 ST(0)+1.0, pop stack */       \
         EMITB(0xD9) EMITB(0xF9)
 
 
-#define sinfs_xx()       /* not portable, do not use outside */             \
+#define sinfs_xx()       /* ST(0) = sin ST(0), don't pop, [-2^63:+2^63] */  \
         EMITB(0xD9) EMITB(0xFE)
 
-#define cosfs_xx()       /* not portable, do not use outside */             \
+#define cosfs_xx()       /* ST(0) = cos ST(0), don't pop, [-2^63:+2^63] */  \
         EMITB(0xD9) EMITB(0xFF)
 
-#define scsfs_xx()       /* not portable, do not use outside */             \
+#define scsfs_xx()       /* ST(0) = sin ST(0), push cos ST(0), original */  \
         EMITB(0xD9) EMITB(0xFB)
 
-#define tanfs_xx()       /* not portable, do not use outside */             \
+#define tanfs_xx()       /* ST(0) = tan ST(0), push +1.0, [-2^63:+2^63] */  \
         EMITB(0xD9) EMITB(0xF2)
 
-#define atnfs_xx()       /* not portable, do not use outside */             \
+#define atnfs_xx()       /* ST(1) = atn ST(1)/ST(0), pop stack */           \
         EMITB(0xD9) EMITB(0xF3)
 
 
-#define reifs_xx()       /* not portable, do not use outside */             \
+#define remfs_xx()       /* ST(0) = ST(0)-Q*ST(1), Q = rnd ST(0)/ST(1) */   \
         EMITB(0xD9) EMITB(0xF5)
 
-#define remfs_xx()       /* not portable, do not use outside */             \
+#define rexfs_xx()       /* ST(0) = ST(0)-Q*ST(1), Q = trn ST(0)/ST(1) */   \
         EMITB(0xD9) EMITB(0xF8)
 
-#define rndfs_xx()       /* not portable, do not use outside */             \
+#define rndfs_xx()       /* ST(0) = rnd ST(0), round to integral value */   \
         EMITB(0xD9) EMITB(0xFC)
 
-#define extfs_xx()       /* not portable, do not use outside */             \
+#define extfs_xx()       /* ST(0) = exp ST(0), push mts ST(0) */            \
         EMITB(0xD9) EMITB(0xF4)
 
-#define sclfs_xx()       /* not portable, do not use outside */             \
+#define sclfs_xx()       /* exp ST(0) = exp ST(0) + rnd ST(1) */             \
         EMITB(0xD9) EMITB(0xFD)
 
 
-#define cmpfs_xn(n)      /* not portable, do not use outside */             \
+#define cmpfs_xn(n)      /* flags = ST(0) ? ST(n), don't pop */             \
         EMITB(0xDB) EMITB(0xF0+(n))
 
-#define cmpfs_pn(n)      /* not portable, do not use outside */             \
+#define cmpfs_pn(n)      /* flags = ST(0) ? ST(n), pop stack */             \
         EMITB(0xDF) EMITB(0xF0+(n))
 
-#define movfs_nx(n)      /* not portable, do not use outside */             \
+#define movfs_nx(n)      /* ST(n) = ST(0), don't pop */                     \
         EMITB(0xDD) EMITB(0xD0+(n))
 
-#define movfs_np(n)      /* not portable, do not use outside */             \
+#define movfs_np(n)      /* ST(n) = ST(0), pop stack */                     \
         EMITB(0xDD) EMITB(0xD8+(n))
 
-#define popfs_xx()       /* not portable, do not use outside */             \
+#define popfs_xx()       /* ST(0) = ST(0), pop stack */                     \
         EMITB(0xDD) EMITB(0xD8)
 
 
