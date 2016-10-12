@@ -774,6 +774,16 @@
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 
+#define sqrfs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xD9) EMITB(0xFA)
+
+#define sinfs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xD9) EMITB(0xFE)
+
+#define cosfs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xD9) EMITB(0xFF)
+
+
 #define fpucw_ld(MS, DS) /* not portable, do not use outside */             \
     ADR REX(0,       RXB(MS)) EMITB(0xD9)                                   \
         MRM(0x05,    MOD(MS), REG(MS))                                      \
