@@ -780,14 +780,132 @@
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 
+#define addfs_xn(n)      /* not portable, do not use outside */             \
+        EMITB(0xD8) EMITB(0xC0+(n))
+
+#define addfs_nx(n)      /* not portable, do not use outside */             \
+        EMITB(0xDC) EMITB(0xC0+(n))
+
+#define addfs_np(n)      /* not portable, do not use outside */             \
+        EMITB(0xDE) EMITB(0xC0+(n))
+
+
+#define subfs_xn(n)      /* not portable, do not use outside */             \
+        EMITB(0xD8) EMITB(0xE0+(n))
+
+#define subfs_nx(n)      /* not portable, do not use outside */             \
+        EMITB(0xDC) EMITB(0xE8+(n))
+
+#define subfs_np(n)      /* not portable, do not use outside */             \
+        EMITB(0xDE) EMITB(0xE8+(n))
+
+
+#define sbrfs_xn(n)      /* not portable, do not use outside */             \
+        EMITB(0xD8) EMITB(0xE8+(n))
+
+#define sbrfs_nx(n)      /* not portable, do not use outside */             \
+        EMITB(0xDC) EMITB(0xE0+(n))
+
+#define sbrfs_np(n)      /* not portable, do not use outside */             \
+        EMITB(0xDE) EMITB(0xE0+(n))
+
+
+#define mulfs_xn(n)      /* not portable, do not use outside */             \
+        EMITB(0xD8) EMITB(0xC8+(n))
+
+#define mulfs_nx(n)      /* not portable, do not use outside */             \
+        EMITB(0xDC) EMITB(0xC8+(n))
+
+#define mulfs_np(n)      /* not portable, do not use outside */             \
+        EMITB(0xDE) EMITB(0xC8+(n))
+
+
+#define divfs_xn(n)      /* not portable, do not use outside */             \
+        EMITB(0xD8) EMITB(0xF0+(n))
+
+#define divfs_nx(n)      /* not portable, do not use outside */             \
+        EMITB(0xDC) EMITB(0xF8+(n))
+
+#define divfs_np(n)      /* not portable, do not use outside */             \
+        EMITB(0xDE) EMITB(0xF8+(n))
+
+
+#define dvrfs_xn(n)      /* not portable, do not use outside */             \
+        EMITB(0xD8) EMITB(0xF8+(n))
+
+#define dvrfs_nx(n)      /* not portable, do not use outside */             \
+        EMITB(0xDC) EMITB(0xF0+(n))
+
+#define dvrfs_np(n)      /* not portable, do not use outside */             \
+        EMITB(0xDE) EMITB(0xF0+(n))
+
+
 #define sqrfs_xx()       /* not portable, do not use outside */             \
         EMITB(0xD9) EMITB(0xFA)
+
+#define negfs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xD9) EMITB(0xE0)
+
+#define absfs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xD9) EMITB(0xE1)
+
+
+#define xm2fs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xD9) EMITB(0xF0)
+
+#define lg2fs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xD9) EMITB(0xF1)
+
+#define lp2fs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xD9) EMITB(0xF9)
+
 
 #define sinfs_xx()       /* not portable, do not use outside */             \
         EMITB(0xD9) EMITB(0xFE)
 
 #define cosfs_xx()       /* not portable, do not use outside */             \
         EMITB(0xD9) EMITB(0xFF)
+
+#define scsfs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xD9) EMITB(0xFB)
+
+#define tanfs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xD9) EMITB(0xF2)
+
+#define atnfs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xD9) EMITB(0xF3)
+
+
+#define reifs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xD9) EMITB(0xF5)
+
+#define remfs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xD9) EMITB(0xF8)
+
+#define rndfs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xD9) EMITB(0xFC)
+
+#define extfs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xD9) EMITB(0xF4)
+
+#define sclfs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xD9) EMITB(0xFD)
+
+
+#define cmpfs_xn(n)      /* not portable, do not use outside */             \
+        EMITB(0xDB) EMITB(0xF0+(n))
+
+#define cmpfs_pn(n)      /* not portable, do not use outside */             \
+        EMITB(0xDF) EMITB(0xF0+(n))
+
+#define movfs_nx(n)      /* not portable, do not use outside */             \
+        EMITB(0xDD) EMITB(0xD0+(n))
+
+#define movfs_np(n)      /* not portable, do not use outside */             \
+        EMITB(0xDD) EMITB(0xD8+(n))
+
+#define popfs_xx()       /* not portable, do not use outside */             \
+        EMITB(0xDD) EMITB(0xD8)
 
 
 #define fpucw_ld(MS, DS) /* not portable, do not use outside */             \
