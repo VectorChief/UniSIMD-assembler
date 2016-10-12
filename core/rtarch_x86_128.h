@@ -331,6 +331,8 @@
 
 /* fma (G = G + S * T) */
 
+#if RT_SIMD_COMPAT_FMR == 0
+
 #define fmaos_rr(XG, XS, XT)                                                \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
@@ -342,6 +344,36 @@
         movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
         movox_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         fmaos_rx(W(XG))
+
+#elif RT_SIMD_COMPAT_FMR == 1
+
+#define fmaos_rr(XG, XS, XT)                                                \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        fmaos_rx(W(XG))                                                     \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#define fmaos_ld(XG, XS, MT, DT)                                            \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XS), W(MT), W(DT))                                       \
+        movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movox_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        fmaos_rx(W(XG))                                                     \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#endif /* RT_SIMD_COMPAT_FMR */
 
 #define fmaos_rx(XG) /* not portable, do not use outside */                 \
         fpuws_ld(Mebp,  inf_SCR01(0x00))                                    \
@@ -389,6 +421,8 @@
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
+#if RT_SIMD_COMPAT_FMR == 0
+
 #define fmsos_rr(XG, XS, XT)                                                \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
@@ -400,6 +434,36 @@
         movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
         movox_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         fmsos_rx(W(XG))
+
+#elif RT_SIMD_COMPAT_FMR == 1
+
+#define fmsos_rr(XG, XS, XT)                                                \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        fmsos_rx(W(XG))                                                     \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#define fmsos_ld(XG, XS, MT, DT)                                            \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XS), W(MT), W(DT))                                       \
+        movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movox_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        fmsos_rx(W(XG))                                                     \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#endif /* RT_SIMD_COMPAT_FMR */
 
 #define fmsos_rx(XG) /* not portable, do not use outside */                 \
         fpuws_ld(Mebp,  inf_SCR01(0x00))                                    \

@@ -293,6 +293,8 @@
 
 /* fma (G = G + S * T) */
 
+#if RT_SIMD_COMPAT_FMR == 0
+
 #define fmaqs_rr(XG, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
@@ -304,6 +306,36 @@
         movqx_st(W(XS), Mebp, inf_SCR02(0))                                 \
         movqx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         fmaqs_rx(W(XG))
+
+#elif RT_SIMD_COMPAT_FMR == 1
+
+#define fmaqs_rr(XG, XS, XT)                                                \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        fmaqs_rx(W(XG))                                                     \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#define fmaqs_ld(XG, XS, MT, DT)                                            \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XS), W(MT), W(DT))                                       \
+        movqx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movqx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        fmaqs_rx(W(XG))                                                     \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#endif /* RT_SIMD_COMPAT_FMR */
 
 #define fmaqs_rx(XG) /* not portable, do not use outside */                 \
         fpuzs_ld(Mebp,  inf_SCR01(0x00))                                    \
@@ -351,6 +383,8 @@
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
+#if RT_SIMD_COMPAT_FMR == 0
+
 #define fmsqs_rr(XG, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
@@ -362,6 +396,36 @@
         movqx_st(W(XS), Mebp, inf_SCR02(0))                                 \
         movqx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         fmsqs_rx(W(XG))
+
+#elif RT_SIMD_COMPAT_FMR == 1
+
+#define fmsqs_rr(XG, XS, XT)                                                \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        fmsqs_rx(W(XG))                                                     \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#define fmsqs_ld(XG, XS, MT, DT)                                            \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XS), W(MT), W(DT))                                       \
+        movqx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movqx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        fmsqs_rx(W(XG))                                                     \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#endif /* RT_SIMD_COMPAT_FMR */
 
 #define fmsqs_rx(XG) /* not portable, do not use outside */                 \
         fpuzs_ld(Mebp,  inf_SCR01(0x00))                                    \

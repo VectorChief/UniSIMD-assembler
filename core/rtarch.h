@@ -203,6 +203,7 @@
 #define RT_SIMD_COMPAT_FMS_MASTER       1 /* for full-precision fmsps_** */
 #define RT_SIMD_COMPAT_DIV_MASTER       1 /* for full-precision divps_** */
 #define RT_SIMD_COMPAT_SQR_MASTER       1 /* for full-precision sqrps_** */
+#define RT_SIMD_COMPAT_FMR_MASTER       0 /* for rounding-mode fm*ps_** */
 #define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and Power */
 
 #include "rtzero.h"
@@ -299,6 +300,9 @@
 /* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
  * of fmsps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
+/* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
+ * of fm*ps_** instruction fallbacks to honour rounding mode */
+#define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
@@ -497,6 +501,9 @@
 /* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
  * of fmsps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
+/* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
+ * of fm*ps_** instruction fallbacks to honour rounding mode */
+#define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
@@ -716,6 +723,9 @@
 /* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
  * of fmsps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
+/* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
+ * of fm*ps_** instruction fallbacks to honour rounding mode */
+#define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
