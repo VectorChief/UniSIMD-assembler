@@ -155,6 +155,7 @@
 /* selectors  */
 
 #define REG(reg, mod, sib)  reg
+#define RXG(reg, mod, sib)  ((reg) + 32)
 #define MOD(reg, mod, sib)  mod
 #define SIB(reg, mod, sib)  sib
 
@@ -188,7 +189,8 @@
 #define T21(tr) (tr)
 #define M21(im) (0x0A000000 | TIxx << 16)
 #define G21(rg, im) G31(rg, im)
-#define G31(rg, im) EMITW(0x52800000 | MRM((rg),    0x00,    0x00) |        \
+#define G31(rg, im) EMITW(0x52800000 | MRM(((rg)&0x1F),    0x00,    0x00) | \
+                     ((rg)&0x20)<<26 | ((rg)&0x20)<<24 | ((rg)&0x20)<<17  | \
                              (0xFFFF & (im)) << 5)
 
 #define T12(tr) (tr)
@@ -197,9 +199,11 @@
 #define T22(tr) (tr)
 #define M22(im) (0x0A000000 | TIxx << 16)
 #define G22(rg, im) G32(rg, im)
-#define G32(rg, im) EMITW(0x52800000 | MRM((rg),    0x00,    0x00) |        \
+#define G32(rg, im) EMITW(0x52800000 | MRM(((rg)&0x1F),    0x00,    0x00) | \
+                     ((rg)&0x20)<<26 | ((rg)&0x20)<<24 | ((rg)&0x20)<<17  | \
                              (0xFFFF & (im)) << 5)                          \
-                    EMITW(0x72A00000 | MRM((rg),    0x00,    0x00) |        \
+                    EMITW(0x72A00000 | MRM(((rg)&0x1F),    0x00,    0x00) | \
+                     ((rg)&0x20)<<26 | ((rg)&0x20)<<17 |                    \
                              (0xFFFF & (im) >> 16) << 5)
 
 /* displacement encoding BASE(TP1), adr(TP3) */
