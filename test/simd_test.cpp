@@ -8,8 +8,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#define RT_SIMD_CODE /* enable SIMD instructions definitions */
-#define RT_BASE_TEST /* enable BASE instructions sub-tests */
+#define RT_SIMD_CODE /* enable SIMD instruction definitions */
+#define RT_BASE_TEST /* enable BASE instruction sub-tests */
 
 #include "rtarch.h"
 #include "rtbase.h"
@@ -128,7 +128,7 @@ struct rt_SIMD_INFOX : public rt_SIMD_INFO
 };
 
 /*
- * SIMD offsets within array.
+ * SIMD offsets within array (j-index below).
  */
 #define AJ0                 DP(Q*0x000)
 #define AJ1                 DP(Q*0x010)
@@ -1515,7 +1515,7 @@ rt_void c_test13(rt_SIMD_INFOX *info)
         while (j-->0)
         {
             fco1[j] = RT_POW(far0[j], 1.0 / 3.0);
-            fco2[j] = 1.0 / RT_SQRT(far0[j]);
+            fco2[j] = -1.0 / RT_SQRT(far0[j]);
         }
     }
 }
@@ -1536,18 +1536,21 @@ rt_void s_test13(rt_SIMD_INFOX *info)
         movpx_ld(Xmm0, Mecx, AJ0)
         cbrps_rr(Xmm2, Xmm5, Xmm6, Xmm0) /* destroys Xmm5, Xmm6 */
         rsqps_rr(Xmm3, Xmm0) /* destroys Xmm0 */
+        negps_rx(Xmm3)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
 
         movpx_ld(Xmm0, Mecx, AJ1)
         cbrps_rr(Xmm2, Xmm5, Xmm6, Xmm0) /* destroys Xmm5, Xmm6 */
         rsqps_rr(Xmm3, Xmm0) /* destroys Xmm0 */
+        negps_rx(Xmm3)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
 
         movpx_ld(Xmm0, Mecx, AJ2)
         cbrps_rr(Xmm2, Xmm5, Xmm6, Xmm0) /* destroys Xmm5, Xmm6 */
         rsqps_rr(Xmm3, Xmm0) /* destroys Xmm0 */
+        negps_rx(Xmm3)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
 
@@ -1576,10 +1579,12 @@ rt_void p_test13(rt_SIMD_INFOX *info)
         RT_LOGI("farr[%d] = %e\n",
                 j, far0[j]);
 
-        RT_LOGI("C RT_POW(farr[%d],1.0/3.0) = %e, 1.0/RT_SQRT(farr[%d]) = %e\n",
+        RT_LOGI("C RT_POW(farr[%d],1.0/3.0) = %e, "
+                    "-1.0/RT_SQRT(farr[%d]) = %e\n",
                 j, fco1[j], j, fco2[j]);
 
-        RT_LOGI("S RT_POW(farr[%d],1.0/3.0) = %e, 1.0/RT_SQRT(farr[%d]) = %e\n",
+        RT_LOGI("S RT_POW(farr[%d],1.0/3.0) = %e, "
+                    "-1.0/RT_SQRT(farr[%d]) = %e\n",
                 j, fso1[j], j, fso2[j]);
     }
 }
