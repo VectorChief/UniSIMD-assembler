@@ -767,7 +767,9 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-/* fma (G = G + S * T) */
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
 #if RT_SIMD_COMPAT_FMA == 2
 
@@ -912,7 +914,9 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-/* fma (G = G + S * T) */
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
 #if RT_SIMD_COMPAT_FMA == 2
 
@@ -1100,7 +1104,9 @@ struct rt_SIMD_REGS
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* fma (G = G + S * T) */
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
 #define fmaps_rr(XG, XS, XT)                                                \
         fmaos_rr(W(XG), W(XS), W(XT))
@@ -1479,7 +1485,9 @@ struct rt_SIMD_REGS
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* fma (G = G + S * T) */
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
 #define fmaps_rr(XG, XS, XT)                                                \
         fmaqs_rr(W(XG), W(XS), W(XT))

@@ -435,7 +435,9 @@
 
 #if RT_SIMD_COMPAT_FMA == 0
 
-/* fma (G = G + S * T) */
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
 #define fmaos_rr(XG, XS, XT)                                                \
         EMITW(0xF2000D50 | MXM(REG(XG), REG(XS), REG(XT)))
@@ -448,7 +450,9 @@
 
 #elif RT_SIMD_COMPAT_FMA == 1
 
-/* fma (G = G + S * T) */
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
 #define fmaos_rr(XG, XS, XT)                                                \
         EMITW(0xEEB70AC0 | MXM(Tmm2+0,  0x00,    REG(XS)+0))                \
@@ -587,7 +591,9 @@
 
 #else /* RT_128 >= 2 */ /* NOTE: FMA is available in processors with ASIMDv2 */
 
-/* fma (G = G + S * T) */
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
 #if RT_SIMD_COMPAT_FMA <= 1
 

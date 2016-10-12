@@ -203,7 +203,7 @@
 #define RT_SIMD_COMPAT_FMS_MASTER       1 /* for full-precision fmsps_** */
 #define RT_SIMD_COMPAT_DIV_MASTER       1 /* for full-precision divps_** */
 #define RT_SIMD_COMPAT_SQR_MASTER       1 /* for full-precision sqrps_** */
-#define RT_SIMD_COMPAT_FMR_MASTER       0 /* for rounding-mode fm*ps_** */
+#define RT_SIMD_COMPAT_FMR_MASTER       0 /* for fm*ps_** rounding mode */
 #define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and Power */
 
 #include "rtzero.h"

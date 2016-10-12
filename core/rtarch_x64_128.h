@@ -269,7 +269,9 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 
 #if RT_SIMD_COMPAT_FMA == 0
 
-/* fma (G = G + S * T) */
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
 #define fmaqs_rr(XG, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -285,7 +287,9 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 
 #elif RT_SIMD_COMPAT_FMA == 1
 
-/* fma (G = G + S * T) */
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
 #if RT_SIMD_COMPAT_FMR == 0
 
