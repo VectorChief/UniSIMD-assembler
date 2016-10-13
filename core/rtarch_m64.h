@@ -169,19 +169,20 @@
 
 #define movzx_rj(RD, IT, IS)     /* IT - upper 32-bit, IS - lower 32-bit */ \
         AUW(EMPTY,    VAL(IT), REG(RD), EMPTY,   EMPTY,   EMPTY2, G3(IT))   \
+        EMITW(0x24000000 | REG(RD)<<21 | REG(RD)<<16 | ((VAL(IS)>>31)&1))   \
         EMITW(0x0000003C | MRM(REG(RD), 0x00,    REG(RD)))                  \
-        AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IS))   \
-        EMITW(0x0000003C | MRM(TIxx,    0x00,    TIxx))                     \
-        EMITW(0x0000003E | MRM(TIxx,    0x00,    TIxx))                     \
-        EMITW(0x00000025 | MRM(REG(RD), REG(RD), TIxx))
+        AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
+        EMITW(0x00000000 | MIM(REG(RD), REG(RD), VAL(IS), T1(IS), M1(IS)) | \
+        (+(TP1(IS) == 0) & 0x64000000) | (+(TP1(IS) != 0) & 0x0000002D))    \
+        /* if true ^ equals to -1 (not 1) */
 
 #define movzx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
         AUW(EMPTY,    VAL(IT), TMxx,    EMPTY,   EMPTY,   EMPTY2, G3(IT))   \
+        EMITW(0x24000000 | TMxx<<21 | TMxx<<16 | ((VAL(IS)>>31)&1))         \
         EMITW(0x0000003C | MRM(TMxx,    0x00,    TMxx))                     \
-        AUW(SIB(MD),  VAL(IS), TIxx,    MOD(MD), VAL(DD), C1(DD), G3(IS))   \
-        EMITW(0x0000003C | MRM(TIxx,    0x00,    TIxx))                     \
-        EMITW(0x0000003E | MRM(TIxx,    0x00,    TIxx))                     \
-        EMITW(0x00000025 | MRM(TMxx,    TMxx,    TIxx))                     \
+        AUW(SIB(MD),  VAL(IS), TIxx,    MOD(MD), VAL(DD), C1(DD), G1(IS))   \
+        EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IS), T1(IS), M1(IS)) | \
+        (+(TP1(IS) == 0) & 0x64000000) | (+(TP1(IS) != 0) & 0x0000002D))    \
         EMITW(0xFC000000 | MDM(TMxx,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
 /* and
