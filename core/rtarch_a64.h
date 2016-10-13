@@ -171,7 +171,7 @@
 
 #define movzx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
         AUW(EMPTY,    VAL(IS), TMxx,    EMPTY,   EMPTY,   EMPTY2, G3(IS))   \
-        AUW(EMPTY,    VAL(IT), TMxx+32, EMPTY,   EMPTY,   EMPTY2, G3(IT))   \
+        AUW(SIB(MD),  VAL(IT), TMxx+32, MOD(MD), VAL(DD), C1(DD), G3(IT))   \
         EMITW(0xF9000000 | MDM(TMxx,    MOD(MD), VXL(DD), B1(DD), P1(DD)))
 
 /* and
