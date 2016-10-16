@@ -150,6 +150,12 @@
 #define TYP(val, typ, cmd)  typ
 #define CMD(val, typ, cmd)  cmd
 
+/* 3-byte VEX prefix with full customization (LZ, W0) */
+#define VEX(ren, pfx, aux)                                                  \
+        EMITB(0xC4)                                                         \
+        EMITB(0xE0 | (aux))                                                 \
+        EMITB(0x00 | (0x0F - (ren)) << 3 | (pfx))
+
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -289,24 +295,19 @@
  * set-flags: undefined (*x), yes (*z) */
 
 #define annwx_ri(RG, IS)                                                    \
-        notwx_rx(W(RG))                                                     \
-        andwx_ri(W(RG), W(IS))
+        annwz_ri(W(RG), W(IS))
 
 #define annwx_mi(MG, DG, IS)                                                \
-        notwx_mx(W(MG), W(DG))                                              \
-        andwx_mi(W(MG), W(DG), W(IS))
+        annwz_mi(W(MG), W(DG), W(IS))
 
 #define annwx_rr(RG, RS)                                                    \
-        notwx_rx(W(RG))                                                     \
-        andwx_rr(W(RG), W(RS))
+        annwz_rr(W(RG), W(RS))
 
 #define annwx_ld(RG, MS, DS)                                                \
-        notwx_rx(W(RG))                                                     \
-        andwx_ld(W(RG), W(MS), W(DS))
+        annwz_ld(W(RG), W(MS), W(DS))
 
 #define annwx_st(RS, MG, DG)                                                \
-        notwx_mx(W(MG), W(DG))                                              \
-        andwx_st(W(RS), W(MG), W(DG))
+        annwz_st(W(RS), W(MG), W(DG))
 
 #define annwx_mr(MG, DG, RS)                                                \
         annwx_st(W(RS), W(MG), W(DG))
@@ -320,6 +321,8 @@
         notwx_mx(W(MG), W(DG))                                              \
         andwz_mi(W(MG), W(DG), W(IS))
 
+#if RT_X86 < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
+
 #define annwz_rr(RG, RS)                                                    \
         notwx_rx(W(RG))                                                     \
         andwz_rr(W(RG), W(RS))
@@ -327,6 +330,19 @@
 #define annwz_ld(RG, MS, DS)                                                \
         notwx_rx(W(RG))                                                     \
         andwz_ld(W(RG), W(MS), W(DS))
+
+#else /* RT_X86 >= 2 */
+
+#define annwz_rr(RG, RS)                                                    \
+        VEX(REG(RG), 0, 2) EMITB(0xF2)                                      \
+        MRM(REG(RG), MOD(RS), REG(RS))
+
+#define annwz_ld(RG, MS, DS)                                                \
+        VEX(REG(RG), 0, 2) EMITB(0xF2)                                      \
+        MRM(REG(RG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#endif /* RT_X86 >= 2 */
 
 #define annwz_st(RS, MG, DG)                                                \
         notwx_mx(W(MG), W(DG))                                              \
@@ -382,24 +398,19 @@
  * set-flags: undefined (*x), yes (*z) */
 
 #define ornwx_ri(RG, IS)                                                    \
-        notwx_rx(W(RG))                                                     \
-        orrwx_ri(W(RG), W(IS))
+        ornwz_ri(W(RG), W(IS))
 
 #define ornwx_mi(MG, DG, IS)                                                \
-        notwx_mx(W(MG), W(DG))                                              \
-        orrwx_mi(W(MG), W(DG), W(IS))
+        ornwz_mi(W(MG), W(DG), W(IS))
 
 #define ornwx_rr(RG, RS)                                                    \
-        notwx_rx(W(RG))                                                     \
-        orrwx_rr(W(RG), W(RS))
+        ornwz_rr(W(RG), W(RS))
 
 #define ornwx_ld(RG, MS, DS)                                                \
-        notwx_rx(W(RG))                                                     \
-        orrwx_ld(W(RG), W(MS), W(DS))
+        ornwz_ld(W(RG), W(MS), W(DS))
 
 #define ornwx_st(RS, MG, DG)                                                \
-        notwx_mx(W(MG), W(DG))                                              \
-        orrwx_st(W(RS), W(MG), W(DG))
+        ornwz_st(W(RS), W(MG), W(DG))
 
 #define ornwx_mr(MG, DG, RS)                                                \
         ornwx_st(W(RS), W(MG), W(DG))

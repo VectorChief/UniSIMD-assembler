@@ -229,24 +229,19 @@
  * set-flags: undefined (*x), yes (*z) */
 
 #define annzx_ri(RG, IS)                                                    \
-        notzx_rx(W(RG))                                                     \
-        andzx_ri(W(RG), W(IS))
+        annzz_ri(W(RG), W(IS))
 
 #define annzx_mi(MG, DG, IS)                                                \
-        notzx_mx(W(MG), W(DG))                                              \
-        andzx_mi(W(MG), W(DG), W(IS))
+        annzz_mi(W(MG), W(DG), W(IS))
 
 #define annzx_rr(RG, RS)                                                    \
-        notzx_rx(W(RG))                                                     \
-        andzx_rr(W(RG), W(RS))
+        annzz_rr(W(RG), W(RS))
 
 #define annzx_ld(RG, MS, DS)                                                \
-        notzx_rx(W(RG))                                                     \
-        andzx_ld(W(RG), W(MS), W(DS))
+        annzz_ld(W(RG), W(MS), W(DS))
 
 #define annzx_st(RS, MG, DG)                                                \
-        notzx_mx(W(MG), W(DG))                                              \
-        andzx_st(W(RS), W(MG), W(DG))
+        annzz_st(W(RS), W(MG), W(DG))
 
 #define annzx_mr(MG, DG, RS)                                                \
         annzx_st(W(RS), W(MG), W(DG))
@@ -260,6 +255,9 @@
         notzx_mx(W(MG), W(DG))                                              \
         andzz_mi(W(MG), W(DG), W(IS))
 
+/* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
+#if (defined (RT_X32) && RT_X32 < 2) || (defined (RT_X64) && RT_X64 < 2)
+
 #define annzz_rr(RG, RS)                                                    \
         notzx_rx(W(RG))                                                     \
         andzz_rr(W(RG), W(RS))
@@ -267,6 +265,19 @@
 #define annzz_ld(RG, MS, DS)                                                \
         notzx_rx(W(RG))                                                     \
         andzz_ld(W(RG), W(MS), W(DS))
+
+#else /* RT_X32/RT_X64 >= 2 */
+
+#define annzz_rr(RG, RS)                                                    \
+        VEW(RXB(RG), RXB(RS), REN(RG), 0, 0, 2) EMITB(0xF2)                 \
+        MRM(REG(RG), MOD(RS), REG(RS))
+
+#define annzz_ld(RG, MS, DS)                                                \
+        VEW(RXB(RG), RXB(MS), REN(RG), 0, 0, 2) EMITB(0xF2)                 \
+        MRM(REG(RG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#endif /* RT_X32/RT_X64 >= 2 */
 
 #define annzz_st(RS, MG, DG)                                                \
         notzx_mx(W(MG), W(DG))                                              \
@@ -322,24 +333,19 @@
  * set-flags: undefined (*x), yes (*z) */
 
 #define ornzx_ri(RG, IS)                                                    \
-        notzx_rx(W(RG))                                                     \
-        orrzx_ri(W(RG), W(IS))
+        ornzz_ri(W(RG), W(IS))
 
 #define ornzx_mi(MG, DG, IS)                                                \
-        notzx_mx(W(MG), W(DG))                                              \
-        orrzx_mi(W(MG), W(DG), W(IS))
+        ornzz_mi(W(MG), W(DG), W(IS))
 
 #define ornzx_rr(RG, RS)                                                    \
-        notzx_rx(W(RG))                                                     \
-        orrzx_rr(W(RG), W(RS))
+        ornzz_rr(W(RG), W(RS))
 
 #define ornzx_ld(RG, MS, DS)                                                \
-        notzx_rx(W(RG))                                                     \
-        orrzx_ld(W(RG), W(MS), W(DS))
+        ornzz_ld(W(RG), W(MS), W(DS))
 
 #define ornzx_st(RS, MG, DG)                                                \
-        notzx_mx(W(MG), W(DG))                                              \
-        orrzx_st(W(RS), W(MG), W(DG))
+        ornzz_st(W(RS), W(MG), W(DG))
 
 #define ornzx_mr(MG, DG, RS)                                                \
         ornzx_st(W(RS), W(MG), W(DG))

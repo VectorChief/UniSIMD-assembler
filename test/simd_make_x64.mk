@@ -56,6 +56,10 @@ simd_test_x64f64:
 # For AVX1 build use (replace): RT_256=1
 # For AVX2 build use (replace): RT_256=2
 
+# For generic BASE X64 build keep: RT_X64 (default)
+# For 3-op-VEX BASE X64 build use (replace): RT_X64=1 (reserved)
+# For BMI1+BMI2 BASE X64 build use (replace): RT_X64=2
+
 # 64/32-bit (ptr/adr) hybrid mode compatible with native 64-bit ABI
 # is available for the original pure 32-bit ISA using 64-bit pointers,
 # use (replace): RT_ADDRESS=32, rename the binary to simd_test.x64_32
