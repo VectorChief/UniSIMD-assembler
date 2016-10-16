@@ -717,6 +717,74 @@
 #define shrzn_mr(MG, DG, RS)                                                \
         shrzn_st(W(RS), W(MG), W(DG))
 
+/* ror
+ * set-flags: undefined (*x), yes (*z) */
+
+#define rorzx_rx(RG)                     /* reads Recx for shift count */   \
+        rorzz_rx(W(RG))
+
+#define rorzx_mx(MG, DG)                 /* reads Recx for shift count */   \
+        rorzz_mx(W(MG), W(DG))
+
+#define rorzx_ri(RG, IS)                                                    \
+        rorzz_ri(W(RG), W(IS))
+
+#define rorzx_mi(MG, DG, IS)                                                \
+        rorzz_mi(W(MG), W(DG), W(IS))
+
+#define rorzx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        rorzz_rr(W(RG), W(RS))
+
+#define rorzx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        rorzz_ld(W(RG), W(MS), W(DS))
+
+#define rorzx_st(RS, MG, DG)                                                \
+        rorzz_st(W(RS), W(MG), W(DG))
+
+#define rorzx_mr(MG, DG, RS)                                                \
+        rorzx_st(W(RS), W(MG), W(DG))
+
+
+#define rorzz_rx(RG)                     /* reads Recx for shift count */   \
+        REW(0,       RXB(RG)) EMITB(0xD3)                                   \
+        MRM(0x01,    MOD(RG), REG(RG))                                      \
+
+#define rorzz_mx(MG, DG)                 /* reads Recx for shift count */   \
+    ADR REW(0,       RXB(MG)) EMITB(0xD3)                                   \
+        MRM(0x01,    MOD(MG), REG(MG))                                      \
+        AUX(SIB(MG), CMD(DG), EMPTY)
+
+#define rorzz_ri(RG, IS)                                                    \
+        REW(0,       RXB(RG)) EMITB(0xC1)                                   \
+        MRM(0x01,    MOD(RG), REG(RG))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
+
+#define rorzz_mi(MG, DG, IS)                                                \
+    ADR REW(0,       RXB(MG)) EMITB(0xC1)                                   \
+        MRM(0x01,    MOD(MG), REG(MG))                                      \
+        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS) & 0x3F))
+
+#define rorzz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        stack_st(Recx)                                                      \
+        movzx_rr(Recx, W(RS))                                               \
+        rorzz_rx(W(RG))                                                     \
+        stack_ld(Recx)
+
+#define rorzz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx, W(MS), W(DS))                                        \
+        rorzz_rx(W(RG))                                                     \
+        stack_ld(Recx)
+
+#define rorzz_st(RS, MG, DG)                                                \
+        stack_st(Recx)                                                      \
+        movzx_rr(Recx, W(RS))                                               \
+        rorzz_mx(W(MG), W(DG))                                              \
+        stack_ld(Recx)
+
+#define rorzz_mr(MG, DG, RS)                                                \
+        rorzz_st(W(RS), W(MG), W(DG))
+
 /* mul
  * set-flags: undefined */
 
@@ -954,7 +1022,7 @@
 
 /* arj
  * set-flags: undefined
- * refer to individual instructions' description
+ * refer to individual instruction descriptions
  * to stay within special register limitations */
 
 #define arjzx_rx(RG, op, cc, lb)                                            \

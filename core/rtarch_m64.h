@@ -880,6 +880,94 @@
 #define shrzn_mr(MG, DG, RS)                                                \
         shrzn_st(W(RS), W(MG), W(DG))
 
+/* ror
+ * set-flags: undefined (*x), yes (*z) */
+
+#define rorzx_rx(RG)                     /* reads Recx for shift count */   \
+        EMITW(0x00000056 | MSM(REG(RG), REG(RG), Tecx))
+
+#define rorzx_mx(MG, DG)                 /* reads Recx for shift count */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(0x00000056 | MSM(TMxx,    TMxx,    Tecx))                     \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define rorzx_ri(RG, IS)                                                    \
+        EMITW(0x00000000 | MSM(REG(RG), REG(RG), 0x00) |                    \
+        (+(VAL(IS) < 32) & (0x0020003A | (0x1F & VAL(IS)) << 6)) |          \
+        (+(VAL(IS) > 31) & (0x0020003E | (0x1F & VAL(IS)) << 6)))           \
+        /* if true ^ equals to -1 (not 1) */
+
+#define rorzx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(0x00000000 | MSM(TMxx,    TMxx,    0x00) |                    \
+        (+(VAL(IS) < 32) & (0x0020003A | (0x1F & VAL(IS)) << 6)) |          \
+        (+(VAL(IS) > 31) & (0x0020003E | (0x1F & VAL(IS)) << 6)))           \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define rorzx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        EMITW(0x00000056 | MSM(REG(RG), REG(RG), REG(RS)))
+
+#define rorzx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x00000056 | MSM(REG(RG), REG(RG), TMxx))
+
+#define rorzx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(0x00000056 | MSM(TMxx,    TMxx,    REG(RS)))                  \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define rorzx_mr(MG, DG, RS)                                                \
+        rorzx_st(W(RS), W(MG), W(DG))
+
+
+#define rorzz_rx(RG)                     /* reads Recx for shift count */   \
+        EMITW(0x00000056 | MSM(REG(RG), REG(RG), Tecx))                     \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define rorzz_mx(MG, DG)                 /* reads Recx for shift count */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(0x00000056 | MSM(TMxx,    TMxx,    Tecx))                     \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define rorzz_ri(RG, IS)                                                    \
+        EMITW(0x00000000 | MSM(REG(RG), REG(RG), 0x00) |                    \
+        (+(VAL(IS) < 32) & (0x0020003A | (0x1F & VAL(IS)) << 6)) |          \
+        (+(VAL(IS) > 31) & (0x0020003E | (0x1F & VAL(IS)) << 6)))           \
+        /* if true ^ equals to -1 (not 1) */                                \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define rorzz_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(0x00000000 | MSM(TMxx,    TMxx,    0x00) |                    \
+        (+(VAL(IS) < 32) & (0x0020003A | (0x1F & VAL(IS)) << 6)) |          \
+        (+(VAL(IS) > 31) & (0x0020003E | (0x1F & VAL(IS)) << 6)))           \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define rorzz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        EMITW(0x00000056 | MSM(REG(RG), REG(RG), REG(RS)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define rorzz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x00000056 | MSM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define rorzz_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(0x00000056 | MSM(TMxx,    TMxx,    REG(RS)))                  \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define rorzz_mr(MG, DG, RS)                                                \
+        rorzz_st(W(RS), W(MG), W(DG))
+
 /* pre-r6 */
 #if defined (RT_M64) && RT_M64 < 6
 
@@ -1219,7 +1307,7 @@
 
 /* arj
  * set-flags: undefined
- * refer to individual instructions' description
+ * refer to individual instruction descriptions
  * to stay within special register limitations */
 
 #define arjzx_rx(RG, op, cc, lb)                                            \
