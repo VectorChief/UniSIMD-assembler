@@ -2080,10 +2080,10 @@ struct rt_SIMD_REGS
 /* shl
  * set-flags: undefined (*x), yes (*z) */
 
-#define shlxx_rx(RG)                     /* reads Recx for shift value */   \
+#define shlxx_rx(RG)                     /* reads Recx for shift count */   \
         shlwx_rx(W(RG))
 
-#define shlxx_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shlxx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shlwx_mx(W(MG), W(DG))
 
 #define shlxx_ri(RG, IS)                                                    \
@@ -2105,10 +2105,10 @@ struct rt_SIMD_REGS
         shlwx_mr(W(MG), W(DG), W(RS))
 
 
-#define shlxz_rx(RG)                     /* reads Recx for shift value */   \
+#define shlxz_rx(RG)                     /* reads Recx for shift count */   \
         shlwz_rx(W(RG))
 
-#define shlxz_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shlxz_mx(MG, DG)                 /* reads Recx for shift count */   \
         shlwz_mx(W(MG), W(DG))
 
 #define shlxz_ri(RG, IS)                                                    \
@@ -2132,10 +2132,10 @@ struct rt_SIMD_REGS
 /* shr
  * set-flags: undefined (*x), yes (*z) */
 
-#define shrxx_rx(RG)                     /* reads Recx for shift value */   \
+#define shrxx_rx(RG)                     /* reads Recx for shift count */   \
         shrwx_rx(W(RG))
 
-#define shrxx_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shrxx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrwx_mx(W(MG), W(DG))
 
 #define shrxx_ri(RG, IS)                                                    \
@@ -2157,10 +2157,10 @@ struct rt_SIMD_REGS
         shrwx_mr(W(MG), W(DG), W(RS))
 
 
-#define shrxz_rx(RG)                     /* reads Recx for shift value */   \
+#define shrxz_rx(RG)                     /* reads Recx for shift count */   \
         shrwz_rx(W(RG))
 
-#define shrxz_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shrxz_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrwz_mx(W(MG), W(DG))
 
 #define shrxz_ri(RG, IS)                                                    \
@@ -2182,10 +2182,10 @@ struct rt_SIMD_REGS
         shrwz_mr(W(MG), W(DG), W(RS))
 
 
-#define shrxn_rx(RG)                     /* reads Recx for shift value */   \
+#define shrxn_rx(RG)                     /* reads Recx for shift count */   \
         shrwn_rx(W(RG))
 
-#define shrxn_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shrxn_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrwn_mx(W(MG), W(DG))
 
 #define shrxn_ri(RG, IS)                                                    \
@@ -2205,6 +2205,58 @@ struct rt_SIMD_REGS
 
 #define shrxn_mr(MG, DG, RS)                                                \
         shrwn_mr(W(MG), W(DG), W(RS))
+
+/* ror
+ * set-flags: undefined (*x), yes (*z) */
+
+#define rorxx_rx(RG)                     /* reads Recx for shift count */   \
+        rorwx_rx(W(RG))
+
+#define rorxx_mx(MG, DG)                 /* reads Recx for shift count */   \
+        rorwx_mx(W(MG), W(DG))
+
+#define rorxx_ri(RG, IS)                                                    \
+        rorwx_ri(W(RG), W(IS))
+
+#define rorxx_mi(MG, DG, IS)                                                \
+        rorwx_mi(W(MG), W(DG), W(IS))
+
+#define rorxx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        rorwx_rr(W(RG), W(RS))
+
+#define rorxx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        rorwx_ld(W(RG), W(MS), W(DS))
+
+#define rorxx_st(RS, MG, DG)                                                \
+        rorwx_st(W(RS), W(MG), W(DG))
+
+#define rorxx_mr(MG, DG, RS)                                                \
+        rorwx_mr(W(MG), W(DG), W(RS))
+
+
+#define rorxz_rx(RG)                     /* reads Recx for shift count */   \
+        rorwz_rx(W(RG))
+
+#define rorxz_mx(MG, DG)                 /* reads Recx for shift count */   \
+        rorwz_mx(W(MG), W(DG))
+
+#define rorxz_ri(RG, IS)                                                    \
+        rorwz_ri(W(RG), W(IS))
+
+#define rorxz_mi(MG, DG, IS)                                                \
+        rorwz_mi(W(MG), W(DG), W(IS))
+
+#define rorxz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        rorwz_rr(W(RG), W(RS))
+
+#define rorxz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        rorwz_ld(W(RG), W(MS), W(DS))
+
+#define rorxz_st(RS, MG, DG)                                                \
+        rorwz_st(W(RS), W(MG), W(DG))
+
+#define rorxz_mr(MG, DG, RS)                                                \
+        rorwz_mr(W(MG), W(DG), W(RS))
 
 /* mul
  * set-flags: undefined */
@@ -2710,10 +2762,10 @@ struct rt_SIMD_REGS
 /* shl
  * set-flags: undefined (*x), yes (*z) */
 
-#define shlxx_rx(RG)                     /* reads Recx for shift value */   \
+#define shlxx_rx(RG)                     /* reads Recx for shift count */   \
         shlzx_rx(W(RG))
 
-#define shlxx_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shlxx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shlzx_mx(W(MG), W(DG))
 
 #define shlxx_ri(RG, IS)                                                    \
@@ -2735,10 +2787,10 @@ struct rt_SIMD_REGS
         shlzx_mr(W(MG), W(DG), W(RS))
 
 
-#define shlxz_rx(RG)                     /* reads Recx for shift value */   \
+#define shlxz_rx(RG)                     /* reads Recx for shift count */   \
         shlzz_rx(W(RG))
 
-#define shlxz_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shlxz_mx(MG, DG)                 /* reads Recx for shift count */   \
         shlzz_mx(W(MG), W(DG))
 
 #define shlxz_ri(RG, IS)                                                    \
@@ -2762,10 +2814,10 @@ struct rt_SIMD_REGS
 /* shr
  * set-flags: undefined (*x), yes (*z) */
 
-#define shrxx_rx(RG)                     /* reads Recx for shift value */   \
+#define shrxx_rx(RG)                     /* reads Recx for shift count */   \
         shrzx_rx(W(RG))
 
-#define shrxx_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shrxx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrzx_mx(W(MG), W(DG))
 
 #define shrxx_ri(RG, IS)                                                    \
@@ -2787,10 +2839,10 @@ struct rt_SIMD_REGS
         shrzx_mr(W(MG), W(DG), W(RS))
 
 
-#define shrxz_rx(RG)                     /* reads Recx for shift value */   \
+#define shrxz_rx(RG)                     /* reads Recx for shift count */   \
         shrzz_rx(W(RG))
 
-#define shrxz_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shrxz_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrzz_mx(W(MG), W(DG))
 
 #define shrxz_ri(RG, IS)                                                    \
@@ -2812,10 +2864,10 @@ struct rt_SIMD_REGS
         shrzz_mr(W(MG), W(DG), W(RS))
 
 
-#define shrxn_rx(RG)                     /* reads Recx for shift value */   \
+#define shrxn_rx(RG)                     /* reads Recx for shift count */   \
         shrzn_rx(W(RG))
 
-#define shrxn_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shrxn_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrzn_mx(W(MG), W(DG))
 
 #define shrxn_ri(RG, IS)                                                    \
@@ -2835,6 +2887,58 @@ struct rt_SIMD_REGS
 
 #define shrxn_mr(MG, DG, RS)                                                \
         shrzn_mr(W(MG), W(DG), W(RS))
+
+/* ror
+ * set-flags: undefined (*x), yes (*z) */
+
+#define rorxx_rx(RG)                     /* reads Recx for shift count */   \
+        rorzx_rx(W(RG))
+
+#define rorxx_mx(MG, DG)                 /* reads Recx for shift count */   \
+        rorzx_mx(W(MG), W(DG))
+
+#define rorxx_ri(RG, IS)                                                    \
+        rorzx_ri(W(RG), W(IS))
+
+#define rorxx_mi(MG, DG, IS)                                                \
+        rorzx_mi(W(MG), W(DG), W(IS))
+
+#define rorxx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        rorzx_rr(W(RG), W(RS))
+
+#define rorxx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        rorzx_ld(W(RG), W(MS), W(DS))
+
+#define rorxx_st(RS, MG, DG)                                                \
+        rorzx_st(W(RS), W(MG), W(DG))
+
+#define rorxx_mr(MG, DG, RS)                                                \
+        rorzx_mr(W(MG), W(DG), W(RS))
+
+
+#define rorxz_rx(RG)                     /* reads Recx for shift count */   \
+        rorzz_rx(W(RG))
+
+#define rorxz_mx(MG, DG)                 /* reads Recx for shift count */   \
+        rorzz_mx(W(MG), W(DG))
+
+#define rorxz_ri(RG, IS)                                                    \
+        rorzz_ri(W(RG), W(IS))
+
+#define rorxz_mi(MG, DG, IS)                                                \
+        rorzz_mi(W(MG), W(DG), W(IS))
+
+#define rorxz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        rorzz_rr(W(RG), W(RS))
+
+#define rorxz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        rorzz_ld(W(RG), W(MS), W(DS))
+
+#define rorxz_st(RS, MG, DG)                                                \
+        rorzz_st(W(RS), W(MG), W(DG))
+
+#define rorxz_mr(MG, DG, RS)                                                \
+        rorzz_mr(W(MG), W(DG), W(RS))
 
 /* mul
  * set-flags: undefined */
@@ -3342,10 +3446,10 @@ struct rt_SIMD_REGS
 /* shl
  * set-flags: undefined (*x), yes (*z) */
 
-#define shlyx_rx(RG)                     /* reads Recx for shift value */   \
+#define shlyx_rx(RG)                     /* reads Recx for shift count */   \
         shlwx_rx(W(RG))
 
-#define shlyx_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shlyx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shlwx_mx(W(MG), W(DG))
 
 #define shlyx_ri(RG, IS)                                                    \
@@ -3367,10 +3471,10 @@ struct rt_SIMD_REGS
         shlwx_mr(W(MG), W(DG), W(RS))
 
 
-#define shlyz_rx(RG)                     /* reads Recx for shift value */   \
+#define shlyz_rx(RG)                     /* reads Recx for shift count */   \
         shlwz_rx(W(RG))
 
-#define shlyz_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shlyz_mx(MG, DG)                 /* reads Recx for shift count */   \
         shlwz_mx(W(MG), W(DG))
 
 #define shlyz_ri(RG, IS)                                                    \
@@ -3394,10 +3498,10 @@ struct rt_SIMD_REGS
 /* shr
  * set-flags: undefined (*x), yes (*z) */
 
-#define shryx_rx(RG)                     /* reads Recx for shift value */   \
+#define shryx_rx(RG)                     /* reads Recx for shift count */   \
         shrwx_rx(W(RG))
 
-#define shryx_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shryx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrwx_mx(W(MG), W(DG))
 
 #define shryx_ri(RG, IS)                                                    \
@@ -3419,10 +3523,10 @@ struct rt_SIMD_REGS
         shrwx_mr(W(MG), W(DG), W(RS))
 
 
-#define shryz_rx(RG)                     /* reads Recx for shift value */   \
+#define shryz_rx(RG)                     /* reads Recx for shift count */   \
         shrwz_rx(W(RG))
 
-#define shryz_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shryz_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrwz_mx(W(MG), W(DG))
 
 #define shryz_ri(RG, IS)                                                    \
@@ -3444,10 +3548,10 @@ struct rt_SIMD_REGS
         shrwz_mr(W(MG), W(DG), W(RS))
 
 
-#define shryn_rx(RG)                     /* reads Recx for shift value */   \
+#define shryn_rx(RG)                     /* reads Recx for shift count */   \
         shrwn_rx(W(RG))
 
-#define shryn_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shryn_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrwn_mx(W(MG), W(DG))
 
 #define shryn_ri(RG, IS)                                                    \
@@ -3467,6 +3571,58 @@ struct rt_SIMD_REGS
 
 #define shryn_mr(MG, DG, RS)                                                \
         shrwn_mr(W(MG), W(DG), W(RS))
+
+/* ror
+ * set-flags: undefined (*x), yes (*z) */
+
+#define roryx_rx(RG)                     /* reads Recx for shift count */   \
+        rorwx_rx(W(RG))
+
+#define roryx_mx(MG, DG)                 /* reads Recx for shift count */   \
+        rorwx_mx(W(MG), W(DG))
+
+#define roryx_ri(RG, IS)                                                    \
+        rorwx_ri(W(RG), W(IS))
+
+#define roryx_mi(MG, DG, IS)                                                \
+        rorwx_mi(W(MG), W(DG), W(IS))
+
+#define roryx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        rorwx_rr(W(RG), W(RS))
+
+#define roryx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        rorwx_ld(W(RG), W(MS), W(DS))
+
+#define roryx_st(RS, MG, DG)                                                \
+        rorwx_st(W(RS), W(MG), W(DG))
+
+#define roryx_mr(MG, DG, RS)                                                \
+        rorwx_mr(W(MG), W(DG), W(RS))
+
+
+#define roryz_rx(RG)                     /* reads Recx for shift count */   \
+        rorwz_rx(W(RG))
+
+#define roryz_mx(MG, DG)                 /* reads Recx for shift count */   \
+        rorwz_mx(W(MG), W(DG))
+
+#define roryz_ri(RG, IS)                                                    \
+        rorwz_ri(W(RG), W(IS))
+
+#define roryz_mi(MG, DG, IS)                                                \
+        rorwz_mi(W(MG), W(DG), W(IS))
+
+#define roryz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        rorwz_rr(W(RG), W(RS))
+
+#define roryz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        rorwz_ld(W(RG), W(MS), W(DS))
+
+#define roryz_st(RS, MG, DG)                                                \
+        rorwz_st(W(RS), W(MG), W(DG))
+
+#define roryz_mr(MG, DG, RS)                                                \
+        rorwz_mr(W(MG), W(DG), W(RS))
 
 /* mul
  * set-flags: undefined */
@@ -3972,10 +4128,10 @@ struct rt_SIMD_REGS
 /* shl
  * set-flags: undefined (*x), yes (*z) */
 
-#define shlyx_rx(RG)                     /* reads Recx for shift value */   \
+#define shlyx_rx(RG)                     /* reads Recx for shift count */   \
         shlzx_rx(W(RG))
 
-#define shlyx_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shlyx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shlzx_mx(W(MG), W(DG))
 
 #define shlyx_ri(RG, IS)                                                    \
@@ -3997,10 +4153,10 @@ struct rt_SIMD_REGS
         shlzx_mr(W(MG), W(DG), W(RS))
 
 
-#define shlyz_rx(RG)                     /* reads Recx for shift value */   \
+#define shlyz_rx(RG)                     /* reads Recx for shift count */   \
         shlzz_rx(W(RG))
 
-#define shlyz_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shlyz_mx(MG, DG)                 /* reads Recx for shift count */   \
         shlzz_mx(W(MG), W(DG))
 
 #define shlyz_ri(RG, IS)                                                    \
@@ -4024,10 +4180,10 @@ struct rt_SIMD_REGS
 /* shr
  * set-flags: undefined (*x), yes (*z) */
 
-#define shryx_rx(RG)                     /* reads Recx for shift value */   \
+#define shryx_rx(RG)                     /* reads Recx for shift count */   \
         shrzx_rx(W(RG))
 
-#define shryx_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shryx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrzx_mx(W(MG), W(DG))
 
 #define shryx_ri(RG, IS)                                                    \
@@ -4049,10 +4205,10 @@ struct rt_SIMD_REGS
         shrzx_mr(W(MG), W(DG), W(RS))
 
 
-#define shryz_rx(RG)                     /* reads Recx for shift value */   \
+#define shryz_rx(RG)                     /* reads Recx for shift count */   \
         shrzz_rx(W(RG))
 
-#define shryz_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shryz_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrzz_mx(W(MG), W(DG))
 
 #define shryz_ri(RG, IS)                                                    \
@@ -4074,10 +4230,10 @@ struct rt_SIMD_REGS
         shrzz_mr(W(MG), W(DG), W(RS))
 
 
-#define shryn_rx(RG)                     /* reads Recx for shift value */   \
+#define shryn_rx(RG)                     /* reads Recx for shift count */   \
         shrzn_rx(W(RG))
 
-#define shryn_mx(MG, DG)                 /* reads Recx for shift value */   \
+#define shryn_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrzn_mx(W(MG), W(DG))
 
 #define shryn_ri(RG, IS)                                                    \
@@ -4097,6 +4253,58 @@ struct rt_SIMD_REGS
 
 #define shryn_mr(MG, DG, RS)                                                \
         shrzn_mr(W(MG), W(DG), W(RS))
+
+/* ror
+ * set-flags: undefined (*x), yes (*z) */
+
+#define roryx_rx(RG)                     /* reads Recx for shift count */   \
+        rorzx_rx(W(RG))
+
+#define roryx_mx(MG, DG)                 /* reads Recx for shift count */   \
+        rorzx_mx(W(MG), W(DG))
+
+#define roryx_ri(RG, IS)                                                    \
+        rorzx_ri(W(RG), W(IS))
+
+#define roryx_mi(MG, DG, IS)                                                \
+        rorzx_mi(W(MG), W(DG), W(IS))
+
+#define roryx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        rorzx_rr(W(RG), W(RS))
+
+#define roryx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        rorzx_ld(W(RG), W(MS), W(DS))
+
+#define roryx_st(RS, MG, DG)                                                \
+        rorzx_st(W(RS), W(MG), W(DG))
+
+#define roryx_mr(MG, DG, RS)                                                \
+        rorzx_mr(W(MG), W(DG), W(RS))
+
+
+#define roryz_rx(RG)                     /* reads Recx for shift count */   \
+        rorzz_rx(W(RG))
+
+#define roryz_mx(MG, DG)                 /* reads Recx for shift count */   \
+        rorzz_mx(W(MG), W(DG))
+
+#define roryz_ri(RG, IS)                                                    \
+        rorzz_ri(W(RG), W(IS))
+
+#define roryz_mi(MG, DG, IS)                                                \
+        rorzz_mi(W(MG), W(DG), W(IS))
+
+#define roryz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        rorzz_rr(W(RG), W(RS))
+
+#define roryz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        rorzz_ld(W(RG), W(MS), W(DS))
+
+#define roryz_st(RS, MG, DG)                                                \
+        rorzz_st(W(RS), W(MG), W(DG))
+
+#define roryz_mr(MG, DG, RS)                                                \
+        rorzz_mr(W(MG), W(DG), W(RS))
 
 /* mul
  * set-flags: undefined */
