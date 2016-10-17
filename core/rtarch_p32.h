@@ -1074,14 +1074,14 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define shlwx_ri(RG, IS)                                                    \
-        EMITW(0x60000000 | TIxx << 16 | (0x1F & VAL(IS)))                   \
-        EMITW(0x7C000030 | MSM(REG(RG), REG(RG), TIxx))
+        EMITW(0x54000000 | MSM(REG(RG), REG(RG), VAL(IS) & 0x1F) |          \
+                                           ((31-VAL(IS)) & 0x1F) << 1)
 
 #define shlwx_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
-        EMITW(0x60000000 | TIxx << 16 | (0x1F & VAL(IS)))                   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x7C000030 | MSM(TMxx,    TMxx,    TIxx))                     \
+        EMITW(0x54000000 | MSM(TMxx,    TMxx,    VAL(IS) & 0x1F) |          \
+                                           ((31-VAL(IS)) & 0x1F) << 1)      \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define shlwx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
@@ -1112,14 +1112,14 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define shlwz_ri(RG, IS)                                                    \
-        EMITW(0x60000000 | TIxx << 16 | (0x1F & VAL(IS)))                   \
-        EMITW(0x7C000031 | MSM(REG(RG), REG(RG), TIxx))
+        EMITW(0x54000001 | MSM(REG(RG), REG(RG), VAL(IS) & 0x1F) |          \
+                                           ((31-VAL(IS)) & 0x1F) << 1)
 
 #define shlwz_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
-        EMITW(0x60000000 | TIxx << 16 | (0x1F & VAL(IS)))                   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x7C000031 | MSM(TMxx,    TMxx,    TIxx))                     \
+        EMITW(0x54000001 | MSM(TMxx,    TMxx,    VAL(IS) & 0x1F) |          \
+                                           ((31-VAL(IS)) & 0x1F) << 1)      \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define shlwz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
@@ -1152,14 +1152,14 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define shrwx_ri(RG, IS)                                                    \
-        EMITW(0x60000000 | TIxx << 16 | (0x1F & VAL(IS)))                   \
-        EMITW(0x7C000430 | MSM(REG(RG), REG(RG), TIxx))
+        EMITW(0x5400003E | MSM(REG(RG), REG(RG), (32-VAL(IS)) & 0x1F) |     \
+                                                     (VAL(IS) & 0x1F) << 6)
 
 #define shrwx_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
-        EMITW(0x60000000 | TIxx << 16 | (0x1F & VAL(IS)))                   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x7C000430 | MSM(TMxx,    TMxx,    TIxx))                     \
+        EMITW(0x5400003E | MSM(TMxx,    TMxx,    (32-VAL(IS)) & 0x1F) |     \
+                                                     (VAL(IS) & 0x1F) << 6) \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define shrwx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
@@ -1190,14 +1190,14 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define shrwz_ri(RG, IS)                                                    \
-        EMITW(0x60000000 | TIxx << 16 | (0x1F & VAL(IS)))                   \
-        EMITW(0x7C000431 | MSM(REG(RG), REG(RG), TIxx))
+        EMITW(0x5400003F | MSM(REG(RG), REG(RG), (32-VAL(IS)) & 0x1F) |     \
+                                                     (VAL(IS) & 0x1F) << 6)
 
 #define shrwz_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
-        EMITW(0x60000000 | TIxx << 16 | (0x1F & VAL(IS)))                   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x7C000431 | MSM(TMxx,    TMxx,    TIxx))                     \
+        EMITW(0x5400003F | MSM(TMxx,    TMxx,    (32-VAL(IS)) & 0x1F) |     \
+                                                     (VAL(IS) & 0x1F) << 6) \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define shrwz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
@@ -1228,12 +1228,12 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define shrwn_ri(RG, IS)                                                    \
-        EMITW(0x7C000670 | MSM(REG(RG), REG(RG), (0x1F & VAL(IS))))
+        EMITW(0x7C000670 | MSM(REG(RG), REG(RG), VAL(IS) & 0x1F))
 
 #define shrwn_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x7C000670 | MSM(TMxx,    TMxx,    (0x1F & VAL(IS))))         \
+        EMITW(0x7C000670 | MSM(TMxx,    TMxx,    VAL(IS) & 0x1F))           \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define shrwn_rr(RG, RS)       /* Recx cannot be used as first operand */   \
@@ -1270,12 +1270,12 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define rorwx_ri(RG, IS)                                                    \
-        EMITW(0x5400003E | MSM(REG(RG), REG(RG), (32-VAL(IS))&0x1F))
+        EMITW(0x5400003E | MSM(REG(RG), REG(RG), (32-VAL(IS)) & 0x1F))
 
 #define rorwx_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x5400003E | MSM(TMxx,    TMxx,    (32-VAL(IS))&0x1F))        \
+        EMITW(0x5400003E | MSM(TMxx,    TMxx,    (32-VAL(IS)) & 0x1F))      \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define rorwx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
@@ -1316,12 +1316,12 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define rorwz_ri(RG, IS)                                                    \
-        EMITW(0x5400003F | MSM(REG(RG), REG(RG), (32-VAL(IS))&0x1F))
+        EMITW(0x5400003F | MSM(REG(RG), REG(RG), (32-VAL(IS)) & 0x1F))
 
 #define rorwz_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x5400003F | MSM(TMxx,    TMxx,    (32-VAL(IS))&0x1F))        \
+        EMITW(0x5400003F | MSM(TMxx,    TMxx,    (32-VAL(IS)) & 0x1F))      \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define rorwz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
