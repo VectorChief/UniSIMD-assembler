@@ -842,14 +842,14 @@
         EMITW(0xF8000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define rorzx_ri(RG, IS)                                                    \
-        EMITW(0x78000000 | MSM(REG(RG), REG(RG), (32-VAL(IS))&0x1F) |       \
-                                                ((32-VAL(IS))&0x20 >> 4))
+        EMITW(0x78000000 | MSM(REG(RG), REG(RG), (64-VAL(IS))&0x1F) |       \
+                                               (((64-VAL(IS))&0x20) >> 4))
 
 #define rorzx_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0xE8000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x78000000 | MSM(TMxx,    TMxx,    (32-VAL(IS))&0x1F) |       \
-                                                ((32-VAL(IS))&0x20 >> 4))   \
+        EMITW(0x78000000 | MSM(TMxx,    TMxx,    (64-VAL(IS))&0x1F) |       \
+                                               (((64-VAL(IS))&0x20) >> 4))  \
         EMITW(0xF8000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define rorzx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
@@ -890,14 +890,14 @@
         EMITW(0xF8000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define rorzz_ri(RG, IS)                                                    \
-        EMITW(0x78000001 | MSM(REG(RG), REG(RG), (32-VAL(IS))&0x1F) |       \
-                                                ((32-VAL(IS))&0x20 >> 4))
+        EMITW(0x78000001 | MSM(REG(RG), REG(RG), (64-VAL(IS))&0x1F) |       \
+                                               (((64-VAL(IS))&0x20) >> 4))
 
 #define rorzz_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0xE8000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x78000001 | MSM(TMxx,    TMxx,    (32-VAL(IS))&0x1F) |       \
-                                                ((32-VAL(IS))&0x20 >> 4))   \
+        EMITW(0x78000001 | MSM(TMxx,    TMxx,    (64-VAL(IS))&0x1F) |       \
+                                               (((64-VAL(IS))&0x20) >> 4))  \
         EMITW(0xF8000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define rorzz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
