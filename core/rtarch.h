@@ -1639,6 +1639,8 @@
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
         EMITW(0x7C000278 | MSM(TZxx, TZxx, TZxx)) /* r0  <- 0 (xor) */      \
+        EMITW(0x60000020 | MSM(TAxx, TZxx, 0x00)) /* r22 <- 32 (im) */      \
+        EMITW(0x60000040 | MSM(TBxx, TZxx, 0x00)) /* r23 <- 64 (im) */      \
         EMITW(0x7C000040 | MRM(0x08, TLxx, TLxx)) /* cmplw cr2, r24, r24 */ \
         EMITW(0x7C0002A6 | MRM(TCxx, 0x00, 0x09)) /* ctr -> r27 */          \
         EMITS(0x7C0002A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave -> r28 */       \
@@ -1697,6 +1699,8 @@
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
         EMITW(0x7C000278 | MSM(TZxx, TZxx, TZxx)) /* r0  <- 0 (xor) */      \
+        EMITW(0x60000020 | MSM(TAxx, TZxx, 0x00)) /* r22 <- 32 (im) */      \
+        EMITW(0x60000040 | MSM(TBxx, TZxx, 0x00)) /* r23 <- 64 (im) */      \
         EMITW(0x7C000040 | MRM(0x08, TLxx, TLxx)) /* cmplw cr2, r24, r24 */ \
         EMITW(0x7C0002A6 | MRM(TCxx, 0x00, 0x09)) /* ctr -> r27 */          \
         EMITS(0x7C0002A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave -> r28 */       \
