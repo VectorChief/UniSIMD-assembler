@@ -1072,7 +1072,7 @@
 /* div
  * set-flags: undefined */
 
-#if (RT_128 < 2) /* hw int-div is available in processors with ASIMDv2 */
+#if (RT_ARM < 2) /* hw int-div is available in processors with ASIMDv2 */
 
 #define divwx_ri(RG, IS)       /* Reax cannot be used as first operand */   \
         movpx_st(Xmm0, Mebp, inf_SCR01(0))          /* fallback to VFP */   \
@@ -1211,7 +1211,7 @@
         EMITW(0xF3BB0700 | MRM(Tmm0+0,  0x00,    Tmm0+1))/* Xmm0<-junk */   \
         EMITW(0xEE100B10 | MRM(Teax,    Tmm0+0,  0x00)) /* fallback to VFP */
 
-#else /* RT_128 >= 2 */
+#else /* RT_ARM >= 2 */
 
 #define divwx_ri(RG, IS)       /* Reax cannot be used as first operand */   \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IS))   \
@@ -1272,7 +1272,7 @@
         divwn_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
                                      /* 24-bit int (fp32 div in ARMv7) */
 
-#endif /* RT_128 >= 2 */
+#endif /* RT_ARM >= 2 */
 
 /* rem
  * set-flags: undefined */
