@@ -1257,15 +1257,13 @@
  * set-flags: undefined (*x), yes (*z) */
 
 #define rorwx_rx(RG)                     /* reads Recx for shift count */   \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    Tecx))                     \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x20000020 | MRM(TIxx,    0x00,    Tecx))                     \
         EMITW(0x5C00003E | MSM(REG(RG), REG(RG), TIxx))
 
 #define rorwx_mx(MG, DG)                 /* reads Recx for shift count */   \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    Tecx))                     \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x20000020 | MRM(TIxx,    0x00,    Tecx))                     \
         EMITW(0x5C00003E | MSM(TMxx,    TMxx,    TIxx))                     \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
@@ -1279,22 +1277,19 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define rorwx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    REG(RS)))                  \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x20000020 | MRM(TIxx,    0x00,    REG(RS)))                  \
         EMITW(0x5C00003E | MSM(REG(RG), REG(RG), TIxx))
 
 #define rorwx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    TMxx))                     \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x20000020 | MRM(TIxx,    0x00,    TMxx))                     \
         EMITW(0x5C00003E | MSM(REG(RG), REG(RG), TIxx))
 
 #define rorwx_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    REG(RS)))                  \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x20000020 | MRM(TIxx,    0x00,    REG(RS)))                  \
         EMITW(0x5C00003E | MSM(TMxx,    TMxx,    TIxx))                     \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
@@ -1303,15 +1298,13 @@
 
 
 #define rorwz_rx(RG)                     /* reads Recx for shift count */   \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    Tecx))                     \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x20000020 | MRM(TIxx,    0x00,    Tecx))                     \
         EMITW(0x5C00003F | MSM(REG(RG), REG(RG), TIxx))
 
 #define rorwz_mx(MG, DG)                 /* reads Recx for shift count */   \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    Tecx))                     \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x20000020 | MRM(TIxx,    0x00,    Tecx))                     \
         EMITW(0x5C00003F | MSM(TMxx,    TMxx,    TIxx))                     \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
@@ -1325,22 +1318,19 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define rorwz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    REG(RS)))                  \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x20000020 | MRM(TIxx,    0x00,    REG(RS)))                  \
         EMITW(0x5C00003F | MSM(REG(RG), REG(RG), TIxx))
 
 #define rorwz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    TMxx))                     \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x20000020 | MRM(TIxx,    0x00,    TMxx))                     \
         EMITW(0x5C00003F | MSM(REG(RG), REG(RG), TIxx))
 
 #define rorwz_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    REG(RS)))                  \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x20000020 | MRM(TIxx,    0x00,    REG(RS)))                  \
         EMITW(0x5C00003F | MSM(TMxx,    TMxx,    TIxx))                     \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
