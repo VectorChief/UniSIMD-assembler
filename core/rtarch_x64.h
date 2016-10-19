@@ -543,8 +543,18 @@
 /* shl
  * set-flags: undefined (*x), yes (*z) */
 
+#if RT_X86 < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
+
 #define shlzx_rx(RG)                     /* reads Recx for shift count */   \
         shlzz_rx(W(RG))
+
+#else /* RT_X86 >= 2 */
+
+#define shlzx_rx(RG)                     /* reads Recx for shift count */   \
+        VEW(RXB(RG), RXB(RG),    0x01, 0, 1, 2) EMITB(0xF7)                 \
+        MRM(REG(RG), MOD(RG), REG(RG))
+
+#endif /* RT_X86 >= 2 */
 
 #define shlzx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shlzz_mx(W(MG), W(DG))
@@ -555,6 +565,8 @@
 #define shlzx_mi(MG, DG, IS)                                                \
         shlzz_mi(W(MG), W(DG), W(IS))
 
+#if RT_X86 < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
+
 #define shlzx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         shlzz_rr(W(RG), W(RS))
 
@@ -563,6 +575,29 @@
 
 #define shlzx_st(RS, MG, DG)                                                \
         shlzz_st(W(RS), W(MG), W(DG))
+
+#else /* RT_X86 >= 2 */
+
+#define shlzx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        VEW(RXB(RG), RXB(RG), REN(RS), 0, 1, 2) EMITB(0xF7)                 \
+        MRM(REG(RG), MOD(RG), REG(RG))
+
+#define shlzx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+    ADR REW(0x01,    RXB(MS)) EMITB(0x8B)                                   \
+        MRM(0x07,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        VEW(RXB(RG), RXB(RG),    0x0F, 0, 1, 2) EMITB(0xF7)                 \
+        MRM(REG(RG), MOD(RG), REG(RG))
+
+#define shlzx_st(RS, MG, DG)                                                \
+    ADR VEW(0x01,    RXB(MG), REN(RS), 0, 1, 2) EMITB(0xF7)                 \
+        MRM(0x07,    MOD(MG), REG(MG))                                      \
+        AUX(SIB(MG), CMD(DG), EMPTY)                                        \
+    ADR REW(0x01,    RXB(MG)) EMITB(0x89)                                   \
+        MRM(0x07,    MOD(MG), REG(MG))                                      \
+        AUX(SIB(MG), CMD(DG), EMPTY)
+
+#endif /* RT_X86 >= 2 */
 
 #define shlzx_mr(MG, DG, RS)                                                \
         shlzx_st(W(RS), W(MG), W(DG))
@@ -611,8 +646,18 @@
 /* shr
  * set-flags: undefined (*x), yes (*z) */
 
+#if RT_X86 < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
+
 #define shrzx_rx(RG)                     /* reads Recx for shift count */   \
         shrzz_rx(W(RG))
+
+#else /* RT_X86 >= 2 */
+
+#define shrzx_rx(RG)                     /* reads Recx for shift count */   \
+        VEW(RXB(RG), RXB(RG),    0x01, 0, 3, 2) EMITB(0xF7)                 \
+        MRM(REG(RG), MOD(RG), REG(RG))
+
+#endif /* RT_X86 >= 2 */
 
 #define shrzx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrzz_mx(W(MG), W(DG))
@@ -623,6 +668,8 @@
 #define shrzx_mi(MG, DG, IS)                                                \
         shrzz_mi(W(MG), W(DG), W(IS))
 
+#if RT_X86 < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
+
 #define shrzx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         shrzz_rr(W(RG), W(RS))
 
@@ -631,6 +678,29 @@
 
 #define shrzx_st(RS, MG, DG)                                                \
         shrzz_st(W(RS), W(MG), W(DG))
+
+#else /* RT_X86 >= 2 */
+
+#define shrzx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        VEW(RXB(RG), RXB(RG), REN(RS), 0, 3, 2) EMITB(0xF7)                 \
+        MRM(REG(RG), MOD(RG), REG(RG))
+
+#define shrzx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+    ADR REW(0x01,    RXB(MS)) EMITB(0x8B)                                   \
+        MRM(0x07,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        VEW(RXB(RG), RXB(RG),    0x0F, 0, 3, 2) EMITB(0xF7)                 \
+        MRM(REG(RG), MOD(RG), REG(RG))
+
+#define shrzx_st(RS, MG, DG)                                                \
+    ADR VEW(0x01,    RXB(MG), REN(RS), 0, 3, 2) EMITB(0xF7)                 \
+        MRM(0x07,    MOD(MG), REG(MG))                                      \
+        AUX(SIB(MG), CMD(DG), EMPTY)                                        \
+    ADR REW(0x01,    RXB(MG)) EMITB(0x89)                                   \
+        MRM(0x07,    MOD(MG), REG(MG))                                      \
+        AUX(SIB(MG), CMD(DG), EMPTY)
+
+#endif /* RT_X86 >= 2 */
 
 #define shrzx_mr(MG, DG, RS)                                                \
         shrzx_st(W(RS), W(MG), W(DG))
@@ -677,9 +747,19 @@
         shrzz_st(W(RS), W(MG), W(DG))
 
 
+#if RT_X86 < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
+
 #define shrzn_rx(RG)                     /* reads Recx for shift count */   \
         REW(0,       RXB(RG)) EMITB(0xD3)                                   \
         MRM(0x07,    MOD(RG), REG(RG))                                      \
+
+#else /* RT_X86 >= 2 */
+
+#define shrzn_rx(RG)                     /* reads Recx for shift count */   \
+        VEW(RXB(RG), RXB(RG),    0x01, 0, 2, 2) EMITB(0xF7)                 \
+        MRM(REG(RG), MOD(RG), REG(RG))
+
+#endif /* RT_X86 >= 2 */
 
 #define shrzn_mx(MG, DG)                 /* reads Recx for shift count */   \
     ADR REW(0,       RXB(MG)) EMITB(0xD3)                                   \
@@ -695,6 +775,8 @@
     ADR REW(0,       RXB(MG)) EMITB(0xC1)                                   \
         MRM(0x07,    MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMITB(VAL(IS) & 0x3F))
+
+#if RT_X86 < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
 
 #define shrzn_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
@@ -714,6 +796,29 @@
         shrzn_mx(W(MG), W(DG))                                              \
         stack_ld(Recx)
 
+#else /* RT_X86 >= 2 */
+
+#define shrzn_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        VEW(RXB(RG), RXB(RG), REN(RS), 0, 2, 2) EMITB(0xF7)                 \
+        MRM(REG(RG), MOD(RG), REG(RG))
+
+#define shrzn_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+    ADR REW(0x01,    RXB(MS)) EMITB(0x8B)                                   \
+        MRM(0x07,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        VEW(RXB(RG), RXB(RG),    0x0F, 0, 2, 2) EMITB(0xF7)                 \
+        MRM(REG(RG), MOD(RG), REG(RG))
+
+#define shrzn_st(RS, MG, DG)                                                \
+    ADR VEW(0x01,    RXB(MG), REN(RS), 0, 2, 2) EMITB(0xF7)                 \
+        MRM(0x07,    MOD(MG), REG(MG))                                      \
+        AUX(SIB(MG), CMD(DG), EMPTY)                                        \
+    ADR REW(0x01,    RXB(MG)) EMITB(0x89)                                   \
+        MRM(0x07,    MOD(MG), REG(MG))                                      \
+        AUX(SIB(MG), CMD(DG), EMPTY)
+
+#endif /* RT_X86 >= 2 */
+
 #define shrzn_mr(MG, DG, RS)                                                \
         shrzn_st(W(RS), W(MG), W(DG))
 
@@ -726,8 +831,19 @@
 #define rorzx_mx(MG, DG)                 /* reads Recx for shift count */   \
         rorzz_mx(W(MG), W(DG))
 
+#if RT_X86 < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
+
 #define rorzx_ri(RG, IS)                                                    \
         rorzz_ri(W(RG), W(IS))
+
+#else /* RT_X86 >= 2 */
+
+#define rorzx_ri(RG, IS)                                                    \
+        VEW(RXB(RG), RXB(RG),    0x00, 0, 3, 3) EMITB(0xF0)                 \
+        MRM(REG(RG), MOD(RG), REG(RG))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
+
+#endif /* RT_X86 >= 2 */
 
 #define rorzx_mi(MG, DG, IS)                                                \
         rorzz_mi(W(MG), W(DG), W(IS))
