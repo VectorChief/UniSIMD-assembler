@@ -1259,15 +1259,13 @@
  * set-flags: undefined (*x), yes (*z) */
 
 #define rorwx_rx(RG)                     /* reads Recx for shift count */   \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    Tecx))                     \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x7C000050 | MRM(TIxx,    TAxx,    Tecx))                     \
         EMITW(0x5C00003E | MSM(REG(RG), REG(RG), TIxx))
 
 #define rorwx_mx(MG, DG)                 /* reads Recx for shift count */   \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    Tecx))                     \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x7C000050 | MRM(TIxx,    TAxx,    Tecx))                     \
         EMITW(0x5C00003E | MSM(TMxx,    TMxx,    TIxx))                     \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
@@ -1281,22 +1279,19 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define rorwx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    REG(RS)))                  \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x7C000050 | MRM(TIxx,    TAxx,    REG(RS)))                  \
         EMITW(0x5C00003E | MSM(REG(RG), REG(RG), TIxx))
 
 #define rorwx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    TMxx))                     \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x7C000050 | MRM(TIxx,    TAxx,    TMxx))                     \
         EMITW(0x5C00003E | MSM(REG(RG), REG(RG), TIxx))
 
 #define rorwx_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    REG(RS)))                  \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x7C000050 | MRM(TIxx,    TAxx,    REG(RS)))                  \
         EMITW(0x5C00003E | MSM(TMxx,    TMxx,    TIxx))                     \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
@@ -1305,15 +1300,13 @@
 
 
 #define rorwz_rx(RG)                     /* reads Recx for shift count */   \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    Tecx))                     \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x7C000050 | MRM(TIxx,    TAxx,    Tecx))                     \
         EMITW(0x5C00003F | MSM(REG(RG), REG(RG), TIxx))
 
 #define rorwz_mx(MG, DG)                 /* reads Recx for shift count */   \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    Tecx))                     \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x7C000050 | MRM(TIxx,    TAxx,    Tecx))                     \
         EMITW(0x5C00003F | MSM(TMxx,    TMxx,    TIxx))                     \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
@@ -1327,22 +1320,19 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define rorwz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    REG(RS)))                  \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x7C000050 | MRM(TIxx,    TAxx,    REG(RS)))                  \
         EMITW(0x5C00003F | MSM(REG(RG), REG(RG), TIxx))
 
 #define rorwz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    TMxx))                     \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x7C000050 | MRM(TIxx,    TAxx,    TMxx))                     \
         EMITW(0x5C00003F | MSM(REG(RG), REG(RG), TIxx))
 
 #define rorwz_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x7C0000D0 | MRM(TIxx,    0x00,    REG(RS)))                  \
-        EMITW(0x38000020 | MRM(TIxx,    0x00,    TIxx))                     \
+        EMITW(0x7C000050 | MRM(TIxx,    TAxx,    REG(RS)))                  \
         EMITW(0x5C00003F | MSM(TMxx,    TMxx,    TIxx))                     \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
@@ -1861,7 +1851,7 @@
         EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x08 & 0xFFFF))
 
 #define stack_sa()  /* save all, [Reax - RegE] + 11 temps, 25 regs total */ \
-        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x78 & 0xFFFF))  \
+        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x70 & 0xFFFF))  \
         EMITW(0xD8000000 | MTM(Tff1,    SPxx,    0x00) | (+0x00 & 0xFFFF))  \
         EMITW(0xD8000000 | MTM(Tff2,    SPxx,    0x00) | (+0x08 & 0xFFFF))  \
         EMITW(0x90000000 | MTM(Teax,    SPxx,    0x00) | (+0x10 & 0xFFFF))  \
@@ -1885,12 +1875,12 @@
         EMITW(0x90000000 | MTM(TCxx,    SPxx,    0x00) | (+0x58 & 0xFFFF))  \
         EMITW(0x90000000 | MTM(TVxx,    SPxx,    0x00) | (+0x5C & 0xFFFF))  \
         EMITW(0x90000000 | MTM(TZxx,    SPxx,    0x00) | (+0x60 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(TAxx,    SPxx,    0x00) | (+0x6C & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(TBxx,    SPxx,    0x00) | (+0x70 & 0xFFFF))
+        EMITW(0x90000000 | MTM(TAxx,    SPxx,    0x00) | (+0x64 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(TBxx,    SPxx,    0x00) | (+0x68 & 0xFFFF))
 
 #define stack_la()  /* load all, 11 temps + [RegE - Reax], 25 regs total */ \
-        EMITW(0x80000000 | MTM(TBxx,    SPxx,    0x00) | (+0x70 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(TAxx,    SPxx,    0x00) | (+0x6C & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(TBxx,    SPxx,    0x00) | (+0x68 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(TAxx,    SPxx,    0x00) | (+0x64 & 0xFFFF))  \
         EMITW(0x80000000 | MTM(TZxx,    SPxx,    0x00) | (+0x60 & 0xFFFF))  \
         EMITW(0x80000000 | MTM(TVxx,    SPxx,    0x00) | (+0x5C & 0xFFFF))  \
         EMITW(0x80000000 | MTM(TCxx,    SPxx,    0x00) | (+0x58 & 0xFFFF))  \
@@ -1914,7 +1904,7 @@
         EMITW(0x80000000 | MTM(Teax,    SPxx,    0x00) | (+0x10 & 0xFFFF))  \
         EMITW(0xC8000000 | MTM(Tff2,    SPxx,    0x00) | (+0x08 & 0xFFFF))  \
         EMITW(0xC8000000 | MTM(Tff1,    SPxx,    0x00) | (+0x00 & 0xFFFF))  \
-        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x78 & 0xFFFF))
+        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x70 & 0xFFFF))
 
 #endif  /* defined (RT_P32) */
 
