@@ -902,8 +902,11 @@
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, r0, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, r0) ASM_END
 
+#define ASM_OPX(op, p1, p2)     #op"  "#p1", #"#p2
+
 #define label_ld(lb)/*Reax*/                                                \
-        ASM_BEG ASM_OP2(adr, r0, lb) ASM_END
+        ASM_BEG ASM_OPX(movw, r0, :lower16:lb) ASM_END                      \
+        ASM_BEG ASM_OPX(movt, r0, :upper16:lb) ASM_END
 
 #define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
