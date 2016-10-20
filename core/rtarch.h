@@ -139,18 +139,18 @@
  *
  * Mixing of 64/32-bit fields in backend structures may lead to misalignment
  * of 64-bit fields to 4-byte boundary, which is not supported on some targets.
- * Place fields carefully to ensure proper alignment for all data types.
+ * Place fields carefully to ensure natural alignment for all data types.
  * Note that within cmdx*_** subset most of the instructions follow in-heap
  * address size (RT_ADDRESS or A) and only label_ld/st, jmpxx_xr/xm follow
  * pointer size (RT_POINTER or P) as code/data/stack segments are fixed.
- * In 64/32-bit (ptr/adr) hybrid mode there is no way to move 64-bit registers,
- * thus label_ld has very limited use as jmpxx_xr(Reax) is the only matching op.
  * Stack ops always work with full registers regardless of the mode chosen.
  *
  * 32-bit and 64-bit BASE subsets are not easily compatible on all targets,
  * thus any register modified with 32-bit op cannot be used in 64-bit subset.
  * Alternatively, data flow must not exceed 31-bit range for 32-bit operations
  * to produce consistent results usable in 64-bit subset across all targets.
+ * Also any register modified with 64-bit op cannot be used in 32-bit subset,
+ * as m64 requires the upper half to be all 0s or all 1s for m32 to operate.
  * Only a64 and x64 have a complete 32-bit support in 64-bit mode both zeroing
  * the upper half of the result, while m64 sign-extending all 32-bit operations
  * and p64 overflowing 32-bit arithmetic into the upper half. Similar reasons
