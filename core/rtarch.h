@@ -149,8 +149,8 @@
  * thus any register modified with 32-bit op cannot be used in 64-bit subset.
  * Alternatively, data flow must not exceed 31-bit range for 32-bit operations
  * to produce consistent results usable in 64-bit subset across all targets.
- * Also any register modified with 64-bit op cannot be used in 32-bit subset,
- * as m64 requires the upper half to be all 0s or all 1s for m32 to operate.
+ * Also registers written with 64-bit ops aren't always compatible with 32-bit,
+ * as m64 requires the upper half to be all 0s or all 1s for m32 arithmetic.
  * Only a64 and x64 have a complete 32-bit support in 64-bit mode both zeroing
  * the upper half of the result, while m64 sign-extending all 32-bit operations
  * and p64 overflowing 32-bit arithmetic into the upper half. Similar reasons
