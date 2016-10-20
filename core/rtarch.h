@@ -1113,10 +1113,11 @@
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, x0, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, x0) ASM_END
 
-#if   defined (RT_A32)
-
 #define label_ld(lb)/*Reax*/                                                \
-        ASM_BEG ASM_OP2(adr, x0, lb) ASM_END
+        ASM_BEG ASM_OP2(adrp, x0, lb) ASM_END                               \
+        ASM_BEG ASM_OP3(add,  x0, x0, :lo12:lb) ASM_END
+
+#if   defined (RT_A32)
 
 #define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
@@ -1124,9 +1125,6 @@
         EMITW(0xB9000000 | MDM(Teax,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
 #elif defined (RT_A64)
-
-#define label_ld(lb)/*Reax*/                                                \
-        ASM_BEG ASM_OP2(adr, x0, lb) ASM_END
 
 #define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
