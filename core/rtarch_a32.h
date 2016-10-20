@@ -359,9 +359,20 @@
         EMITW(0xB9000000 | MDM(REG(RS), MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
 
+#define movwx_rj(RD, IT, IS)     /* IT - upper 32-bit, IS - lower 32-bit */ \
+        movwx_ri(W(RD), W(IS))
+
+#define movwx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
+        movwx_mi(W(MD), W(DD), W(IS))
+
+
 #define adrxx_ld(RD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C3(DS), EMPTY2)   \
         EMITW(0x0B000000 | MRM(REG(RD), MOD(MS), TDxx) | ADR)
+
+     /* label_ld(lb) is defined in rtarch.h file, loads label to Reax */
+
+     /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
 
 /* and
  * set-flags: undefined (*x), yes (*z) */
@@ -1278,7 +1289,6 @@
 #define EZ_x    jezxx_lb
 #define NZ_x    jnzxx_lb
 
-
 #define arjwx_rx(RG, op, cc, lb)                                            \
         AR1(W(RG), op, wz_rx)                                               \
         CMJ(cc, lb)
@@ -1339,7 +1349,6 @@
 #define LE_n    jlexn_lb
 #define GT_n    jgtxn_lb
 #define GE_n    jgexn_lb
-
 
 #define cmjwx_rz(RS, cc, lb)                                                \
         cmjwx_ri(W(RS), IC(0), cc, lb)

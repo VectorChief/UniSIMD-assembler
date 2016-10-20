@@ -182,6 +182,13 @@
         MRM(0x07,    MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
+
+     /* adrxx_ld(RD, MS, DS) is defined in 32-bit rtarch_***.h files */
+
+     /* label_ld(lb) is defined in rtarch.h file, loads label to Reax */
+
+     /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
+
 /* and
  * set-flags: undefined (*x), yes (*z) */
 
@@ -1148,6 +1155,9 @@
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
+/* Definitions for arj's "op" and "cc" parameters
+ * are provided in 32-bit rtarch_***.h files. */
+
 #define arjzx_rx(RG, op, cc, lb)                                            \
         AR1(W(RG), op, zz_rx)                                               \
         CMJ(cc, lb)
@@ -1181,6 +1191,9 @@
 
 /* cmj
  * set-flags: undefined */
+
+/* Definitions for cmj's "cc" parameter
+ * are provided in 32-bit rtarch_***.h files. */
 
 #define cmjzx_rz(RS, cc, lb)                                                \
         cmjzx_ri(W(RS), IC(0), cc, lb)

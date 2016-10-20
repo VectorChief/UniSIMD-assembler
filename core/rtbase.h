@@ -1796,6 +1796,20 @@ struct rt_SIMD_REGS
 #define movxx_st(RS, MD, DD)                                                \
         movwx_st(W(RS), W(MD), W(DD))
 
+
+#define movxx_rj(RD, IT, IS)     /* IT - upper 32-bit, IS - lower 32-bit */ \
+        movwx_ri(W(RD), W(IS))
+
+#define movxx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
+        movwx_mi(W(MD), W(DD), W(IS))
+
+
+     /* adrxx_ld(RD, MS, DS) is defined in 32-bit rtarch_***.h files */
+
+     /* label_ld(lb) is defined in rtarch.h file, loads label to Reax */
+
+     /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
+
 /* and
  * set-flags: undefined (*x), yes (*z) */
 
@@ -2390,6 +2404,9 @@ struct rt_SIMD_REGS
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
+/* Definitions for arj's "op" and "cc" parameters
+ * are provided in 32-bit rtarch_***.h files. */
+
 #define arjxx_rx(RG, op, cc, lb)                                            \
         arjwx_rx(W(RG), op, cc, lb)
 
@@ -2416,6 +2433,9 @@ struct rt_SIMD_REGS
 
 /* cmj
  * set-flags: undefined */
+
+/* Definitions for cmj's "cc" parameter
+ * are provided in 32-bit rtarch_***.h files. */
 
 #define cmjxx_rz(RS, cc, lb)                                                \
         cmjwx_rz(W(RS), cc, lb)
@@ -2477,6 +2497,20 @@ struct rt_SIMD_REGS
 
 #define movxx_st(RS, MD, DD)                                                \
         movzx_st(W(RS), W(MD), W(DD))
+
+
+#define movxx_rj(RD, IT, IS)     /* IT - upper 32-bit, IS - lower 32-bit */ \
+        movzx_ri(W(RD), W(IS))
+
+#define movxx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
+        movzx_mi(W(MD), W(DD), W(IS))
+
+
+     /* adrxx_ld(RD, MS, DS) is defined in 32-bit rtarch_***.h files */
+
+     /* label_ld(lb) is defined in rtarch.h file, loads label to Reax */
+
+     /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
 
 /* and
  * set-flags: undefined (*x), yes (*z) */
@@ -3072,6 +3106,9 @@ struct rt_SIMD_REGS
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
+/* Definitions for arj's "op" and "cc" parameters
+ * are provided in 32-bit rtarch_***.h files. */
+
 #define arjxx_rx(RG, op, cc, lb)                                            \
         arjzx_rx(W(RG), op, cc, lb)
 
@@ -3098,6 +3135,9 @@ struct rt_SIMD_REGS
 
 /* cmj
  * set-flags: undefined */
+
+/* Definitions for cmj's "cc" parameter
+ * are provided in 32-bit rtarch_***.h files. */
 
 #define cmjxx_rz(RS, cc, lb)                                                \
         cmjzx_rz(W(RS), cc, lb)
@@ -3162,6 +3202,13 @@ struct rt_SIMD_REGS
 #define movyx_st(RS, MD, DD)                                                \
         movwx_st(W(RS), W(MD), W(DD))
 
+
+#define movyx_rj(RD, IT, IS)     /* IT - upper 32-bit, IS - lower 32-bit */ \
+        movwx_ri(W(RD), W(IS))
+
+#define movyx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
+        movwx_mi(W(MD), W(DD), W(IS))
+
 /* and
  * set-flags: undefined (*x), yes (*z) */
 
@@ -3756,6 +3803,9 @@ struct rt_SIMD_REGS
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
+/* Definitions for arj's "op" and "cc" parameters
+ * are provided in 32-bit rtarch_***.h files. */
+
 #define arjyx_rx(RG, op, cc, lb)                                            \
         arjwx_rx(W(RG), op, cc, lb)
 
@@ -3782,6 +3832,9 @@ struct rt_SIMD_REGS
 
 /* cmj
  * set-flags: undefined */
+
+/* Definitions for cmj's "cc" parameter
+ * are provided in 32-bit rtarch_***.h files. */
 
 #define cmjyx_rz(RS, cc, lb)                                                \
         cmjwx_rz(W(RS), cc, lb)
@@ -3843,6 +3896,13 @@ struct rt_SIMD_REGS
 
 #define movyx_st(RS, MD, DD)                                                \
         movzx_st(W(RS), W(MD), W(DD))
+
+
+#define movyx_rj(RD, IT, IS)     /* IT - upper 32-bit, IS - lower 32-bit */ \
+        movzx_ri(W(RD), W(IS))
+
+#define movyx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
+        movzx_mi(W(MD), W(DD), W(IS))
 
 /* and
  * set-flags: undefined (*x), yes (*z) */
@@ -4438,6 +4498,9 @@ struct rt_SIMD_REGS
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
+/* Definitions for arj's "op" and "cc" parameters
+ * are provided in 32-bit rtarch_***.h files. */
+
 #define arjyx_rx(RG, op, cc, lb)                                            \
         arjzx_rx(W(RG), op, cc, lb)
 
@@ -4464,6 +4527,9 @@ struct rt_SIMD_REGS
 
 /* cmj
  * set-flags: undefined */
+
+/* Definitions for cmj's "cc" parameter
+ * are provided in 32-bit rtarch_***.h files. */
 
 #define cmjyx_rz(RS, cc, lb)                                                \
         cmjzx_rz(W(RS), cc, lb)
