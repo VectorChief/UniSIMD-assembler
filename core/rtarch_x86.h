@@ -215,7 +215,7 @@
 /**********************************   X86   ***********************************/
 /******************************************************************************/
 
-/* mov
+/* mov (D = S)
  * set-flags: no */
 
 #define movwx_ri(RD, IS)                                                    \
@@ -259,7 +259,7 @@
 
      /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
 
-/* and
+/* and (G = G & S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define andwx_ri(RG, IS)                                                    \
@@ -362,7 +362,7 @@
 #define annwz_mr(MG, DG, RS)                                                \
         annwz_st(W(RS), W(MG), W(DG))
 
-/* orr
+/* orr (G = G | S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define orrwx_ri(RG, IS)                                                    \
@@ -450,7 +450,7 @@
 #define ornwz_mr(MG, DG, RS)                                                \
         ornwz_st(W(RS), W(MG), W(DG))
 
-/* xor
+/* xor (G = G ^ S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define xorwx_ri(RG, IS)                                                    \
@@ -493,7 +493,7 @@
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
-/* not
+/* not (G = ~G)
  * set-flags: no */
 
 #define notwx_rx(RG)                                                        \
@@ -505,7 +505,7 @@
         MRM(0x02,    MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
-/* neg
+/* neg (G = -G)
  * set-flags: undefined (*x), yes (*z) */
 
 #define negwx_rx(RG)                                                        \
@@ -524,7 +524,7 @@
         MRM(0x03,    MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
-/* add
+/* add (G = G + S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define addwx_ri(RG, IS)                                                    \
@@ -567,7 +567,7 @@
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
-/* sub
+/* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define subwx_ri(RG, IS)                                                    \
@@ -616,7 +616,7 @@
 #define subwz_mr(MG, DG, RS)                                                \
         subwz_st(W(RS), W(MG), W(DG))
 
-/* shl
+/* shl (G = G << S)
  * set-flags: undefined (*x), yes (*z) */
 
 #if RT_X86 < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
@@ -704,7 +704,7 @@
 #define shlwz_mr(MG, DG, RS)                                                \
         shlwz_st(W(RS), W(MG), W(DG))
 
-/* shr
+/* shr (G = G >> S)
  * set-flags: undefined (*x), yes (*z) */
 
 #if RT_X86 < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
@@ -853,7 +853,7 @@
 #define shrwn_mr(MG, DG, RS)                                                \
         shrwn_st(W(RS), W(MG), W(DG))
 
-/* ror
+/* ror (G = G >> S | G << 32 - S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define rorwx_rx(RG)                     /* reads Recx for shift count */   \
@@ -932,7 +932,7 @@
 #define rorwz_mr(MG, DG, RS)                                                \
         rorwz_st(W(RS), W(MG), W(DG))
 
-/* mul
+/* mul (G = G * S)
  * set-flags: undefined */
 
 #define mulwx_ri(RG, IS)                                                    \
@@ -976,7 +976,7 @@
 #define mulwp_xm(MS, DS) /* Reax is in/out, prepares Redx for divwn_x* */   \
         mulwn_xm(W(MS), W(DS))/* product must not exceed operands size */
 
-/* div
+/* div (G = G / S)
  * set-flags: undefined */
 
 #define divwx_ri(RG, IS)       /* Reax cannot be used as first operand */   \
@@ -1081,7 +1081,7 @@
         divwn_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
                                      /* 24-bit int (fp32 div in ARMv7) */
 
-/* rem
+/* rem (G = G % S)
  * set-flags: undefined */
 
 #define remwx_ri(RG, IS)       /* Redx cannot be used as first operand */   \

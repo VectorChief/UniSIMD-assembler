@@ -309,7 +309,7 @@
 /**********************************   ARM   ***********************************/
 /******************************************************************************/
 
-/* mov
+/* mov (D = S)
  * set-flags: no */
 
 #define movwx_ri(RD, IS)                                                    \
@@ -346,7 +346,7 @@
 
      /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
 
-/* and
+/* and (G = G & S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define andwx_ri(RG, IS)                                                    \
@@ -458,7 +458,7 @@
 #define annwz_mr(MG, DG, RS)                                                \
         annwz_st(W(RS), W(MG), W(DG))
 
-/* orr
+/* orr (G = G | S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define orrwx_ri(RG, IS)                                                    \
@@ -572,7 +572,7 @@
 #define ornwz_mr(MG, DG, RS)                                                \
         ornwz_st(W(RS), W(MG), W(DG))
 
-/* xor
+/* xor (G = G ^ S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define xorwx_ri(RG, IS)                                                    \
@@ -624,7 +624,7 @@
         EMITW(0xE0300000 | MRM(TMxx,    TMxx,    REG(RS)))                  \
         EMITW(0xE5800000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
-/* not
+/* not (G = ~G)
  * set-flags: no */
 
 #define notwx_rx(RG)                                                        \
@@ -636,7 +636,7 @@
         EMITW(0xE1E00000 | MRM(TMxx,    0x00,    TMxx))                     \
         EMITW(0xE5800000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
-/* neg
+/* neg (G = -G)
  * set-flags: undefined (*x), yes (*z) */
 
 #define negwx_rx(RG)                                                        \
@@ -658,7 +658,7 @@
         EMITW(0xE2700000 | MRM(TMxx,    TMxx,    0x00))                     \
         EMITW(0xE5800000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
-/* add
+/* add (G = G + S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define addwx_ri(RG, IS)                                                    \
@@ -710,7 +710,7 @@
         EMITW(0xE0900000 | MRM(TMxx,    TMxx,    REG(RS)))                  \
         EMITW(0xE5800000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
-/* sub
+/* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define subwx_ri(RG, IS)                                                    \
@@ -768,7 +768,7 @@
 #define subwz_mr(MG, DG, RS)                                                \
         subwz_st(W(RS), W(MG), W(DG))
 
-/* shl
+/* shl (G = G << S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define shlwx_rx(RG)                     /* reads Recx for shift count */   \
@@ -846,7 +846,7 @@
 #define shlwz_mr(MG, DG, RS)                                                \
         shlwz_st(W(RS), W(MG), W(DG))
 
-/* shr
+/* shr (G = G >> S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define shrwx_rx(RG)                     /* reads Recx for shift count */   \
@@ -962,7 +962,7 @@
 #define shrwn_mr(MG, DG, RS)                                                \
         shrwn_st(W(RS), W(MG), W(DG))
 
-/* ror
+/* ror (G = G >> S | G << 32 - S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define rorwx_rx(RG)                     /* reads Recx for shift count */   \
@@ -1040,7 +1040,7 @@
 #define rorwz_mr(MG, DG, RS)                                                \
         rorwz_st(W(RS), W(MG), W(DG))
 
-/* mul
+/* mul (G = G * S)
  * set-flags: undefined */
 
 #define mulwx_ri(RG, IS)                                                    \
@@ -1080,7 +1080,7 @@
 #define mulwp_xm(MS, DS) /* Reax is in/out, prepares Redx for divwn_x* */   \
         mulwx_ld(Reax, W(MS), W(DS))  /* must not exceed operands size */
 
-/* div
+/* div (G = G / S)
  * set-flags: undefined */
 
 #if (RT_ARM < 2) /* hw int-div is available in processors with ASIMDv2 */
@@ -1285,7 +1285,7 @@
 
 #endif /* RT_ARM >= 2 */
 
-/* rem
+/* rem (G = G % S)
  * set-flags: undefined */
 
 #define remwx_ri(RG, IS)       /* Redx cannot be used as first operand */   \

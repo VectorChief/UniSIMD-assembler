@@ -145,7 +145,7 @@
 /**********************************   M64   ***********************************/
 /******************************************************************************/
 
-/* mov
+/* mov (D = S)
  * set-flags: no */
 
 #define movzx_ri(RD, IS)                                                    \
@@ -192,7 +192,7 @@
 
      /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
 
-/* and
+/* and (G = G & S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define andzx_ri(RG, IS)                                                    \
@@ -317,7 +317,7 @@
 #define annzz_mr(MG, DG, RS)                                                \
         annzz_st(W(RS), W(MG), W(DG))
 
-/* orr
+/* orr (G = G | S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define orrzx_ri(RG, IS)                                                    \
@@ -442,7 +442,7 @@
 #define ornzz_mr(MG, DG, RS)                                                \
         ornzz_st(W(RS), W(MG), W(DG))
 
-/* xor
+/* xor (G = G ^ S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define xorzx_ri(RG, IS)                                                    \
@@ -503,7 +503,7 @@
         EMITW(0x00000026 | MRM(TMxx,    TMxx,    REG(RS)))                  \
         EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
-/* not
+/* not (G = ~G)
  * set-flags: no */
 
 #define notzx_rx(RG)                                                        \
@@ -515,7 +515,7 @@
         EMITW(0x00000027 | MRM(TDxx,    TZxx,    TDxx))                     \
         EMITW(0xFC000000 | MDM(TDxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
-/* neg
+/* neg (G = -G)
  * set-flags: undefined (*x), yes (*z) */
 
 #define negzx_rx(RG)                                                        \
@@ -538,7 +538,7 @@
         EMITW(0x0000002F | MRM(TMxx,    TZxx,    TMxx))                     \
         EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
-/* add
+/* add (G = G + S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define addzx_ri(RG, IS)                                                    \
@@ -599,7 +599,7 @@
         EMITW(0x0000002D | MRM(TMxx,    TMxx,    REG(RS)))                  \
         EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
-/* sub
+/* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define subzx_ri(RG, IS)                                                    \
@@ -670,7 +670,7 @@
 #define subzz_mr(MG, DG, RS)                                                \
         subzz_st(W(RS), W(MG), W(DG))
 
-/* shl
+/* shl (G = G << S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define shlzx_rx(RG)                     /* reads Recx for shift count */   \
@@ -758,7 +758,7 @@
 #define shlzz_mr(MG, DG, RS)                                                \
         shlzz_st(W(RS), W(MG), W(DG))
 
-/* shr
+/* shr (G = G >> S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define shrzx_rx(RG)                     /* reads Recx for shift count */   \
@@ -887,7 +887,7 @@
 #define shrzn_mr(MG, DG, RS)                                                \
         shrzn_st(W(RS), W(MG), W(DG))
 
-/* ror
+/* ror (G = G >> S | G << 64 - S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define rorzx_rx(RG)                     /* reads Recx for shift count */   \
@@ -978,7 +978,7 @@
 /* pre-r6 */
 #if defined (RT_M64) && RT_M64 < 6
 
-/* mul
+/* mul (G = G * S)
  * set-flags: undefined */
 
 #define mulzx_ri(RG, IS)                                                    \
@@ -1029,7 +1029,7 @@
 #define mulzp_xm(MS, DS) /* Reax is in/out, prepares Redx for divzn_x* */   \
         mulzx_ld(Reax, W(MS), W(DS))  /* must not exceed operands size */
 
-/* div
+/* div (G = G / S)
  * set-flags: undefined */
 
 #define divzx_ri(RG, IS)       /* Reax cannot be used as first operand */   \
@@ -1101,7 +1101,7 @@
         divzn_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
                                      /* 24-bit int (fp32 div in ARMv7) */
 
-/* rem
+/* rem (G = G % S)
  * set-flags: undefined */
 
 #define remzx_ri(RG, IS)       /* Redx cannot be used as first operand */   \
@@ -1156,7 +1156,7 @@
 
 #else  /* r6 */
 
-/* mul
+/* mul (G = G * S)
  * set-flags: undefined */
 
 #define mulzx_ri(RG, IS)                                                    \
@@ -1200,7 +1200,7 @@
 #define mulzp_xm(MS, DS) /* Reax is in/out, prepares Redx for divzn_x* */   \
         mulzx_ld(Reax, W(MS), W(DS))  /* must not exceed operands size */
 
-/* div
+/* div (G = G / S)
  * set-flags: undefined */
 
 #define divzx_ri(RG, IS)       /* Reax cannot be used as first operand */   \
@@ -1262,7 +1262,7 @@
         divzn_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
                                      /* 24-bit int (fp32 div in ARMv7) */
 
-/* rem
+/* rem (G = G % S)
  * set-flags: undefined */
 
 #define remzx_ri(RG, IS)       /* Redx cannot be used as first operand */   \

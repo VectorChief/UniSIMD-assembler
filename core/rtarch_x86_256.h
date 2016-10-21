@@ -121,7 +121,7 @@
 
 /**************************   packed generic (AVX1)   *************************/
 
-/* mov */
+/* mov (D = S) */
 
 #define movox_rr(XD, XS)                                                    \
         VX2(0x0,     0, 1) EMITB(0x28)                                      \
@@ -143,7 +143,7 @@
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* and */
+/* and (G = G & S) */
 
 #define andox_rr(XG, XS)                                                    \
         VX2(REG(XG), 0, 1) EMITB(0x54)                                      \
@@ -165,7 +165,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* orr */
+/* orr (G = G | S) */
 
 #define orrox_rr(XG, XS)                                                    \
         VX2(REG(XG), 0, 1) EMITB(0x56)                                      \
@@ -186,7 +186,7 @@
         notox_rx(W(XG))                                                     \
         orrox_ld(W(XG), W(MS), W(DS))
 
-/* xor */
+/* xor (G = G ^ S) */
 
 #define xorox_rr(XG, XS)                                                    \
         VX2(REG(XG), 0, 1) EMITB(0x57)                                      \
@@ -197,19 +197,19 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* not */
+/* not (G = ~G) */
 
 #define notox_rx(XG)                                                        \
         annox_ld(W(XG), Mebp, inf_GPC07)
 
 /**************   packed single precision floating point (AVX1)   *************/
 
-/* neg */
+/* neg (G = -G) */
 
 #define negos_rx(XG)                                                        \
         xorox_ld(W(XG), Mebp, inf_GPC06_32)
 
-/* add */
+/* add (G = G + S) */
 
 #define addos_rr(XG, XS)                                                    \
         VX2(REG(XG), 0, 1) EMITB(0x58)                                      \
@@ -220,7 +220,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subos_rr(XG, XS)                                                    \
         VX2(REG(XG), 0, 1) EMITB(0x5C)                                      \
@@ -231,7 +231,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* mul */
+/* mul (G = G * S) */
 
 #define mulos_rr(XG, XS)                                                    \
         VX2(REG(XG), 0, 1) EMITB(0x59)                                      \
@@ -242,7 +242,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* div */
+/* div (G = G / S) */
 
 #define divos_rr(XG, XS)                                                    \
         VX2(REG(XG), 0, 1) EMITB(0x5E)                                      \
@@ -965,7 +965,7 @@
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
-/* add */
+/* add (G = G + S) */
 
 #define addix_rr(XG, XS)     /* not portable, do not use outside */         \
         VX2(REG(XG), 1, 0) EMITB(0xFE)                                      \
@@ -999,7 +999,7 @@
         movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subix_rr(XG, XS)     /* not portable, do not use outside */         \
         VX2(REG(XG), 1, 0) EMITB(0xFA)                                      \
@@ -1033,7 +1033,7 @@
         movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shl */
+/* shl (G = G << S) */
 
 #define shlix_ri(XG, IS)     /* not portable, do not use outside */         \
         VX2(REG(XG), 1, 0) EMITB(0x72)                                      \
@@ -1063,7 +1063,7 @@
         movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shr */
+/* shr (G = G >> S) */
 
 #define shrix_ri(XG, IS)     /* not portable, do not use outside */         \
         VX2(REG(XG), 1, 0) EMITB(0x72)                                      \
@@ -1125,7 +1125,7 @@
 
 #else /* RT_256 >= 2 */
 
-/* add */
+/* add (G = G + S) */
 
 #define addox_rr(XG, XS)                                                    \
         VX2(REG(XG), 1, 1) EMITB(0xFE)                                      \
@@ -1136,7 +1136,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subox_rr(XG, XS)                                                    \
         VX2(REG(XG), 1, 1) EMITB(0xFA)                                      \
@@ -1147,7 +1147,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* shl */
+/* shl (G = G << S) */
 
 #define shlox_ri(XG, IS)                                                    \
         VX2(REG(XG), 1, 1) EMITB(0x72)                                      \
@@ -1159,7 +1159,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* shr */
+/* shr (G = G >> S) */
 
 #define shrox_ri(XG, IS)                                                    \
         VX2(REG(XG), 1, 1) EMITB(0x72)                                      \

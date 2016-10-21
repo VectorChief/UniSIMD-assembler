@@ -90,7 +90,7 @@
 
 /**************************   packed generic (SIMD)   *************************/
 
-/* mov */
+/* mov (D = S) */
 
 #define movqx_rr(XD, XS)                                                    \
         EMITW(0xF0000497 | MXM(REG(XD), REG(XS), REG(XS)))
@@ -107,7 +107,7 @@
         EMITW(0x7C000799 | MXM(REG(XS), Teax & (MOD(MD) == TPxx), TPxx))    \
                                                        /* ^ == -1 if true */
 
-/* and */
+/* and (G = G & S) */
 
 #define andqx_rr(XG, XS)                                                    \
         EMITW(0xF0000417 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -129,7 +129,7 @@
         EMITW(0x7C000699 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0xF0000457 | MXM(REG(XG), Tmm1,    REG(XG)))/* ^ == -1 if true */
 
-/* orr */
+/* orr (G = G | S) */
 
 #define orrqx_rr(XG, XS)                                                    \
         EMITW(0xF0000497 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -165,7 +165,7 @@
 
 #endif /* RT_128 >= 4 */
 
-/* xor */
+/* xor (G = G ^ S) */
 
 #define xorqx_rr(XG, XS)                                                    \
         EMITW(0xF00004D7 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -176,19 +176,19 @@
         EMITW(0x7C000699 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0xF00004D7 | MXM(REG(XG), REG(XG), Tmm1))/* ^ == -1 if true */
 
-/* not */
+/* not (G = ~G) */
 
 #define notqx_rx(XG)                                                        \
         EMITW(0xF0000517 | MXM(REG(XG), REG(XG), REG(XG)))
 
 /**************   packed double precision floating point (SIMD)   *************/
 
-/* neg */
+/* neg (G = -G) */
 
 #define negqs_rx(XG)                                                        \
         EMITW(0xF00007E7 | MXM(REG(XG), 0x00,    REG(XG)))
 
-/* add */
+/* add (G = G + S) */
 
 #define addqs_rr(XG, XS)                                                    \
         EMITW(0xF0000307 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -199,7 +199,7 @@
         EMITW(0x7C000699 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0xF0000307 | MXM(REG(XG), REG(XG), Tmm1))/* ^ == -1 if true */
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subqs_rr(XG, XS)                                                    \
         EMITW(0xF0000347 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -210,7 +210,7 @@
         EMITW(0x7C000699 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0xF0000347 | MXM(REG(XG), REG(XG), Tmm1))/* ^ == -1 if true */
 
-/* mul */
+/* mul (G = G * S) */
 
 #define mulqs_rr(XG, XS)                                                    \
         EMITW(0xF0000387 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -221,7 +221,7 @@
         EMITW(0x7C000699 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0xF0000387 | MXM(REG(XG), REG(XG), Tmm1))/* ^ == -1 if true */
 
-/* div */
+/* div (G = G / S) */
 
 #define divqs_rr(XG, XS)                                                    \
         EMITW(0xF00003C7 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -500,7 +500,7 @@
 
 #if (RT_128 < 4)
 
-/* add */
+/* add (G = G + S) */
 
 #define addqx_rr(XG, XS)                                                    \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -525,7 +525,7 @@
         stack_ld(Reax)                                                      \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subqx_rr(XG, XS)                                                    \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -550,7 +550,7 @@
         stack_ld(Reax)                                                      \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shl */
+/* shl (G = G << S) */
 
 #define shlqx_ri(XG, IS)                                                    \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -567,7 +567,7 @@
         stack_ld(Recx)                                                      \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shr */
+/* shr (G = G >> S) */
 
 #define shrqx_ri(XG, IS)                                                    \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -601,7 +601,7 @@
 
 #else /* RT_128 >= 4 */
 
-/* add */
+/* add (G = G + S) */
 
 #define addqx_rr(XG, XS)                                                    \
         EMITW(0x100000C0 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -612,7 +612,7 @@
         EMITW(0x7C000699 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0x100000C0 | MXM(REG(XG), REG(XG), Tmm1))/* ^ == -1 if true */
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subqx_rr(XG, XS)                                                    \
         EMITW(0x100004C0 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -623,7 +623,7 @@
         EMITW(0x7C000699 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0x100004C0 | MXM(REG(XG), REG(XG), Tmm1))/* ^ == -1 if true */
 
-/* shl */
+/* shl (G = G << S) */
 
 #define shlqx_ri(XG, IS)                                                    \
         movzx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
@@ -635,7 +635,7 @@
         EMITW(0x7C000299 | MXM(Tmm1,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0x100005C4 | MXM(REG(XG), REG(XG), Tmm1))/* ^ == -1 if true */
 
-/* shr */
+/* shr (G = G >> S) */
 
 #define shrqx_ri(XG, IS)                                                    \
         movzx_mi(Mebp, inf_SCR01(0), W(IS))                                 \

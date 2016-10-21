@@ -966,7 +966,7 @@ struct rt_SIMD_REGS
 
 #if   RT_ELEMENT == 32
 
-/* mov */
+/* mov (D = S) */
 
 #define movpx_rr(XD, XS)                                                    \
         movox_rr(W(XD), W(XS))
@@ -977,7 +977,7 @@ struct rt_SIMD_REGS
 #define movpx_st(XS, MD, DD)                                                \
         movox_st(W(XS), W(MD), W(DD))
 
-/* and */
+/* and (G = G & S) */
 
 #define andpx_rr(XG, XS)                                                    \
         andox_rr(W(XG), W(XS))
@@ -993,7 +993,7 @@ struct rt_SIMD_REGS
 #define annpx_ld(XG, MS, DS)                                                \
         annox_ld(W(XG), W(MS), W(DS))
 
-/* orr */
+/* orr (G = G | S) */
 
 #define orrpx_rr(XG, XS)                                                    \
         orrox_rr(W(XG), W(XS))
@@ -1009,7 +1009,7 @@ struct rt_SIMD_REGS
 #define ornpx_ld(XG, MS, DS)                                                \
         ornox_ld(W(XG), W(MS), W(DS))
 
-/* xor */
+/* xor (G = G ^ S) */
 
 #define xorpx_rr(XG, XS)                                                    \
         xorox_rr(W(XG), W(XS))
@@ -1017,17 +1017,17 @@ struct rt_SIMD_REGS
 #define xorpx_ld(XG, MS, DS)                                                \
         xorox_ld(W(XG), W(MS), W(DS))
 
-/* not */
+/* not (G = ~G) */
 
 #define notpx_rx(XG)                                                        \
         notox_rx(W(XG))
 
-/* neg */
+/* neg (G = -G) */
 
 #define negps_rx(XG)                                                        \
         negos_rx(W(XG))
 
-/* add */
+/* add (G = G + S) */
 
 #define addps_rr(XG, XS)                                                    \
         addos_rr(W(XG), W(XS))
@@ -1035,7 +1035,7 @@ struct rt_SIMD_REGS
 #define addps_ld(XG, MS, DS)                                                \
         addos_ld(W(XG), W(MS), W(DS))
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subps_rr(XG, XS)                                                    \
         subos_rr(W(XG), W(XS))
@@ -1043,7 +1043,7 @@ struct rt_SIMD_REGS
 #define subps_ld(XG, MS, DS)                                                \
         subos_ld(W(XG), W(MS), W(DS))
 
-/* mul */
+/* mul (G = G * S) */
 
 #define mulps_rr(XG, XS)                                                    \
         mulos_rr(W(XG), W(XS))
@@ -1051,7 +1051,7 @@ struct rt_SIMD_REGS
 #define mulps_ld(XG, MS, DS)                                                \
         mulos_ld(W(XG), W(MS), W(DS))
 
-/* div */
+/* div (G = G / S) */
 
 #define divps_rr(XG, XS)                                                    \
         divos_rr(W(XG), W(XS))
@@ -1255,7 +1255,7 @@ struct rt_SIMD_REGS
 #define cvnpn_ld(XD, MS, DS) /* round towards near */                       \
         cvnon_ld(W(XD), W(MS), W(DS))
 
-/* add */
+/* add (G = G + S) */
 
 #define addpx_rr(XG, XS)                                                    \
         addox_rr(W(XG), W(XS))
@@ -1263,7 +1263,7 @@ struct rt_SIMD_REGS
 #define addpx_ld(XG, MS, DS)                                                \
         addox_ld(W(XG), W(MS), W(DS))
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subpx_rr(XG, XS)                                                    \
         subox_rr(W(XG), W(XS))
@@ -1271,7 +1271,7 @@ struct rt_SIMD_REGS
 #define subpx_ld(XG, MS, DS)                                                \
         subox_ld(W(XG), W(MS), W(DS))
 
-/* shl */
+/* shl (G = G << S) */
 
 #define shlpx_ri(XG, IS)                                                    \
         shlox_ri(W(XG), W(IS))
@@ -1279,7 +1279,7 @@ struct rt_SIMD_REGS
 #define shlpx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         shlox_ld(W(XG), W(MS), W(DS))
 
-/* shr */
+/* shr (G = G >> S) */
 
 #define shrpx_ri(XG, IS)                                                    \
         shrox_ri(W(XG), W(IS))
@@ -1347,7 +1347,7 @@ struct rt_SIMD_REGS
 
 #elif RT_ELEMENT == 64
 
-/* mov */
+/* mov (D = S) */
 
 #define movpx_rr(XD, XS)                                                    \
         movqx_rr(W(XD), W(XS))
@@ -1358,7 +1358,7 @@ struct rt_SIMD_REGS
 #define movpx_st(XS, MD, DD)                                                \
         movqx_st(W(XS), W(MD), W(DD))
 
-/* and */
+/* and (G = G & S) */
 
 #define andpx_rr(XG, XS)                                                    \
         andqx_rr(W(XG), W(XS))
@@ -1374,7 +1374,7 @@ struct rt_SIMD_REGS
 #define annpx_ld(XG, MS, DS)                                                \
         annqx_ld(W(XG), W(MS), W(DS))
 
-/* orr */
+/* orr (G = G | S) */
 
 #define orrpx_rr(XG, XS)                                                    \
         orrqx_rr(W(XG), W(XS))
@@ -1390,7 +1390,7 @@ struct rt_SIMD_REGS
 #define ornpx_ld(XG, MS, DS)                                                \
         ornqx_ld(W(XG), W(MS), W(DS))
 
-/* xor */
+/* xor (G = G ^ S) */
 
 #define xorpx_rr(XG, XS)                                                    \
         xorqx_rr(W(XG), W(XS))
@@ -1398,17 +1398,17 @@ struct rt_SIMD_REGS
 #define xorpx_ld(XG, MS, DS)                                                \
         xorqx_ld(W(XG), W(MS), W(DS))
 
-/* not */
+/* not (G = ~G) */
 
 #define notpx_rx(XG)                                                        \
         notqx_rx(W(XG))
 
-/* neg */
+/* neg (G = -G) */
 
 #define negps_rx(XG)                                                        \
         negqs_rx(W(XG))
 
-/* add */
+/* add (G = G + S) */
 
 #define addps_rr(XG, XS)                                                    \
         addqs_rr(W(XG), W(XS))
@@ -1416,7 +1416,7 @@ struct rt_SIMD_REGS
 #define addps_ld(XG, MS, DS)                                                \
         addqs_ld(W(XG), W(MS), W(DS))
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subps_rr(XG, XS)                                                    \
         subqs_rr(W(XG), W(XS))
@@ -1424,7 +1424,7 @@ struct rt_SIMD_REGS
 #define subps_ld(XG, MS, DS)                                                \
         subqs_ld(W(XG), W(MS), W(DS))
 
-/* mul */
+/* mul (G = G * S) */
 
 #define mulps_rr(XG, XS)                                                    \
         mulqs_rr(W(XG), W(XS))
@@ -1432,7 +1432,7 @@ struct rt_SIMD_REGS
 #define mulps_ld(XG, MS, DS)                                                \
         mulqs_ld(W(XG), W(MS), W(DS))
 
-/* div */
+/* div (G = G / S) */
 
 #define divps_rr(XG, XS)                                                    \
         divqs_rr(W(XG), W(XS))
@@ -1636,7 +1636,7 @@ struct rt_SIMD_REGS
 #define cvnpn_ld(XD, MS, DS) /* round towards near */                       \
         cvnqn_ld(W(XD), W(MS), W(DS))
 
-/* add */
+/* add (G = G + S) */
 
 #define addpx_rr(XG, XS)                                                    \
         addqx_rr(W(XG), W(XS))
@@ -1644,7 +1644,7 @@ struct rt_SIMD_REGS
 #define addpx_ld(XG, MS, DS)                                                \
         addqx_ld(W(XG), W(MS), W(DS))
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subpx_rr(XG, XS)                                                    \
         subqx_rr(W(XG), W(XS))
@@ -1652,7 +1652,7 @@ struct rt_SIMD_REGS
 #define subpx_ld(XG, MS, DS)                                                \
         subqx_ld(W(XG), W(MS), W(DS))
 
-/* shl */
+/* shl (G = G << S) */
 
 #define shlpx_ri(XG, IS)                                                    \
         shlqx_ri(W(XG), W(IS))
@@ -1660,7 +1660,7 @@ struct rt_SIMD_REGS
 #define shlpx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         shlqx_ld(W(XG), W(MS), W(DS))
 
-/* shr */
+/* shr (G = G >> S) */
 
 #define shrpx_ri(XG, IS)                                                    \
         shrqx_ri(W(XG), W(IS))
@@ -1737,7 +1737,7 @@ struct rt_SIMD_REGS
 #define adrxx_lb(lb) /* load label to Reax */                               \
         label_ld(lb)
 
-/* mul */
+/* mul (G = G * S) */
 
 #define mulxn_ri(RG, IS)                                                    \
         mulxx_ri(W(RG), W(IS))
@@ -1750,7 +1750,7 @@ struct rt_SIMD_REGS
 
 /***************** original forms of one-operand instructions *****************/
 
-/* not */
+/* not (G = ~G) */
 
 #define notxx_rr(RG)                                                        \
         notxx_rx(W(RG))
@@ -1758,7 +1758,7 @@ struct rt_SIMD_REGS
 #define notxx_mm(MG, DG)                                                    \
         notxx_mx(W(MG), W(DG))
 
-/* neg */
+/* neg (G = -G) */
 
 #define negxx_rr(RG)                                                        \
         negxx_rx(W(RG))
@@ -1778,7 +1778,7 @@ struct rt_SIMD_REGS
 
 #if   RT_ADDRESS == 32
 
-/* mov
+/* mov (D = S)
  * set-flags: no */
 
 #define movxx_ri(RD, IS)                                                    \
@@ -1810,7 +1810,7 @@ struct rt_SIMD_REGS
 
      /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
 
-/* and
+/* and (G = G & S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define andxx_ri(RG, IS)                                                    \
@@ -1884,7 +1884,7 @@ struct rt_SIMD_REGS
 #define annxz_mr(MG, DG, RS)                                                \
         annwz_mr(W(MG), W(DG), W(RS))
 
-/* orr
+/* orr (G = G | S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define orrxx_ri(RG, IS)                                                    \
@@ -1958,7 +1958,7 @@ struct rt_SIMD_REGS
 #define ornxz_mr(MG, DG, RS)                                                \
         ornwz_mr(W(MG), W(DG), W(RS))
 
-/* xor
+/* xor (G = G ^ S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define xorxx_ri(RG, IS)                                                    \
@@ -1992,7 +1992,7 @@ struct rt_SIMD_REGS
 #define xorxz_st(RS, MG, DG)                                                \
         xorwz_st(W(RS), W(MG), W(DG))
 
-/* not
+/* not (G = ~G)
  * set-flags: no */
 
 #define notxx_rx(RG)                                                        \
@@ -2001,7 +2001,7 @@ struct rt_SIMD_REGS
 #define notxx_mx(MG, DG)                                                    \
         notwx_mx(W(MG), W(DG))
 
-/* neg
+/* neg (G = -G)
  * set-flags: undefined (*x), yes (*z) */
 
 #define negxx_rx(RG)                                                        \
@@ -2017,7 +2017,7 @@ struct rt_SIMD_REGS
 #define negxz_mx(MG, DG)                                                    \
         negwz_mx(W(MG), W(DG))
 
-/* add
+/* add (G = G + S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define addxx_ri(RG, IS)                                                    \
@@ -2051,7 +2051,7 @@ struct rt_SIMD_REGS
 #define addxz_st(RS, MG, DG)                                                \
         addwz_st(W(RS), W(MG), W(DG))
 
-/* sub
+/* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define subxx_ri(RG, IS)                                                    \
@@ -2091,7 +2091,7 @@ struct rt_SIMD_REGS
 #define subxz_mr(MG, DG, RS)                                                \
         subwz_mr(W(MG), W(DG), W(RS))
 
-/* shl
+/* shl (G = G << S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define shlxx_rx(RG)                     /* reads Recx for shift count */   \
@@ -2143,7 +2143,7 @@ struct rt_SIMD_REGS
 #define shlxz_mr(MG, DG, RS)                                                \
         shlwz_mr(W(MG), W(DG), W(RS))
 
-/* shr
+/* shr (G = G >> S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define shrxx_rx(RG)                     /* reads Recx for shift count */   \
@@ -2220,7 +2220,7 @@ struct rt_SIMD_REGS
 #define shrxn_mr(MG, DG, RS)                                                \
         shrwn_mr(W(MG), W(DG), W(RS))
 
-/* ror
+/* ror (G = G >> S | G << 32 - S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define rorxx_rx(RG)                     /* reads Recx for shift count */   \
@@ -2272,7 +2272,7 @@ struct rt_SIMD_REGS
 #define rorxz_mr(MG, DG, RS)                                                \
         rorwz_mr(W(MG), W(DG), W(RS))
 
-/* mul
+/* mul (G = G * S)
  * set-flags: undefined */
 
 #define mulxx_ri(RG, IS)                                                    \
@@ -2305,7 +2305,7 @@ struct rt_SIMD_REGS
 #define mulxp_xm(MS, DS) /* Reax is in/out, prepares Redx for divxn_x* */   \
         mulwp_xm(W(MS), W(DS))/* product must not exceed operands size */
 
-/* div
+/* div (G = G / S)
  * set-flags: undefined */
 
 #define divxx_ri(RG, IS)       /* Reax cannot be used as first operand */   \
@@ -2357,7 +2357,7 @@ struct rt_SIMD_REGS
         divwp_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
                                      /* 24-bit int (fp32 div in ARMv7) */
 
-/* rem
+/* rem (G = G % S)
  * set-flags: undefined */
 
 #define remxx_ri(RG, IS)       /* Redx cannot be used as first operand */   \
@@ -2480,7 +2480,7 @@ struct rt_SIMD_REGS
 
 #elif RT_ADDRESS == 64
 
-/* mov
+/* mov (D = S)
  * set-flags: no */
 
 #define movxx_ri(RD, IS)                                                    \
@@ -2512,7 +2512,7 @@ struct rt_SIMD_REGS
 
      /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
 
-/* and
+/* and (G = G & S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define andxx_ri(RG, IS)                                                    \
@@ -2586,7 +2586,7 @@ struct rt_SIMD_REGS
 #define annxz_mr(MG, DG, RS)                                                \
         annzz_mr(W(MG), W(DG), W(RS))
 
-/* orr
+/* orr (G = G | S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define orrxx_ri(RG, IS)                                                    \
@@ -2660,7 +2660,7 @@ struct rt_SIMD_REGS
 #define ornxz_mr(MG, DG, RS)                                                \
         ornzz_mr(W(MG), W(DG), W(RS))
 
-/* xor
+/* xor (G = G ^ S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define xorxx_ri(RG, IS)                                                    \
@@ -2694,7 +2694,7 @@ struct rt_SIMD_REGS
 #define xorxz_st(RS, MG, DG)                                                \
         xorzz_st(W(RS), W(MG), W(DG))
 
-/* not
+/* not (G = ~G)
  * set-flags: no */
 
 #define notxx_rx(RG)                                                        \
@@ -2703,7 +2703,7 @@ struct rt_SIMD_REGS
 #define notxx_mx(MG, DG)                                                    \
         notzx_mx(W(MG), W(DG))
 
-/* neg
+/* neg (G = -G)
  * set-flags: undefined (*x), yes (*z) */
 
 #define negxx_rx(RG)                                                        \
@@ -2719,7 +2719,7 @@ struct rt_SIMD_REGS
 #define negxz_mx(MG, DG)                                                    \
         negzz_mx(W(MG), W(DG))
 
-/* add
+/* add (G = G + S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define addxx_ri(RG, IS)                                                    \
@@ -2753,7 +2753,7 @@ struct rt_SIMD_REGS
 #define addxz_st(RS, MG, DG)                                                \
         addzz_st(W(RS), W(MG), W(DG))
 
-/* sub
+/* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define subxx_ri(RG, IS)                                                    \
@@ -2793,7 +2793,7 @@ struct rt_SIMD_REGS
 #define subxz_mr(MG, DG, RS)                                                \
         subzz_mr(W(MG), W(DG), W(RS))
 
-/* shl
+/* shl (G = G << S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define shlxx_rx(RG)                     /* reads Recx for shift count */   \
@@ -2845,7 +2845,7 @@ struct rt_SIMD_REGS
 #define shlxz_mr(MG, DG, RS)                                                \
         shlzz_mr(W(MG), W(DG), W(RS))
 
-/* shr
+/* shr (G = G >> S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define shrxx_rx(RG)                     /* reads Recx for shift count */   \
@@ -2922,7 +2922,7 @@ struct rt_SIMD_REGS
 #define shrxn_mr(MG, DG, RS)                                                \
         shrzn_mr(W(MG), W(DG), W(RS))
 
-/* ror
+/* ror (G = G >> S | G << 64 - S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define rorxx_rx(RG)                     /* reads Recx for shift count */   \
@@ -2974,7 +2974,7 @@ struct rt_SIMD_REGS
 #define rorxz_mr(MG, DG, RS)                                                \
         rorzz_mr(W(MG), W(DG), W(RS))
 
-/* mul
+/* mul (G = G * S)
  * set-flags: undefined */
 
 #define mulxx_ri(RG, IS)                                                    \
@@ -3007,7 +3007,7 @@ struct rt_SIMD_REGS
 #define mulxp_xm(MS, DS) /* Reax is in/out, prepares Redx for divxn_x* */   \
         mulzp_xm(W(MS), W(DS))/* product must not exceed operands size */
 
-/* div
+/* div (G = G / S)
  * set-flags: undefined */
 
 #define divxx_ri(RG, IS)       /* Reax cannot be used as first operand */   \
@@ -3059,7 +3059,7 @@ struct rt_SIMD_REGS
         divzp_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
                                      /* 24-bit int (fp32 div in ARMv7) */
 
-/* rem
+/* rem (G = G % S)
  * set-flags: undefined */
 
 #define remxx_ri(RG, IS)       /* Redx cannot be used as first operand */   \
@@ -3184,7 +3184,7 @@ struct rt_SIMD_REGS
 
 #if   RT_ELEMENT == 32
 
-/* mov
+/* mov (D = S)
  * set-flags: no */
 
 #define movyx_ri(RD, IS)                                                    \
@@ -3209,7 +3209,7 @@ struct rt_SIMD_REGS
 #define movyx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
         movwx_mi(W(MD), W(DD), W(IS))
 
-/* and
+/* and (G = G & S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define andyx_ri(RG, IS)                                                    \
@@ -3283,7 +3283,7 @@ struct rt_SIMD_REGS
 #define annyz_mr(MG, DG, RS)                                                \
         annwz_mr(W(MG), W(DG), W(RS))
 
-/* orr
+/* orr (G = G | S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define orryx_ri(RG, IS)                                                    \
@@ -3357,7 +3357,7 @@ struct rt_SIMD_REGS
 #define ornyz_mr(MG, DG, RS)                                                \
         ornwz_mr(W(MG), W(DG), W(RS))
 
-/* xor
+/* xor (G = G ^ S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define xoryx_ri(RG, IS)                                                    \
@@ -3391,7 +3391,7 @@ struct rt_SIMD_REGS
 #define xoryz_st(RS, MG, DG)                                                \
         xorwz_st(W(RS), W(MG), W(DG))
 
-/* not
+/* not (G = ~G)
  * set-flags: no */
 
 #define notyx_rx(RG)                                                        \
@@ -3400,7 +3400,7 @@ struct rt_SIMD_REGS
 #define notyx_mx(MG, DG)                                                    \
         notwx_mx(W(MG), W(DG))
 
-/* neg
+/* neg (G = -G)
  * set-flags: undefined (*x), yes (*z) */
 
 #define negyx_rx(RG)                                                        \
@@ -3416,7 +3416,7 @@ struct rt_SIMD_REGS
 #define negyz_mx(MG, DG)                                                    \
         negwz_mx(W(MG), W(DG))
 
-/* add
+/* add (G = G + S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define addyx_ri(RG, IS)                                                    \
@@ -3450,7 +3450,7 @@ struct rt_SIMD_REGS
 #define addyz_st(RS, MG, DG)                                                \
         addwz_st(W(RS), W(MG), W(DG))
 
-/* sub
+/* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define subyx_ri(RG, IS)                                                    \
@@ -3490,7 +3490,7 @@ struct rt_SIMD_REGS
 #define subyz_mr(MG, DG, RS)                                                \
         subwz_mr(W(MG), W(DG), W(RS))
 
-/* shl
+/* shl (G = G << S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define shlyx_rx(RG)                     /* reads Recx for shift count */   \
@@ -3542,7 +3542,7 @@ struct rt_SIMD_REGS
 #define shlyz_mr(MG, DG, RS)                                                \
         shlwz_mr(W(MG), W(DG), W(RS))
 
-/* shr
+/* shr (G = G >> S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define shryx_rx(RG)                     /* reads Recx for shift count */   \
@@ -3619,7 +3619,7 @@ struct rt_SIMD_REGS
 #define shryn_mr(MG, DG, RS)                                                \
         shrwn_mr(W(MG), W(DG), W(RS))
 
-/* ror
+/* ror (G = G >> S | G << 32 - S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define roryx_rx(RG)                     /* reads Recx for shift count */   \
@@ -3671,7 +3671,7 @@ struct rt_SIMD_REGS
 #define roryz_mr(MG, DG, RS)                                                \
         rorwz_mr(W(MG), W(DG), W(RS))
 
-/* mul
+/* mul (G = G * S)
  * set-flags: undefined */
 
 #define mulyx_ri(RG, IS)                                                    \
@@ -3704,7 +3704,7 @@ struct rt_SIMD_REGS
 #define mulyp_xm(MS, DS) /* Reax is in/out, prepares Redx for divyn_x* */   \
         mulwp_xm(W(MS), W(DS))/* product must not exceed operands size */
 
-/* div
+/* div (G = G / S)
  * set-flags: undefined */
 
 #define divyx_ri(RG, IS)       /* Reax cannot be used as first operand */   \
@@ -3756,7 +3756,7 @@ struct rt_SIMD_REGS
         divwp_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
                                      /* 24-bit int (fp32 div in ARMv7) */
 
-/* rem
+/* rem (G = G % S)
  * set-flags: undefined */
 
 #define remyx_ri(RG, IS)       /* Redx cannot be used as first operand */   \
@@ -3879,7 +3879,7 @@ struct rt_SIMD_REGS
 
 #elif RT_ELEMENT == 64
 
-/* mov
+/* mov (D = S)
  * set-flags: no */
 
 #define movyx_ri(RD, IS)                                                    \
@@ -3904,7 +3904,7 @@ struct rt_SIMD_REGS
 #define movyx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
         movzx_mi(W(MD), W(DD), W(IS))
 
-/* and
+/* and (G = G & S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define andyx_ri(RG, IS)                                                    \
@@ -3978,7 +3978,7 @@ struct rt_SIMD_REGS
 #define annyz_mr(MG, DG, RS)                                                \
         annzz_mr(W(MG), W(DG), W(RS))
 
-/* orr
+/* orr (G = G | S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define orryx_ri(RG, IS)                                                    \
@@ -4052,7 +4052,7 @@ struct rt_SIMD_REGS
 #define ornyz_mr(MG, DG, RS)                                                \
         ornzz_mr(W(MG), W(DG), W(RS))
 
-/* xor
+/* xor (G = G ^ S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define xoryx_ri(RG, IS)                                                    \
@@ -4086,7 +4086,7 @@ struct rt_SIMD_REGS
 #define xoryz_st(RS, MG, DG)                                                \
         xorzz_st(W(RS), W(MG), W(DG))
 
-/* not
+/* not (G = ~G)
  * set-flags: no */
 
 #define notyx_rx(RG)                                                        \
@@ -4095,7 +4095,7 @@ struct rt_SIMD_REGS
 #define notyx_mx(MG, DG)                                                    \
         notzx_mx(W(MG), W(DG))
 
-/* neg
+/* neg (G = -G)
  * set-flags: undefined (*x), yes (*z) */
 
 #define negyx_rx(RG)                                                        \
@@ -4111,7 +4111,7 @@ struct rt_SIMD_REGS
 #define negyz_mx(MG, DG)                                                    \
         negzz_mx(W(MG), W(DG))
 
-/* add
+/* add (G = G + S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define addyx_ri(RG, IS)                                                    \
@@ -4145,7 +4145,7 @@ struct rt_SIMD_REGS
 #define addyz_st(RS, MG, DG)                                                \
         addzz_st(W(RS), W(MG), W(DG))
 
-/* sub
+/* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define subyx_ri(RG, IS)                                                    \
@@ -4185,7 +4185,7 @@ struct rt_SIMD_REGS
 #define subyz_mr(MG, DG, RS)                                                \
         subzz_mr(W(MG), W(DG), W(RS))
 
-/* shl
+/* shl (G = G << S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define shlyx_rx(RG)                     /* reads Recx for shift count */   \
@@ -4237,7 +4237,7 @@ struct rt_SIMD_REGS
 #define shlyz_mr(MG, DG, RS)                                                \
         shlzz_mr(W(MG), W(DG), W(RS))
 
-/* shr
+/* shr (G = G >> S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define shryx_rx(RG)                     /* reads Recx for shift count */   \
@@ -4314,7 +4314,7 @@ struct rt_SIMD_REGS
 #define shryn_mr(MG, DG, RS)                                                \
         shrzn_mr(W(MG), W(DG), W(RS))
 
-/* ror
+/* ror (G = G >> S | G << 64 - S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define roryx_rx(RG)                     /* reads Recx for shift count */   \
@@ -4366,7 +4366,7 @@ struct rt_SIMD_REGS
 #define roryz_mr(MG, DG, RS)                                                \
         rorzz_mr(W(MG), W(DG), W(RS))
 
-/* mul
+/* mul (G = G * S)
  * set-flags: undefined */
 
 #define mulyx_ri(RG, IS)                                                    \
@@ -4399,7 +4399,7 @@ struct rt_SIMD_REGS
 #define mulyp_xm(MS, DS) /* Reax is in/out, prepares Redx for divyn_x* */   \
         mulzp_xm(W(MS), W(DS))/* product must not exceed operands size */
 
-/* div
+/* div (G = G / S)
  * set-flags: undefined */
 
 #define divyx_ri(RG, IS)       /* Reax cannot be used as first operand */   \
@@ -4451,7 +4451,7 @@ struct rt_SIMD_REGS
         divzp_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
                                      /* 24-bit int (fp32 div in ARMv7) */
 
-/* rem
+/* rem (G = G % S)
  * set-flags: undefined */
 
 #define remyx_ri(RG, IS)       /* Redx cannot be used as first operand */   \

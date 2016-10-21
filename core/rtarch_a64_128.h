@@ -86,7 +86,7 @@
 
 /**************************   packed generic (NEON)   *************************/
 
-/* mov */
+/* mov (D = S) */
 
 #define movqx_rr(XD, XS)                                                    \
         EMITW(0x4EA01C00 | MXM(REG(XD), REG(XS), REG(XS)))
@@ -99,7 +99,7 @@
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
         EMITW(0x3D800000 | MPM(REG(XS), MOD(MD), VAL(DD), B2(DD), P2(DD)))
 
-/* and */
+/* and (G = G & S) */
 
 #define andqx_rr(XG, XS)                                                    \
         EMITW(0x4E201C00 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -119,7 +119,7 @@
         EMITW(0x3DC00000 | MPM(Tmm1,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E601C00 | MXM(REG(XG), Tmm1,    REG(XG)))
 
-/* orr */
+/* orr (G = G | S) */
 
 #define orrqx_rr(XG, XS)                                                    \
         EMITW(0x4EA01C00 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -139,7 +139,7 @@
         EMITW(0x3DC00000 | MPM(Tmm1,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4EE01C00 | MXM(REG(XG), Tmm1,    REG(XG)))
 
-/* xor */
+/* xor (G = G ^ S) */
 
 #define xorqx_rr(XG, XS)                                                    \
         EMITW(0x6E201C00 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -149,19 +149,19 @@
         EMITW(0x3DC00000 | MPM(Tmm1,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6E201C00 | MXM(REG(XG), REG(XG), Tmm1))
 
-/* not */
+/* not (G = ~G) */
 
 #define notqx_rx(XG)                                                        \
         EMITW(0x6E205800 | MXM(REG(XG), REG(XG), 0x00))
 
 /**************   packed double precision floating point (NEON)   *************/
 
-/* neg */
+/* neg (G = -G) */
 
 #define negqs_rx(XG)                                                        \
         EMITW(0x6EE0F800 | MXM(REG(XG), REG(XG), 0x00))
 
-/* add */
+/* add (G = G + S) */
 
 #define addqs_rr(XG, XS)                                                    \
         EMITW(0x4E60D400 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -171,7 +171,7 @@
         EMITW(0x3DC00000 | MPM(Tmm1,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E60D400 | MXM(REG(XG), REG(XG), Tmm1))
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subqs_rr(XG, XS)                                                    \
         EMITW(0x4EE0D400 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -181,7 +181,7 @@
         EMITW(0x3DC00000 | MPM(Tmm1,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4EE0D400 | MXM(REG(XG), REG(XG), Tmm1))
 
-/* mul */
+/* mul (G = G * S) */
 
 #define mulqs_rr(XG, XS)                                                    \
         EMITW(0x6E60DC00 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -191,7 +191,7 @@
         EMITW(0x3DC00000 | MPM(Tmm1,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6E60DC00 | MXM(REG(XG), REG(XG), Tmm1))
 
-/* div */
+/* div (G = G / S) */
 
 #define divqs_rr(XG, XS)                                                    \
         EMITW(0x6E60FC00 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -450,7 +450,7 @@
 #define cvnqn_ld(XD, MS, DS) /* round towards near */                       \
         cvtqn_ld(W(XD), W(MS), W(DS))
 
-/* add */
+/* add (G = G + S) */
 
 #define addqx_rr(XG, XS)                                                    \
         EMITW(0x4EE08400 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -460,7 +460,7 @@
         EMITW(0x3DC00000 | MPM(Tmm1,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4EE08400 | MXM(REG(XG), REG(XG), Tmm1))
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subqx_rr(XG, XS)                                                    \
         EMITW(0x6EE08400 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -470,7 +470,7 @@
         EMITW(0x3DC00000 | MPM(Tmm1,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6EE08400 | MXM(REG(XG), REG(XG), Tmm1))
 
-/* shl */
+/* shl (G = G << S) */
 
 #define shlqx_ri(XG, IS)                                                    \
         EMITW(0x4F405400 | MXM(REG(XG), REG(XG), 0x00) |                    \
@@ -482,7 +482,7 @@
         EMITW(0x4E080400 | MXM(Tmm1,    Tmm1,    0x00))                     \
         EMITW(0x6EE04400 | MXM(REG(XG), REG(XG), Tmm1))
 
-/* shr */
+/* shr (G = G >> S) */
 
 #define shrqx_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
         EMITW(0x4F400400 | MXM(REG(XG), REG(XG), 0x00) |                    \

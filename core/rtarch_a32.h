@@ -337,7 +337,7 @@
 /**********************************   A32   ***********************************/
 /******************************************************************************/
 
-/* mov
+/* mov (D = S)
  * set-flags: no */
 
 #define movwx_ri(RD, IS)                                                    \
@@ -374,7 +374,7 @@
 
      /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
 
-/* and
+/* and (G = G & S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define andwx_ri(RG, IS)                                                    \
@@ -486,7 +486,7 @@
 #define annwz_mr(MG, DG, RS)                                                \
         annwz_st(W(RS), W(MG), W(DG))
 
-/* orr
+/* orr (G = G | S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define orrwx_ri(RG, IS)                                                    \
@@ -607,7 +607,7 @@
 #define ornwz_mr(MG, DG, RS)                                                \
         ornwz_st(W(RS), W(MG), W(DG))
 
-/* xor
+/* xor (G = G ^ S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define xorwx_ri(RG, IS)                                                    \
@@ -664,7 +664,7 @@
         EMITW(0xB9000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x71000000 | TMxx << 5)                  /* <- set flags (Z) */
 
-/* not
+/* not (G = ~G)
  * set-flags: no */
 
 #define notwx_rx(RG)                                                        \
@@ -676,7 +676,7 @@
         EMITW(0x2A200000 | MRM(TMxx,    TZxx,    TMxx))                     \
         EMITW(0xB9000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
-/* neg
+/* neg (G = -G)
  * set-flags: undefined (*x), yes (*z) */
 
 #define negwx_rx(RG)                                                        \
@@ -698,7 +698,7 @@
         EMITW(0x6B000000 | MRM(TMxx,    TZxx,    TMxx))                     \
         EMITW(0xB9000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
-/* add
+/* add (G = G + S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define addwx_ri(RG, IS)                                                    \
@@ -750,7 +750,7 @@
         EMITW(0x2B000000 | MRM(TMxx,    TMxx,    REG(RS)))                  \
         EMITW(0xB9000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
-/* sub
+/* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define subwx_ri(RG, IS)                                                    \
@@ -808,7 +808,7 @@
 #define subwz_mr(MG, DG, RS)                                                \
         subwz_st(W(RS), W(MG), W(DG))
 
-/* shl
+/* shl (G = G << S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define shlwx_rx(RG)                     /* reads Recx for shift count */   \
@@ -893,7 +893,7 @@
 #define shlwz_mr(MG, DG, RS)                                                \
         shlwz_st(W(RS), W(MG), W(DG))
 
-/* shr
+/* shr (G = G >> S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define shrwx_rx(RG)                     /* reads Recx for shift count */   \
@@ -1010,7 +1010,7 @@
 #define shrwn_mr(MG, DG, RS)                                                \
         shrwn_st(W(RS), W(MG), W(DG))
 
-/* ror
+/* ror (G = G >> S | G << 32 - S)
  * set-flags: undefined (*x), yes (*z) */
 
 #define rorwx_rx(RG)                     /* reads Recx for shift count */   \
@@ -1093,7 +1093,7 @@
 #define rorwz_mr(MG, DG, RS)                                                \
         rorwz_st(W(RS), W(MG), W(DG))
 
-/* mul
+/* mul (G = G * S)
  * set-flags: undefined */
 
 #define mulwx_ri(RG, IS)                                                    \
@@ -1137,7 +1137,7 @@
 #define mulwp_xm(MS, DS) /* Reax is in/out, prepares Redx for divwn_x* */   \
         mulwx_ld(Reax, W(MS), W(DS))  /* must not exceed operands size */
 
-/* div
+/* div (G = G / S)
  * set-flags: undefined */
 
 #define divwx_ri(RG, IS)       /* Reax cannot be used as first operand */   \
@@ -1199,7 +1199,7 @@
         divwn_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
                                      /* 24-bit int (fp32 div in ARMv7) */
 
-/* rem
+/* rem (G = G % S)
  * set-flags: undefined */
 
 #define remwx_ri(RG, IS)       /* Redx cannot be used as first operand */   \

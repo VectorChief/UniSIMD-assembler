@@ -130,7 +130,7 @@
 
 /**************************   packed generic (SSE1)   *************************/
 
-/* mov */
+/* mov (D = S) */
 
 #define movox_rr(XD, XS)                                                    \
         REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x28)                       \
@@ -152,7 +152,7 @@
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* and */
+/* and (G = G & S) */
 
 #define andox_rr(XG, XS)                                                    \
         REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x54)                       \
@@ -174,7 +174,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* orr */
+/* orr (G = G | S) */
 
 #define orrox_rr(XG, XS)                                                    \
         REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x56)                       \
@@ -195,7 +195,7 @@
         notox_rx(W(XG))                                                     \
         orrox_ld(W(XG), W(MS), W(DS))
 
-/* xor */
+/* xor (G = G ^ S) */
 
 #define xorox_rr(XG, XS)                                                    \
         REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x57)                       \
@@ -206,19 +206,19 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* not */
+/* not (G = ~G) */
 
 #define notox_rx(XG)                                                        \
         annox_ld(W(XG), Mebp, inf_GPC07)
 
 /**************   packed single precision floating point (SSE1)   *************/
 
-/* neg */
+/* neg (G = -G) */
 
 #define negos_rx(XG)                                                        \
         xorox_ld(W(XG), Mebp, inf_GPC06_32)
 
-/* add */
+/* add (G = G + S) */
 
 #define addos_rr(XG, XS)                                                    \
         REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x58)                       \
@@ -229,7 +229,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subos_rr(XG, XS)                                                    \
         REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5C)                       \
@@ -240,7 +240,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* mul */
+/* mul (G = G * S) */
 
 #define mulos_rr(XG, XS)                                                    \
         REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x59)                       \
@@ -251,7 +251,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* div */
+/* div (G = G / S) */
 
 #define divos_rr(XG, XS)                                                    \
         REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5E)                       \
@@ -1110,7 +1110,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 
 #if (RT_128 < 2)
 
-/* add */
+/* add (G = G + S) */
 
 #define addox_rr(XG, XS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1143,7 +1143,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         stack_ld(Reax)                                                      \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subox_rr(XG, XS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1176,7 +1176,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         stack_ld(Reax)                                                      \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shl */
+/* shl (G = G << S) */
 
 #define shlox_ri(XG, IS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1197,7 +1197,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         stack_ld(Recx)                                                      \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shr */
+/* shr (G = G >> S) */
 
 #define shrox_ri(XG, IS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1241,7 +1241,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 
 #else /* RT_128 >= 2 */
 
-/* add */
+/* add (G = G + S) */
 
 #define addox_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xFE)                       \
@@ -1252,7 +1252,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xFE)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subox_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xFA)                       \
@@ -1263,7 +1263,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xFA)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* shl */
+/* shl (G = G << S) */
 
 #define shlox_ri(XG, IS)                                                    \
     ESC REX(0,       RXB(XG)) EMITB(0x0F) EMITB(0x72)                       \
@@ -1275,7 +1275,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xF2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* shr */
+/* shr (G = G >> S) */
 
 #define shrox_ri(XG, IS)                                                    \
     ESC REX(0,       RXB(XG)) EMITB(0x0F) EMITB(0x72)                       \

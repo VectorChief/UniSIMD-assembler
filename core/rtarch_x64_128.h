@@ -90,7 +90,7 @@
 
 /**************************   packed generic (SSE2)   *************************/
 
-/* mov */
+/* mov (D = S) */
 
 #define movqx_rr(XD, XS)                                                    \
     ESC REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x28)                       \
@@ -106,7 +106,7 @@ ADR ESC REX(RXB(XS), RXB(MD)) EMITB(0x0F) EMITB(0x29)                       \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
-/* and */
+/* and (G = G & S) */
 
 #define andqx_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x54)                       \
@@ -128,7 +128,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x55)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* orr */
+/* orr (G = G | S) */
 
 #define orrqx_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x56)                       \
@@ -149,7 +149,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x56)                       \
         notqx_rx(W(XG))                                                     \
         orrqx_ld(W(XG), W(MS), W(DS))
 
-/* xor */
+/* xor (G = G ^ S) */
 
 #define xorqx_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x57)                       \
@@ -160,19 +160,19 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x57)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* not */
+/* not (G = ~G) */
 
 #define notqx_rx(XG)                                                        \
         annqx_ld(W(XG), Mebp, inf_GPC07)
 
 /**************   packed double precision floating point (SSE2)   *************/
 
-/* neg */
+/* neg (G = -G) */
 
 #define negqs_rx(XG)                                                        \
         xorqx_ld(W(XG), Mebp, inf_GPC06_64)
 
-/* add */
+/* add (G = G + S) */
 
 #define addqs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x58)                       \
@@ -183,7 +183,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x58)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subqs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5C)                       \
@@ -194,7 +194,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5C)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* mul */
+/* mul (G = G * S) */
 
 #define mulqs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x59)                       \
@@ -205,7 +205,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* div */
+/* div (G = G / S) */
 
 #define divqs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5E)                       \
@@ -926,7 +926,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 
 /**************************   packed integer (SSE2)   *************************/
 
-/* add */
+/* add (G = G + S) */
 
 #define addqx_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xD4)                       \
@@ -937,7 +937,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xD4)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subqx_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xFB)                       \
@@ -948,7 +948,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xFB)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* shl */
+/* shl (G = G << S) */
 
 #define shlqx_ri(XG, IS)                                                    \
     ESC REX(0,       RXB(XG)) EMITB(0x0F) EMITB(0x73)                       \
@@ -960,7 +960,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xF3)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* shr */
+/* shr (G = G >> S) */
 
 #define shrqx_ri(XG, IS)                                                    \
     ESC REX(0,       RXB(XG)) EMITB(0x0F) EMITB(0x73)                       \

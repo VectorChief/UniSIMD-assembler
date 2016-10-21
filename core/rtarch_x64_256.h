@@ -88,7 +88,7 @@
 
 /**************************   packed generic (AVX1)   *************************/
 
-/* mov */
+/* mov (D = S) */
 
 #define movqx_rr(XD, XS)                                                    \
         VEX(RXB(XD), RXB(XS),     0x0, 1, 1, 1) EMITB(0x28)                 \
@@ -104,7 +104,7 @@
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
-/* and */
+/* and (G = G & S) */
 
 #define andqx_rr(XG, XS)                                                    \
         VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x54)                 \
@@ -126,7 +126,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* orr */
+/* orr (G = G | S) */
 
 #define orrqx_rr(XG, XS)                                                    \
         VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x56)                 \
@@ -147,7 +147,7 @@
         notqx_rx(W(XG))                                                     \
         orrqx_ld(W(XG), W(MS), W(DS))
 
-/* xor */
+/* xor (G = G ^ S) */
 
 #define xorqx_rr(XG, XS)                                                    \
         VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x57)                 \
@@ -158,19 +158,19 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* not */
+/* not (G = ~G) */
 
 #define notqx_rx(XG)                                                        \
         annqx_ld(W(XG), Mebp, inf_GPC07)
 
 /**************   packed double precision floating point (AVX1)   *************/
 
-/* neg */
+/* neg (G = -G) */
 
 #define negqs_rx(XG)                                                        \
         xorqx_ld(W(XG), Mebp, inf_GPC06_64)
 
-/* add */
+/* add (G = G + S) */
 
 #define addqs_rr(XG, XS)                                                    \
         VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x58)                 \
@@ -181,7 +181,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subqs_rr(XG, XS)                                                    \
         VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x5C)                 \
@@ -192,7 +192,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* mul */
+/* mul (G = G * S) */
 
 #define mulqs_rr(XG, XS)                                                    \
         VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x59)                 \
@@ -203,7 +203,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* div */
+/* div (G = G / S) */
 
 #define divqs_rr(XG, XS)                                                    \
         VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x5E)                 \
@@ -933,7 +933,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
-/* add */
+/* add (G = G + S) */
 
 #define addjx_rr(XG, XS)     /* not portable, do not use outside */         \
         VEX(RXB(XG), RXB(XS), REN(XG), 0, 1, 1) EMITB(0xD4)                 \
@@ -967,7 +967,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         movjx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subjx_rr(XG, XS)     /* not portable, do not use outside */         \
         VEX(RXB(XG), RXB(XS), REN(XG), 0, 1, 1) EMITB(0xFB)                 \
@@ -1001,7 +1001,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         movjx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shl */
+/* shl (G = G << S) */
 
 #define shljx_ri(XG, IS)     /* not portable, do not use outside */         \
         VEX(0,       RXB(XG), REN(XG), 0, 1, 1) EMITB(0x73)                 \
@@ -1031,7 +1031,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         movjx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shr */
+/* shr (G = G >> S) */
 
 #define shrjx_ri(XG, IS)     /* not portable, do not use outside */         \
         VEX(0,       RXB(XG), REN(XG), 0, 1, 1) EMITB(0x73)                 \
@@ -1065,7 +1065,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 
 #else /* RT_256 >= 2 */
 
-/* add */
+/* add (G = G + S) */
 
 #define addqx_rr(XG, XS)                                                    \
         VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0xD4)                 \
@@ -1076,7 +1076,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* sub */
+/* sub (G = G - S) */
 
 #define subqx_rr(XG, XS)                                                    \
         VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0xFB)                 \
@@ -1087,7 +1087,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* shl */
+/* shl (G = G << S) */
 
 #define shlqx_ri(XG, IS)                                                    \
         VEX(0,       RXB(XG), REN(XG), 1, 1, 1) EMITB(0x73)                 \
@@ -1099,7 +1099,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* shr */
+/* shr (G = G >> S) */
 
 #define shrqx_ri(XG, IS)                                                    \
         VEX(0,       RXB(XG), REN(XG), 1, 1, 1) EMITB(0x73)                 \
