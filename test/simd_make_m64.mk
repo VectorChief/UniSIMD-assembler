@@ -20,13 +20,19 @@ clean:
 	rm simd_test.m64*
 
 
-build_le: simd_test_m64_32Lr6 simd_test_m64f32Lr6 simd_test_m64f64Lr6
+build_le: simd_test_m64_32Lr6 simd_test_m64_64Lr6 simd_test_m64f32Lr6 simd_test_m64f64Lr6
 
 simd_test_m64_32Lr6:
 	mips-img-linux-gnu-g++ -O3 -g -static -EL -mabi=64 -mmsa \
         -DRT_LINUX -DRT_M64=6 -DRT_128=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64_32Lr6
+
+simd_test_m64_64Lr6:
+	mips-img-linux-gnu-g++ -O3 -g -static -EL -mabi=64 -mmsa \
+        -DRT_LINUX -DRT_M64=6 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64_64Lr6
 
 simd_test_m64f32Lr6:
 	mips-img-linux-gnu-g++ -O3 -g -static -EL -mabi=64 -mmsa \
@@ -41,13 +47,19 @@ simd_test_m64f64Lr6:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64f64Lr6
 
 
-build_be: simd_test_m64_32Br6 simd_test_m64f32Br6 simd_test_m64f64Br6
+build_be: simd_test_m64_32Br6 simd_test_m64_64Br6 simd_test_m64f32Br6 simd_test_m64f64Br6
 
 simd_test_m64_32Br6:
 	mips-img-linux-gnu-g++ -O3 -g -static -EB -mabi=64 -mmsa \
         -DRT_LINUX -DRT_M64=6 -DRT_128=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64_32Br6
+
+simd_test_m64_64Br6:
+	mips-img-linux-gnu-g++ -O3 -g -static -EB -mabi=64 -mmsa \
+        -DRT_LINUX -DRT_M64=6 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=1 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64_64Br6
 
 simd_test_m64f32Br6:
 	mips-img-linux-gnu-g++ -O3 -g -static -EB -mabi=64 -mmsa \
@@ -91,10 +103,8 @@ simd_test_m64f64Br6:
 # For big-endian MIPS64 target use (replace): -EB -DRT_ENDIAN=1
 # qemu-mips64 -cpu I6400 simd_test.m64f32Br6
 
-# 64/32-bit (ptr/adr) hybrid mode compatible with native 64-bit ABI
-# is available for the original pure 32-bit ISA using 64-bit pointers,
-# use (replace): RT_ADDRESS=32, rename the binary to simd_test.m64_32
+# 64/32-bit (ptr/adr) hybrid mode is compatible with native 64-bit ABI,
+# use (replace): RT_ADDRESS=32, rename the binary to simd_test.m64_**
 
 # 64-bit packed SIMD mode (fp64/int64) is supported on 64-bit targets,
-# but currently requires addresses to be 64-bit as well (RT_ADDRESS=64),
-# use (replace): RT_ELEMENT=64, rename the binary to simd_test.m64f64
+# use (replace): RT_ELEMENT=64, rename the binary to simd_test.m64*64
