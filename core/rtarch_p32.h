@@ -1645,10 +1645,12 @@
 
 #endif /* defined (RT_P32) */
 
-/* ver
- * set-flags: no */
+/* ver (Mebp/inf_VER = SIMD-version)
+ * set-flags: no
+ * 0th byte - 128-bit version, 1st byte - 256-bit version,
+ * 2nd byte - 512-bit version, 3rd byte - upper, reserved */
 
-#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
+#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
         movwx_mi(Mebp, inf_VER, IB(7)) /* <- VMX, VSX, VSX2 to bit0, 1, 2 */
 
 /************************* address-sized instructions *************************/

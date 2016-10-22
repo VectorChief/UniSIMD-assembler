@@ -1242,6 +1242,13 @@
         MRM(REG(RT), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
+/* ver (Mebp/inf_VER = SIMD-version)
+ * set-flags: no
+ * 0th byte - 128-bit version, 1st byte - 256-bit version,
+ * 2nd byte - 512-bit version, 3rd byte - upper, reserved */
+
+     /* verxx_xx() in 32-bit rtarch_***.h files, destroys Reax, ... , Redi */
+
 /************************* address-sized instructions *************************/
 
 /* adr (D = adr S)

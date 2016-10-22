@@ -1226,6 +1226,13 @@
         EMITW(0xE8000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0x7C000378 | MSM(TRxx,    REG(RT), REG(RT)))
 
+/* ver (Mebp/inf_VER = SIMD-version)
+ * set-flags: no
+ * 0th byte - 128-bit version, 1st byte - 256-bit version,
+ * 2nd byte - 512-bit version, 3rd byte - upper, reserved */
+
+     /* verxx_xx() in 32-bit rtarch_***.h files, destroys Reax, ... , Redi */
+
 /************************* address-sized instructions *************************/
 
 /* adr (D = adr S)

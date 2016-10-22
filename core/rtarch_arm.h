@@ -1479,10 +1479,12 @@
         EMITW(0xE5900000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0xE1500000 | MRM(0x00,    TMxx,    REG(RT)))
 
-/* ver
- * set-flags: no */
+/* ver (Mebp/inf_VER = SIMD-version)
+ * set-flags: no
+ * 0th byte - 128-bit version, 1st byte - 256-bit version,
+ * 2nd byte - 512-bit version, 3rd byte - upper, reserved */
 
-#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
+#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
         movwx_mi(Mebp, inf_VER, IB(7)) /* <- NEON to bit0, bit1, bit2 */
 
 /************************* address-sized instructions *************************/

@@ -1393,8 +1393,10 @@
         MRM(REG(RT), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* ver
- * set-flags: no */
+/* ver (Mebp/inf_VER = SIMD-version)
+ * set-flags: no
+ * 0th byte - 128-bit version, 1st byte - 256-bit version,
+ * 2nd byte - 512-bit version, 3rd byte - upper, reserved */
 
 #define cpuid_xx() /* destroys Reax, Recx, Rebx, Redx, reads Reax, Recx */  \
         EMITB(0x0F) EMITB(0xA2)     /* not portable, do not use outside */
