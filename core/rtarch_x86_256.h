@@ -1318,9 +1318,9 @@
  * uses Xmm0 implicitly as a mask register */
 
 #define mmvox_ld(XD, MS, DS) /* not portable, use conditionally (on x86) */ \
-        VX3(0x0,     1, 2) EMITB(0x2C)                                      \
+        VX3(REN(XD), 1, 3) EMITB(0x4A)                                      \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        AUX(SIB(MS), CMD(DS), EMITB(0x00))
 
 #define mmvox_st(XD, MS, DS) /* not portable, use conditionally (on x86) */ \
         VX3(0x0,     1, 2) EMITB(0x2E)                                      \

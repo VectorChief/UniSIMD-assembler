@@ -1197,9 +1197,9 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
  * uses Xmm0 implicitly as a mask register */
 
 #define mmvqx_ld(XD, MS, DS) /* not portable, use conditionally (on x86) */ \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, 1, 1, 2) EMITB(0x2D)                 \
+    ADR VEX(RXB(XD), RXB(MS), REN(XD), 1, 1, 3) EMITB(0x4B)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        AUX(SIB(MS), CMD(DS), EMITB(0x00))
 
 #define mmvqx_st(XS, MD, DD) /* not portable, use conditionally (on x86) */ \
     ADR VEX(RXB(XS), RXB(MD),     0x0, 1, 1, 2) EMITB(0x2F)                 \
