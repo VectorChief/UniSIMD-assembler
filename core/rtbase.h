@@ -1821,6 +1821,9 @@ struct rt_SIMD_REGS
 #define andxx_st(RS, MG, DG)                                                \
         andwx_st(W(RS), W(MG), W(DG))
 
+#define andxx_mr(MG, DG, RS)                                                \
+        andwx_mr(W(MG), W(DG), W(RS))
+
 
 #define andxz_ri(RG, IS)                                                    \
         andwz_ri(W(RG), W(IS))
@@ -1836,6 +1839,9 @@ struct rt_SIMD_REGS
 
 #define andxz_st(RS, MG, DG)                                                \
         andwz_st(W(RS), W(MG), W(DG))
+
+#define andxz_mr(MG, DG, RS)                                                \
+        andwz_mr(W(MG), W(DG), W(RS))
 
 /* ann (G = ~G & S)
  * set-flags: undefined (*x), yes (*z) */
@@ -1895,6 +1901,9 @@ struct rt_SIMD_REGS
 #define orrxx_st(RS, MG, DG)                                                \
         orrwx_st(W(RS), W(MG), W(DG))
 
+#define orrxx_mr(MG, DG, RS)                                                \
+        orrwx_mr(W(MG), W(DG), W(RS))
+
 
 #define orrxz_ri(RG, IS)                                                    \
         orrwz_ri(W(RG), W(IS))
@@ -1910,6 +1919,9 @@ struct rt_SIMD_REGS
 
 #define orrxz_st(RS, MG, DG)                                                \
         orrwz_st(W(RS), W(MG), W(DG))
+
+#define orrxz_mr(MG, DG, RS)                                                \
+        orrwz_mr(W(MG), W(DG), W(RS))
 
 /* orn (G = ~G | S)
  * set-flags: undefined (*x), yes (*z) */
@@ -1969,6 +1981,9 @@ struct rt_SIMD_REGS
 #define xorxx_st(RS, MG, DG)                                                \
         xorwx_st(W(RS), W(MG), W(DG))
 
+#define xorxx_mr(MG, DG, RS)                                                \
+        xorwx_mr(W(MG), W(DG), W(RS))
+
 
 #define xorxz_ri(RG, IS)                                                    \
         xorwz_ri(W(RG), W(IS))
@@ -1984,6 +1999,9 @@ struct rt_SIMD_REGS
 
 #define xorxz_st(RS, MG, DG)                                                \
         xorwz_st(W(RS), W(MG), W(DG))
+
+#define xorxz_mr(MG, DG, RS)                                                \
+        xorwz_mr(W(MG), W(DG), W(RS))
 
 /* not (G = ~G)
  * set-flags: no */
@@ -2028,6 +2046,9 @@ struct rt_SIMD_REGS
 #define addxx_st(RS, MG, DG)                                                \
         addwx_st(W(RS), W(MG), W(DG))
 
+#define addxx_mr(MG, DG, RS)                                                \
+        addwx_mr(W(MG), W(DG), W(RS))
+
 
 #define addxz_ri(RG, IS)                                                    \
         addwz_ri(W(RG), W(IS))
@@ -2043,6 +2064,9 @@ struct rt_SIMD_REGS
 
 #define addxz_st(RS, MG, DG)                                                \
         addwz_st(W(RS), W(MG), W(DG))
+
+#define addxz_mr(MG, DG, RS)                                                \
+        addwz_mr(W(MG), W(DG), W(RS))
 
 /* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */
@@ -2558,6 +2582,9 @@ struct rt_SIMD_REGS
 #define andxx_st(RS, MG, DG)                                                \
         andzx_st(W(RS), W(MG), W(DG))
 
+#define andxx_mr(MG, DG, RS)                                                \
+        andzx_mr(W(MG), W(DG), W(RS))
+
 
 #define andxz_ri(RG, IS)                                                    \
         andzz_ri(W(RG), W(IS))
@@ -2573,6 +2600,9 @@ struct rt_SIMD_REGS
 
 #define andxz_st(RS, MG, DG)                                                \
         andzz_st(W(RS), W(MG), W(DG))
+
+#define andxz_mr(MG, DG, RS)                                                \
+        andzz_mr(W(MG), W(DG), W(RS))
 
 /* ann (G = ~G & S)
  * set-flags: undefined (*x), yes (*z) */
@@ -2632,6 +2662,9 @@ struct rt_SIMD_REGS
 #define orrxx_st(RS, MG, DG)                                                \
         orrzx_st(W(RS), W(MG), W(DG))
 
+#define orrxx_mr(MG, DG, RS)                                                \
+        orrzx_mr(W(MG), W(DG), W(RS))
+
 
 #define orrxz_ri(RG, IS)                                                    \
         orrzz_ri(W(RG), W(IS))
@@ -2647,6 +2680,9 @@ struct rt_SIMD_REGS
 
 #define orrxz_st(RS, MG, DG)                                                \
         orrzz_st(W(RS), W(MG), W(DG))
+
+#define orrxz_mr(MG, DG, RS)                                                \
+        orrzz_mr(W(MG), W(DG), W(RS))
 
 /* orn (G = ~G | S)
  * set-flags: undefined (*x), yes (*z) */
@@ -2706,6 +2742,9 @@ struct rt_SIMD_REGS
 #define xorxx_st(RS, MG, DG)                                                \
         xorzx_st(W(RS), W(MG), W(DG))
 
+#define xorxx_mr(MG, DG, RS)                                                \
+        xorzx_mr(W(MG), W(DG), W(RS))
+
 
 #define xorxz_ri(RG, IS)                                                    \
         xorzz_ri(W(RG), W(IS))
@@ -2721,6 +2760,9 @@ struct rt_SIMD_REGS
 
 #define xorxz_st(RS, MG, DG)                                                \
         xorzz_st(W(RS), W(MG), W(DG))
+
+#define xorxz_mr(MG, DG, RS)                                                \
+        xorzz_mr(W(MG), W(DG), W(RS))
 
 /* not (G = ~G)
  * set-flags: no */
@@ -2765,6 +2807,9 @@ struct rt_SIMD_REGS
 #define addxx_st(RS, MG, DG)                                                \
         addzx_st(W(RS), W(MG), W(DG))
 
+#define addxx_mr(MG, DG, RS)                                                \
+        addzx_mr(W(MG), W(DG), W(RS))
+
 
 #define addxz_ri(RG, IS)                                                    \
         addzz_ri(W(RG), W(IS))
@@ -2780,6 +2825,9 @@ struct rt_SIMD_REGS
 
 #define addxz_st(RS, MG, DG)                                                \
         addzz_st(W(RS), W(MG), W(DG))
+
+#define addxz_mr(MG, DG, RS)                                                \
+        addzz_mr(W(MG), W(DG), W(RS))
 
 /* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */
@@ -3297,6 +3345,9 @@ struct rt_SIMD_REGS
 #define andyx_st(RS, MG, DG)                                                \
         andwx_st(W(RS), W(MG), W(DG))
 
+#define andyx_mr(MG, DG, RS)                                                \
+        andwx_mr(W(MG), W(DG), W(RS))
+
 
 #define andyz_ri(RG, IS)                                                    \
         andwz_ri(W(RG), W(IS))
@@ -3312,6 +3363,9 @@ struct rt_SIMD_REGS
 
 #define andyz_st(RS, MG, DG)                                                \
         andwz_st(W(RS), W(MG), W(DG))
+
+#define andyz_mr(MG, DG, RS)                                                \
+        andwz_mr(W(MG), W(DG), W(RS))
 
 /* ann (G = ~G & S)
  * set-flags: undefined (*x), yes (*z) */
@@ -3371,6 +3425,9 @@ struct rt_SIMD_REGS
 #define orryx_st(RS, MG, DG)                                                \
         orrwx_st(W(RS), W(MG), W(DG))
 
+#define orryx_mr(MG, DG, RS)                                                \
+        orrwx_mr(W(MG), W(DG), W(RS))
+
 
 #define orryz_ri(RG, IS)                                                    \
         orrwz_ri(W(RG), W(IS))
@@ -3386,6 +3443,9 @@ struct rt_SIMD_REGS
 
 #define orryz_st(RS, MG, DG)                                                \
         orrwz_st(W(RS), W(MG), W(DG))
+
+#define orryz_mr(MG, DG, RS)                                                \
+        orrwz_mr(W(MG), W(DG), W(RS))
 
 /* orn (G = ~G | S)
  * set-flags: undefined (*x), yes (*z) */
@@ -3445,6 +3505,9 @@ struct rt_SIMD_REGS
 #define xoryx_st(RS, MG, DG)                                                \
         xorwx_st(W(RS), W(MG), W(DG))
 
+#define xoryx_mr(MG, DG, RS)                                                \
+        xorwx_mr(W(MG), W(DG), W(RS))
+
 
 #define xoryz_ri(RG, IS)                                                    \
         xorwz_ri(W(RG), W(IS))
@@ -3460,6 +3523,9 @@ struct rt_SIMD_REGS
 
 #define xoryz_st(RS, MG, DG)                                                \
         xorwz_st(W(RS), W(MG), W(DG))
+
+#define xoryz_mr(MG, DG, RS)                                                \
+        xorwz_mr(W(MG), W(DG), W(RS))
 
 /* not (G = ~G)
  * set-flags: no */
@@ -3504,6 +3570,9 @@ struct rt_SIMD_REGS
 #define addyx_st(RS, MG, DG)                                                \
         addwx_st(W(RS), W(MG), W(DG))
 
+#define addyx_mr(MG, DG, RS)                                                \
+        addwx_mr(W(MG), W(DG), W(RS))
+
 
 #define addyz_ri(RG, IS)                                                    \
         addwz_ri(W(RG), W(IS))
@@ -3519,6 +3588,9 @@ struct rt_SIMD_REGS
 
 #define addyz_st(RS, MG, DG)                                                \
         addwz_st(W(RS), W(MG), W(DG))
+
+#define addyz_mr(MG, DG, RS)                                                \
+        addwz_mr(W(MG), W(DG), W(RS))
 
 /* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */
@@ -3992,6 +4064,9 @@ struct rt_SIMD_REGS
 #define andyx_st(RS, MG, DG)                                                \
         andzx_st(W(RS), W(MG), W(DG))
 
+#define andyx_mr(MG, DG, RS)                                                \
+        andzx_mr(W(MG), W(DG), W(RS))
+
 
 #define andyz_ri(RG, IS)                                                    \
         andzz_ri(W(RG), W(IS))
@@ -4007,6 +4082,9 @@ struct rt_SIMD_REGS
 
 #define andyz_st(RS, MG, DG)                                                \
         andzz_st(W(RS), W(MG), W(DG))
+
+#define andyz_mr(MG, DG, RS)                                                \
+        andzz_mr(W(MG), W(DG), W(RS))
 
 /* ann (G = ~G & S)
  * set-flags: undefined (*x), yes (*z) */
@@ -4066,6 +4144,9 @@ struct rt_SIMD_REGS
 #define orryx_st(RS, MG, DG)                                                \
         orrzx_st(W(RS), W(MG), W(DG))
 
+#define orryx_mr(MG, DG, RS)                                                \
+        orrzx_mr(W(MG), W(DG), W(RS))
+
 
 #define orryz_ri(RG, IS)                                                    \
         orrzz_ri(W(RG), W(IS))
@@ -4081,6 +4162,9 @@ struct rt_SIMD_REGS
 
 #define orryz_st(RS, MG, DG)                                                \
         orrzz_st(W(RS), W(MG), W(DG))
+
+#define orryz_mr(MG, DG, RS)                                                \
+        orrzz_mr(W(MG), W(DG), W(RS))
 
 /* orn (G = ~G | S)
  * set-flags: undefined (*x), yes (*z) */
@@ -4140,6 +4224,9 @@ struct rt_SIMD_REGS
 #define xoryx_st(RS, MG, DG)                                                \
         xorzx_st(W(RS), W(MG), W(DG))
 
+#define xoryx_mr(MG, DG, RS)                                                \
+        xorzx_mr(W(MG), W(DG), W(RS))
+
 
 #define xoryz_ri(RG, IS)                                                    \
         xorzz_ri(W(RG), W(IS))
@@ -4155,6 +4242,9 @@ struct rt_SIMD_REGS
 
 #define xoryz_st(RS, MG, DG)                                                \
         xorzz_st(W(RS), W(MG), W(DG))
+
+#define xoryz_mr(MG, DG, RS)                                                \
+        xorzz_mr(W(MG), W(DG), W(RS))
 
 /* not (G = ~G)
  * set-flags: no */
@@ -4199,6 +4289,9 @@ struct rt_SIMD_REGS
 #define addyx_st(RS, MG, DG)                                                \
         addzx_st(W(RS), W(MG), W(DG))
 
+#define addyx_mr(MG, DG, RS)                                                \
+        addzx_mr(W(MG), W(DG), W(RS))
+
 
 #define addyz_ri(RG, IS)                                                    \
         addzz_ri(W(RG), W(IS))
@@ -4214,6 +4307,9 @@ struct rt_SIMD_REGS
 
 #define addyz_st(RS, MG, DG)                                                \
         addzz_st(W(RS), W(MG), W(DG))
+
+#define addyz_mr(MG, DG, RS)                                                \
+        addzz_mr(W(MG), W(DG), W(RS))
 
 /* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */

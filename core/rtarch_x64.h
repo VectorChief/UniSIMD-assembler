@@ -201,6 +201,9 @@
 #define andzx_st(RS, MG, DG)                                                \
         andzz_st(W(RS), W(MG), W(DG))
 
+#define andzx_mr(MG, DG, RS)                                                \
+        andzx_st(W(RS), W(MG), W(DG))
+
 
 #define andzz_ri(RG, IS)                                                    \
         REW(0,       RXB(RG)) EMITB(0x81 | TYP(IS))                         \
@@ -225,6 +228,9 @@
     ADR REW(RXB(RS), RXB(MG)) EMITB(0x21)                                   \
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
+
+#define andzz_mr(MG, DG, RS)                                                \
+        andzz_st(W(RS), W(MG), W(DG))
 
 /* ann (G = ~G & S)
  * set-flags: undefined (*x), yes (*z) */
@@ -305,6 +311,9 @@
 #define orrzx_st(RS, MG, DG)                                                \
         orrzz_st(W(RS), W(MG), W(DG))
 
+#define orrzx_mr(MG, DG, RS)                                                \
+        orrzx_st(W(RS), W(MG), W(DG))
+
 
 #define orrzz_ri(RG, IS)                                                    \
         REW(0,       RXB(RG)) EMITB(0x81 | TYP(IS))                         \
@@ -329,6 +338,9 @@
     ADR REW(RXB(RS), RXB(MG)) EMITB(0x09)                                   \
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
+
+#define orrzz_mr(MG, DG, RS)                                                \
+        orrzz_st(W(RS), W(MG), W(DG))
 
 /* orn (G = ~G | S)
  * set-flags: undefined (*x), yes (*z) */
@@ -393,6 +405,9 @@
 #define xorzx_st(RS, MG, DG)                                                \
         xorzz_st(W(RS), W(MG), W(DG))
 
+#define xorzx_mr(MG, DG, RS)                                                \
+        xorzx_st(W(RS), W(MG), W(DG))
+
 
 #define xorzz_ri(RG, IS)                                                    \
         REW(0,       RXB(RG)) EMITB(0x81 | TYP(IS))                         \
@@ -417,6 +432,9 @@
     ADR REW(RXB(RS), RXB(MG)) EMITB(0x31)                                   \
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
+
+#define xorzz_mr(MG, DG, RS)                                                \
+        xorzz_st(W(RS), W(MG), W(DG))
 
 /* not (G = ~G)
  * set-flags: no */
@@ -467,6 +485,9 @@
 #define addzx_st(RS, MG, DG)                                                \
         addzz_st(W(RS), W(MG), W(DG))
 
+#define addzx_mr(MG, DG, RS)                                                \
+        addzx_st(W(RS), W(MG), W(DG))
+
 
 #define addzz_ri(RG, IS)                                                    \
         REW(0,       RXB(RG)) EMITB(0x81 | TYP(IS))                         \
@@ -491,6 +512,9 @@
     ADR REW(RXB(RS), RXB(MG)) EMITB(0x01)                                   \
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
+
+#define addzz_mr(MG, DG, RS)                                                \
+        addzz_st(W(RS), W(MG), W(DG))
 
 /* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */
