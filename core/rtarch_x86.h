@@ -88,6 +88,7 @@
  * IS - immediate value (is used as a second or first source)
  * IT - immediate value (is used as a third or second source)
  *
+ * Adjustable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtbase.h.
  * Mixing of 64/32-bit fields in backend structures may lead to misalignment
  * of 64-bit fields to 4-byte boundary, which is not supported on some targets.
  * Place fields carefully to ensure natural alignment for all data types.
@@ -119,7 +120,7 @@
  * better orthogonality with operands size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
- * of higher performance on certain targets use combined-compare-jump (cmj).
+ * of higher performance on MIPS and Power use combined-compare-jump (cmj).
  * Not all canonical forms of BASE instructions have efficient implementation.
  * For example, some forms of shifts and division use stack ops on x86 targets,
  * while standalone remainder operations can only be done natively on MIPS.
@@ -248,16 +249,6 @@
 
 #define movwx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
         movwx_mi(W(MD), W(DD), W(IS))
-
-
-#define adrxx_ld(RD, MS, DS)                                                \
-        EMITB(0x8D)                                                         \
-        MRM(REG(RD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-     /* label_ld(lb) is defined in rtarch.h file, loads label to Reax */
-
-     /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
 
 /* and (G = G & S)
  * set-flags: undefined (*x), yes (*z) */
@@ -1167,7 +1158,7 @@
 #define remwn_xm(MS, DS)    /* to be placed immediately after divwn_xm */   \
                                      /* to produce remainder Redx<-rem */
 
-/* arj
+/* arj (G = G op S, if cc G then jump lb)
  * set-flags: undefined
  * refer to individual instruction descriptions
  * to stay within special register limitations */
@@ -1232,7 +1223,7 @@
 #define CMJ(cc, lb)                                                         \
         cc(lb)
 
-/* cmj
+/* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */
 
 #define EQ_x    jeqxx_lb
@@ -1274,7 +1265,7 @@
         cmpwx_mr(W(MS), W(DS), W(RT))                                       \
         CMJ(cc, lb)
 
-/* cmp
+/* cmp (flags = S ? T)
  * set-flags: yes */
 
 #define cmpwx_ri(RS, IT)                                                    \
@@ -1301,9 +1292,65 @@
         MRM(REG(RT), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/***************** pointer-sized instructions for 32-bit mode *****************/
+/* ver
+ * set-flags: no */
 
-/* jmp
+#define cpuid_xx() /* destroys Reax, Recx, Rebx, Redx, reads Reax, Recx */  \
+        EMITB(0x0F) EMITB(0xA2)     /* not portable, do not use outside */
+
+#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
+        /* request cpuid:eax=1 */                                           \
+        movwx_ri(Reax, IB(1))                                               \
+        cpuid_xx()                                                          \
+        shrwx_ri(Redx, IB(25))  /* <- SSE1, SSE2 to bit0, bit1 */           \
+        andwx_ri(Redx, IB(0x03))                                            \
+        movwx_rr(Resi, Redx)                                                \
+        movwx_rr(Redx, Recx)                                                \
+        shrwx_ri(Redx, IB(17))  /* <- SSE4 to bit2 */                       \
+        andwx_ri(Redx, IB(0x04))                                            \
+        shrwx_ri(Recx, IB(20))  /* <- AVX1 to bit8 */                       \
+        andwx_ri(Recx, IH(0x0100))                                          \
+        orrwx_rr(Resi, Redx)                                                \
+        orrwx_rr(Resi, Recx)                                                \
+        /* request cpuid:eax=0 to test input value eax=7 */                 \
+        movwx_ri(Reax, IB(0))                                               \
+        cpuid_xx()                                                          \
+        subwx_ri(Reax, IB(7))                                               \
+        shrwn_ri(Reax, IB(31))                                              \
+        movwx_rr(Redi, Reax)                                                \
+        notwx_rx(Redi)                                                      \
+        /* request cpuid:eax=7:ecx=0 */                                     \
+        movwx_ri(Reax, IB(7))                                               \
+        movwx_ri(Recx, IB(0))                                               \
+        cpuid_xx()                                                          \
+        shlwx_ri(Rebx, IB(4))   /* <- AVX2 to bit9 */                       \
+        andwx_ri(Rebx, IH(0x0200))                                          \
+        andwx_rr(Rebx, Redi)                                                \
+        orrwx_rr(Resi, Rebx)                                                \
+        movwx_st(Resi, Mebp, inf_VER)
+
+/************************* address-sized instructions *************************/
+
+/* adr (D = adr S)
+ * set-flags: no */
+
+#define adrxx_ld(RD, MS, DS)                                                \
+        EMITB(0x8D)                                                         \
+        MRM(REG(RD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+     /* adrpx_ld(RD, MS, DS) in 32-bit rtarch_***_***.h files, SIMD-aligned */
+
+/************************* pointer-sized instructions *************************/
+
+/* label (D = Reax = adr lb)
+ * set-flags: no */
+
+     /* label_ld(lb) is defined in rtarch.h file, loads label to Reax */
+
+     /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
+
+/* jmp (if unconditional jump S/lb, else if cc flags then jump lb)
  * set-flags: no
  * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
  * based on minimum natively-encoded offset across supported targets (u/c)
@@ -1361,7 +1408,9 @@
 #define LBL(lb)                                          /* code label */   \
         ASM_BEG ASM_OP0(lb:) ASM_END
 
-/* stack
+/************************* register-size instructions *************************/
+
+/* stack (push stack = S, D = pop stack)
  * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & Power)
  * adjust stack pointer with 4-byte (32-bit) steps on legacy 32-bit targets */
 
@@ -1378,43 +1427,6 @@
 
 #define stack_la()   /* load all [Redi - Reax], 8 regs in total */          \
         EMITB(0x61)
-
-/* ver
- * set-flags: no */
-
-#define cpuid_xx() /* destroys Reax, Recx, Rebx, Redx, reads Reax, Recx */  \
-        EMITB(0x0F) EMITB(0xA2)     /* not portable, do not use outside */
-
-#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
-        /* request cpuid:eax=1 */                                           \
-        movwx_ri(Reax, IB(1))                                               \
-        cpuid_xx()                                                          \
-        shrwx_ri(Redx, IB(25))  /* <- SSE1, SSE2 to bit0, bit1 */           \
-        andwx_ri(Redx, IB(0x03))                                            \
-        movwx_rr(Resi, Redx)                                                \
-        movwx_rr(Redx, Recx)                                                \
-        shrwx_ri(Redx, IB(17))  /* <- SSE4 to bit2 */                       \
-        andwx_ri(Redx, IB(0x04))                                            \
-        shrwx_ri(Recx, IB(20))  /* <- AVX1 to bit8 */                       \
-        andwx_ri(Recx, IH(0x0100))                                          \
-        orrwx_rr(Resi, Redx)                                                \
-        orrwx_rr(Resi, Recx)                                                \
-        /* request cpuid:eax=0 to test input value eax=7 */                 \
-        movwx_ri(Reax, IB(0))                                               \
-        cpuid_xx()                                                          \
-        subwx_ri(Reax, IB(7))                                               \
-        shrwn_ri(Reax, IB(31))                                              \
-        movwx_rr(Redi, Reax)                                                \
-        notwx_rx(Redi)                                                      \
-        /* request cpuid:eax=7:ecx=0 */                                     \
-        movwx_ri(Reax, IB(7))                                               \
-        movwx_ri(Recx, IB(0))                                               \
-        cpuid_xx()                                                          \
-        shlwx_ri(Rebx, IB(4))   /* <- AVX2 to bit9 */                       \
-        andwx_ri(Rebx, IH(0x0200))                                          \
-        andwx_rr(Rebx, Redi)                                                \
-        orrwx_rr(Resi, Rebx)                                                \
-        movwx_st(Resi, Mebp, inf_VER)
 
 #endif /* RT_RTARCH_X86_H */
 

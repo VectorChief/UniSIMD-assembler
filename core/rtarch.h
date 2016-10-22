@@ -137,6 +137,7 @@
  *
  * cmdk*_** - 128b-size args, BASE ISA (reserved for beyond 64-bit computing)
  *
+ * Adjustable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtbase.h.
  * Mixing of 64/32-bit fields in backend structures may lead to misalignment
  * of 64-bit fields to 4-byte boundary, which is not supported on some targets.
  * Place fields carefully to ensure natural alignment for all data types.
@@ -168,7 +169,7 @@
  * better orthogonality with operands size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
- * of higher performance on certain targets use combined-compare-jump (cmj).
+ * of higher performance on MIPS and Power use combined-compare-jump (cmj).
  * Not all canonical forms of BASE instructions have efficient implementation.
  * For example, some forms of shifts and division use stack ops on x86 targets,
  * while standalone remainder operations can only be done natively on MIPS.
@@ -181,9 +182,9 @@
  * However, as current major ISAs lack the ability to do sub-word fp-compute,
  * these corresponding subsets cannot be considered valid targets for SPMD.
  *
- * Fused-multiply-add (FMA3), scalar SIMD subset, horizontal SIMD reductions,
- * constructive 3-operand syntax (potentially with zeroing/merging predicates)
- * are being considered as extensions to current SPMD-driven vertical SIMD ISA.
+ * Scalar SIMD subset, horizontal SIMD reductions, constructive 3/4-op syntax
+ * (potentially with zeroing/merging predicates) are being considered as future
+ * extensions to current 2-op (dest-as-1st-src) SPMD-driven vertical SIMD ISA.
  */
 
 /******************************************************************************/

@@ -88,6 +88,7 @@
  * IS - immediate value (is used as a second or first source)
  * IT - immediate value (is used as a third or second source)
  *
+ * Adjustable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtbase.h.
  * Mixing of 64/32-bit fields in backend structures may lead to misalignment
  * of 64-bit fields to 4-byte boundary, which is not supported on some targets.
  * Place fields carefully to ensure natural alignment for all data types.
@@ -119,7 +120,7 @@
  * better orthogonality with operands size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
- * of higher performance on certain targets use combined-compare-jump (cmj).
+ * of higher performance on MIPS and Power use combined-compare-jump (cmj).
  * Not all canonical forms of BASE instructions have efficient implementation.
  * For example, some forms of shifts and division use stack ops on x86 targets,
  * while standalone remainder operations can only be done natively on MIPS.
@@ -375,15 +376,6 @@
 
 #define movwx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
         movwx_mi(W(MD), W(DD), W(IS))
-
-
-#define adrxx_ld(RD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C3(DS), EMPTY2)   \
-        EMITW(0x7C000214 | MRM(REG(RD), MOD(MS), TDxx))
-
-     /* label_ld(lb) is defined in rtarch.h file, loads label to Reax */
-
-     /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
 
 /* and (G = G & S)
  * set-flags: undefined (*x), yes (*z) */
@@ -1530,7 +1522,7 @@
         EMITW(0x7C0001D6 | MRM(TMxx,    Teax,    TMxx))                     \
         EMITW(0x7C000050 | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
 
-/* arj
+/* arj (G = G op S, if cc G then jump lb)
  * set-flags: undefined
  * refer to individual instruction descriptions
  * to stay within special register limitations */
@@ -1581,21 +1573,7 @@
 #define arjwx_mr(MG, DG, RS, op, cc, lb)                                    \
         arjwx_st(W(RS), W(MG), W(DG), op, cc, lb)
 
-/* internal definitions for combined-arithmetic-jump (arj) */
-
-#define AR1(P1, op, sg)                                                     \
-        op##sg(W(P1))
-
-#define AR2(P1, P2, op, sg)                                                 \
-        op##sg(W(P1), W(P2))
-
-#define AR3(P1, P2, P3, op, sg)                                             \
-        op##sg(W(P1), W(P2), W(P3))
-
-#define CMJ(cc, lb)                                                         \
-        cc(lb)
-
-/* cmj
+/* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */
 
 #define EQ_x    J0
@@ -1637,6 +1615,218 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         CWR(cc, %%r24,   MOD(RT), lb)
+
+#if   defined (RT_P32)
+
+/* cmp (flags = S ? T)
+ * set-flags: yes */
+
+#define cmpwx_ri(RS, IT)                                                    \
+        AUW(EMPTY,    VAL(IT), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IT))   \
+        EMITW(0x7C000378 | MSM(TLxx,    REG(RS), REG(RS)))
+
+#define cmpwx_mi(MS, DS, IT)                                                \
+        AUW(SIB(MS),  VAL(IT), TRxx,    MOD(MS), VAL(DS), C1(DS), G3(IT))   \
+        EMITW(0x80000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define cmpwx_rr(RS, RT)                                                    \
+        EMITW(0x7C000378 | MSM(TRxx,    REG(RT), REG(RT)))                  \
+        EMITW(0x7C000378 | MSM(TLxx,    REG(RS), REG(RS)))
+
+#define cmpwx_rm(RS, MT, DT)                                                \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0x80000000 | MDM(TRxx,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMITW(0x7C000378 | MSM(TLxx,    REG(RS), REG(RS)))
+
+#define cmpwx_mr(MS, DS, RT)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x80000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x7C000378 | MSM(TRxx,    REG(RT), REG(RT)))
+
+#endif /* defined (RT_P32) */
+
+/* ver
+ * set-flags: no */
+
+#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
+        movwx_mi(Mebp, inf_VER, IB(7)) /* <- VMX, VSX, VSX2 to bit0, 1, 2 */
+
+/************************* address-sized instructions *************************/
+
+/* adr (D = adr S)
+ * set-flags: no */
+
+#define adrxx_ld(RD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C3(DS), EMPTY2)   \
+        EMITW(0x7C000214 | MRM(REG(RD), MOD(MS), TDxx))
+
+     /* adrpx_ld(RD, MS, DS) in 32-bit rtarch_***_***.h files, SIMD-aligned */
+
+/************************* pointer-sized instructions *************************/
+
+/* label (D = Reax = adr lb)
+ * set-flags: no */
+
+     /* label_ld(lb) is defined in rtarch.h file, loads label to Reax */
+
+     /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
+
+#if   defined (RT_P32)
+
+/* jmp (if unconditional jump S/lb, else if cc flags then jump lb)
+ * set-flags: no
+ * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
+ * based on minimum natively-encoded offset across supported targets (u/c)
+ * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
+ * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
+
+#define jmpxx_xr(RS)           /* register-targeted unconditional jump */   \
+        EMITW(0x7C0003A6 | MRM(REG(RS), 0x00,    0x09)) /* ctr <- reg */    \
+        EMITW(0x4C000420 | MTM(0x0C,    0x0A,    0x00)) /* beqctr cr2 */
+
+#define jmpxx_xm(MS, DS)         /* memory-targeted unconditional jump */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x80000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x7C0003A6 | MRM(TMxx,    0x00,    0x09)) /* ctr <- r24 */    \
+        EMITW(0x4C000420 | MTM(0x0C,    0x0A,    0x00)) /* beqctr cr2 */
+
+#define jmpxx_lb(lb)              /* label-targeted unconditional jump */   \
+        ASM_BEG ASM_OP1(b, lb) ASM_END
+
+#define jezxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
+        ASM_BEG ASM_OP1(beq,   lb) ASM_END
+
+#define jnzxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
+        ASM_BEG ASM_OP1(bne,   lb) ASM_END
+
+#define jeqxx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(cmplw, %%r24, %%r25) ASM_END                        \
+        ASM_BEG ASM_OP1(beq,   lb) ASM_END
+
+#define jnexx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(cmplw, %%r24, %%r25) ASM_END                        \
+        ASM_BEG ASM_OP1(bne,   lb) ASM_END
+
+#define jltxx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(cmplw, %%r24, %%r25) ASM_END                        \
+        ASM_BEG ASM_OP1(blt,   lb) ASM_END
+
+#define jlexx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(cmplw, %%r24, %%r25) ASM_END                        \
+        ASM_BEG ASM_OP1(ble,   lb) ASM_END
+
+#define jgtxx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(cmplw, %%r24, %%r25) ASM_END                        \
+        ASM_BEG ASM_OP1(bgt,   lb) ASM_END
+
+#define jgexx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(cmplw, %%r24, %%r25) ASM_END                        \
+        ASM_BEG ASM_OP1(bge,   lb) ASM_END
+
+#define jltxn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(cmpw,  %%r24, %%r25) ASM_END                        \
+        ASM_BEG ASM_OP1(blt,   lb) ASM_END
+
+#define jlexn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(cmpw,  %%r24, %%r25) ASM_END                        \
+        ASM_BEG ASM_OP1(ble,   lb) ASM_END
+
+#define jgtxn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(cmpw,  %%r24, %%r25) ASM_END                        \
+        ASM_BEG ASM_OP1(bgt,   lb) ASM_END
+
+#define jgexn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP2(cmpw,  %%r24, %%r25) ASM_END                        \
+        ASM_BEG ASM_OP1(bge,   lb) ASM_END
+
+#define LBL(lb)                                          /* code label */   \
+        ASM_BEG ASM_OP0(lb:) ASM_END
+
+/************************* register-size instructions *************************/
+
+/* stack (push stack = S, D = pop stack)
+ * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & Power)
+ * adjust stack pointer with 8-byte (64-bit) steps on all current targets */
+
+#define stack_st(RS)                                                        \
+        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x08 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(REG(RS), SPxx,    0x00))
+
+#define stack_ld(RD)                                                        \
+        EMITW(0x80000000 | MTM(REG(RD), SPxx,    0x00))                     \
+        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x08 & 0xFFFF))
+
+#define stack_sa()   /* save all, [Reax - RegE] + 9 temps, 23 regs total */ \
+        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x68 & 0xFFFF))  \
+        EMITW(0xD8000000 | MTM(Tff1,    SPxx,    0x00) | (+0x00 & 0xFFFF))  \
+        EMITW(0xD8000000 | MTM(Tff2,    SPxx,    0x00) | (+0x08 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(Teax,    SPxx,    0x00) | (+0x10 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(Tecx,    SPxx,    0x00) | (+0x14 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(Tedx,    SPxx,    0x00) | (+0x18 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(Tebx,    SPxx,    0x00) | (+0x1C & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(Tebp,    SPxx,    0x00) | (+0x20 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(Tesi,    SPxx,    0x00) | (+0x24 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(Tedi,    SPxx,    0x00) | (+0x28 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(Teg8,    SPxx,    0x00) | (+0x2C & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(Teg9,    SPxx,    0x00) | (+0x30 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(TegA,    SPxx,    0x00) | (+0x34 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(TegB,    SPxx,    0x00) | (+0x38 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(TegC,    SPxx,    0x00) | (+0x3C & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(TegD,    SPxx,    0x00) | (+0x40 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(TegE,    SPxx,    0x00) | (+0x44 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(TMxx,    SPxx,    0x00) | (+0x48 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(TIxx,    SPxx,    0x00) | (+0x4C & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(TDxx,    SPxx,    0x00) | (+0x50 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(TPxx,    SPxx,    0x00) | (+0x54 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(TCxx,    SPxx,    0x00) | (+0x58 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(TVxx,    SPxx,    0x00) | (+0x5C & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(TZxx,    SPxx,    0x00) | (+0x60 & 0xFFFF))
+
+#define stack_la()   /* load all, 9 temps + [RegE - Reax], 23 regs total */ \
+        EMITW(0x80000000 | MTM(TZxx,    SPxx,    0x00) | (+0x60 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(TVxx,    SPxx,    0x00) | (+0x5C & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(TCxx,    SPxx,    0x00) | (+0x58 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(TPxx,    SPxx,    0x00) | (+0x54 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(TDxx,    SPxx,    0x00) | (+0x50 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(TIxx,    SPxx,    0x00) | (+0x4C & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(TMxx,    SPxx,    0x00) | (+0x48 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(TegE,    SPxx,    0x00) | (+0x44 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(TegD,    SPxx,    0x00) | (+0x40 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(TegC,    SPxx,    0x00) | (+0x3C & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(TegB,    SPxx,    0x00) | (+0x38 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(TegA,    SPxx,    0x00) | (+0x34 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(Teg9,    SPxx,    0x00) | (+0x30 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(Teg8,    SPxx,    0x00) | (+0x2C & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(Tedi,    SPxx,    0x00) | (+0x28 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(Tesi,    SPxx,    0x00) | (+0x24 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(Tebp,    SPxx,    0x00) | (+0x20 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(Tebx,    SPxx,    0x00) | (+0x1C & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(Tedx,    SPxx,    0x00) | (+0x18 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(Tecx,    SPxx,    0x00) | (+0x14 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(Teax,    SPxx,    0x00) | (+0x10 & 0xFFFF))  \
+        EMITW(0xC8000000 | MTM(Tff2,    SPxx,    0x00) | (+0x08 & 0xFFFF))  \
+        EMITW(0xC8000000 | MTM(Tff1,    SPxx,    0x00) | (+0x00 & 0xFFFF))  \
+        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x68 & 0xFFFF))
+
+#endif /* defined (RT_P32) */
+
+/******************************************************************************/
+/********************************   INTERNAL   ********************************/
+/******************************************************************************/
+
+/* internal definitions for combined-arithmetic-jump (arj) */
+
+#define AR1(P1, op, sg)                                                     \
+        op##sg(W(P1))
+
+#define AR2(P1, P2, op, sg)                                                 \
+        op##sg(W(P1), W(P2))
+
+#define AR3(P1, P2, P3, op, sg)                                             \
+        op##sg(W(P1), W(P2), W(P3))
+
+#define CMJ(cc, lb)                                                         \
+        cc(lb)
 
 /* internal definitions for combined-compare-jump (cmj) */
 
@@ -1746,176 +1936,6 @@
 
 #define CWR(cc, r1, r2, lb)                                                 \
         RW##cc(r1, r2, lb)
-
-#if   defined (RT_P32)
-
-/* cmp
- * set-flags: yes */
-
-#define cmpwx_ri(RS, IT)                                                    \
-        AUW(EMPTY,    VAL(IT), TRxx,    EMPTY,   EMPTY,   EMPTY2, G3(IT))   \
-        EMITW(0x7C000378 | MSM(TLxx,    REG(RS), REG(RS)))
-
-#define cmpwx_mi(MS, DS, IT)                                                \
-        AUW(SIB(MS),  VAL(IT), TRxx,    MOD(MS), VAL(DS), C1(DS), G3(IT))   \
-        EMITW(0x80000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))
-
-#define cmpwx_rr(RS, RT)                                                    \
-        EMITW(0x7C000378 | MSM(TRxx,    REG(RT), REG(RT)))                  \
-        EMITW(0x7C000378 | MSM(TLxx,    REG(RS), REG(RS)))
-
-#define cmpwx_rm(RS, MT, DT)                                                \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
-        EMITW(0x80000000 | MDM(TRxx,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
-        EMITW(0x7C000378 | MSM(TLxx,    REG(RS), REG(RS)))
-
-#define cmpwx_mr(MS, DS, RT)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0x80000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x7C000378 | MSM(TRxx,    REG(RT), REG(RT)))
-
-/***************** pointer-sized instructions for hybrid mode *****************/
-
-/* jmp
- * set-flags: no
- * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
- * based on minimum natively-encoded offset across supported targets (u/c)
- * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
- * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
-
-#define jmpxx_xr(RS)           /* register-targeted unconditional jump */   \
-        EMITW(0x7C0003A6 | MRM(REG(RS), 0x00,    0x09)) /* ctr <- reg */    \
-        EMITW(0x4C000420 | MTM(0x0C,    0x0A,    0x00)) /* beqctr cr2 */
-
-#define jmpxx_xm(MS, DS)         /* memory-targeted unconditional jump */   \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0x80000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x7C0003A6 | MRM(TMxx,    0x00,    0x09)) /* ctr <- r24 */    \
-        EMITW(0x4C000420 | MTM(0x0C,    0x0A,    0x00)) /* beqctr cr2 */
-
-#define jmpxx_lb(lb)              /* label-targeted unconditional jump */   \
-        ASM_BEG ASM_OP1(b, lb) ASM_END
-
-#define jezxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
-        ASM_BEG ASM_OP1(beq,   lb) ASM_END
-
-#define jnzxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
-        ASM_BEG ASM_OP1(bne,   lb) ASM_END
-
-#define jeqxx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(cmplw, %%r24, %%r25) ASM_END                        \
-        ASM_BEG ASM_OP1(beq,   lb) ASM_END
-
-#define jnexx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(cmplw, %%r24, %%r25) ASM_END                        \
-        ASM_BEG ASM_OP1(bne,   lb) ASM_END
-
-#define jltxx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(cmplw, %%r24, %%r25) ASM_END                        \
-        ASM_BEG ASM_OP1(blt,   lb) ASM_END
-
-#define jlexx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(cmplw, %%r24, %%r25) ASM_END                        \
-        ASM_BEG ASM_OP1(ble,   lb) ASM_END
-
-#define jgtxx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(cmplw, %%r24, %%r25) ASM_END                        \
-        ASM_BEG ASM_OP1(bgt,   lb) ASM_END
-
-#define jgexx_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(cmplw, %%r24, %%r25) ASM_END                        \
-        ASM_BEG ASM_OP1(bge,   lb) ASM_END
-
-#define jltxn_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(cmpw,  %%r24, %%r25) ASM_END                        \
-        ASM_BEG ASM_OP1(blt,   lb) ASM_END
-
-#define jlexn_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(cmpw,  %%r24, %%r25) ASM_END                        \
-        ASM_BEG ASM_OP1(ble,   lb) ASM_END
-
-#define jgtxn_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(cmpw,  %%r24, %%r25) ASM_END                        \
-        ASM_BEG ASM_OP1(bgt,   lb) ASM_END
-
-#define jgexn_lb(lb)                                /* compare -> jump */   \
-        ASM_BEG ASM_OP2(cmpw,  %%r24, %%r25) ASM_END                        \
-        ASM_BEG ASM_OP1(bge,   lb) ASM_END
-
-#define LBL(lb)                                          /* code label */   \
-        ASM_BEG ASM_OP0(lb:) ASM_END
-
-/* stack
- * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & Power)
- * adjust stack pointer with 8-byte (64-bit) steps on all current targets */
-
-#define stack_st(RS)                                                        \
-        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x08 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(REG(RS), SPxx,    0x00))
-
-#define stack_ld(RD)                                                        \
-        EMITW(0x80000000 | MTM(REG(RD), SPxx,    0x00))                     \
-        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x08 & 0xFFFF))
-
-#define stack_sa()   /* save all, [Reax - RegE] + 9 temps, 23 regs total */ \
-        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x68 & 0xFFFF))  \
-        EMITW(0xD8000000 | MTM(Tff1,    SPxx,    0x00) | (+0x00 & 0xFFFF))  \
-        EMITW(0xD8000000 | MTM(Tff2,    SPxx,    0x00) | (+0x08 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(Teax,    SPxx,    0x00) | (+0x10 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(Tecx,    SPxx,    0x00) | (+0x14 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(Tedx,    SPxx,    0x00) | (+0x18 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(Tebx,    SPxx,    0x00) | (+0x1C & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(Tebp,    SPxx,    0x00) | (+0x20 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(Tesi,    SPxx,    0x00) | (+0x24 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(Tedi,    SPxx,    0x00) | (+0x28 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(Teg8,    SPxx,    0x00) | (+0x2C & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(Teg9,    SPxx,    0x00) | (+0x30 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(TegA,    SPxx,    0x00) | (+0x34 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(TegB,    SPxx,    0x00) | (+0x38 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(TegC,    SPxx,    0x00) | (+0x3C & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(TegD,    SPxx,    0x00) | (+0x40 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(TegE,    SPxx,    0x00) | (+0x44 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(TMxx,    SPxx,    0x00) | (+0x48 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(TIxx,    SPxx,    0x00) | (+0x4C & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(TDxx,    SPxx,    0x00) | (+0x50 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(TPxx,    SPxx,    0x00) | (+0x54 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(TCxx,    SPxx,    0x00) | (+0x58 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(TVxx,    SPxx,    0x00) | (+0x5C & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(TZxx,    SPxx,    0x00) | (+0x60 & 0xFFFF))
-
-#define stack_la()   /* load all, 9 temps + [RegE - Reax], 23 regs total */ \
-        EMITW(0x80000000 | MTM(TZxx,    SPxx,    0x00) | (+0x60 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(TVxx,    SPxx,    0x00) | (+0x5C & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(TCxx,    SPxx,    0x00) | (+0x58 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(TPxx,    SPxx,    0x00) | (+0x54 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(TDxx,    SPxx,    0x00) | (+0x50 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(TIxx,    SPxx,    0x00) | (+0x4C & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(TMxx,    SPxx,    0x00) | (+0x48 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(TegE,    SPxx,    0x00) | (+0x44 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(TegD,    SPxx,    0x00) | (+0x40 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(TegC,    SPxx,    0x00) | (+0x3C & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(TegB,    SPxx,    0x00) | (+0x38 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(TegA,    SPxx,    0x00) | (+0x34 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(Teg9,    SPxx,    0x00) | (+0x30 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(Teg8,    SPxx,    0x00) | (+0x2C & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(Tedi,    SPxx,    0x00) | (+0x28 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(Tesi,    SPxx,    0x00) | (+0x24 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(Tebp,    SPxx,    0x00) | (+0x20 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(Tebx,    SPxx,    0x00) | (+0x1C & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(Tedx,    SPxx,    0x00) | (+0x18 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(Tecx,    SPxx,    0x00) | (+0x14 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(Teax,    SPxx,    0x00) | (+0x10 & 0xFFFF))  \
-        EMITW(0xC8000000 | MTM(Tff2,    SPxx,    0x00) | (+0x08 & 0xFFFF))  \
-        EMITW(0xC8000000 | MTM(Tff1,    SPxx,    0x00) | (+0x00 & 0xFFFF))  \
-        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x68 & 0xFFFF))
-
-#endif  /* defined (RT_P32) */
-
-/* ver
- * set-flags: no */
-
-#define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi (in x86)*/\
-        movwx_mi(Mebp, inf_VER, IB(7)) /* <- VMX, VSX, VSX2 to bit0, 1, 2 */
 
 #endif /* RT_RTARCH_P32_H */
 

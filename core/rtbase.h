@@ -555,7 +555,7 @@ struct rt_SIMD_REGS
 
 /***************** element-sized adjustable SIMD instructions *****************/
 
-/* cbr */
+/* cbr (D = cbrt S) */
 
 /*
  * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
@@ -602,7 +602,7 @@ struct rt_SIMD_REGS
         mulps_rr(W(X2), W(X1))                                              \
         subps_rr(W(XG), W(X2))
 
-/* rcp
+/* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #if RT_SIMD_COMPAT_RCP == 0
@@ -630,7 +630,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
-/* rsq
+/* rsq (D = 1.0 / sqrt S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #if RT_SIMD_COMPAT_RSQ == 0
@@ -662,7 +662,7 @@ struct rt_SIMD_REGS
 
 /****************** instructions for fixed-sized 32-bit SIMD ******************/
 
-/* cbr */
+/* cbr (D = cbrt S) */
 
 /*
  * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
@@ -709,7 +709,7 @@ struct rt_SIMD_REGS
         mulos_rr(W(X2), W(X1))                                              \
         subos_rr(W(XG), W(X2))
 
-/* rcp
+/* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #if RT_SIMD_COMPAT_RCP == 0
@@ -737,7 +737,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
-/* rsq
+/* rsq (D = 1.0 / sqrt S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #if RT_SIMD_COMPAT_RSQ == 0
@@ -809,7 +809,7 @@ struct rt_SIMD_REGS
 
 /****************** instructions for fixed-sized 64-bit SIMD ******************/
 
-/* cbr */
+/* cbr (D = cbrt S) */
 
 /*
  * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
@@ -856,7 +856,7 @@ struct rt_SIMD_REGS
         mulqs_rr(W(X2), W(X1))                                              \
         subqs_rr(W(XG), W(X2))
 
-/* rcp
+/* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #if RT_SIMD_COMPAT_RCP == 0
@@ -884,7 +884,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
-/* rsq
+/* rsq (D = 1.0 / sqrt S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #if RT_SIMD_COMPAT_RSQ == 0
@@ -1059,7 +1059,7 @@ struct rt_SIMD_REGS
 #define divps_ld(XG, MS, DS)                                                \
         divos_ld(W(XG), W(MS), W(DS))
 
-/* sqr */
+/* sqr (D = sqrt S) */
 
 #define sqrps_rr(XD, XS)                                                    \
         sqros_rr(W(XD), W(XS))
@@ -1067,12 +1067,12 @@ struct rt_SIMD_REGS
 #define sqrps_ld(XD, MS, DS)                                                \
         sqros_ld(W(XD), W(MS), W(DS))
 
-/* cbr */
+/* cbr (D = cbrt S) */
 
         /* cbe, cbs, cbr defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* rcp
+/* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #if RT_SIMD_COMPAT_RCP == 0
@@ -1088,7 +1088,7 @@ struct rt_SIMD_REGS
         /* rcp defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* rsq
+/* rsq (D = 1.0 / sqrt S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #if RT_SIMD_COMPAT_RSQ == 0
@@ -1124,7 +1124,7 @@ struct rt_SIMD_REGS
 #define fmsps_ld(XG, XS, MT, DT)                                            \
         fmsos_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* min */
+/* min (G = G < S ? G : S) */
 
 #define minps_rr(XG, XS)                                                    \
         minos_rr(W(XG), W(XS))
@@ -1132,7 +1132,7 @@ struct rt_SIMD_REGS
 #define minps_ld(XG, MS, DS)                                                \
         minos_ld(W(XG), W(MS), W(DS))
 
-/* max */
+/* max (G = G > S ? G : S) */
 
 #define maxps_rr(XG, XS)                                                    \
         maxos_rr(W(XG), W(XS))
@@ -1140,7 +1140,7 @@ struct rt_SIMD_REGS
 #define maxps_ld(XG, MS, DS)                                                \
         maxos_ld(W(XG), W(MS), W(DS))
 
-/* cmp */
+/* cmp (G = G ? S) */
 
 #define ceqps_rr(XG, XS)                                                    \
         ceqos_rr(W(XG), W(XS))
@@ -1178,7 +1178,7 @@ struct rt_SIMD_REGS
 #define cgeps_ld(XG, MS, DS)                                                \
         cgeos_ld(W(XG), W(MS), W(DS))
 
-/* cvz (fp-to-signed-int)
+/* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
@@ -1195,7 +1195,7 @@ struct rt_SIMD_REGS
 #define cvzps_ld(XD, MS, DS) /* round towards zero */                       \
         cvzos_ld(W(XD), W(MS), W(DS))
 
-/* cvp (fp-to-signed-int)
+/* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
@@ -1212,7 +1212,7 @@ struct rt_SIMD_REGS
 #define cvpps_ld(XD, MS, DS) /* round towards +inf */                       \
         cvpos_ld(W(XD), W(MS), W(DS))
 
-/* cvm (fp-to-signed-int)
+/* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
@@ -1229,7 +1229,7 @@ struct rt_SIMD_REGS
 #define cvmps_ld(XD, MS, DS) /* round towards -inf */                       \
         cvmos_ld(W(XD), W(MS), W(DS))
 
-/* cvn (fp-to-signed-int)
+/* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
@@ -1246,7 +1246,7 @@ struct rt_SIMD_REGS
 #define cvnps_ld(XD, MS, DS) /* round towards near */                       \
         cvnos_ld(W(XD), W(MS), W(DS))
 
-/* cvn (signed-int-to-fp)
+/* cvn (D = signed-int-to-fp S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
 #define cvnpn_rr(XD, XS)     /* round towards near */                       \
@@ -1293,7 +1293,7 @@ struct rt_SIMD_REGS
 #define shrpn_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         shron_ld(W(XG), W(MS), W(DS))
 
-/* cvt (fp-to-signed-int)
+/* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -1311,7 +1311,7 @@ struct rt_SIMD_REGS
 #define cvtps_ld(XD, MS, DS)                                                \
         cvtos_ld(W(XD), W(MS), W(DS))
 
-/* cvt (signed-int-to-fp)
+/* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
 
@@ -1321,7 +1321,7 @@ struct rt_SIMD_REGS
 #define cvtpn_ld(XD, MS, DS)                                                \
         cvton_ld(W(XD), W(MS), W(DS))
 
-/* cvr (fp-to-signed-int)
+/* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
@@ -1334,13 +1334,13 @@ struct rt_SIMD_REGS
 #define cvrps_rr(XD, XS, mode)                                              \
         cvros_rr(W(XD), W(XS), mode)
 
-/* mmv
+/* mmv (D = mask-merge S)
  * uses Xmm0 implicitly as a mask register */
 
-#define mmvpx_ld(XD, MS, DS) /* not portable, use conditionally */          \
+#define mmvpx_ld(XD, MS, DS) /* not portable, use conditionally (on x86) */ \
         mmvox_ld(W(XD), W(MS), W(DS))
 
-#define mmvpx_st(XS, MD, DD) /* not portable, use conditionally */          \
+#define mmvpx_st(XS, MD, DD) /* not portable, use conditionally (on x86) */ \
         mmvox_st(W(XS), W(MD), W(DD))
 
 /***************** instructions for element-sized 64-bit SIMD *****************/
@@ -1440,7 +1440,7 @@ struct rt_SIMD_REGS
 #define divps_ld(XG, MS, DS)                                                \
         divqs_ld(W(XG), W(MS), W(DS))
 
-/* sqr */
+/* sqr (D = sqrt S) */
 
 #define sqrps_rr(XD, XS)                                                    \
         sqrqs_rr(W(XD), W(XS))
@@ -1448,12 +1448,12 @@ struct rt_SIMD_REGS
 #define sqrps_ld(XD, MS, DS)                                                \
         sqrqs_ld(W(XD), W(MS), W(DS))
 
-/* cbr */
+/* cbr (D = cbrt S) */
 
         /* cbe, cbs, cbr defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* rcp
+/* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #if RT_SIMD_COMPAT_RCP == 0
@@ -1469,7 +1469,7 @@ struct rt_SIMD_REGS
         /* rcp defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* rsq
+/* rsq (D = 1.0 / sqrt S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #if RT_SIMD_COMPAT_RSQ == 0
@@ -1505,7 +1505,7 @@ struct rt_SIMD_REGS
 #define fmsps_ld(XG, XS, MT, DT)                                            \
         fmsqs_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* min */
+/* min (G = G < S ? G : S) */
 
 #define minps_rr(XG, XS)                                                    \
         minqs_rr(W(XG), W(XS))
@@ -1513,7 +1513,7 @@ struct rt_SIMD_REGS
 #define minps_ld(XG, MS, DS)                                                \
         minqs_ld(W(XG), W(MS), W(DS))
 
-/* max */
+/* max (G = G > S ? G : S) */
 
 #define maxps_rr(XG, XS)                                                    \
         maxqs_rr(W(XG), W(XS))
@@ -1521,7 +1521,7 @@ struct rt_SIMD_REGS
 #define maxps_ld(XG, MS, DS)                                                \
         maxqs_ld(W(XG), W(MS), W(DS))
 
-/* cmp */
+/* cmp (G = G ? S) */
 
 #define ceqps_rr(XG, XS)                                                    \
         ceqqs_rr(W(XG), W(XS))
@@ -1559,7 +1559,7 @@ struct rt_SIMD_REGS
 #define cgeps_ld(XG, MS, DS)                                                \
         cgeqs_ld(W(XG), W(MS), W(DS))
 
-/* cvz (fp-to-signed-int)
+/* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
@@ -1576,7 +1576,7 @@ struct rt_SIMD_REGS
 #define cvzps_ld(XD, MS, DS) /* round towards zero */                       \
         cvzqs_ld(W(XD), W(MS), W(DS))
 
-/* cvp (fp-to-signed-int)
+/* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
@@ -1593,7 +1593,7 @@ struct rt_SIMD_REGS
 #define cvpps_ld(XD, MS, DS) /* round towards +inf */                       \
         cvpqs_ld(W(XD), W(MS), W(DS))
 
-/* cvm (fp-to-signed-int)
+/* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
@@ -1610,7 +1610,7 @@ struct rt_SIMD_REGS
 #define cvmps_ld(XD, MS, DS) /* round towards -inf */                       \
         cvmqs_ld(W(XD), W(MS), W(DS))
 
-/* cvn (fp-to-signed-int)
+/* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
@@ -1627,7 +1627,7 @@ struct rt_SIMD_REGS
 #define cvnps_ld(XD, MS, DS) /* round towards near */                       \
         cvnqs_ld(W(XD), W(MS), W(DS))
 
-/* cvn (signed-int-to-fp)
+/* cvn (D = signed-int-to-fp S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
 #define cvnpn_rr(XD, XS)     /* round towards near */                       \
@@ -1674,7 +1674,7 @@ struct rt_SIMD_REGS
 #define shrpn_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         shrqn_ld(W(XG), W(MS), W(DS))
 
-/* cvt (fp-to-signed-int)
+/* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -1692,7 +1692,7 @@ struct rt_SIMD_REGS
 #define cvtps_ld(XD, MS, DS)                                                \
         cvtqs_ld(W(XD), W(MS), W(DS))
 
-/* cvt (signed-int-to-fp)
+/* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
 
@@ -1702,7 +1702,7 @@ struct rt_SIMD_REGS
 #define cvtpn_ld(XD, MS, DS)                                                \
         cvtqn_ld(W(XD), W(MS), W(DS))
 
-/* cvr (fp-to-signed-int)
+/* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
@@ -1715,13 +1715,13 @@ struct rt_SIMD_REGS
 #define cvrps_rr(XD, XS, mode)                                              \
         cvrqs_rr(W(XD), W(XS), mode)
 
-/* mmv
+/* mmv (D = mask-merge S)
  * uses Xmm0 implicitly as a mask register */
 
-#define mmvpx_ld(XD, MS, DS) /* not portable, use conditionally */          \
+#define mmvpx_ld(XD, MS, DS) /* not portable, use conditionally (on x86) */ \
         mmvqx_ld(W(XD), W(MS), W(DS))
 
-#define mmvpx_st(XS, MD, DD) /* not portable, use conditionally */          \
+#define mmvpx_st(XS, MD, DD) /* not portable, use conditionally (on x86) */ \
         mmvqx_st(W(XS), W(MD), W(DD))
 
 #endif /* RT_ELEMENT */
@@ -1802,13 +1802,6 @@ struct rt_SIMD_REGS
 
 #define movxx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
         movwx_mi(W(MD), W(DD), W(IS))
-
-
-     /* adrxx_ld(RD, MS, DS) is defined in 32-bit rtarch_***.h files */
-
-     /* label_ld(lb) is defined in rtarch.h file, loads label to Reax */
-
-     /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
 
 /* and (G = G & S)
  * set-flags: undefined (*x), yes (*z) */
@@ -2399,13 +2392,13 @@ struct rt_SIMD_REGS
 #define remxn_xm(MS, DS)    /* to be placed immediately after divxn_xm */   \
         remwn_xm(W(MS), W(DS))       /* to produce remainder Redx<-rem */
 
-/* arj
+/* arj (G = G op S, if cc G then jump lb)
  * set-flags: undefined
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
-/* Definitions for arj's "op" and "cc" parameters
- * are provided in 32-bit rtarch_***.h files. */
+     /* Definitions for arj's "op" and "cc" parameters
+      * are provided in 32-bit rtarch_***.h files. */
 
 #define arjxx_rx(RG, op, cc, lb)                                            \
         arjwx_rx(W(RG), op, cc, lb)
@@ -2431,11 +2424,11 @@ struct rt_SIMD_REGS
 #define arjxx_mr(MG, DG, RS, op, cc, lb)                                    \
         arjwx_mr(W(MG), W(DG), W(RS), op, cc, lb)
 
-/* cmj
+/* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */
 
-/* Definitions for cmj's "cc" parameter
- * are provided in 32-bit rtarch_***.h files. */
+     /* Definitions for cmj's "cc" parameter
+      * are provided in 32-bit rtarch_***.h files. */
 
 #define cmjxx_rz(RS, cc, lb)                                                \
         cmjwx_rz(W(RS), cc, lb)
@@ -2458,7 +2451,7 @@ struct rt_SIMD_REGS
 #define cmjxx_mr(MS, DS, RT, cc, lb)                                        \
         cmjwx_mr(W(MS), W(DS), W(RT), cc, lb)
 
-/* cmp
+/* cmp (flags = S ? T)
  * set-flags: yes */
 
 #define cmpxx_ri(RS, IT)                                                    \
@@ -2475,6 +2468,39 @@ struct rt_SIMD_REGS
 
 #define cmpxx_mr(MS, DS, RT)                                                \
         cmpwx_mr(W(MS), W(DS), W(RT))
+
+/* adr (D = adr S)
+ * set-flags: no */
+
+     /* adrxx_ld(RD, MS, DS) is defined in 32-bit rtarch_***.h files */
+
+     /* adrpx_ld(RD, MS, DS) in 32-bit rtarch_***_***.h files, SIMD-aligned */
+
+/************************* pointer-sized instructions *************************/
+
+/* label (D = Reax = adr lb)
+ * set-flags: no */
+
+     /* label_ld(lb) is defined in rtarch.h file, loads label to Reax */
+
+     /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
+
+/* jmp (if unconditional jump S/lb, else if cc flags then jump lb)
+ * set-flags: no
+ * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
+ * based on minimum natively-encoded offset across supported targets (u/c)
+ * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
+ * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
+
+     /* jccxx_** is defined in 32-bit rtarch_***.h files */
+
+/************************* register-size instructions *************************/
+
+/* stack (push stack = S, D = pop stack)
+ * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & Power)
+ * adjust stack pointer with 8-byte (64-bit) steps on all current targets */
+
+     /* stack_** is defined in 32-bit rtarch_***.h files */
 
 /***************** address-sized instructions for 64-bit mode *****************/
 
@@ -2504,13 +2530,6 @@ struct rt_SIMD_REGS
 
 #define movxx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
         movzx_mi(W(MD), W(DD), W(IS))
-
-
-     /* adrxx_ld(RD, MS, DS) is defined in 32-bit rtarch_***.h files */
-
-     /* label_ld(lb) is defined in rtarch.h file, loads label to Reax */
-
-     /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
 
 /* and (G = G & S)
  * set-flags: undefined (*x), yes (*z) */
@@ -3101,13 +3120,13 @@ struct rt_SIMD_REGS
 #define remxn_xm(MS, DS)    /* to be placed immediately after divxn_xm */   \
         remzn_xm(W(MS), W(DS))       /* to produce remainder Redx<-rem */
 
-/* arj
+/* arj (G = G op S, if cc G then jump lb)
  * set-flags: undefined
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
-/* Definitions for arj's "op" and "cc" parameters
- * are provided in 32-bit rtarch_***.h files. */
+     /* Definitions for arj's "op" and "cc" parameters
+      * are provided in 32-bit rtarch_***.h files. */
 
 #define arjxx_rx(RG, op, cc, lb)                                            \
         arjzx_rx(W(RG), op, cc, lb)
@@ -3133,11 +3152,11 @@ struct rt_SIMD_REGS
 #define arjxx_mr(MG, DG, RS, op, cc, lb)                                    \
         arjzx_mr(W(MG), W(DG), W(RS), op, cc, lb)
 
-/* cmj
+/* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */
 
-/* Definitions for cmj's "cc" parameter
- * are provided in 32-bit rtarch_***.h files. */
+     /* Definitions for cmj's "cc" parameter
+      * are provided in 32-bit rtarch_***.h files. */
 
 #define cmjxx_rz(RS, cc, lb)                                                \
         cmjzx_rz(W(RS), cc, lb)
@@ -3160,7 +3179,7 @@ struct rt_SIMD_REGS
 #define cmjxx_mr(MS, DS, RT, cc, lb)                                        \
         cmjzx_mr(W(MS), W(DS), W(RT), cc, lb)
 
-/* cmp
+/* cmp (flags = S ? T)
  * set-flags: yes */
 
 #define cmpxx_ri(RS, IT)                                                    \
@@ -3177,6 +3196,39 @@ struct rt_SIMD_REGS
 
 #define cmpxx_mr(MS, DS, RT)                                                \
         cmpzx_mr(W(MS), W(DS), W(RT))
+
+/* adr (D = adr S)
+ * set-flags: no */
+
+     /* adrxx_ld(RD, MS, DS) is defined in 32-bit rtarch_***.h files */
+
+     /* adrpx_ld(RD, MS, DS) in 32-bit rtarch_***_***.h files, SIMD-aligned */
+
+/************************* pointer-sized instructions *************************/
+
+/* label (D = Reax = adr lb)
+ * set-flags: no */
+
+     /* label_ld(lb) is defined in rtarch.h file, loads label to Reax */
+
+     /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
+
+/* jmp (if unconditional jump S/lb, else if cc flags then jump lb)
+ * set-flags: no
+ * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
+ * based on minimum natively-encoded offset across supported targets (u/c)
+ * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
+ * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
+
+     /* jccxx_** is defined in 32-bit rtarch_***.h files */
+
+/************************* register-size instructions *************************/
+
+/* stack (push stack = S, D = pop stack)
+ * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & Power)
+ * adjust stack pointer with 8-byte (64-bit) steps on all current targets */
+
+     /* stack_** is defined in 32-bit rtarch_***.h files */
 
 #endif /* RT_ADDRESS */
 
@@ -3798,13 +3850,13 @@ struct rt_SIMD_REGS
 #define remyn_xm(MS, DS)    /* to be placed immediately after divyn_xm */   \
         remwn_xm(W(MS), W(DS))       /* to produce remainder Redx<-rem */
 
-/* arj
+/* arj (G = G op S, if cc G then jump lb)
  * set-flags: undefined
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
-/* Definitions for arj's "op" and "cc" parameters
- * are provided in 32-bit rtarch_***.h files. */
+     /* Definitions for arj's "op" and "cc" parameters
+      * are provided in 32-bit rtarch_***.h files. */
 
 #define arjyx_rx(RG, op, cc, lb)                                            \
         arjwx_rx(W(RG), op, cc, lb)
@@ -3830,11 +3882,11 @@ struct rt_SIMD_REGS
 #define arjyx_mr(MG, DG, RS, op, cc, lb)                                    \
         arjwx_mr(W(MG), W(DG), W(RS), op, cc, lb)
 
-/* cmj
+/* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */
 
-/* Definitions for cmj's "cc" parameter
- * are provided in 32-bit rtarch_***.h files. */
+     /* Definitions for cmj's "cc" parameter
+      * are provided in 32-bit rtarch_***.h files. */
 
 #define cmjyx_rz(RS, cc, lb)                                                \
         cmjwx_rz(W(RS), cc, lb)
@@ -3857,7 +3909,7 @@ struct rt_SIMD_REGS
 #define cmjyx_mr(MS, DS, RT, cc, lb)                                        \
         cmjwx_mr(W(MS), W(DS), W(RT), cc, lb)
 
-/* cmp
+/* cmp (flags = S ? T)
  * set-flags: yes */
 
 #define cmpyx_ri(RS, IT)                                                    \
@@ -4493,13 +4545,13 @@ struct rt_SIMD_REGS
 #define remyn_xm(MS, DS)    /* to be placed immediately after divyn_xm */   \
         remzn_xm(W(MS), W(DS))       /* to produce remainder Redx<-rem */
 
-/* arj
+/* arj (G = G op S, if cc G then jump lb)
  * set-flags: undefined
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
-/* Definitions for arj's "op" and "cc" parameters
- * are provided in 32-bit rtarch_***.h files. */
+     /* Definitions for arj's "op" and "cc" parameters
+      * are provided in 32-bit rtarch_***.h files. */
 
 #define arjyx_rx(RG, op, cc, lb)                                            \
         arjzx_rx(W(RG), op, cc, lb)
@@ -4525,11 +4577,11 @@ struct rt_SIMD_REGS
 #define arjyx_mr(MG, DG, RS, op, cc, lb)                                    \
         arjzx_mr(W(MG), W(DG), W(RS), op, cc, lb)
 
-/* cmj
+/* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */
 
-/* Definitions for cmj's "cc" parameter
- * are provided in 32-bit rtarch_***.h files. */
+     /* Definitions for cmj's "cc" parameter
+      * are provided in 32-bit rtarch_***.h files. */
 
 #define cmjyx_rz(RS, cc, lb)                                                \
         cmjzx_rz(W(RS), cc, lb)
@@ -4552,7 +4604,7 @@ struct rt_SIMD_REGS
 #define cmjyx_mr(MS, DS, RT, cc, lb)                                        \
         cmjzx_mr(W(MS), W(DS), W(RT), cc, lb)
 
-/* cmp
+/* cmp (flags = S ? T)
  * set-flags: yes */
 
 #define cmpyx_ri(RS, IT)                                                    \

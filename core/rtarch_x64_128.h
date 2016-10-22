@@ -40,10 +40,11 @@
  * cmdp*_** - applies [cmd] to L-size SIMD register/memory/immediate args
  * cmdq*_** - applies [cmd] to 64-bit SIMD register/memory/immediate args
  *
- * The cmdp*_** instructions are intended for SPMD programming model
+ * The cmdp*_** (rtbase.h) instructions are intended for SPMD programming model
  * and can be configured to work with 32/64-bit data-elements (int, fp).
  * In this model data-paths are fixed-width, BASE and SIMD data-elements are
  * width-compatible, code-path divergence is handled via CHECK_MASK macro.
+ * Matching element-sized BASE subset cmdy*_** is defined in rtbase.h.
  *
  * Interpretation of instruction parameters:
  *
@@ -216,7 +217,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5E)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* sqr */
+/* sqr (D = sqrt S) */
 
 #define sqrqs_rr(XD, XS)                                                    \
     ESC REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x51)                       \
@@ -227,12 +228,12 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* cbr */
+/* cbr (D = cbrt S) */
 
         /* cbe, cbs, cbr defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* rcp
+/* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #if RT_SIMD_COMPAT_RCP != 1
@@ -249,7 +250,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
         /* rcp defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* rsq
+/* rsq (D = 1.0 / sqrt S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #if RT_SIMD_COMPAT_RSQ != 1
@@ -431,7 +432,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/* min */
+/* min (G = G < S ? G : S) */
 
 #define minqs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5D)                       \
@@ -442,7 +443,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5D)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* max */
+/* max (G = G > S ? G : S) */
 
 #define maxqs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5F)                       \
@@ -453,7 +454,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5F)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* cmp */
+/* cmp (G = G ? S) */
 
 #define ceqqs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
@@ -515,7 +516,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x05))
 
-/* cvz (fp-to-signed-int)
+/* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
@@ -556,7 +557,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
         movqx_ld(W(XD), W(MS), W(DS))                                       \
         cvzqs_rr(W(XD), W(XD))
 
-/* cvp (fp-to-signed-int)
+/* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
@@ -603,7 +604,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
 
 #endif /* RT_128 >= 4 */
 
-/* cvm (fp-to-signed-int)
+/* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
@@ -650,7 +651,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
 
 #endif /* RT_128 >= 4 */
 
-/* cvn (fp-to-signed-int)
+/* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
@@ -691,7 +692,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
         movqx_ld(W(XD), W(MS), W(DS))                                       \
         cvnqs_rr(W(XD), W(XD))
 
-/* cvn (signed-int-to-fp)
+/* cvn (D = signed-int-to-fp S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
 #define cvnqn_rr(XD, XS)     /* round towards near */                       \
@@ -991,7 +992,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
 
 #if (RT_128 < 4)
 
-/* cvt (fp-to-signed-int)
+/* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -1021,7 +1022,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
 
 #else /* RT_128 >= 4 */
 
-/* cvt (fp-to-signed-int)
+/* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -1047,7 +1048,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
 
 #endif /* RT_128 >= 4 */
 
-/* cvt (signed-int-to-fp)
+/* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
 
@@ -1065,7 +1066,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
         movqx_ld(W(XD), W(MS), W(DS))                                       \
         cvtqn_rr(W(XD), W(XD))
 
-/* cvr (fp-to-signed-int)
+/* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
@@ -1094,10 +1095,10 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
         rnrqs_rr(W(XD), W(XS), mode)                                        \
         cvzqs_rr(W(XD), W(XD))
 
-/* mmv
+/* mmv (D = mask-merge S)
  * uses Xmm0 implicitly as a mask register */
 
-#define mmvqx_ld(XD, MS, DS) /* not portable, use conditionally */          \
+#define mmvqx_ld(XD, MS, DS) /* not portable, use conditionally (on x86) */ \
 ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x15)           \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)

@@ -88,6 +88,7 @@
  * IS - immediate value (is used as a second or first source)
  * IT - immediate value (is used as a third or second source)
  *
+ * Adjustable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtbase.h.
  * Mixing of 64/32-bit fields in backend structures may lead to misalignment
  * of 64-bit fields to 4-byte boundary, which is not supported on some targets.
  * Place fields carefully to ensure natural alignment for all data types.
@@ -119,7 +120,7 @@
  * better orthogonality with operands size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
- * of higher performance on certain targets use combined-compare-jump (cmj).
+ * of higher performance on MIPS and Power use combined-compare-jump (cmj).
  * Not all canonical forms of BASE instructions have efficient implementation.
  * For example, some forms of shifts and division use stack ops on x86 targets,
  * while standalone remainder operations can only be done natively on MIPS.
@@ -181,13 +182,6 @@
     ADR REW(0x01,    RXB(MD)) EMITB(0x89)                                   \
         MRM(0x07,    MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
-
-
-     /* adrxx_ld(RD, MS, DS) is defined in 32-bit rtarch_***.h files */
-
-     /* label_ld(lb) is defined in rtarch.h file, loads label to Reax */
-
-     /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
 
 /* and (G = G & S)
  * set-flags: undefined (*x), yes (*z) */
@@ -1150,13 +1144,13 @@
 #define remzn_xm(MS, DS)    /* to be placed immediately after divzn_xm */   \
                                      /* to produce remainder Redx<-rem */
 
-/* arj
+/* arj (G = G op S, if cc G then jump lb)
  * set-flags: undefined
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
-/* Definitions for arj's "op" and "cc" parameters
- * are provided in 32-bit rtarch_***.h files. */
+     /* Definitions for arj's "op" and "cc" parameters
+      * are provided in 32-bit rtarch_***.h files. */
 
 #define arjzx_rx(RG, op, cc, lb)                                            \
         AR1(W(RG), op, zz_rx)                                               \
@@ -1189,11 +1183,11 @@
 #define arjzx_mr(MG, DG, RS, op, cc, lb)                                    \
         arjzx_st(W(RS), W(MG), W(DG), op, cc, lb)
 
-/* cmj
+/* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */
 
-/* Definitions for cmj's "cc" parameter
- * are provided in 32-bit rtarch_***.h files. */
+     /* Definitions for cmj's "cc" parameter
+      * are provided in 32-bit rtarch_***.h files. */
 
 #define cmjzx_rz(RS, cc, lb)                                                \
         cmjzx_ri(W(RS), IC(0), cc, lb)
@@ -1221,7 +1215,7 @@
         cmpzx_mr(W(MS), W(DS), W(RT))                                       \
         CMJ(cc, lb)
 
-/* cmp
+/* cmp (flags = S ? T)
  * set-flags: yes */
 
 #define cmpzx_ri(RS, IT)                                                    \
@@ -1247,6 +1241,41 @@
     ADR REW(RXB(RT), RXB(MS)) EMITB(0x39)                                   \
         MRM(REG(RT), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
+
+/************************* address-sized instructions *************************/
+
+/* adr (D = adr S)
+ * set-flags: no */
+
+     /* adrxx_ld(RD, MS, DS) is defined in 32-bit rtarch_***.h files */
+
+     /* adrpx_ld(RD, MS, DS) in 32-bit rtarch_***_***.h files, SIMD-aligned */
+
+/************************* pointer-sized instructions *************************/
+
+/* label (D = Reax = adr lb)
+ * set-flags: no */
+
+     /* label_ld(lb) is defined in rtarch.h file, loads label to Reax */
+
+     /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
+
+/* jmp (if unconditional jump S/lb, else if cc flags then jump lb)
+ * set-flags: no
+ * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
+ * based on minimum natively-encoded offset across supported targets (u/c)
+ * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
+ * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
+
+     /* jccxx_** is defined in 32-bit rtarch_***.h files */
+
+/************************* register-size instructions *************************/
+
+/* stack (push stack = S, D = pop stack)
+ * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & Power)
+ * adjust stack pointer with 8-byte (64-bit) steps on all current targets */
+
+     /* stack_** is defined in 32-bit rtarch_***.h files */
 
 #endif /* RT_RTARCH_X64_H */
 
