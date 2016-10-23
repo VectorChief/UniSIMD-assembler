@@ -16,18 +16,6 @@
 #define RT_SIMD_WIDTH64     2
 #define RT_SIMD_SET64(s, v) s[0]=s[1]=v
 
-#if defined (RT_SIMD_CODE)
-
-#undef  sregs_sa
-#undef  sregs_la
-#undef  movox_ld
-#undef  movqx_ld
-#define movqx_ld(XD, MS, DS)
-#undef  EMITS
-#define EMITS(w) EMITW(w)
-
-#if defined (RT_128) && (RT_128 != 0)
-
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
@@ -93,6 +81,18 @@
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
+
+#if defined (RT_SIMD_CODE)
+
+#if defined (RT_128) && (RT_128 != 0)
+
+#undef  sregs_sa
+#undef  sregs_la
+#undef  movox_ld
+#undef  movqx_ld
+#define movqx_ld(XD, MS, DS)
+#undef  EMITS
+#define EMITS(w) EMITW(w)
 
 /* structural */
 
