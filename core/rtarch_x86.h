@@ -141,6 +141,12 @@
 
 #define AUX(sib, cdp, cim)  sib  cdp  cim
 
+/* 3-byte VEX prefix with full customization (LZ, W0) */
+#define VEX(ren, pfx, aux)                                                  \
+        EMITB(0xC4)                                                         \
+        EMITB(0xE0 | (aux))                                                 \
+        EMITB(0x00 | (0x0F - (ren)) << 3 | (pfx))
+
 /* selectors  */
 
 #define REG(reg, mod, sib)  reg
@@ -150,12 +156,6 @@
 #define VAL(val, typ, cmd)  val
 #define TYP(val, typ, cmd)  typ
 #define CMD(val, typ, cmd)  cmd
-
-/* 3-byte VEX prefix with full customization (LZ, W0) */
-#define VEX(ren, pfx, aux)                                                  \
-        EMITB(0xC4)                                                         \
-        EMITB(0xE0 | (aux))                                                 \
-        EMITB(0x00 | (0x0F - (ren)) << 3 | (pfx))
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -1349,8 +1349,12 @@
         movwx_ri(Reax, IB(7))                                               \
         movwx_ri(Recx, IB(0))                                               \
         cpuid_xx()                                                          \
+        movwx_rr(Recx, Rebx)                                                \
+        shrwx_ri(Recx, IB(2))   /* <- AVX2 to bit4 */                       \
+        andwx_ri(Recx, IB(0x08))                                            \
         shlwx_ri(Rebx, IB(4))   /* <- AVX2 to bit9 */                       \
         andwx_ri(Rebx, IH(0x0200))                                          \
+        orrwx_rr(Rebx, Recx)                                                \
         andwx_rr(Rebx, Redi)                                                \
         orrwx_rr(Resi, Rebx)                                                \
         movwx_st(Resi, Mebp, inf_VER)

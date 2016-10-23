@@ -158,6 +158,18 @@
 
 #endif /* defined (RT_X32, RT_X64) */
 
+/* 3-byte VEX prefix with full customization (W0) */
+#define VEX(rxg, rxm, ren, len, pfx, aux)                                   \
+        EMITB(0xC4)                                                         \
+        EMITB((1 - (rxg)) << 7 | 1 << 6 | (1 - (rxm)) << 5 | (aux))         \
+        EMITB(0x00 | (len) << 2 | (0x0F - (ren)) << 3 | (pfx))
+
+/* 3-byte VEX prefix with full customization (W1) */
+#define VEW(rxg, rxm, ren, len, pfx, aux)                                   \
+        EMITB(0xC4)                                                         \
+        EMITB((1 - (rxg)) << 7 | 1 << 6 | (1 - (rxm)) << 5 | (aux))         \
+        EMITB(0x80 | (len) << 2 | (0x0F - (ren)) << 3 | (pfx))
+
 /* selectors  */
 
 #define RXB(reg, mod, sib)  ((reg) >> 3 & 0x01) /* register-extension-bit */
@@ -171,18 +183,6 @@
 
 /* selector for full register (3rd operand, 4-bits-wide) */
 #define REN(reg, mod, sib)  reg
-
-/* 3-byte VEX prefix with full customization (W0) */
-#define VEX(rxg, rxm, ren, len, pfx, aux)                                   \
-        EMITB(0xC4)                                                         \
-        EMITB((1 - (rxg)) << 7 | 1 << 6 | (1 - (rxm)) << 5 | (aux))         \
-        EMITB((len) << 2 | (0x0F - (ren)) << 3 | (pfx))
-
-/* 3-byte VEX prefix with full customization (W1) */
-#define VEW(rxg, rxm, ren, len, pfx, aux)                                   \
-        EMITB(0xC4)                                                         \
-        EMITB((1 - (rxg)) << 7 | 1 << 6 | (1 - (rxm)) << 5 | (aux))         \
-        EMITB((len) << 2 | (0x0F - (ren)) << 3 | (pfx) | 0x80)
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -1450,8 +1450,12 @@
         movwx_ri(Reax, IB(7))                                               \
         movwx_ri(Recx, IB(0))                                               \
         cpuid_xx()                                                          \
+        movwx_rr(Recx, Rebx)                                                \
+        shrwx_ri(Recx, IB(2))   /* <- AVX2 to bit4 */                       \
+        andwx_ri(Recx, IB(0x08))                                            \
         shlwx_ri(Rebx, IB(4))   /* <- AVX2 to bit9 */                       \
         andwx_ri(Rebx, IH(0x0200))                                          \
+        orrwx_rr(Rebx, Recx)                                                \
         andwx_rr(Rebx, Redi)                                                \
         orrwx_rr(Resi, Rebx)                                                \
         movwx_st(Resi, Mebp, inf_VER)
