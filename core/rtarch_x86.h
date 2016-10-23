@@ -141,11 +141,16 @@
 
 #define AUX(sib, cdp, cim)  sib  cdp  cim
 
-/* 3-byte VEX prefix with full customization (LZ, W0) */
-#define VEX(ren, pfx, aux)                                                  \
+/* 2-byte VEX prefix with full customization (W0) */
+#define VX2(ren, len, pfx)                                                  \
+        EMITB(0xC5)                                                         \
+        EMITB(0x80 | (len) << 2 | (0x0F - (ren)) << 3 | (pfx))
+
+/* 3-byte VEX prefix with full customization (W0) */
+#define VEX(ren, len, pfx, aux)                                             \
         EMITB(0xC4)                                                         \
         EMITB(0xE0 | (aux))                                                 \
-        EMITB(0x00 | (0x0F - (ren)) << 3 | (pfx))
+        EMITB(0x00 | (len) << 2 | (0x0F - (ren)) << 3 | (pfx))
 
 /* selectors  */
 
@@ -342,11 +347,11 @@
 #else /* RT_X86 >= 2 */
 
 #define annwz_rr(RG, RS)                                                    \
-        VEX(REG(RG), 0, 2) EMITB(0xF2)                                      \
+        VEX(REG(RG), 0, 0, 2) EMITB(0xF2)                                   \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define annwz_ld(RG, MS, DS)                                                \
-        VEX(REG(RG), 0, 2) EMITB(0xF2)                                      \
+        VEX(REG(RG), 0, 0, 2) EMITB(0xF2)                                   \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -642,7 +647,7 @@
 #else /* RT_X86 >= 2 */
 
 #define shlwx_rx(RG)                     /* reads Recx for shift count */   \
-        VEX(0x01,    1, 2) EMITB(0xF7)                                      \
+        VEX(0x01,    0, 1, 2) EMITB(0xF7)                                   \
         MRM(REG(RG), MOD(RG), REG(RG))
 
 #endif /* RT_X86 >= 2 */
@@ -664,7 +669,7 @@
 #else /* RT_X86 >= 2 */
 
 #define shlwx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        VEX(REG(RS), 1, 2) EMITB(0xF7)                                      \
+        VEX(REG(RS), 0, 1, 2) EMITB(0xF7)                                   \
         MRM(REG(RG), MOD(RG), REG(RG))
 
 #endif /* RT_X86 >= 2 */
@@ -730,7 +735,7 @@
 #else /* RT_X86 >= 2 */
 
 #define shrwx_rx(RG)                     /* reads Recx for shift count */   \
-        VEX(0x01,    3, 2) EMITB(0xF7)                                      \
+        VEX(0x01,    0, 3, 2) EMITB(0xF7)                                   \
         MRM(REG(RG), MOD(RG), REG(RG))
 
 #endif /* RT_X86 >= 2 */
@@ -752,7 +757,7 @@
 #else /* RT_X86 >= 2 */
 
 #define shrwx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        VEX(REG(RS), 3, 2) EMITB(0xF7)                                      \
+        VEX(REG(RS), 0, 3, 2) EMITB(0xF7)                                   \
         MRM(REG(RG), MOD(RG), REG(RG))
 
 #endif /* RT_X86 >= 2 */
@@ -817,7 +822,7 @@
 #else /* RT_X86 >= 2 */
 
 #define shrwn_rx(RG)                     /* reads Recx for shift count */   \
-        VEX(0x01,    2, 2) EMITB(0xF7)                                      \
+        VEX(0x01,    0, 2, 2) EMITB(0xF7)                                   \
         MRM(REG(RG), MOD(RG), REG(RG))
 
 #endif /* RT_X86 >= 2 */
@@ -848,7 +853,7 @@
 #else /* RT_X86 >= 2 */
 
 #define shrwn_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        VEX(REG(RS), 2, 2) EMITB(0xF7)                                      \
+        VEX(REG(RS), 0, 2, 2) EMITB(0xF7)                                   \
         MRM(REG(RG), MOD(RG), REG(RG))
 
 #endif /* RT_X86 >= 2 */
@@ -885,7 +890,7 @@
 #else /* RT_X86 >= 2 */
 
 #define rorwx_ri(RG, IS)                                                    \
-        VEX(0x00,    3, 3) EMITB(0xF0)                                      \
+        VEX(0x00,    0, 3, 3) EMITB(0xF0)                                   \
         MRM(REG(RG), MOD(RG), REG(RG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
