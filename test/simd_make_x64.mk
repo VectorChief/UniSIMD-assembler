@@ -57,10 +57,11 @@ simd_test_x64f64:
 # clang++ (in place of x86_64-linux-gnu-g++)
 # sudo apt-get install clang
 
-# For SSE1 build use (replace): RT_128=1
-# For SSE4 build use (replace): RT_128=4
-# For AVX1 build use (replace): RT_256=1
-# For AVX2 build use (replace): RT_256=2
+# For 128-bit SSE1 build use (replace): RT_128=1
+# For 128-bit SSE4 build use (replace): RT_128=4
+# For 128-bit AVX2 build use (replace): RT_128=8
+# For 256-bit AVX1 build use (replace): RT_256=1
+# For 256-bit AVX2 build use (replace): RT_256=2
 
 # For generic BASE X64 build keep: RT_X64 (default)
 # For 3-op-VEX BASE X64 build use (replace): RT_X64=1 (reserved)
