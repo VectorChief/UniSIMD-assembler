@@ -314,9 +314,9 @@
 #endif /* RT_256, RT_128 */
 
 /*
- * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
  * the stack, they are considered heavy and therefore best suited for compute
- * intensive parts of the program, so that the ASM overhead is minimized.
+ * intensive parts of the program, in which case the ASM overhead is minimized.
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
 
@@ -515,9 +515,9 @@
 #endif /* RT_256, RT_128 */
 
 /*
- * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
  * the stack, they are considered heavy and therefore best suited for compute
- * intensive parts of the program, so that the ASM overhead is minimized.
+ * intensive parts of the program, in which case the ASM overhead is minimized.
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
 
@@ -737,9 +737,9 @@
 #endif /* RT_256, RT_128 */
 
 /*
- * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
  * the stack, they are considered heavy and therefore best suited for compute
- * intensive parts of the program, so that the ASM overhead is minimized.
+ * intensive parts of the program, in which case the ASM overhead is minimized.
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
 
@@ -947,9 +947,9 @@
 #endif /* RT_256, RT_128 */
 
 /*
- * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
  * the stack, they are considered heavy and therefore best suited for compute
- * intensive parts of the program, so that the ASM overhead is minimized.
+ * intensive parts of the program, in which case the ASM overhead is minimized.
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
 
@@ -1155,9 +1155,9 @@
 #endif /* RT_256, RT_128 */
 
 /*
- * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
  * the stack, they are considered heavy and therefore best suited for compute
- * intensive parts of the program, so that the ASM overhead is minimized.
+ * intensive parts of the program, in which case the ASM overhead is minimized.
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
 
@@ -1365,9 +1365,9 @@
 #endif /* RT_256, RT_128 */
 
 /*
- * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
  * the stack, they are considered heavy and therefore best suited for compute
- * intensive parts of the program, so that the ASM overhead is minimized.
+ * intensive parts of the program, in which case the ASM overhead is minimized.
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
 
@@ -1618,9 +1618,9 @@
 #endif /* RT_256, RT_128 */
 
 /*
- * As ASM_ENTER/ASM_LEAVE save/load a significant portion of registers onto
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
  * the stack, they are considered heavy and therefore best suited for compute
- * intensive parts of the program, so that the ASM overhead is minimized.
+ * intensive parts of the program, in which case the ASM overhead is minimized.
  * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
  */
 

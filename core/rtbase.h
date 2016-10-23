@@ -422,7 +422,7 @@ typedef const char         *rt_pstr;
 /******************************************************************************/
 
 /*
- * SIMD info structure for asm enter/leave contains internal variables
+ * SIMD info structure for ASM_ENTER/ASM_LEAVE contains internal variables
  * and general purpose constants used internally by some instructions.
  * Note that DP offsets below accept only 12-bit values (0xFFF),
  * use DF, DG, DH and DV for 14, 15, 16 and 31-bit offsets respectively.

@@ -64,7 +64,7 @@ rt_pntr sys_alloc(rt_size size);
 rt_void sys_free(rt_pntr ptr, rt_size size);
 
 /*
- * Extended SIMD info structure for asm enter/leave
+ * Extended SIMD info structure for ASM_ENTER/ASM_LEAVE
  * serves as a container for test arrays and internal variables.
  * Note that DP offsets below start where rt_SIMD_INFO ends (at Q*0x100).
  * SIMD width is taken into account via S and Q from rtarch.h
@@ -160,6 +160,13 @@ rt_void c_test01(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test01(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -261,6 +268,13 @@ rt_void c_test02(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test02(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -362,6 +376,13 @@ rt_void c_test03(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test03(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -465,6 +486,13 @@ rt_void c_test04(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test04(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -568,6 +596,13 @@ rt_void c_test05(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test05(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -672,6 +707,13 @@ rt_void c_test06(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test06(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -769,6 +811,13 @@ rt_void c_test07(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test07(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -861,6 +910,13 @@ rt_void c_test08(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test08(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -1010,6 +1066,13 @@ rt_void c_test09(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test09(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
@@ -1135,6 +1198,13 @@ rt_void c_test10(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test10(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -1236,6 +1306,13 @@ rt_void c_test11(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test11(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -1379,6 +1456,13 @@ rt_void c_test12(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test12(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -1522,6 +1606,13 @@ rt_void c_test13(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test13(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -1631,6 +1722,13 @@ rt_void c_test14(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test14(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -1806,6 +1904,13 @@ rt_void c_test15(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test15(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -1931,6 +2036,13 @@ rt_void c_test16(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test16(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -2073,6 +2185,13 @@ rt_void c_test17(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test17(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -2165,6 +2284,13 @@ rt_void c_test18(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test18(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
@@ -2294,6 +2420,13 @@ rt_void c_test19(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test19(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -2427,6 +2560,13 @@ rt_void c_test20(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test20(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -2532,6 +2672,13 @@ rt_void c_test21(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test21(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -2651,6 +2798,13 @@ rt_void c_test22(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test22(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
@@ -2770,6 +2924,13 @@ rt_void c_test23(rt_SIMD_INFOX *info)
     }
 }
 
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
 rt_void s_test23(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
