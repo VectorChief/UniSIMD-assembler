@@ -322,20 +322,22 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if defined (RT_256) && (RT_256 < 2) /* NOTE: 2-pass fp32<->fp64 SIMD FMA */
+#if defined (RT_256) && (RT_256 < 2) || \
+    defined (RT_128) && RT_SIMD_COMPAT_128 == 1
 
 #define cvqos_rr(XD, XS)     /* not portable, do not use outside */         \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 0, 1) EMITB(0x5A)                 \
+        VEX(RXB(XD), RXB(XS),     0x0, 1, 0, 1) EMITB(0x5A)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvqos_ld(XD, MS, DS) /* not portable, do not use outside */         \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 0, 1) EMITB(0x5A)                 \
+    ADR VEX(RXB(XD), RXB(MS),     0x0, 1, 0, 1) EMITB(0x5A)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define cvoqs_rr(XD, XS)     /* not portable, do not use outside */         \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 1, 1) EMITB(0x5A)                 \
+        VEX(RXB(XD), RXB(XS),     0x0, 1, 1, 1) EMITB(0x5A)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
+
 
 #define addzm_ri(MG, IS)     /* not portable, do not use outside */         \
         REW(0,       RXB(MG) & (REG(MG) != 4)) EMITB(0x81 | TYP(IS))        \
@@ -346,6 +348,19 @@
         REW(0,       RXB(MG) & (REG(MG) != 4)) EMITB(0x81 | TYP(IS))        \
         MRM(0x05,    0x03,    REG(MG) & (REG(MG) != 4))                     \
         AUX(EMPTY,   EMPTY,   CMD(IS))
+
+
+#define addgs_rr(XG, XS)     /* not portable, do not use outside */         \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x58)                 \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define subgs_rr(XG, XS)     /* not portable, do not use outside */         \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x5C)                 \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define mulgs_rr(XG, XS)     /* not portable, do not use outside */         \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0x59)                 \
+        MRM(REG(XG), MOD(XS), REG(XS))
 
 #if RT_SIMD_COMPAT_FMA == 0
 
@@ -366,6 +381,8 @@
         movox_ld(W(XS), Mebp, inf_SCR01(0))
 
 #elif RT_SIMD_COMPAT_FMA == 1
+
+#if defined (RT_256) && (RT_256 < 2) /* NOTE: 2-pass fp32<->fp64 SIMD FMA */
 
 /* fma (G = G + S * T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -422,6 +439,36 @@
         prmox_rr(W(XS), W(XS), IB(1))                                       \
         subzm_ri(W(MT), IC(0x10))                  /* 2st-pass <- */        \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+#else  /* RT_256 */ /* NOTE: 1-pass fp32<->fp64 SIMD FMA for 128-bit AVX1 */
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#define fmaos_rr(XG, XS, XT)                                                \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        cvqos_rr(W(XG), W(XS))                     /* 1st-pass -> */        \
+        movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        cvqos_rr(W(XS), W(XT))                                              \
+        mulgs_rr(W(XS), W(XG))                                              \
+        cvqos_ld(W(XG), Mebp, inf_SCR01(0))                                 \
+        addgs_rr(W(XG), W(XS))                                              \
+        cvoqs_rr(W(XG), W(XG))                     /* 1st-pass <- */        \
+        movox_ld(W(XS), Mebp, inf_SCR02(0))
+
+#define fmaos_ld(XG, XS, MT, DT)                                            \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        cvqos_rr(W(XG), W(XS))                     /* 1st-pass -> */        \
+        movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        cvqos_ld(W(XS), W(MT), W(DT))                                       \
+        mulgs_rr(W(XS), W(XG))                                              \
+        cvqos_ld(W(XG), Mebp, inf_SCR01(0))                                 \
+        addgs_rr(W(XG), W(XS))                                              \
+        cvoqs_rr(W(XG), W(XG))                     /* 1st-pass <- */        \
+        movox_ld(W(XS), Mebp, inf_SCR02(0))
+
+#endif /* RT_256 */
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
@@ -445,6 +492,8 @@
 
 #elif RT_SIMD_COMPAT_FMS == 1
 
+#if defined (RT_256) && (RT_256 < 2) /* NOTE: 2-pass fp32<->fp64 SIMD FMS */
+
 /* fms (G = G - S * T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -500,6 +549,36 @@
         prmox_rr(W(XS), W(XS), IB(1))                                       \
         subzm_ri(W(MT), IC(0x10))                  /* 2st-pass <- */        \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+#else  /* RT_256 */ /* NOTE: 1-pass fp32<->fp64 SIMD FMS for 128-bit AVX1 */
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsos_rr(XG, XS, XT)                                                \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        cvqos_rr(W(XG), W(XS))                     /* 1st-pass -> */        \
+        movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        cvqos_rr(W(XS), W(XT))                                              \
+        mulgs_rr(W(XS), W(XG))                                              \
+        cvqos_ld(W(XG), Mebp, inf_SCR01(0))                                 \
+        subgs_rr(W(XG), W(XS))                                              \
+        cvoqs_rr(W(XG), W(XG))                     /* 1st-pass <- */        \
+        movox_ld(W(XS), Mebp, inf_SCR02(0))
+
+#define fmsos_ld(XG, XS, MT, DT)                                            \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        cvqos_rr(W(XG), W(XS))                     /* 1st-pass -> */        \
+        movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        cvqos_ld(W(XS), W(MT), W(DT))                                       \
+        mulgs_rr(W(XS), W(XG))                                              \
+        cvqos_ld(W(XG), Mebp, inf_SCR01(0))                                 \
+        subgs_rr(W(XG), W(XS))                                              \
+        cvoqs_rr(W(XG), W(XG))                     /* 1st-pass <- */        \
+        movox_ld(W(XS), Mebp, inf_SCR02(0))
+
+#endif /* RT_256 */
 
 #endif /* RT_SIMD_COMPAT_FMS */
 

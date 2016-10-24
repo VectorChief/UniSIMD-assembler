@@ -1340,14 +1340,14 @@
         movwx_ri(Reax, IB(7))                                               \
         movwx_ri(Recx, IB(0))                                               \
         cpuid_xx()                                                          \
-        movwx_rr(Recx, Rebx)                                                \
-        shrwx_ri(Recx, IB(2))   /* <- AVX2 to bit4 */                       \
-        andwx_ri(Recx, IB(0x08))                                            \
         shlwx_ri(Rebx, IB(4))   /* <- AVX2 to bit9 */                       \
         andwx_ri(Rebx, IH(0x0200))                                          \
-        orrwx_rr(Rebx, Recx)                                                \
         andwx_rr(Rebx, Redi)                                                \
         orrwx_rr(Resi, Rebx)                                                \
+        movwx_rr(Recx, Resi)                                                \
+        shrwx_ri(Recx, IB(4 + RT_SIMD_COMPAT_128)) /* <- AVX1,2 to bit3 */  \
+        andwx_ri(Recx, IB(0x08))                                            \
+        orrwx_rr(Resi, Recx)                                                \
         movwx_st(Resi, Mebp, inf_VER)
 
 /************************* address-sized instructions *************************/

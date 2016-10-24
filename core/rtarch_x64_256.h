@@ -266,7 +266,8 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if defined (RT_256) && (RT_256 < 2) /* NOTE: x87 fpu fallback for fp64 FMA */
+#if defined (RT_256) && (RT_256 < 2) || \
+    defined (RT_128) && RT_SIMD_COMPAT_128 == 1
 
 #if RT_SIMD_COMPAT_FMA == 0
 
@@ -336,6 +337,8 @@
 
 #endif /* RT_SIMD_COMPAT_FMR */
 
+#if defined (RT_256) && (RT_256 < 2) /* NOTE: x87 fallback for fp64 FMA */
+
 #define fmaqs_rx(XG) /* not portable, do not use outside */                 \
         fpuzs_ld(Mebp,  inf_SCR01(0x00))                                    \
         mulzs_ld(Mebp,  inf_SCR02(0x00))                                    \
@@ -355,6 +358,22 @@
         addzs_ld(Mebp,  inf_SCR02(0x00))                                    \
         fpuzs_st(Mebp,  inf_SCR02(0x00))                                    \
         movqx_ld(W(XG), Mebp, inf_SCR02(0))
+
+#else  /* RT_256 */
+
+#define fmaqs_rx(XG) /* not portable, do not use outside */                 \
+        fpuzs_ld(Mebp,  inf_SCR01(0x00))                                    \
+        mulzs_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_ld(Mebp,  inf_SCR01(0x08))                                    \
+        mulzs_ld(Mebp,  inf_SCR02(0x08))                                    \
+        movqx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        addzs_ld(Mebp,  inf_SCR02(0x08))                                    \
+        fpuzs_st(Mebp,  inf_SCR02(0x08))                                    \
+        addzs_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_st(Mebp,  inf_SCR02(0x00))                                    \
+        movqx_ld(W(XG), Mebp, inf_SCR02(0))
+
+#endif /* RT_256 */
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
@@ -426,6 +445,8 @@
 
 #endif /* RT_SIMD_COMPAT_FMR */
 
+#if defined (RT_256) && (RT_256 < 2) /* NOTE: x87 fallback for fp64 FMS */
+
 #define fmsqs_rx(XG) /* not portable, do not use outside */                 \
         fpuzs_ld(Mebp,  inf_SCR01(0x00))                                    \
         mulzs_ld(Mebp,  inf_SCR02(0x00))                                    \
@@ -445,6 +466,22 @@
         sbrzs_ld(Mebp,  inf_SCR02(0x00))                                    \
         fpuzs_st(Mebp,  inf_SCR02(0x00))                                    \
         movqx_ld(W(XG), Mebp, inf_SCR02(0))
+
+#else  /* RT_256 */
+
+#define fmsqs_rx(XG) /* not portable, do not use outside */                 \
+        fpuzs_ld(Mebp,  inf_SCR01(0x00))                                    \
+        mulzs_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_ld(Mebp,  inf_SCR01(0x08))                                    \
+        mulzs_ld(Mebp,  inf_SCR02(0x08))                                    \
+        movqx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        sbrzs_ld(Mebp,  inf_SCR02(0x08))                                    \
+        fpuzs_st(Mebp,  inf_SCR02(0x08))                                    \
+        sbrzs_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_st(Mebp,  inf_SCR02(0x00))                                    \
+        movqx_ld(W(XG), Mebp, inf_SCR02(0))
+
+#endif /* RT_256 */
 
 #endif /* RT_SIMD_COMPAT_FMS */
 

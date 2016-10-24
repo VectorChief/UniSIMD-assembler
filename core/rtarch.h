@@ -205,6 +205,7 @@
 #define RT_SIMD_COMPAT_DIV_MASTER       1 /* for full-precision divps_** */
 #define RT_SIMD_COMPAT_SQR_MASTER       1 /* for full-precision sqrps_** */
 #define RT_SIMD_COMPAT_FMR_MASTER       0 /* for fm*ps_** rounding mode */
+#define RT_SIMD_COMPAT_128_MASTER       1 /* for 128-bit AVX(1,2) - 1,2 */
 #define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and Power */
 
 #include "rtzero.h"
@@ -304,6 +305,9 @@
 /* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
  * of fm*ps_** instruction fallbacks to honour rounding mode */
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
+/* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1 & AVX2
+ * when RT_128=8 SIMD backend is present among build targets */
+#define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
@@ -505,6 +509,9 @@
 /* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
  * of fm*ps_** instruction fallbacks to honour rounding mode */
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
+/* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1 & AVX2
+ * when RT_128=8 SIMD backend is present among build targets */
+#define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
@@ -727,6 +734,9 @@
 /* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
  * of fm*ps_** instruction fallbacks to honour rounding mode */
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
+/* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1 & AVX2
+ * when RT_128=8 SIMD backend is present among build targets */
+#define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
