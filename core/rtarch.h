@@ -104,27 +104,48 @@
 /******************************************************************************/
 
 /*
- * The following instruction namespaces are reserved for current/future use.
+ * The following BASE instruction namespaces are defined for current use.
  *
- * cmdw*_** - word-size args, BASE ISA (always fixed at 32-bit)
+ * cmdw*_** - word-size args, BASE ISA (data-element is always fixed at 32-bit)
  * cmdx*_** - addr-size args, BASE ISA (32/64-bit configurable with RT_ADDRESS)
  * cmdy*_** - SIMD-elem args, BASE ISA (32/64-bit configurable with RT_ELEMENT)
- * cmdz*_** - full-size args, BASE ISA (always fixed at 64-bit)
+ * cmdz*_** - full-size args, BASE ISA (data-element is always fixed at 64-bit)
  *
- * cmd*z_** - usage for setting-flags is implemented orthogonal to size
+ * cmd*z_** - usage for setting-flags is implemented orthogonal to data-size
+ *
+ * The following SIMD instruction namespaces are defined for current use.
  *
  * cmdo*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, packed)
  * cmdp*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, packed)
  * cmdq*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, packed)
  *
+ * packed SIMD instructions above are vector-length-agnostic: (Q * 128-bit)
+ *
+ * The following SIMD instruction namespaces are reserved for future use.
+ *
  * cmdr*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, scalar)
  * cmds*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, scalar)
  * cmdt*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, scalar)
  *
- * The following instruction namespaces are reserved for potential future use.
+ * cmdg*_** - SIMD-elem args, SIMD ISA (always fixed at 16-bit, packed-128-bit)
+ * cmdi*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, packed-128-bit)
+ * cmdj*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, packed-128-bit)
+ * cmdl*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, packed-128-bit)
+ *
+ * cmda*_** - SIMD-elem args, SIMD ISA (always fixed at 16-bit, packed-256-bit)
+ * cmdc*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, packed-256-bit)
+ * cmdd*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, packed-256-bit)
+ * cmdf*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, packed-256-bit)
+ *
+ * The following BASE instruction namespaces are planned for potential future.
  *
  * cmdb*_** - byte-size args, BASE ISA (displacement/alignment may differ)
  * cmdh*_** - half-size args, BASE ISA (displacement/alignment may differ)
+ *
+ * cmde*_** - extd-size args, BASE ISA (for 80-bit extended float, x87)
+ * cmdk*_** - 128b-size args, BASE ISA (for 128-bit BASE subset, RISC-V)
+ *
+ * The following SIMD instruction namespaces are planned for potential future.
  *
  * cmdpb_** - SIMD-elem args, SIMD ISA (packed byte-int subset)
  * cmdph_** - SIMD-elem args, SIMD ISA (packed half-int subset)
@@ -135,7 +156,7 @@
  * cmdu*_** - SIMD-elem args, SIMD ISA (packed f128/int subset, quad-precision)
  * cmdv*_** - SIMD-elem args, SIMD ISA (scalar f128/int subset, quad-precision)
  *
- * cmdk*_** - 128b-size args, BASE ISA (reserved for beyond 64-bit computing)
+ * packed SIMD instructions above are vector-length-agnostic: (Q * 128-bit)
  *
  * Adjustable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtbase.h.
  * Mixing of 64/32-bit fields in backend structures may lead to misalignment
