@@ -267,7 +267,7 @@
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 #if defined (RT_256) && (RT_256 < 2) || \
-    defined (RT_128) && RT_SIMD_COMPAT_128 == 1
+    defined (RT_128) && (RT_SIMD_COMPAT_128 == 1)
 
 #if RT_SIMD_COMPAT_FMA == 0
 
@@ -359,7 +359,7 @@
         fpuzs_st(Mebp,  inf_SCR02(0x00))                                    \
         movqx_ld(W(XG), Mebp, inf_SCR02(0))
 
-#else  /* RT_256 */
+#else /* RT_128 >= 8 */ /* NOTE: x87 fallback for fp64 FMA (128-bit AVX1) */
 
 #define fmaqs_rx(XG) /* not portable, do not use outside */                 \
         fpuzs_ld(Mebp,  inf_SCR01(0x00))                                    \
@@ -373,7 +373,7 @@
         fpuzs_st(Mebp,  inf_SCR02(0x00))                                    \
         movqx_ld(W(XG), Mebp, inf_SCR02(0))
 
-#endif /* RT_256 */
+#endif /* RT_128 >= 8 */
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
@@ -467,7 +467,7 @@
         fpuzs_st(Mebp,  inf_SCR02(0x00))                                    \
         movqx_ld(W(XG), Mebp, inf_SCR02(0))
 
-#else  /* RT_256 */
+#else /* RT_128 >= 8 */ /* NOTE: x87 fallback for fp64 FMS (128-bit AVX1) */
 
 #define fmsqs_rx(XG) /* not portable, do not use outside */                 \
         fpuzs_ld(Mebp,  inf_SCR01(0x00))                                    \
@@ -481,7 +481,7 @@
         fpuzs_st(Mebp,  inf_SCR02(0x00))                                    \
         movqx_ld(W(XG), Mebp, inf_SCR02(0))
 
-#endif /* RT_256 */
+#endif /* RT_128 >= 8 */
 
 #endif /* RT_SIMD_COMPAT_FMS */
 

@@ -323,7 +323,7 @@
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 #if defined (RT_256) && (RT_256 < 2) || \
-    defined (RT_128) && RT_SIMD_COMPAT_128 == 1
+    defined (RT_128) && (RT_SIMD_COMPAT_128 == 1)
 
 #define cvqos_rr(XD, XS)     /* not portable, do not use outside */         \
         VEX(RXB(XD), RXB(XS),     0x0, 1, 0, 1) EMITB(0x5A)                 \
@@ -440,7 +440,7 @@
         subzm_ri(W(MT), IC(0x10))                  /* 2st-pass <- */        \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-#else  /* RT_256 */ /* NOTE: 1-pass fp32<->fp64 SIMD FMA for 128-bit AVX1 */
+#else /* RT_128 >= 8 */ /* NOTE: 1-pass fp32<->fp64 SIMD FMA (128-bit AVX1) */
 
 /* fma (G = G + S * T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -468,7 +468,7 @@
         cvoqs_rr(W(XG), W(XG))                     /* 1st-pass <- */        \
         movox_ld(W(XS), Mebp, inf_SCR02(0))
 
-#endif /* RT_256 */
+#endif /* RT_128 >= 8 */
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
@@ -550,7 +550,7 @@
         subzm_ri(W(MT), IC(0x10))                  /* 2st-pass <- */        \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-#else  /* RT_256 */ /* NOTE: 1-pass fp32<->fp64 SIMD FMS for 128-bit AVX1 */
+#else /* RT_128 >= 8 */ /* NOTE: 1-pass fp32<->fp64 SIMD FMS (128-bit AVX1) */
 
 /* fms (G = G - S * T)
  * NOTE: due to final negation being outside of rounding on all Power systems
@@ -578,7 +578,7 @@
         cvoqs_rr(W(XG), W(XG))                     /* 1st-pass <- */        \
         movox_ld(W(XS), Mebp, inf_SCR02(0))
 
-#endif /* RT_256 */
+#endif /* RT_128 >= 8 */
 
 #endif /* RT_SIMD_COMPAT_FMS */
 

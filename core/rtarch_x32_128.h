@@ -93,7 +93,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if defined (RT_128) && (RT_128 <= 4)
+#if defined (RT_128) && (RT_128 < 8)
 
 #undef  sregs_sa
 #undef  sregs_la
