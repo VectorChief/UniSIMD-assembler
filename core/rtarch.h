@@ -310,11 +310,7 @@
 #include "rtarch_x86_256.h"
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
-#if RT_128 >= 8
-#include "rtarch_x86_256.h"
-#else  /* RT_128 <= 4 */
 #include "rtarch_x86_128.h"
-#endif /* RT_128 >= 8 */
 #endif /* RT_256, RT_128 */
 
 /*
@@ -515,11 +511,7 @@
 #include "rtarch_x86_256.h"
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
-#if RT_128 >= 8
-#include "rtarch_x86_256.h"
-#else  /* RT_128 <= 4 */
 #include "rtarch_x86_128.h"
-#endif /* RT_128 >= 8 */
 #endif /* RT_256, RT_128 */
 
 /*
@@ -741,11 +733,7 @@
 #include "rtarch_x64_256.h"
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
-#if RT_128 >= 8
-#include "rtarch_x64_256.h"
-#else  /* RT_128 <= 4 */
 #include "rtarch_x64_128.h"
-#endif /* RT_128 >= 8 */
 #endif /* RT_256, RT_128 */
 
 /*

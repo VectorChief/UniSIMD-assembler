@@ -18,16 +18,7 @@
 #define RT_SIMD_WIDTH64     4
 #define RT_SIMD_SET64(s, v) s[0]=s[1]=s[2]=s[3]=v
 
-#elif defined (RT_128) && RT_128 >= 8
-
-#define RT_SIMD_REGS        8
-#define RT_SIMD_ALIGN       16
-#define RT_SIMD_WIDTH32     4
-#define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=v
-#define RT_SIMD_WIDTH64     2
-#define RT_SIMD_SET64(s, v) s[0]=s[1]=v
-
-#endif /* RT_256, RT_128 */
+#endif /* RT_256 */
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
@@ -97,17 +88,17 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if (defined (RT_256) && RT_256 != 0) || (defined (RT_128) && RT_128 >= 8)
+#if defined (RT_256) && (RT_256 != 0) || defined (RT_128) && (RT_128 >= 8)
 
 #undef  sregs_sa
 #undef  sregs_la
 #undef  mxcsr_ld
 
-#if   defined (RT_256) && RT_256 != 0
+#if   defined (RT_256) && (RT_256 != 0)
 
 #define K 1
 
-#elif defined (RT_128) && RT_128 >= 8
+#elif defined (RT_128) && (RT_128 >= 8)
 
 #define K 0
 

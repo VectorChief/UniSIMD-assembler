@@ -82,9 +82,18 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
+#if defined (RT_128) && (RT_128 >= 8)
+
+#undef RT_256
+#undef RT_RTARCH_X32_256_H
+#undef RT_RTARCH_X64_256_H
+#include "rtarch_x64_256.h"
+
+#endif /* RT_128 */
+
 #if defined (RT_SIMD_CODE)
 
-#if defined (RT_128) && (RT_128 != 0)
+#if defined (RT_128) && (RT_128 <= 4)
 
 #undef  sregs_sa
 #undef  sregs_la
