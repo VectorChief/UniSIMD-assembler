@@ -266,7 +266,7 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (defined (RT_256) && RT_256 < 2) /* NOTE: x87 fpu fallback for fp64 FMA */
+#if defined (RT_256) && (RT_256 < 2) /* NOTE: x87 fpu fallback for fp64 FMA */
 
 #if RT_SIMD_COMPAT_FMA == 0
 
@@ -917,7 +917,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 
 /**************************   packed integer (AVX1)   *************************/
 
-#if (defined (RT_256) && RT_256 < 2)
+#if defined (RT_256) && (RT_256 < 2)
 
 #define prmqx_rr(XD, XS, IT) /* not portable, do not use outside */         \
         VEX(RXB(XD), RXB(XS), REN(XD), K, 1, 3) EMITB(0x06)                 \
@@ -1114,7 +1114,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 
 #endif /* RT_256 >= 2 */
 
-#if   defined (RT_128) && RT_128 >= 8
+#if   defined (RT_128) && (RT_128 >= 8)
 
 #define shrqn_ri(XG, IS)                                                    \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1131,7 +1131,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         stack_ld(Recx)                                                      \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-#elif defined (RT_256) && RT_256 != 0
+#elif defined (RT_256) && (RT_256 != 0)
 
 #define shrqn_ri(XG, IS)                                                    \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \

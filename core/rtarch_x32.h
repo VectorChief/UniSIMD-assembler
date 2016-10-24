@@ -1334,20 +1334,6 @@
 #define arjwx_mr(MG, DG, RS, op, cc, lb)                                    \
         arjwx_st(W(RS), W(MG), W(DG), op, cc, lb)
 
-/* internal definitions for combined-arithmetic-jump (arj) */
-
-#define AR1(P1, op, sg)                                                     \
-        op##sg(W(P1))
-
-#define AR2(P1, P2, op, sg)                                                 \
-        op##sg(W(P1), W(P2))
-
-#define AR3(P1, P2, P3, op, sg)                                             \
-        op##sg(W(P1), W(P2), W(P3))
-
-#define CMJ(cc, lb)                                                         \
-        cc(lb)
-
 /* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */
 
@@ -1605,6 +1591,20 @@
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
+
+/* internal definitions for combined-arithmetic-jump (arj) */
+
+#define AR1(P1, op, sg)                                                     \
+        op##sg(W(P1))
+
+#define AR2(P1, P2, op, sg)                                                 \
+        op##sg(W(P1), W(P2))
+
+#define AR3(P1, P2, P3, op, sg)                                             \
+        op##sg(W(P1), W(P2), W(P3))
+
+#define CMJ(cc, lb)                                                         \
+        cc(lb)
 
 #endif /* RT_RTARCH_X32_H */
 

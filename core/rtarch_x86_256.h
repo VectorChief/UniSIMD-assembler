@@ -9,7 +9,7 @@
 
 #include "rtarch_x86.h"
 
-#if   defined (RT_256) && RT_256 != 0
+#if defined (RT_256) && (RT_256 != 0)
 
 #define RT_SIMD_REGS        8
 #define RT_SIMD_ALIGN       32
@@ -314,7 +314,7 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (defined (RT_256) && RT_256 < 2) /* NOTE: 2-pass fp32<->fp64 SIMD FMA */
+#if defined (RT_256) && (RT_256 < 2) /* NOTE: 2-pass fp32<->fp64 SIMD FMA */
 
 #define cvqos_rr(XD, XS)     /* not portable, do not use outside */         \
         VX2(0x0,     K, 0) EMITB(0x5A)                                      \
@@ -952,7 +952,7 @@
 
 /**************************   packed integer (AVX1)   *************************/
 
-#if (defined (RT_256) && RT_256 < 2)
+#if defined (RT_256) && (RT_256 < 2)
 
 #define prmox_rr(XD, XS, IT) /* not portable, do not use outside */         \
         VEX(REG(XD), 1, 1, 3) EMITB(0x06)                                   \
