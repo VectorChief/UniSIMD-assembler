@@ -828,9 +828,9 @@
  * uses Xmm0 implicitly as a mask register */
 
 #define mmvpx_ld(RG, RM, DP) /* not portable, use conditionally */          \
-    ADR VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 2) EMITB(0x2C)                 \
+    ADR VEX(RXB(RG), RXB(RM), REN(RG), 1, 1, 3) EMITB(0x4A)                 \
         MRM(REG(RG), MOD(RM), REG(RM))                                      \
-        AUX(SIB(RM), CMD(DP), EMPTY)
+        AUX(SIB(RM), CMD(DP), EMITB(0x00))
 
 #define mmvpx_st(RG, RM, DP) /* not portable, use conditionally */          \
     ADR VEX(RXB(RG), RXB(RM),     0x0, 1, 1, 2) EMITB(0x2E)                 \
