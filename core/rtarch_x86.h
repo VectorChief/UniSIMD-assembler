@@ -142,7 +142,7 @@
 #define AUX(sib, cdp, cim)  sib  cdp  cim
 
 /* 2-byte VEX prefix with full customization (W0) */
-#define VX2(ren, len, pfx)                                                  \
+#define V2X(ren, len, pfx)                                                  \
         EMITB(0xC5)                                                         \
         EMITB(0x80 | (len) << 2 | (0x0F - (ren)) << 3 | (pfx))
 
