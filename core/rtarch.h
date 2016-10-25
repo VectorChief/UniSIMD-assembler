@@ -142,7 +142,7 @@
  * cmdb*_** - byte-size args, BASE ISA (displacement/alignment may differ)
  * cmdh*_** - half-size args, BASE ISA (displacement/alignment may differ)
  *
- * cmde*_** - extd-size args, BASE ISA (for 80-bit extended float, x87)
+ * cmde*_** - extd-size args, extd ISA (for 80-bit extended double, x87)
  * cmdk*_** - 128b-size args, BASE ISA (for 128-bit BASE subset, RISC-V)
  *
  * The following SIMD instruction namespaces are planned for potential future.
