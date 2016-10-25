@@ -108,7 +108,7 @@
  *
  * cmdw*_** - word-size args, BASE ISA (data-element is always fixed at 32-bit)
  * cmdx*_** - addr-size args, BASE ISA (32/64-bit configurable with RT_ADDRESS)
- * cmdy*_** - SIMD-elem args, BASE ISA (32/64-bit configurable with RT_ELEMENT)
+ * cmdy*_** - elem-size args, BASE ISA (32/64-bit configurable with RT_ELEMENT)
  * cmdz*_** - full-size args, BASE ISA (data-element is always fixed at 64-bit)
  *
  * cmd*z_** - usage for setting-flags is implemented orthogonal to data-size
@@ -137,13 +137,15 @@
  * cmdd*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, packed-256-bit)
  * cmdf*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, packed-256-bit)
  *
+ * fixed 256-bit instructions can be done as pairs with 14 regs on modern RISCs
+ *
  * The following BASE instruction namespaces are planned for potential future.
  *
  * cmdb*_** - byte-size args, BASE ISA (displacement/alignment may differ)
  * cmdh*_** - half-size args, BASE ISA (displacement/alignment may differ)
  *
  * cmde*_** - extd-size args, extd ISA (for 80-bit extended double, x87)
- * cmdk*_** - 128b-size args, BASE ISA (for 128-bit BASE subset, RISC-V)
+ * cmdk*_** - mega-size args, BASE ISA (for 128-bit BASE subset, RISC-V)
  *
  * The following SIMD instruction namespaces are planned for potential future.
  *
@@ -158,6 +160,7 @@
  *
  * packed SIMD instructions above are vector-length-agnostic: (Q * 128-bit)
  *
+ * Alphabetical view of current/future instruction namespaces are in rtzero.h.
  * Adjustable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtbase.h.
  * Mixing of 64/32-bit fields in backend structures may lead to misalignment
  * of 64-bit fields to 4-byte boundary, which is not supported on some targets.

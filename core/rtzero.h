@@ -17,6 +17,37 @@
 /*******************************   DEFINITIONS   ******************************/
 /******************************************************************************/
 
+/*
+ * Alphabetical view of current/future instruction namespaces:
+ *
+ * cmda*_** - SIMD-elem args, SIMD ISA (always fixed at 16-bit, packed-256-bit)
+ * cmdb*_** - byte-size args, BASE ISA (displacement/alignment may differ)
+ * cmdc*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, packed-256-bit)
+ * cmdd*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, packed-256-bit)
+ * cmde*_** - extd-size args, extd ISA (for 80-bit extended double, x87)
+ * cmdf*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, packed-256-bit)
+ * cmdg*_** - SIMD-elem args, SIMD ISA (always fixed at 16-bit, packed-128-bit)
+ * cmdh*_** - half-size args, BASE ISA (displacement/alignment may differ)
+ * cmdi*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, packed-128-bit)
+ * cmdj*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, packed-128-bit)
+ * cmdk*_** - mega-size args, BASE ISA (for 128-bit BASE subset, RISC-V)
+ * cmdl*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, packed-128-bit)
+ * cmdm*_** - SIMD-elem args, SIMD ISA (packed fp16/int subset, half-precision)
+ * cmdn*_** - SIMD-elem args, SIMD ISA (scalar fp16/int subset, half-precision)
+ * cmdo*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, packed)
+ * cmdp*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, packed)
+ * cmdq*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, packed)
+ * cmdr*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, scalar)
+ * cmds*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, scalar)
+ * cmdt*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, scalar)
+ * cmdu*_** - SIMD-elem args, SIMD ISA (packed f128/int subset, quad-precision)
+ * cmdv*_** - SIMD-elem args, SIMD ISA (scalar f128/int subset, quad-precision)
+ * cmdw*_** - word-size args, BASE ISA (data-element is always fixed at 32-bit)
+ * cmdx*_** - addr-size args, BASE ISA (32/64-bit configurable with RT_ADDRESS)
+ * cmdy*_** - elem-size args, BASE ISA (32/64-bit configurable with RT_ELEMENT)
+ * cmdz*_** - full-size args, BASE ISA (data-element is always fixed at 64-bit)
+ */
+
 #undef Q /* short name for SIMD-quads in structs (number of 128-bit chunks) */
 
 #undef N /* short name for SIMD-width in structs (with rt_fp16 SIMD-fields) */
