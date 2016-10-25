@@ -137,7 +137,7 @@
  * cmdd*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, packed-256-bit)
  * cmdf*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, packed-256-bit)
  *
- * fixed 256-bit instructions can be done as pairs with 14 regs on modern RISCs
+ * fixed 256-bit ops can be done as pairs with 2*14 128-bit regs on modern RISCs
  *
  * The following BASE instruction namespaces are planned for potential future.
  *
@@ -160,7 +160,7 @@
  *
  * packed SIMD instructions above are vector-length-agnostic: (Q * 128-bit)
  *
- * Alphabetical view of current/future instruction namespaces are in rtzero.h.
+ * Alphabetical view of current/future instruction namespaces is in rtzero.h.
  * Adjustable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtbase.h.
  * Mixing of 64/32-bit fields in backend structures may lead to misalignment
  * of 64-bit fields to 4-byte boundary, which is not supported on some targets.
