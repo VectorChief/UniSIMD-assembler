@@ -42,7 +42,9 @@ simd_test_x32:
 
 # For 128-bit SSE1 build use (replace): RT_128=1
 # For 128-bit SSE4 build use (replace): RT_128=4
-# For 128-bit AVX2 build use (replace): RT_128=8
+# For 128-bit AVX1 build use (replace): RT_128=8
+# For 128-bit AVX2 build use (replace): RT_128=8, RT_SIMD_COMPAT_128=2 in rtarch.h
+
 # For 256-bit AVX1 build use (replace): RT_256=1
 # For 256-bit AVX2 build use (replace): RT_256=2
 
