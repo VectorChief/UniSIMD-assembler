@@ -30,7 +30,7 @@
  * cmdh*_** - half-size args, BASE ISA (displacement/alignment may differ)
  * cmdi*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, packed-128-bit)
  * cmdj*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, packed-128-bit)
- * cmdk*_** - mega-size args, BASE ISA (for 128-bit BASE subset, RISC-V)
+ * cmdk*_** - king-kong args, BASE ISA (for 128-bit BASE subset, RISC-V)
  * cmdl*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, packed-128-bit)
  * cmdm*_** - SIMD-elem args, SIMD ISA (packed fp16/int subset, half-precision)
  * cmdn*_** - SIMD-elem args, SIMD ISA (scalar fp16/int subset, half-precision)
