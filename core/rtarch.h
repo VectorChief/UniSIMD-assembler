@@ -115,9 +115,9 @@
  *
  * The following SIMD instruction namespaces are defined for current use.
  *
- * cmdo*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, packed)
- * cmdp*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, packed)
- * cmdq*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, packed)
+ * cmdo*_** - SIMD-data args, SIMD ISA (always fixed at 32-bit, packed)
+ * cmdp*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed)
+ * cmdq*_** - SIMD-data args, SIMD ISA (always fixed at 64-bit, packed)
  *
  * packed SIMD instructions above are vector-length-agnostic: (Q * 128-bit)
  *
@@ -127,17 +127,18 @@
  * cmds*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, scalar)
  * cmdt*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, scalar)
  *
- * cmdg*_** - SIMD-elem args, SIMD ISA (always fixed at 16-bit, packed-128-bit)
- * cmdi*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, packed-128-bit)
- * cmdj*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, packed-128-bit)
- * cmdl*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, packed-128-bit)
+ * cmdg*_** - SIMD-data args, SIMD ISA (always fixed at 16-bit, packed-128-bit)
+ * cmdi*_** - SIMD-data args, SIMD ISA (always fixed at 32-bit, packed-128-bit)
+ * cmdj*_** - SIMD-data args, SIMD ISA (always fixed at 64-bit, packed-128-bit)
+ * cmdl*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed-128-bit)
  *
- * cmda*_** - SIMD-elem args, SIMD ISA (always fixed at 16-bit, packed-256-bit)
- * cmdc*_** - SIMD-elem args, SIMD ISA (always fixed at 32-bit, packed-256-bit)
- * cmdd*_** - SIMD-elem args, SIMD ISA (always fixed at 64-bit, packed-256-bit)
- * cmdf*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, packed-256-bit)
+ * cmda*_** - SIMD-data args, SIMD ISA (always fixed at 16-bit, packed-256-bit)
+ * cmdc*_** - SIMD-data args, SIMD ISA (always fixed at 32-bit, packed-256-bit)
+ * cmdd*_** - SIMD-data args, SIMD ISA (always fixed at 64-bit, packed-256-bit)
+ * cmdf*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed-256-bit)
  *
  * fixed 256-bit ops can be done as pairs with 2*14 128-bit regs on modern RISCs
+ * while 512-bit ops can be done as quads with 4*14 128-bit regs on modern Power
  *
  * The following BASE instruction namespaces are planned for potential future.
  *
@@ -149,14 +150,14 @@
  *
  * The following SIMD instruction namespaces are planned for potential future.
  *
- * cmdpb_** - SIMD-elem args, SIMD ISA (packed byte-int subset)
- * cmdph_** - SIMD-elem args, SIMD ISA (packed half-int subset)
- *
- * cmdm*_** - SIMD-elem args, SIMD ISA (packed fp16/int subset, half-precision)
+ * cmdm*_** - SIMD-data args, SIMD ISA (packed fp16/int subset, half-precision)
  * cmdn*_** - SIMD-elem args, SIMD ISA (scalar fp16/int subset, half-precision)
  *
- * cmdu*_** - SIMD-elem args, SIMD ISA (packed f128/int subset, quad-precision)
+ * cmdu*_** - SIMD-data args, SIMD ISA (packed f128/int subset, quad-precision)
  * cmdv*_** - SIMD-elem args, SIMD ISA (scalar f128/int subset, quad-precision)
+ *
+ * cmdpb_** - SIMD-data args, SIMD ISA (packed byte-int subset)
+ * cmdph_** - SIMD-data args, SIMD ISA (packed half-int subset)
  *
  * packed SIMD instructions above are vector-length-agnostic: (Q * 128-bit)
  *

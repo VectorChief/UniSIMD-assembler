@@ -128,14 +128,14 @@
 
 #define TmmX    0x15  /* v21, +1.0 64-bit */
 #define TmmY    0x16  /* v22, -0.5 64-bit */
-#define TmmR    0x17  /* v23, Rounding Mode */
-#define TmmS    0x18  /* v24, sign-mask 32-bit */
+#define TmmR    0x17  /* v23, VMX only, Rounding Mode */
+#define TmmS    0x18  /* v24, VMX only, sign-mask 32-bit */
 #define TmmQ    0x19  /* v25, full-mask all 1s */
 #define TmmA    0x1A  /* v26, +1.0 32-bit */
 #define TmmB    0x1B  /* v27, -0.5 32-bit */
 #define TmmC    0x1C  /* v28 */
 #define TmmD    0x1D  /* v29 */
-#define TmmE    0x1E  /* v30 */
+#define TmmE    0x1E  /* v30, VMX only */
 #define Tmm1    0x1F  /* v31 */
 
 /******************************************************************************/
@@ -158,8 +158,16 @@
 #define XmmB    0x0B, 0x00, EMPTY       /* v11 */
 #define XmmC    0x0C, 0x00, EMPTY       /* v12 */
 #define XmmD    0x0D, 0x00, EMPTY       /* v13 */
-#define XmmE    0x0E, 0x00, EMPTY       /* v14 */
-#define XmmF    0x0F, 0x00, EMPTY       /* v15 */
+#define XmmE    0x0E, 0x00, EMPTY       /* v14, may be reserved in some cases */
+#define XmmF    0x0F, 0x00, EMPTY       /* v15, may be reserved in some cases */
+
+/* The last two SIMD registers can be reserved by the assembler when building
+ * RISC targets with SIMD wider than natively supported 128-bit, in which case
+ * they will be occupied by temporary data. Two hidden registers may also come
+ * in handy when implementing elaborate register-spill techniques in the future
+ * for current targets with less native registers than architecturally exposed.
+ * Neither of the above is currently supported by the assembler, but is being
+ * considered as a potential optimization/compatibility option going forward. */
 
 #if (RT_128 < 2)
 

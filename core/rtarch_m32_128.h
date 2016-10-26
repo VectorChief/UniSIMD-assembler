@@ -153,8 +153,16 @@
 #define XmmB    0x0B, $w11, EMPTY       /* w11 */
 #define XmmC    0x0C, $w12, EMPTY       /* w12 */
 #define XmmD    0x0D, $w13, EMPTY       /* w13 */
-#define XmmE    0x0E, $w14, EMPTY       /* w14 */
-#define XmmF    0x0F, $w15, EMPTY       /* w15 */
+#define XmmE    0x0E, $w14, EMPTY       /* w14, may be reserved in some cases */
+#define XmmF    0x0F, $w15, EMPTY       /* w15, may be reserved in some cases */
+
+/* The last two SIMD registers can be reserved by the assembler when building
+ * RISC targets with SIMD wider than natively supported 128-bit, in which case
+ * they will be occupied by temporary data. Two hidden registers may also come
+ * in handy when implementing elaborate register-spill techniques in the future
+ * for current targets with less native registers than architecturally exposed.
+ * Neither of the above is currently supported by the assembler, but is being
+ * considered as a potential optimization/compatibility option going forward. */
 
 /******************************************************************************/
 /**********************************   MSA   ***********************************/
