@@ -65,27 +65,33 @@
  *
  * Future 32-bit SIMD targets:
  *
- *  - rtarch_a32_256.h     - 32-bit elements, 16 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_a32_128.h     - 32-bit elements, 32 SIMD regs, NEON 128-bit, 30
+ *  - rtarch_a32_256.h     - 32-bit elements, 32 SIMD regs, pairs of 128-bit, 15
  *  - rtarch_a32_256.h     - 32-bit elements, 32 SIMD regs, SVE 256-bit, 30 used
  *  - rtarch_a32_512.h     - 32-bit elements, 32 SIMD regs, SVE 512-bit, 30 used
- *  - rtarch_m32_256.h     - 32-bit elements, 16 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_p32_256.h     - 32-bit elements, 16 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_p32_256.h     - 32-bit elements, 32 SIMD regs, pairs of 128-bit, 30
- *  - rtarch_p32_512.h     - 32-bit elements, 16 SIMD regs, quads of 128-bit, 15
- *  - rtarch_x32_512.h     - 32-bit elements, 16 SIMD regs, AVX 512-bit, 16 used
+ *  - rtarch_m32_128.h     - 32-bit elements, 32 SIMD regs, MSA 128-bit, 30 used
+ *  - rtarch_m32_256.h     - 32-bit elements, 32 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_p32_128.h     - 32-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
+ *  - rtarch_p32_256.h     - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 16
+ *  - rtarch_p32_256.h     - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 30
+ *  - rtarch_p32_512.h     - 32-bit elements, 64 SIMD regs, quads of 128-bit, 15
+ *  - rtarch_x32_512.h     - 32-bit elements, 32 SIMD regs, AVX 512-bit, 16 used
  *  - rtarch_x32_512.h     - 32-bit elements, 32 SIMD regs, AVX 512-bit, 30 used
  *  - rtarch_x86_512.h     - 32-bit elements, 8 SIMD regs, AVX 512-bit, 8 used
  *
  * Future 64-bit SIMD targets:
  *
- *  - rtarch_a64_256.h     - 64-bit elements, 16 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_a64_128.h     - 64-bit elements, 32 SIMD regs, NEON 128-bit, 30
+ *  - rtarch_a64_256.h     - 64-bit elements, 32 SIMD regs, pairs of 128-bit, 15
  *  - rtarch_a64_256.h     - 64-bit elements, 32 SIMD regs, SVE 256-bit, 30 used
  *  - rtarch_a64_512.h     - 64-bit elements, 32 SIMD regs, SVE 512-bit, 30 used
- *  - rtarch_m64_256.h     - 64-bit elements, 16 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_p64_256.h     - 64-bit elements, 16 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_p64_256.h     - 64-bit elements, 32 SIMD regs, pairs of 128-bit, 30
- *  - rtarch_p64_512.h     - 64-bit elements, 16 SIMD regs, quads of 128-bit, 15
- *  - rtarch_x64_512.h     - 64-bit elements, 16 SIMD regs, AVX 512-bit, 16 used
+ *  - rtarch_m64_128.h     - 64-bit elements, 32 SIMD regs, MSA 128-bit, 30 used
+ *  - rtarch_m64_256.h     - 64-bit elements, 32 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_p64_128.h     - 64-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
+ *  - rtarch_p64_256.h     - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 16
+ *  - rtarch_p64_256.h     - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 30
+ *  - rtarch_p64_512.h     - 64-bit elements, 64 SIMD regs, quads of 128-bit, 15
+ *  - rtarch_x64_512.h     - 64-bit elements, 32 SIMD regs, AVX 512-bit, 16 used
  *  - rtarch_x64_512.h     - 64-bit elements, 32 SIMD regs, AVX 512-bit, 30 used
  *
  * not all registers in target descriptions are always exposed for apps to use
