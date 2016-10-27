@@ -128,8 +128,8 @@
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
-#define TmmS    0x1C  /* w28, sign-mask 32-bit */
-#define TmmT    0x1D  /* w29, sign-mask 64-bit */
+#define TmmS    0x1C  /* w28, sign-mask 32-bit, optional (temp-load in Tmm1) */
+#define TmmT    0x1D  /* w29, sign-mask 64-bit, optional (temp-load in Tmm1) */
 #define TmmZ    0x1E  /* w30, zero-mask all 0s */
 #define Tmm1    0x1F  /* w31 */
 
@@ -163,6 +163,9 @@
  * for current targets with less native registers than architecturally exposed.
  * Neither of the above is currently supported by the assembler, but is being
  * considered as a potential optimization/compatibility option going forward. */
+
+/* It should be possible to reserve only 1 SIMD register (XmmF) to achieve the
+ * goals above (totalling 15 regs) at the cost of extra loads in certain ops. */
 
 /******************************************************************************/
 /**********************************   MSA   ***********************************/

@@ -130,11 +130,11 @@
 #define TmmY    0x16  /* v22, -0.5 64-bit */
 #define TmmR    0x17  /* v23, VMX only, Rounding Mode */
 #define TmmS    0x18  /* v24, VMX only, sign-mask 32-bit */
-#define TmmQ    0x19  /* v25, full-mask all 1s */
+#define TmmQ    0x19  /* v25, optional, full-mask all 1s */
 #define TmmA    0x1A  /* v26, +1.0 32-bit */
 #define TmmB    0x1B  /* v27, -0.5 32-bit */
 #define TmmC    0x1C  /* v28 */
-#define TmmD    0x1D  /* v29 */
+#define TmmD    0x1D  /* v29, optional in VSX, use Tmm1 */
 #define TmmE    0x1E  /* v30, VMX only */
 #define Tmm1    0x1F  /* v31 */
 
@@ -168,6 +168,9 @@
  * for current targets with less native registers than architecturally exposed.
  * Neither of the above is currently supported by the assembler, but is being
  * considered as a potential optimization/compatibility option going forward. */
+
+/* It should be possible to reserve only 1 SIMD register (XmmF) to achieve the
+ * goals above (totalling 15 regs) at the cost of extra loads in certain ops. */
 
 #if (RT_128 < 2)
 

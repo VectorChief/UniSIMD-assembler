@@ -137,8 +137,10 @@
  * cmdd*_** - SIMD-data args, SIMD ISA (always fixed at 64-bit, packed-256-bit)
  * cmdf*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed-256-bit)
  *
- * fixed 256-bit ops can be done as pairs with 2*14 128-bit regs on modern RISCs
- * while 512-bit ops can be done as quads with 4*14 128-bit regs on modern Power
+ * fixed 256-bit ops can be done as pairs with 2*15 128-bit regs on modern RISCs
+ * while 512-bit ops can be done as quads with 4*15 128-bit regs on modern Power
+ * potentially saving extra address-calculation step using indexed load on Power
+ * in case of only 14 exposed SIMD registers some rare ops can be done faster
  *
  * The following BASE instruction namespaces are planned for potential future.
  *

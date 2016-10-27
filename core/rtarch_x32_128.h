@@ -142,6 +142,9 @@
  * Neither of the above is currently supported by the assembler, but is being
  * considered as a potential optimization/compatibility option going forward. */
 
+/* It should be possible to reserve only 1 SIMD register (XmmF) to achieve the
+ * goals above (totalling 15 regs) at the cost of extra loads in certain ops. */
+
 /******************************************************************************/
 /**********************************   SSE   ***********************************/
 /******************************************************************************/
