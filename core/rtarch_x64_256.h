@@ -92,16 +92,16 @@
 /* mov (D = S) */
 
 #define movqx_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 1, 1) EMITB(0x28)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 1) EMITB(0x28)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define movqx_ld(XD, MS, DS)                                                \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 1, 1) EMITB(0x28)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x28)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define movqx_st(XS, MD, DD)                                                \
-    ADR VEX(RXB(XS), RXB(MD),     0x0, K, 1, 1) EMITB(0x29)                 \
+    ADR VEX(RXB(XS), RXB(MD),    0x00, K, 1, 1) EMITB(0x29)                 \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
@@ -218,11 +218,11 @@
 /* sqr (D = sqrt S) */
 
 #define sqrqs_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 1, 1) EMITB(0x51)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 1) EMITB(0x51)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define sqrqs_ld(XD, MS, DS)                                                \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 1, 1) EMITB(0x51)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x51)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -613,12 +613,12 @@
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnzqs_rr(XD, XS)     /* round towards zero */                       \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 1, 3) EMITB(0x09)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x09)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x03))
 
 #define rnzqs_ld(XD, MS, DS) /* round towards zero */                       \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 1, 3) EMITB(0x09)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x09)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x03))
 
@@ -644,12 +644,12 @@
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnpqs_rr(XD, XS)     /* round towards +inf */                       \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 1, 3) EMITB(0x09)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x09)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x02))
 
 #define rnpqs_ld(XD, MS, DS) /* round towards +inf */                       \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 1, 3) EMITB(0x09)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x09)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x02))
 
@@ -667,12 +667,12 @@
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnmqs_rr(XD, XS)     /* round towards -inf */                       \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 1, 3) EMITB(0x09)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x09)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x01))
 
 #define rnmqs_ld(XD, MS, DS) /* round towards -inf */                       \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 1, 3) EMITB(0x09)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x09)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x01))
 
@@ -690,12 +690,12 @@
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnnqs_rr(XD, XS)     /* round towards near */                       \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 1, 3) EMITB(0x09)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x09)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))
 
 #define rnnqs_ld(XD, MS, DS) /* round towards near */                       \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 1, 3) EMITB(0x09)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x09)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x00))
 
@@ -962,12 +962,12 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define movjx_ld(XD, MS, DS) /* not portable, do not use outside */         \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, 0, 1, 1) EMITB(0x28)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, 0, 1, 1) EMITB(0x28)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define movjx_st(XS, MD, DD) /* not portable, do not use outside */         \
-    ADR VEX(RXB(XS), RXB(MD),     0x0, 0, 1, 1) EMITB(0x29)                 \
+    ADR VEX(RXB(XS), RXB(MD),    0x00, 0, 1, 1) EMITB(0x29)                 \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
@@ -1200,12 +1200,12 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rndqs_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 1, 3) EMITB(0x09)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x09)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x04))
 
 #define rndqs_ld(XD, MS, DS)                                                \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 1, 3) EMITB(0x09)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x09)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x04))
 
@@ -1243,7 +1243,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnrqs_rr(XD, XS, mode)                                              \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 1, 3) EMITB(0x09)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x09)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
 
@@ -1260,7 +1260,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         AUX(SIB(MS), CMD(DS), EMITB(0x00))
 
 #define mmvqx_st(XS, MD, DD) /* not portable, use conditionally (on x86) */ \
-    ADR VEX(RXB(XS), RXB(MD),     0x0, K, 1, 2) EMITB(0x2F)                 \
+    ADR VEX(RXB(XS), RXB(MD),    0x00, K, 1, 2) EMITB(0x2F)                 \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 

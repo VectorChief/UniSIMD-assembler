@@ -275,10 +275,10 @@
         EMITW(0xF000032B | MXM(REG(XD), 0x00,    REG(XS)))
 
 #define rssqs_rr(XG, XS) /* destroys MS */                                  \
-        EMITW(0xF0000387 | MXM(TmmD,    REG(XG), REG(XG)))                  \
-        EMITW(0xF0000387 | MXM(TmmC,    REG(XG), TmmY))                     \
-        EMITW(0xF00007CF | MXM(TmmD,    REG(XS), TmmX))                     \
-        EMITW(0xF000078F | MXM(REG(XG), TmmD,    TmmC))
+        EMITW(0xF0000387 | MXM(TmmZ,    REG(XG), REG(XG)))                  \
+        EMITW(0xF0000387 | MXM(TmmW,    REG(XG), TmmY))                     \
+        EMITW(0xF00007CF | MXM(TmmZ,    REG(XS), TmmX))                     \
+        EMITW(0xF000078F | MXM(REG(XG), TmmZ,    TmmW))
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 

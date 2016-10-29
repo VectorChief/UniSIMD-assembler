@@ -131,8 +131,12 @@
 #define XmmB    0x0B, 0x03, EMPTY
 #define XmmC    0x0C, 0x03, EMPTY
 #define XmmD    0x0D, 0x03, EMPTY
+#if     RT_SIMD_COMPAT_XMM < 2
 #define XmmE    0x0E, 0x03, EMPTY            /* may be reserved in some cases */
+#if     RT_SIMD_COMPAT_XMM < 1
 #define XmmF    0x0F, 0x03, EMPTY            /* may be reserved in some cases */
+#endif/*RT_SIMD_COMPAT_XMM < 1*/
+#endif/*RT_SIMD_COMPAT_XMM < 2*/
 
 /* The last two SIMD registers can be reserved by the assembler when building
  * RISC targets with SIMD wider than natively supported 128-bit, in which case
@@ -1575,9 +1579,11 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         movox_st(XmmD, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        movox_st(XmmE, Oeax, PLAIN)                                         \
+    ADR REX(1,             0) EMITB(0x0F) EMITB(0x29)                       \
+        MRM(0x06,       0x00, 0x00)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        movox_st(XmmF, Oeax, PLAIN)
+    ADR REX(1,             0) EMITB(0x0F) EMITB(0x29)                       \
+        MRM(0x07,       0x00, 0x00)
 
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
@@ -1609,9 +1615,11 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         movox_ld(XmmD, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        movox_ld(XmmE, Oeax, PLAIN)                                         \
+    ADR REX(1,             0) EMITB(0x0F) EMITB(0x28)                       \
+        MRM(0x06,       0x00, 0x00)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        movox_ld(XmmF, Oeax, PLAIN)
+    ADR REX(1,             0) EMITB(0x0F) EMITB(0x28)                       \
+        MRM(0x07,       0x00, 0x00)
 
 #endif /* RT_128 */
 

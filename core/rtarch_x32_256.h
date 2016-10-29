@@ -124,8 +124,12 @@
 #define XmmB    0x0B, 0x03, EMPTY
 #define XmmC    0x0C, 0x03, EMPTY
 #define XmmD    0x0D, 0x03, EMPTY
+#if     RT_SIMD_COMPAT_XMM < 2
 #define XmmE    0x0E, 0x03, EMPTY            /* may be reserved in some cases */
+#if     RT_SIMD_COMPAT_XMM < 1
 #define XmmF    0x0F, 0x03, EMPTY            /* may be reserved in some cases */
+#endif/*RT_SIMD_COMPAT_XMM < 1*/
+#endif/*RT_SIMD_COMPAT_XMM < 2*/
 
 /* The last two SIMD registers can be reserved by the assembler when building
  * RISC targets with SIMD wider than natively supported 128-bit, in which case
@@ -147,16 +151,16 @@
 /* mov (D = S) */
 
 #define movox_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 0, 1) EMITB(0x28)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x28)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define movox_ld(XD, MS, DS)                                                \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 0, 1) EMITB(0x28)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x28)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define movox_st(XS, MD, DD)                                                \
-    ADR VEX(RXB(XS), RXB(MD),     0x0, K, 0, 1) EMITB(0x29)                 \
+    ADR VEX(RXB(XS), RXB(MD),    0x00, K, 0, 1) EMITB(0x29)                 \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
@@ -279,11 +283,11 @@
 /* sqr (D = sqrt S) */
 
 #define sqros_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 0, 1) EMITB(0x51)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x51)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define sqros_ld(XD, MS, DS)                                                \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 0, 1) EMITB(0x51)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x51)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -298,7 +302,7 @@
 #if RT_SIMD_COMPAT_RCP != 1
 
 #define rceos_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 0, 1) EMITB(0x53)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x53)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define rcsos_rr(XG, XS) /* destroys MS */                                  \
@@ -318,7 +322,7 @@
 #if RT_SIMD_COMPAT_RSQ != 1
 
 #define rseos_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 0, 1) EMITB(0x52)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x52)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define rssos_rr(XG, XS) /* destroys MS */                                  \
@@ -348,16 +352,16 @@
 
 
 #define cvdcs_rr(XD, XS)     /* not portable, do not use outside */         \
-        VEX(RXB(XD), RXB(XS),     0x0, 1, 0, 1) EMITB(0x5A)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, 1, 0, 1) EMITB(0x5A)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvdcs_ld(XD, MS, DS) /* not portable, do not use outside */         \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, 1, 0, 1) EMITB(0x5A)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, 1, 0, 1) EMITB(0x5A)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define cvcds_rr(XD, XS)     /* not portable, do not use outside */         \
-        VEX(RXB(XD), RXB(XS),     0x0, 1, 1, 1) EMITB(0x5A)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, 1, 1, 1) EMITB(0x5A)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 
@@ -737,21 +741,21 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnzos_rr(XD, XS)     /* round towards zero */                       \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 1, 3) EMITB(0x08)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x03))
 
 #define rnzos_ld(XD, MS, DS) /* round towards zero */                       \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 1, 3) EMITB(0x08)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x03))
 
 #define cvzos_rr(XD, XS)     /* round towards zero */                       \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 2, 1) EMITB(0x5B)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 2, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvzos_ld(XD, MS, DS) /* round towards zero */                       \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 2, 1) EMITB(0x5B)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 2, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -761,12 +765,12 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnpos_rr(XD, XS)     /* round towards +inf */                       \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 1, 3) EMITB(0x08)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x02))
 
 #define rnpos_ld(XD, MS, DS) /* round towards +inf */                       \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 1, 3) EMITB(0x08)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x02))
 
@@ -784,12 +788,12 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnmos_rr(XD, XS)     /* round towards -inf */                       \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 1, 3) EMITB(0x08)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x01))
 
 #define rnmos_ld(XD, MS, DS) /* round towards -inf */                       \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 1, 3) EMITB(0x08)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x01))
 
@@ -807,12 +811,12 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnnos_rr(XD, XS)     /* round towards near */                       \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 1, 3) EMITB(0x08)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))
 
 #define rnnos_ld(XD, MS, DS) /* round towards near */                       \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 1, 3) EMITB(0x08)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x00))
 
@@ -1059,12 +1063,12 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define movix_ld(XD, MS, DS) /* not portable, do not use outside */         \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, 0, 0, 1) EMITB(0x28)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, 0, 0, 1) EMITB(0x28)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define movix_st(XS, MD, DD) /* not portable, do not use outside */         \
-    ADR VEX(RXB(XS), RXB(MD),     0x0, 0, 0, 1) EMITB(0x29)                 \
+    ADR VEX(RXB(XS), RXB(MD),    0x00, 0, 0, 1) EMITB(0x29)                 \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
@@ -1298,7 +1302,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 #define RT_SIMD_MASK_FULL       0x0F+K*0xF0 /*  all satisfy the condition */
 
 #define movsn_rr(RD, XS) /* not portable, do not use outside */             \
-        VEX(RXB(RD), RXB(XS),     0x0, K, 0, 1) EMITB(0x50)                 \
+        VEX(RXB(RD), RXB(XS),    0x00, K, 0, 1) EMITB(0x50)                 \
         MRM(REG(RD), MOD(XS), REG(XS))
 
 #define CHECK_MASK(lb, mask, XS) /* destroys Reax, jump lb if mask == S */  \
@@ -1334,12 +1338,12 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 #define RT_SIMD_MODE_ROUNDZ_F   0x07    /* round towards zero */
 
 #define mxcsr_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR VEX(0,       RXB(MS),     0x0, 0, 0, 1) EMITB(0xAE)                 \
+    ADR VEX(0,       RXB(MS),    0x00, 0, 0, 1) EMITB(0xAE)                 \
         MRM(0x02,    MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define mxcsr_st(MD, DD) /* not portable, do not use outside */             \
-    ADR VEX(0,       RXB(MD),     0x0, 0, 0, 1) EMITB(0xAE)                 \
+    ADR VEX(0,       RXB(MD),    0x00, 0, 0, 1) EMITB(0xAE)                 \
         MRM(0x03,    MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
@@ -1369,21 +1373,21 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rndos_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 1, 3) EMITB(0x08)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x04))
 
 #define rndos_ld(XD, MS, DS)                                                \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 1, 3) EMITB(0x08)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x04))
 
 #define cvtos_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 1, 1) EMITB(0x5B)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvtos_ld(XD, MS, DS)                                                \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 1, 1) EMITB(0x5B)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -1392,11 +1396,11 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
  * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
 
 #define cvton_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 0, 1) EMITB(0x5B)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvton_ld(XD, MS, DS)                                                \
-    ADR VEX(RXB(XD), RXB(MS),     0x0, K, 0, 1) EMITB(0x5B)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -1408,7 +1412,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnros_rr(XD, XS, mode)                                              \
-        VEX(RXB(XD), RXB(XS),     0x0, K, 1, 3) EMITB(0x08)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
 
@@ -1425,7 +1429,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         AUX(SIB(MS), CMD(DS), EMITB(0x00))
 
 #define mmvox_st(XS, MD, DD) /* not portable, use conditionally (on x86) */ \
-    ADR VEX(RXB(XS), RXB(MD),     0x0, K, 1, 2) EMITB(0x2E)                 \
+    ADR VEX(RXB(XS), RXB(MD),    0x00, K, 1, 2) EMITB(0x2E)                 \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
@@ -1465,9 +1469,11 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         movox_st(XmmD, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        movox_st(XmmE, Oeax, PLAIN)                                         \
+    ADR VEX(1,             0,    0x00, K, 0, 1) EMITB(0x29)                 \
+        MRM(0x06,       0x00,    0x00)                                      \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        movox_st(XmmF, Oeax, PLAIN)
+    ADR VEX(1,             0,    0x00, K, 0, 1) EMITB(0x29)                 \
+        MRM(0x07,       0x00,    0x00)
 
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
@@ -1499,9 +1505,11 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         movox_ld(XmmD, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        movox_ld(XmmE, Oeax, PLAIN)                                         \
+    ADR VEX(1,             0,    0x00, K, 0, 1) EMITB(0x28)                 \
+        MRM(0x06,       0x00,    0x00)                                      \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        movox_ld(XmmF, Oeax, PLAIN)
+    ADR VEX(1,             0,    0x00, K, 0, 1) EMITB(0x28)                 \
+        MRM(0x07,       0x00,    0x00)
 
 #endif /* RT_256, RT_128 */
 

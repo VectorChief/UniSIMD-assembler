@@ -128,8 +128,6 @@
  */
 
 /******************************************************************************/
-/***************************   OS, COMPILER, ARCH   ***************************/
-/******************************************************************************/
 
 /*
  * The following BASE instruction namespaces are defined for current use.
@@ -254,14 +252,15 @@
  * General rule for interpretation of RT_SIMD_COMPAT_* values is as following:
  * 0 - non-compat (fastest), 1 - max-compat (slower), 2 - min-compat (faster).
  */
+#define RT_SIMD_COMPAT_XMM_MASTER       1 /* 0 - 16, 1 - 15, 2 - 14 regs */
 #define RT_SIMD_COMPAT_RCP_MASTER       1 /* for full-precision rcpps_** */
 #define RT_SIMD_COMPAT_RSQ_MASTER       1 /* for full-precision rsqps_** */
 #define RT_SIMD_COMPAT_FMA_MASTER       1 /* for full-precision fmaps_** */
 #define RT_SIMD_COMPAT_FMS_MASTER       1 /* for full-precision fmsps_** */
 #define RT_SIMD_COMPAT_DIV_MASTER       1 /* for full-precision divps_** */
 #define RT_SIMD_COMPAT_SQR_MASTER       1 /* for full-precision sqrps_** */
-#define RT_SIMD_COMPAT_FMR_MASTER       0 /* for fm*ps_** rounding mode */
-#define RT_SIMD_COMPAT_128_MASTER       1 /* for 128-bit AVX(1,2) - 1,2 */
+#define RT_SIMD_COMPAT_128_MASTER       1 /* for 128-bit AVX(1,2) - 1,2 (x86) */
+#define RT_SIMD_COMPAT_FMR_MASTER       0 /* for fm*ps_** rounding mode (x86) */
 #define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and Power */
 
 #include "rtzero.h"
@@ -303,6 +302,10 @@
 #define G   (RT_ENDIAN*(2-P)*4)     /* for jmpxx_xm working on 64-bit field */
 #define H   (RT_ENDIAN*(L-1)*4)     /* for cmdw*_** working on L-size field */
 #define I   (RT_ENDIAN*(2-L)*4)     /* for cmdy*_** working on 64-bit field */
+
+/******************************************************************************/
+/***************************   OS, COMPILER, ARCH   ***************************/
+/******************************************************************************/
 
 /*******************************   WIN32, MSVC   ******************************/
 
@@ -358,12 +361,12 @@
 /* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
  * of fmsps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
-/* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
- * of fm*ps_** instruction fallbacks to honour rounding mode */
-#define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 /* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1 & AVX2
  * when RT_128=8 SIMD backend is present among build targets */
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
+/* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
+ * of fm*ps_** instruction fallbacks to honour rounding mode */
+#define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
@@ -562,12 +565,12 @@
 /* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
  * of fmsps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
-/* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
- * of fm*ps_** instruction fallbacks to honour rounding mode */
-#define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 /* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1 & AVX2
  * when RT_128=8 SIMD backend is present among build targets */
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
+/* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
+ * of fm*ps_** instruction fallbacks to honour rounding mode */
+#define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
@@ -775,6 +778,9 @@
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
+/* RT_SIMD_COMPAT_XMM distinguishes between SIMD reg-file sizes
+ * with current top values: 0 - 16, 1 - 15, 2 - 14 SIMD regs */
+#define RT_SIMD_COMPAT_XMM      RT_SIMD_COMPAT_XMM_MASTER
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
@@ -787,12 +793,12 @@
 /* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
  * of fmsps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
-/* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
- * of fm*ps_** instruction fallbacks to honour rounding mode */
-#define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 /* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1 & AVX2
  * when RT_128=8 SIMD backend is present among build targets */
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
+/* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
+ * of fm*ps_** instruction fallbacks to honour rounding mode */
+#define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
@@ -1205,6 +1211,9 @@
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
+/* RT_SIMD_COMPAT_XMM distinguishes between SIMD reg-file sizes
+ * with current top values: 0 - 16, 1 - 15, 2 - 14 SIMD regs */
+#define RT_SIMD_COMPAT_XMM      RT_SIMD_COMPAT_XMM_MASTER
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
@@ -1415,6 +1424,9 @@
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
+/* RT_SIMD_COMPAT_XMM distinguishes between SIMD reg-file sizes
+ * with current top values: 0 - 16, 1 - 15, 2 - 14 SIMD regs */
+#define RT_SIMD_COMPAT_XMM      RT_SIMD_COMPAT_XMM_MASTER
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
@@ -1659,6 +1671,9 @@
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
+/* RT_SIMD_COMPAT_XMM distinguishes between SIMD reg-file sizes
+ * with current top values: 0 - 16, 1 - 15, 2 - 14 SIMD regs */
+#define RT_SIMD_COMPAT_XMM      RT_SIMD_COMPAT_XMM_MASTER
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
@@ -1715,8 +1730,8 @@
         movox_ld(Xmm8, Mebp, inf_GPC04_32)        /* v8  <- 0x7FFFFFFF */   \
         EMITS(0x10000504 | MXM(TmmS, 0x08, 0x08)) /* v24 <- not v8 */       \
         EMITS(0x10000484 | MXM(TmmQ, 0x08, TmmS)) /* v25 <- v8 or v24 */    \
-        EMITS(0x10000484 | MXM(TmmA, 0x02, 0x02)) /* v26 <- v2 */           \
-        EMITS(0x10000484 | MXM(TmmB, 0x04, 0x04)) /* v27 <- v4 */           \
+        EMITS(0x10000484 | MXM(TmmU, 0x02, 0x02)) /* v26 <- v2 */           \
+        EMITS(0x10000484 | MXM(TmmV, 0x04, 0x04)) /* v27 <- v4 */           \
         movqx_ld(Xmm2, Mebp, inf_GPC01_64)        /* v2  <- +1.0  64-bit */ \
         movqx_ld(Xmm4, Mebp, inf_GPC02_64)        /* v4  <- -0.5  64-bit */ \
         EMITS(0x10000484 | MXM(TmmX, 0x02, 0x02)) /* v21 <- v2 */           \
@@ -1773,21 +1788,21 @@
         movox_ld(Xmm8, Mebp, inf_GPC04_32)        /* v8  <- 0x7FFFFFFF */   \
         EMITS(0x10000504 | MXM(TmmS, 0x08, 0x08)) /* v24 <- not v8 */       \
         EMITS(0x10000484 | MXM(TmmQ, 0x08, TmmS)) /* v25 <- v8 or v24 */    \
-        EMITS(0x10000484 | MXM(TmmA, 0x02, 0x02)) /* v26 <- v2 */           \
-        EMITS(0x10000484 | MXM(TmmB, 0x04, 0x04)) /* v27 <- v4 */           \
+        EMITS(0x10000484 | MXM(TmmU, 0x02, 0x02)) /* v26 <- v2 */           \
+        EMITS(0x10000484 | MXM(TmmV, 0x04, 0x04)) /* v27 <- v4 */           \
         movqx_ld(Xmm2, Mebp, inf_GPC01_64)        /* v2  <- +1.0  64-bit */ \
         movqx_ld(Xmm4, Mebp, inf_GPC02_64)        /* v4  <- -0.5  64-bit */ \
         EMITS(0x10000484 | MXM(TmmX, 0x02, 0x02)) /* v21 <- v2 */           \
         EMITS(0x10000484 | MXM(TmmY, 0x04, 0x04)) /* v22 <- v4 */           \
         EMITS(0x100004C4 | MXM(TmmR, TmmS, TmmS)) /* v23 <- v24 xor v24 */  \
         EMITW(0xFC00010C | MRM(0x1C, 0x08, 0x00)) /* fpscr <- NI(4) */      \
-        EMITS(0x1000034C | MXM(Tmm1, 0x01, 0x00)) /* v31 <- splt-half(1) */ \
-        EMITS(0x10000644 | MXM(0x00, 0x00, Tmm1)) /* vscr <- v31, NJ(16) */
+        EMITS(0x1000034C | MXM(TmmM, 0x01, 0x00)) /* v31 <- splt-half(1) */ \
+        EMITS(0x10000644 | MXM(0x00, 0x00, TmmM)) /* vscr <- v31, NJ(16) */
 
 #define ASM_LEAVE_F(__Info__)                                               \
         EMITW(0xFC00010C | MRM(0x1C, 0x00, 0x00)) /* fpscr <- NI(0) */      \
-        EMITS(0x1000034C | MXM(Tmm1, 0x00, 0x00)) /* v31 <- splt-half(0) */ \
-        EMITS(0x10000644 | MXM(0x00, 0x00, Tmm1)) /* vscr <- v31, NJ(16) */ \
+        EMITS(0x1000034C | MXM(TmmM, 0x00, 0x00)) /* v31 <- splt-half(0) */ \
+        EMITS(0x10000644 | MXM(0x00, 0x00, TmmM)) /* vscr <- v31, NJ(16) */ \
         EMITW(0x7C0003A6 | MRM(TCxx, 0x00, 0x09)) /* ctr <- r27 */          \
         EMITS(0x7C0003A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave <- r28 */       \
         sregs_la()                                                          \
