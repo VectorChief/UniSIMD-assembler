@@ -119,9 +119,9 @@
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
-#define Tmm0    0x00  /* v0,  internal name for Xmm0, for mmv */
-#define TmmE    0x0E  /* v14, internal name for XmmE, for sregs */
-#define TmmF    0x0F  /* v15, internal name for XmmF, for sregs */
+#define Tmm0    0x00  /* v0,  internal name for Xmm0 (in mmv) */
+#define TmmE    0x0E  /* v14, internal name for XmmE (in sregs) */
+#define TmmF    0x0F  /* v15, internal name for XmmF (in sregs) */
 #define TmmM    0x1F  /* v31, temp-reg name for mem-args */
 
 /******************************************************************************/
@@ -156,7 +156,7 @@
  * they will be occupied by temporary data. Two hidden registers may also come
  * in handy when implementing elaborate register-spill techniques in the future
  * for current targets with less native registers than architecturally exposed.
- * Neither of the above is currently supported by the assembler, but is being
+ * Neither of the above is currently supported by the assembler, while both are
  * considered as a potential optimization/compatibility option going forward. */
 
 /* It should be possible to reserve only 1 SIMD register (XmmF) to achieve the

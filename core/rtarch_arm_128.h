@@ -130,7 +130,7 @@
 #define TmmE    0x16  /* q11 */
 #define TmmF    0x18  /* q12 */
 
-#define Tmm0    0x00  /* q0, internal name for Xmm0, for mmv, int-div on VFP */
+#define Tmm0    0x00  /* q0, internal name for Xmm0 (in mmv, VFP-int-div) */
 #define TmmM    0x10  /* q8, temp-reg name for mem-args */
 
 /* register pass-through variator */

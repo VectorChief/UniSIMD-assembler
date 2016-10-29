@@ -47,7 +47,7 @@
  * cmdy*_** - elem-size args, BASE ISA (32/64-bit configurable with RT_ELEMENT)
  * cmdz*_** - full-size args, BASE ISA (data-element is always fixed at 64-bit)
  *
- * More detailed description of the above is given in the rtarch.h file.
+ * More detailed description of the above is given in rtarch.h.
  */
 
 #undef Q /* short name for SIMD-quads in structs (number of 128-bit chunks) */
@@ -94,7 +94,7 @@
  * they will be occupied by temporary data. Two hidden registers may also come
  * in handy when implementing elaborate register-spill techniques in the future
  * for current targets with less native registers than architecturally exposed.
- * Neither of the above is currently supported by the assembler, but is being
+ * Neither of the above is currently supported by the assembler, while both are
  * considered as a potential optimization/compatibility option going forward. */
 
 /* It should be possible to reserve only 1 SIMD register (XmmF) to achieve the

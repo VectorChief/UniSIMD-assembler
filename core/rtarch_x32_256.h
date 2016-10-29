@@ -136,7 +136,7 @@
  * they will be occupied by temporary data. Two hidden registers may also come
  * in handy when implementing elaborate register-spill techniques in the future
  * for current targets with less native registers than architecturally exposed.
- * Neither of the above is currently supported by the assembler, but is being
+ * Neither of the above is currently supported by the assembler, while both are
  * considered as a potential optimization/compatibility option going forward. */
 
 /* It should be possible to reserve only 1 SIMD register (XmmF) to achieve the
