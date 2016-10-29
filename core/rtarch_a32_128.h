@@ -185,6 +185,21 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C3(DS), EMPTY2)   \
         EMITW(0x8B000000 | MRM(REG(RD), MOD(MS), TDxx))
 
+/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+
+#define mmvox_ld(XG, MS, DS)                                                \
+        notox_rx(Xmm0)                                                      \
+        andox_rr(W(XG), Xmm0)                                               \
+        annox_ld(Xmm0, W(MS), W(DS))                                        \
+        orrox_rr(W(XG), Xmm0)
+
+#define mmvox_st(XS, MG, DG)                                                \
+        andox_rr(W(XS), Xmm0)                                               \
+        annox_ld(Xmm0, W(MG), W(DG))                                        \
+        orrox_rr(Xmm0, W(XS))                                               \
+        movox_st(Xmm0, W(MG), W(DG))
+
 /* and (G = G & S) */
 
 #define andox_rr(XG, XS)                                                    \

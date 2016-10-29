@@ -977,6 +977,15 @@ struct rt_SIMD_REGS
 #define movpx_st(XS, MD, DD)                                                \
         movox_st(W(XS), W(MD), W(DD))
 
+/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+
+#define mmvpx_ld(XG, MS, DS)                                                \
+        mmvox_ld(W(XG), W(MS), W(DS))
+
+#define mmvpx_st(XS, MG, DG)                                                \
+        mmvox_st(W(XS), W(MG), W(DG))
+
 /* and (G = G & S) */
 
 #define andpx_rr(XG, XS)                                                    \
@@ -1334,15 +1343,6 @@ struct rt_SIMD_REGS
 #define cvrps_rr(XD, XS, mode)                                              \
         cvros_rr(W(XD), W(XS), mode)
 
-/* mmv (D = mask-merge S)
- * uses Xmm0 implicitly as a mask register */
-
-#define mmvpx_ld(XD, MS, DS) /* not portable, use conditionally (on x86) */ \
-        mmvox_ld(W(XD), W(MS), W(DS))
-
-#define mmvpx_st(XS, MD, DD) /* not portable, use conditionally (on x86) */ \
-        mmvox_st(W(XS), W(MD), W(DD))
-
 /***************** instructions for element-sized 64-bit SIMD *****************/
 
 #elif RT_ELEMENT == 64
@@ -1357,6 +1357,15 @@ struct rt_SIMD_REGS
 
 #define movpx_st(XS, MD, DD)                                                \
         movqx_st(W(XS), W(MD), W(DD))
+
+/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+
+#define mmvpx_ld(XG, MS, DS)                                                \
+        mmvqx_ld(W(XG), W(MS), W(DS))
+
+#define mmvpx_st(XS, MG, DG)                                                \
+        mmvqx_st(W(XS), W(MG), W(DG))
 
 /* and (G = G & S) */
 
@@ -1714,15 +1723,6 @@ struct rt_SIMD_REGS
 
 #define cvrps_rr(XD, XS, mode)                                              \
         cvrqs_rr(W(XD), W(XS), mode)
-
-/* mmv (D = mask-merge S)
- * uses Xmm0 implicitly as a mask register */
-
-#define mmvpx_ld(XD, MS, DS) /* not portable, use conditionally (on x86) */ \
-        mmvqx_ld(W(XD), W(MS), W(DS))
-
-#define mmvpx_st(XS, MD, DD) /* not portable, use conditionally (on x86) */ \
-        mmvqx_st(W(XS), W(MD), W(DD))
 
 #endif /* RT_ELEMENT */
 

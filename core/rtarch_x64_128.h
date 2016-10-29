@@ -105,6 +105,32 @@ ADR ESC REX(RXB(XS), RXB(MD)) EMITB(0x0F) EMITB(0x29)                       \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
+/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+
+#if (RT_128 < 4)
+
+#define mmvqx_ld(XG, MS, DS)                                                \
+        notqx_rx(Xmm0)                                                      \
+        andqx_rr(W(XG), Xmm0)                                               \
+        annqx_ld(Xmm0, W(MS), W(DS))                                        \
+        orrqx_rr(W(XG), Xmm0)
+
+#else /* RT_128 >= 4 */
+
+#define mmvqx_ld(XG, MS, DS)                                                \
+ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x15)           \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#endif /* RT_128 >= 4 */
+
+#define mmvqx_st(XS, MG, DG)                                                \
+        andqx_rr(W(XS), Xmm0)                                               \
+        annqx_ld(Xmm0, W(MG), W(DG))                                        \
+        orrqx_rr(Xmm0, W(XS))                                               \
+        movqx_st(Xmm0, W(MG), W(DG))
+
 /* and (G = G & S) */
 
 #define andqx_rr(XG, XS)                                                    \
@@ -1092,14 +1118,6 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
 #define cvrqs_rr(XD, XS, mode)                                              \
         rnrqs_rr(W(XD), W(XS), mode)                                        \
         cvzqs_rr(W(XD), W(XD))
-
-/* mmv (D = mask-merge S)
- * uses Xmm0 implicitly as a mask register */
-
-#define mmvqx_ld(XD, MS, DS) /* not portable, use conditionally (on x86) */ \
-ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x15)           \
-        MRM(REG(XD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
 
 #endif /* RT_128 >= 4 */
 

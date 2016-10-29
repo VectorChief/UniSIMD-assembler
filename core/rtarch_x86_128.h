@@ -153,6 +153,32 @@
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
+/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+
+#if (RT_128 < 4)
+
+#define mmvox_ld(XG, MS, DS)                                                \
+        notox_rx(Xmm0)                                                      \
+        andox_rr(W(XG), Xmm0)                                               \
+        annox_ld(Xmm0, W(MS), W(DS))                                        \
+        orrox_rr(W(XG), Xmm0)
+
+#else /* RT_128 >= 4 */
+
+#define mmvox_ld(XG, MS, DS)                                                \
+    ESC EMITB(0x0F) EMITB(0x38) EMITB(0x14)                                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#endif /* RT_128 >= 4 */
+
+#define mmvox_st(XS, MG, DG)                                                \
+        andox_rr(W(XS), Xmm0)                                               \
+        annox_ld(Xmm0, W(MG), W(DG))                                        \
+        orrox_rr(Xmm0, W(XS))                                               \
+        movox_st(Xmm0, W(MG), W(DG))
+
 /* and (G = G & S) */
 
 #define andox_rr(XG, XS)                                                    \
@@ -1508,14 +1534,6 @@
 #define cvros_rr(XD, XS, mode)                                              \
         rnros_rr(W(XD), W(XS), mode)                                        \
         cvzos_rr(W(XD), W(XD))
-
-/* mmv (D = mask-merge S)
- * uses Xmm0 implicitly as a mask register */
-
-#define mmvox_ld(XD, MS, DS) /* not portable, use conditionally (on x86) */ \
-    ESC EMITB(0x0F) EMITB(0x38) EMITB(0x14)                                 \
-        MRM(REG(XD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
 
 #endif /* RT_128 >= 4 */
 

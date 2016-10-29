@@ -108,6 +108,21 @@
         EMITW(0x7C000799 | MXM(REG(XS), Teax & (MOD(MD) == TPxx), TPxx))    \
                                                        /* ^ == -1 if true */
 
+/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+
+#define mmvqx_ld(XG, MS, DS)                                                \
+        notqx_rx(Xmm0)                                                      \
+        andqx_rr(W(XG), Xmm0)                                               \
+        annqx_ld(Xmm0, W(MS), W(DS))                                        \
+        orrqx_rr(W(XG), Xmm0)
+
+#define mmvqx_st(XS, MG, DG)                                                \
+        andqx_rr(W(XS), Xmm0)                                               \
+        annqx_ld(Xmm0, W(MG), W(DG))                                        \
+        orrqx_rr(Xmm0, W(XS))                                               \
+        movqx_st(Xmm0, W(MG), W(DG))
+
 /* and (G = G & S) */
 
 #define andqx_rr(XG, XS)                                                    \

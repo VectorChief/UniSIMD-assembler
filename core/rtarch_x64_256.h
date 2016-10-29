@@ -105,6 +105,19 @@
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
+/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+
+#define mmvqx_ld(XG, MS, DS)                                                \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 1, 3) EMITB(0x4B)                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x00))
+
+#define mmvqx_st(XS, MG, DG)                                                \
+    ADR VEX(RXB(XS), RXB(MG),    0x00, K, 1, 2) EMITB(0x2F)                 \
+        MRM(REG(XS), MOD(MG), REG(MG))                                      \
+        AUX(SIB(MG), CMD(DG), EMPTY)
+
 /* and (G = G & S) */
 
 #define andqx_rr(XG, XS)                                                    \
@@ -1250,19 +1263,6 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 #define cvrqs_rr(XD, XS, mode)                                              \
         rnrqs_rr(W(XD), W(XS), mode)                                        \
         cvzqs_rr(W(XD), W(XD))
-
-/* mmv (D = mask-merge S)
- * uses Xmm0 implicitly as a mask register */
-
-#define mmvqx_ld(XD, MS, DS) /* not portable, use conditionally (on x86) */ \
-    ADR VEX(RXB(XD), RXB(MS), REN(XD), K, 1, 3) EMITB(0x4B)                 \
-        MRM(REG(XD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x00))
-
-#define mmvqx_st(XS, MD, DD) /* not portable, use conditionally (on x86) */ \
-    ADR VEX(RXB(XS), RXB(MD),    0x00, K, 1, 2) EMITB(0x2F)                 \
-        MRM(REG(XS), MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
