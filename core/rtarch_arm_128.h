@@ -125,12 +125,13 @@
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
-#define Tmm0    0x00  /* q0, for integer div VFP fallback */
-#define TmmM    0x10  /* q8 */
 #define TmmC    0x12  /* q9 */
 #define TmmD    0x14  /* q10 */
 #define TmmE    0x16  /* q11 */
 #define TmmF    0x18  /* q12 */
+
+#define Tmm0    0x00  /* q0, internal name for Xmm0, for mmv, int-div on VFP */
+#define TmmM    0x10  /* q8, temp-reg name for mem-args */
 
 /* register pass-through variator */
 
@@ -181,16 +182,17 @@
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
 
 #define mmvox_ld(XG, MS, DS)                                                \
-        notox_rx(Xmm0)                                                      \
-        andox_rr(W(XG), Xmm0)                                               \
-        annox_ld(Xmm0, W(MS), W(DS))                                        \
-        orrox_rr(W(XG), Xmm0)
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3200150 | MXM(REG(XG), TmmM,    Tmm0))
 
 #define mmvox_st(XS, MG, DG)                                                \
-        andox_rr(W(XS), Xmm0)                                               \
-        annox_ld(Xmm0, W(MG), W(DG))                                        \
-        orrox_rr(Xmm0, W(XS))                                               \
-        movox_st(Xmm0, W(MG), W(DG))
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C2(DG), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MG), VAL(DG), B2(DG), P2(DG)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3200150 | MXM(TmmM,    REG(XS), Tmm0))                     \
+        EMITW(0xF4000AAF | MXM(TmmM,    TPxx,    0x00))
 
 /* and (G = G & S) */
 

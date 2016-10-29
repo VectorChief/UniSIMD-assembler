@@ -106,16 +106,15 @@
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
 
 #define mmvqx_ld(XG, MS, DS)                                                \
-        notqx_rx(Xmm0)                                                      \
-        andqx_rr(W(XG), Xmm0)                                               \
-        annqx_ld(Xmm0, W(MS), W(DS))                                        \
-        orrqx_rr(W(XG), Xmm0)
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x6EA01C00 | MXM(REG(XG), TmmM,    Tmm0))
 
 #define mmvqx_st(XS, MG, DG)                                                \
-        andqx_rr(W(XS), Xmm0)                                               \
-        annqx_ld(Xmm0, W(MG), W(DG))                                        \
-        orrqx_rr(Xmm0, W(XS))                                               \
-        movqx_st(Xmm0, W(MG), W(DG))
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C2(DG), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MG), VAL(DG), B2(DG), P2(DG)))  \
+        EMITW(0x6EA01C00 | MXM(TmmM,    REG(XS), Tmm0))                     \
+        EMITW(0x3D800000 | MPM(TmmM,    MOD(MG), VAL(DG), B2(DG), P2(DG)))
 
 /* and (G = G & S) */
 

@@ -132,8 +132,9 @@
 #define TmmT    0x1D  /* w29, sign-mask 64-bit, optional (temp-load in TmmM) */
 #define TmmZ    0x1E  /* w30, zero-mask all 0s */
 
-#define TmmE    0x0E  /* w14, internal name for XmmE */
-#define TmmF    0x0F  /* w15, internal name for XmmF */
+#define Tmm0    0x00  /* w0,  internal name for Xmm0, for mmv */
+#define TmmE    0x0E  /* w14, internal name for XmmE, for sregs */
+#define TmmF    0x0F  /* w15, internal name for XmmF, for sregs */
 #define TmmM    0x1F  /* w31, temp-reg name for mem-args */
 
 /******************************************************************************/
@@ -202,16 +203,15 @@
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
 
 #define mmvox_ld(XG, MS, DS)                                                \
-        notox_rx(Xmm0)                                                      \
-        andox_rr(W(XG), Xmm0)                                               \
-        annox_ld(Xmm0, W(MS), W(DS))                                        \
-        orrox_rr(W(XG), Xmm0)
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7880001E | MXM(REG(XG), TmmM,    Tmm0))
 
 #define mmvox_st(XS, MG, DG)                                                \
-        andox_rr(W(XS), Xmm0)                                               \
-        annox_ld(Xmm0, W(MG), W(DG))                                        \
-        orrox_rr(Xmm0, W(XS))                                               \
-        movox_st(Xmm0, W(MG), W(DG))
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C2(DG), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MG), VAL(DG), B2(DG), P2(DG)))  \
+        EMITW(0x7880001E | MXM(TmmM,    REG(XS), Tmm0))                     \
+        EMITW(0x78000027 | MPM(TmmM,    MOD(MG), VAL(DG), B2(DG), P2(DG)))
 
 /* and (G = G & S) */
 
