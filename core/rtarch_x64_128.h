@@ -110,6 +110,12 @@ ADR ESC REX(RXB(XS), RXB(MD)) EMITB(0x0F) EMITB(0x29)                       \
 
 #if (RT_128 < 4)
 
+#define mmvqx_rr(XG, XS)                                                    \
+        andqx_rr(W(XS), Xmm0)                                               \
+        annqx_rr(Xmm0, W(XG))                                               \
+        orrqx_rr(Xmm0, W(XS))                                               \
+        movqx_rr(W(XG), Xmm0)
+
 #define mmvqx_ld(XG, MS, DS)                                                \
         notqx_rx(Xmm0)                                                      \
         andqx_rr(W(XG), Xmm0)                                               \
@@ -117,6 +123,10 @@ ADR ESC REX(RXB(XS), RXB(MD)) EMITB(0x0F) EMITB(0x29)                       \
         orrqx_rr(W(XG), Xmm0)
 
 #else /* RT_128 >= 4 */
+
+#define mmvqx_rr(XG, XS)                                                    \
+    ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x38) EMITB(0x15)           \
+        MRM(REG(XG), MOD(XS), REG(XS))
 
 #define mmvqx_ld(XG, MS, DS)                                                \
 ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x15)           \

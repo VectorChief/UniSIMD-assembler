@@ -129,6 +129,13 @@
 /**********************************   SSE   ***********************************/
 /******************************************************************************/
 
+/* adr (D = adr S) */
+
+#define adrpx_ld(RD, MS, DS) /* RD is a BASE reg, MS/DS is SIMD-aligned */  \
+        EMITB(0x8D)                                                         \
+        MRM(REG(RD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
 /**************************   packed generic (SSE1)   *************************/
 
 /* mov (D = S) */
@@ -147,16 +154,16 @@
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
-
-#define adrpx_ld(RD, MS, DS) /* RD is a BASE reg, DS is SIMD-aligned */     \
-        EMITB(0x8D)                                                         \
-        MRM(REG(RD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
 /* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
 
 #if (RT_128 < 4)
+
+#define mmvox_rr(XG, XS)                                                    \
+        andox_rr(W(XS), Xmm0)                                               \
+        annox_rr(Xmm0, W(XG))                                               \
+        orrox_rr(Xmm0, W(XS))                                               \
+        movox_rr(W(XG), Xmm0)
 
 #define mmvox_ld(XG, MS, DS)                                                \
         notox_rx(Xmm0)                                                      \
@@ -165,6 +172,10 @@
         orrox_rr(W(XG), Xmm0)
 
 #else /* RT_128 >= 4 */
+
+#define mmvox_rr(XG, XS)                                                    \
+    ESC EMITB(0x0F) EMITB(0x38) EMITB(0x14)                                 \
+        MRM(REG(XG), MOD(XS), REG(XS))
 
 #define mmvox_ld(XG, MS, DS)                                                \
     ESC EMITB(0x0F) EMITB(0x38) EMITB(0x14)                                 \

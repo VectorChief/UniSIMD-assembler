@@ -179,6 +179,12 @@
 /**********************************   MSA   ***********************************/
 /******************************************************************************/
 
+/* adr (D = adr S) */
+
+#define adrpx_ld(RD, MS, DS) /* RD is a BASE reg, MS/DS is SIMD-aligned */  \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C3(DS), EMPTY2)   \
+        EMITW(0x00000021 | MRM(REG(RD), MOD(MS), TDxx) | ADR)
+
 /**************************   packed generic (SIMD)   *************************/
 
 /* mov (D = S) */
@@ -194,13 +200,11 @@
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
         EMITW(0x78000027 | MPM(REG(XS), MOD(MD), VAL(DD), B2(DD), P2(DD)))
 
-
-#define adrpx_ld(RD, MS, DS) /* RD is a BASE reg, DS is SIMD-aligned */     \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C3(DS), EMPTY2)   \
-        EMITW(0x00000021 | MRM(REG(RD), MOD(MS), TDxx) | ADR)
-
 /* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+
+#define mmvox_rr(XG, XS)                                                    \
+        EMITW(0x7880001E | MXM(REG(XG), REG(XS), Tmm0))
 
 #define mmvox_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
