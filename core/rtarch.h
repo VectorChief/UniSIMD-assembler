@@ -172,8 +172,14 @@
  *
  * cvx*s_** - SIMD-data args, SIMD ISA (convert to fp-precision below selected)
  * cvy*s_** - SIMD-data args, SIMD ISA (convert to fp-precision above selected)
- * conversion to lower fp-precision narrows onto lower-half of selected arg-size
- * conversion to higher fp-precision widens from lower-half of selected arg-size
+ * conversion to lower fp-precision narrows onto lower-half of selected vec-size
+ * conversion to higher fp-precision widens from lower-half of selected vec-size
+ * cux*s_**, cuy*s_** are reserved for fp-precision conversion of the upper-half
+ *
+ * cv**x_rr, cv**x_ld are reserved for unsigned-int-to-fp conversion, keeps size
+ * cx**s_rr, cx**s_ld are reserved for fp-to-unsigned-int conversion, keeps size
+ * cn**s_rr, cn**s_ld can be aliases for fp-to-signed-int conversion, keeps size
+ * cv***F**, c***sF** can reuse fp<->int names for .?-sized fixed-point, ? = F*8
  *
  * The following BASE instruction namespaces are planned for potential future.
  *
@@ -235,8 +241,8 @@
  * while standalone remainder operations can only be done natively on MIPS.
  * Consider using special fixed-register forms for maximum performance.
  *
- * Working with sub-word BASE elements (byte, half) is reserved for future use,
- * however current displacement types may not work due to natural alignment.
+ * Working with sub-word BASE elements (byte, half) is reserved for future use.
+ * However, current displacement types may not work due to natural alignment.
  * Signed/unsigned types can be supported orthogonally in cmd*n_**, cmd*x_**.
  * Working with sub-word SIMD elements (byte, half) has not been investigated.
  * However, as current major ISAs lack the ability to do sub-word fp-compute,
