@@ -177,9 +177,12 @@
  * cux*s_**, cuy*s_** are reserved for fp-precision conversion of the upper-half
  *
  * cv**x_rr, cv**x_ld are reserved for unsigned-int-to-fp conversion, keeps size
- * cx**s_rr, cx**s_ld are reserved for fp-to-unsigned-int conversion, keeps size
- * cn**s_rr, cn**s_ld can be aliases for fp-to-signed-int conversion, keeps size
+ * cu**s_rr, cu**s_ld are reserved for fp-to-unsigned-int conversion, keeps size
  * cv***F**, c***sF** can reuse fp<->int names for .?-sized fixed-point, ? = F*8
+ *
+ * cs***_rr, cs***_ld can be aliases for everything-to-fp conversion, keeps size
+ * cn**s_rr, cn**s_ld can be aliases for fp-to-signed-int conversion, keeps size
+ * cx**s_rr, cx**s_ld are reserved for fp-to-unsigned-int conversion, keeps size
  *
  * The following BASE instruction namespaces are planned for potential future.
  *
