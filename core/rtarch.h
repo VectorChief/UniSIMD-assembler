@@ -97,6 +97,7 @@
  * not all registers in target descriptions are always exposed for apps to use
  * flags RT_BASE_REGS and RT_SIMD_REGS are available for rough differentiation
  * between register-file sizes with current values: legacy 8, 16, 32 (planned)
+ * while top registers reservation is controlled via RT_SIMD_COMPAT_XMM option
  *
  * fixed 256-bit ops can be done as pairs with 2*15 128-bit regs on modern RISCs
  * fixed 256-bit ops can be done as pairs with 2*30 128-bit regs on modern Power
@@ -168,6 +169,11 @@
  * while 512-bit ops can be done as quads with 4*15 128-bit regs on modern Power
  * potentially saving extra address-calculation step using indexed-load on Power
  * in case of only 14/28 exposed SIMD registers some rare ops can be done faster
+ *
+ * cvx*s_** - SIMD-data args, SIMD ISA (convert to fp-precision below selected)
+ * cvy*s_** - SIMD-data args, SIMD ISA (convert to fp-precision above selected)
+ * conversion to lower fp-precision narrows onto lower-half of selected arg-size
+ * conversion to higher fp-precision widens from lower-half of selected arg-size
  *
  * The following BASE instruction namespaces are planned for potential future.
  *
