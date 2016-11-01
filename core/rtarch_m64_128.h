@@ -246,7 +246,7 @@
 #define rceqs_rr(XD, XS)                                                    \
         EMITW(0x7B2B001E | MXM(REG(XD), REG(XS), 0x00))
 
-#define rcsqs_rr(XG, XS) /* destroys MS */
+#define rcsqs_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
@@ -261,7 +261,7 @@
 #define rseqs_rr(XD, XS)                                                    \
         EMITW(0x7B29001E | MXM(REG(XD), REG(XS), 0x00))
 
-#define rssqs_rr(XG, XS) /* destroys MS */
+#define rssqs_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 

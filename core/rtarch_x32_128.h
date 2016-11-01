@@ -349,7 +349,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
         REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x53)                       \
         MRM(REG(XD), MOD(XS), REG(XS))
 
-#define rcsos_rr(XG, XS) /* destroys MS */                                  \
+#define rcsos_rr(XG, XS) /* destroys XS */                                  \
         mulos_rr(W(XS), W(XG))                                              \
         mulos_rr(W(XS), W(XG))                                              \
         addos_rr(W(XG), W(XG))                                              \
@@ -369,7 +369,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
         REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x52)                       \
         MRM(REG(XD), MOD(XS), REG(XS))
 
-#define rssos_rr(XG, XS) /* destroys MS */                                  \
+#define rssos_rr(XG, XS) /* destroys XS */                                  \
         mulos_rr(W(XS), W(XG))                                              \
         mulos_rr(W(XS), W(XG))                                              \
         subos_ld(W(XS), Mebp, inf_GPC03_32)                                 \

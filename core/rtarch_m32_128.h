@@ -342,7 +342,7 @@
 #define rceos_rr(XD, XS)                                                    \
         EMITW(0x7B2A001E | MXM(REG(XD), REG(XS), 0x00))
 
-#define rcsos_rr(XG, XS) /* destroys MS */
+#define rcsos_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
@@ -357,7 +357,7 @@
 #define rseos_rr(XD, XS)                                                    \
         EMITW(0x7B28001E | MXM(REG(XD), REG(XS), 0x00))
 
-#define rssos_rr(XG, XS) /* destroys MS */
+#define rssos_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 

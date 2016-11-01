@@ -277,7 +277,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
         movqx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
         divqs_ld(W(XD), Mebp, inf_SCR01(0))
 
-#define rcsqs_rr(XG, XS) /* destroys MS */
+#define rcsqs_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
@@ -295,7 +295,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
         movqx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
         divqs_ld(W(XD), Mebp, inf_SCR01(0))
 
-#define rssqs_rr(XG, XS) /* destroys MS */
+#define rssqs_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 

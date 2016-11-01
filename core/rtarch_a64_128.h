@@ -244,7 +244,7 @@
 #define rceqs_rr(XD, XS)                                                    \
         EMITW(0x4EE1D800 | MXM(REG(XD), REG(XS), 0x00))
 
-#define rcsqs_rr(XG, XS) /* destroys MS */                                  \
+#define rcsqs_rr(XG, XS) /* destroys XS */                                  \
         EMITW(0x4E60FC00 | MXM(REG(XS), REG(XS), REG(XG)))                  \
         EMITW(0x6E60DC00 | MXM(REG(XG), REG(XG), REG(XS)))
 
@@ -261,7 +261,7 @@
 #define rseqs_rr(XD, XS)                                                    \
         EMITW(0x6EE1D800 | MXM(REG(XD), REG(XS), 0x00))
 
-#define rssqs_rr(XG, XS) /* destroys MS */                                  \
+#define rssqs_rr(XG, XS) /* destroys XS */                                  \
         EMITW(0x6E60DC00 | MXM(REG(XS), REG(XS), REG(XG)))                  \
         EMITW(0x4EE0FC00 | MXM(REG(XS), REG(XS), REG(XG)))                  \
         EMITW(0x6E60DC00 | MXM(REG(XG), REG(XG), REG(XS)))

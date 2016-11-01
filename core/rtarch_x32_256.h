@@ -324,7 +324,7 @@
         VEX(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x53)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
-#define rcsos_rr(XG, XS) /* destroys MS */                                  \
+#define rcsos_rr(XG, XS) /* destroys XS */                                  \
         mulos_rr(W(XS), W(XG))                                              \
         mulos_rr(W(XS), W(XG))                                              \
         addos_rr(W(XG), W(XG))                                              \
@@ -344,7 +344,7 @@
         VEX(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x52)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
-#define rssos_rr(XG, XS) /* destroys MS */                                  \
+#define rssos_rr(XG, XS) /* destroys XS */                                  \
         mulos_rr(W(XS), W(XG))                                              \
         mulos_rr(W(XS), W(XG))                                              \
         subos_ld(W(XS), Mebp, inf_GPC03_32)                                 \

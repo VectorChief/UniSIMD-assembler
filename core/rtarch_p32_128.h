@@ -514,7 +514,7 @@
 #define rceos_rr(XD, XS)                                                    \
         EMITW(0x1000010A | MXM(REG(XD), 0x00,    REG(XS)))
 
-#define rcsos_rr(XG, XS) /* destroys MS */                                  \
+#define rcsos_rr(XG, XS) /* destroys XS */                                  \
         EMITW(0x1000002F | MXM(REG(XS), REG(XG), TmmU) | REG(XS) << 6)      \
         EMITW(0x1000002E | MXM(REG(XG), REG(XG), REG(XG)) | REG(XS) << 6)
 
@@ -531,7 +531,7 @@
 #define rseos_rr(XD, XS)                                                    \
         EMITW(0x1000014A | MXM(REG(XD), 0x00,    REG(XS)))
 
-#define rssos_rr(XG, XS) /* destroys MS */                                  \
+#define rssos_rr(XG, XS) /* destroys XS */                                  \
         EMITW(0x1000002E | MXM(TmmZ,    REG(XG), TmmS) | REG(XG) << 6)      \
         EMITW(0x1000002E | MXM(TmmW,    REG(XG), TmmS) | TmmV << 6)         \
         EMITW(0x1000002F | MXM(TmmZ,    TmmZ,    TmmU) | REG(XS) << 6)      \
@@ -957,7 +957,7 @@
 #define rceos_rr(XD, XS)                                                    \
         EMITW(0xF000026B | MXM(REG(XD), 0x00,    REG(XS)))
 
-#define rcsos_rr(XG, XS) /* destroys MS */                                  \
+#define rcsos_rr(XG, XS) /* destroys XS */                                  \
         EMITW(0xF00006CF | MXM(REG(XS), REG(XG), TmmU))                     \
         EMITW(0xF000020F | MXM(REG(XG), REG(XG), REG(XS)))
 
@@ -974,7 +974,7 @@
 #define rseos_rr(XD, XS)                                                    \
         EMITW(0xF000022B | MXM(REG(XD), 0x00,    REG(XS)))
 
-#define rssos_rr(XG, XS) /* destroys MS */                                  \
+#define rssos_rr(XG, XS) /* destroys XS */                                  \
         EMITW(0xF0000287 | MXM(TmmZ,    REG(XG), REG(XG)))                  \
         EMITW(0xF0000287 | MXM(TmmW,    REG(XG), TmmV))                     \
         EMITW(0xF00006CF | MXM(TmmZ,    REG(XS), TmmU))                     \
