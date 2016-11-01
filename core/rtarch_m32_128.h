@@ -632,8 +632,8 @@
 
 #define S0(mask)    S1(mask)
 #define S1(mask)    S##mask
-#define SMN(rg, lb) ASM_BEG ASM_OP2( bz.v, rg, lb) ASM_END
-#define SMF(rg, lb) ASM_BEG ASM_OP2(bnz.w, rg, lb) ASM_END
+#define SMN(xs, lb) ASM_BEG ASM_OP2( bz.v, xs, lb) ASM_END
+#define SMF(xs, lb) ASM_BEG ASM_OP2(bnz.w, xs, lb) ASM_END
 
 #define CHECK_MASK(lb, mask, XS) /* destroys Reax, jump lb if mask == S */  \
         AUW(EMPTY, EMPTY, EMPTY, MOD(XS), lb, S0(RT_SIMD_MASK_##mask), EMPTY2)

@@ -624,12 +624,12 @@
 #define RT_SIMD_MASK_NONE       0x00    /* none satisfy the condition */
 #define RT_SIMD_MASK_FULL       0x04    /*  all satisfy the condition */
 
-#define movms_rr(XD, XS) /* not portable, do not use outside */             \
+#define movmn_rr(RD, XS) /* not portable, do not use outside */             \
         EMITW(0x4EB1B800 | MXM(TmmM,    REG(XS), 0x00))                     \
-        EMITW(0x0E043C00 | MXM(REG(XD), TmmM,    0x00))
+        EMITW(0x0E043C00 | MXM(REG(RD), TmmM,    0x00))
 
 #define CHECK_MASK(lb, mask, XS) /* destroys Reax, jump lb if mask == S */  \
-        movms_rr(Reax, W(XS))                                               \
+        movmn_rr(Reax, W(XS))                                               \
         addwz_ri(Reax, IB(RT_SIMD_MASK_##mask))                             \
         jezxx_lb(lb)
 
