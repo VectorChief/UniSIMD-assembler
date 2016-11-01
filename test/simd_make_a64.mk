@@ -61,6 +61,8 @@ simd_test_a64f64:
 # make -f simd_make_a64.mk
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64f32
 
+# For 256-bit NEON build use (replace): RT_256=1 (uses pairs of regs/ops)
+
 # 64/32-bit (ptr/adr) hybrid mode is compatible with native 64-bit ABI,
 # use (replace): RT_ADDRESS=32, rename the binary to simd_test.a64_**
 
