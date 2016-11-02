@@ -40,5 +40,7 @@ simd_test_a32:
 # make -f simd_make_a32.mk
 # (recent upstream QEMU(-2.6) doesn't currently support AArch64 ILP32 ABI)
 
+# For 256-bit NEON build use (replace): RT_256=1 (uses pairs of regs/ops)
+
 # 32-bit ABI hasn't been fully tested yet due to lack of available libs,
 # check out 64/32-bit (ptr/adr) hybrid mode for 64-bit ABI in simd_make_a64.mk

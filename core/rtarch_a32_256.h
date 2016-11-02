@@ -119,7 +119,7 @@
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
-#define Tmm0    0x00  /* v0,  internal name for Xmm0 (in sregs, mmv) */
+#define Tmm0    0x00  /* v0,  internal name for Xmm0 (in mmv) */
 #define TmmE    0x0E  /* v14, internal name for XmmE (in sregs) */
 #define TmmF    0x0F  /* v15, internal name for XmmF (in sregs) */
 #define TmmM    0x1F  /* v31, temp-reg name for mem-args */
@@ -939,9 +939,9 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         EMITW(0x3D800000 | MXM(TmmE,    Teax,    0x00))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        EMITW(0x3D800000 | MXM(TmmF,    Teax,    0x00))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         EMITW(0x3D800000 | MXM(TmmE+16, Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0x3D800000 | MXM(TmmF,    Teax,    0x00))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         EMITW(0x3D800000 | MXM(TmmM,    Teax,    0x00))
 
@@ -977,9 +977,9 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         EMITW(0x3DC00000 | MXM(TmmE,    Teax,    0x00))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        EMITW(0x3DC00000 | MXM(TmmF,    Teax,    0x00))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         EMITW(0x3DC00000 | MXM(TmmE+16, Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0x3DC00000 | MXM(TmmF,    Teax,    0x00))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         EMITW(0x3DC00000 | MXM(TmmM,    Teax,    0x00))
 

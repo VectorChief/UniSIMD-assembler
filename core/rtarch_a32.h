@@ -1412,7 +1412,7 @@
  * 2nd byte - 512-bit version, 3rd byte - upper, reserved */
 
 #define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
-        movwx_mi(Mebp, inf_VER, IM(257)) /* <- NEON to bit0, bit8 */
+        movwx_mi(Mebp, inf_VER, IM(0x101)) /* <- NEON to bit0, bit8 */
 
 /************************* address-sized instructions *************************/
 
