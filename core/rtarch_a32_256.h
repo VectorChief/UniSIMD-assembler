@@ -777,14 +777,13 @@
  * then in CHECK_MASK to facilitate branching on a given condition value */
 
 #define RT_SIMD_MASK_NONE       0x00    /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL       0x08    /*  all satisfy the condition */
+#define RT_SIMD_MASK_FULL       0x04    /*  all satisfy the condition */
 
 #define CHECK_MASK(lb, mask, XS) /* destroys Reax, jump lb if mask == S */  \
-        EMITW(0x4EB1B800 | MXM(TmmM,    REG(XS), 0x00))                     \
+        EMITW(0x4E201C00 | MXM(TmmM,    REG(XS), RYG(XS)) |                 \
+                                        (0x04 - RT_SIMD_MASK_##mask) << 21) \
+        EMITW(0x4EB1B800 | MXM(TmmM,    TmmM,    0x00))                     \
         EMITW(0x0E043C00 | MXM(Teax,    TmmM,    0x00))                     \
-        EMITW(0x4EB1B800 | MXM(TmmM,    RYG(XS), 0x00))                     \
-        EMITW(0x0E043C00 | MXM(TIxx,    TmmM,    0x00))                     \
-        EMITW(0x0B000000 | MRM(Teax,    Teax,    TIxx))                     \
         addwz_ri(Reax, IB(RT_SIMD_MASK_##mask))                             \
         jezxx_lb(lb)
 

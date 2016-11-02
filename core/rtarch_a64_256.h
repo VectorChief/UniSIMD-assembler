@@ -14,7 +14,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_a64_256.h: Implementation of AArch64 fp64 NEON instructions.
+ * rtarch_a64_256.h: Implementation of AArch64 fp64 NEON instructions (pairs).
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
