@@ -160,10 +160,12 @@
 /* selectors  */
 
 #define REG(reg, mod, sib)  reg
+#define RYG(reg, mod, sib)  ((reg) + 16)
 #define MOD(reg, mod, sib)  mod
 #define SIB(reg, mod, sib)  sib
 
 #define VAL(val, tp1, tp2)  val
+#define VYL(val, tp1, tp2)  ((val) | 0x10)
 #define TP1(val, tp1, tp2)  tp1
 #define TP2(val, tp1, tp2)  tp2
 
@@ -1623,7 +1625,7 @@
  * 2nd byte - 512-bit version, 3rd byte - upper, reserved */
 
 #define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
-        movwx_mi(Mebp, inf_VER, IB(1)) /* <- MSA to bit0 */
+        movwx_mi(Mebp, inf_VER, IM(0x101)) /* <- MSA to bit0, bit8 */
 
 /************************* address-sized instructions *************************/
 
