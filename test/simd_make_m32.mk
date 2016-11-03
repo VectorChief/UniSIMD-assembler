@@ -71,7 +71,7 @@ simd_test_m32Br6:
 # make -f simd_make_m32.mk
 # qemu-mipsel -cpu P5600 simd_test.m32Lr5
 
-# For 256-bit NEON build use (replace): RT_256=1 (uses pairs of regs/ops)
+# For 256-bit SIMD build use (replace): RT_256=1 (uses pairs of regs/ops)
 
 # For MIPS32 Release 6 target use the following options (replace):
 # mips-img-linux-gnu-g++ -mips32r6 -DRT_M32=6
