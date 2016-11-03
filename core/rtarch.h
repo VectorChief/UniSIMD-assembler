@@ -1711,7 +1711,7 @@
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
-#error "AltiVec doesn't support SIMD wider than 128-bit, check build flags"
+#include "rtarch_p64_256.h"
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
 #include "rtarch_p64_128.h"
