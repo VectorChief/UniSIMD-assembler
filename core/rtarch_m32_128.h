@@ -595,6 +595,14 @@
         EMITW(0x7B02001E | MXM(TmmM,    TMxx,    0x00))                     \
         EMITW(0x7840000D | MXM(REG(XG), REG(XG), TmmM))
 
+#define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EMITW(0x7840000D | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define svlox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7840000D | MXM(REG(XG), REG(XG), TmmM))
+
 /* shr (G = G >> S) */
 
 #define shrox_ri(XG, IS)                                                    \
@@ -607,6 +615,15 @@
         EMITW(0x7B02001E | MXM(TmmM,    TMxx,    0x00))                     \
         EMITW(0x7940000D | MXM(REG(XG), REG(XG), TmmM))
 
+#define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EMITW(0x7940000D | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define svrox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7940000D | MXM(REG(XG), REG(XG), TmmM))
+
+
 #define shron_ri(XG, IS)                                                    \
         EMITW(0x78C00009 | MXM(REG(XG), REG(XG), 0x00) |                    \
                                                  (0x1F & VAL(IS)) << 16)
@@ -615,6 +632,14 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x8C000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0x7B02001E | MXM(TmmM,    TMxx,    0x00))                     \
+        EMITW(0x78C0000D | MXM(REG(XG), REG(XG), TmmM))
+
+#define svron_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EMITW(0x78C0000D | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define svron_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x78C0000D | MXM(REG(XG), REG(XG), TmmM))
 
 /**************************   helper macros (SIMD)   **************************/

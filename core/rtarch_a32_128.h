@@ -585,6 +585,14 @@
         EMITW(0x4E040400 | MXM(TmmM,    TmmM,    0x00))                     \
         EMITW(0x6EA04400 | MXM(REG(XG), REG(XG), TmmM))
 
+#define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EMITW(0x6EA04400 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define svlox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x6EA04400 | MXM(REG(XG), REG(XG), TmmM))
+
 /* shr (G = G >> S) */
 
 #define shrox_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
@@ -599,6 +607,17 @@
         EMITW(0x6EA0B800 | MXM(TmmM,    TmmM,    0x00))                     \
         EMITW(0x6EA04400 | MXM(REG(XG), REG(XG), TmmM))
 
+#define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EMITW(0x6EA0B800 | MXM(TmmM,    REG(XS), 0x00))                     \
+        EMITW(0x6EA04400 | MXM(REG(XG), REG(XG), TmmM))
+
+#define svrox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x6EA0B800 | MXM(TmmM,    TmmM,    0x00))                     \
+        EMITW(0x6EA04400 | MXM(REG(XG), REG(XG), TmmM))
+
+
 #define shron_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
         EMITW(0x4F200400 | MXM(REG(XG), REG(XG), 0x00) |                    \
         (+(VAL(IS) == 0) & 0x00005000) | (+(VAL(IS) != 0) & 0x00000000) |   \
@@ -608,6 +627,16 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E040400 | MXM(TmmM,    TmmM,    0x00))                     \
+        EMITW(0x6EA0B800 | MXM(TmmM,    TmmM,    0x00))                     \
+        EMITW(0x4EA04400 | MXM(REG(XG), REG(XG), TmmM))
+
+#define svron_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EMITW(0x6EA0B800 | MXM(TmmM,    REG(XS), 0x00))                     \
+        EMITW(0x4EA04400 | MXM(REG(XG), REG(XG), TmmM))
+
+#define svron_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6EA0B800 | MXM(TmmM,    TmmM,    0x00))                     \
         EMITW(0x4EA04400 | MXM(REG(XG), REG(XG), TmmM))
 

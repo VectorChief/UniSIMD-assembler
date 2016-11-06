@@ -649,6 +649,18 @@
         EMITW(0x6EE04400 | MXM(REG(XG), REG(XG), TmmM))                     \
         EMITW(0x6EE04400 | MXM(RYG(XG), RYG(XG), TmmM))
 
+#define svlqx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EMITW(0x6EE04400 | MXM(REG(XG), REG(XG), REG(XS)))                  \
+        EMITW(0x6EE04400 | MXM(RYG(XG), RYG(XG), RYG(XS)))
+
+#define svlqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x6EE04400 | MXM(REG(XG), REG(XG), TmmM))                     \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x6EE04400 | MXM(RYG(XG), RYG(XG), TmmM))
+
 /* shr (G = G >> S) */
 
 #define shrqx_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
@@ -667,6 +679,23 @@
         EMITW(0x6EE04400 | MXM(REG(XG), REG(XG), TmmM))                     \
         EMITW(0x6EE04400 | MXM(RYG(XG), RYG(XG), TmmM))
 
+#define svrqx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EMITW(0x6EE0B800 | MXM(TmmM,    REG(XS), 0x00))                     \
+        EMITW(0x6EE04400 | MXM(REG(XG), REG(XG), TmmM))                     \
+        EMITW(0x6EE0B800 | MXM(TmmM,    RYG(XS), 0x00))                     \
+        EMITW(0x6EE04400 | MXM(RYG(XG), RYG(XG), TmmM))
+
+#define svrqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x6EE0B800 | MXM(TmmM,    TmmM,    0x00))                     \
+        EMITW(0x6EE04400 | MXM(REG(XG), REG(XG), TmmM))                     \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x6EE0B800 | MXM(TmmM,    TmmM,    0x00))                     \
+        EMITW(0x6EE04400 | MXM(RYG(XG), RYG(XG), TmmM))
+
+
 #define shrqn_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
         EMITW(0x4F400400 | MXM(REG(XG), REG(XG), 0x00) |                    \
         (+(VAL(IS) == 0) & 0x00005000) | (+(VAL(IS) != 0) & 0x00000000) |   \
@@ -681,6 +710,22 @@
         EMITW(0x4E080400 | MXM(TmmM,    TmmM,    0x00))                     \
         EMITW(0x6EE0B800 | MXM(TmmM,    TmmM,    0x00))                     \
         EMITW(0x4EE04400 | MXM(REG(XG), REG(XG), TmmM))                     \
+        EMITW(0x4EE04400 | MXM(RYG(XG), RYG(XG), TmmM))
+
+#define svrqn_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EMITW(0x6EE0B800 | MXM(TmmM,    REG(XS), 0x00))                     \
+        EMITW(0x4EE04400 | MXM(REG(XG), REG(XG), TmmM))                     \
+        EMITW(0x6EE0B800 | MXM(TmmM,    RYG(XS), 0x00))                     \
+        EMITW(0x4EE04400 | MXM(RYG(XG), RYG(XG), TmmM))
+
+#define svrqn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x6EE0B800 | MXM(TmmM,    TmmM,    0x00))                     \
+        EMITW(0x4EE04400 | MXM(REG(XG), REG(XG), TmmM))                     \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x6EE0B800 | MXM(TmmM,    TmmM,    0x00))                     \
         EMITW(0x4EE04400 | MXM(RYG(XG), RYG(XG), TmmM))
 
 /**************************   helper macros (NEON)   **************************/

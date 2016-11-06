@@ -1221,14 +1221,14 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0x10000480 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
 
+/* shl (G = G << S) */
+
+#define shlox_ri(XG, IS)                                                    \
+        EMITW(0x1000038C | MXM(TmmM,    (0x1F & VAL(IS)), 0x00))            \
+        EMITW(0x10000184 | MXM(REG(XG), REG(XG), TmmM))
+
 #if RT_ENDIAN == 0
 
-/* shl (G = G << S) */
-
-#define shlox_ri(XG, IS)                                                    \
-        EMITW(0x1000038C | MXM(TmmM,    (0x1F & VAL(IS)), 0x00))            \
-        EMITW(0x10000184 | MXM(REG(XG), REG(XG), TmmM))
-
 #define shlox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
@@ -1236,37 +1236,7 @@
         EMITW(0x1003028C | MXM(TmmM,    0x00,    TmmM))/* ^ == -1 if true */\
         EMITW(0x10000184 | MXM(REG(XG), REG(XG), TmmM))
 
-/* shr (G = G >> S) */
-
-#define shrox_ri(XG, IS)                                                    \
-        EMITW(0x1000038C | MXM(TmmM,    (0x1F & VAL(IS)), 0x00))            \
-        EMITW(0x10000284 | MXM(REG(XG), REG(XG), TmmM))
-
-#define shrox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C00008E | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0x1003028C | MXM(TmmM,    0x00,    TmmM))/* ^ == -1 if true */\
-        EMITW(0x10000284 | MXM(REG(XG), REG(XG), TmmM))
-
-#define shron_ri(XG, IS)                                                    \
-        EMITW(0x1000038C | MXM(TmmM,    (0x1F & VAL(IS)), 0x00))            \
-        EMITW(0x10000384 | MXM(REG(XG), REG(XG), TmmM))
-
-#define shron_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C00008E | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0x1003028C | MXM(TmmM,    0x00,    TmmM))/* ^ == -1 if true */\
-        EMITW(0x10000384 | MXM(REG(XG), REG(XG), TmmM))
-
-#else /* RT_ENDIAN == 0 */
-
-/* shl (G = G << S) */
-
-#define shlox_ri(XG, IS)                                                    \
-        EMITW(0x1000038C | MXM(TmmM,    (0x1F & VAL(IS)), 0x00))            \
-        EMITW(0x10000184 | MXM(REG(XG), REG(XG), TmmM))
+#else /* RT_ENDIAN == 1 */
 
 #define shlox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
@@ -1275,11 +1245,33 @@
         EMITW(0x1000028C | MXM(TmmM,    0x00,    TmmM))/* ^ == -1 if true */\
         EMITW(0x10000184 | MXM(REG(XG), REG(XG), TmmM))
 
+#endif /* RT_ENDIAN == 1 */
+
+#define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EMITW(0x10000184 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define svlox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0x10000184 | MXM(REG(XG), REG(XG), TmmM))
+
 /* shr (G = G >> S) */
 
 #define shrox_ri(XG, IS)                                                    \
         EMITW(0x1000038C | MXM(TmmM,    (0x1F & VAL(IS)), 0x00))            \
         EMITW(0x10000284 | MXM(REG(XG), REG(XG), TmmM))
+
+#if RT_ENDIAN == 0
+
+#define shrox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C00008E | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0x1003028C | MXM(TmmM,    0x00,    TmmM))/* ^ == -1 if true */\
+        EMITW(0x10000284 | MXM(REG(XG), REG(XG), TmmM))
+
+#else /* RT_ENDIAN == 1 */
 
 #define shrox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
@@ -1288,9 +1280,32 @@
         EMITW(0x1000028C | MXM(TmmM,    0x00,    TmmM))/* ^ == -1 if true */\
         EMITW(0x10000284 | MXM(REG(XG), REG(XG), TmmM))
 
+#endif /* RT_ENDIAN == 1 */
+
+#define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EMITW(0x10000284 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define svrox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0x10000284 | MXM(REG(XG), REG(XG), TmmM))
+
+
 #define shron_ri(XG, IS)                                                    \
         EMITW(0x1000038C | MXM(TmmM,    (0x1F & VAL(IS)), 0x00))            \
         EMITW(0x10000384 | MXM(REG(XG), REG(XG), TmmM))
+
+#if RT_ENDIAN == 0
+
+#define shron_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C00008E | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0x1003028C | MXM(TmmM,    0x00,    TmmM))/* ^ == -1 if true */\
+        EMITW(0x10000384 | MXM(REG(XG), REG(XG), TmmM))
+
+#else /* RT_ENDIAN == 1 */
 
 #define shron_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
@@ -1299,7 +1314,16 @@
         EMITW(0x1000028C | MXM(TmmM,    0x00,    TmmM))/* ^ == -1 if true */\
         EMITW(0x10000384 | MXM(REG(XG), REG(XG), TmmM))
 
-#endif /* RT_ENDIAN == 0 */
+#endif /* RT_ENDIAN == 1 */
+
+#define svron_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EMITW(0x10000384 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define svron_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0x10000384 | MXM(REG(XG), REG(XG), TmmM))
 
 /**************************   helper macros (SIMD)   **************************/
 

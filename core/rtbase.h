@@ -1288,6 +1288,12 @@ struct rt_SIMD_REGS
 #define shlpx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         shlox_ld(W(XG), W(MS), W(DS))
 
+#define svlpx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlox_rr(W(XG), W(XS))
+
+#define svlpx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlox_ld(W(XG), W(MS), W(DS))
+
 /* shr (G = G >> S) */
 
 #define shrpx_ri(XG, IS)                                                    \
@@ -1296,11 +1302,24 @@ struct rt_SIMD_REGS
 #define shrpx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         shrox_ld(W(XG), W(MS), W(DS))
 
+#define svrpx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrox_rr(W(XG), W(XS))
+
+#define svrpx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrox_ld(W(XG), W(MS), W(DS))
+
+
 #define shrpn_ri(XG, IS)                                                    \
         shron_ri(W(XG), W(IS))
 
 #define shrpn_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         shron_ld(W(XG), W(MS), W(DS))
+
+#define svrpn_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svron_rr(W(XG), W(XS))
+
+#define svrpn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svron_ld(W(XG), W(MS), W(DS))
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -1669,6 +1688,12 @@ struct rt_SIMD_REGS
 #define shlpx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         shlqx_ld(W(XG), W(MS), W(DS))
 
+#define svlpx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlqx_rr(W(XG), W(XS))
+
+#define svlpx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlqx_ld(W(XG), W(MS), W(DS))
+
 /* shr (G = G >> S) */
 
 #define shrpx_ri(XG, IS)                                                    \
@@ -1677,11 +1702,24 @@ struct rt_SIMD_REGS
 #define shrpx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         shrqx_ld(W(XG), W(MS), W(DS))
 
+#define svrpx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrqx_rr(W(XG), W(XS))
+
+#define svrpx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrqx_ld(W(XG), W(MS), W(DS))
+
+
 #define shrpn_ri(XG, IS)                                                    \
         shrqn_ri(W(XG), W(IS))
 
 #define shrpn_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
         shrqn_ld(W(XG), W(MS), W(DS))
+
+#define svrpn_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrqn_rr(W(XG), W(XS))
+
+#define svrpn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrqn_ld(W(XG), W(MS), W(DS))
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)

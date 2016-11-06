@@ -1278,6 +1278,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         stack_ld(Recx)                                                      \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
+
 #define shron_ri(XG, IS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
         shrwn_mi(Mebp,  inf_SCR01(0x00), W(IS))                             \
@@ -1347,6 +1348,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xD2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
+
 #define shron_ri(XG, IS)                                                    \
     ESC REX(0,       RXB(XG)) EMITB(0x0F) EMITB(0x72)                       \
         MRM(0x04,    MOD(XG), REG(XG))                                      \
@@ -1358,6 +1360,104 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #endif /* RT_128 >= 2 */
+
+/* shl (G = G << S) */
+
+#define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x04))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        stack_ld(Recx)                                                      \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+#define svlox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XG), W(MS), W(DS))                                       \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x04))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        stack_ld(Recx)                                                      \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+/* shr (G = G >> S) */
+
+#define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x04))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        stack_ld(Recx)                                                      \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+#define svrox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XG), W(MS), W(DS))                                       \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x04))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        stack_ld(Recx)                                                      \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+
+#define svron_rr(XG, XS)     /* variable shift with per-elem count */       \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x04))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x08))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        stack_ld(Recx)                                                      \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
+
+#define svron_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XG), W(MS), W(DS))                                       \
+        movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x04))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x08))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        stack_ld(Recx)                                                      \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 /**************************   helper macros (SSE1)   **************************/
 
