@@ -685,6 +685,10 @@
         addzx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
         movzx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
         addzx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR02(0x10))                              \
+        addzx_st(Reax,  Mebp, inf_SCR01(0x10))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR02(0x18))                              \
+        addzx_st(Reax,  Mebp, inf_SCR01(0x18))                              \
         stack_ld(Reax)                                                      \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
@@ -697,6 +701,10 @@
         addzx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
         movzx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
         addzx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR02(0x10))                              \
+        addzx_st(Reax,  Mebp, inf_SCR01(0x10))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR02(0x18))                              \
+        addzx_st(Reax,  Mebp, inf_SCR01(0x18))                              \
         stack_ld(Reax)                                                      \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
@@ -710,6 +718,10 @@
         subzx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
         movzx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
         subzx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR02(0x10))                              \
+        subzx_st(Reax,  Mebp, inf_SCR01(0x10))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR02(0x18))                              \
+        subzx_st(Reax,  Mebp, inf_SCR01(0x18))                              \
         stack_ld(Reax)                                                      \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
@@ -722,6 +734,10 @@
         subzx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
         movzx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
         subzx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR02(0x10))                              \
+        subzx_st(Reax,  Mebp, inf_SCR01(0x10))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR02(0x18))                              \
+        subzx_st(Reax,  Mebp, inf_SCR01(0x18))                              \
         stack_ld(Reax)                                                      \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
@@ -731,6 +747,8 @@
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         shlzx_mi(Mebp,  inf_SCR01(0x00), W(IS))                             \
         shlzx_mi(Mebp,  inf_SCR01(0x08), W(IS))                             \
+        shlzx_mi(Mebp,  inf_SCR01(0x10), W(IS))                             \
+        shlzx_mi(Mebp,  inf_SCR01(0x18), W(IS))                             \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
 #define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
@@ -739,6 +757,8 @@
         movzx_ld(Recx,  W(MS), W(DS))                                       \
         shlzx_mx(Mebp,  inf_SCR01(0x00))                                    \
         shlzx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        shlzx_mx(Mebp,  inf_SCR01(0x10))                                    \
+        shlzx_mx(Mebp,  inf_SCR01(0x18))                                    \
         stack_ld(Recx)                                                      \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
@@ -748,6 +768,8 @@
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         shrzx_mi(Mebp,  inf_SCR01(0x00), W(IS))                             \
         shrzx_mi(Mebp,  inf_SCR01(0x08), W(IS))                             \
+        shrzx_mi(Mebp,  inf_SCR01(0x10), W(IS))                             \
+        shrzx_mi(Mebp,  inf_SCR01(0x18), W(IS))                             \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
 #define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
@@ -756,6 +778,8 @@
         movzx_ld(Recx,  W(MS), W(DS))                                       \
         shrzx_mx(Mebp,  inf_SCR01(0x00))                                    \
         shrzx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        shrzx_mx(Mebp,  inf_SCR01(0x10))                                    \
+        shrzx_mx(Mebp,  inf_SCR01(0x18))                                    \
         stack_ld(Recx)                                                      \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
@@ -763,6 +787,8 @@
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         shrzn_mi(Mebp,  inf_SCR01(0x00), W(IS))                             \
         shrzn_mi(Mebp,  inf_SCR01(0x08), W(IS))                             \
+        shrzn_mi(Mebp,  inf_SCR01(0x10), W(IS))                             \
+        shrzn_mi(Mebp,  inf_SCR01(0x18), W(IS))                             \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
 #define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
@@ -771,6 +797,8 @@
         movzx_ld(Recx,  W(MS), W(DS))                                       \
         shrzn_mx(Mebp,  inf_SCR01(0x00))                                    \
         shrzn_mx(Mebp,  inf_SCR01(0x08))                                    \
+        shrzn_mx(Mebp,  inf_SCR01(0x10))                                    \
+        shrzn_mx(Mebp,  inf_SCR01(0x18))                                    \
         stack_ld(Recx)                                                      \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
