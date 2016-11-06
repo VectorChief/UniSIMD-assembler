@@ -174,12 +174,6 @@
  * cv**n_rr, cv**n_ld already in use for signed-int-to-fp conversion, keeps size
  * cv**x_rr, cv**x_ld are reserved for unsigned-int-to-fp conversion, keeps size
  * cv***F**, c***sF** can reuse fp<->int names for .?-sized fixed-point, ? = F*8
- *
- * aliases below give cleaner more orthogonal mapping to current/future c****_**
- *
- * cs***_rr, cs***_ld can be aliases for (un)signed-to-fp conversion, keeps size
- * cn**s_rr, cn**s_ld can be aliases for fp-to-signed-int conversion, keeps size
- * cx**s_rr, cx**s_ld are aliasable to fp-to-unsigned-int conversion, keeps size
  * when fp<->int sizes don't match extended fpu ISA can be used with other archs
  *
  * The following BASE instruction namespaces are planned for potential future.
