@@ -1236,7 +1236,8 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         stack_ld(Reax)                                                      \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shl (G = G << S) */
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlox_ri(XG, IS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1257,7 +1258,8 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         stack_ld(Recx)                                                      \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shr (G = G >> S) */
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrox_ri(XG, IS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1324,7 +1326,8 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xFA)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* shl (G = G << S) */
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlox_ri(XG, IS)                                                    \
     ESC REX(0,       RXB(XG)) EMITB(0x0F) EMITB(0x72)                       \
@@ -1336,7 +1339,8 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xF2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* shr (G = G >> S) */
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrox_ri(XG, IS)                                                    \
     ESC REX(0,       RXB(XG)) EMITB(0x0F) EMITB(0x72)                       \
@@ -1361,7 +1365,8 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
 
 #endif /* RT_128 >= 2 */
 
-/* shl (G = G << S) */
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1394,7 +1399,8 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
         stack_ld(Recx)                                                      \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shr (G = G >> S) */
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \

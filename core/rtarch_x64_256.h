@@ -1057,7 +1057,8 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         movjx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shl (G = G << S) */
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shljx_ri(XG, IS)     /* not portable, do not use outside */         \
         VEX(0,       RXB(XG), REN(XG), 0, 1, 1) EMITB(0x73)                 \
@@ -1118,7 +1119,8 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         stack_ld(Recx)                                                      \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shr (G = G >> S) */
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrjx_ri(XG, IS)     /* not portable, do not use outside */         \
         VEX(0,       RXB(XG), REN(XG), 0, 1, 1) EMITB(0x73)                 \
@@ -1205,7 +1207,8 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* shl (G = G << S) */
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlqx_ri(XG, IS)                                                    \
         VEX(0,       RXB(XG), REN(XG), K, 1, 1) EMITB(0x73)                 \
@@ -1255,7 +1258,8 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 
 #endif /* (RT_128 && RT_SIMD_COMPAT_128 == 2) || RT_256 */
 
-/* shr (G = G >> S) */
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrqx_ri(XG, IS)                                                    \
         VEX(0,       RXB(XG), REN(XG), K, 1, 1) EMITB(0x73)                 \

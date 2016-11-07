@@ -1136,7 +1136,8 @@
         movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shl (G = G << S) */
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlix_ri(XG, IS)     /* not portable, do not use outside */         \
         V2X(REG(XG), 0, 1) EMITB(0x72)                                      \
@@ -1213,7 +1214,8 @@
         stack_ld(Recx)                                                      \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shr (G = G >> S) */
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrix_ri(XG, IS)     /* not portable, do not use outside */         \
         V2X(REG(XG), 0, 1) EMITB(0x72)                                      \
@@ -1392,7 +1394,8 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* shl (G = G << S) */
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlox_ri(XG, IS)                                                    \
         V2X(REG(XG), K, 1) EMITB(0x72)                                      \
@@ -1450,7 +1453,8 @@
 
 #endif /* (RT_128 && RT_SIMD_COMPAT_128 == 2) || RT_256 */
 
-/* shr (G = G >> S) */
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrox_ri(XG, IS)                                                    \
         V2X(REG(XG), K, 1) EMITB(0x72)                                      \

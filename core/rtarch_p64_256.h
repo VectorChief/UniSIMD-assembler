@@ -741,7 +741,8 @@
         stack_ld(Reax)                                                      \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shl (G = G << S) */
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlqx_ri(XG, IS)                                                    \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -793,7 +794,8 @@
         stack_ld(Recx)                                                      \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* shr (G = G >> S) */
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrqx_ri(XG, IS)                                                    \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -930,7 +932,8 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0x100004C0 | MXM(RYG(XG), RYG(XG), TmmM))/* ^ == -1 if true */
 
-/* shl (G = G << S) */
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlqx_ri(XG, IS)                                                    \
         movzx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
@@ -957,7 +960,8 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0x100005C4 | MXM(RYG(XG), RYG(XG), TmmM))/* ^ == -1 if true */
 
-/* shr (G = G >> S) */
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrqx_ri(XG, IS)                                                    \
         movzx_mi(Mebp, inf_SCR01(0), W(IS))                                 \

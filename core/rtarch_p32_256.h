@@ -803,7 +803,8 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0x10000480 | MXM(RYG(XG), RYG(XG), TmmM))/* ^ == -1 if true */
 
-/* shl (G = G << S) */
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlox_ri(XG, IS)                                                    \
         EMITW(0x1000038C | MXM(TmmM,    (0x1F & VAL(IS)), 0x00))            \
@@ -846,7 +847,8 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0x10000184 | MXM(RYG(XG), RYG(XG), TmmM))
 
-/* shr (G = G >> S) */
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrox_ri(XG, IS)                                                    \
         EMITW(0x1000038C | MXM(TmmM,    (0x1F & VAL(IS)), 0x00))            \

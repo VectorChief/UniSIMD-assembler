@@ -1280,7 +1280,8 @@ struct rt_SIMD_REGS
 #define subpx_ld(XG, MS, DS)                                                \
         subox_ld(W(XG), W(MS), W(DS))
 
-/* shl (G = G << S) */
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlpx_ri(XG, IS)                                                    \
         shlox_ri(W(XG), W(IS))
@@ -1294,7 +1295,8 @@ struct rt_SIMD_REGS
 #define svlpx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svlox_ld(W(XG), W(MS), W(DS))
 
-/* shr (G = G >> S) */
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrpx_ri(XG, IS)                                                    \
         shrox_ri(W(XG), W(IS))
@@ -1680,7 +1682,8 @@ struct rt_SIMD_REGS
 #define subpx_ld(XG, MS, DS)                                                \
         subqx_ld(W(XG), W(MS), W(DS))
 
-/* shl (G = G << S) */
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlpx_ri(XG, IS)                                                    \
         shlqx_ri(W(XG), W(IS))
@@ -1694,7 +1697,8 @@ struct rt_SIMD_REGS
 #define svlpx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svlqx_ld(W(XG), W(MS), W(DS))
 
-/* shr (G = G >> S) */
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrpx_ri(XG, IS)                                                    \
         shrqx_ri(W(XG), W(IS))
