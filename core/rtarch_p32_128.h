@@ -609,6 +609,30 @@
         EMITW(0x7C0000CE | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
         EMITW(0x1000034A | MXM(REG(RG), 0x00,    Tmm1))/* ^ == -1 if true */
 
+/**************************   packed integer (SIMD)   *************************/
+
+/* add */
+
+#define addpx_rr(RG, RM)                                                    \
+        EMITW(0x10000080 | MXM(REG(RG), REG(RG), REG(RM)))
+
+#define addpx_ld(RG, RM, DP)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x7C0000CE | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
+        EMITW(0x10000080 | MXM(REG(RG), REG(RG), Tmm1))/* ^ == -1 if true */
+
+/* sub */
+
+#define subpx_rr(RG, RM)                                                    \
+        EMITW(0x10000480 | MXM(REG(RG), REG(RG), REG(RM)))
+
+#define subpx_ld(RG, RM, DP)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
+        EMITW(0x7C0000CE | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
+        EMITW(0x10000480 | MXM(REG(RG), REG(RG), Tmm1))/* ^ == -1 if true */
+
 #else /* RT_128 >= 2 */
 
 /******************************************************************************/
@@ -948,8 +972,6 @@
 #define cvnpn_ld(RG, RM, DP) /* round towards near */                       \
         cvtpn_ld(W(RG), W(RM), W(DP))
 
-#endif /* RT_128 >= 2 */
-
 /**************************   packed integer (SIMD)   *************************/
 
 /* add */
@@ -960,7 +982,7 @@
 #define addpx_ld(RG, RM, DP)                                                \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x7C0000CE | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
+        EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
         EMITW(0x10000080 | MXM(REG(RG), REG(RG), Tmm1))/* ^ == -1 if true */
 
 /* sub */
@@ -971,8 +993,10 @@
 #define subpx_ld(RG, RM, DP)                                                \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(RM), VAL(DP), C2(DP), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    REG(RM), VAL(DP), B2(DP), P2(DP)))  \
-        EMITW(0x7C0000CE | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
+        EMITW(0x7C000619 | MXM(Tmm1,    Teax & (MOD(RM) == TPxx), TPxx))    \
         EMITW(0x10000480 | MXM(REG(RG), REG(RG), Tmm1))/* ^ == -1 if true */
+
+#endif /* RT_128 >= 2 */
 
 #if RT_ENDIAN == 0
 
