@@ -18,7 +18,7 @@
 /*******************************   DEFINITIONS   ******************************/
 /******************************************************************************/
 
-#define RUN_LEVEL           23
+#define RUN_LEVEL           24
 #define CYC_SIZE            1000000
 
 #define ARR_SIZE            S*3 /* hardcoded in asm sections, S = SIMD width */
@@ -3019,6 +3019,120 @@ rt_void p_test23(rt_SIMD_INFOX *info)
 #endif /* RUN_LEVEL 23 */
 
 /******************************************************************************/
+/******************************   RUN LEVEL 24   ******************************/
+/******************************************************************************/
+
+#if RUN_LEVEL >= 24
+
+rt_void c_test24(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            ico1[j] = iar0[j] << (iar0[j] & ((16 << L) - 1));
+            ico2[j] = iar0[j] >> (iar0[j] & ((16 << L) - 1));
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
+rt_void s_test24(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Resi, Mebp, inf_IAR0)
+        movxx_ld(Redx, Mebp, inf_ISO1)
+        movxx_ld(Rebx, Mebp, inf_ISO2)
+
+        movpx_ld(Xmm7, Mebp, inf_GPC07)
+        shrpx_ri(Xmm7, IB(31*L-4))
+
+        movpx_ld(Xmm0, Mesi, AJ0)
+        movpx_rr(Xmm1, Xmm0)
+        movpx_rr(Xmm2, Xmm0)
+        andpx_rr(Xmm0, Xmm7)
+        svlpx_rr(Xmm1, Xmm0)
+        svrpn_rr(Xmm2, Xmm0)
+        movpx_st(Xmm1, Medx, AJ0)
+        movpx_st(Xmm2, Mebx, AJ0)
+
+        movpx_ld(Xmm0, Mesi, AJ1)
+        movpx_rr(Xmm1, Xmm0)
+        movpx_rr(Xmm2, Xmm0)
+        andpx_rr(Xmm0, Xmm7)
+        movpx_st(Xmm0, Mebp, inf_SCR01(0))
+        svlpx_ld(Xmm1, Mebp, inf_SCR01(0))
+        svrpn_ld(Xmm2, Mebp, inf_SCR01(0))
+        movpx_st(Xmm1, Medx, AJ1)
+        movpx_st(Xmm2, Mebx, AJ1)
+
+        movpx_ld(Xmm0, Mesi, AJ2)
+        movpx_rr(Xmm1, Xmm0)
+        movpx_rr(Xmm2, Xmm0)
+        andpx_rr(Xmm0, Xmm7)
+        svlpx_rr(Xmm1, Xmm0)
+        svrpn_rr(Xmm2, Xmm0)
+        movpx_st(Xmm1, Medx, AJ2)
+        movpx_st(Xmm2, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test24(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(ico1[j], iso1[j]) && IEQ(ico2[j], iso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("iarr[%d] = %"PR_L"d\n",
+                j, iar0[j]);
+
+        RT_LOGI("C iarr[%d]<<(iarr[%d]&((16<<L)-1)) = %"PR_L"d, "
+                  "iarr[%d]>>(iarr[%d]&((16<<L)-1)) = %"PR_L"d\n",
+                j, j, ico1[j], j, j, ico2[j]);
+
+        RT_LOGI("S iarr[%d]<<(iarr[%d]&((16<<L)-1)) = %"PR_L"d, "
+                  "iarr[%d]>>(iarr[%d]&((16<<L)-1)) = %"PR_L"d\n",
+                j, j, iso1[j], j, j, iso2[j]);
+    }
+}
+
+#endif /* RUN_LEVEL 24 */
+
+/******************************************************************************/
 /*********************************   TABLES   *********************************/
 /******************************************************************************/
 
@@ -3117,6 +3231,10 @@ testXX c_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 23
     c_test23,
 #endif /* RUN_LEVEL 23 */
+
+#if RUN_LEVEL >= 24
+    c_test24,
+#endif /* RUN_LEVEL 24 */
 };
 
 testXX s_test[RUN_LEVEL] =
@@ -3212,6 +3330,10 @@ testXX s_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 23
     s_test23,
 #endif /* RUN_LEVEL 23 */
+
+#if RUN_LEVEL >= 24
+    s_test24,
+#endif /* RUN_LEVEL 24 */
 };
 
 testXX p_test[RUN_LEVEL] =
@@ -3307,6 +3429,10 @@ testXX p_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 23
     p_test23,
 #endif /* RUN_LEVEL 23 */
+
+#if RUN_LEVEL >= 24
+    p_test24,
+#endif /* RUN_LEVEL 24 */
 };
 
 /******************************************************************************/
