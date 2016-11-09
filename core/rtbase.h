@@ -464,10 +464,10 @@ struct rt_SIMD_INFO
 
     /* internal variables */
 
-    rt_elem scr01[S];       /* scratchpad1, SIMD ISA */
+    rt_elem scr01[S];       /* scratchpad1, internal */
 #define inf_SCR01(nx)       DP(Q*0x070 + nx)
 
-    rt_elem scr02[S];       /* scratchpad2, SIMD ISA */
+    rt_elem scr02[S];       /* scratchpad2, internal */
 #define inf_SCR02(nx)       DP(Q*0x080 + nx)
 
     rt_si32 gpc07[R];       /* 0xFFFFFFFF */
