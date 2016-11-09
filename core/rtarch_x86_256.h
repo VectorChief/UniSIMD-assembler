@@ -1000,7 +1000,7 @@
 #define extes_xx()       /* ST(0) = exp ST(0), push mts ST(0) */            \
         EMITB(0xD9) EMITB(0xF4)
 
-#define scles_xx()       /* exp ST(0) = exp ST(0) + rnd ST(1) */             \
+#define scles_xx()       /* exp ST(0) = exp ST(0) + rnd ST(1) */            \
         EMITB(0xD9) EMITB(0xFD)
 
 
