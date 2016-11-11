@@ -375,7 +375,10 @@
  * of fm*ps_** instruction fallbacks to honour rounding mode */
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 
-#if   defined (RT_256) && (RT_256 != 0)
+#if   defined (RT_512) && (RT_512 != 0)
+#define Q 4
+#include "rtarch_x86_512.h"
+#elif defined (RT_256) && (RT_256 != 0)
 #define Q 2
 #include "rtarch_x86_256.h"
 #elif defined (RT_128) && (RT_128 != 0)
@@ -579,7 +582,10 @@
  * of fm*ps_** instruction fallbacks to honour rounding mode */
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 
-#if   defined (RT_256) && (RT_256 != 0)
+#if   defined (RT_512) && (RT_512 != 0)
+#define Q 4
+#include "rtarch_x86_512.h"
+#elif defined (RT_256) && (RT_256 != 0)
 #define Q 2
 #include "rtarch_x86_256.h"
 #elif defined (RT_128) && (RT_128 != 0)
@@ -807,7 +813,10 @@
  * of fm*ps_** instruction fallbacks to honour rounding mode */
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 
-#if   defined (RT_256) && (RT_256 != 0)
+#if   defined (RT_512) && (RT_512 != 0)
+#define Q 4
+#include "rtarch_x64_512.h"
+#elif defined (RT_256) && (RT_256 != 0)
 #define Q 2
 #include "rtarch_x64_256.h"
 #elif defined (RT_128) && (RT_128 != 0)

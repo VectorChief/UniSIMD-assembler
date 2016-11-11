@@ -153,6 +153,27 @@
         EMITB(0xE0 | (aux))                                                 \
         EMITB(0x00 | (len) << 2 | (0x0F - (ren)) << 3 | (pfx))
 
+/* 4-byte EVEX prefix with full customization (W0, K0, Z0) */
+#define EVX(ren, len, pfx, aux)                                             \
+        EMITB(0x62)                                                         \
+        EMITB(0xF0 | (aux))                                                 \
+        EMITB(0x00 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
+        EMITB(0x08 | (len) << 5)
+
+/* 4-byte EVEX prefix with full customization (W0, K1, Z0) */
+#define EKX(ren, len, pfx, aux)                                             \
+        EMITB(0x62)                                                         \
+        EMITB(0xF0 | (aux))                                                 \
+        EMITB(0x00 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
+        EMITB(0x09 | (len) << 5)
+
+/* 4-byte EVEX prefix with full customization (W0, K1, Z1) */
+#define EZX(ren, len, pfx, aux)                                             \
+        EMITB(0x62)                                                         \
+        EMITB(0xF0 | (aux))                                                 \
+        EMITB(0x00 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
+        EMITB(0x89 | (len) << 5)
+
 /* selectors  */
 
 #define REG(reg, mod, sib)  reg
@@ -1341,6 +1362,10 @@
         movwx_ri(Reax, IB(7))                                               \
         movwx_ri(Recx, IB(0))                                               \
         cpuid_xx()                                                          \
+        movwx_rr(Redx, Rebx)                                                \
+        andwx_ri(Redx, IV(0x030000)) /* <- AVX3 to bit16, bit17 */          \
+        andwx_rr(Redx, Redi)                                                \
+        orrwx_rr(Resi, Redx)                                                \
         shlwx_ri(Rebx, IB(4))   /* <- AVX2 to bit9 */                       \
         andwx_ri(Rebx, IH(0x0200))                                          \
         andwx_rr(Rebx, Redi)                                                \

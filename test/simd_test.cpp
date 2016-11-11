@@ -3439,6 +3439,12 @@ testXX p_test[RUN_LEVEL] =
 /**********************************   MAIN   **********************************/
 /******************************************************************************/
 
+#undef sregs_sa /* turn off SIMD-regs instruction definitions */
+#undef sregs_la /* turn off SIMD-regs instruction definitions */
+
+#define sregs_sa() /* empty SIMD-regs instruction definitions */
+#define sregs_la() /* empty SIMD-regs instruction definitions */
+
 rt_time get_time();
 
 /*
@@ -3609,6 +3615,15 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     ASM_ENTER(inf0)
         verxx_xx()
     ASM_LEAVE(inf0)
+
+#if defined (RT_512) && (RT_512 != 0)
+    if ((inf0->ver & (RT_512 << 16)) == 0)
+    {
+        RT_LOGI("Chosen SIMD target not supported, check build flags\n");
+        run_level = 0;
+    }
+    simd = simd == 0 ? (RT_512 << 8) | 16 : simd;
+#endif /* RT_512 */
 
 #if defined (RT_256) && (RT_256 != 0)
     if ((inf0->ver & (RT_256 << 8)) == 0)
