@@ -553,113 +553,6 @@ struct rt_SIMD_REGS
 /************************   COMMON SIMD INSTRUCTIONS   ************************/
 /******************************************************************************/
 
-/***************** element-sized adjustable SIMD instructions *****************/
-
-/* cbr (D = cbrt S) */
-
-/*
- * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
- * available at http://www.musicdsp.org/showone.php?id=206
- * converted to S-way SIMD version by VectorChief.
- */
-#define cbrps_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        cbeps_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsps_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsps_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsps_rr(W(XD), W(X1), W(X2), W(XS))
-
-#define cbeps_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        /* cube root estimate, the exponent is divided by three             \
-         * in such a way that remainder bits get shoved into                \
-         * the top of the normalized mantissa */                            \
-        movpx_ld(W(X2), Mebp, inf_GPC04)                                    \
-        movpx_rr(W(XD), W(XS))                                              \
-        andpx_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
-        subpx_ld(W(XD), Mebp, inf_GPC05) /* convert to 2's complement */    \
-        shrpn_ri(W(XD), IB(10))  /* XD / 1024 */                            \
-        movpx_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
-        shlpx_ri(W(X1), IB(2))                                              \
-        addpx_rr(W(XD), W(X1))                                              \
-        shlpx_ri(W(X1), IB(2))                                              \
-        addpx_rr(W(XD), W(X1))                                              \
-        shlpx_ri(W(X1), IB(2))                                              \
-        addpx_rr(W(XD), W(X1))                                              \
-        shlpx_ri(W(X1), IB(2))                                              \
-        addpx_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
-        addpx_ld(W(XD), Mebp, inf_GPC05) /* back to biased-127 */           \
-        andpx_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
-        annpx_rr(W(X2), W(XS))   /* original sign */                        \
-        orrpx_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
-
-#define cbsps_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        movpx_rr(W(X1), W(XG))                                              \
-        mulps_rr(W(X1), W(XG))                                              \
-        movpx_rr(W(X2), W(X1))                                              \
-        mulps_ld(W(X1), Mebp, inf_GPC03)                                    \
-        rceps_rr(W(X1), W(X1))                                              \
-        mulps_rr(W(X2), W(XG))                                              \
-        subps_rr(W(X2), W(XS))                                              \
-        mulps_rr(W(X2), W(X1))                                              \
-        subps_rr(W(XG), W(X2))
-
-/* rcp (D = 1.0 / S)
- * accuracy/behavior may vary across supported targets, use accordingly */
-
-#if RT_SIMD_COMPAT_RCP == 0
-
-#define rcpps_rr(XD, XS) /* destroys XS */                                  \
-        rceps_rr(W(XD), W(XS))                                              \
-        rcsps_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
-
-#else /* RT_SIMD_COMPAT_RCP */
-
-#define rcpps_rr(XD, XS) /* destroys XS */                                  \
-        movpx_ld(W(XD), Mebp, inf_GPC01)                                    \
-        divps_rr(W(XD), W(XS))
-
-#endif /* RT_SIMD_COMPAT_RCP */
-
-#if RT_SIMD_COMPAT_RCP == 1
-
-#define rceps_rr(XD, XS)                                                    \
-        movpx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movpx_ld(W(XD), Mebp, inf_GPC01)                                    \
-        divps_ld(W(XD), Mebp, inf_SCR02(0))
-
-#define rcsps_rr(XG, XS) /* destroys XS */
-
-#endif /* RT_SIMD_COMPAT_RCP */
-
-/* rsq (D = 1.0 / sqrt S)
- * accuracy/behavior may vary across supported targets, use accordingly */
-
-#if RT_SIMD_COMPAT_RSQ == 0
-
-#define rsqps_rr(XD, XS) /* destroys XS */                                  \
-        rseps_rr(W(XD), W(XS))                                              \
-        rssps_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
-
-#else /* RT_SIMD_COMPAT_RSQ */
-
-#define rsqps_rr(XD, XS) /* destroys XS */                                  \
-        sqrps_rr(W(XS), W(XS))                                              \
-        movpx_ld(W(XD), Mebp, inf_GPC01)                                    \
-        divps_rr(W(XD), W(XS))
-
-#endif /* RT_SIMD_COMPAT_RSQ */
-
-#if RT_SIMD_COMPAT_RSQ == 1
-
-#define rseps_rr(XD, XS)                                                    \
-        sqrps_rr(W(XD), W(XS))                                              \
-        movpx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        movpx_ld(W(XD), Mebp, inf_GPC01)                                    \
-        divps_ld(W(XD), Mebp, inf_SCR02(0))
-
-#define rssps_rr(XG, XS) /* destroys XS */
-
-#endif /* RT_SIMD_COMPAT_RSQ */
-
 /****************** instructions for fixed-sized 32-bit SIMD ******************/
 
 /* cbr (D = cbrt S) */
@@ -712,21 +605,17 @@ struct rt_SIMD_REGS
 /* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RCP == 0
+#if   RT_SIMD_COMPAT_RCP == 0
 
 #define rcpos_rr(XD, XS) /* destroys XS */                                  \
         rceos_rr(W(XD), W(XS))                                              \
         rcsos_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
 
-#else /* RT_SIMD_COMPAT_RCP */
+#elif RT_SIMD_COMPAT_RCP == 1
 
 #define rcpos_rr(XD, XS) /* destroys XS */                                  \
         movox_ld(W(XD), Mebp, inf_GPC01_32)                                 \
         divos_rr(W(XD), W(XS))
-
-#endif /* RT_SIMD_COMPAT_RCP */
-
-#if RT_SIMD_COMPAT_RCP == 1
 
 #define rceos_rr(XD, XS)                                                    \
         movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
@@ -740,22 +629,18 @@ struct rt_SIMD_REGS
 /* rsq (D = 1.0 / sqrt S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RSQ == 0
+#if   RT_SIMD_COMPAT_RSQ == 0
 
 #define rsqos_rr(XD, XS) /* destroys XS */                                  \
         rseos_rr(W(XD), W(XS))                                              \
         rssos_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
 
-#else /* RT_SIMD_COMPAT_RSQ */
+#elif RT_SIMD_COMPAT_RSQ == 1
 
 #define rsqos_rr(XD, XS) /* destroys XS */                                  \
         sqros_rr(W(XS), W(XS))                                              \
         movox_ld(W(XD), Mebp, inf_GPC01_32)                                 \
         divos_rr(W(XD), W(XS))
-
-#endif /* RT_SIMD_COMPAT_RSQ */
-
-#if RT_SIMD_COMPAT_RSQ == 1
 
 #define rseos_rr(XD, XS)                                                    \
         sqros_rr(W(XD), W(XS))                                              \
@@ -859,21 +744,17 @@ struct rt_SIMD_REGS
 /* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RCP == 0
+#if   RT_SIMD_COMPAT_RCP == 0
 
 #define rcpqs_rr(XD, XS) /* destroys XS */                                  \
         rceqs_rr(W(XD), W(XS))                                              \
         rcsqs_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
 
-#else /* RT_SIMD_COMPAT_RCP */
+#elif RT_SIMD_COMPAT_RCP == 1
 
 #define rcpqs_rr(XD, XS) /* destroys XS */                                  \
         movqx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
         divqs_rr(W(XD), W(XS))
-
-#endif /* RT_SIMD_COMPAT_RCP */
-
-#if RT_SIMD_COMPAT_RCP == 1
 
 #define rceqs_rr(XD, XS)                                                    \
         movqx_st(W(XS), Mebp, inf_SCR02(0))                                 \
@@ -887,22 +768,18 @@ struct rt_SIMD_REGS
 /* rsq (D = 1.0 / sqrt S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RSQ == 0
+#if   RT_SIMD_COMPAT_RSQ == 0
 
 #define rsqqs_rr(XD, XS) /* destroys XS */                                  \
         rseqs_rr(W(XD), W(XS))                                              \
         rssqs_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
 
-#else /* RT_SIMD_COMPAT_RSQ */
+#elif RT_SIMD_COMPAT_RSQ == 1
 
 #define rsqqs_rr(XD, XS) /* destroys XS */                                  \
         sqrqs_rr(W(XS), W(XS))                                              \
         movqx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
         divqs_rr(W(XD), W(XS))
-
-#endif /* RT_SIMD_COMPAT_RSQ */
-
-#if RT_SIMD_COMPAT_RSQ == 1
 
 #define rseqs_rr(XD, XS)                                                    \
         sqrqs_rr(W(XD), W(XS))                                              \
@@ -1078,40 +955,38 @@ struct rt_SIMD_REGS
 
 /* cbr (D = cbrt S) */
 
-        /* cbe, cbs, cbr defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
+#define cbrps_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbros_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbeps_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbeos_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbsps_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbsos_rr(W(XG), W(X1), W(X2), W(XS))
 
 /* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RCP == 0
+#define rcpps_rr(XD, XS) /* destroys XS */                                  \
+        rcpos_rr(W(XD), W(XS))
 
 #define rceps_rr(XD, XS)                                                    \
         rceos_rr(W(XD), W(XS))
 
-#define rcsps_rr(XG, XS) /* destroys RM */                                  \
+#define rcsps_rr(XG, XS) /* destroys XS */                                  \
         rcsos_rr(W(XG), W(XS))
-
-#endif /* RT_SIMD_COMPAT_RCP */
-
-        /* rcp defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rsq (D = 1.0 / sqrt S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RSQ == 0
+#define rsqps_rr(XD, XS) /* destroys XS */                                  \
+        rsqos_rr(W(XD), W(XS))
 
 #define rseps_rr(XD, XS)                                                    \
         rseos_rr(W(XD), W(XS))
 
-#define rssps_rr(XG, XS) /* destroys RM */                                  \
+#define rssps_rr(XG, XS) /* destroys XS */                                  \
         rssos_rr(W(XG), W(XS))
-
-#endif /* RT_SIMD_COMPAT_RSQ */
-
-        /* rsq defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* fma (G = G + S * T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -1480,40 +1355,38 @@ struct rt_SIMD_REGS
 
 /* cbr (D = cbrt S) */
 
-        /* cbe, cbs, cbr defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
+#define cbrps_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbrqs_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbeps_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbeqs_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbsps_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbsqs_rr(W(XG), W(X1), W(X2), W(XS))
 
 /* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RCP == 0
+#define rcpps_rr(XD, XS) /* destroys XS */                                  \
+        rcpqs_rr(W(XD), W(XS))
 
 #define rceps_rr(XD, XS)                                                    \
         rceqs_rr(W(XD), W(XS))
 
-#define rcsps_rr(XG, XS) /* destroys RM */                                  \
+#define rcsps_rr(XG, XS) /* destroys XS */                                  \
         rcsqs_rr(W(XG), W(XS))
-
-#endif /* RT_SIMD_COMPAT_RCP */
-
-        /* rcp defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rsq (D = 1.0 / sqrt S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RSQ == 0
+#define rsqps_rr(XD, XS) /* destroys XS */                                  \
+        rsqqs_rr(W(XD), W(XS))
 
 #define rseps_rr(XD, XS)                                                    \
         rseqs_rr(W(XD), W(XS))
 
-#define rssps_rr(XG, XS) /* destroys RM */                                  \
+#define rssps_rr(XG, XS) /* destroys XS */                                  \
         rssqs_rr(W(XG), W(XS))
-
-#endif /* RT_SIMD_COMPAT_RSQ */
-
-        /* rsq defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* fma (G = G + S * T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,

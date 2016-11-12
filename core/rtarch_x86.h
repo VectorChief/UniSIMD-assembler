@@ -160,20 +160,6 @@
         EMITB(0x00 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
         EMITB(0x08 | (len) << 5)
 
-/* 4-byte EVEX prefix with full customization (W0, K1, Z0) */
-#define EKX(ren, len, pfx, aux)                                             \
-        EMITB(0x62)                                                         \
-        EMITB(0xF0 | (aux))                                                 \
-        EMITB(0x00 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
-        EMITB(0x09 | (len) << 5)
-
-/* 4-byte EVEX prefix with full customization (W0, K1, Z1) */
-#define EZX(ren, len, pfx, aux)                                             \
-        EMITB(0x62)                                                         \
-        EMITB(0xF0 | (aux))                                                 \
-        EMITB(0x00 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
-        EMITB(0x89 | (len) << 5)
-
 /* selectors  */
 
 #define REG(reg, mod, sib)  reg

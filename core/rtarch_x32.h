@@ -185,34 +185,6 @@
         EMITB(0x80 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
         EMITB(0x08 | (len) << 5)
 
-/* 4-byte EVEX prefix with full customization (W0, K1, Z0) */
-#define EKX(rxg, rxm, ren, len, pfx, aux)                                   \
-        EMITB(0x62)                                                         \
-        EMITB(0x10 | (1 - (rxg)) << 7 | 1 << 6 | (1 - (rxm)) << 5 | (aux))  \
-        EMITB(0x00 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
-        EMITB(0x09 | (len) << 5)
-
-/* 4-byte EVEX prefix with full customization (W1, K1, Z0) */
-#define EKW(rxg, rxm, ren, len, pfx, aux)                                   \
-        EMITB(0x62)                                                         \
-        EMITB(0x10 | (1 - (rxg)) << 7 | 1 << 6 | (1 - (rxm)) << 5 | (aux))  \
-        EMITB(0x80 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
-        EMITB(0x09 | (len) << 5)
-
-/* 4-byte EVEX prefix with full customization (W0, K1, Z1) */
-#define EZX(rxg, rxm, ren, len, pfx, aux)                                   \
-        EMITB(0x62)                                                         \
-        EMITB(0x10 | (1 - (rxg)) << 7 | 1 << 6 | (1 - (rxm)) << 5 | (aux))  \
-        EMITB(0x00 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
-        EMITB(0x89 | (len) << 5)
-
-/* 4-byte EVEX prefix with full customization (W1, K1, Z1) */
-#define EZW(rxg, rxm, ren, len, pfx, aux)                                   \
-        EMITB(0x62)                                                         \
-        EMITB(0x10 | (1 - (rxg)) << 7 | 1 << 6 | (1 - (rxm)) << 5 | (aux))  \
-        EMITB(0x80 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
-        EMITB(0x89 | (len) << 5)
-
 /* selectors  */
 
 #define RXB(reg, mod, sib)  ((reg) >> 3 & 0x01) /* register-extension-bit */

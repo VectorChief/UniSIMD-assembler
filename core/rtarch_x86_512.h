@@ -93,6 +93,27 @@
 
 #define K 2
 
+/* 4-byte EVEX prefix with full customization (W0, K1, Z0) */
+#define EKX(ren, len, pfx, aux)                                             \
+        EMITB(0x62)                                                         \
+        EMITB(0xF0 | (aux))                                                 \
+        EMITB(0x00 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
+        EMITB(0x09 | (len) << 5)
+
+/* 4-byte EVEX prefix with full customization (W0, K1, Z1) */
+#define EZX(ren, len, pfx, aux)                                             \
+        EMITB(0x62)                                                         \
+        EMITB(0xF0 | (aux))                                                 \
+        EMITB(0x00 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
+        EMITB(0x89 | (len) << 5)
+
+/* 4-byte EVEX prefix with full customization (W0, B1, RM) */
+#define ERX(ren, erm, pfx, aux)                                             \
+        EMITB(0x62)                                                         \
+        EMITB(0xF0 | (aux))                                                 \
+        EMITB(0x00 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
+        EMITB(0x18 | (erm) << 5)
+
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -142,26 +163,17 @@
 
 #define mmvox_rr(XG, XS)                                                    \
         ck1ox_rm(Xmm0, Mebp, inf_GPC07)                                     \
-        mk1ox_rr(W(XG), W(XS))
-
-#define mmvox_ld(XG, MS, DS)                                                \
-        ck1ox_rm(Xmm0, Mebp, inf_GPC07)                                     \
-        mk1ox_ld(W(XG), W(MS), W(DS))
-
-#define mmvox_st(XS, MG, DG)                                                \
-        ck1ox_rm(Xmm0, Mebp, inf_GPC07)                                     \
-        mk1ox_st(W(XS), W(MG), W(DG))
-
-#define mk1ox_rr(XG, XS)     /* not portable, do not use outside */         \
         EKX(0x00,    K, 0, 1) EMITB(0x28)                                   \
         MRM(REG(XG), MOD(XS), REG(XS))
 
-#define mk1ox_ld(XG, MS, DS) /* not portable, do not use outside */         \
+#define mmvox_ld(XG, MS, DS)                                                \
+        ck1ox_rm(Xmm0, Mebp, inf_GPC07)                                     \
         EKX(0x00,    K, 0, 1) EMITB(0x28)                                   \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define mk1ox_st(XS, MG, DG) /* not portable, do not use outside */         \
+#define mmvox_st(XS, MG, DG)                                                \
+        ck1ox_rm(Xmm0, Mebp, inf_GPC07)                                     \
         EKX(0x00,    K, 0, 1) EMITB(0x29)                                   \
         MRM(REG(XS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
@@ -355,37 +367,67 @@
 /* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RCP != 1
+#if   RT_SIMD_COMPAT_RCP == 0
 
 #define rceos_rr(XD, XS)                                                    \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_ld(W(XD), Mebp, inf_GPC01_32)                                 \
-        divos_ld(W(XD), Mebp, inf_SCR01(0))
+        EVX(0x00,    K, 1, 2) EMITB(0x4C)                                   \
+        MRM(REG(XD), MOD(XS), REG(XS))
 
-#define rcsos_rr(XG, XS) /* destroys XS */
-
-#endif /* RT_SIMD_COMPAT_RCP */
+#define rcsos_rr(XG, XS) /* destroys XS */                                  \
+        mulos_rr(W(XS), W(XG))                                              \
+        mulos_rr(W(XS), W(XG))                                              \
+        addos_rr(W(XG), W(XG))                                              \
+        subos_rr(W(XG), W(XS))
 
         /* rcp defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
+#elif RT_SIMD_COMPAT_RCP == 2
+
+#define rceos_rr(XD, XS)                                                    \
+        EVX(0x00,    K, 1, 2) EMITB(0xCA)                                   \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define rcsos_rr(XG, XS) /* destroys XS */
+
+#define rcpos_rr(XD, XS) /* destroys XS */                                  \
+        rceos_rr(W(XD), W(XS))                                              \
+        rcsos_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
 /* rsq (D = 1.0 / sqrt S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if RT_SIMD_COMPAT_RSQ != 1
+#if   RT_SIMD_COMPAT_RSQ == 0
 
 #define rseos_rr(XD, XS)                                                    \
-        sqros_rr(W(XD), W(XS))                                              \
-        movox_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movox_ld(W(XD), Mebp, inf_GPC01_32)                                 \
-        divos_ld(W(XD), Mebp, inf_SCR01(0))
+        EVX(0x00,    K, 1, 2) EMITB(0x4E)                                   \
+        MRM(REG(XD), MOD(XS), REG(XS))
 
-#define rssos_rr(XG, XS) /* destroys XS */
-
-#endif /* RT_SIMD_COMPAT_RSQ */
+#define rssos_rr(XG, XS) /* destroys XS */                                  \
+        mulos_rr(W(XS), W(XG))                                              \
+        mulos_rr(W(XS), W(XG))                                              \
+        subos_ld(W(XS), Mebp, inf_GPC03_32)                                 \
+        mulos_ld(W(XS), Mebp, inf_GPC02_32)                                 \
+        mulos_rr(W(XG), W(XS))
 
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
+
+#elif RT_SIMD_COMPAT_RSQ == 2
+
+#define rseos_rr(XD, XS)                                                    \
+        EVX(0x00,    K, 1, 2) EMITB(0xCC)                                   \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define rssos_rr(XG, XS) /* destroys XS */
+
+#define rsqos_rr(XD, XS) /* destroys XS */                                  \
+        rseos_rr(W(XD), W(XS))                                              \
+        rssos_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
+
+#endif /* RT_SIMD_COMPAT_RSQ */
 
 /* fma (G = G + S * T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -517,19 +559,10 @@
         AUX(SIB(MS), CMD(DS), EMITB(0x05))                                  \
         mz1ox_ld(W(XG), Mebp, inf_GPC07)
 
-#define mz1ox_rr(XG, XS)     /* not portable, do not use outside */         \
-        EZX(0x00,    K, 0, 1) EMITB(0x28)                                   \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
 #define mz1ox_ld(XG, MS, DS) /* not portable, do not use outside */         \
         EZX(0x00,    K, 0, 1) EMITB(0x28)                                   \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define mz1ox_st(XS, MG, DG) /* not portable, do not use outside */         \
-        EZX(0x00,    K, 0, 1) EMITB(0x29)                                   \
-        MRM(REG(XS), MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DG), EMPTY)
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -571,12 +604,12 @@
         AUX(SIB(MS), CMD(DS), EMITB(0x02))
 
 #define cvpos_rr(XD, XS)     /* round towards +inf */                       \
-        rnpos_rr(W(XD), W(XS))                                              \
-        cvzos_rr(W(XD), W(XD))
+        ERX(0x00,    2, 1, 1) EMITB(0x5B)                                   \
+        MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvpos_ld(XD, MS, DS) /* round towards +inf */                       \
-        rnpos_ld(W(XD), W(MS), W(DS))                                       \
-        cvzos_rr(W(XD), W(XD))
+        movox_ld(W(XD), W(MS), W(DS))                                       \
+        cvpos_rr(W(XD), W(XD))
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
@@ -594,12 +627,12 @@
         AUX(SIB(MS), CMD(DS), EMITB(0x01))
 
 #define cvmos_rr(XD, XS)     /* round towards -inf */                       \
-        rnmos_rr(W(XD), W(XS))                                              \
-        cvzos_rr(W(XD), W(XD))
+        ERX(0x00,    1, 1, 1) EMITB(0x5B)                                   \
+        MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvmos_ld(XD, MS, DS) /* round towards -inf */                       \
-        rnmos_ld(W(XD), W(MS), W(DS))                                       \
-        cvzos_rr(W(XD), W(XD))
+        movox_ld(W(XD), W(MS), W(DS))                                       \
+        cvmos_rr(W(XD), W(XD))
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
@@ -1070,8 +1103,8 @@
         AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
 
 #define cvros_rr(XD, XS, mode)                                              \
-        rnros_rr(W(XD), W(XS), mode)                                        \
-        cvzos_rr(W(XD), W(XD))
+        ERX(0x00,    RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x5B)               \
+        MRM(REG(XD), MOD(XS), REG(XS))
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
