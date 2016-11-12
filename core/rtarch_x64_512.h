@@ -322,6 +322,14 @@
 #if   RT_SIMD_COMPAT_RCP == 0
 
 #define rceqs_rr(XD, XS)                                                    \
+        EVW(RXB(XD), RXB(XS),    0x00, K, 1, 2) EMITB(0xCA)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define rcsqs_rr(XG, XS) /* destroys XS */
+
+#elif RT_SIMD_COMPAT_RCP == 2
+
+#define rceqs_rr(XD, XS)                                                    \
         EVW(RXB(XD), RXB(XS),    0x00, K, 1, 2) EMITB(0x4C)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
@@ -331,27 +339,23 @@
         addqs_rr(W(XG), W(XG))                                              \
         subqs_rr(W(XG), W(XS))
 
+#endif /* RT_SIMD_COMPAT_RCP */
+
         /* rcp defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
-
-#elif RT_SIMD_COMPAT_RCP == 2
-
-#define rceqs_rr(XD, XS)                                                    \
-        EVW(RXB(XD), RXB(XS),    0x00, K, 1, 2) EMITB(0xCA)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))
-
-#define rcsqs_rr(XG, XS) /* destroys XS */
-
-#define rcpqs_rr(XD, XS) /* destroys XS */                                  \
-        rceqs_rr(W(XD), W(XS))                                              \
-        rcsqs_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
-
-#endif /* RT_SIMD_COMPAT_RCP */
 
 /* rsq (D = 1.0 / sqrt S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #if   RT_SIMD_COMPAT_RSQ == 0
+
+#define rseqs_rr(XD, XS)                                                    \
+        EVW(RXB(XD), RXB(XS),    0x00, K, 1, 2) EMITB(0xCC)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define rssqs_rr(XG, XS) /* destroys XS */
+
+#elif RT_SIMD_COMPAT_RSQ == 2
 
 #define rseqs_rr(XD, XS)                                                    \
         EVW(RXB(XD), RXB(XS),    0x00, K, 1, 2) EMITB(0x4E)                 \
@@ -364,22 +368,10 @@
         mulqs_ld(W(XS), Mebp, inf_GPC02_64)                                 \
         mulqs_rr(W(XG), W(XS))
 
+#endif /* RT_SIMD_COMPAT_RSQ */
+
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
-
-#elif RT_SIMD_COMPAT_RSQ == 2
-
-#define rseqs_rr(XD, XS)                                                    \
-        EVW(RXB(XD), RXB(XS),    0x00, K, 1, 2) EMITB(0xCC)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))
-
-#define rssqs_rr(XG, XS) /* destroys XS */
-
-#define rsqqs_rr(XD, XS) /* destroys XS */                                  \
-        rseqs_rr(W(XD), W(XS))                                              \
-        rssqs_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
-
-#endif /* RT_SIMD_COMPAT_RSQ */
 
 /* fma (G = G + S * T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,

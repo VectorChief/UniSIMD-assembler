@@ -605,7 +605,7 @@ struct rt_SIMD_REGS
 /* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if   RT_SIMD_COMPAT_RCP == 0
+#if   RT_SIMD_COMPAT_RCP == 0 || RT_SIMD_COMPAT_RCP == 2
 
 #define rcpos_rr(XD, XS) /* destroys XS */                                  \
         rceos_rr(W(XD), W(XS))                                              \
@@ -629,7 +629,7 @@ struct rt_SIMD_REGS
 /* rsq (D = 1.0 / sqrt S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if   RT_SIMD_COMPAT_RSQ == 0
+#if   RT_SIMD_COMPAT_RSQ == 0 || RT_SIMD_COMPAT_RSQ == 2
 
 #define rsqos_rr(XD, XS) /* destroys XS */                                  \
         rseos_rr(W(XD), W(XS))                                              \
@@ -744,7 +744,7 @@ struct rt_SIMD_REGS
 /* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if   RT_SIMD_COMPAT_RCP == 0
+#if   RT_SIMD_COMPAT_RCP == 0 || RT_SIMD_COMPAT_RCP == 2
 
 #define rcpqs_rr(XD, XS) /* destroys XS */                                  \
         rceqs_rr(W(XD), W(XS))                                              \
@@ -768,7 +768,7 @@ struct rt_SIMD_REGS
 /* rsq (D = 1.0 / sqrt S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
-#if   RT_SIMD_COMPAT_RSQ == 0
+#if   RT_SIMD_COMPAT_RSQ == 0 || RT_SIMD_COMPAT_RSQ == 2
 
 #define rsqqs_rr(XD, XS) /* destroys XS */                                  \
         rseqs_rr(W(XD), W(XS))                                              \
