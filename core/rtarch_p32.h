@@ -143,7 +143,7 @@
 #define MSM(reg, ren, rem) /* logic, shifts */                              \
         ((reg) << 16 | (ren) << 21 | (rem) << 11)
 
-#define MTM(reg, ren, rem) /* div (G = G / S)ide, stack */                              \
+#define MTM(reg, ren, rem) /* divide, stack */                              \
         ((reg) << 21 | (ren) << 16 | (rem) << 11)
 
 #define MDM(reg, brm, vdp, bxx, pxx)                                        \
@@ -167,7 +167,9 @@
 #define SIB(reg, mod, sib)  sib
 
 #define VAL(val, tp1, tp2)  val
+#define VXL(val, tp1, tp2)  ((val) | 0x20)
 #define VYL(val, tp1, tp2)  ((val) | 0x10)
+#define VZL(val, tp1, tp2)  ((val) | 0x30)
 #define TP1(val, tp1, tp2)  tp1
 #define TP2(val, tp1, tp2)  tp2
 
@@ -1678,7 +1680,7 @@
  * 2nd byte - 512-bit version, 3rd byte - upper, reserved */
 
 #define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
-        movwx_mi(Mebp, inf_VER, IM(0x307)) /* <- VMX, VSX1/2 to bit0-1/2, 8/9 */
+        movwx_mi(Mebp, inf_VER, IV(0x030307)) /* <- VMX/VSX1/2 to 128/256/512 */
 
 /************************* address-sized instructions *************************/
 

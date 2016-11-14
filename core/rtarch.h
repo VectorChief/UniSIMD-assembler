@@ -1706,7 +1706,10 @@
  * compatible with 64-bit processors running 32-bit ISA mode */
 #define RT_BASE_COMPAT_ZFL      1 /* only necessary on Power */
 
-#if   defined (RT_256) && (RT_256 != 0)
+#if   defined (RT_512) && (RT_512 != 0)
+#define Q 4
+#include "rtarch_p64_512.h"
+#elif defined (RT_256) && (RT_256 != 0)
 #define Q 2
 #include "rtarch_p64_256.h"
 #elif defined (RT_128) && (RT_128 != 0)

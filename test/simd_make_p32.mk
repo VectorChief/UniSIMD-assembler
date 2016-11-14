@@ -52,5 +52,8 @@ simd_test_p32Bp7:
 # For 256-bit VSX1 build use (replace): RT_256=1 (uses pairs of regs/ops)
 # For 256-bit VSX2 build use (replace): RT_256=2 (uses pairs of regs/ops)
 
+# For 512-bit VSX1 build use (replace): RT_512=1 (uses quads of regs/ops)
+# For 512-bit VSX2 build use (replace): RT_512=2 (uses quads of regs/ops)
+
 # For 128-bit VSX1 POWER(7,7+,8) target use (replace): -DRT_128=2
 # qemu-ppc64abi32 -cpu POWER7 simd_test.p32Bp7
