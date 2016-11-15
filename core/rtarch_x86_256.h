@@ -96,6 +96,8 @@
 
 #if   defined (RT_256) && (RT_256 != 0)
 
+#undef RT_128
+
 #define K 1
 
 #elif defined (RT_128) && (RT_128 >= 8)
