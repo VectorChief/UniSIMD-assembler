@@ -96,7 +96,7 @@
 
 #if   defined (RT_256) && (RT_256 != 0)
 
-#undef RT_128
+#undef RT_128 /* turn off 128-bit definitions in multi-target build */
 
 #define K 1
 

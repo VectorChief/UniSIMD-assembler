@@ -84,7 +84,8 @@
 
 #if defined (RT_128) && (RT_128 >= 8)
 
-#undef RT_256
+#undef RT_256 /* turn off 256-bit definitions in multi-target build */
+
 #undef RT_RTARCH_X32_256_H
 #undef RT_RTARCH_X64_256_H
 #include "rtarch_x64_256.h"
