@@ -344,14 +344,11 @@
 #if RT_SIMD_COMPAT_RCP != 1
 
 #define rceqs_rr(XD, XS)                                                    \
-        EMITW(0xF000036B | MXM(REG(XD), 0x00,    REG(XS)))                  \
-        EMITW(0xF000036B | MXM(RYG(XD), 0x00,    RYG(XS)))
+        movqx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movqx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divqs_ld(W(XD), Mebp, inf_SCR02(0))
 
-#define rcsqs_rr(XG, XS) /* destroys XS */                                  \
-        EMITW(0xF00007CD | MXM(REG(XS), REG(XG), TmmX))                     \
-        EMITW(0xF000030F | MXM(REG(XG), REG(XG), REG(XS)))                  \
-        EMITW(0xF00007CD | MXM(RYG(XS), RYG(XG), TmmX))                     \
-        EMITW(0xF000030F | MXM(RYG(XG), RYG(XG), RYG(XS)))
+#define rcsqs_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
@@ -364,18 +361,12 @@
 #if RT_SIMD_COMPAT_RSQ != 1
 
 #define rseqs_rr(XD, XS)                                                    \
-        EMITW(0xF000032B | MXM(REG(XD), 0x00,    REG(XS)))                  \
-        EMITW(0xF000032B | MXM(RYG(XD), 0x00,    RYG(XS)))
+        sqrqs_rr(W(XD), W(XS))                                              \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movqx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divqs_ld(W(XD), Mebp, inf_SCR02(0))
 
-#define rssqs_rr(XG, XS) /* destroys XS */                                  \
-        EMITW(0xF0000387 | MXM(TmmM,    REG(XG), REG(XG)))                  \
-        EMITW(0xF0000384 | MXM(TmmW,    REG(XG), TmmY))                     \
-        EMITW(0xF00007CD | MXM(TmmM,    REG(XS), TmmX))                     \
-        EMITW(0xF000078D | MXM(REG(XG), TmmM,    TmmW))                     \
-        EMITW(0xF0000387 | MXM(TmmM,    RYG(XG), RYG(XG)))                  \
-        EMITW(0xF0000384 | MXM(TmmW,    RYG(XG), TmmY))                     \
-        EMITW(0xF00007CD | MXM(TmmM,    RYG(XS), TmmX))                     \
-        EMITW(0xF000078D | MXM(RYG(XG), TmmM,    TmmW))
+#define rssqs_rr(XG, XS) /* destroys XS */
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
