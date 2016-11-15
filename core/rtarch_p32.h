@@ -261,7 +261,7 @@
 
 #define Teax    0x04  /* r4, must be larger reg-num than zero (r0) */
 #define Tecx    0x0F  /* r15 */
-#define Tedx    0x02  /* r2 */
+#define Tedx    0x10  /* r16 */
 #define Tebx    0x03  /* r3 */
 #define Tebp    0x05  /* r5 */
 #define Tesi    0x06  /* r6 */
@@ -269,9 +269,9 @@
 #define Teg8    0x08  /* r8 */
 #define Teg9    0x09  /* r9 */
 #define TegA    0x0A  /* r10 */
-#define TegB    0x0B  /* r11 */
-#define TegC    0x0C  /* r12 */
-#define TegD    0x0D  /* r13 */
+#define TegB    0x11  /* r17 */
+#define TegC    0x12  /* r18 */
+#define TegD    0x1F  /* r31 */
 #define TegE    0x0E  /* r14 */
 
 /******************************************************************************/
@@ -282,7 +282,7 @@
 
 #define Reax    Teax, %%r4,  EMPTY
 #define Recx    Tecx, %%r15, EMPTY
-#define Redx    Tedx, %%r2,  EMPTY
+#define Redx    Tedx, %%r16, EMPTY
 #define Rebx    Tebx, %%r3,  EMPTY
 #define Rebp    Tebp, %%r5,  EMPTY
 #define Resi    Tesi, %%r6,  EMPTY
@@ -290,9 +290,9 @@
 #define Reg8    Teg8, %%r8,  EMPTY
 #define Reg9    Teg9, %%r9,  EMPTY
 #define RegA    TegA, %%r10, EMPTY
-#define RegB    TegB, %%r11, EMPTY
-#define RegC    TegC, %%r12, EMPTY
-#define RegD    TegD, %%r13, EMPTY
+#define RegB    TegB, %%r17, EMPTY
+#define RegC    TegC, %%r18, EMPTY
+#define RegD    TegD, %%r31, EMPTY
 #define RegE    TegE, %%r14, EMPTY
 
 /* addressing   REG,  MOD,  SIB */
