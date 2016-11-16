@@ -271,7 +271,7 @@
 #define TegA    0x0A  /* r10 */
 #define TegB    0x11  /* r17 */
 #define TegC    0x12  /* r18 */
-#define TegD    0x1F  /* r31 */
+#define TegD    0x13  /* r19 */
 #define TegE    0x0E  /* r14 */
 
 /******************************************************************************/
@@ -292,7 +292,7 @@
 #define RegA    TegA, %%r10, EMPTY
 #define RegB    TegB, %%r17, EMPTY
 #define RegC    TegC, %%r18, EMPTY
-#define RegD    TegD, %%r31, EMPTY
+#define RegD    TegD, %%r19, EMPTY
 #define RegE    TegE, %%r14, EMPTY
 
 /* addressing   REG,  MOD,  SIB */
