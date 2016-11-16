@@ -213,23 +213,21 @@
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
 
 #define mmvox_rr(XG, XS)                                                    \
-        EMITW(0x10000444 | MXM(REG(XG), REG(XG), Tmm0))                     \
-        andox_rr(Xmm0, W(XS))                                               \
-        orrox_rr(W(XG), Xmm0)
+        EMITW(0x1000002A | MXM(REG(XG), REG(XG), REG(XS)))
 
 #define mmvox_ld(XG, MS, DS)                                                \
-        EMITW(0x10000444 | MXM(REG(XG), REG(XG), Tmm0))                     \
-        andox_ld(Xmm0, W(MS), W(DS))                                        \
-        orrox_rr(W(XG), Xmm0)
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0x1000002A | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
 
 #define mmvox_st(XS, MG, DG)                                                \
-        EMITW(0x10000404 | MXM(REG(XS), REG(XS), Tmm0))                     \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MG), VAL(DG), C2(DG), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    REG(MG), VAL(DG), B2(DG), P2(DG)))  \
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MG) == TPxx), TPxx))    \
-        EMITW(0x10000444 | MXM(Tmm0,    TmmM,    Tmm0))/* ^ == -1 if true */\
-        EMITW(0x10000484 | MXM(Tmm0,    Tmm0,    REG(XS)))                  \
-        EMITW(0x7C0001CE | MXM(Tmm0,    Teax & (MOD(MG) == TPxx), TPxx))
+        EMITW(0x1000002A | MXM(TmmM,    TmmM,    REG(XS)))                  \
+        EMITW(0x7C0001CE | MXM(TmmM,    Teax & (MOD(MG) == TPxx), TPxx))    \
+                                                       /* ^ == -1 if true */
 
 /* and (G = G & S) */
 
