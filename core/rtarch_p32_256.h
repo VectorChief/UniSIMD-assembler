@@ -93,6 +93,8 @@
 #define movqx_ld(XD, MS, DS)
 #undef  EMITS
 #define EMITS(w) EMITW(w)
+#undef  EMITM
+#define EMITM(w) /* EMPTY */
 #undef  EMITP
 #define EMITP(w) EMITW(w)
 
@@ -127,13 +129,6 @@
                                                     (0xFFF0 & (dp)))
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
-
-#define TmmR    0x17  /* v23, VMX only, Rounding Mode */
-#define TmmS    0x18  /* v24, VMX only, sign-mask 32-bit */
-#define TmmT    0x1E  /* v30, VMX only */
-#define TmmU    0x1A  /* v26, VMX only, +1.0 32-bit */
-#define TmmV    0x1B  /* v27, VMX only, -0.5 32-bit */
-#define TmmW    0x1C  /* v28, VMX only */
 
 #define TmmE    0x0E  /* v14, internal name for XmmE (in sregs) */
 #define TmmQ    0x0F  /* v15, internal name for all-ones */

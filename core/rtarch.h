@@ -1744,16 +1744,16 @@
         EMITS(0x7C0002A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave -> r28 */       \
         EMITS(0x3800FFFF | MRM(TIxx, 0x00, 0x00)) /* r25 <- -1 */           \
         EMITS(0x7C0003A6 | MRM(TIxx, 0x08, 0x00)) /* vrsave <- r25 */       \
+        EMITS(0x1000038C | MXM(TmmQ, 0x1F, 0x00)) /* v15 <- all-ones */     \
         movox_ld(Xmm2, Mebp, inf_GPC01_32)        /* v2  <- +1.0f 32-bit */ \
         movox_ld(Xmm4, Mebp, inf_GPC02_32)        /* v4  <- -0.5f 32-bit */ \
         movox_ld(Xmm8, Mebp, inf_GPC04_32)        /* v8  <- 0x7FFFFFFF */   \
-        EMITS(0x10000504 | MXM(TmmS, 0x08, 0x08)) /* v24 <- not v8 */       \
-        EMITS(0x10000484 | MXM(TmmQ, 0x08, TmmS)) /* v25 <- v8 or v24 */    \
-        EMITS(0x10000484 | MXM(TmmU, 0x02, 0x02)) /* v26 <- v2 */           \
-        EMITS(0x10000484 | MXM(TmmV, 0x04, 0x04)) /* v27 <- v4 */           \
+        EMITM(0x100004C4 | MXM(TmmR, TmmR, TmmR)) /* v23 <- v23 xor v23 */  \
+        EMITM(0x10000504 | MXM(TmmS, 0x08, 0x08)) /* v24 <- not v8 */       \
+        EMITM(0x10000484 | MXM(TmmU, 0x02, 0x02)) /* v26 <- v2 */           \
+        EMITM(0x10000484 | MXM(TmmV, 0x04, 0x04)) /* v27 <- v4 */           \
         EMITP(0xF0000496 | MXM(TmmQ, 0x02, 0x02)) /* vs15 <- v2 */          \
-        EMITP(0xF0000496 | MXM(TmmM, 0x04, 0x04)) /* vs31 <- v4 */          \
-        EMITS(0x100004C4 | MXM(TmmR, TmmS, TmmS)) /* v23 <- v24 xor v24 */
+        EMITP(0xF0000496 | MXM(TmmM, 0x04, 0x04)) /* vs31 <- v4 */
 
 #define ASM_LEAVE(__Info__)                                                 \
         EMITW(0x7C0003A6 | MRM(TCxx, 0x00, 0x09)) /* ctr <- r27 */          \
@@ -1800,16 +1800,16 @@
         EMITS(0x7C0002A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave -> r28 */       \
         EMITS(0x3800FFFF | MRM(TIxx, 0x00, 0x00)) /* r25 <- -1 */           \
         EMITS(0x7C0003A6 | MRM(TIxx, 0x08, 0x00)) /* vrsave <- r25 */       \
+        EMITS(0x1000038C | MXM(TmmQ, 0x1F, 0x00)) /* v15 <- all-ones */     \
         movox_ld(Xmm2, Mebp, inf_GPC01_32)        /* v2  <- +1.0f 32-bit */ \
         movox_ld(Xmm4, Mebp, inf_GPC02_32)        /* v4  <- -0.5f 32-bit */ \
         movox_ld(Xmm8, Mebp, inf_GPC04_32)        /* v8  <- 0x7FFFFFFF */   \
-        EMITS(0x10000504 | MXM(TmmS, 0x08, 0x08)) /* v24 <- not v8 */       \
-        EMITS(0x10000484 | MXM(TmmQ, 0x08, TmmS)) /* v25 <- v8 or v24 */    \
-        EMITS(0x10000484 | MXM(TmmU, 0x02, 0x02)) /* v26 <- v2 */           \
-        EMITS(0x10000484 | MXM(TmmV, 0x04, 0x04)) /* v27 <- v4 */           \
+        EMITM(0x100004C4 | MXM(TmmR, TmmR, TmmR)) /* v23 <- v23 xor v23 */  \
+        EMITM(0x10000504 | MXM(TmmS, 0x08, 0x08)) /* v24 <- not v8 */       \
+        EMITM(0x10000484 | MXM(TmmU, 0x02, 0x02)) /* v26 <- v2 */           \
+        EMITM(0x10000484 | MXM(TmmV, 0x04, 0x04)) /* v27 <- v4 */           \
         EMITP(0xF0000496 | MXM(TmmQ, 0x02, 0x02)) /* vs15 <- v2 */          \
         EMITP(0xF0000496 | MXM(TmmM, 0x04, 0x04)) /* vs31 <- v4 */          \
-        EMITS(0x100004C4 | MXM(TmmR, TmmS, TmmS)) /* v23 <- v24 xor v24 */  \
         EMITW(0xFC00010C | MRM(0x1C, 0x08, 0x00)) /* fpscr <- NI(4) */      \
         EMITS(0x1000034C | MXM(TmmM, 0x01, 0x00)) /* v31 <- splt-half(1) */ \
         EMITS(0x10000644 | MXM(0x00, 0x00, TmmM)) /* vscr <- v31, NJ(16) */
@@ -1835,12 +1835,15 @@
 #define movox_ld(XD, MS, DS)
 #define movqx_ld(XD, MS, DS)
 #define EMITS(w) /* EMPTY */
+#define EMITM(w) /* EMPTY */
 #define EMITP(w) /* EMPTY */
 #elif (RT_128 > 1) || (RT_256 != 0) || (RT_512 != 0)
 #define EMITS(w)    EMITW(w)
+#define EMITM(w) /* EMPTY */
 #define EMITP(w)    EMITW(w)
 #else  /* RT_SIMD_CODE */
 #define EMITS(w)    EMITW(w)
+#define EMITM(w)    EMITW(w)
 #define EMITP(w) /* EMPTY */
 #endif /* RT_SIMD_CODE */
 
