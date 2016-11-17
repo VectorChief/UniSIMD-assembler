@@ -134,8 +134,6 @@
 #define TmmU    0x1A  /* v26, VMX only, +1.0 32-bit */
 #define TmmV    0x1B  /* v27, VMX only, -0.5 32-bit */
 #define TmmW    0x1C  /* v28, VMX only */
-#define TmmX    0x15  /* v21, VMX only, +1.0 64-bit */
-#define TmmY    0x16  /* v22, VMX only, -0.5 64-bit */
 
 #define TmmE    0x0E  /* v14, internal name for XmmE (in sregs) */
 #define TmmQ    0x0F  /* v15, internal name for all-ones */
@@ -162,7 +160,7 @@
 #define XmmC    0x0C, 0x00, EMPTY       /* v12 */
 #define XmmD    0x0D, 0x00, EMPTY       /* v13 */
 #if     RT_SIMD_COMPAT_XMM < 2
-#define XmmE    0x0E, 0x00, EMPTY       /* v14, may be reserved in some cases */
+#define XmmE    TmmE, 0x00, EMPTY       /* v14, may be reserved in some cases */
 #if     RT_SIMD_COMPAT_XMM < 1
 #define XmmF    0x0F, 0x00, EMPTY       /* v15, may be reserved in some cases */
 #endif/*RT_SIMD_COMPAT_XMM < 1*/

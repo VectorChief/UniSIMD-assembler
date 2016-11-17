@@ -1753,10 +1753,6 @@
         EMITS(0x10000484 | MXM(TmmV, 0x04, 0x04)) /* v27 <- v4 */           \
         EMITP(0xF0000496 | MXM(TmmQ, 0x02, 0x02)) /* vs15 <- v2 */          \
         EMITP(0xF0000496 | MXM(TmmM, 0x04, 0x04)) /* vs31 <- v4 */          \
-        movqx_ld(Xmm2, Mebp, inf_GPC01_64)        /* v2  <- +1.0  64-bit */ \
-        movqx_ld(Xmm4, Mebp, inf_GPC02_64)        /* v4  <- -0.5  64-bit */ \
-        EMITS(0x10000484 | MXM(TmmX, 0x02, 0x02)) /* v21 <- v2 */           \
-        EMITS(0x10000484 | MXM(TmmY, 0x04, 0x04)) /* v22 <- v4 */           \
         EMITS(0x100004C4 | MXM(TmmR, TmmS, TmmS)) /* v23 <- v24 xor v24 */
 
 #define ASM_LEAVE(__Info__)                                                 \
@@ -1813,10 +1809,6 @@
         EMITS(0x10000484 | MXM(TmmV, 0x04, 0x04)) /* v27 <- v4 */           \
         EMITP(0xF0000496 | MXM(TmmQ, 0x02, 0x02)) /* vs15 <- v2 */          \
         EMITP(0xF0000496 | MXM(TmmM, 0x04, 0x04)) /* vs31 <- v4 */          \
-        movqx_ld(Xmm2, Mebp, inf_GPC01_64)        /* v2  <- +1.0  64-bit */ \
-        movqx_ld(Xmm4, Mebp, inf_GPC02_64)        /* v4  <- -0.5  64-bit */ \
-        EMITS(0x10000484 | MXM(TmmX, 0x02, 0x02)) /* v21 <- v2 */           \
-        EMITS(0x10000484 | MXM(TmmY, 0x04, 0x04)) /* v22 <- v4 */           \
         EMITS(0x100004C4 | MXM(TmmR, TmmS, TmmS)) /* v23 <- v24 xor v24 */  \
         EMITW(0xFC00010C | MRM(0x1C, 0x08, 0x00)) /* fpscr <- NI(4) */      \
         EMITS(0x1000034C | MXM(TmmM, 0x01, 0x00)) /* v31 <- splt-half(1) */ \
@@ -1844,7 +1836,7 @@
 #define movqx_ld(XD, MS, DS)
 #define EMITS(w) /* EMPTY */
 #define EMITP(w) /* EMPTY */
-#elif (RT_256 != 0) || (RT_512 != 0)
+#elif (RT_128 > 1) || (RT_256 != 0) || (RT_512 != 0)
 #define EMITS(w)    EMITW(w)
 #define EMITP(w)    EMITW(w)
 #else  /* RT_SIMD_CODE */
