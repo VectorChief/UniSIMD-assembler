@@ -959,7 +959,7 @@
         EMITW(0xF2A00550 | MXM(REG(XG), 0x00,    REG(XG)) |                 \
                                                  (0x1F & VAL(IS)) << 16)
 
-#define shlox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shlox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0xF4A00CBF | MXM(TmmM,    TPxx,    0x00))                     \
@@ -982,7 +982,7 @@
         (+(VAL(IS) == 0) & 0x00000500) | (+(VAL(IS) != 0) & 0x01000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IS)) << 16)
 
-#define shrox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0xF4A00CBF | MXM(TmmM,    TPxx,    0x00))                     \
@@ -1006,7 +1006,7 @@
         (+(VAL(IS) == 0) & 0x00000500) | (+(VAL(IS) != 0) & 0x00000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IS)) << 16)
 
-#define shron_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shron_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0xF4A00CBF | MXM(TmmM,    TPxx,    0x00))                     \

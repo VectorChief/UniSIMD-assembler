@@ -1160,7 +1160,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define shlox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shlox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
         shlix_ld(W(XG), W(MS), W(DS))                                       \
         movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
@@ -1238,7 +1238,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define shrox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
         shrix_ld(W(XG), W(MS), W(DS))                                       \
         movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
@@ -1314,7 +1314,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define shron_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shron_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
         shrln_ld(W(XG), W(MS), W(DS))                                       \
         movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
@@ -1404,7 +1404,7 @@
         MRM(0x06,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
-#define shlox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shlox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         V2X(REG(XG), K, 1) EMITB(0xF2)                                      \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
@@ -1463,7 +1463,7 @@
         MRM(0x02,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
-#define shrox_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         V2X(REG(XG), K, 1) EMITB(0xD2)                                      \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
@@ -1520,7 +1520,7 @@
         MRM(0x04,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
-#define shron_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shron_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         V2X(REG(XG), K, 1) EMITB(0xE2)                                      \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)

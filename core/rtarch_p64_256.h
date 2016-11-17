@@ -743,7 +743,7 @@
         shlzx_mi(Mebp,  inf_SCR01(0x18), W(IS))                             \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movzx_ld(Recx,  W(MS), W(DS))                                       \
@@ -796,7 +796,7 @@
         shrzx_mi(Mebp,  inf_SCR01(0x18), W(IS))                             \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movzx_ld(Recx,  W(MS), W(DS))                                       \
@@ -847,7 +847,7 @@
         shrzn_mi(Mebp,  inf_SCR01(0x18), W(IS))                             \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movzx_ld(Recx,  W(MS), W(DS))                                       \
@@ -930,7 +930,7 @@
         movzx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
         shlqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x7C000299 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
@@ -958,7 +958,7 @@
         movzx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
         shrqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x7C000299 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
@@ -984,7 +984,7 @@
         movzx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
         shrqn_ld(W(XG), Mebp, inf_SCR01(0))
 
-#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x7C000299 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \

@@ -1161,7 +1161,7 @@ struct rt_SIMD_REGS
 #define shlpx_ri(XG, IS)                                                    \
         shlox_ri(W(XG), W(IS))
 
-#define shlpx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shlpx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shlox_ld(W(XG), W(MS), W(DS))
 
 #define svlpx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1176,7 +1176,7 @@ struct rt_SIMD_REGS
 #define shrpx_ri(XG, IS)                                                    \
         shrox_ri(W(XG), W(IS))
 
-#define shrpx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrpx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrox_ld(W(XG), W(MS), W(DS))
 
 #define svrpx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1189,7 +1189,7 @@ struct rt_SIMD_REGS
 #define shrpn_ri(XG, IS)                                                    \
         shron_ri(W(XG), W(IS))
 
-#define shrpn_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrpn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shron_ld(W(XG), W(MS), W(DS))
 
 #define svrpn_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1561,7 +1561,7 @@ struct rt_SIMD_REGS
 #define shlpx_ri(XG, IS)                                                    \
         shlqx_ri(W(XG), W(IS))
 
-#define shlpx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shlpx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shlqx_ld(W(XG), W(MS), W(DS))
 
 #define svlpx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1576,7 +1576,7 @@ struct rt_SIMD_REGS
 #define shrpx_ri(XG, IS)                                                    \
         shrqx_ri(W(XG), W(IS))
 
-#define shrpx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrpx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrqx_ld(W(XG), W(MS), W(DS))
 
 #define svrpx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1589,7 +1589,7 @@ struct rt_SIMD_REGS
 #define shrpn_ri(XG, IS)                                                    \
         shrqn_ri(W(XG), W(IS))
 
-#define shrpn_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrpn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrqn_ld(W(XG), W(MS), W(DS))
 
 #define svrpn_rr(XG, XS)     /* variable shift with per-elem count */       \

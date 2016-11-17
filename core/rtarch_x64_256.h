@@ -1079,7 +1079,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         shljx_ld(W(XG), W(MS), W(DS))                                       \
         movjx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
@@ -1141,7 +1141,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         shrjx_ld(W(XG), W(MS), W(DS))                                       \
         movjx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
@@ -1215,7 +1215,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
 
-#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
     ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xF3)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
@@ -1266,7 +1266,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
 
-#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
     ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xD3)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
@@ -1319,7 +1319,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         shrzn_mi(Mebp,  inf_SCR01(0x08), W(IS))                             \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movzx_ld(Recx, W(MS), W(DS))                                        \
@@ -1361,7 +1361,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         shrzn_mi(Mebp,  inf_SCR01(0x18), W(IS))                             \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
 
-#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movzx_ld(Recx, W(MS), W(DS))                                        \

@@ -496,7 +496,7 @@
         EMITW(0x78000009 | MXM(REG(XG), REG(XG), 0x00) |                    \
                                                  (0x3F & VAL(IS)) << 16)
 
-#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0x7B03001E | MXM(TmmM,    TMxx,    0x00))                     \
@@ -517,7 +517,7 @@
         EMITW(0x79000009 | MXM(REG(XG), REG(XG), 0x00) |                    \
                                                  (0x3F & VAL(IS)) << 16)
 
-#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0x7B03001E | MXM(TmmM,    TMxx,    0x00))                     \
@@ -536,7 +536,7 @@
         EMITW(0x78800009 | MXM(REG(XG), REG(XG), 0x00) |                    \
                                                  (0x3F & VAL(IS)) << 16)
 
-#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 1 elem at given address */ \
+#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0x7B03001E | MXM(TmmM,    TMxx,    0x00))                     \
