@@ -40,6 +40,7 @@
  *  - rtarch_x86.h         - x86 32-bit ISA, 8 BASE regs, 6 + esp, ebp used
  *  - rtarch_x86_128.h     - 32-bit elements, 8 SIMD regs, SSE 128-bit, 8 used
  *  - rtarch_x86_256.h     - 32-bit elements, 8 SIMD regs, AVX 256-bit, 8 used
+ *  - rtarch_x86_512.h     - 32-bit elements, 8 SIMD regs, AVX 512-bit, 8 used
  *
  * Current 32/64-bit BASE
  * and 32/64-bit SIMD targets:
@@ -62,12 +63,16 @@
  *  - rtarch_p64_128.h     - 64-bit elements, 32 SIMD regs, VMX/VSX 128-bit, 16+
  *  - rtarch_p32_256.h     - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 15
  *  - rtarch_p64_256.h     - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_p32_512.h     - 32-bit elements, 64 SIMD regs, quads of 128-bit, 15
+ *  - rtarch_p64_512.h     - 64-bit elements, 64 SIMD regs, quads of 128-bit, 15
  *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 14 + temps used
  *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 14 + temps used
  *  - rtarch_x32_128.h     - 32-bit elements, 16 SIMD regs, SSE 128-bit, 16 used
  *  - rtarch_x64_128.h     - 64-bit elements, 16 SIMD regs, SSE 128-bit, 16 used
  *  - rtarch_x32_256.h     - 32-bit elements, 16 SIMD regs, AVX 256-bit, 16 used
  *  - rtarch_x64_256.h     - 64-bit elements, 16 SIMD regs, AVX 256-bit, 16 used
+ *  - rtarch_x32_512.h     - 32-bit elements, 32 SIMD regs, AVX 512-bit, 16 used
+ *  - rtarch_x64_512.h     - 64-bit elements, 32 SIMD regs, AVX 512-bit, 16 used
  *
  * Future 32-bit SIMD targets:
  *
@@ -77,10 +82,7 @@
  *  - rtarch_m32_128.h     - 32-bit elements, 32 SIMD regs, MSA 128-bit, 30 used
  *  - rtarch_p32_128.h     - 32-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
  *  - rtarch_p32_256.h     - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 30
- *  - rtarch_p32_512.h     - 32-bit elements, 64 SIMD regs, quads of 128-bit, 15
- *  - rtarch_x32_512.h     - 32-bit elements, 32 SIMD regs, AVX 512-bit, 16 used
  *  - rtarch_x32_512.h     - 32-bit elements, 32 SIMD regs, AVX 512-bit, 30 used
- *  - rtarch_x86_512.h     - 32-bit elements, 8 SIMD regs, AVX 512-bit, 8 used
  *
  * Future 64-bit SIMD targets:
  *
@@ -90,8 +92,6 @@
  *  - rtarch_m64_128.h     - 64-bit elements, 32 SIMD regs, MSA 128-bit, 30 used
  *  - rtarch_p64_128.h     - 64-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
  *  - rtarch_p64_256.h     - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 30
- *  - rtarch_p64_512.h     - 64-bit elements, 64 SIMD regs, quads of 128-bit, 15
- *  - rtarch_x64_512.h     - 64-bit elements, 32 SIMD regs, AVX 512-bit, 16 used
  *  - rtarch_x64_512.h     - 64-bit elements, 32 SIMD regs, AVX 512-bit, 30 used
  *
  * not all registers in target descriptions are always exposed for apps to use

@@ -11,10 +11,10 @@
 
 #define RT_SIMD_REGS        16
 #define RT_SIMD_ALIGN       16
-#define RT_SIMD_WIDTH32     4
-#define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=v
 #define RT_SIMD_WIDTH64     2
 #define RT_SIMD_SET64(s, v) s[0]=s[1]=v
+#define RT_SIMD_WIDTH32     4
+#define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=v
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/

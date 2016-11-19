@@ -14,7 +14,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_p64_512.h: Implementation of Power fp64 VSX(1,2) instructions (quads).
+ * rtarch_p64_512.h: Implementation of Power fp64 VSX1/2 instructions (quads).
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

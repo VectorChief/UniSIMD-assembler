@@ -14,7 +14,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x64_256.h: Implementation of x86_64 fp64 AVX(1,2) instructions.
+ * rtarch_x64_256.h: Implementation of x86_64 fp64 AVX1/2 instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

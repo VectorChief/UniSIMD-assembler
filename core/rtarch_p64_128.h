@@ -14,7 +14,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_p64_128.h: Implementation of Power fp64 VSX(1,2) instructions.
+ * rtarch_p64_128.h: Implementation of Power fp64 VSX1/2 instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

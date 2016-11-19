@@ -11,18 +11,18 @@
 
 #define RT_SIMD_REGS        16
 #define RT_SIMD_ALIGN       64
+#define RT_SIMD_WIDTH64     8
+#define RT_SIMD_SET64(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=v
 #define RT_SIMD_WIDTH32     16
 #define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=\
                             s[8]=s[9]=s[10]=s[11]=s[12]=s[13]=s[14]=s[15]=v
-#define RT_SIMD_WIDTH64     8
-#define RT_SIMD_SET64(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=v
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
 
 /*
- * rtarch_p32_512.h: Implementation of Power fp32 VMX/VSX instructions (quads).
+ * rtarch_p32_512.h: Implementation of Power fp32 VSX1/2 instructions (quads).
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

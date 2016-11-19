@@ -11,17 +11,17 @@
 
 #define RT_SIMD_REGS        8
 #define RT_SIMD_ALIGN       16
-#define RT_SIMD_WIDTH32     4
-#define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=v
 #define RT_SIMD_WIDTH64     2
 #define RT_SIMD_SET64(s, v) s[0]=s[1]=v
+#define RT_SIMD_WIDTH32     4
+#define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=v
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
 
 /*
- * rtarch_x86_128.h: Implementation of x86:i386 fp32 SSE(1,2,4) instructions.
+ * rtarch_x86_128.h: Implementation of x86:i386 fp32 SSE1/2/4 instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

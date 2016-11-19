@@ -13,10 +13,10 @@
 
 #define RT_SIMD_REGS        16
 #define RT_SIMD_ALIGN       32
-#define RT_SIMD_WIDTH32     8
-#define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=v
 #define RT_SIMD_WIDTH64     4
 #define RT_SIMD_SET64(s, v) s[0]=s[1]=s[2]=s[3]=v
+#define RT_SIMD_WIDTH32     8
+#define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=v
 
 #endif /* RT_256 */
 
@@ -25,7 +25,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x32_256.h: Implementation of x86_64 fp32 AVX(1,2) instructions.
+ * rtarch_x32_256.h: Implementation of x86_64 fp32 AVX1/2 instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
