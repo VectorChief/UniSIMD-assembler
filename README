@@ -13,10 +13,11 @@ wider SIMD vectors with zeroing/merging predicates in 3/4-operand instructions,
 larger register files and other architectures are planned as future extensions
 to current 2-operand (destination-as-1st-source) SPMD-driven vertical SIMD ISA.
 
-All legacy targets support 128-bit SIMD with 8 registers (32-bit elements only).
-All modern targets support 256-bit SIMD with 15 registers (using 2x128 on RISC).
-Select few targets support 512-bit SIMD with 15 registers (x86, 4x128 on Power).
 Heap-address, SIMD-element sizes are 32/64-bit configurable on 64-bit targets.
+All targets support FMA3 either natively or via higher-precision fpu-emulation.
+All legacy targets support 128-bit SIMD with 8 registers (32-bit elements only).
+All modern targets support 256-bit SIMD with 15 registers (x86, 2x128 on RISCs).
+Select few targets support 512-bit SIMD with 15 registers (x86, 4x128 on Power).
 
 The project comes with a test framework for Linux/GCC, Windows/VC++/TDM64-GCC.
 Instructions for resolving dependencies and building the binaries
