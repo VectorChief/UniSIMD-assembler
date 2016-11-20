@@ -1,3 +1,28 @@
+v0.9.0: Unified SIMD Assembler, 256-bit SIMD on RISC, basic AVX-512 support
+  - adjust root rt_SIMD_INFO struct to contain both 32-bit and 64-bit constants
+  - add new sign-mask and full-mask general purpose constants to rt_SIMD_INFO
+  - expose 32/64-bit SIMD-element-size subsets (cmdo*, cmdq*) simultaneously
+  - element size in existing cmdp* subset remains configurable with RT_ELEMENT
+  - all three SIMD subsets (cmdo*, cmdp*, cmdq*) are still SIMD-width-agnostic
+  - expose fixed 64-bit BASE subset cmdz* for 64-bit targets only
+  - existing address-size cmdx*, element-size cmdy* and 32-bit cmdw* remain
+  - add BASE move instructions for 64-bit immediates as pairs of 32-bit types
+  - add new rotate-right and inverse-logic BASE instructions (ror, ann, orn)
+  - add new BMI1/BMI2 implementations for existing BASE instructions on x86
+  - implement fused-multiply-accumulate (fma/fms) on all SIMD targets
+  - add new mask-move SIMD instructions to common SIMD ISA (was x86 only)
+  - add new fp-negate and inverse-logic SIMD instructions (neg, orn, not)
+  - add new variable SIMD shifts with per-element count to all targets
+  - implement 256-bit SIMD support (2x128-bit, 15 regs) on modern RISC targets
+  - implement 512-bit SIMD support (4x128-bit, 15 regs) on modern Power targets
+  - implement 512-bit SIMD support (1x512-bit, 16 regs) on future x86 targets
+  - AVX1/AVX2 256-bit SIMD for x86 (1x256-bit, 16 regs) remains supported
+  - 256-bit SIMD with 15 regs becomes new common baseline for modern hardware
+  - add rtzero header file to clean up assembler definitions after use
+  - rename instruction parameters to better reflect their use as source/dest
+  - add formulas for all BASE and SIMD instructions for better clarity
+  - reserve the whole alphabet for future BASE and SIMD instruction subsets
+
 v0.8.1: Unified SIMD Assembler, full 64-bit fp/int SIMD compute elements
   - add element-sized BASE ISA subset to fixed-32-bit and address-sized subsets
   - new instruction mnemonics introduced for element-sized BASE subset (cmdy*)
