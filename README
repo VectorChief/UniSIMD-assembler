@@ -5,14 +5,18 @@ can be written and maintained in one place without code replication.
 The assembler itself isn't a separate tool, but rather a collection of C/C++
 header files, which applications need to include directly in order to use.
 
-At present, Intel SSE/SSE2/SSE4 and 256-bit AVX/AVX2 (32/64-bit x86 ISAs),
+At present, Intel SSE/SSE2/SSE4 and AVX/AVX2/AVX-512 (32/64-bit x86 ISAs),
 ARMv7 NEON/NEONv2, ARMv8:AArch32 NEON and AArch64 NEON (32/64-bit ARM ISAs),
 MIPS 32/64-bit r5/r6 MSA and Power 32/64-bit VMX/VSX (little/big-endian ISAs)
 are mostly implemented, although scalar SIMD subset, horizontal SIMD reductions,
 wider SIMD vectors with zeroing/merging predicates in 3/4-operand instructions,
 larger register files and other architectures are planned as future extensions
 to current 2-operand (destination-as-1st-source) SPMD-driven vertical SIMD ISA.
-Heap-address/SIMD-element sizes are 32/64-bit configurable on 64-bit targets.
+
+All legacy targets support 128-bit SIMD with 8 registers (32-bit elements only).
+All modern targets support 256-bit SIMD with 15 registers (using 2x128 on RISC).
+Select few targets support 512-bit SIMD with 15 registers (x86, 4x128 on Power).
+Heap-address, SIMD-element sizes are 32/64-bit configurable on 64-bit targets.
 
 The project comes with a test framework for Linux/GCC, Windows/VC++/TDM64-GCC.
 Instructions for resolving dependencies and building the binaries
