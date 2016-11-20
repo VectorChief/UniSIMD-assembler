@@ -24,10 +24,10 @@ users of RPM-based distributions need to figure out build-deps on their own.
 ================================================================================
 
 To build SIMD test framework on Windows,
-go to UniSIMD's test folder and open:
+go to UniSIMD's test folder and open (in Visual C++ 6.0 or later):
     simd_workspace.dsw
-in Visual C++ 6.0 or later. In newer versions of VC++ agree to convert
-workspace files (exit and open newly created solution file for development).
+In newer versions of VC++ agree to convert workspace files.
+Exit and open newly created solution file for development.
 Select "Release" build target in drop-down list/menus, then press F5.
 
 To build SIMD test framework for 64-bit Windows,
@@ -53,5 +53,15 @@ run installation script:
 
 When building QEMU from source isn't necessary install a full binary package:
     sudo apt-get install qemu
+
+================================================================================
+
+To emulate future x86 targets (AVX-512) on modern x86 Linux hosts use Intel SDE:
+    http://software.intel.com/en-us/articles/intel-software-development-emulator
+
+In terminal window use "Emulate Everything Mode":
+    path-to-kit/sde64 -knl -- /bin/bash
+    path-to-kit/sde64 -skx -- /bin/bash
+for AVX3.1 (Knights Landing) and AVX3.2 (Skylake Xeon) respectively.
 
 ================================================================================
