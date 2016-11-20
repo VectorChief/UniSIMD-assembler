@@ -19,6 +19,12 @@ All legacy targets support 128-bit SIMD with 8 registers (32-bit elements only).
 All modern targets support 256-bit SIMD with 15 registers (x86, 2x128 on RISCs).
 Select few targets support 512-bit SIMD with 15 registers (x86, 4x128 on Power).
 
+Common SIMD ISA remains vector-length-agnostic and is best suited for SPMD.
+C/C++ backend structures passed to the assembler need to be instrumented with
+offsets/factors in order for configurable instruction subsets to work properly.
+Application-specific backend structures also need to be SIMD-aligned, which can
+be achieved by using custom-heap linear allocator with SIMD-width granularity.
+
 The project comes with a test framework for Linux/GCC, Windows/VC++/TDM64-GCC.
 Instructions for resolving dependencies and building the binaries
 for supported platforms can be found in the accompanying INSTALL file.
