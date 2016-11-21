@@ -132,6 +132,9 @@ typedef __int64             rt_si64;
 typedef unsigned __int64    rt_ui64;
 #define    PRuZ /*printf*/  "I64u"
 
+#define  LL(x)  x
+#define ULL(x)  x
+
 #else /* --- Win64, GCC --- Linux, GCC -------------------------------------- */
 
 typedef long long           rt_si64;
@@ -139,6 +142,9 @@ typedef long long           rt_si64;
 
 typedef unsigned long long  rt_ui64;
 #define    PRuZ /*printf*/  "llu"
+
+#define  LL(x)  x##LL
+#define ULL(x)  x##ULL
 
 #endif /* ------------- OS specific ----------------------------------------- */
 
@@ -542,9 +548,9 @@ struct rt_SIMD_REGS
     RT_SIMD_SET64(__Info__->gpc01_64, +1.0);                                \
     RT_SIMD_SET64(__Info__->gpc02_64, -0.5);                                \
     RT_SIMD_SET64(__Info__->gpc03_64, +3.0);                                \
-    RT_SIMD_SET64(__Info__->gpc04_64, 0x7FFFFFFFFFFFFFFF);                  \
-    RT_SIMD_SET64(__Info__->gpc05_64, 0x3FF0000000000000);                  \
-    RT_SIMD_SET64(__Info__->gpc06_64, 0x8000000000000000);                  \
+    RT_SIMD_SET64(__Info__->gpc04_64, LL(0x7FFFFFFFFFFFFFFF));              \
+    RT_SIMD_SET64(__Info__->gpc05_64, LL(0x3FF0000000000000));              \
+    RT_SIMD_SET64(__Info__->gpc06_64, LL(0x8000000000000000));              \
     __Info__->regs = (rt_ui64)(rt_word)__Regs__;
 
 #define ASM_DONE(__Info__)
