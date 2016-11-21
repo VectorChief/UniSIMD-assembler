@@ -111,7 +111,15 @@ SOURCE=..\core\rtarch_x86_256.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\core\rtarch_x86_512.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\core\rtbase.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\core\rtzero.h
 # End Source File
 # End Group
 # End Target
