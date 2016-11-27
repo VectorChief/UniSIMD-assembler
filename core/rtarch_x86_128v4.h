@@ -82,15 +82,6 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
-#if defined (RT_128) && (RT_128 >= 8)
-
-#undef RT_256 /* turn off 256-bit definitions in multi-target build */
-
-#undef RT_RTARCH_X86_256V2_H
-#include "rtarch_x86_256v2.h"
-
-#endif /* RT_128 */
-
 #if defined (RT_SIMD_CODE)
 
 #if defined (RT_128) && (RT_128 < 8)

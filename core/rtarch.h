@@ -381,10 +381,13 @@
 #elif defined (RT_256) && (RT_256 != 0)
 #define Q 2
 #include "rtarch_x86_256v2.h"
-#elif defined (RT_128) && (RT_128 != 0)
+#elif defined (RT_128) && (RT_128 >= 8)
+#define Q 1
+#include "rtarch_x86_128v8.h"
+#elif defined (RT_128) && (RT_128 >= 1)
 #define Q 1
 #include "rtarch_x86_128v4.h"
-#endif /* RT_256, RT_128 */
+#endif /* RT_512, RT_256, RT_128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -588,10 +591,13 @@
 #elif defined (RT_256) && (RT_256 != 0)
 #define Q 2
 #include "rtarch_x86_256v2.h"
-#elif defined (RT_128) && (RT_128 != 0)
+#elif defined (RT_128) && (RT_128 >= 8)
+#define Q 1
+#include "rtarch_x86_128v8.h"
+#elif defined (RT_128) && (RT_128 >= 1)
 #define Q 1
 #include "rtarch_x86_128v4.h"
-#endif /* RT_256, RT_128 */
+#endif /* RT_512, RT_256, RT_128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -819,10 +825,13 @@
 #elif defined (RT_256) && (RT_256 != 0)
 #define Q 2
 #include "rtarch_x64_256v2.h"
-#elif defined (RT_128) && (RT_128 != 0)
+#elif defined (RT_128) && (RT_128 >= 8)
+#define Q 1
+#include "rtarch_x64_128v8.h"
+#elif defined (RT_128) && (RT_128 >= 1)
 #define Q 1
 #include "rtarch_x64_128v4.h"
-#endif /* RT_256, RT_128 */
+#endif /* RT_512, RT_256, RT_128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -1712,10 +1721,13 @@
 #elif defined (RT_256) && (RT_256 != 0)
 #define Q 2
 #include "rtarch_p64_256v2.h"
-#elif defined (RT_128) && (RT_128 != 0)
+#elif defined (RT_128) && (RT_128 >= 2)
 #define Q 1
 #include "rtarch_p64_128v4.h"
-#endif /* RT_256, RT_128 */
+#elif defined (RT_128) && (RT_128 == 1)
+#define Q 1
+#include "rtarch_p32_128v1.h"
+#endif /* RT_512, RT_256, RT_128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -1837,11 +1849,11 @@
 #define EMITS(w) /* EMPTY */
 #define EMITM(w) /* EMPTY */
 #define EMITP(w) /* EMPTY */
-#elif (RT_128 > 1) || (RT_256 != 0) || (RT_512 != 0)
+#elif (RT_128 >= 2) || (RT_256 != 0) || (RT_512 != 0)
 #define EMITS(w)    EMITW(w)
 #define EMITM(w) /* EMPTY */
 #define EMITP(w)    EMITW(w)
-#else  /* RT_SIMD_CODE */
+#else  /* RT_128 < 2 */
 #define EMITS(w)    EMITW(w)
 #define EMITM(w)    EMITW(w)
 #define EMITP(w) /* EMPTY */
