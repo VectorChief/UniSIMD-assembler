@@ -36,63 +36,63 @@
  *    and 32-bit SIMD targets:
  *
  *  - rtarch_arm.h         - AArch32:ARMv7 ISA, 16 BASE regs, 8 + temps used
- *  - rtarch_arm_128.h     - 32-bit elements, 16 SIMD regs, 8 + temps used
+ *  - rtarch_arm_128v*.h   - 32-bit elements, 16 SIMD regs, 8 + temps used
  *  - rtarch_x86.h         - x86 32-bit ISA, 8 BASE regs, 6 + esp, ebp used
- *  - rtarch_x86_128.h     - 32-bit elements, 8 SIMD regs, SSE 128-bit, 8 used
- *  - rtarch_x86_256.h     - 32-bit elements, 8 SIMD regs, AVX 256-bit, 8 used
- *  - rtarch_x86_512.h     - 32-bit elements, 8 SIMD regs, AVX 512-bit, 8 used
+ *  - rtarch_x86_128v*.h   - 32-bit elements, 8 SIMD regs, SSE 128-bit, 8 used
+ *  - rtarch_x86_256v*.h   - 32-bit elements, 8 SIMD regs, AVX 256-bit, 8 used
+ *  - rtarch_x86_512v*.h   - 32-bit elements, 8 SIMD regs, AVX 512-bit, 8 used
  *
  * Current 32/64-bit BASE
  * and 32/64-bit SIMD targets:
  *
  *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 BASE regs, 14 + temps used
  *  - rtarch_a64.h         - AArch64:ARMv8 ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_a32_128.h     - 32-bit elements, 32 SIMD regs, NEON 128-bit, 16+1
- *  - rtarch_a64_128.h     - 64-bit elements, 32 SIMD regs, NEON 128-bit, 16+1
- *  - rtarch_a32_256.h     - 32-bit elements, 32 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_a64_256.h     - 64-bit elements, 32 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_a32_128v*.h   - 32-bit elements, 32 SIMD regs, NEON 128-bit, 16+1
+ *  - rtarch_a64_128v*.h   - 64-bit elements, 32 SIMD regs, NEON 128-bit, 16+1
+ *  - rtarch_a32_256v*.h   - 32-bit elements, 32 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_a64_256v*.h   - 64-bit elements, 32 SIMD regs, pairs of 128-bit, 15
  *  - rtarch_m32.h         - MIPS32 r5/r6 ISA, 32 BASE regs, 14 + temps used
  *  - rtarch_m64.h         - MIPS64 r5/r6 ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_m32_128.h     - 32-bit elements, 32 SIMD regs, MSA 128-bit, 16+4(2)
- *  - rtarch_m64_128.h     - 64-bit elements, 32 SIMD regs, MSA 128-bit, 16+4(2)
- *  - rtarch_m32_256.h     - 32-bit elements, 32 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_m64_256.h     - 64-bit elements, 32 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_m32_128v*.h   - 32-bit elements, 32 SIMD regs, MSA 128-bit, 16+4(2)
+ *  - rtarch_m64_128v*.h   - 64-bit elements, 32 SIMD regs, MSA 128-bit, 16+4(2)
+ *  - rtarch_m32_256v*.h   - 32-bit elements, 32 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_m64_256v*.h   - 64-bit elements, 32 SIMD regs, pairs of 128-bit, 15
  *  - rtarch_p32.h         - Power 32-bit ISA, 32 BASE regs, 14 + temps used
  *  - rtarch_p64.h         - Power 64-bit ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_p32_128.h     - 32-bit elements, 32 SIMD regs, VMX/VSX 128-bit, 16+
- *  - rtarch_p64_128.h     - 64-bit elements, 32 SIMD regs, VMX/VSX 128-bit, 16+
- *  - rtarch_p32_256.h     - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_p64_256.h     - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_p32_512.h     - 32-bit elements, 64 SIMD regs, quads of 128-bit, 15
- *  - rtarch_p64_512.h     - 64-bit elements, 64 SIMD regs, quads of 128-bit, 15
+ *  - rtarch_p32_128v*.h   - 32-bit elements, 32 SIMD regs, VMX/VSX 128-bit, 16+
+ *  - rtarch_p64_128v*.h   - 64-bit elements, 32 SIMD regs, VMX/VSX 128-bit, 16+
+ *  - rtarch_p32_256v*.h   - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_p64_256v*.h   - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_p32_512v*.h   - 32-bit elements, 64 SIMD regs, quads of 128-bit, 15
+ *  - rtarch_p64_512v*.h   - 64-bit elements, 64 SIMD regs, quads of 128-bit, 15
  *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 14 + temps used
  *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 14 + temps used
- *  - rtarch_x32_128.h     - 32-bit elements, 16 SIMD regs, SSE 128-bit, 16 used
- *  - rtarch_x64_128.h     - 64-bit elements, 16 SIMD regs, SSE 128-bit, 16 used
- *  - rtarch_x32_256.h     - 32-bit elements, 16 SIMD regs, AVX 256-bit, 16 used
- *  - rtarch_x64_256.h     - 64-bit elements, 16 SIMD regs, AVX 256-bit, 16 used
- *  - rtarch_x32_512.h     - 32-bit elements, 32 SIMD regs, AVX 512-bit, 16 used
- *  - rtarch_x64_512.h     - 64-bit elements, 32 SIMD regs, AVX 512-bit, 16 used
+ *  - rtarch_x32_128v*.h   - 32-bit elements, 16 SIMD regs, SSE 128-bit, 16 used
+ *  - rtarch_x64_128v*.h   - 64-bit elements, 16 SIMD regs, SSE 128-bit, 16 used
+ *  - rtarch_x32_256v*.h   - 32-bit elements, 16 SIMD regs, AVX 256-bit, 16 used
+ *  - rtarch_x64_256v*.h   - 64-bit elements, 16 SIMD regs, AVX 256-bit, 16 used
+ *  - rtarch_x32_512v*.h   - 32-bit elements, 32 SIMD regs, AVX 512-bit, 16 used
+ *  - rtarch_x64_512v*.h   - 64-bit elements, 32 SIMD regs, AVX 512-bit, 16 used
  *
  * Future 32-bit SIMD targets:
  *
- *  - rtarch_a32_128.h     - 32-bit elements, 32 SIMD regs, NEON 128-bit, 30
- *  - rtarch_a32_256.h     - 32-bit elements, 32 SIMD regs, SVE 256-bit, 30 used
- *  - rtarch_a32_512.h     - 32-bit elements, 32 SIMD regs, SVE 512-bit, 30 used
- *  - rtarch_m32_128.h     - 32-bit elements, 32 SIMD regs, MSA 128-bit, 30 used
- *  - rtarch_p32_128.h     - 32-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
- *  - rtarch_p32_256.h     - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 30
- *  - rtarch_x32_512.h     - 32-bit elements, 32 SIMD regs, AVX 512-bit, 30 used
+ *  - rtarch_a32_128v*.h   - 32-bit elements, 32 SIMD regs, NEON 128-bit, 30
+ *  - rtarch_a32_256v*.h   - 32-bit elements, 32 SIMD regs, SVE 256-bit, 30 used
+ *  - rtarch_a32_512v*.h   - 32-bit elements, 32 SIMD regs, SVE 512-bit, 30 used
+ *  - rtarch_m32_128v*.h   - 32-bit elements, 32 SIMD regs, MSA 128-bit, 30 used
+ *  - rtarch_p32_128v*.h   - 32-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
+ *  - rtarch_p32_256v*.h   - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 30
+ *  - rtarch_x32_512v*.h   - 32-bit elements, 32 SIMD regs, AVX 512-bit, 30 used
  *
  * Future 64-bit SIMD targets:
  *
- *  - rtarch_a64_128.h     - 64-bit elements, 32 SIMD regs, NEON 128-bit, 30
- *  - rtarch_a64_256.h     - 64-bit elements, 32 SIMD regs, SVE 256-bit, 30 used
- *  - rtarch_a64_512.h     - 64-bit elements, 32 SIMD regs, SVE 512-bit, 30 used
- *  - rtarch_m64_128.h     - 64-bit elements, 32 SIMD regs, MSA 128-bit, 30 used
- *  - rtarch_p64_128.h     - 64-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
- *  - rtarch_p64_256.h     - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 30
- *  - rtarch_x64_512.h     - 64-bit elements, 32 SIMD regs, AVX 512-bit, 30 used
+ *  - rtarch_a64_128v*.h   - 64-bit elements, 32 SIMD regs, NEON 128-bit, 30
+ *  - rtarch_a64_256v*.h   - 64-bit elements, 32 SIMD regs, SVE 256-bit, 30 used
+ *  - rtarch_a64_512v*.h   - 64-bit elements, 32 SIMD regs, SVE 512-bit, 30 used
+ *  - rtarch_m64_128v*.h   - 64-bit elements, 32 SIMD regs, MSA 128-bit, 30 used
+ *  - rtarch_p64_128v*.h   - 64-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
+ *  - rtarch_p64_256v*.h   - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 30
+ *  - rtarch_x64_512v*.h   - 64-bit elements, 32 SIMD regs, AVX 512-bit, 30 used
  *
  * not all registers in target descriptions are always exposed for apps to use
  * flags RT_BASE_REGS and RT_SIMD_REGS are available for rough differentiation
@@ -377,13 +377,13 @@
 
 #if   defined (RT_512) && (RT_512 != 0)
 #define Q 4
-#include "rtarch_x86_512.h"
+#include "rtarch_x86_512v2.h"
 #elif defined (RT_256) && (RT_256 != 0)
 #define Q 2
-#include "rtarch_x86_256.h"
+#include "rtarch_x86_256v2.h"
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
-#include "rtarch_x86_128.h"
+#include "rtarch_x86_128v4.h"
 #endif /* RT_256, RT_128 */
 
 /*
@@ -584,13 +584,13 @@
 
 #if   defined (RT_512) && (RT_512 != 0)
 #define Q 4
-#include "rtarch_x86_512.h"
+#include "rtarch_x86_512v2.h"
 #elif defined (RT_256) && (RT_256 != 0)
 #define Q 2
-#include "rtarch_x86_256.h"
+#include "rtarch_x86_256v2.h"
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
-#include "rtarch_x86_128.h"
+#include "rtarch_x86_128v4.h"
 #endif /* RT_256, RT_128 */
 
 /*
@@ -815,13 +815,13 @@
 
 #if   defined (RT_512) && (RT_512 != 0)
 #define Q 4
-#include "rtarch_x64_512.h"
+#include "rtarch_x64_512v2.h"
 #elif defined (RT_256) && (RT_256 != 0)
 #define Q 2
-#include "rtarch_x64_256.h"
+#include "rtarch_x64_256v2.h"
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
-#include "rtarch_x64_128.h"
+#include "rtarch_x64_128v4.h"
 #endif /* RT_256, RT_128 */
 
 /*
@@ -1031,7 +1031,7 @@
 #error "AArch32 doesn't support SIMD wider than 128-bit, check build flags"
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
-#include "rtarch_arm_128.h"
+#include "rtarch_arm_128v4.h"
 #endif /* RT_256, RT_128 */
 
 /*
@@ -1239,10 +1239,10 @@
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
-#include "rtarch_a64_256.h"
+#include "rtarch_a64_256v1.h"
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
-#include "rtarch_a64_128.h"
+#include "rtarch_a64_128v1.h"
 #endif /* RT_256, RT_128 */
 
 /*
@@ -1452,10 +1452,10 @@
 
 #if   defined (RT_256) && (RT_256 != 0)
 #define Q 2
-#include "rtarch_m64_256.h"
+#include "rtarch_m64_256v1.h"
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
-#include "rtarch_m64_128.h"
+#include "rtarch_m64_128v1.h"
 #endif /* RT_256, RT_128 */
 
 /*
@@ -1708,13 +1708,13 @@
 
 #if   defined (RT_512) && (RT_512 != 0)
 #define Q 4
-#include "rtarch_p64_512.h"
+#include "rtarch_p64_512v2.h"
 #elif defined (RT_256) && (RT_256 != 0)
 #define Q 2
-#include "rtarch_p64_256.h"
+#include "rtarch_p64_256v2.h"
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
-#include "rtarch_p64_128.h"
+#include "rtarch_p64_128v4.h"
 #endif /* RT_256, RT_128 */
 
 /*

@@ -4,8 +4,8 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_M32_128_H
-#define RT_RTARCH_M32_128_H
+#ifndef RT_RTARCH_M32_128V1_H
+#define RT_RTARCH_M32_128V1_H
 
 #include "rtarch_m64.h"
 
@@ -21,7 +21,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_m32_128.h: Implementation of MIPS fp32 MSA instructions.
+ * rtarch_m32_128v1.h: Implementation of MIPS fp32 MSA instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -861,7 +861,7 @@
 
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_RTARCH_M32_128_H */
+#endif /* RT_RTARCH_M32_128V1_H */
 
 /******************************************************************************/
 /******************************************************************************/
