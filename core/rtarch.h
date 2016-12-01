@@ -272,6 +272,28 @@
 
 #include "rtzero.h"
 
+/* determine mapping of vector-length-agnostic SIMD subsets: cmdo, cmdp, cmdq */
+
+#if   defined (RT_SIMD)
+/* RT_SIMD is already defined outside */
+#elif defined (RT_512) && (RT_512 != 0)
+#define RT_SIMD 512
+#elif defined (RT_256) && (RT_256 != 0)
+#define RT_SIMD 256
+#elif defined (RT_128) && (RT_128 != 0)
+#define RT_SIMD 128
+#endif /* RT_512, RT_256, RT_128 */
+
+/* determine SIMD quad-factor for backend structs (maximal for a given build) */
+
+#if   defined (RT_512) && (RT_512 != 0)
+#define Q 4
+#elif defined (RT_256) && (RT_256 != 0)
+#define Q 2
+#elif defined (RT_128) && (RT_128 != 0)
+#define Q 1
+#endif /* RT_512, RT_256, RT_128 */
+
 /*
  * SIMD quad-factor (number of 128-bit chunks) for chosen SIMD target.
  * Short name Q represents maximal quad-factor for given build config.
@@ -375,17 +397,13 @@
  * of fm*ps_** instruction fallbacks to honour rounding mode */
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 
-#if   defined (RT_512) && (RT_512 != 0)
-#define Q 4
+#if   (RT_SIMD == 512) && (RT_512 != 0)
 #include "rtarch_x86_512v2.h"
-#elif defined (RT_256) && (RT_256 != 0)
-#define Q 2
+#elif (RT_SIMD == 256) && (RT_256 != 0)
 #include "rtarch_x86_256v2.h"
-#elif defined (RT_128) && (RT_128 >= 8)
-#define Q 1
+#elif (RT_SIMD == 128) && (RT_128 >= 8)
 #include "rtarch_x86_128v8.h"
-#elif defined (RT_128) && (RT_128 >= 1)
-#define Q 1
+#elif (RT_SIMD == 128) && (RT_128 >= 1)
 #include "rtarch_x86_128v4.h"
 #endif /* RT_512, RT_256, RT_128 */
 
@@ -585,17 +603,13 @@
  * of fm*ps_** instruction fallbacks to honour rounding mode */
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 
-#if   defined (RT_512) && (RT_512 != 0)
-#define Q 4
+#if   (RT_SIMD == 512) && (RT_512 != 0)
 #include "rtarch_x86_512v2.h"
-#elif defined (RT_256) && (RT_256 != 0)
-#define Q 2
+#elif (RT_SIMD == 256) && (RT_256 != 0)
 #include "rtarch_x86_256v2.h"
-#elif defined (RT_128) && (RT_128 >= 8)
-#define Q 1
+#elif (RT_SIMD == 128) && (RT_128 >= 8)
 #include "rtarch_x86_128v8.h"
-#elif defined (RT_128) && (RT_128 >= 1)
-#define Q 1
+#elif (RT_SIMD == 128) && (RT_128 >= 1)
 #include "rtarch_x86_128v4.h"
 #endif /* RT_512, RT_256, RT_128 */
 
@@ -819,17 +833,13 @@
  * of fm*ps_** instruction fallbacks to honour rounding mode */
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 
-#if   defined (RT_512) && (RT_512 != 0)
-#define Q 4
+#if   (RT_SIMD == 512) && (RT_512 != 0)
 #include "rtarch_x64_512v2.h"
-#elif defined (RT_256) && (RT_256 != 0)
-#define Q 2
+#elif (RT_SIMD == 256) && (RT_256 != 0)
 #include "rtarch_x64_256v2.h"
-#elif defined (RT_128) && (RT_128 >= 8)
-#define Q 1
+#elif (RT_SIMD == 128) && (RT_128 >= 8)
 #include "rtarch_x64_128v8.h"
-#elif defined (RT_128) && (RT_128 >= 1)
-#define Q 1
+#elif (RT_SIMD == 128) && (RT_128 >= 1)
 #include "rtarch_x64_128v4.h"
 #endif /* RT_512, RT_256, RT_128 */
 
@@ -1035,11 +1045,9 @@
  * of sqrps_** to the corresponding IEEE-compatible fallback */
 #define RT_SIMD_COMPAT_SQR      RT_SIMD_COMPAT_SQR_MASTER
 
-#if   defined (RT_256) && (RT_256 != 0)
-#define Q 2
+#if   (RT_SIMD == 256) && (RT_256 != 0)
 #error "AArch32 doesn't support SIMD wider than 128-bit, check build flags"
-#elif defined (RT_128) && (RT_128 != 0)
-#define Q 1
+#elif (RT_SIMD == 128) && (RT_128 != 0)
 #include "rtarch_arm_128v4.h"
 #endif /* RT_256, RT_128 */
 
@@ -1246,11 +1254,9 @@
  * of rsqps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 
-#if   defined (RT_256) && (RT_256 != 0)
-#define Q 2
+#if   (RT_SIMD == 256) && (RT_256 != 0)
 #include "rtarch_a64_256v1.h"
-#elif defined (RT_128) && (RT_128 != 0)
-#define Q 1
+#elif (RT_SIMD == 128) && (RT_128 != 0)
 #include "rtarch_a64_128v1.h"
 #endif /* RT_256, RT_128 */
 
@@ -1459,11 +1465,9 @@
  * of rsqps_** instructions to their full-precision fallback */
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
 
-#if   defined (RT_256) && (RT_256 != 0)
-#define Q 2
+#if   (RT_SIMD == 256) && (RT_256 != 0)
 #include "rtarch_m64_256v1.h"
-#elif defined (RT_128) && (RT_128 != 0)
-#define Q 1
+#elif (RT_SIMD == 128) && (RT_128 != 0)
 #include "rtarch_m64_128v1.h"
 #endif /* RT_256, RT_128 */
 
@@ -1489,10 +1493,6 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
-        movox_ld(Xmm8, Mebp, inf_GPC06_32)        /* w8  <- -0.0 32-bit */  \
-        movqx_ld(Xmm9, Mebp, inf_GPC06_64)        /* w9  <- -0.0 64-bit */  \
-        EMITS(0x78BE0019 | MXM(TmmS, 0x08, 0x00)) /* w28 <- w8 */           \
-        EMITS(0x78BE0019 | MXM(TmmT, 0x09, 0x00)) /* w29 <- w9 */           \
         EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
         EMITW(0x3C000000 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(0 << 24) */
 
@@ -1520,10 +1520,6 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
-        movox_ld(Xmm8, Mebp, inf_GPC06_32)        /* w8  <- -0.0 32-bit */  \
-        movqx_ld(Xmm9, Mebp, inf_GPC06_64)        /* w9  <- -0.0 64-bit */  \
-        EMITS(0x78BE0019 | MXM(TmmS, 0x08, 0x00)) /* w28 <- w8 */           \
-        EMITS(0x78BE0019 | MXM(TmmT, 0x09, 0x00)) /* w29 <- w9 */           \
         EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
         EMITW(0x3C000000 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(0 << 24) */  \
         EMITW(0x34000001 | MRM(0x00, TNxx, TAxx)) /* r21 <- 1|(0 << 24) */  \
@@ -1570,10 +1566,6 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
-        movox_ld(Xmm8, Mebp, inf_GPC06_32)        /* w8  <- -0.0 32-bit */  \
-        movqx_ld(Xmm9, Mebp, inf_GPC06_64)        /* w9  <- -0.0 64-bit */  \
-        EMITS(0x78BE0019 | MXM(TmmS, 0x08, 0x00)) /* w28 <- w8 */           \
-        EMITS(0x78BE0019 | MXM(TmmT, 0x09, 0x00)) /* w29 <- w9 */           \
         EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
         EMITW(0x3C000100 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(1 << 24) */  \
         EMITW(0x44C0F800 | MRM(0x00, 0x00, TNxx)) /* fcsr <- r20 */         \
@@ -1606,10 +1598,6 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
-        movox_ld(Xmm8, Mebp, inf_GPC06_32)        /* w8  <- -0.0 32-bit */  \
-        movqx_ld(Xmm9, Mebp, inf_GPC06_64)        /* w9  <- -0.0 64-bit */  \
-        EMITS(0x78BE0019 | MXM(TmmS, 0x08, 0x00)) /* w28 <- w8 */           \
-        EMITS(0x78BE0019 | MXM(TmmT, 0x09, 0x00)) /* w29 <- w9 */           \
         EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
         EMITW(0x3C000100 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(1 << 24) */  \
         EMITW(0x34000001 | MRM(0x00, TNxx, TAxx)) /* r21 <- 1|(1 << 24) */  \
@@ -1636,8 +1624,6 @@
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
 #define sregs_la()
-#define movox_ld(XD, MS, DS)
-#define movqx_ld(XD, MS, DS)
 #define EMITS(w) /* EMPTY */
 #else  /* RT_SIMD_CODE */
 #define EMITS(w)    EMITW(w)
@@ -1715,17 +1701,13 @@
  * compatible with 64-bit processors running 32-bit ISA mode */
 #define RT_BASE_COMPAT_ZFL      1 /* only necessary on Power */
 
-#if   defined (RT_512) && (RT_512 != 0)
-#define Q 4
+#if   (RT_SIMD == 512) && (RT_512 != 0)
 #include "rtarch_p64_512v2.h"
-#elif defined (RT_256) && (RT_256 != 0)
-#define Q 2
+#elif (RT_SIMD == 256) && (RT_256 != 0)
 #include "rtarch_p64_256v2.h"
-#elif defined (RT_128) && (RT_128 >= 2)
-#define Q 1
+#elif (RT_SIMD == 128) && (RT_128 >= 2)
 #include "rtarch_p64_128v4.h"
-#elif defined (RT_128) && (RT_128 == 1)
-#define Q 1
+#elif (RT_SIMD == 128) && (RT_128 == 1)
 #include "rtarch_p32_128v1.h"
 #endif /* RT_512, RT_256, RT_128 */
 
@@ -1845,7 +1827,6 @@
 #define sregs_sa()
 #define sregs_la()
 #define movox_ld(XD, MS, DS)
-#define movqx_ld(XD, MS, DS)
 #define EMITS(w) /* EMPTY */
 #define EMITM(w) /* EMPTY */
 #define EMITP(w) /* EMPTY */

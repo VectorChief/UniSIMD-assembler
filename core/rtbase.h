@@ -559,7 +559,19 @@ struct rt_SIMD_REGS
 /************************   COMMON SIMD INSTRUCTIONS   ************************/
 /******************************************************************************/
 
+#if defined (RT_SIMD_CODE)
+
+/****************** original FCTRL blocks (cannot be nested) ******************/
+
+#define FCTRL_ENTER(mode) /* assumes default mode (ROUNDN) upon entry */    \
+        FCTRL_SET(mode)
+
+#define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */    \
+        FCTRL_RESET()
+
 /****************** instructions for fixed-sized 32-bit SIMD ******************/
+
+#if   (RT_SIMD == 512)
 
 /* cbr (D = cbrt S) */
 
@@ -698,7 +710,1085 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
+/****************** instructions for fixed-sized 32-bit SIMD ***** 256-bit ****/
+
+#elif (RT_SIMD == 256)
+
+/* mov (D = S) */
+
+#define movox_rr(XD, XS)                                                    \
+        movcx_rr(W(XD), W(XS))
+
+#define movox_ld(XD, MS, DS)                                                \
+        movcx_ld(W(XD), W(MS), W(DS))
+
+#define movox_st(XS, MD, DD)                                                \
+        movcx_st(W(XS), W(MD), W(DD))
+
+/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+
+#define mmvox_ld(XG, MS, DS)                                                \
+        mmvcx_ld(W(XG), W(MS), W(DS))
+
+#define mmvox_st(XS, MG, DG)                                                \
+        mmvcx_st(W(XS), W(MG), W(DG))
+
+/* and (G = G & S) */
+
+#define andox_rr(XG, XS)                                                    \
+        andcx_rr(W(XG), W(XS))
+
+#define andox_ld(XG, MS, DS)                                                \
+        andcx_ld(W(XG), W(MS), W(DS))
+
+/* ann (G = ~G & S) */
+
+#define annox_rr(XG, XS)                                                    \
+        anncx_rr(W(XG), W(XS))
+
+#define annox_ld(XG, MS, DS)                                                \
+        anncx_ld(W(XG), W(MS), W(DS))
+
+/* orr (G = G | S) */
+
+#define orrox_rr(XG, XS)                                                    \
+        orrcx_rr(W(XG), W(XS))
+
+#define orrox_ld(XG, MS, DS)                                                \
+        orrcx_ld(W(XG), W(MS), W(DS))
+
+/* orn (G = ~G | S) */
+
+#define ornox_rr(XG, XS)                                                    \
+        orncx_rr(W(XG), W(XS))
+
+#define ornox_ld(XG, MS, DS)                                                \
+        orncx_ld(W(XG), W(MS), W(DS))
+
+/* xor (G = G ^ S) */
+
+#define xorox_rr(XG, XS)                                                    \
+        xorcx_rr(W(XG), W(XS))
+
+#define xorox_ld(XG, MS, DS)                                                \
+        xorcx_ld(W(XG), W(MS), W(DS))
+
+/* not (G = ~G) */
+
+#define notox_rx(XG)                                                        \
+        notcx_rx(W(XG))
+
+/* neg (G = -G) */
+
+#define negos_rx(XG)                                                        \
+        negcs_rx(W(XG))
+
+/* add (G = G + S) */
+
+#define addos_rr(XG, XS)                                                    \
+        addcs_rr(W(XG), W(XS))
+
+#define addos_ld(XG, MS, DS)                                                \
+        addcs_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define subos_rr(XG, XS)                                                    \
+        subcs_rr(W(XG), W(XS))
+
+#define subos_ld(XG, MS, DS)                                                \
+        subcs_ld(W(XG), W(MS), W(DS))
+
+/* mul (G = G * S) */
+
+#define mulos_rr(XG, XS)                                                    \
+        mulcs_rr(W(XG), W(XS))
+
+#define mulos_ld(XG, MS, DS)                                                \
+        mulcs_ld(W(XG), W(MS), W(DS))
+
+/* div (G = G / S) */
+
+#define divos_rr(XG, XS)                                                    \
+        divcs_rr(W(XG), W(XS))
+
+#define divos_ld(XG, MS, DS)                                                \
+        divcs_ld(W(XG), W(MS), W(DS))
+
+/* sqr (D = sqrt S) */
+
+#define sqros_rr(XD, XS)                                                    \
+        sqrcs_rr(W(XD), W(XS))
+
+#define sqros_ld(XD, MS, DS)                                                \
+        sqrcs_ld(W(XD), W(MS), W(DS))
+
+/* cbr (D = cbrt S) */
+
+#define cbros_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbrcs_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbeos_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbecs_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbsos_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbscs_rr(W(XG), W(X1), W(X2), W(XS))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rcpos_rr(XD, XS) /* destroys XS */                                  \
+        rcpcs_rr(W(XD), W(XS))
+
+#define rceos_rr(XD, XS)                                                    \
+        rcecs_rr(W(XD), W(XS))
+
+#define rcsos_rr(XG, XS) /* destroys XS */                                  \
+        rcscs_rr(W(XG), W(XS))
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rsqos_rr(XD, XS) /* destroys XS */                                  \
+        rsqcs_rr(W(XD), W(XS))
+
+#define rseos_rr(XD, XS)                                                    \
+        rsecs_rr(W(XD), W(XS))
+
+#define rssos_rr(XG, XS) /* destroys XS */                                  \
+        rsscs_rr(W(XG), W(XS))
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#define fmaos_rr(XG, XS, XT)                                                \
+        fmacs_rr(W(XG), W(XS), W(XT))
+
+#define fmaos_ld(XG, XS, MT, DT)                                            \
+        fmacs_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsos_rr(XG, XS, XT)                                                \
+        fmscs_rr(W(XG), W(XS), W(XT))
+
+#define fmsos_ld(XG, XS, MT, DT)                                            \
+        fmscs_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S) */
+
+#define minos_rr(XG, XS)                                                    \
+        mincs_rr(W(XG), W(XS))
+
+#define minos_ld(XG, MS, DS)                                                \
+        mincs_ld(W(XG), W(MS), W(DS))
+
+/* max (G = G > S ? G : S) */
+
+#define maxos_rr(XG, XS)                                                    \
+        maxcs_rr(W(XG), W(XS))
+
+#define maxos_ld(XG, MS, DS)                                                \
+        maxcs_ld(W(XG), W(MS), W(DS))
+
+/* cmp (G = G ? S) */
+
+#define ceqos_rr(XG, XS)                                                    \
+        ceqcs_rr(W(XG), W(XS))
+
+#define ceqos_ld(XG, MS, DS)                                                \
+        ceqcs_ld(W(XG), W(MS), W(DS))
+
+#define cneos_rr(XG, XS)                                                    \
+        cnecs_rr(W(XG), W(XS))
+
+#define cneos_ld(XG, MS, DS)                                                \
+        cnecs_ld(W(XG), W(MS), W(DS))
+
+#define cltos_rr(XG, XS)                                                    \
+        cltcs_rr(W(XG), W(XS))
+
+#define cltos_ld(XG, MS, DS)                                                \
+        cltcs_ld(W(XG), W(MS), W(DS))
+
+#define cleos_rr(XG, XS)                                                    \
+        clecs_rr(W(XG), W(XS))
+
+#define cleos_ld(XG, MS, DS)                                                \
+        clecs_ld(W(XG), W(MS), W(DS))
+
+#define cgtos_rr(XG, XS)                                                    \
+        cgtcs_rr(W(XG), W(XS))
+
+#define cgtos_ld(XG, MS, DS)                                                \
+        cgtcs_ld(W(XG), W(MS), W(DS))
+
+#define cgeos_rr(XG, XS)                                                    \
+        cgecs_rr(W(XG), W(XS))
+
+#define cgeos_ld(XG, MS, DS)                                                \
+        cgecs_ld(W(XG), W(MS), W(DS))
+
+/* cvz (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnzos_rr(XD, XS)     /* round towards zero */                       \
+        rnzcs_rr(W(XD), W(XS))
+
+#define rnzos_ld(XD, MS, DS) /* round towards zero */                       \
+        rnzcs_ld(W(XD), W(MS), W(DS))
+
+#define cvzos_rr(XD, XS)     /* round towards zero */                       \
+        cvzcs_rr(W(XD), W(XS))
+
+#define cvzos_ld(XD, MS, DS) /* round towards zero */                       \
+        cvzcs_ld(W(XD), W(MS), W(DS))
+
+/* cvp (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnpos_rr(XD, XS)     /* round towards +inf */                       \
+        rnpcs_rr(W(XD), W(XS))
+
+#define rnpos_ld(XD, MS, DS) /* round towards +inf */                       \
+        rnpcs_ld(W(XD), W(MS), W(DS))
+
+#define cvpos_rr(XD, XS)     /* round towards +inf */                       \
+        cvpcs_rr(W(XD), W(XS))
+
+#define cvpos_ld(XD, MS, DS) /* round towards +inf */                       \
+        cvpcs_ld(W(XD), W(MS), W(DS))
+
+/* cvm (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnmos_rr(XD, XS)     /* round towards -inf */                       \
+        rnmcs_rr(W(XD), W(XS))
+
+#define rnmos_ld(XD, MS, DS) /* round towards -inf */                       \
+        rnmcs_ld(W(XD), W(MS), W(DS))
+
+#define cvmos_rr(XD, XS)     /* round towards -inf */                       \
+        cvmcs_rr(W(XD), W(XS))
+
+#define cvmos_ld(XD, MS, DS) /* round towards -inf */                       \
+        cvmcs_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnnos_rr(XD, XS)     /* round towards near */                       \
+        rnncs_rr(W(XD), W(XS))
+
+#define rnnos_ld(XD, MS, DS) /* round towards near */                       \
+        rnncs_ld(W(XD), W(MS), W(DS))
+
+#define cvnos_rr(XD, XS)     /* round towards near */                       \
+        cvncs_rr(W(XD), W(XS))
+
+#define cvnos_ld(XD, MS, DS) /* round towards near */                       \
+        cvncs_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnon_rr(XD, XS)     /* round towards near */                       \
+        cvncn_rr(W(XD), W(XS))
+
+#define cvnon_ld(XD, MS, DS) /* round towards near */                       \
+        cvncn_ld(W(XD), W(MS), W(DS))
+
+/* add (G = G + S) */
+
+#define addox_rr(XG, XS)                                                    \
+        addcx_rr(W(XG), W(XS))
+
+#define addox_ld(XG, MS, DS)                                                \
+        addcx_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define subox_rr(XG, XS)                                                    \
+        subcx_rr(W(XG), W(XS))
+
+#define subox_ld(XG, MS, DS)                                                \
+        subcx_ld(W(XG), W(MS), W(DS))
+
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shlox_ri(XG, IS)                                                    \
+        shlcx_ri(W(XG), W(IS))
+
+#define shlox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shlcx_ld(W(XG), W(MS), W(DS))
+
+#define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlcx_rr(W(XG), W(XS))
+
+#define svlox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlcx_ld(W(XG), W(MS), W(DS))
+
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shrox_ri(XG, IS)                                                    \
+        shrcx_ri(W(XG), W(IS))
+
+#define shrox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shrcx_ld(W(XG), W(MS), W(DS))
+
+#define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrcx_rr(W(XG), W(XS))
+
+#define svrox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrcx_ld(W(XG), W(MS), W(DS))
+
+
+#define shron_ri(XG, IS)                                                    \
+        shrcn_ri(W(XG), W(IS))
+
+#define shron_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shrcn_ld(W(XG), W(MS), W(DS))
+
+#define svron_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrcn_rr(W(XG), W(XS))
+
+#define svron_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrcn_ld(W(XG), W(MS), W(DS))
+
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rndos_rr(XD, XS)                                                    \
+        rndcs_rr(W(XD), W(XS))
+
+#define rndos_ld(XD, MS, DS)                                                \
+        rndcs_ld(W(XD), W(MS), W(DS))
+
+#define cvtos_rr(XD, XS)                                                    \
+        cvtcs_rr(W(XD), W(XS))
+
+#define cvtos_ld(XD, MS, DS)                                                \
+        cvtcs_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+
+#define cvton_rr(XD, XS)                                                    \
+        cvtcn_rr(W(XD), W(XS))
+
+#define cvton_ld(XD, MS, DS)                                                \
+        cvtcn_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnros_rr(XD, XS, mode)                                              \
+        rnrcs_rr(W(XD), W(XS), mode)
+
+#define cvros_rr(XD, XS, mode)                                              \
+        cvrcs_rr(W(XD), W(XS), mode)
+
+/* cbr (D = cbrt S) */
+
+/*
+ * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
+ * available at http://www.musicdsp.org/showone.php?id=206
+ * converted to S-way SIMD version by VectorChief.
+ */
+#define cbrcs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbecs_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbscs_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbscs_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbscs_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbecs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        /* cube root estimate, the exponent is divided by three             \
+         * in such a way that remainder bits get shoved into                \
+         * the top of the normalized mantissa */                            \
+        movcx_ld(W(X2), Mebp, inf_GPC04_32)                                 \
+        movcx_rr(W(XD), W(XS))                                              \
+        andcx_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
+        subcx_ld(W(XD), Mebp, inf_GPC05_32) /* convert to 2's complement */ \
+        shrcn_ri(W(XD), IB(10))  /* XD / 1024 */                            \
+        movcx_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
+        shlcx_ri(W(X1), IB(2))                                              \
+        addcx_rr(W(XD), W(X1))                                              \
+        shlcx_ri(W(X1), IB(2))                                              \
+        addcx_rr(W(XD), W(X1))                                              \
+        shlcx_ri(W(X1), IB(2))                                              \
+        addcx_rr(W(XD), W(X1))                                              \
+        shlcx_ri(W(X1), IB(2))                                              \
+        addcx_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
+        addcx_ld(W(XD), Mebp, inf_GPC05_32) /* back to biased-127 */        \
+        andcx_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
+        anncx_rr(W(X2), W(XS))   /* original sign */                        \
+        orrcx_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
+
+#define cbscs_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        movcx_rr(W(X1), W(XG))                                              \
+        mulcs_rr(W(X1), W(XG))                                              \
+        movcx_rr(W(X2), W(X1))                                              \
+        mulcs_ld(W(X1), Mebp, inf_GPC03_32)                                 \
+        rcecs_rr(W(X1), W(X1))                                              \
+        mulcs_rr(W(X2), W(XG))                                              \
+        subcs_rr(W(X2), W(XS))                                              \
+        mulcs_rr(W(X2), W(X1))                                              \
+        subcs_rr(W(XG), W(X2))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if   RT_SIMD_COMPAT_RCP == 0 || RT_SIMD_COMPAT_RCP == 2
+
+#define rcpcs_rr(XD, XS) /* destroys XS */                                  \
+        rcecs_rr(W(XD), W(XS))                                              \
+        rcscs_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
+
+#elif RT_SIMD_COMPAT_RCP == 1
+
+#define rcpcs_rr(XD, XS) /* destroys XS */                                  \
+        movcx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        divcs_rr(W(XD), W(XS))
+
+#define rcecs_rr(XD, XS)                                                    \
+        movcx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movcx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        divcs_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rcscs_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if   RT_SIMD_COMPAT_RSQ == 0 || RT_SIMD_COMPAT_RSQ == 2
+
+#define rsqcs_rr(XD, XS) /* destroys XS */                                  \
+        rsecs_rr(W(XD), W(XS))                                              \
+        rsscs_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
+
+#elif RT_SIMD_COMPAT_RSQ == 1
+
+#define rsqcs_rr(XD, XS) /* destroys XS */                                  \
+        sqrcs_rr(W(XS), W(XS))                                              \
+        movcx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        divcs_rr(W(XD), W(XS))
+
+#define rsecs_rr(XD, XS)                                                    \
+        sqrcs_rr(W(XD), W(XS))                                              \
+        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movcx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        divcs_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rsscs_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA == 2
+
+#define fmacs_rr(XG, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulcs_rr(W(XS), W(XT))                                              \
+        addcs_rr(W(XG), W(XS))                                              \
+        movcx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmacs_ld(XG, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulcs_ld(W(XS), W(MT), W(DT))                                       \
+        addcs_rr(W(XG), W(XS))                                              \
+        movcx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS == 2
+
+#define fmscs_rr(XG, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulcs_rr(W(XS), W(XT))                                              \
+        subcs_rr(W(XG), W(XS))                                              \
+        movcx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmscs_ld(XG, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulcs_ld(W(XS), W(MT), W(DT))                                       \
+        subcs_rr(W(XG), W(XS))                                              \
+        movcx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/****************** instructions for fixed-sized 32-bit SIMD ***** 128-bit ****/
+
+#elif (RT_SIMD == 128)
+
+/* mov (D = S) */
+
+#define movox_rr(XD, XS)                                                    \
+        movix_rr(W(XD), W(XS))
+
+#define movox_ld(XD, MS, DS)                                                \
+        movix_ld(W(XD), W(MS), W(DS))
+
+#define movox_st(XS, MD, DD)                                                \
+        movix_st(W(XS), W(MD), W(DD))
+
+/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+
+#define mmvox_ld(XG, MS, DS)                                                \
+        mmvix_ld(W(XG), W(MS), W(DS))
+
+#define mmvox_st(XS, MG, DG)                                                \
+        mmvix_st(W(XS), W(MG), W(DG))
+
+/* and (G = G & S) */
+
+#define andox_rr(XG, XS)                                                    \
+        andix_rr(W(XG), W(XS))
+
+#define andox_ld(XG, MS, DS)                                                \
+        andix_ld(W(XG), W(MS), W(DS))
+
+/* ann (G = ~G & S) */
+
+#define annox_rr(XG, XS)                                                    \
+        annix_rr(W(XG), W(XS))
+
+#define annox_ld(XG, MS, DS)                                                \
+        annix_ld(W(XG), W(MS), W(DS))
+
+/* orr (G = G | S) */
+
+#define orrox_rr(XG, XS)                                                    \
+        orrix_rr(W(XG), W(XS))
+
+#define orrox_ld(XG, MS, DS)                                                \
+        orrix_ld(W(XG), W(MS), W(DS))
+
+/* orn (G = ~G | S) */
+
+#define ornox_rr(XG, XS)                                                    \
+        ornix_rr(W(XG), W(XS))
+
+#define ornox_ld(XG, MS, DS)                                                \
+        ornix_ld(W(XG), W(MS), W(DS))
+
+/* xor (G = G ^ S) */
+
+#define xorox_rr(XG, XS)                                                    \
+        xorix_rr(W(XG), W(XS))
+
+#define xorox_ld(XG, MS, DS)                                                \
+        xorix_ld(W(XG), W(MS), W(DS))
+
+/* not (G = ~G) */
+
+#define notox_rx(XG)                                                        \
+        notix_rx(W(XG))
+
+/* neg (G = -G) */
+
+#define negos_rx(XG)                                                        \
+        negis_rx(W(XG))
+
+/* add (G = G + S) */
+
+#define addos_rr(XG, XS)                                                    \
+        addis_rr(W(XG), W(XS))
+
+#define addos_ld(XG, MS, DS)                                                \
+        addis_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define subos_rr(XG, XS)                                                    \
+        subis_rr(W(XG), W(XS))
+
+#define subos_ld(XG, MS, DS)                                                \
+        subis_ld(W(XG), W(MS), W(DS))
+
+/* mul (G = G * S) */
+
+#define mulos_rr(XG, XS)                                                    \
+        mulis_rr(W(XG), W(XS))
+
+#define mulos_ld(XG, MS, DS)                                                \
+        mulis_ld(W(XG), W(MS), W(DS))
+
+/* div (G = G / S) */
+
+#define divos_rr(XG, XS)                                                    \
+        divis_rr(W(XG), W(XS))
+
+#define divos_ld(XG, MS, DS)                                                \
+        divis_ld(W(XG), W(MS), W(DS))
+
+/* sqr (D = sqrt S) */
+
+#define sqros_rr(XD, XS)                                                    \
+        sqris_rr(W(XD), W(XS))
+
+#define sqros_ld(XD, MS, DS)                                                \
+        sqris_ld(W(XD), W(MS), W(DS))
+
+/* cbr (D = cbrt S) */
+
+#define cbros_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbris_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbeos_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbeis_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbsos_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbsis_rr(W(XG), W(X1), W(X2), W(XS))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rcpos_rr(XD, XS) /* destroys XS */                                  \
+        rcpis_rr(W(XD), W(XS))
+
+#define rceos_rr(XD, XS)                                                    \
+        rceis_rr(W(XD), W(XS))
+
+#define rcsos_rr(XG, XS) /* destroys XS */                                  \
+        rcsis_rr(W(XG), W(XS))
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rsqos_rr(XD, XS) /* destroys XS */                                  \
+        rsqis_rr(W(XD), W(XS))
+
+#define rseos_rr(XD, XS)                                                    \
+        rseis_rr(W(XD), W(XS))
+
+#define rssos_rr(XG, XS) /* destroys XS */                                  \
+        rssis_rr(W(XG), W(XS))
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#define fmaos_rr(XG, XS, XT)                                                \
+        fmais_rr(W(XG), W(XS), W(XT))
+
+#define fmaos_ld(XG, XS, MT, DT)                                            \
+        fmais_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsos_rr(XG, XS, XT)                                                \
+        fmsis_rr(W(XG), W(XS), W(XT))
+
+#define fmsos_ld(XG, XS, MT, DT)                                            \
+        fmsis_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S) */
+
+#define minos_rr(XG, XS)                                                    \
+        minis_rr(W(XG), W(XS))
+
+#define minos_ld(XG, MS, DS)                                                \
+        minis_ld(W(XG), W(MS), W(DS))
+
+/* max (G = G > S ? G : S) */
+
+#define maxos_rr(XG, XS)                                                    \
+        maxis_rr(W(XG), W(XS))
+
+#define maxos_ld(XG, MS, DS)                                                \
+        maxis_ld(W(XG), W(MS), W(DS))
+
+/* cmp (G = G ? S) */
+
+#define ceqos_rr(XG, XS)                                                    \
+        ceqis_rr(W(XG), W(XS))
+
+#define ceqos_ld(XG, MS, DS)                                                \
+        ceqis_ld(W(XG), W(MS), W(DS))
+
+#define cneos_rr(XG, XS)                                                    \
+        cneis_rr(W(XG), W(XS))
+
+#define cneos_ld(XG, MS, DS)                                                \
+        cneis_ld(W(XG), W(MS), W(DS))
+
+#define cltos_rr(XG, XS)                                                    \
+        cltis_rr(W(XG), W(XS))
+
+#define cltos_ld(XG, MS, DS)                                                \
+        cltis_ld(W(XG), W(MS), W(DS))
+
+#define cleos_rr(XG, XS)                                                    \
+        cleis_rr(W(XG), W(XS))
+
+#define cleos_ld(XG, MS, DS)                                                \
+        cleis_ld(W(XG), W(MS), W(DS))
+
+#define cgtos_rr(XG, XS)                                                    \
+        cgtis_rr(W(XG), W(XS))
+
+#define cgtos_ld(XG, MS, DS)                                                \
+        cgtis_ld(W(XG), W(MS), W(DS))
+
+#define cgeos_rr(XG, XS)                                                    \
+        cgeis_rr(W(XG), W(XS))
+
+#define cgeos_ld(XG, MS, DS)                                                \
+        cgeis_ld(W(XG), W(MS), W(DS))
+
+/* cvz (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnzos_rr(XD, XS)     /* round towards zero */                       \
+        rnzis_rr(W(XD), W(XS))
+
+#define rnzos_ld(XD, MS, DS) /* round towards zero */                       \
+        rnzis_ld(W(XD), W(MS), W(DS))
+
+#define cvzos_rr(XD, XS)     /* round towards zero */                       \
+        cvzis_rr(W(XD), W(XS))
+
+#define cvzos_ld(XD, MS, DS) /* round towards zero */                       \
+        cvzis_ld(W(XD), W(MS), W(DS))
+
+/* cvp (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnpos_rr(XD, XS)     /* round towards +inf */                       \
+        rnpis_rr(W(XD), W(XS))
+
+#define rnpos_ld(XD, MS, DS) /* round towards +inf */                       \
+        rnpis_ld(W(XD), W(MS), W(DS))
+
+#define cvpos_rr(XD, XS)     /* round towards +inf */                       \
+        cvpis_rr(W(XD), W(XS))
+
+#define cvpos_ld(XD, MS, DS) /* round towards +inf */                       \
+        cvpis_ld(W(XD), W(MS), W(DS))
+
+/* cvm (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnmos_rr(XD, XS)     /* round towards -inf */                       \
+        rnmis_rr(W(XD), W(XS))
+
+#define rnmos_ld(XD, MS, DS) /* round towards -inf */                       \
+        rnmis_ld(W(XD), W(MS), W(DS))
+
+#define cvmos_rr(XD, XS)     /* round towards -inf */                       \
+        cvmis_rr(W(XD), W(XS))
+
+#define cvmos_ld(XD, MS, DS) /* round towards -inf */                       \
+        cvmis_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnnos_rr(XD, XS)     /* round towards near */                       \
+        rnnis_rr(W(XD), W(XS))
+
+#define rnnos_ld(XD, MS, DS) /* round towards near */                       \
+        rnnis_ld(W(XD), W(MS), W(DS))
+
+#define cvnos_rr(XD, XS)     /* round towards near */                       \
+        cvnis_rr(W(XD), W(XS))
+
+#define cvnos_ld(XD, MS, DS) /* round towards near */                       \
+        cvnis_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnon_rr(XD, XS)     /* round towards near */                       \
+        cvnin_rr(W(XD), W(XS))
+
+#define cvnon_ld(XD, MS, DS) /* round towards near */                       \
+        cvnin_ld(W(XD), W(MS), W(DS))
+
+/* add (G = G + S) */
+
+#define addox_rr(XG, XS)                                                    \
+        addix_rr(W(XG), W(XS))
+
+#define addox_ld(XG, MS, DS)                                                \
+        addix_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define subox_rr(XG, XS)                                                    \
+        subix_rr(W(XG), W(XS))
+
+#define subox_ld(XG, MS, DS)                                                \
+        subix_ld(W(XG), W(MS), W(DS))
+
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shlox_ri(XG, IS)                                                    \
+        shlix_ri(W(XG), W(IS))
+
+#define shlox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shlix_ld(W(XG), W(MS), W(DS))
+
+#define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlix_rr(W(XG), W(XS))
+
+#define svlox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlix_ld(W(XG), W(MS), W(DS))
+
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shrox_ri(XG, IS)                                                    \
+        shrix_ri(W(XG), W(IS))
+
+#define shrox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shrix_ld(W(XG), W(MS), W(DS))
+
+#define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrix_rr(W(XG), W(XS))
+
+#define svrox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrix_ld(W(XG), W(MS), W(DS))
+
+
+#define shron_ri(XG, IS)                                                    \
+        shrin_ri(W(XG), W(IS))
+
+#define shron_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shrin_ld(W(XG), W(MS), W(DS))
+
+#define svron_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrin_rr(W(XG), W(XS))
+
+#define svron_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrin_ld(W(XG), W(MS), W(DS))
+
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rndos_rr(XD, XS)                                                    \
+        rndis_rr(W(XD), W(XS))
+
+#define rndos_ld(XD, MS, DS)                                                \
+        rndis_ld(W(XD), W(MS), W(DS))
+
+#define cvtos_rr(XD, XS)                                                    \
+        cvtis_rr(W(XD), W(XS))
+
+#define cvtos_ld(XD, MS, DS)                                                \
+        cvtis_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+
+#define cvton_rr(XD, XS)                                                    \
+        cvtin_rr(W(XD), W(XS))
+
+#define cvton_ld(XD, MS, DS)                                                \
+        cvtin_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnros_rr(XD, XS, mode)                                              \
+        rnris_rr(W(XD), W(XS), mode)
+
+#define cvros_rr(XD, XS, mode)                                              \
+        cvris_rr(W(XD), W(XS), mode)
+
+/* cbr (D = cbrt S) */
+
+/*
+ * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
+ * available at http://www.musicdsp.org/showone.php?id=206
+ * converted to S-way SIMD version by VectorChief.
+ */
+#define cbris_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbeis_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsis_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsis_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsis_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbeis_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        /* cube root estimate, the exponent is divided by three             \
+         * in such a way that remainder bits get shoved into                \
+         * the top of the normalized mantissa */                            \
+        movix_ld(W(X2), Mebp, inf_GPC04_32)                                 \
+        movix_rr(W(XD), W(XS))                                              \
+        andix_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
+        subix_ld(W(XD), Mebp, inf_GPC05_32) /* convert to 2's complement */ \
+        shrin_ri(W(XD), IB(10))  /* XD / 1024 */                            \
+        movix_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
+        shlix_ri(W(X1), IB(2))                                              \
+        addix_rr(W(XD), W(X1))                                              \
+        shlix_ri(W(X1), IB(2))                                              \
+        addix_rr(W(XD), W(X1))                                              \
+        shlix_ri(W(X1), IB(2))                                              \
+        addix_rr(W(XD), W(X1))                                              \
+        shlix_ri(W(X1), IB(2))                                              \
+        addix_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
+        addix_ld(W(XD), Mebp, inf_GPC05_32) /* back to biased-127 */        \
+        andix_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
+        annix_rr(W(X2), W(XS))   /* original sign */                        \
+        orrix_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
+
+#define cbsis_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        movix_rr(W(X1), W(XG))                                              \
+        mulis_rr(W(X1), W(XG))                                              \
+        movix_rr(W(X2), W(X1))                                              \
+        mulis_ld(W(X1), Mebp, inf_GPC03_32)                                 \
+        rceis_rr(W(X1), W(X1))                                              \
+        mulis_rr(W(X2), W(XG))                                              \
+        subis_rr(W(X2), W(XS))                                              \
+        mulis_rr(W(X2), W(X1))                                              \
+        subis_rr(W(XG), W(X2))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if   RT_SIMD_COMPAT_RCP == 0 || RT_SIMD_COMPAT_RCP == 2
+
+#define rcpis_rr(XD, XS) /* destroys XS */                                  \
+        rceis_rr(W(XD), W(XS))                                              \
+        rcsis_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
+
+#elif RT_SIMD_COMPAT_RCP == 1
+
+#define rcpis_rr(XD, XS) /* destroys XS */                                  \
+        movix_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        divis_rr(W(XD), W(XS))
+
+#define rceis_rr(XD, XS)                                                    \
+        movix_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        divis_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rcsis_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if   RT_SIMD_COMPAT_RSQ == 0 || RT_SIMD_COMPAT_RSQ == 2
+
+#define rsqis_rr(XD, XS) /* destroys XS */                                  \
+        rseis_rr(W(XD), W(XS))                                              \
+        rssis_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
+
+#elif RT_SIMD_COMPAT_RSQ == 1
+
+#define rsqis_rr(XD, XS) /* destroys XS */                                  \
+        sqris_rr(W(XS), W(XS))                                              \
+        movix_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        divis_rr(W(XD), W(XS))
+
+#define rseis_rr(XD, XS)                                                    \
+        sqris_rr(W(XD), W(XS))                                              \
+        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        divis_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rssis_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA == 2
+
+#define fmais_rr(XG, XS, XT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulis_rr(W(XS), W(XT))                                              \
+        addis_rr(W(XG), W(XS))                                              \
+        movix_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmais_ld(XG, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulis_ld(W(XS), W(MT), W(DT))                                       \
+        addis_rr(W(XG), W(XS))                                              \
+        movix_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS == 2
+
+#define fmsis_rr(XG, XS, XT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulis_rr(W(XS), W(XT))                                              \
+        subis_rr(W(XG), W(XS))                                              \
+        movix_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmsis_ld(XG, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulis_ld(W(XS), W(MT), W(DT))                                       \
+        subis_rr(W(XG), W(XS))                                              \
+        movix_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+#endif /* RT_SIMD: 512, 256, 128 */
+
 /****************** instructions for fixed-sized 64-bit SIMD ******************/
+
+#if   (RT_SIMD == 512)
 
 /* cbr (D = cbrt S) */
 
@@ -837,13 +1927,1081 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/****************** original FCTRL blocks (cannot be nested) ******************/
+/****************** instructions for fixed-sized 64-bit SIMD ***** 256-bit ****/
 
-#define FCTRL_ENTER(mode) /* assumes default mode (ROUNDN) upon entry */    \
-        FCTRL_SET(mode)
+#elif (RT_SIMD == 256)
 
-#define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */    \
-        FCTRL_RESET()
+/* mov (D = S) */
+
+#define movqx_rr(XD, XS)                                                    \
+        movdx_rr(W(XD), W(XS))
+
+#define movqx_ld(XD, MS, DS)                                                \
+        movdx_ld(W(XD), W(MS), W(DS))
+
+#define movqx_st(XS, MD, DD)                                                \
+        movdx_st(W(XS), W(MD), W(DD))
+
+/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+
+#define mmvqx_ld(XG, MS, DS)                                                \
+        mmvdx_ld(W(XG), W(MS), W(DS))
+
+#define mmvqx_st(XS, MG, DG)                                                \
+        mmvdx_st(W(XS), W(MG), W(DG))
+
+/* and (G = G & S) */
+
+#define andqx_rr(XG, XS)                                                    \
+        anddx_rr(W(XG), W(XS))
+
+#define andqx_ld(XG, MS, DS)                                                \
+        anddx_ld(W(XG), W(MS), W(DS))
+
+/* ann (G = ~G & S) */
+
+#define annqx_rr(XG, XS)                                                    \
+        anndx_rr(W(XG), W(XS))
+
+#define annqx_ld(XG, MS, DS)                                                \
+        anndx_ld(W(XG), W(MS), W(DS))
+
+/* orr (G = G | S) */
+
+#define orrqx_rr(XG, XS)                                                    \
+        orrdx_rr(W(XG), W(XS))
+
+#define orrqx_ld(XG, MS, DS)                                                \
+        orrdx_ld(W(XG), W(MS), W(DS))
+
+/* orn (G = ~G | S) */
+
+#define ornqx_rr(XG, XS)                                                    \
+        orndx_rr(W(XG), W(XS))
+
+#define ornqx_ld(XG, MS, DS)                                                \
+        orndx_ld(W(XG), W(MS), W(DS))
+
+/* xor (G = G ^ S) */
+
+#define xorqx_rr(XG, XS)                                                    \
+        xordx_rr(W(XG), W(XS))
+
+#define xorqx_ld(XG, MS, DS)                                                \
+        xordx_ld(W(XG), W(MS), W(DS))
+
+/* not (G = ~G) */
+
+#define notqx_rx(XG)                                                        \
+        notdx_rx(W(XG))
+
+/* neg (G = -G) */
+
+#define negqs_rx(XG)                                                        \
+        negds_rx(W(XG))
+
+/* add (G = G + S) */
+
+#define addqs_rr(XG, XS)                                                    \
+        addds_rr(W(XG), W(XS))
+
+#define addqs_ld(XG, MS, DS)                                                \
+        addds_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define subqs_rr(XG, XS)                                                    \
+        subds_rr(W(XG), W(XS))
+
+#define subqs_ld(XG, MS, DS)                                                \
+        subds_ld(W(XG), W(MS), W(DS))
+
+/* mul (G = G * S) */
+
+#define mulqs_rr(XG, XS)                                                    \
+        mulds_rr(W(XG), W(XS))
+
+#define mulqs_ld(XG, MS, DS)                                                \
+        mulds_ld(W(XG), W(MS), W(DS))
+
+/* div (G = G / S) */
+
+#define divqs_rr(XG, XS)                                                    \
+        divds_rr(W(XG), W(XS))
+
+#define divqs_ld(XG, MS, DS)                                                \
+        divds_ld(W(XG), W(MS), W(DS))
+
+/* sqr (D = sqrt S) */
+
+#define sqrqs_rr(XD, XS)                                                    \
+        sqrds_rr(W(XD), W(XS))
+
+#define sqrqs_ld(XD, MS, DS)                                                \
+        sqrds_ld(W(XD), W(MS), W(DS))
+
+/* cbr (D = cbrt S) */
+
+#define cbrqs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbrds_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbeqs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbeds_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbsqs_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbsds_rr(W(XG), W(X1), W(X2), W(XS))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rcpqs_rr(XD, XS) /* destroys XS */                                  \
+        rcpds_rr(W(XD), W(XS))
+
+#define rceqs_rr(XD, XS)                                                    \
+        rceds_rr(W(XD), W(XS))
+
+#define rcsqs_rr(XG, XS) /* destroys XS */                                  \
+        rcsds_rr(W(XG), W(XS))
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rsqqs_rr(XD, XS) /* destroys XS */                                  \
+        rsqds_rr(W(XD), W(XS))
+
+#define rseqs_rr(XD, XS)                                                    \
+        rseds_rr(W(XD), W(XS))
+
+#define rssqs_rr(XG, XS) /* destroys XS */                                  \
+        rssds_rr(W(XG), W(XS))
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#define fmaqs_rr(XG, XS, XT)                                                \
+        fmads_rr(W(XG), W(XS), W(XT))
+
+#define fmaqs_ld(XG, XS, MT, DT)                                            \
+        fmads_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsqs_rr(XG, XS, XT)                                                \
+        fmsds_rr(W(XG), W(XS), W(XT))
+
+#define fmsqs_ld(XG, XS, MT, DT)                                            \
+        fmsds_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S) */
+
+#define minqs_rr(XG, XS)                                                    \
+        minds_rr(W(XG), W(XS))
+
+#define minqs_ld(XG, MS, DS)                                                \
+        minds_ld(W(XG), W(MS), W(DS))
+
+/* max (G = G > S ? G : S) */
+
+#define maxqs_rr(XG, XS)                                                    \
+        maxds_rr(W(XG), W(XS))
+
+#define maxqs_ld(XG, MS, DS)                                                \
+        maxds_ld(W(XG), W(MS), W(DS))
+
+/* cmp (G = G ? S) */
+
+#define ceqqs_rr(XG, XS)                                                    \
+        ceqds_rr(W(XG), W(XS))
+
+#define ceqqs_ld(XG, MS, DS)                                                \
+        ceqds_ld(W(XG), W(MS), W(DS))
+
+#define cneqs_rr(XG, XS)                                                    \
+        cneds_rr(W(XG), W(XS))
+
+#define cneqs_ld(XG, MS, DS)                                                \
+        cneds_ld(W(XG), W(MS), W(DS))
+
+#define cltqs_rr(XG, XS)                                                    \
+        cltds_rr(W(XG), W(XS))
+
+#define cltqs_ld(XG, MS, DS)                                                \
+        cltds_ld(W(XG), W(MS), W(DS))
+
+#define cleqs_rr(XG, XS)                                                    \
+        cleds_rr(W(XG), W(XS))
+
+#define cleqs_ld(XG, MS, DS)                                                \
+        cleds_ld(W(XG), W(MS), W(DS))
+
+#define cgtqs_rr(XG, XS)                                                    \
+        cgtds_rr(W(XG), W(XS))
+
+#define cgtqs_ld(XG, MS, DS)                                                \
+        cgtds_ld(W(XG), W(MS), W(DS))
+
+#define cgeqs_rr(XG, XS)                                                    \
+        cgeds_rr(W(XG), W(XS))
+
+#define cgeqs_ld(XG, MS, DS)                                                \
+        cgeds_ld(W(XG), W(MS), W(DS))
+
+/* cvz (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnzqs_rr(XD, XS)     /* round towards zero */                       \
+        rnzds_rr(W(XD), W(XS))
+
+#define rnzqs_ld(XD, MS, DS) /* round towards zero */                       \
+        rnzds_ld(W(XD), W(MS), W(DS))
+
+#define cvzqs_rr(XD, XS)     /* round towards zero */                       \
+        cvzds_rr(W(XD), W(XS))
+
+#define cvzqs_ld(XD, MS, DS) /* round towards zero */                       \
+        cvzds_ld(W(XD), W(MS), W(DS))
+
+/* cvp (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnpqs_rr(XD, XS)     /* round towards +inf */                       \
+        rnpds_rr(W(XD), W(XS))
+
+#define rnpqs_ld(XD, MS, DS) /* round towards +inf */                       \
+        rnpds_ld(W(XD), W(MS), W(DS))
+
+#define cvpqs_rr(XD, XS)     /* round towards +inf */                       \
+        cvpds_rr(W(XD), W(XS))
+
+#define cvpqs_ld(XD, MS, DS) /* round towards +inf */                       \
+        cvpds_ld(W(XD), W(MS), W(DS))
+
+/* cvm (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnmqs_rr(XD, XS)     /* round towards -inf */                       \
+        rnmds_rr(W(XD), W(XS))
+
+#define rnmqs_ld(XD, MS, DS) /* round towards -inf */                       \
+        rnmds_ld(W(XD), W(MS), W(DS))
+
+#define cvmqs_rr(XD, XS)     /* round towards -inf */                       \
+        cvmds_rr(W(XD), W(XS))
+
+#define cvmqs_ld(XD, MS, DS) /* round towards -inf */                       \
+        cvmds_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnnqs_rr(XD, XS)     /* round towards near */                       \
+        rnnds_rr(W(XD), W(XS))
+
+#define rnnqs_ld(XD, MS, DS) /* round towards near */                       \
+        rnnds_ld(W(XD), W(MS), W(DS))
+
+#define cvnqs_rr(XD, XS)     /* round towards near */                       \
+        cvnds_rr(W(XD), W(XS))
+
+#define cvnqs_ld(XD, MS, DS) /* round towards near */                       \
+        cvnds_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnqn_rr(XD, XS)     /* round towards near */                       \
+        cvndn_rr(W(XD), W(XS))
+
+#define cvnqn_ld(XD, MS, DS) /* round towards near */                       \
+        cvndn_ld(W(XD), W(MS), W(DS))
+
+/* add (G = G + S) */
+
+#define addqx_rr(XG, XS)                                                    \
+        adddx_rr(W(XG), W(XS))
+
+#define addqx_ld(XG, MS, DS)                                                \
+        adddx_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define subqx_rr(XG, XS)                                                    \
+        subdx_rr(W(XG), W(XS))
+
+#define subqx_ld(XG, MS, DS)                                                \
+        subdx_ld(W(XG), W(MS), W(DS))
+
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shlqx_ri(XG, IS)                                                    \
+        shldx_ri(W(XG), W(IS))
+
+#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shldx_ld(W(XG), W(MS), W(DS))
+
+#define svlqx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svldx_rr(W(XG), W(XS))
+
+#define svlqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svldx_ld(W(XG), W(MS), W(DS))
+
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shrqx_ri(XG, IS)                                                    \
+        shrdx_ri(W(XG), W(IS))
+
+#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shrdx_ld(W(XG), W(MS), W(DS))
+
+#define svrqx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrdx_rr(W(XG), W(XS))
+
+#define svrqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrdx_ld(W(XG), W(MS), W(DS))
+
+
+#define shrqn_ri(XG, IS)                                                    \
+        shrdn_ri(W(XG), W(IS))
+
+#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shrdn_ld(W(XG), W(MS), W(DS))
+
+#define svrqn_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrdn_rr(W(XG), W(XS))
+
+#define svrqn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrdn_ld(W(XG), W(MS), W(DS))
+
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rndqs_rr(XD, XS)                                                    \
+        rndds_rr(W(XD), W(XS))
+
+#define rndqs_ld(XD, MS, DS)                                                \
+        rndds_ld(W(XD), W(MS), W(DS))
+
+#define cvtqs_rr(XD, XS)                                                    \
+        cvtds_rr(W(XD), W(XS))
+
+#define cvtqs_ld(XD, MS, DS)                                                \
+        cvtds_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+
+#define cvtqn_rr(XD, XS)                                                    \
+        cvtdn_rr(W(XD), W(XS))
+
+#define cvtqn_ld(XD, MS, DS)                                                \
+        cvtdn_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrqs_rr(XD, XS, mode)                                              \
+        rnrds_rr(W(XD), W(XS), mode)
+
+#define cvrqs_rr(XD, XS, mode)                                              \
+        cvrds_rr(W(XD), W(XS), mode)
+
+/* cbr (D = cbrt S) */
+
+/*
+ * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
+ * available at http://www.musicdsp.org/showone.php?id=206
+ * converted to S-way SIMD version by VectorChief.
+ */
+#define cbrds_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbeds_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsds_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsds_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsds_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbeds_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        /* cube root estimate, the exponent is divided by three             \
+         * in such a way that remainder bits get shoved into                \
+         * the top of the normalized mantissa */                            \
+        movdx_ld(W(X2), Mebp, inf_GPC04_64)                                 \
+        movdx_rr(W(XD), W(XS))                                              \
+        anddx_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
+        subdx_ld(W(XD), Mebp, inf_GPC05_64) /* convert to 2's complement */ \
+        shrdn_ri(W(XD), IB(10))  /* XD / 1024 */                            \
+        movdx_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
+        shldx_ri(W(X1), IB(2))                                              \
+        adddx_rr(W(XD), W(X1))                                              \
+        shldx_ri(W(X1), IB(2))                                              \
+        adddx_rr(W(XD), W(X1))                                              \
+        shldx_ri(W(X1), IB(2))                                              \
+        adddx_rr(W(XD), W(X1))                                              \
+        shldx_ri(W(X1), IB(2))                                              \
+        adddx_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
+        adddx_ld(W(XD), Mebp, inf_GPC05_64) /* back to biased-127 */        \
+        anddx_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
+        anndx_rr(W(X2), W(XS))   /* original sign */                        \
+        orrdx_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
+
+#define cbsds_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        movdx_rr(W(X1), W(XG))                                              \
+        mulds_rr(W(X1), W(XG))                                              \
+        movdx_rr(W(X2), W(X1))                                              \
+        mulds_ld(W(X1), Mebp, inf_GPC03_64)                                 \
+        rceds_rr(W(X1), W(X1))                                              \
+        mulds_rr(W(X2), W(XG))                                              \
+        subds_rr(W(X2), W(XS))                                              \
+        mulds_rr(W(X2), W(X1))                                              \
+        subds_rr(W(XG), W(X2))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if   RT_SIMD_COMPAT_RCP == 0 || RT_SIMD_COMPAT_RCP == 2
+
+#define rcpds_rr(XD, XS) /* destroys XS */                                  \
+        rceds_rr(W(XD), W(XS))                                              \
+        rcsds_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
+
+#elif RT_SIMD_COMPAT_RCP == 1
+
+#define rcpds_rr(XD, XS) /* destroys XS */                                  \
+        movdx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divds_rr(W(XD), W(XS))
+
+#define rceds_rr(XD, XS)                                                    \
+        movdx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movdx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divds_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rcsds_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if   RT_SIMD_COMPAT_RSQ == 0 || RT_SIMD_COMPAT_RSQ == 2
+
+#define rsqds_rr(XD, XS) /* destroys XS */                                  \
+        rseds_rr(W(XD), W(XS))                                              \
+        rssds_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
+
+#elif RT_SIMD_COMPAT_RSQ == 1
+
+#define rsqds_rr(XD, XS) /* destroys XS */                                  \
+        sqrds_rr(W(XS), W(XS))                                              \
+        movdx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divds_rr(W(XD), W(XS))
+
+#define rseds_rr(XD, XS)                                                    \
+        sqrds_rr(W(XD), W(XS))                                              \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movdx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divds_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rssds_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA == 2
+
+#define fmads_rr(XG, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulds_rr(W(XS), W(XT))                                              \
+        addds_rr(W(XG), W(XS))                                              \
+        movdx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmads_ld(XG, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulds_ld(W(XS), W(MT), W(DT))                                       \
+        addds_rr(W(XG), W(XS))                                              \
+        movdx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS == 2
+
+#define fmsds_rr(XG, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulds_rr(W(XS), W(XT))                                              \
+        subds_rr(W(XG), W(XS))                                              \
+        movdx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmsds_ld(XG, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulds_ld(W(XS), W(MT), W(DT))                                       \
+        subds_rr(W(XG), W(XS))                                              \
+        movdx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/****************** instructions for fixed-sized 64-bit SIMD ***** 128-bit ****/
+
+#elif (RT_SIMD == 128)
+
+/* mov (D = S) */
+
+#define movqx_rr(XD, XS)                                                    \
+        movjx_rr(W(XD), W(XS))
+
+#define movqx_ld(XD, MS, DS)                                                \
+        movjx_ld(W(XD), W(MS), W(DS))
+
+#define movqx_st(XS, MD, DD)                                                \
+        movjx_st(W(XS), W(MD), W(DD))
+
+/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+
+#define mmvqx_ld(XG, MS, DS)                                                \
+        mmvjx_ld(W(XG), W(MS), W(DS))
+
+#define mmvqx_st(XS, MG, DG)                                                \
+        mmvjx_st(W(XS), W(MG), W(DG))
+
+/* and (G = G & S) */
+
+#define andqx_rr(XG, XS)                                                    \
+        andjx_rr(W(XG), W(XS))
+
+#define andqx_ld(XG, MS, DS)                                                \
+        andjx_ld(W(XG), W(MS), W(DS))
+
+/* ann (G = ~G & S) */
+
+#define annqx_rr(XG, XS)                                                    \
+        annjx_rr(W(XG), W(XS))
+
+#define annqx_ld(XG, MS, DS)                                                \
+        annjx_ld(W(XG), W(MS), W(DS))
+
+/* orr (G = G | S) */
+
+#define orrqx_rr(XG, XS)                                                    \
+        orrjx_rr(W(XG), W(XS))
+
+#define orrqx_ld(XG, MS, DS)                                                \
+        orrjx_ld(W(XG), W(MS), W(DS))
+
+/* orn (G = ~G | S) */
+
+#define ornqx_rr(XG, XS)                                                    \
+        ornjx_rr(W(XG), W(XS))
+
+#define ornqx_ld(XG, MS, DS)                                                \
+        ornjx_ld(W(XG), W(MS), W(DS))
+
+/* xor (G = G ^ S) */
+
+#define xorqx_rr(XG, XS)                                                    \
+        xorjx_rr(W(XG), W(XS))
+
+#define xorqx_ld(XG, MS, DS)                                                \
+        xorjx_ld(W(XG), W(MS), W(DS))
+
+/* not (G = ~G) */
+
+#define notqx_rx(XG)                                                        \
+        notjx_rx(W(XG))
+
+/* neg (G = -G) */
+
+#define negqs_rx(XG)                                                        \
+        negjs_rx(W(XG))
+
+/* add (G = G + S) */
+
+#define addqs_rr(XG, XS)                                                    \
+        addjs_rr(W(XG), W(XS))
+
+#define addqs_ld(XG, MS, DS)                                                \
+        addjs_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define subqs_rr(XG, XS)                                                    \
+        subjs_rr(W(XG), W(XS))
+
+#define subqs_ld(XG, MS, DS)                                                \
+        subjs_ld(W(XG), W(MS), W(DS))
+
+/* mul (G = G * S) */
+
+#define mulqs_rr(XG, XS)                                                    \
+        muljs_rr(W(XG), W(XS))
+
+#define mulqs_ld(XG, MS, DS)                                                \
+        muljs_ld(W(XG), W(MS), W(DS))
+
+/* div (G = G / S) */
+
+#define divqs_rr(XG, XS)                                                    \
+        divjs_rr(W(XG), W(XS))
+
+#define divqs_ld(XG, MS, DS)                                                \
+        divjs_ld(W(XG), W(MS), W(DS))
+
+/* sqr (D = sqrt S) */
+
+#define sqrqs_rr(XD, XS)                                                    \
+        sqrjs_rr(W(XD), W(XS))
+
+#define sqrqs_ld(XD, MS, DS)                                                \
+        sqrjs_ld(W(XD), W(MS), W(DS))
+
+/* cbr (D = cbrt S) */
+
+#define cbrqs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbrjs_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbeqs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbejs_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbsqs_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbsjs_rr(W(XG), W(X1), W(X2), W(XS))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rcpqs_rr(XD, XS) /* destroys XS */                                  \
+        rcpjs_rr(W(XD), W(XS))
+
+#define rceqs_rr(XD, XS)                                                    \
+        rcejs_rr(W(XD), W(XS))
+
+#define rcsqs_rr(XG, XS) /* destroys XS */                                  \
+        rcsjs_rr(W(XG), W(XS))
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rsqqs_rr(XD, XS) /* destroys XS */                                  \
+        rsqjs_rr(W(XD), W(XS))
+
+#define rseqs_rr(XD, XS)                                                    \
+        rsejs_rr(W(XD), W(XS))
+
+#define rssqs_rr(XG, XS) /* destroys XS */                                  \
+        rssjs_rr(W(XG), W(XS))
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#define fmaqs_rr(XG, XS, XT)                                                \
+        fmajs_rr(W(XG), W(XS), W(XT))
+
+#define fmaqs_ld(XG, XS, MT, DT)                                            \
+        fmajs_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsqs_rr(XG, XS, XT)                                                \
+        fmsjs_rr(W(XG), W(XS), W(XT))
+
+#define fmsqs_ld(XG, XS, MT, DT)                                            \
+        fmsjs_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S) */
+
+#define minqs_rr(XG, XS)                                                    \
+        minjs_rr(W(XG), W(XS))
+
+#define minqs_ld(XG, MS, DS)                                                \
+        minjs_ld(W(XG), W(MS), W(DS))
+
+/* max (G = G > S ? G : S) */
+
+#define maxqs_rr(XG, XS)                                                    \
+        maxjs_rr(W(XG), W(XS))
+
+#define maxqs_ld(XG, MS, DS)                                                \
+        maxjs_ld(W(XG), W(MS), W(DS))
+
+/* cmp (G = G ? S) */
+
+#define ceqqs_rr(XG, XS)                                                    \
+        ceqjs_rr(W(XG), W(XS))
+
+#define ceqqs_ld(XG, MS, DS)                                                \
+        ceqjs_ld(W(XG), W(MS), W(DS))
+
+#define cneqs_rr(XG, XS)                                                    \
+        cnejs_rr(W(XG), W(XS))
+
+#define cneqs_ld(XG, MS, DS)                                                \
+        cnejs_ld(W(XG), W(MS), W(DS))
+
+#define cltqs_rr(XG, XS)                                                    \
+        cltjs_rr(W(XG), W(XS))
+
+#define cltqs_ld(XG, MS, DS)                                                \
+        cltjs_ld(W(XG), W(MS), W(DS))
+
+#define cleqs_rr(XG, XS)                                                    \
+        clejs_rr(W(XG), W(XS))
+
+#define cleqs_ld(XG, MS, DS)                                                \
+        clejs_ld(W(XG), W(MS), W(DS))
+
+#define cgtqs_rr(XG, XS)                                                    \
+        cgtjs_rr(W(XG), W(XS))
+
+#define cgtqs_ld(XG, MS, DS)                                                \
+        cgtjs_ld(W(XG), W(MS), W(DS))
+
+#define cgeqs_rr(XG, XS)                                                    \
+        cgejs_rr(W(XG), W(XS))
+
+#define cgeqs_ld(XG, MS, DS)                                                \
+        cgejs_ld(W(XG), W(MS), W(DS))
+
+/* cvz (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnzqs_rr(XD, XS)     /* round towards zero */                       \
+        rnzjs_rr(W(XD), W(XS))
+
+#define rnzqs_ld(XD, MS, DS) /* round towards zero */                       \
+        rnzjs_ld(W(XD), W(MS), W(DS))
+
+#define cvzqs_rr(XD, XS)     /* round towards zero */                       \
+        cvzjs_rr(W(XD), W(XS))
+
+#define cvzqs_ld(XD, MS, DS) /* round towards zero */                       \
+        cvzjs_ld(W(XD), W(MS), W(DS))
+
+/* cvp (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnpqs_rr(XD, XS)     /* round towards +inf */                       \
+        rnpjs_rr(W(XD), W(XS))
+
+#define rnpqs_ld(XD, MS, DS) /* round towards +inf */                       \
+        rnpjs_ld(W(XD), W(MS), W(DS))
+
+#define cvpqs_rr(XD, XS)     /* round towards +inf */                       \
+        cvpjs_rr(W(XD), W(XS))
+
+#define cvpqs_ld(XD, MS, DS) /* round towards +inf */                       \
+        cvpjs_ld(W(XD), W(MS), W(DS))
+
+/* cvm (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnmqs_rr(XD, XS)     /* round towards -inf */                       \
+        rnmjs_rr(W(XD), W(XS))
+
+#define rnmqs_ld(XD, MS, DS) /* round towards -inf */                       \
+        rnmjs_ld(W(XD), W(MS), W(DS))
+
+#define cvmqs_rr(XD, XS)     /* round towards -inf */                       \
+        cvmjs_rr(W(XD), W(XS))
+
+#define cvmqs_ld(XD, MS, DS) /* round towards -inf */                       \
+        cvmjs_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnnqs_rr(XD, XS)     /* round towards near */                       \
+        rnnjs_rr(W(XD), W(XS))
+
+#define rnnqs_ld(XD, MS, DS) /* round towards near */                       \
+        rnnjs_ld(W(XD), W(MS), W(DS))
+
+#define cvnqs_rr(XD, XS)     /* round towards near */                       \
+        cvnjs_rr(W(XD), W(XS))
+
+#define cvnqs_ld(XD, MS, DS) /* round towards near */                       \
+        cvnjs_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnqn_rr(XD, XS)     /* round towards near */                       \
+        cvnjn_rr(W(XD), W(XS))
+
+#define cvnqn_ld(XD, MS, DS) /* round towards near */                       \
+        cvnjn_ld(W(XD), W(MS), W(DS))
+
+/* add (G = G + S) */
+
+#define addqx_rr(XG, XS)                                                    \
+        addjx_rr(W(XG), W(XS))
+
+#define addqx_ld(XG, MS, DS)                                                \
+        addjx_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define subqx_rr(XG, XS)                                                    \
+        subjx_rr(W(XG), W(XS))
+
+#define subqx_ld(XG, MS, DS)                                                \
+        subjx_ld(W(XG), W(MS), W(DS))
+
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shlqx_ri(XG, IS)                                                    \
+        shljx_ri(W(XG), W(IS))
+
+#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shljx_ld(W(XG), W(MS), W(DS))
+
+#define svlqx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svljx_rr(W(XG), W(XS))
+
+#define svlqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svljx_ld(W(XG), W(MS), W(DS))
+
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shrqx_ri(XG, IS)                                                    \
+        shrjx_ri(W(XG), W(IS))
+
+#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shrjx_ld(W(XG), W(MS), W(DS))
+
+#define svrqx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrjx_rr(W(XG), W(XS))
+
+#define svrqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrjx_ld(W(XG), W(MS), W(DS))
+
+
+#define shrqn_ri(XG, IS)                                                    \
+        shrjn_ri(W(XG), W(IS))
+
+#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shrjn_ld(W(XG), W(MS), W(DS))
+
+#define svrqn_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrjn_rr(W(XG), W(XS))
+
+#define svrqn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrjn_ld(W(XG), W(MS), W(DS))
+
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rndqs_rr(XD, XS)                                                    \
+        rndjs_rr(W(XD), W(XS))
+
+#define rndqs_ld(XD, MS, DS)                                                \
+        rndjs_ld(W(XD), W(MS), W(DS))
+
+#define cvtqs_rr(XD, XS)                                                    \
+        cvtjs_rr(W(XD), W(XS))
+
+#define cvtqs_ld(XD, MS, DS)                                                \
+        cvtjs_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+
+#define cvtqn_rr(XD, XS)                                                    \
+        cvtjn_rr(W(XD), W(XS))
+
+#define cvtqn_ld(XD, MS, DS)                                                \
+        cvtjn_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrqs_rr(XD, XS, mode)                                              \
+        rnrjs_rr(W(XD), W(XS), mode)
+
+#define cvrqs_rr(XD, XS, mode)                                              \
+        cvrjs_rr(W(XD), W(XS), mode)
+
+/* cbr (D = cbrt S) */
+
+/*
+ * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
+ * available at http://www.musicdsp.org/showone.php?id=206
+ * converted to S-way SIMD version by VectorChief.
+ */
+#define cbrjs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbejs_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsjs_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsjs_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsjs_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbejs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        /* cube root estimate, the exponent is divided by three             \
+         * in such a way that remainder bits get shoved into                \
+         * the top of the normalized mantissa */                            \
+        movjx_ld(W(X2), Mebp, inf_GPC04_64)                                 \
+        movjx_rr(W(XD), W(XS))                                              \
+        andjx_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
+        subjx_ld(W(XD), Mebp, inf_GPC05_64) /* convert to 2's complement */ \
+        shrjn_ri(W(XD), IB(10))  /* XD / 1024 */                            \
+        movjx_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
+        shljx_ri(W(X1), IB(2))                                              \
+        addjx_rr(W(XD), W(X1))                                              \
+        shljx_ri(W(X1), IB(2))                                              \
+        addjx_rr(W(XD), W(X1))                                              \
+        shljx_ri(W(X1), IB(2))                                              \
+        addjx_rr(W(XD), W(X1))                                              \
+        shljx_ri(W(X1), IB(2))                                              \
+        addjx_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
+        addjx_ld(W(XD), Mebp, inf_GPC05_64) /* back to biased-127 */        \
+        andjx_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
+        annjx_rr(W(X2), W(XS))   /* original sign */                        \
+        orrjx_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
+
+#define cbsjs_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        movjx_rr(W(X1), W(XG))                                              \
+        muljs_rr(W(X1), W(XG))                                              \
+        movjx_rr(W(X2), W(X1))                                              \
+        muljs_ld(W(X1), Mebp, inf_GPC03_64)                                 \
+        rcejs_rr(W(X1), W(X1))                                              \
+        muljs_rr(W(X2), W(XG))                                              \
+        subjs_rr(W(X2), W(XS))                                              \
+        muljs_rr(W(X2), W(X1))                                              \
+        subjs_rr(W(XG), W(X2))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if   RT_SIMD_COMPAT_RCP == 0 || RT_SIMD_COMPAT_RCP == 2
+
+#define rcpjs_rr(XD, XS) /* destroys XS */                                  \
+        rcejs_rr(W(XD), W(XS))                                              \
+        rcsjs_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
+
+#elif RT_SIMD_COMPAT_RCP == 1
+
+#define rcpjs_rr(XD, XS) /* destroys XS */                                  \
+        movjx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divjs_rr(W(XD), W(XS))
+
+#define rcejs_rr(XD, XS)                                                    \
+        movjx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movjx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divjs_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rcsjs_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if   RT_SIMD_COMPAT_RSQ == 0 || RT_SIMD_COMPAT_RSQ == 2
+
+#define rsqjs_rr(XD, XS) /* destroys XS */                                  \
+        rsejs_rr(W(XD), W(XS))                                              \
+        rssjs_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
+
+#elif RT_SIMD_COMPAT_RSQ == 1
+
+#define rsqjs_rr(XD, XS) /* destroys XS */                                  \
+        sqrjs_rr(W(XS), W(XS))                                              \
+        movjx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divjs_rr(W(XD), W(XS))
+
+#define rsejs_rr(XD, XS)                                                    \
+        sqrjs_rr(W(XD), W(XS))                                              \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movjx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divjs_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rssjs_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA == 2
+
+#define fmajs_rr(XG, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        muljs_rr(W(XS), W(XT))                                              \
+        addjs_rr(W(XG), W(XS))                                              \
+        movjx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmajs_ld(XG, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        muljs_ld(W(XS), W(MT), W(DT))                                       \
+        addjs_rr(W(XG), W(XS))                                              \
+        movjx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS == 2
+
+#define fmsjs_rr(XG, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        muljs_rr(W(XS), W(XT))                                              \
+        subjs_rr(W(XG), W(XS))                                              \
+        movjx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmsjs_ld(XG, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        muljs_ld(W(XS), W(MT), W(DT))                                       \
+        subjs_rr(W(XG), W(XS))                                              \
+        movjx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+#endif /* RT_SIMD: 512, 256, 128 */
 
 /***************** instructions for element-sized 32-bit SIMD *****************/
 
@@ -1245,6 +3403,802 @@ struct rt_SIMD_REGS
 #define cvrps_rr(XD, XS, mode)                                              \
         cvros_rr(W(XD), W(XS), mode)
 
+/***************** instructions for element-sized 32-bit SIMD **** 256-bit ****/
+
+/* mov (D = S) */
+
+#define movfx_rr(XD, XS)                                                    \
+        movcx_rr(W(XD), W(XS))
+
+#define movfx_ld(XD, MS, DS)                                                \
+        movcx_ld(W(XD), W(MS), W(DS))
+
+#define movfx_st(XS, MD, DD)                                                \
+        movcx_st(W(XS), W(MD), W(DD))
+
+/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+
+#define mmvfx_ld(XG, MS, DS)                                                \
+        mmvcx_ld(W(XG), W(MS), W(DS))
+
+#define mmvfx_st(XS, MG, DG)                                                \
+        mmvcx_st(W(XS), W(MG), W(DG))
+
+/* and (G = G & S) */
+
+#define andfx_rr(XG, XS)                                                    \
+        andcx_rr(W(XG), W(XS))
+
+#define andfx_ld(XG, MS, DS)                                                \
+        andcx_ld(W(XG), W(MS), W(DS))
+
+/* ann (G = ~G & S) */
+
+#define annfx_rr(XG, XS)                                                    \
+        anncx_rr(W(XG), W(XS))
+
+#define annfx_ld(XG, MS, DS)                                                \
+        anncx_ld(W(XG), W(MS), W(DS))
+
+/* orr (G = G | S) */
+
+#define orrfx_rr(XG, XS)                                                    \
+        orrcx_rr(W(XG), W(XS))
+
+#define orrfx_ld(XG, MS, DS)                                                \
+        orrcx_ld(W(XG), W(MS), W(DS))
+
+/* orn (G = ~G | S) */
+
+#define ornfx_rr(XG, XS)                                                    \
+        orncx_rr(W(XG), W(XS))
+
+#define ornfx_ld(XG, MS, DS)                                                \
+        orncx_ld(W(XG), W(MS), W(DS))
+
+/* xor (G = G ^ S) */
+
+#define xorfx_rr(XG, XS)                                                    \
+        xorcx_rr(W(XG), W(XS))
+
+#define xorfx_ld(XG, MS, DS)                                                \
+        xorcx_ld(W(XG), W(MS), W(DS))
+
+/* not (G = ~G) */
+
+#define notfx_rx(XG)                                                        \
+        notcx_rx(W(XG))
+
+/* neg (G = -G) */
+
+#define negfs_rx(XG)                                                        \
+        negcs_rx(W(XG))
+
+/* add (G = G + S) */
+
+#define addfs_rr(XG, XS)                                                    \
+        addcs_rr(W(XG), W(XS))
+
+#define addfs_ld(XG, MS, DS)                                                \
+        addcs_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define subfs_rr(XG, XS)                                                    \
+        subcs_rr(W(XG), W(XS))
+
+#define subfs_ld(XG, MS, DS)                                                \
+        subcs_ld(W(XG), W(MS), W(DS))
+
+/* mul (G = G * S) */
+
+#define mulfs_rr(XG, XS)                                                    \
+        mulcs_rr(W(XG), W(XS))
+
+#define mulfs_ld(XG, MS, DS)                                                \
+        mulcs_ld(W(XG), W(MS), W(DS))
+
+/* div (G = G / S) */
+
+#define divfs_rr(XG, XS)                                                    \
+        divcs_rr(W(XG), W(XS))
+
+#define divfs_ld(XG, MS, DS)                                                \
+        divcs_ld(W(XG), W(MS), W(DS))
+
+/* sqr (D = sqrt S) */
+
+#define sqrfs_rr(XD, XS)                                                    \
+        sqrcs_rr(W(XD), W(XS))
+
+#define sqrfs_ld(XD, MS, DS)                                                \
+        sqrcs_ld(W(XD), W(MS), W(DS))
+
+/* cbr (D = cbrt S) */
+
+#define cbrfs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbrcs_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbefs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbecs_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbsfs_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbscs_rr(W(XG), W(X1), W(X2), W(XS))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rcpfs_rr(XD, XS) /* destroys XS */                                  \
+        rcpcs_rr(W(XD), W(XS))
+
+#define rcefs_rr(XD, XS)                                                    \
+        rcecs_rr(W(XD), W(XS))
+
+#define rcsfs_rr(XG, XS) /* destroys XS */                                  \
+        rcscs_rr(W(XG), W(XS))
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rsqfs_rr(XD, XS) /* destroys XS */                                  \
+        rsqcs_rr(W(XD), W(XS))
+
+#define rsefs_rr(XD, XS)                                                    \
+        rsecs_rr(W(XD), W(XS))
+
+#define rssfs_rr(XG, XS) /* destroys XS */                                  \
+        rsscs_rr(W(XG), W(XS))
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#define fmafs_rr(XG, XS, XT)                                                \
+        fmacs_rr(W(XG), W(XS), W(XT))
+
+#define fmafs_ld(XG, XS, MT, DT)                                            \
+        fmacs_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsfs_rr(XG, XS, XT)                                                \
+        fmscs_rr(W(XG), W(XS), W(XT))
+
+#define fmsfs_ld(XG, XS, MT, DT)                                            \
+        fmscs_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S) */
+
+#define minfs_rr(XG, XS)                                                    \
+        mincs_rr(W(XG), W(XS))
+
+#define minfs_ld(XG, MS, DS)                                                \
+        mincs_ld(W(XG), W(MS), W(DS))
+
+/* max (G = G > S ? G : S) */
+
+#define maxfs_rr(XG, XS)                                                    \
+        maxcs_rr(W(XG), W(XS))
+
+#define maxfs_ld(XG, MS, DS)                                                \
+        maxcs_ld(W(XG), W(MS), W(DS))
+
+/* cmp (G = G ? S) */
+
+#define ceqfs_rr(XG, XS)                                                    \
+        ceqcs_rr(W(XG), W(XS))
+
+#define ceqfs_ld(XG, MS, DS)                                                \
+        ceqcs_ld(W(XG), W(MS), W(DS))
+
+#define cnefs_rr(XG, XS)                                                    \
+        cnecs_rr(W(XG), W(XS))
+
+#define cnefs_ld(XG, MS, DS)                                                \
+        cnecs_ld(W(XG), W(MS), W(DS))
+
+#define cltfs_rr(XG, XS)                                                    \
+        cltcs_rr(W(XG), W(XS))
+
+#define cltfs_ld(XG, MS, DS)                                                \
+        cltcs_ld(W(XG), W(MS), W(DS))
+
+#define clefs_rr(XG, XS)                                                    \
+        clecs_rr(W(XG), W(XS))
+
+#define clefs_ld(XG, MS, DS)                                                \
+        clecs_ld(W(XG), W(MS), W(DS))
+
+#define cgtfs_rr(XG, XS)                                                    \
+        cgtcs_rr(W(XG), W(XS))
+
+#define cgtfs_ld(XG, MS, DS)                                                \
+        cgtcs_ld(W(XG), W(MS), W(DS))
+
+#define cgefs_rr(XG, XS)                                                    \
+        cgecs_rr(W(XG), W(XS))
+
+#define cgefs_ld(XG, MS, DS)                                                \
+        cgecs_ld(W(XG), W(MS), W(DS))
+
+/* cvz (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnzfs_rr(XD, XS)     /* round towards zero */                       \
+        rnzcs_rr(W(XD), W(XS))
+
+#define rnzfs_ld(XD, MS, DS) /* round towards zero */                       \
+        rnzcs_ld(W(XD), W(MS), W(DS))
+
+#define cvzfs_rr(XD, XS)     /* round towards zero */                       \
+        cvzcs_rr(W(XD), W(XS))
+
+#define cvzfs_ld(XD, MS, DS) /* round towards zero */                       \
+        cvzcs_ld(W(XD), W(MS), W(DS))
+
+/* cvp (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnpfs_rr(XD, XS)     /* round towards +inf */                       \
+        rnpcs_rr(W(XD), W(XS))
+
+#define rnpfs_ld(XD, MS, DS) /* round towards +inf */                       \
+        rnpcs_ld(W(XD), W(MS), W(DS))
+
+#define cvpfs_rr(XD, XS)     /* round towards +inf */                       \
+        cvpcs_rr(W(XD), W(XS))
+
+#define cvpfs_ld(XD, MS, DS) /* round towards +inf */                       \
+        cvpcs_ld(W(XD), W(MS), W(DS))
+
+/* cvm (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnmfs_rr(XD, XS)     /* round towards -inf */                       \
+        rnmcs_rr(W(XD), W(XS))
+
+#define rnmfs_ld(XD, MS, DS) /* round towards -inf */                       \
+        rnmcs_ld(W(XD), W(MS), W(DS))
+
+#define cvmfs_rr(XD, XS)     /* round towards -inf */                       \
+        cvmcs_rr(W(XD), W(XS))
+
+#define cvmfs_ld(XD, MS, DS) /* round towards -inf */                       \
+        cvmcs_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnnfs_rr(XD, XS)     /* round towards near */                       \
+        rnncs_rr(W(XD), W(XS))
+
+#define rnnfs_ld(XD, MS, DS) /* round towards near */                       \
+        rnncs_ld(W(XD), W(MS), W(DS))
+
+#define cvnfs_rr(XD, XS)     /* round towards near */                       \
+        cvncs_rr(W(XD), W(XS))
+
+#define cvnfs_ld(XD, MS, DS) /* round towards near */                       \
+        cvncs_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnfn_rr(XD, XS)     /* round towards near */                       \
+        cvncn_rr(W(XD), W(XS))
+
+#define cvnfn_ld(XD, MS, DS) /* round towards near */                       \
+        cvncn_ld(W(XD), W(MS), W(DS))
+
+/* add (G = G + S) */
+
+#define addfx_rr(XG, XS)                                                    \
+        addcx_rr(W(XG), W(XS))
+
+#define addfx_ld(XG, MS, DS)                                                \
+        addcx_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define subfx_rr(XG, XS)                                                    \
+        subcx_rr(W(XG), W(XS))
+
+#define subfx_ld(XG, MS, DS)                                                \
+        subcx_ld(W(XG), W(MS), W(DS))
+
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shlfx_ri(XG, IS)                                                    \
+        shlcx_ri(W(XG), W(IS))
+
+#define shlfx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shlcx_ld(W(XG), W(MS), W(DS))
+
+#define svlfx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlcx_rr(W(XG), W(XS))
+
+#define svlfx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlcx_ld(W(XG), W(MS), W(DS))
+
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shrfx_ri(XG, IS)                                                    \
+        shrcx_ri(W(XG), W(IS))
+
+#define shrfx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shrcx_ld(W(XG), W(MS), W(DS))
+
+#define svrfx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrcx_rr(W(XG), W(XS))
+
+#define svrfx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrcx_ld(W(XG), W(MS), W(DS))
+
+
+#define shrfn_ri(XG, IS)                                                    \
+        shrcn_ri(W(XG), W(IS))
+
+#define shrfn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shrcn_ld(W(XG), W(MS), W(DS))
+
+#define svrfn_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrcn_rr(W(XG), W(XS))
+
+#define svrfn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrcn_ld(W(XG), W(MS), W(DS))
+
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rndfs_rr(XD, XS)                                                    \
+        rndcs_rr(W(XD), W(XS))
+
+#define rndfs_ld(XD, MS, DS)                                                \
+        rndcs_ld(W(XD), W(MS), W(DS))
+
+#define cvtfs_rr(XD, XS)                                                    \
+        cvtcs_rr(W(XD), W(XS))
+
+#define cvtfs_ld(XD, MS, DS)                                                \
+        cvtcs_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+
+#define cvtfn_rr(XD, XS)                                                    \
+        cvtcn_rr(W(XD), W(XS))
+
+#define cvtfn_ld(XD, MS, DS)                                                \
+        cvtcn_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnrfs_rr(XD, XS, mode)                                              \
+        rnrcs_rr(W(XD), W(XS), mode)
+
+#define cvrfs_rr(XD, XS, mode)                                              \
+        cvrcs_rr(W(XD), W(XS), mode)
+
+/***************** instructions for element-sized 32-bit SIMD **** 128-bit ****/
+
+/* mov (D = S) */
+
+#define movlx_rr(XD, XS)                                                    \
+        movix_rr(W(XD), W(XS))
+
+#define movlx_ld(XD, MS, DS)                                                \
+        movix_ld(W(XD), W(MS), W(DS))
+
+#define movlx_st(XS, MD, DD)                                                \
+        movix_st(W(XS), W(MD), W(DD))
+
+/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+
+#define mmvlx_ld(XG, MS, DS)                                                \
+        mmvix_ld(W(XG), W(MS), W(DS))
+
+#define mmvlx_st(XS, MG, DG)                                                \
+        mmvix_st(W(XS), W(MG), W(DG))
+
+/* and (G = G & S) */
+
+#define andlx_rr(XG, XS)                                                    \
+        andix_rr(W(XG), W(XS))
+
+#define andlx_ld(XG, MS, DS)                                                \
+        andix_ld(W(XG), W(MS), W(DS))
+
+/* ann (G = ~G & S) */
+
+#define annlx_rr(XG, XS)                                                    \
+        annix_rr(W(XG), W(XS))
+
+#define annlx_ld(XG, MS, DS)                                                \
+        annix_ld(W(XG), W(MS), W(DS))
+
+/* orr (G = G | S) */
+
+#define orrlx_rr(XG, XS)                                                    \
+        orrix_rr(W(XG), W(XS))
+
+#define orrlx_ld(XG, MS, DS)                                                \
+        orrix_ld(W(XG), W(MS), W(DS))
+
+/* orn (G = ~G | S) */
+
+#define ornlx_rr(XG, XS)                                                    \
+        ornix_rr(W(XG), W(XS))
+
+#define ornlx_ld(XG, MS, DS)                                                \
+        ornix_ld(W(XG), W(MS), W(DS))
+
+/* xor (G = G ^ S) */
+
+#define xorlx_rr(XG, XS)                                                    \
+        xorix_rr(W(XG), W(XS))
+
+#define xorlx_ld(XG, MS, DS)                                                \
+        xorix_ld(W(XG), W(MS), W(DS))
+
+/* not (G = ~G) */
+
+#define notlx_rx(XG)                                                        \
+        notix_rx(W(XG))
+
+/* neg (G = -G) */
+
+#define negls_rx(XG)                                                        \
+        negis_rx(W(XG))
+
+/* add (G = G + S) */
+
+#define addls_rr(XG, XS)                                                    \
+        addis_rr(W(XG), W(XS))
+
+#define addls_ld(XG, MS, DS)                                                \
+        addis_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define subls_rr(XG, XS)                                                    \
+        subis_rr(W(XG), W(XS))
+
+#define subls_ld(XG, MS, DS)                                                \
+        subis_ld(W(XG), W(MS), W(DS))
+
+/* mul (G = G * S) */
+
+#define mulls_rr(XG, XS)                                                    \
+        mulis_rr(W(XG), W(XS))
+
+#define mulls_ld(XG, MS, DS)                                                \
+        mulis_ld(W(XG), W(MS), W(DS))
+
+/* div (G = G / S) */
+
+#define divls_rr(XG, XS)                                                    \
+        divis_rr(W(XG), W(XS))
+
+#define divls_ld(XG, MS, DS)                                                \
+        divis_ld(W(XG), W(MS), W(DS))
+
+/* sqr (D = sqrt S) */
+
+#define sqrls_rr(XD, XS)                                                    \
+        sqris_rr(W(XD), W(XS))
+
+#define sqrls_ld(XD, MS, DS)                                                \
+        sqris_ld(W(XD), W(MS), W(DS))
+
+/* cbr (D = cbrt S) */
+
+#define cbrls_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbris_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbels_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbeis_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbsls_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbsis_rr(W(XG), W(X1), W(X2), W(XS))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rcpls_rr(XD, XS) /* destroys XS */                                  \
+        rcpis_rr(W(XD), W(XS))
+
+#define rcels_rr(XD, XS)                                                    \
+        rceis_rr(W(XD), W(XS))
+
+#define rcsls_rr(XG, XS) /* destroys XS */                                  \
+        rcsis_rr(W(XG), W(XS))
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rsqls_rr(XD, XS) /* destroys XS */                                  \
+        rsqis_rr(W(XD), W(XS))
+
+#define rsels_rr(XD, XS)                                                    \
+        rseis_rr(W(XD), W(XS))
+
+#define rssls_rr(XG, XS) /* destroys XS */                                  \
+        rssis_rr(W(XG), W(XS))
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#define fmals_rr(XG, XS, XT)                                                \
+        fmais_rr(W(XG), W(XS), W(XT))
+
+#define fmals_ld(XG, XS, MT, DT)                                            \
+        fmais_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsls_rr(XG, XS, XT)                                                \
+        fmsis_rr(W(XG), W(XS), W(XT))
+
+#define fmsls_ld(XG, XS, MT, DT)                                            \
+        fmsis_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S) */
+
+#define minls_rr(XG, XS)                                                    \
+        minis_rr(W(XG), W(XS))
+
+#define minls_ld(XG, MS, DS)                                                \
+        minis_ld(W(XG), W(MS), W(DS))
+
+/* max (G = G > S ? G : S) */
+
+#define maxls_rr(XG, XS)                                                    \
+        maxis_rr(W(XG), W(XS))
+
+#define maxls_ld(XG, MS, DS)                                                \
+        maxis_ld(W(XG), W(MS), W(DS))
+
+/* cmp (G = G ? S) */
+
+#define ceqls_rr(XG, XS)                                                    \
+        ceqis_rr(W(XG), W(XS))
+
+#define ceqls_ld(XG, MS, DS)                                                \
+        ceqis_ld(W(XG), W(MS), W(DS))
+
+#define cnels_rr(XG, XS)                                                    \
+        cneis_rr(W(XG), W(XS))
+
+#define cnels_ld(XG, MS, DS)                                                \
+        cneis_ld(W(XG), W(MS), W(DS))
+
+#define cltls_rr(XG, XS)                                                    \
+        cltis_rr(W(XG), W(XS))
+
+#define cltls_ld(XG, MS, DS)                                                \
+        cltis_ld(W(XG), W(MS), W(DS))
+
+#define clels_rr(XG, XS)                                                    \
+        cleis_rr(W(XG), W(XS))
+
+#define clels_ld(XG, MS, DS)                                                \
+        cleis_ld(W(XG), W(MS), W(DS))
+
+#define cgtls_rr(XG, XS)                                                    \
+        cgtis_rr(W(XG), W(XS))
+
+#define cgtls_ld(XG, MS, DS)                                                \
+        cgtis_ld(W(XG), W(MS), W(DS))
+
+#define cgels_rr(XG, XS)                                                    \
+        cgeis_rr(W(XG), W(XS))
+
+#define cgels_ld(XG, MS, DS)                                                \
+        cgeis_ld(W(XG), W(MS), W(DS))
+
+/* cvz (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnzls_rr(XD, XS)     /* round towards zero */                       \
+        rnzis_rr(W(XD), W(XS))
+
+#define rnzls_ld(XD, MS, DS) /* round towards zero */                       \
+        rnzis_ld(W(XD), W(MS), W(DS))
+
+#define cvzls_rr(XD, XS)     /* round towards zero */                       \
+        cvzis_rr(W(XD), W(XS))
+
+#define cvzls_ld(XD, MS, DS) /* round towards zero */                       \
+        cvzis_ld(W(XD), W(MS), W(DS))
+
+/* cvp (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnpls_rr(XD, XS)     /* round towards +inf */                       \
+        rnpis_rr(W(XD), W(XS))
+
+#define rnpls_ld(XD, MS, DS) /* round towards +inf */                       \
+        rnpis_ld(W(XD), W(MS), W(DS))
+
+#define cvpls_rr(XD, XS)     /* round towards +inf */                       \
+        cvpis_rr(W(XD), W(XS))
+
+#define cvpls_ld(XD, MS, DS) /* round towards +inf */                       \
+        cvpis_ld(W(XD), W(MS), W(DS))
+
+/* cvm (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnmls_rr(XD, XS)     /* round towards -inf */                       \
+        rnmis_rr(W(XD), W(XS))
+
+#define rnmls_ld(XD, MS, DS) /* round towards -inf */                       \
+        rnmis_ld(W(XD), W(MS), W(DS))
+
+#define cvmls_rr(XD, XS)     /* round towards -inf */                       \
+        cvmis_rr(W(XD), W(XS))
+
+#define cvmls_ld(XD, MS, DS) /* round towards -inf */                       \
+        cvmis_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnnls_rr(XD, XS)     /* round towards near */                       \
+        rnnis_rr(W(XD), W(XS))
+
+#define rnnls_ld(XD, MS, DS) /* round towards near */                       \
+        rnnis_ld(W(XD), W(MS), W(DS))
+
+#define cvnls_rr(XD, XS)     /* round towards near */                       \
+        cvnis_rr(W(XD), W(XS))
+
+#define cvnls_ld(XD, MS, DS) /* round towards near */                       \
+        cvnis_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnln_rr(XD, XS)     /* round towards near */                       \
+        cvnin_rr(W(XD), W(XS))
+
+#define cvnln_ld(XD, MS, DS) /* round towards near */                       \
+        cvnin_ld(W(XD), W(MS), W(DS))
+
+/* add (G = G + S) */
+
+#define addlx_rr(XG, XS)                                                    \
+        addix_rr(W(XG), W(XS))
+
+#define addlx_ld(XG, MS, DS)                                                \
+        addix_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define sublx_rr(XG, XS)                                                    \
+        subix_rr(W(XG), W(XS))
+
+#define sublx_ld(XG, MS, DS)                                                \
+        subix_ld(W(XG), W(MS), W(DS))
+
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shllx_ri(XG, IS)                                                    \
+        shlix_ri(W(XG), W(IS))
+
+#define shllx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shlix_ld(W(XG), W(MS), W(DS))
+
+#define svllx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlix_rr(W(XG), W(XS))
+
+#define svllx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlix_ld(W(XG), W(MS), W(DS))
+
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shrlx_ri(XG, IS)                                                    \
+        shrix_ri(W(XG), W(IS))
+
+#define shrlx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shrix_ld(W(XG), W(MS), W(DS))
+
+#define svrlx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrix_rr(W(XG), W(XS))
+
+#define svrlx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrix_ld(W(XG), W(MS), W(DS))
+
+
+#define shrln_ri(XG, IS)                                                    \
+        shrin_ri(W(XG), W(IS))
+
+#define shrln_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shrin_ld(W(XG), W(MS), W(DS))
+
+#define svrln_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrin_rr(W(XG), W(XS))
+
+#define svrln_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrin_ld(W(XG), W(MS), W(DS))
+
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rndls_rr(XD, XS)                                                    \
+        rndis_rr(W(XD), W(XS))
+
+#define rndls_ld(XD, MS, DS)                                                \
+        rndis_ld(W(XD), W(MS), W(DS))
+
+#define cvtls_rr(XD, XS)                                                    \
+        cvtis_rr(W(XD), W(XS))
+
+#define cvtls_ld(XD, MS, DS)                                                \
+        cvtis_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+
+#define cvtln_rr(XD, XS)                                                    \
+        cvtin_rr(W(XD), W(XS))
+
+#define cvtln_ld(XD, MS, DS)                                                \
+        cvtin_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnrls_rr(XD, XS, mode)                                              \
+        rnris_rr(W(XD), W(XS), mode)
+
+#define cvrls_rr(XD, XS, mode)                                              \
+        cvris_rr(W(XD), W(XS), mode)
+
 /***************** instructions for element-sized 64-bit SIMD *****************/
 
 #elif RT_ELEMENT == 64
@@ -1645,7 +4599,805 @@ struct rt_SIMD_REGS
 #define cvrps_rr(XD, XS, mode)                                              \
         cvrqs_rr(W(XD), W(XS), mode)
 
+/***************** instructions for element-sized 64-bit SIMD **** 256-bit ****/
+
+/* mov (D = S) */
+
+#define movfx_rr(XD, XS)                                                    \
+        movdx_rr(W(XD), W(XS))
+
+#define movfx_ld(XD, MS, DS)                                                \
+        movdx_ld(W(XD), W(MS), W(DS))
+
+#define movfx_st(XS, MD, DD)                                                \
+        movdx_st(W(XS), W(MD), W(DD))
+
+/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+
+#define mmvfx_ld(XG, MS, DS)                                                \
+        mmvdx_ld(W(XG), W(MS), W(DS))
+
+#define mmvfx_st(XS, MG, DG)                                                \
+        mmvdx_st(W(XS), W(MG), W(DG))
+
+/* and (G = G & S) */
+
+#define andfx_rr(XG, XS)                                                    \
+        anddx_rr(W(XG), W(XS))
+
+#define andfx_ld(XG, MS, DS)                                                \
+        anddx_ld(W(XG), W(MS), W(DS))
+
+/* ann (G = ~G & S) */
+
+#define annfx_rr(XG, XS)                                                    \
+        anndx_rr(W(XG), W(XS))
+
+#define annfx_ld(XG, MS, DS)                                                \
+        anndx_ld(W(XG), W(MS), W(DS))
+
+/* orr (G = G | S) */
+
+#define orrfx_rr(XG, XS)                                                    \
+        orrdx_rr(W(XG), W(XS))
+
+#define orrfx_ld(XG, MS, DS)                                                \
+        orrdx_ld(W(XG), W(MS), W(DS))
+
+/* orn (G = ~G | S) */
+
+#define ornfx_rr(XG, XS)                                                    \
+        orndx_rr(W(XG), W(XS))
+
+#define ornfx_ld(XG, MS, DS)                                                \
+        orndx_ld(W(XG), W(MS), W(DS))
+
+/* xor (G = G ^ S) */
+
+#define xorfx_rr(XG, XS)                                                    \
+        xordx_rr(W(XG), W(XS))
+
+#define xorfx_ld(XG, MS, DS)                                                \
+        xordx_ld(W(XG), W(MS), W(DS))
+
+/* not (G = ~G) */
+
+#define notfx_rx(XG)                                                        \
+        notdx_rx(W(XG))
+
+/* neg (G = -G) */
+
+#define negfs_rx(XG)                                                        \
+        negds_rx(W(XG))
+
+/* add (G = G + S) */
+
+#define addfs_rr(XG, XS)                                                    \
+        addds_rr(W(XG), W(XS))
+
+#define addfs_ld(XG, MS, DS)                                                \
+        addds_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define subfs_rr(XG, XS)                                                    \
+        subds_rr(W(XG), W(XS))
+
+#define subfs_ld(XG, MS, DS)                                                \
+        subds_ld(W(XG), W(MS), W(DS))
+
+/* mul (G = G * S) */
+
+#define mulfs_rr(XG, XS)                                                    \
+        mulds_rr(W(XG), W(XS))
+
+#define mulfs_ld(XG, MS, DS)                                                \
+        mulds_ld(W(XG), W(MS), W(DS))
+
+/* div (G = G / S) */
+
+#define divfs_rr(XG, XS)                                                    \
+        divds_rr(W(XG), W(XS))
+
+#define divfs_ld(XG, MS, DS)                                                \
+        divds_ld(W(XG), W(MS), W(DS))
+
+/* sqr (D = sqrt S) */
+
+#define sqrfs_rr(XD, XS)                                                    \
+        sqrds_rr(W(XD), W(XS))
+
+#define sqrfs_ld(XD, MS, DS)                                                \
+        sqrds_ld(W(XD), W(MS), W(DS))
+
+/* cbr (D = cbrt S) */
+
+#define cbrfs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbrds_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbefs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbeds_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbsfs_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbsds_rr(W(XG), W(X1), W(X2), W(XS))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rcpfs_rr(XD, XS) /* destroys XS */                                  \
+        rcpds_rr(W(XD), W(XS))
+
+#define rcefs_rr(XD, XS)                                                    \
+        rceds_rr(W(XD), W(XS))
+
+#define rcsfs_rr(XG, XS) /* destroys XS */                                  \
+        rcsds_rr(W(XG), W(XS))
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rsqfs_rr(XD, XS) /* destroys XS */                                  \
+        rsqds_rr(W(XD), W(XS))
+
+#define rsefs_rr(XD, XS)                                                    \
+        rseds_rr(W(XD), W(XS))
+
+#define rssfs_rr(XG, XS) /* destroys XS */                                  \
+        rssds_rr(W(XG), W(XS))
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#define fmafs_rr(XG, XS, XT)                                                \
+        fmads_rr(W(XG), W(XS), W(XT))
+
+#define fmafs_ld(XG, XS, MT, DT)                                            \
+        fmads_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsfs_rr(XG, XS, XT)                                                \
+        fmsds_rr(W(XG), W(XS), W(XT))
+
+#define fmsfs_ld(XG, XS, MT, DT)                                            \
+        fmsds_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S) */
+
+#define minfs_rr(XG, XS)                                                    \
+        minds_rr(W(XG), W(XS))
+
+#define minfs_ld(XG, MS, DS)                                                \
+        minds_ld(W(XG), W(MS), W(DS))
+
+/* max (G = G > S ? G : S) */
+
+#define maxfs_rr(XG, XS)                                                    \
+        maxds_rr(W(XG), W(XS))
+
+#define maxfs_ld(XG, MS, DS)                                                \
+        maxds_ld(W(XG), W(MS), W(DS))
+
+/* cmp (G = G ? S) */
+
+#define ceqfs_rr(XG, XS)                                                    \
+        ceqds_rr(W(XG), W(XS))
+
+#define ceqfs_ld(XG, MS, DS)                                                \
+        ceqds_ld(W(XG), W(MS), W(DS))
+
+#define cnefs_rr(XG, XS)                                                    \
+        cneds_rr(W(XG), W(XS))
+
+#define cnefs_ld(XG, MS, DS)                                                \
+        cneds_ld(W(XG), W(MS), W(DS))
+
+#define cltfs_rr(XG, XS)                                                    \
+        cltds_rr(W(XG), W(XS))
+
+#define cltfs_ld(XG, MS, DS)                                                \
+        cltds_ld(W(XG), W(MS), W(DS))
+
+#define clefs_rr(XG, XS)                                                    \
+        cleds_rr(W(XG), W(XS))
+
+#define clefs_ld(XG, MS, DS)                                                \
+        cleds_ld(W(XG), W(MS), W(DS))
+
+#define cgtfs_rr(XG, XS)                                                    \
+        cgtds_rr(W(XG), W(XS))
+
+#define cgtfs_ld(XG, MS, DS)                                                \
+        cgtds_ld(W(XG), W(MS), W(DS))
+
+#define cgefs_rr(XG, XS)                                                    \
+        cgeds_rr(W(XG), W(XS))
+
+#define cgefs_ld(XG, MS, DS)                                                \
+        cgeds_ld(W(XG), W(MS), W(DS))
+
+/* cvz (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnzfs_rr(XD, XS)     /* round towards zero */                       \
+        rnzds_rr(W(XD), W(XS))
+
+#define rnzfs_ld(XD, MS, DS) /* round towards zero */                       \
+        rnzds_ld(W(XD), W(MS), W(DS))
+
+#define cvzfs_rr(XD, XS)     /* round towards zero */                       \
+        cvzds_rr(W(XD), W(XS))
+
+#define cvzfs_ld(XD, MS, DS) /* round towards zero */                       \
+        cvzds_ld(W(XD), W(MS), W(DS))
+
+/* cvp (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnpfs_rr(XD, XS)     /* round towards +inf */                       \
+        rnpds_rr(W(XD), W(XS))
+
+#define rnpfs_ld(XD, MS, DS) /* round towards +inf */                       \
+        rnpds_ld(W(XD), W(MS), W(DS))
+
+#define cvpfs_rr(XD, XS)     /* round towards +inf */                       \
+        cvpds_rr(W(XD), W(XS))
+
+#define cvpfs_ld(XD, MS, DS) /* round towards +inf */                       \
+        cvpds_ld(W(XD), W(MS), W(DS))
+
+/* cvm (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnmfs_rr(XD, XS)     /* round towards -inf */                       \
+        rnmds_rr(W(XD), W(XS))
+
+#define rnmfs_ld(XD, MS, DS) /* round towards -inf */                       \
+        rnmds_ld(W(XD), W(MS), W(DS))
+
+#define cvmfs_rr(XD, XS)     /* round towards -inf */                       \
+        cvmds_rr(W(XD), W(XS))
+
+#define cvmfs_ld(XD, MS, DS) /* round towards -inf */                       \
+        cvmds_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnnfs_rr(XD, XS)     /* round towards near */                       \
+        rnnds_rr(W(XD), W(XS))
+
+#define rnnfs_ld(XD, MS, DS) /* round towards near */                       \
+        rnnds_ld(W(XD), W(MS), W(DS))
+
+#define cvnfs_rr(XD, XS)     /* round towards near */                       \
+        cvnds_rr(W(XD), W(XS))
+
+#define cvnfs_ld(XD, MS, DS) /* round towards near */                       \
+        cvnds_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnfn_rr(XD, XS)     /* round towards near */                       \
+        cvndn_rr(W(XD), W(XS))
+
+#define cvnfn_ld(XD, MS, DS) /* round towards near */                       \
+        cvndn_ld(W(XD), W(MS), W(DS))
+
+/* add (G = G + S) */
+
+#define addfx_rr(XG, XS)                                                    \
+        adddx_rr(W(XG), W(XS))
+
+#define addfx_ld(XG, MS, DS)                                                \
+        adddx_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define subfx_rr(XG, XS)                                                    \
+        subdx_rr(W(XG), W(XS))
+
+#define subfx_ld(XG, MS, DS)                                                \
+        subdx_ld(W(XG), W(MS), W(DS))
+
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shlfx_ri(XG, IS)                                                    \
+        shldx_ri(W(XG), W(IS))
+
+#define shlfx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shldx_ld(W(XG), W(MS), W(DS))
+
+#define svlfx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svldx_rr(W(XG), W(XS))
+
+#define svlfx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svldx_ld(W(XG), W(MS), W(DS))
+
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shrfx_ri(XG, IS)                                                    \
+        shrdx_ri(W(XG), W(IS))
+
+#define shrfx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shrdx_ld(W(XG), W(MS), W(DS))
+
+#define svrfx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrdx_rr(W(XG), W(XS))
+
+#define svrfx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrdx_ld(W(XG), W(MS), W(DS))
+
+
+#define shrfn_ri(XG, IS)                                                    \
+        shrdn_ri(W(XG), W(IS))
+
+#define shrfn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shrdn_ld(W(XG), W(MS), W(DS))
+
+#define svrfn_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrdn_rr(W(XG), W(XS))
+
+#define svrfn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrdn_ld(W(XG), W(MS), W(DS))
+
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rndfs_rr(XD, XS)                                                    \
+        rndds_rr(W(XD), W(XS))
+
+#define rndfs_ld(XD, MS, DS)                                                \
+        rndds_ld(W(XD), W(MS), W(DS))
+
+#define cvtfs_rr(XD, XS)                                                    \
+        cvtds_rr(W(XD), W(XS))
+
+#define cvtfs_ld(XD, MS, DS)                                                \
+        cvtds_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+
+#define cvtfn_rr(XD, XS)                                                    \
+        cvtdn_rr(W(XD), W(XS))
+
+#define cvtfn_ld(XD, MS, DS)                                                \
+        cvtdn_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrfs_rr(XD, XS, mode)                                              \
+        rnrds_rr(W(XD), W(XS), mode)
+
+#define cvrfs_rr(XD, XS, mode)                                              \
+        cvrds_rr(W(XD), W(XS), mode)
+
+/***************** instructions for element-sized 64-bit SIMD **** 128-bit ****/
+
+/* mov (D = S) */
+
+#define movlx_rr(XD, XS)                                                    \
+        movjx_rr(W(XD), W(XS))
+
+#define movlx_ld(XD, MS, DS)                                                \
+        movjx_ld(W(XD), W(MS), W(DS))
+
+#define movlx_st(XS, MD, DD)                                                \
+        movjx_st(W(XS), W(MD), W(DD))
+
+/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+
+#define mmvlx_ld(XG, MS, DS)                                                \
+        mmvjx_ld(W(XG), W(MS), W(DS))
+
+#define mmvlx_st(XS, MG, DG)                                                \
+        mmvjx_st(W(XS), W(MG), W(DG))
+
+/* and (G = G & S) */
+
+#define andlx_rr(XG, XS)                                                    \
+        andjx_rr(W(XG), W(XS))
+
+#define andlx_ld(XG, MS, DS)                                                \
+        andjx_ld(W(XG), W(MS), W(DS))
+
+/* ann (G = ~G & S) */
+
+#define annlx_rr(XG, XS)                                                    \
+        annjx_rr(W(XG), W(XS))
+
+#define annlx_ld(XG, MS, DS)                                                \
+        annjx_ld(W(XG), W(MS), W(DS))
+
+/* orr (G = G | S) */
+
+#define orrlx_rr(XG, XS)                                                    \
+        orrjx_rr(W(XG), W(XS))
+
+#define orrlx_ld(XG, MS, DS)                                                \
+        orrjx_ld(W(XG), W(MS), W(DS))
+
+/* orn (G = ~G | S) */
+
+#define ornlx_rr(XG, XS)                                                    \
+        ornjx_rr(W(XG), W(XS))
+
+#define ornlx_ld(XG, MS, DS)                                                \
+        ornjx_ld(W(XG), W(MS), W(DS))
+
+/* xor (G = G ^ S) */
+
+#define xorlx_rr(XG, XS)                                                    \
+        xorjx_rr(W(XG), W(XS))
+
+#define xorlx_ld(XG, MS, DS)                                                \
+        xorjx_ld(W(XG), W(MS), W(DS))
+
+/* not (G = ~G) */
+
+#define notlx_rx(XG)                                                        \
+        notjx_rx(W(XG))
+
+/* neg (G = -G) */
+
+#define negls_rx(XG)                                                        \
+        negjs_rx(W(XG))
+
+/* add (G = G + S) */
+
+#define addls_rr(XG, XS)                                                    \
+        addjs_rr(W(XG), W(XS))
+
+#define addls_ld(XG, MS, DS)                                                \
+        addjs_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define subls_rr(XG, XS)                                                    \
+        subjs_rr(W(XG), W(XS))
+
+#define subls_ld(XG, MS, DS)                                                \
+        subjs_ld(W(XG), W(MS), W(DS))
+
+/* mul (G = G * S) */
+
+#define mulls_rr(XG, XS)                                                    \
+        muljs_rr(W(XG), W(XS))
+
+#define mulls_ld(XG, MS, DS)                                                \
+        muljs_ld(W(XG), W(MS), W(DS))
+
+/* div (G = G / S) */
+
+#define divls_rr(XG, XS)                                                    \
+        divjs_rr(W(XG), W(XS))
+
+#define divls_ld(XG, MS, DS)                                                \
+        divjs_ld(W(XG), W(MS), W(DS))
+
+/* sqr (D = sqrt S) */
+
+#define sqrls_rr(XD, XS)                                                    \
+        sqrjs_rr(W(XD), W(XS))
+
+#define sqrls_ld(XD, MS, DS)                                                \
+        sqrjs_ld(W(XD), W(MS), W(DS))
+
+/* cbr (D = cbrt S) */
+
+#define cbrls_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbrjs_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbels_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbejs_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbsls_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbsjs_rr(W(XG), W(X1), W(X2), W(XS))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rcpls_rr(XD, XS) /* destroys XS */                                  \
+        rcpjs_rr(W(XD), W(XS))
+
+#define rcels_rr(XD, XS)                                                    \
+        rcejs_rr(W(XD), W(XS))
+
+#define rcsls_rr(XG, XS) /* destroys XS */                                  \
+        rcsjs_rr(W(XG), W(XS))
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rsqls_rr(XD, XS) /* destroys XS */                                  \
+        rsqjs_rr(W(XD), W(XS))
+
+#define rsels_rr(XD, XS)                                                    \
+        rsejs_rr(W(XD), W(XS))
+
+#define rssls_rr(XG, XS) /* destroys XS */                                  \
+        rssjs_rr(W(XG), W(XS))
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#define fmals_rr(XG, XS, XT)                                                \
+        fmajs_rr(W(XG), W(XS), W(XT))
+
+#define fmals_ld(XG, XS, MT, DT)                                            \
+        fmajs_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsls_rr(XG, XS, XT)                                                \
+        fmsjs_rr(W(XG), W(XS), W(XT))
+
+#define fmsls_ld(XG, XS, MT, DT)                                            \
+        fmsjs_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S) */
+
+#define minls_rr(XG, XS)                                                    \
+        minjs_rr(W(XG), W(XS))
+
+#define minls_ld(XG, MS, DS)                                                \
+        minjs_ld(W(XG), W(MS), W(DS))
+
+/* max (G = G > S ? G : S) */
+
+#define maxls_rr(XG, XS)                                                    \
+        maxjs_rr(W(XG), W(XS))
+
+#define maxls_ld(XG, MS, DS)                                                \
+        maxjs_ld(W(XG), W(MS), W(DS))
+
+/* cmp (G = G ? S) */
+
+#define ceqls_rr(XG, XS)                                                    \
+        ceqjs_rr(W(XG), W(XS))
+
+#define ceqls_ld(XG, MS, DS)                                                \
+        ceqjs_ld(W(XG), W(MS), W(DS))
+
+#define cnels_rr(XG, XS)                                                    \
+        cnejs_rr(W(XG), W(XS))
+
+#define cnels_ld(XG, MS, DS)                                                \
+        cnejs_ld(W(XG), W(MS), W(DS))
+
+#define cltls_rr(XG, XS)                                                    \
+        cltjs_rr(W(XG), W(XS))
+
+#define cltls_ld(XG, MS, DS)                                                \
+        cltjs_ld(W(XG), W(MS), W(DS))
+
+#define clels_rr(XG, XS)                                                    \
+        clejs_rr(W(XG), W(XS))
+
+#define clels_ld(XG, MS, DS)                                                \
+        clejs_ld(W(XG), W(MS), W(DS))
+
+#define cgtls_rr(XG, XS)                                                    \
+        cgtjs_rr(W(XG), W(XS))
+
+#define cgtls_ld(XG, MS, DS)                                                \
+        cgtjs_ld(W(XG), W(MS), W(DS))
+
+#define cgels_rr(XG, XS)                                                    \
+        cgejs_rr(W(XG), W(XS))
+
+#define cgels_ld(XG, MS, DS)                                                \
+        cgejs_ld(W(XG), W(MS), W(DS))
+
+/* cvz (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnzls_rr(XD, XS)     /* round towards zero */                       \
+        rnzjs_rr(W(XD), W(XS))
+
+#define rnzls_ld(XD, MS, DS) /* round towards zero */                       \
+        rnzjs_ld(W(XD), W(MS), W(DS))
+
+#define cvzls_rr(XD, XS)     /* round towards zero */                       \
+        cvzjs_rr(W(XD), W(XS))
+
+#define cvzls_ld(XD, MS, DS) /* round towards zero */                       \
+        cvzjs_ld(W(XD), W(MS), W(DS))
+
+/* cvp (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnpls_rr(XD, XS)     /* round towards +inf */                       \
+        rnpjs_rr(W(XD), W(XS))
+
+#define rnpls_ld(XD, MS, DS) /* round towards +inf */                       \
+        rnpjs_ld(W(XD), W(MS), W(DS))
+
+#define cvpls_rr(XD, XS)     /* round towards +inf */                       \
+        cvpjs_rr(W(XD), W(XS))
+
+#define cvpls_ld(XD, MS, DS) /* round towards +inf */                       \
+        cvpjs_ld(W(XD), W(MS), W(DS))
+
+/* cvm (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnmls_rr(XD, XS)     /* round towards -inf */                       \
+        rnmjs_rr(W(XD), W(XS))
+
+#define rnmls_ld(XD, MS, DS) /* round towards -inf */                       \
+        rnmjs_ld(W(XD), W(MS), W(DS))
+
+#define cvmls_rr(XD, XS)     /* round towards -inf */                       \
+        cvmjs_rr(W(XD), W(XS))
+
+#define cvmls_ld(XD, MS, DS) /* round towards -inf */                       \
+        cvmjs_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = fp-to-signed-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnnls_rr(XD, XS)     /* round towards near */                       \
+        rnnjs_rr(W(XD), W(XS))
+
+#define rnnls_ld(XD, MS, DS) /* round towards near */                       \
+        rnnjs_ld(W(XD), W(MS), W(DS))
+
+#define cvnls_rr(XD, XS)     /* round towards near */                       \
+        cvnjs_rr(W(XD), W(XS))
+
+#define cvnls_ld(XD, MS, DS) /* round towards near */                       \
+        cvnjs_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnln_rr(XD, XS)     /* round towards near */                       \
+        cvnjn_rr(W(XD), W(XS))
+
+#define cvnln_ld(XD, MS, DS) /* round towards near */                       \
+        cvnjn_ld(W(XD), W(MS), W(DS))
+
+/* add (G = G + S) */
+
+#define addlx_rr(XG, XS)                                                    \
+        addjx_rr(W(XG), W(XS))
+
+#define addlx_ld(XG, MS, DS)                                                \
+        addjx_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define sublx_rr(XG, XS)                                                    \
+        subjx_rr(W(XG), W(XS))
+
+#define sublx_ld(XG, MS, DS)                                                \
+        subjx_ld(W(XG), W(MS), W(DS))
+
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shllx_ri(XG, IS)                                                    \
+        shljx_ri(W(XG), W(IS))
+
+#define shllx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shljx_ld(W(XG), W(MS), W(DS))
+
+#define svllx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svljx_rr(W(XG), W(XS))
+
+#define svllx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svljx_ld(W(XG), W(MS), W(DS))
+
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shrlx_ri(XG, IS)                                                    \
+        shrjx_ri(W(XG), W(IS))
+
+#define shrlx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shrjx_ld(W(XG), W(MS), W(DS))
+
+#define svrlx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrjx_rr(W(XG), W(XS))
+
+#define svrlx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrjx_ld(W(XG), W(MS), W(DS))
+
+
+#define shrln_ri(XG, IS)                                                    \
+        shrjn_ri(W(XG), W(IS))
+
+#define shrln_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        shrjn_ld(W(XG), W(MS), W(DS))
+
+#define svrln_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrjn_rr(W(XG), W(XS))
+
+#define svrln_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrjn_ld(W(XG), W(MS), W(DS))
+
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rndls_rr(XD, XS)                                                    \
+        rndjs_rr(W(XD), W(XS))
+
+#define rndls_ld(XD, MS, DS)                                                \
+        rndjs_ld(W(XD), W(MS), W(DS))
+
+#define cvtls_rr(XD, XS)                                                    \
+        cvtjs_rr(W(XD), W(XS))
+
+#define cvtls_ld(XD, MS, DS)                                                \
+        cvtjs_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+
+#define cvtln_rr(XD, XS)                                                    \
+        cvtjn_rr(W(XD), W(XS))
+
+#define cvtln_ld(XD, MS, DS)                                                \
+        cvtjn_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrls_rr(XD, XS, mode)                                              \
+        rnrjs_rr(W(XD), W(XS), mode)
+
+#define cvrls_rr(XD, XS, mode)                                              \
+        cvrjs_rr(W(XD), W(XS), mode)
+
 #endif /* RT_ELEMENT */
+
+#endif /* RT_SIMD_CODE */
 
 /******************************************************************************/
 /************************   COMMON BASE INSTRUCTIONS   ************************/

@@ -87,10 +87,6 @@
 
 #if defined (RT_512) && (RT_512 != 0)
 
-#undef  sregs_sa
-#undef  sregs_la
-#undef  mxcsr_ld
-
 #define K 2
 
 /* 4-byte EVEX prefix with full customization (W0, K1, Z0) */

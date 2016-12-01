@@ -87,18 +87,6 @@
 
 #if defined (RT_512) && (RT_512 != 0) && (RT_SIMD_COMPAT_XMM > 0)
 
-#undef  sregs_sa
-#undef  sregs_la
-#undef  movox_ld
-#undef  movqx_ld
-#define movqx_ld(XD, MS, DS)
-#undef  EMITS
-#define EMITS(w) EMITW(w)
-#undef  EMITM
-#define EMITM(w) /* EMPTY */
-#undef  EMITP
-#define EMITP(w) EMITW(w)
-
 /* structural */
 
 #define MXM(reg, ren, rem)                                                  \
@@ -132,6 +120,7 @@
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
 #define TmmE    0x0E  /* v14, internal name for XmmE (in sregs) */
+#define TmmF    0x10  /* v16, internal name for XmmF (in sregs) */
 #define TmmQ    0x0F  /* v15, internal name for all-ones */
 #define TmmM    0x1F  /* v31, temp-reg name for mem-args */
 
@@ -158,7 +147,7 @@
 #if     RT_SIMD_COMPAT_XMM < 2
 #define XmmE    TmmE, 0x00, EMPTY       /* v14, may be reserved in some cases */
 #if     RT_SIMD_COMPAT_XMM < 1
-#define XmmF    0x0F, 0x00, EMPTY       /* v15, may be reserved in some cases */
+#define XmmF    TmmF, 0x00, EMPTY       /* v16, may be reserved in some cases */
 #endif/*RT_SIMD_COMPAT_XMM < 1*/
 #endif/*RT_SIMD_COMPAT_XMM < 2*/
 

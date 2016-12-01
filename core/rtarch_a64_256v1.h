@@ -91,17 +91,17 @@
 
 /* mov (D = S) */
 
-#define movqx_rr(XD, XS)                                                    \
+#define movdx_rr(XD, XS)                                                    \
         EMITW(0x4EA01C00 | MXM(REG(XD), REG(XS), REG(XS)))                  \
         EMITW(0x4EA01C00 | MXM(RYG(XD), RYG(XS), RYG(XS)))
 
-#define movqx_ld(XD, MS, DS)                                                \
+#define movdx_ld(XD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(REG(XD), MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(RYG(XD), MOD(MS), VYL(DS), B2(DS), P2(DS)))
 
-#define movqx_st(XS, MD, DD)                                                \
+#define movdx_st(XS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
         EMITW(0x3D800000 | MPM(REG(XS), MOD(MD), VAL(DD), B2(DD), P2(DD)))  \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VYL(DD), C2(DD), EMPTY2)   \
@@ -110,11 +110,11 @@
 /* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
 
-#define mmvqx_rr(XG, XS)                                                    \
+#define mmvdx_rr(XG, XS)                                                    \
         EMITW(0x6EA01C00 | MXM(REG(XG), REG(XS), Tmm0))                     \
         EMITW(0x6EA01C00 | MXM(RYG(XG), RYG(XS), Tmm0+16))
 
-#define mmvqx_ld(XG, MS, DS)                                                \
+#define mmvdx_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6EA01C00 | MXM(REG(XG), TmmM,    Tmm0))                     \
@@ -122,7 +122,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6EA01C00 | MXM(RYG(XG), TmmM,    Tmm0+16))
 
-#define mmvqx_st(XS, MG, DG)                                                \
+#define mmvdx_st(XS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C2(DG), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MG), VAL(DG), B2(DG), P2(DG)))  \
         EMITW(0x6EA01C00 | MXM(TmmM,    REG(XS), Tmm0))                     \
@@ -134,11 +134,11 @@
 
 /* and (G = G & S) */
 
-#define andqx_rr(XG, XS)                                                    \
+#define anddx_rr(XG, XS)                                                    \
         EMITW(0x4E201C00 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x4E201C00 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-#define andqx_ld(XG, MS, DS)                                                \
+#define anddx_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E201C00 | MXM(REG(XG), REG(XG), TmmM))                     \
@@ -148,11 +148,11 @@
 
 /* ann (G = ~G & S) */
 
-#define annqx_rr(XG, XS)                                                    \
+#define anndx_rr(XG, XS)                                                    \
         EMITW(0x4E601C00 | MXM(REG(XG), REG(XS), REG(XG)))                  \
         EMITW(0x4E601C00 | MXM(RYG(XG), RYG(XS), RYG(XG)))
 
-#define annqx_ld(XG, MS, DS)                                                \
+#define anndx_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E601C00 | MXM(REG(XG), TmmM,    REG(XG)))                  \
@@ -162,11 +162,11 @@
 
 /* orr (G = G | S) */
 
-#define orrqx_rr(XG, XS)                                                    \
+#define orrdx_rr(XG, XS)                                                    \
         EMITW(0x4EA01C00 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x4EA01C00 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-#define orrqx_ld(XG, MS, DS)                                                \
+#define orrdx_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4EA01C00 | MXM(REG(XG), REG(XG), TmmM))                     \
@@ -176,11 +176,11 @@
 
 /* orn (G = ~G | S) */
 
-#define ornqx_rr(XG, XS)                                                    \
+#define orndx_rr(XG, XS)                                                    \
         EMITW(0x4EE01C00 | MXM(REG(XG), REG(XS), REG(XG)))                  \
         EMITW(0x4EE01C00 | MXM(RYG(XG), RYG(XS), RYG(XG)))
 
-#define ornqx_ld(XG, MS, DS)                                                \
+#define orndx_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4EE01C00 | MXM(REG(XG), TmmM,    REG(XG)))                  \
@@ -190,11 +190,11 @@
 
 /* xor (G = G ^ S) */
 
-#define xorqx_rr(XG, XS)                                                    \
+#define xordx_rr(XG, XS)                                                    \
         EMITW(0x6E201C00 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x6E201C00 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-#define xorqx_ld(XG, MS, DS)                                                \
+#define xordx_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6E201C00 | MXM(REG(XG), REG(XG), TmmM))                     \
@@ -204,7 +204,7 @@
 
 /* not (G = ~G) */
 
-#define notqx_rx(XG)                                                        \
+#define notdx_rx(XG)                                                        \
         EMITW(0x6E205800 | MXM(REG(XG), REG(XG), 0x00))                     \
         EMITW(0x6E205800 | MXM(RYG(XG), RYG(XG), 0x00))
 
@@ -212,17 +212,17 @@
 
 /* neg (G = -G) */
 
-#define negqs_rx(XG)                                                        \
+#define negds_rx(XG)                                                        \
         EMITW(0x6EE0F800 | MXM(REG(XG), REG(XG), 0x00))                     \
         EMITW(0x6EE0F800 | MXM(RYG(XG), RYG(XG), 0x00))
 
 /* add (G = G + S) */
 
-#define addqs_rr(XG, XS)                                                    \
+#define addds_rr(XG, XS)                                                    \
         EMITW(0x4E60D400 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x4E60D400 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-#define addqs_ld(XG, MS, DS)                                                \
+#define addds_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E60D400 | MXM(REG(XG), REG(XG), TmmM))                     \
@@ -232,11 +232,11 @@
 
 /* sub (G = G - S) */
 
-#define subqs_rr(XG, XS)                                                    \
+#define subds_rr(XG, XS)                                                    \
         EMITW(0x4EE0D400 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x4EE0D400 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-#define subqs_ld(XG, MS, DS)                                                \
+#define subds_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4EE0D400 | MXM(REG(XG), REG(XG), TmmM))                     \
@@ -246,11 +246,11 @@
 
 /* mul (G = G * S) */
 
-#define mulqs_rr(XG, XS)                                                    \
+#define mulds_rr(XG, XS)                                                    \
         EMITW(0x6E60DC00 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x6E60DC00 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-#define mulqs_ld(XG, MS, DS)                                                \
+#define mulds_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6E60DC00 | MXM(REG(XG), REG(XG), TmmM))                     \
@@ -260,11 +260,11 @@
 
 /* div (G = G / S) */
 
-#define divqs_rr(XG, XS)                                                    \
+#define divds_rr(XG, XS)                                                    \
         EMITW(0x6E60FC00 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x6E60FC00 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-#define divqs_ld(XG, MS, DS)                                                \
+#define divds_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6E60FC00 | MXM(REG(XG), REG(XG), TmmM))                     \
@@ -274,11 +274,11 @@
 
 /* sqr (D = sqrt S) */
 
-#define sqrqs_rr(XD, XS)                                                    \
+#define sqrds_rr(XD, XS)                                                    \
         EMITW(0x6EE1F800 | MXM(REG(XD), REG(XS), 0x00))                     \
         EMITW(0x6EE1F800 | MXM(RYG(XD), RYG(XS), 0x00))
 
-#define sqrqs_ld(XD, MS, DS)                                                \
+#define sqrds_ld(XD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6EE1F800 | MXM(REG(XD), TmmM,    0x00))                     \
@@ -296,11 +296,11 @@
 
 #if RT_SIMD_COMPAT_RCP != 1
 
-#define rceqs_rr(XD, XS)                                                    \
+#define rceds_rr(XD, XS)                                                    \
         EMITW(0x4EE1D800 | MXM(REG(XD), REG(XS), 0x00))                     \
         EMITW(0x4EE1D800 | MXM(RYG(XD), RYG(XS), 0x00))
 
-#define rcsqs_rr(XG, XS) /* destroys XS */                                  \
+#define rcsds_rr(XG, XS) /* destroys XS */                                  \
         EMITW(0x4E60FC00 | MXM(REG(XS), REG(XS), REG(XG)))                  \
         EMITW(0x6E60DC00 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x4E60FC00 | MXM(RYG(XS), RYG(XS), RYG(XG)))                  \
@@ -316,11 +316,11 @@
 
 #if RT_SIMD_COMPAT_RSQ != 1
 
-#define rseqs_rr(XD, XS)                                                    \
+#define rseds_rr(XD, XS)                                                    \
         EMITW(0x6EE1D800 | MXM(REG(XD), REG(XS), 0x00))                     \
         EMITW(0x6EE1D800 | MXM(RYG(XD), RYG(XS), 0x00))
 
-#define rssqs_rr(XG, XS) /* destroys XS */                                  \
+#define rssds_rr(XG, XS) /* destroys XS */                                  \
         EMITW(0x6E60DC00 | MXM(REG(XS), REG(XS), REG(XG)))                  \
         EMITW(0x4EE0FC00 | MXM(REG(XS), REG(XS), REG(XG)))                  \
         EMITW(0x6E60DC00 | MXM(REG(XG), REG(XG), REG(XS)))                  \
@@ -339,11 +339,11 @@
 
 #if RT_SIMD_COMPAT_FMA <= 1
 
-#define fmaqs_rr(XG, XS, XT)                                                \
+#define fmads_rr(XG, XS, XT)                                                \
         EMITW(0x4E60CC00 | MXM(REG(XG), REG(XS), REG(XT)))                  \
         EMITW(0x4E60CC00 | MXM(RYG(XG), RYG(XS), RYG(XT)))
 
-#define fmaqs_ld(XG, XS, MT, DT)                                            \
+#define fmads_ld(XG, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4E60CC00 | MXM(REG(XG), REG(XS), TmmM))                     \
@@ -359,11 +359,11 @@
 
 #if RT_SIMD_COMPAT_FMS <= 1
 
-#define fmsqs_rr(XG, XS, XT)                                                \
+#define fmsds_rr(XG, XS, XT)                                                \
         EMITW(0x4EE0CC00 | MXM(REG(XG), REG(XS), REG(XT)))                  \
         EMITW(0x4EE0CC00 | MXM(RYG(XG), RYG(XS), RYG(XT)))
 
-#define fmsqs_ld(XG, XS, MT, DT)                                            \
+#define fmsds_ld(XG, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4EE0CC00 | MXM(REG(XG), REG(XS), TmmM))                     \
@@ -375,11 +375,11 @@
 
 /* min (G = G < S ? G : S) */
 
-#define minqs_rr(XG, XS)                                                    \
+#define minds_rr(XG, XS)                                                    \
         EMITW(0x4EE0F400 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x4EE0F400 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-#define minqs_ld(XG, MS, DS)                                                \
+#define minds_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4EE0F400 | MXM(REG(XG), REG(XG), TmmM))                     \
@@ -389,11 +389,11 @@
 
 /* max (G = G > S ? G : S) */
 
-#define maxqs_rr(XG, XS)                                                    \
+#define maxds_rr(XG, XS)                                                    \
         EMITW(0x4E60F400 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x4E60F400 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-#define maxqs_ld(XG, MS, DS)                                                \
+#define maxds_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E60F400 | MXM(REG(XG), REG(XG), TmmM))                     \
@@ -403,11 +403,11 @@
 
 /* cmp (G = G ? S) */
 
-#define ceqqs_rr(XG, XS)                                                    \
+#define ceqds_rr(XG, XS)                                                    \
         EMITW(0x4E60E400 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x4E60E400 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-#define ceqqs_ld(XG, MS, DS)                                                \
+#define ceqds_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E60E400 | MXM(REG(XG), REG(XG), TmmM))                     \
@@ -415,13 +415,13 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E60E400 | MXM(RYG(XG), RYG(XG), TmmM))
 
-#define cneqs_rr(XG, XS)                                                    \
+#define cneds_rr(XG, XS)                                                    \
         EMITW(0x4E60E400 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x6E205800 | MXM(REG(XG), REG(XG), 0x00))                     \
         EMITW(0x4E60E400 | MXM(RYG(XG), RYG(XG), RYG(XS)))                  \
         EMITW(0x6E205800 | MXM(RYG(XG), RYG(XG), 0x00))
 
-#define cneqs_ld(XG, MS, DS)                                                \
+#define cneds_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E60E400 | MXM(REG(XG), REG(XG), TmmM))                     \
@@ -431,11 +431,11 @@
         EMITW(0x4E60E400 | MXM(RYG(XG), RYG(XG), TmmM))                     \
         EMITW(0x6E205800 | MXM(RYG(XG), RYG(XG), 0x00))
 
-#define cltqs_rr(XG, XS)                                                    \
+#define cltds_rr(XG, XS)                                                    \
         EMITW(0x6EE0E400 | MXM(REG(XG), REG(XS), REG(XG)))                  \
         EMITW(0x6EE0E400 | MXM(RYG(XG), RYG(XS), RYG(XG)))
 
-#define cltqs_ld(XG, MS, DS)                                                \
+#define cltds_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6EE0E400 | MXM(REG(XG), TmmM,    REG(XG)))                  \
@@ -443,11 +443,11 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6EE0E400 | MXM(RYG(XG), TmmM,    RYG(XG)))
 
-#define cleqs_rr(XG, XS)                                                    \
+#define cleds_rr(XG, XS)                                                    \
         EMITW(0x6E60E400 | MXM(REG(XG), REG(XS), REG(XG)))                  \
         EMITW(0x6E60E400 | MXM(RYG(XG), RYG(XS), RYG(XG)))
 
-#define cleqs_ld(XG, MS, DS)                                                \
+#define cleds_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6E60E400 | MXM(REG(XG), TmmM,    REG(XG)))                  \
@@ -455,11 +455,11 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6E60E400 | MXM(RYG(XG), TmmM,    RYG(XG)))
 
-#define cgtqs_rr(XG, XS)                                                    \
+#define cgtds_rr(XG, XS)                                                    \
         EMITW(0x6EE0E400 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x6EE0E400 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-#define cgtqs_ld(XG, MS, DS)                                                \
+#define cgtds_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6EE0E400 | MXM(REG(XG), REG(XG), TmmM))                     \
@@ -467,11 +467,11 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6EE0E400 | MXM(RYG(XG), RYG(XG), TmmM))
 
-#define cgeqs_rr(XG, XS)                                                    \
+#define cgeds_rr(XG, XS)                                                    \
         EMITW(0x6E60E400 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x6E60E400 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-#define cgeqs_ld(XG, MS, DS)                                                \
+#define cgeds_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6E60E400 | MXM(REG(XG), REG(XG), TmmM))                     \
@@ -486,11 +486,11 @@
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rnzqs_rr(XD, XS)     /* round towards zero */                       \
+#define rnzds_rr(XD, XS)     /* round towards zero */                       \
         EMITW(0x4EE19800 | MXM(REG(XD), REG(XS), 0x00))                     \
         EMITW(0x4EE19800 | MXM(RYG(XD), RYG(XS), 0x00))
 
-#define rnzqs_ld(XD, MS, DS) /* round towards zero */                       \
+#define rnzds_ld(XD, MS, DS) /* round towards zero */                       \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4EE19800 | MXM(REG(XD), TmmM,    0x00))                     \
@@ -498,11 +498,11 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4EE19800 | MXM(RYG(XD), TmmM,    0x00))
 
-#define cvzqs_rr(XD, XS)     /* round towards zero */                       \
+#define cvzds_rr(XD, XS)     /* round towards zero */                       \
         EMITW(0x4EE1B800 | MXM(REG(XD), REG(XS), 0x00))                     \
         EMITW(0x4EE1B800 | MXM(RYG(XD), RYG(XS), 0x00))
 
-#define cvzqs_ld(XD, MS, DS) /* round towards zero */                       \
+#define cvzds_ld(XD, MS, DS) /* round towards zero */                       \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4EE1B800 | MXM(REG(XD), TmmM,    0x00))                     \
@@ -515,11 +515,11 @@
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rnpqs_rr(XD, XS)     /* round towards +inf */                       \
+#define rnpds_rr(XD, XS)     /* round towards +inf */                       \
         EMITW(0x4EE18800 | MXM(REG(XD), REG(XS), 0x00))                     \
         EMITW(0x4EE18800 | MXM(RYG(XD), RYG(XS), 0x00))
 
-#define rnpqs_ld(XD, MS, DS) /* round towards +inf */                       \
+#define rnpds_ld(XD, MS, DS) /* round towards +inf */                       \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4EE18800 | MXM(REG(XD), TmmM,    0x00))                     \
@@ -527,11 +527,11 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4EE18800 | MXM(RYG(XD), TmmM,    0x00))
 
-#define cvpqs_rr(XD, XS)     /* round towards +inf */                       \
+#define cvpds_rr(XD, XS)     /* round towards +inf */                       \
         EMITW(0x4EE1A800 | MXM(REG(XD), REG(XS), 0x00))                     \
         EMITW(0x4EE1A800 | MXM(RYG(XD), RYG(XS), 0x00))
 
-#define cvpqs_ld(XD, MS, DS) /* round towards +inf */                       \
+#define cvpds_ld(XD, MS, DS) /* round towards +inf */                       \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4EE1A800 | MXM(REG(XD), TmmM,    0x00))                     \
@@ -544,11 +544,11 @@
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rnmqs_rr(XD, XS)     /* round towards -inf */                       \
+#define rnmds_rr(XD, XS)     /* round towards -inf */                       \
         EMITW(0x4E619800 | MXM(REG(XD), REG(XS), 0x00))                     \
         EMITW(0x4E619800 | MXM(RYG(XD), RYG(XS), 0x00))
 
-#define rnmqs_ld(XD, MS, DS) /* round towards -inf */                       \
+#define rnmds_ld(XD, MS, DS) /* round towards -inf */                       \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E619800 | MXM(REG(XD), TmmM,    0x00))                     \
@@ -556,11 +556,11 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E619800 | MXM(RYG(XD), TmmM,    0x00))
 
-#define cvmqs_rr(XD, XS)     /* round towards -inf */                       \
+#define cvmds_rr(XD, XS)     /* round towards -inf */                       \
         EMITW(0x4E61B800 | MXM(REG(XD), REG(XS), 0x00))                     \
         EMITW(0x4E61B800 | MXM(RYG(XD), RYG(XS), 0x00))
 
-#define cvmqs_ld(XD, MS, DS) /* round towards -inf */                       \
+#define cvmds_ld(XD, MS, DS) /* round towards -inf */                       \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E61B800 | MXM(REG(XD), TmmM,    0x00))                     \
@@ -573,11 +573,11 @@
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rnnqs_rr(XD, XS)     /* round towards near */                       \
+#define rnnds_rr(XD, XS)     /* round towards near */                       \
         EMITW(0x4E618800 | MXM(REG(XD), REG(XS), 0x00))                     \
         EMITW(0x4E618800 | MXM(RYG(XD), RYG(XS), 0x00))
 
-#define rnnqs_ld(XD, MS, DS) /* round towards near */                       \
+#define rnnds_ld(XD, MS, DS) /* round towards near */                       \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E618800 | MXM(REG(XD), TmmM,    0x00))                     \
@@ -585,11 +585,11 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E618800 | MXM(RYG(XD), TmmM,    0x00))
 
-#define cvnqs_rr(XD, XS)     /* round towards near */                       \
+#define cvnds_rr(XD, XS)     /* round towards near */                       \
         EMITW(0x4E61A800 | MXM(REG(XD), REG(XS), 0x00))                     \
         EMITW(0x4E61A800 | MXM(RYG(XD), RYG(XS), 0x00))
 
-#define cvnqs_ld(XD, MS, DS) /* round towards near */                       \
+#define cvnds_ld(XD, MS, DS) /* round towards near */                       \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E61A800 | MXM(REG(XD), TmmM,    0x00))                     \
@@ -600,19 +600,19 @@
 /* cvn (D = signed-int-to-fp S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
-#define cvnqn_rr(XD, XS)     /* round towards near */                       \
-        cvtqn_rr(W(XD), W(XS))
+#define cvndn_rr(XD, XS)     /* round towards near */                       \
+        cvtdn_rr(W(XD), W(XS))
 
-#define cvnqn_ld(XD, MS, DS) /* round towards near */                       \
-        cvtqn_ld(W(XD), W(MS), W(DS))
+#define cvndn_ld(XD, MS, DS) /* round towards near */                       \
+        cvtdn_ld(W(XD), W(MS), W(DS))
 
 /* add (G = G + S) */
 
-#define addqx_rr(XG, XS)                                                    \
+#define adddx_rr(XG, XS)                                                    \
         EMITW(0x4EE08400 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x4EE08400 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-#define addqx_ld(XG, MS, DS)                                                \
+#define adddx_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4EE08400 | MXM(REG(XG), REG(XG), TmmM))                     \
@@ -622,11 +622,11 @@
 
 /* sub (G = G - S) */
 
-#define subqx_rr(XG, XS)                                                    \
+#define subdx_rr(XG, XS)                                                    \
         EMITW(0x6EE08400 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x6EE08400 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-#define subqx_ld(XG, MS, DS)                                                \
+#define subdx_ld(XG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6EE08400 | MXM(REG(XG), REG(XG), TmmM))                     \
@@ -637,24 +637,24 @@
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
-#define shlqx_ri(XG, IS)                                                    \
+#define shldx_ri(XG, IS)                                                    \
         EMITW(0x4F405400 | MXM(REG(XG), REG(XG), 0x00) |                    \
                                                  (0x3F & VAL(IS)) << 16)    \
         EMITW(0x4F405400 | MXM(RYG(XG), RYG(XG), 0x00) |                    \
                                                  (0x3F & VAL(IS)) << 16)
 
-#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shldx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E080400 | MXM(TmmM,    TmmM,    0x00))                     \
         EMITW(0x6EE04400 | MXM(REG(XG), REG(XG), TmmM))                     \
         EMITW(0x6EE04400 | MXM(RYG(XG), RYG(XG), TmmM))
 
-#define svlqx_rr(XG, XS)     /* variable shift with per-elem count */       \
+#define svldx_rr(XG, XS)     /* variable shift with per-elem count */       \
         EMITW(0x6EE04400 | MXM(REG(XG), REG(XG), REG(XS)))                  \
         EMITW(0x6EE04400 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-#define svlqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+#define svldx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6EE04400 | MXM(REG(XG), REG(XG), TmmM))                     \
@@ -665,7 +665,7 @@
 /* shr (G = G >> S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
-#define shrqx_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
+#define shrdx_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
         EMITW(0x4F400400 | MXM(REG(XG), REG(XG), 0x00) |                    \
         (+(VAL(IS) == 0) & 0x00005000) | (+(VAL(IS) != 0) & 0x20000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x3F &-VAL(IS)) << 16)    \
@@ -673,7 +673,7 @@
         (+(VAL(IS) == 0) & 0x00005000) | (+(VAL(IS) != 0) & 0x20000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x3F &-VAL(IS)) << 16)
 
-#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrdx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E080400 | MXM(TmmM,    TmmM,    0x00))                     \
@@ -681,13 +681,13 @@
         EMITW(0x6EE04400 | MXM(REG(XG), REG(XG), TmmM))                     \
         EMITW(0x6EE04400 | MXM(RYG(XG), RYG(XG), TmmM))
 
-#define svrqx_rr(XG, XS)     /* variable shift with per-elem count */       \
+#define svrdx_rr(XG, XS)     /* variable shift with per-elem count */       \
         EMITW(0x6EE0B800 | MXM(TmmM,    REG(XS), 0x00))                     \
         EMITW(0x6EE04400 | MXM(REG(XG), REG(XG), TmmM))                     \
         EMITW(0x6EE0B800 | MXM(TmmM,    RYG(XS), 0x00))                     \
         EMITW(0x6EE04400 | MXM(RYG(XG), RYG(XG), TmmM))
 
-#define svrqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+#define svrdx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6EE0B800 | MXM(TmmM,    TmmM,    0x00))                     \
@@ -698,7 +698,7 @@
         EMITW(0x6EE04400 | MXM(RYG(XG), RYG(XG), TmmM))
 
 
-#define shrqn_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
+#define shrdn_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
         EMITW(0x4F400400 | MXM(REG(XG), REG(XG), 0x00) |                    \
         (+(VAL(IS) == 0) & 0x00005000) | (+(VAL(IS) != 0) & 0x00000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x3F &-VAL(IS)) << 16)    \
@@ -706,7 +706,7 @@
         (+(VAL(IS) == 0) & 0x00005000) | (+(VAL(IS) != 0) & 0x00000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x3F &-VAL(IS)) << 16)
 
-#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrdn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E080400 | MXM(TmmM,    TmmM,    0x00))                     \
@@ -714,13 +714,13 @@
         EMITW(0x4EE04400 | MXM(REG(XG), REG(XG), TmmM))                     \
         EMITW(0x4EE04400 | MXM(RYG(XG), RYG(XG), TmmM))
 
-#define svrqn_rr(XG, XS)     /* variable shift with per-elem count */       \
+#define svrdn_rr(XG, XS)     /* variable shift with per-elem count */       \
         EMITW(0x6EE0B800 | MXM(TmmM,    REG(XS), 0x00))                     \
         EMITW(0x4EE04400 | MXM(REG(XG), REG(XG), TmmM))                     \
         EMITW(0x6EE0B800 | MXM(TmmM,    RYG(XS), 0x00))                     \
         EMITW(0x4EE04400 | MXM(RYG(XG), RYG(XG), TmmM))
 
-#define svrqn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+#define svrdn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6EE0B800 | MXM(TmmM,    TmmM,    0x00))                     \
@@ -738,11 +738,11 @@
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rndqs_rr(XD, XS)                                                    \
+#define rndds_rr(XD, XS)                                                    \
         EMITW(0x6EE19800 | MXM(REG(XD), REG(XS), 0x00))                     \
         EMITW(0x6EE19800 | MXM(RYG(XD), RYG(XS), 0x00))
 
-#define rndqs_ld(XD, MS, DS)                                                \
+#define rndds_ld(XD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6EE19800 | MXM(REG(XD), TmmM,    0x00))                     \
@@ -750,23 +750,23 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6EE19800 | MXM(RYG(XD), TmmM,    0x00))
 
-#define cvtqs_rr(XD, XS)                                                    \
-        rndqs_rr(W(XD), W(XS))                                              \
-        cvzqs_rr(W(XD), W(XD))
+#define cvtds_rr(XD, XS)                                                    \
+        rndds_rr(W(XD), W(XS))                                              \
+        cvzds_rr(W(XD), W(XD))
 
-#define cvtqs_ld(XD, MS, DS)                                                \
-        rndqs_ld(W(XD), W(MS), W(DS))                                       \
-        cvzqs_rr(W(XD), W(XD))
+#define cvtds_ld(XD, MS, DS)                                                \
+        rndds_ld(W(XD), W(MS), W(DS))                                       \
+        cvzds_rr(W(XD), W(XD))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
 
-#define cvtqn_rr(XD, XS)                                                    \
+#define cvtdn_rr(XD, XS)                                                    \
         EMITW(0x4E61D800 | MXM(REG(XD), REG(XS), 0x00))                     \
         EMITW(0x4E61D800 | MXM(RYG(XD), RYG(XS), 0x00))
 
-#define cvtqn_ld(XD, MS, DS)                                                \
+#define cvtdn_ld(XD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x4E61D800 | MXM(REG(XD), TmmM,    0x00))                     \
@@ -781,13 +781,13 @@
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
-#define rnrqs_rr(XD, XS, mode)                                              \
+#define rnrds_rr(XD, XS, mode)                                              \
         EMITW(0x4E618800 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (RT_SIMD_MODE_##mode&1) << 23 | (RT_SIMD_MODE_##mode&2) << 11)      \
         EMITW(0x4E618800 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
         (RT_SIMD_MODE_##mode&1) << 23 | (RT_SIMD_MODE_##mode&2) << 11)
 
-#define cvrqs_rr(XD, XS, mode)                                              \
+#define cvrds_rr(XD, XS, mode)                                              \
         EMITW(0x4E61A800 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (RT_SIMD_MODE_##mode&1) << 23 | (RT_SIMD_MODE_##mode&2) << 11)      \
         EMITW(0x4E61A800 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
