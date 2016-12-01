@@ -7,14 +7,14 @@
 #ifndef RT_RTARCH_X32_256V2_H
 #define RT_RTARCH_X32_256V2_H
 
-#include "rtarch_x64.h"
+#include "rtarch_x64_128v8.h"
 
-#define RT_SIMD_REGS        16
-#define RT_SIMD_ALIGN       32
-#define RT_SIMD_WIDTH64     4
-#define RT_SIMD_SET64(s, v) s[0]=s[1]=s[2]=s[3]=v
-#define RT_SIMD_WIDTH32     8
-#define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=v
+#define RT_SIMD_REGS_256        16
+#define RT_SIMD_ALIGN_256       32
+#define RT_SIMD_WIDTH64_256     4
+#define RT_SIMD_SET64_256(s, v) s[0]=s[1]=s[2]=s[3]=v
+#define RT_SIMD_WIDTH32_256     8
+#define RT_SIMD_SET32_256(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=v
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
@@ -86,70 +86,32 @@
 
 #if defined (RT_256) && (RT_256 != 0)
 
-#define K 1
+#undef  sregs_sa
+#undef  sregs_la
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
 
-/* registers    REG,  MOD,  SIB */
-
-#define Xmm0    0x00, 0x03, EMPTY
-#define Xmm1    0x01, 0x03, EMPTY
-#define Xmm2    0x02, 0x03, EMPTY
-#define Xmm3    0x03, 0x03, EMPTY
-#define Xmm4    0x04, 0x03, EMPTY
-#define Xmm5    0x05, 0x03, EMPTY
-#define Xmm6    0x06, 0x03, EMPTY
-#define Xmm7    0x07, 0x03, EMPTY
-#define Xmm8    0x08, 0x03, EMPTY
-#define Xmm9    0x09, 0x03, EMPTY
-#define XmmA    0x0A, 0x03, EMPTY
-#define XmmB    0x0B, 0x03, EMPTY
-#define XmmC    0x0C, 0x03, EMPTY
-#define XmmD    0x0D, 0x03, EMPTY
-#if     RT_SIMD_COMPAT_XMM < 2
-#define XmmE    0x0E, 0x03, EMPTY            /* may be reserved in some cases */
-#if     RT_SIMD_COMPAT_XMM < 1
-#define XmmF    0x0F, 0x03, EMPTY            /* may be reserved in some cases */
-#endif/*RT_SIMD_COMPAT_XMM < 1*/
-#endif/*RT_SIMD_COMPAT_XMM < 2*/
-
-/* The last two SIMD registers can be reserved by the assembler when building
- * RISC targets with SIMD wider than natively supported 128-bit, in which case
- * they will be occupied by temporary data. Two hidden registers may also come
- * in handy when implementing elaborate register-spill techniques in the future
- * for current targets with less native registers than architecturally exposed.
- *
- * It should be possible to reserve only 1 SIMD register (XmmF) to achieve the
- * goals above (totalling 15 regs) at the cost of extra loads in certain ops. */
-
 /******************************************************************************/
 /**********************************   AVX   ***********************************/
 /******************************************************************************/
-
-/* adr (D = adr S) */
-
-#define adrpx_ld(RD, MS, DS) /* RD is a BASE reg, MS/DS is SIMD-aligned */  \
-    ADR REW(RXB(RD), RXB(MS)) EMITB(0x8D)                                   \
-        MRM(REG(RD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
 
 /**************************   packed generic (AVX1)   *************************/
 
 /* mov (D = S) */
 
 #define movcx_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x28)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, 1, 0, 1) EMITB(0x28)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define movcx_ld(XD, MS, DS)                                                \
-    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x28)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, 1, 0, 1) EMITB(0x28)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define movcx_st(XS, MD, DD)                                                \
-    ADR VEX(RXB(XS), RXB(MD),    0x00, K, 0, 1) EMITB(0x29)                 \
+    ADR VEX(RXB(XS), RXB(MD),    0x00, 1, 0, 1) EMITB(0x29)                 \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
@@ -157,50 +119,50 @@
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
 
 #define mmvcx_rr(XG, XS)                                                    \
-    ADR VEX(RXB(XG), RXB(XS), REN(XG), K, 1, 3) EMITB(0x4A)                 \
+    ADR VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 3) EMITB(0x4A)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))
 
 #define mmvcx_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 1, 3) EMITB(0x4A)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 3) EMITB(0x4A)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x00))
 
 #define mmvcx_st(XS, MG, DG)                                                \
-    ADR VEX(RXB(XS), RXB(MG),    0x00, K, 1, 2) EMITB(0x2E)                 \
+    ADR VEX(RXB(XS), RXB(MG),    0x00, 1, 1, 2) EMITB(0x2E)                 \
         MRM(REG(XS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
 /* and (G = G & S) */
 
 #define andcx_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x54)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x54)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define andcx_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x54)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x54)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* ann (G = ~G & S) */
 
 #define anncx_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x55)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x55)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define anncx_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x55)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x55)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* orr (G = G | S) */
 
 #define orrcx_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x56)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x56)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define orrcx_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x56)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x56)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -217,11 +179,11 @@
 /* xor (G = G ^ S) */
 
 #define xorcx_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x57)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x57)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define xorcx_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x57)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x57)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -240,55 +202,55 @@
 /* add (G = G + S) */
 
 #define addcs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x58)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x58)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define addcs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x58)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x58)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* sub (G = G - S) */
 
 #define subcs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x5C)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x5C)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define subcs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x5C)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x5C)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* mul (G = G * S) */
 
 #define mulcs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x59)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x59)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define mulcs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x59)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x59)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* div (G = G / S) */
 
 #define divcs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x5E)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x5E)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define divcs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x5E)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x5E)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* sqr (D = sqrt S) */
 
 #define sqrcs_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x51)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, 1, 0, 1) EMITB(0x51)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define sqrcs_ld(XD, MS, DS)                                                \
-    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x51)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, 1, 0, 1) EMITB(0x51)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -303,7 +265,7 @@
 #if RT_SIMD_COMPAT_RCP != 1
 
 #define rcecs_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x53)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, 1, 0, 1) EMITB(0x53)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define rcscs_rr(XG, XS) /* destroys XS */                                  \
@@ -323,7 +285,7 @@
 #if RT_SIMD_COMPAT_RSQ != 1
 
 #define rsecs_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x52)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, 1, 0, 1) EMITB(0x52)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define rsscs_rr(XG, XS) /* destroys XS */                                  \
@@ -529,11 +491,11 @@
 #if RT_SIMD_COMPAT_FMA <= 1
 
 #define fmacs_rr(XG, XS, XT)                                                \
-    ADR VEX(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xB8)                 \
+    ADR VEX(RXB(XG), RXB(XT), REN(XS), 1, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmacs_ld(XG, XS, MT, DT)                                            \
-    ADR VEX(RXB(XG), RXB(MT), REN(XS), K, 1, 2) EMITB(0xB8)                 \
+    ADR VEX(RXB(XG), RXB(MT), REN(XS), 1, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -546,11 +508,11 @@
 #if RT_SIMD_COMPAT_FMS <= 1
 
 #define fmscs_rr(XG, XS, XT)                                                \
-    ADR VEX(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xBC)                 \
+    ADR VEX(RXB(XG), RXB(XT), REN(XS), 1, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmscs_ld(XG, XS, MT, DT)                                            \
-    ADR VEX(RXB(XG), RXB(MT), REN(XS), K, 1, 2) EMITB(0xBC)                 \
+    ADR VEX(RXB(XG), RXB(MT), REN(XS), 1, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -561,84 +523,84 @@
 /* min (G = G < S ? G : S) */
 
 #define mincs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x5D)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x5D)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define mincs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x5D)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x5D)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* max (G = G > S ? G : S) */
 
 #define maxcs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x5F)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x5F)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define maxcs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x5F)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x5F)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* cmp (G = G ? S) */
 
 #define ceqcs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))
 
 #define ceqcs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x00))
 
 #define cnecs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x04))
 
 #define cnecs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x04))
 
 #define cltcs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x01))
 
 #define cltcs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x01))
 
 #define clecs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x02))
 
 #define clecs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x02))
 
 #define cgtcs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x06))
 
 #define cgtcs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x06))
 
 #define cgecs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x05))
 
 #define cgecs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x05))
 
@@ -648,21 +610,21 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnzcs_rr(XD, XS)     /* round towards zero */                       \
-        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, 1, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x03))
 
 #define rnzcs_ld(XD, MS, DS) /* round towards zero */                       \
-    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, 1, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x03))
 
 #define cvzcs_rr(XD, XS)     /* round towards zero */                       \
-        VEX(RXB(XD), RXB(XS),    0x00, K, 2, 1) EMITB(0x5B)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, 1, 2, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvzcs_ld(XD, MS, DS) /* round towards zero */                       \
-    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 2, 1) EMITB(0x5B)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, 1, 2, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -672,12 +634,12 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnpcs_rr(XD, XS)     /* round towards +inf */                       \
-        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, 1, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x02))
 
 #define rnpcs_ld(XD, MS, DS) /* round towards +inf */                       \
-    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, 1, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x02))
 
@@ -695,12 +657,12 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnmcs_rr(XD, XS)     /* round towards -inf */                       \
-        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, 1, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x01))
 
 #define rnmcs_ld(XD, MS, DS) /* round towards -inf */                       \
-    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, 1, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x01))
 
@@ -718,12 +680,12 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnncs_rr(XD, XS)     /* round towards near */                       \
-        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, 1, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))
 
 #define rnncs_ld(XD, MS, DS) /* round towards near */                       \
-    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, 1, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x00))
 
@@ -742,248 +704,16 @@
 #define cvncn_ld(XD, MS, DS) /* round towards near */                       \
         cvtcn_ld(W(XD), W(MS), W(DS))
 
-/**************************   extended float (x87)   **************************/
-
-#define fpuws_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xD9)                                   \
-        MRM(0x00,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define fpuws_st(MD, DD) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
-        MRM(0x03,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-
-#define fpuwn_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xDB)                                   \
-        MRM(0x00,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define fpuwn_st(MD, DD) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MD)) EMITB(0xDB)                                   \
-        MRM(0x03,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-#define fpuwt_st(MD, DD) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MD)) EMITB(0xDB)                                   \
-        MRM(0x01,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-
-#define addws_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
-        MRM(0x00,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define subws_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
-        MRM(0x04,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define sbrws_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
-        MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-
-#define mulws_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
-        MRM(0x01,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define divws_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
-        MRM(0x06,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define dvrws_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xD8)                                   \
-        MRM(0x07,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-
-#define addes_xn(n)      /* ST(0) = ST(0) + ST(n), don't pop */             \
-        EMITB(0xD8) EMITB(0xC0+(n))
-
-#define addes_nx(n)      /* ST(n) = ST(n) + ST(0), don't pop */             \
-        EMITB(0xDC) EMITB(0xC0+(n))
-
-#define addes_np(n)      /* ST(n) = ST(n) + ST(0), pop stack */             \
-        EMITB(0xDE) EMITB(0xC0+(n))
-
-
-#define subes_xn(n)      /* ST(0) = ST(0) - ST(n), don't pop */             \
-        EMITB(0xD8) EMITB(0xE0+(n))
-
-#define subes_nx(n)      /* ST(n) = ST(n) - ST(0), don't pop */             \
-        EMITB(0xDC) EMITB(0xE8+(n))
-
-#define subes_np(n)      /* ST(n) = ST(n) - ST(0), pop stack */             \
-        EMITB(0xDE) EMITB(0xE8+(n))
-
-
-#define sbres_xn(n)      /* ST(0) = ST(n) - ST(0), don't pop */             \
-        EMITB(0xD8) EMITB(0xE8+(n))
-
-#define sbres_nx(n)      /* ST(n) = ST(0) - ST(n), don't pop */             \
-        EMITB(0xDC) EMITB(0xE0+(n))
-
-#define sbres_np(n)      /* ST(n) = ST(0) - ST(n), pop stack */             \
-        EMITB(0xDE) EMITB(0xE0+(n))
-
-
-#define mules_xn(n)      /* ST(0) = ST(0) * ST(n), don't pop */             \
-        EMITB(0xD8) EMITB(0xC8+(n))
-
-#define mules_nx(n)      /* ST(n) = ST(n) * ST(0), don't pop */             \
-        EMITB(0xDC) EMITB(0xC8+(n))
-
-#define mules_np(n)      /* ST(n) = ST(n) * ST(0), pop stack */             \
-        EMITB(0xDE) EMITB(0xC8+(n))
-
-
-#define dives_xn(n)      /* ST(0) = ST(0) / ST(n), don't pop */             \
-        EMITB(0xD8) EMITB(0xF0+(n))
-
-#define dives_nx(n)      /* ST(n) = ST(n) / ST(0), don't pop */             \
-        EMITB(0xDC) EMITB(0xF8+(n))
-
-#define dives_np(n)      /* ST(n) = ST(n) / ST(0), pop stack */             \
-        EMITB(0xDE) EMITB(0xF8+(n))
-
-
-#define dvres_xn(n)      /* ST(0) = ST(n) / ST(0), don't pop */             \
-        EMITB(0xD8) EMITB(0xF8+(n))
-
-#define dvres_nx(n)      /* ST(n) = ST(0) / ST(n), don't pop */             \
-        EMITB(0xDC) EMITB(0xF0+(n))
-
-#define dvres_np(n)      /* ST(n) = ST(0) / ST(n), pop stack */             \
-        EMITB(0xDE) EMITB(0xF0+(n))
-
-
-#define sqres_xx()       /* ST(0) = sqr ST(0), don't pop */                 \
-        EMITB(0xD9) EMITB(0xFA)
-
-#define neges_xx()       /* ST(0) = neg ST(0), don't pop */                 \
-        EMITB(0xD9) EMITB(0xE0)
-
-#define abses_xx()       /* ST(0) = abs ST(0), don't pop */                 \
-        EMITB(0xD9) EMITB(0xE1)
-
-
-#define xm2es_xx()       /* ST(0) = 2^ST(0)-1, don't pop, [-1.0 : +1.0] */  \
-        EMITB(0xD9) EMITB(0xF0)
-
-#define lg2es_xx()       /* ST(1) = ST(1)*lg2 ST(0), pop stack */           \
-        EMITB(0xD9) EMITB(0xF1)
-
-#define lp2es_xx()       /* ST(1) = ST(1)*lg2 ST(0)+1.0, pop stack */       \
-        EMITB(0xD9) EMITB(0xF9)
-
-
-#define sines_xx()       /* ST(0) = sin ST(0), don't pop, [-2^63:+2^63] */  \
-        EMITB(0xD9) EMITB(0xFE)
-
-#define coses_xx()       /* ST(0) = cos ST(0), don't pop, [-2^63:+2^63] */  \
-        EMITB(0xD9) EMITB(0xFF)
-
-#define scses_xx()       /* ST(0) = sin ST(0), push cos ST(0), original */  \
-        EMITB(0xD9) EMITB(0xFB)
-
-#define tanes_xx()       /* ST(0) = tan ST(0), push +1.0, [-2^63:+2^63] */  \
-        EMITB(0xD9) EMITB(0xF2)
-
-#define atnes_xx()       /* ST(1) = atn ST(1)/ST(0), pop stack */           \
-        EMITB(0xD9) EMITB(0xF3)
-
-
-#define remes_xx()       /* ST(0) = ST(0)-Q*ST(1), Q = rnd ST(0)/ST(1) */   \
-        EMITB(0xD9) EMITB(0xF5)
-
-#define rexes_xx()       /* ST(0) = ST(0)-Q*ST(1), Q = trn ST(0)/ST(1) */   \
-        EMITB(0xD9) EMITB(0xF8)
-
-#define rndes_xx()       /* ST(0) = rnd ST(0), round to integral value */   \
-        EMITB(0xD9) EMITB(0xFC)
-
-#define extes_xx()       /* ST(0) = exp ST(0), push mts ST(0) */            \
-        EMITB(0xD9) EMITB(0xF4)
-
-#define scles_xx()       /* exp ST(0) = exp ST(0) + rnd ST(1) */            \
-        EMITB(0xD9) EMITB(0xFD)
-
-
-#define cmpes_xn(n)      /* flags = ST(0) ? ST(n), don't pop */             \
-        EMITB(0xDB) EMITB(0xF0+(n))
-
-#define cmpes_pn(n)      /* flags = ST(0) ? ST(n), pop stack */             \
-        EMITB(0xDF) EMITB(0xF0+(n))
-
-#define moves_nx(n)      /* ST(n) = ST(0), don't pop */                     \
-        EMITB(0xDD) EMITB(0xD0+(n))
-
-#define moves_np(n)      /* ST(n) = ST(0), pop stack */                     \
-        EMITB(0xDD) EMITB(0xD8+(n))
-
-#define popes_xx()       /* ST(0) = ST(0), pop stack */                     \
-        EMITB(0xDD) EMITB(0xD8)
-
-
-#define fpucw_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xD9)                                   \
-        MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define fpucw_st(MD, DD) /* not portable, do not use outside */             \
-FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
-        MRM(0x07,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-
-#define fpurz_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        movwx_mi(Mebp,  inf_SCR02(0), IH(0x0C7F))                           \
-        fpucw_ld(Mebp,  inf_SCR02(0))
-
-#define fpurp_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        movwx_mi(Mebp,  inf_SCR02(0), IH(0x087F))                           \
-        fpucw_ld(Mebp,  inf_SCR02(0))
-
-#define fpurm_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        movwx_mi(Mebp,  inf_SCR02(0), IH(0x047F))                           \
-        fpucw_ld(Mebp,  inf_SCR02(0))
-
-#define fpurn_xx()       /* not portable, do not use outside */             \
-        fpucw_ld(Mebp,  inf_SCR02(4))
-
 /**************************   packed integer (AVX1)   *************************/
 
 #if defined (RT_256) && (RT_256 < 2)
 
 #define prmcx_rr(XD, XS, IT) /* not portable, do not use outside */         \
-        VEX(RXB(XD), RXB(XS), REN(XD), K, 1, 3) EMITB(0x06)                 \
+        VEX(RXB(XD), RXB(XS), REN(XD), 1, 1, 3) EMITB(0x06)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
-#define movix_ld(XD, MS, DS) /* not portable, do not use outside */         \
-    ADR VEX(RXB(XD), RXB(MS),    0x00, 0, 0, 1) EMITB(0x28)                 \
-        MRM(REG(XD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define movix_st(XS, MD, DD) /* not portable, do not use outside */         \
-    ADR VEX(RXB(XS), RXB(MD),    0x00, 0, 0, 1) EMITB(0x29)                 \
-        MRM(REG(XS), MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
 /* add (G = G + S) */
-
-#define addix_rr(XG, XS)     /* not portable, do not use outside */         \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 1, 1) EMITB(0xFE)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
 
 #define addcx_rr(XG, XS)                                                    \
         movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -995,11 +725,6 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         prmcx_rr(W(XS), W(XS), IB(1))                                       \
         movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movcx_ld(W(XG), Mebp, inf_SCR01(0))
-
-#define addix_ld(XG, MS, DS) /* not portable, do not use outside */         \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 1, 1) EMITB(0xFE)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define addcx_ld(XG, MS, DS)                                                \
         movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1015,10 +740,6 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 
 /* sub (G = G - S) */
 
-#define subix_rr(XG, XS)     /* not portable, do not use outside */         \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 1, 1) EMITB(0xFA)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
 #define subcx_rr(XG, XS)                                                    \
         movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         subix_rr(W(XG), W(XS))                                              \
@@ -1029,11 +750,6 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         prmcx_rr(W(XS), W(XS), IB(1))                                       \
         movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movcx_ld(W(XG), Mebp, inf_SCR01(0))
-
-#define subix_ld(XG, MS, DS) /* not portable, do not use outside */         \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 1, 1) EMITB(0xFA)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define subcx_ld(XG, MS, DS)                                                \
         movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1050,11 +766,6 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
-#define shlix_ri(XG, IS)     /* not portable, do not use outside */         \
-        VEX(0,       RXB(XG), REN(XG), 0, 1, 1) EMITB(0x72)                 \
-        MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
-
 #define shlcx_ri(XG, IS)                                                    \
         movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         shlix_ri(W(XG), W(IS))                                              \
@@ -1063,11 +774,6 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         shlix_ri(W(XG), W(IS))                                              \
         movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movcx_ld(W(XG), Mebp, inf_SCR01(0))
-
-#define shlix_ld(XG, MS, DS) /* not portable, do not use outside */         \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 1, 1) EMITB(0xF2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define shlcx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1128,11 +834,6 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 /* shr (G = G >> S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
-#define shrix_ri(XG, IS)     /* not portable, do not use outside */         \
-        VEX(0,       RXB(XG), REN(XG), 0, 1, 1) EMITB(0x72)                 \
-        MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
-
 #define shrcx_ri(XG, IS)                                                    \
         movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         shrix_ri(W(XG), W(IS))                                              \
@@ -1141,11 +842,6 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         shrix_ri(W(XG), W(IS))                                              \
         movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movcx_ld(W(XG), Mebp, inf_SCR01(0))
-
-#define shrix_ld(XG, MS, DS) /* not portable, do not use outside */         \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 1, 1) EMITB(0xD2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define shrcx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1204,11 +900,6 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         movcx_ld(W(XG), Mebp, inf_SCR01(0))
 
 
-#define shrin_ri(XG, IS)     /* not portable, do not use outside */         \
-        VEX(0,       RXB(XG), REN(XG), 0, 1, 1) EMITB(0x72)                 \
-        MRM(0x04,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
-
 #define shrcn_ri(XG, IS)                                                    \
         movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         shrin_ri(W(XG), W(IS))                                              \
@@ -1217,11 +908,6 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         shrin_ri(W(XG), W(IS))                                              \
         movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
         movcx_ld(W(XG), Mebp, inf_SCR01(0))
-
-#define shrin_ld(XG, MS, DS) /* not portable, do not use outside */         \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 1, 1) EMITB(0xE2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define shrcn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1286,22 +972,22 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 /* add (G = G + S) */
 
 #define addcx_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xFE)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0xFE)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define addcx_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xFE)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0xFE)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* sub (G = G - S) */
 
 #define subcx_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xFA)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0xFA)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define subcx_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xFA)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0xFA)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -1309,21 +995,21 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlcx_ri(XG, IS)                                                    \
-        VEX(0,       RXB(XG), REN(XG), K, 1, 1) EMITB(0x72)                 \
+        VEX(0,       RXB(XG), REN(XG), 1, 1, 1) EMITB(0x72)                 \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
 #define shlcx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xF2)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0xF2)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define svlcx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 1, 2) EMITB(0x47)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 2) EMITB(0x47)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define svlcx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        VEX(RXB(XG), RXB(MS), REN(XG), K, 1, 2) EMITB(0x47)                 \
+        VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 2) EMITB(0x47)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -1331,41 +1017,41 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrcx_ri(XG, IS)                                                    \
-        VEX(0,       RXB(XG), REN(XG), K, 1, 1) EMITB(0x72)                 \
+        VEX(0,       RXB(XG), REN(XG), 1, 1, 1) EMITB(0x72)                 \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
 #define shrcx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xD2)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0xD2)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define svrcx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 1, 2) EMITB(0x45)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 2) EMITB(0x45)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define svrcx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        VEX(RXB(XG), RXB(MS), REN(XG), K, 1, 2) EMITB(0x45)                 \
+        VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 2) EMITB(0x45)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 
 #define shrcn_ri(XG, IS)                                                    \
-        VEX(0,       RXB(XG), REN(XG), K, 1, 1) EMITB(0x72)                 \
+        VEX(0,       RXB(XG), REN(XG), 1, 1, 1) EMITB(0x72)                 \
         MRM(0x04,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
 #define shrcn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xE2)                 \
+    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0xE2)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define svrcn_rr(XG, XS)     /* variable shift with per-elem count */       \
-        VEX(RXB(XG), RXB(XS), REN(XG), K, 1, 2) EMITB(0x46)                 \
+        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 2) EMITB(0x46)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define svrcn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        VEX(RXB(XG), RXB(MS), REN(XG), K, 1, 2) EMITB(0x46)                 \
+        VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 2) EMITB(0x46)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -1377,75 +1063,16 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
  * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
  * one hidden SIMD register holding all 1s and using one hidden mask register
  * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in CHECK_MASK to facilitate branching on a given condition value */
+ * then in mkj**_** to facilitate branching on a given condition value */
 
-#define RT_SIMD_MASK_NONE       0x00        /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL       0x0F+K*0xF0 /*  all satisfy the condition */
+#define RT_SIMD_MASK_NONE32_256    0x00     /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL32_256    0xFF     /*  all satisfy the condition */
 
-#define movsn_rr(RD, XS) /* not portable, do not use outside */             \
-        VEX(RXB(RD), RXB(XS),    0x00, K, 0, 1) EMITB(0x50)                 \
-        MRM(REG(RD), MOD(XS), REG(XS))
-
-#define CHECK_MASK(lb, mask, XS) /* destroys Reax, jump lb if mask == S */  \
-        movsn_rr(Reax, W(XS))                                               \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask))                             \
+#define mkjcx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        VEX(0,       RXB(XS),    0x00, 1, 0, 1) EMITB(0x50)                 \
+        MRM(0x00,    MOD(XS), REG(XS))                                      \
+        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##32_256))                     \
         jeqxx_lb(lb)
-
-/* simd mode
- * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),
- * original FCTRL blocks (FCTRL_ENTER/FCTRL_LEAVE) are defined in rtbase.h
- * NOTE: ARMv7 always uses ROUNDN non-IEEE mode for SIMD fp-arithmetic,
- * while fp<->int conversion takes ROUND* into account via VFP fallback */
-
-#if RT_SIMD_FLUSH_ZERO == 0
-
-#define RT_SIMD_MODE_ROUNDN     0x00    /* round towards near */
-#define RT_SIMD_MODE_ROUNDM     0x01    /* round towards -inf */
-#define RT_SIMD_MODE_ROUNDP     0x02    /* round towards +inf */
-#define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
-
-#else /* RT_SIMD_FLUSH_ZERO */
-
-#define RT_SIMD_MODE_ROUNDN     0x04    /* round towards near */
-#define RT_SIMD_MODE_ROUNDM     0x05    /* round towards -inf */
-#define RT_SIMD_MODE_ROUNDP     0x06    /* round towards +inf */
-#define RT_SIMD_MODE_ROUNDZ     0x07    /* round towards zero */
-
-#endif /* RT_SIMD_FLUSH_ZERO */
-
-#define RT_SIMD_MODE_ROUNDN_F   0x04    /* round towards near */
-#define RT_SIMD_MODE_ROUNDM_F   0x05    /* round towards -inf */
-#define RT_SIMD_MODE_ROUNDP_F   0x06    /* round towards +inf */
-#define RT_SIMD_MODE_ROUNDZ_F   0x07    /* round towards zero */
-
-#define mxcsr_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR VEX(0,       RXB(MS),    0x00, 0, 0, 1) EMITB(0xAE)                 \
-        MRM(0x02,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define mxcsr_st(MD, DD) /* not portable, do not use outside */             \
-    ADR VEX(0,       RXB(MD),    0x00, 0, 0, 1) EMITB(0xAE)                 \
-        MRM(0x03,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-#if RT_SIMD_FAST_FCTRL == 0
-
-#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
-        movwx_mi(Mebp, inf_SCR02(4), IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))\
-        mxcsr_ld(Mebp, inf_SCR02(4))
-
-#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
-        mxcsr_ld(Mebp, inf_FCTRL((RT_SIMD_MODE_ROUNDN&3)*4))
-
-#else /* RT_SIMD_FAST_FCTRL */
-
-#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
-        mxcsr_ld(Mebp, inf_FCTRL((RT_SIMD_MODE_##mode&3)*4))
-
-#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
-        mxcsr_ld(Mebp, inf_FCTRL((RT_SIMD_MODE_ROUNDN&3)*4))
-
-#endif /* RT_SIMD_FAST_FCTRL */
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -1454,21 +1081,21 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rndcs_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, 1, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x04))
 
 #define rndcs_ld(XD, MS, DS)                                                \
-    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, 1, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x04))
 
 #define cvtcs_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 1) EMITB(0x5B)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, 1, 1, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvtcs_ld(XD, MS, DS)                                                \
-    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x5B)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, 1, 1, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -1477,11 +1104,11 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
  * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
 
 #define cvtcn_rr(XD, XS)                                                    \
-        VEX(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x5B)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, 1, 0, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvtcn_ld(XD, MS, DS)                                                \
-    ADR VEX(RXB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x5B)                 \
+    ADR VEX(RXB(XD), RXB(MS),    0x00, 1, 0, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -1493,7 +1120,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnrcs_rr(XD, XS, mode)                                              \
-        VEX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
+        VEX(RXB(XD), RXB(XS),    0x00, 1, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
 
@@ -1537,10 +1164,10 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         movcx_st(XmmD, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-    ADR VEX(1,             0,    0x00, K, 0, 1) EMITB(0x29)                 \
+    ADR VEX(1,             0,    0x00, 1, 0, 1) EMITB(0x29)                 \
         MRM(0x06,       0x00,    0x00)                                      \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-    ADR VEX(1,             0,    0x00, K, 0, 1) EMITB(0x29)                 \
+    ADR VEX(1,             0,    0x00, 1, 0, 1) EMITB(0x29)                 \
         MRM(0x07,       0x00,    0x00)
 
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
@@ -1573,10 +1200,10 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         movcx_ld(XmmD, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-    ADR VEX(1,             0,    0x00, K, 0, 1) EMITB(0x28)                 \
+    ADR VEX(1,             0,    0x00, 1, 0, 1) EMITB(0x28)                 \
         MRM(0x06,       0x00,    0x00)                                      \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-    ADR VEX(1,             0,    0x00, K, 0, 1) EMITB(0x28)                 \
+    ADR VEX(1,             0,    0x00, 1, 0, 1) EMITB(0x28)                 \
         MRM(0x07,       0x00,    0x00)
 
 #endif /* RT_256 */

@@ -9,12 +9,12 @@
 
 #include "rtarch_a64.h"
 
-#define RT_SIMD_REGS        16
-#define RT_SIMD_ALIGN       16
-#define RT_SIMD_WIDTH64     2
-#define RT_SIMD_SET64(s, v) s[0]=s[1]=v
-#define RT_SIMD_WIDTH32     4
-#define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=v
+#define RT_SIMD_REGS_128        16
+#define RT_SIMD_ALIGN_128       16
+#define RT_SIMD_WIDTH64_128     2
+#define RT_SIMD_SET64_128(s, v) s[0]=s[1]=v
+#define RT_SIMD_WIDTH32_128     4
+#define RT_SIMD_SET32_128(s, v) s[0]=s[1]=s[2]=s[3]=v
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
@@ -85,6 +85,9 @@
 #if defined (RT_SIMD_CODE)
 
 #if defined (RT_128) && (RT_128 != 0)
+
+#undef  sregs_sa
+#undef  sregs_la
 
 /* structural */
 
@@ -645,18 +648,15 @@
  * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
  * one hidden SIMD register holding all 1s and using one hidden mask register
  * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in CHECK_MASK to facilitate branching on a given condition value */
+ * then in mkj**_** to facilitate branching on a given condition value */
 
-#define RT_SIMD_MASK_NONE       0x00    /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL       0x04    /*  all satisfy the condition */
+#define RT_SIMD_MASK_NONE32_128     0x00    /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL32_128     0x04    /*  all satisfy the condition */
 
-#define movmn_rr(RD, XS) /* not portable, do not use outside */             \
+#define mkjix_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         EMITW(0x4EB1B800 | MXM(TmmM,    REG(XS), 0x00))                     \
-        EMITW(0x0E043C00 | MXM(REG(RD), TmmM,    0x00))
-
-#define CHECK_MASK(lb, mask, XS) /* destroys Reax, jump lb if mask == S */  \
-        movmn_rr(Reax, W(XS))                                               \
-        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask))                             \
+        EMITW(0x0E043C00 | MXM(Teax,    TmmM,    0x00))                     \
+        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask##32_128))                     \
         jezxx_lb(lb)
 
 /* simd mode

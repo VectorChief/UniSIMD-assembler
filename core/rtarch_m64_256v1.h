@@ -681,6 +681,30 @@
 
 /**************************   helper macros (SIMD)   **************************/
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define RT_SIMD_MASK_NONE64_256  MN64_256   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL64_256  MF64_256   /*  all satisfy the condition */
+
+/* #define S0(mask)    S1(mask)            (defined in 32_128-bit header) */
+/* #define S1(mask)    S##mask             (defined in 32_128-bit header) */
+
+#define SMN64_256(xs, lb) /* not portable, do not use outside */            \
+        EMITW(0x7820001E | MXM(TmmM, xs, xs+16))                            \
+        ASM_BEG ASM_OP2( bz.v, $w31, lb) ASM_END
+
+#define SMF64_256(xs, lb) /* not portable, do not use outside */            \
+        EMITW(0x7800001E | MXM(TmmM, xs, xs+16))                            \
+        ASM_BEG ASM_OP2(bnz.w, $w31, lb) ASM_END
+
+#define mkjdx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        AUW(EMPTY, EMPTY, EMPTY, REG(XS), lb,                               \
+        S0(RT_SIMD_MASK_##mask##64_256), EMPTY2)
+
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz

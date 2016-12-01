@@ -7,14 +7,14 @@
 #ifndef RT_RTARCH_A32_256V1_H
 #define RT_RTARCH_A32_256V1_H
 
-#include "rtarch_a64.h"
+#include "rtarch_a64_128v1.h"
 
-#define RT_SIMD_REGS        16
-#define RT_SIMD_ALIGN       32
-#define RT_SIMD_WIDTH64     4
-#define RT_SIMD_SET64(s, v) s[0]=s[1]=s[2]=s[3]=v
-#define RT_SIMD_WIDTH32     8
-#define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=v
+#define RT_SIMD_REGS_256        16
+#define RT_SIMD_ALIGN_256       32
+#define RT_SIMD_WIDTH64_256     4
+#define RT_SIMD_SET64_256(s, v) s[0]=s[1]=s[2]=s[3]=v
+#define RT_SIMD_WIDTH32_256     8
+#define RT_SIMD_SET32_256(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=v
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
@@ -86,86 +86,16 @@
 
 #if defined (RT_256) && (RT_256 != 0) && (RT_SIMD_COMPAT_XMM > 0)
 
-/* structural */
-
-#define MXM(reg, ren, rem)                                                  \
-        ((rem) << 16 | (ren) << 5 | (reg))
-
-#define MPM(reg, brm, vdp, bxx, pxx)                                        \
-        (pxx(vdp) | bxx(brm) << 5 | (reg))
-
-/* selectors  */
-
-#define  B2(val, tp1, tp2)  B2##tp2
-#define  P2(val, tp1, tp2)  P2##tp2
-#define  C2(val, tp1, tp2)  C2##tp2
-
-/* displacement encoding SIMD(TP2) */
-
-#define B20(br) (br)
-#define P20(dp) (0x00000000 | ((dp) & 0xFFF0) << 6)
-#define C20(br, dp) EMPTY
-
-#define B22(br) TPxx
-#define P22(dp) (0x00000000)
-#define C22(br, dp) EMITW(0x52800000 | MXM(TDxx,    0x00,    0x00) |        \
-                             (0xFFF0 & (dp)) << 5)                          \
-                    EMITW(0x72A00000 | MXM(TDxx,    0x00,    0x00) |        \
-                             (0x7FFF & (dp) >> 16) << 5)                    \
-                    EMITW(0x0B000000 | MXM(TPxx,    (br),    TDxx) | ADR)
-
-/* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
-
-#define Tmm0    0x00  /* v0,  internal name for Xmm0 (in mmv) */
-#define TmmE    0x0E  /* v14, internal name for XmmE (in sregs) */
-#define TmmF    0x0F  /* v15, internal name for XmmF (in sregs) */
-#define TmmM    0x1F  /* v31, temp-reg name for mem-args */
+#undef  sregs_sa
+#undef  sregs_la
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
 
-/* registers    REG,  MOD,  SIB */
-
-#define Xmm0    0x00, 0x00, EMPTY       /* v0 */
-#define Xmm1    0x01, 0x00, EMPTY       /* v1 */
-#define Xmm2    0x02, 0x00, EMPTY       /* v2 */
-#define Xmm3    0x03, 0x00, EMPTY       /* v3 */
-#define Xmm4    0x04, 0x00, EMPTY       /* v4 */
-#define Xmm5    0x05, 0x00, EMPTY       /* v5 */
-#define Xmm6    0x06, 0x00, EMPTY       /* v6 */
-#define Xmm7    0x07, 0x00, EMPTY       /* v7 */
-#define Xmm8    0x08, 0x00, EMPTY       /* v8 */
-#define Xmm9    0x09, 0x00, EMPTY       /* v9 */
-#define XmmA    0x0A, 0x00, EMPTY       /* v10 */
-#define XmmB    0x0B, 0x00, EMPTY       /* v11 */
-#define XmmC    0x0C, 0x00, EMPTY       /* v12 */
-#define XmmD    0x0D, 0x00, EMPTY       /* v13 */
-#if     RT_SIMD_COMPAT_XMM < 2
-#define XmmE    0x0E, 0x00, EMPTY       /* v14, may be reserved in some cases */
-#if     RT_SIMD_COMPAT_XMM < 1
-#define XmmF    0x0F, 0x00, EMPTY       /* v15, may be reserved in some cases */
-#endif/*RT_SIMD_COMPAT_XMM < 1*/
-#endif/*RT_SIMD_COMPAT_XMM < 2*/
-
-/* The last two SIMD registers can be reserved by the assembler when building
- * RISC targets with SIMD wider than natively supported 128-bit, in which case
- * they will be occupied by temporary data. Two hidden registers may also come
- * in handy when implementing elaborate register-spill techniques in the future
- * for current targets with less native registers than architecturally exposed.
- *
- * It should be possible to reserve only 1 SIMD register (XmmF) to achieve the
- * goals above (totalling 15 regs) at the cost of extra loads in certain ops. */
-
 /******************************************************************************/
 /**********************************   MPE   ***********************************/
 /******************************************************************************/
-
-/* adr (D = adr S) */
-
-#define adrpx_ld(RD, MS, DS) /* RD is a BASE reg, MS/DS is SIMD-aligned */  \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C3(DS), EMPTY2)   \
-        EMITW(0x8B000000 | MRM(REG(RD), MOD(MS), TDxx))
 
 /**************************   packed generic (NEON)   *************************/
 
@@ -816,71 +746,18 @@
  * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
  * one hidden SIMD register holding all 1s and using one hidden mask register
  * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in CHECK_MASK to facilitate branching on a given condition value */
+ * then in mkj**_** to facilitate branching on a given condition value */
 
-#define RT_SIMD_MASK_NONE       0x00    /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL       0x04    /*  all satisfy the condition */
+#define RT_SIMD_MASK_NONE32_256     0x00    /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL32_256     0x04    /*  all satisfy the condition */
 
-#define CHECK_MASK(lb, mask, XS) /* destroys Reax, jump lb if mask == S */  \
+#define mkjcx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         EMITW(0x4E201C00 | MXM(TmmM,    REG(XS), RYG(XS)) |                 \
-                                        (0x04 - RT_SIMD_MASK_##mask) << 21) \
+                                (0x04 - RT_SIMD_MASK_##mask##32_256) << 21) \
         EMITW(0x4EB1B800 | MXM(TmmM,    TmmM,    0x00))                     \
         EMITW(0x0E043C00 | MXM(Teax,    TmmM,    0x00))                     \
-        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask))                             \
+        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask##32_256))                     \
         jezxx_lb(lb)
-
-/* simd mode
- * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),
- * original FCTRL blocks (FCTRL_ENTER/FCTRL_LEAVE) are defined in rtbase.h
- * NOTE: ARMv7 always uses ROUNDN non-IEEE mode for SIMD fp-arithmetic,
- * while fp<->int conversion takes ROUND* into account via VFP fallback */
-
-#if RT_SIMD_FLUSH_ZERO == 0
-
-#define RT_SIMD_MODE_ROUNDN     0x00    /* round towards near */
-#define RT_SIMD_MODE_ROUNDM     0x02    /* round towards -inf */
-#define RT_SIMD_MODE_ROUNDP     0x01    /* round towards +inf */
-#define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
-
-#else /* RT_SIMD_FLUSH_ZERO */
-
-#define RT_SIMD_MODE_ROUNDN     0x04    /* round towards near */
-#define RT_SIMD_MODE_ROUNDM     0x06    /* round towards -inf */
-#define RT_SIMD_MODE_ROUNDP     0x05    /* round towards +inf */
-#define RT_SIMD_MODE_ROUNDZ     0x07    /* round towards zero */
-
-#endif /* RT_SIMD_FLUSH_ZERO */
-
-#define RT_SIMD_MODE_ROUNDN_F   0x04    /* round towards near */
-#define RT_SIMD_MODE_ROUNDM_F   0x06    /* round towards -inf */
-#define RT_SIMD_MODE_ROUNDP_F   0x05    /* round towards +inf */
-#define RT_SIMD_MODE_ROUNDZ_F   0x07    /* round towards zero */
-
-#define fpscr_ld(RS) /* not portable, do not use outside */                 \
-        EMITW(0xD51B4400 | MRM(REG(RS), 0x00,    0x00))
-
-#define fpscr_st(RD) /* not portable, do not use outside */                 \
-        EMITW(0xD53B4400 | MRM(REG(RD), 0x00,    0x00))
-
-#if RT_SIMD_FAST_FCTRL == 0
-
-#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
-        EMITW(0x52A00000 | MRM(TIxx,    0x00,    0x00) |                    \
-                           RT_SIMD_MODE_##mode << 11)                       \
-        EMITW(0xD51B4400 | MRM(TIxx,    0x00,    0x00))
-
-#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
-        EMITW(0xD51B4400 | MRM(TNxx,    0x00,    0x00))
-
-#else /* RT_SIMD_FAST_FCTRL */
-
-#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
-        EMITW(0xD51B4400 | MRM(TNxx+(RT_SIMD_MODE_##mode&3), 0x00, 0x00))
-
-#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
-        EMITW(0xD51B4400 | MRM(TNxx,    0x00,    0x00))
-
-#endif /* RT_SIMD_FAST_FCTRL */
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)

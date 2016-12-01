@@ -561,6 +561,11 @@ struct rt_SIMD_REGS
 
 #if defined (RT_SIMD_CODE)
 
+/****************** original CHECK_MASK macro (configurable) ******************/
+
+#define CHECK_MASK(lb, mask, XS) /* destroys Reax, jump lb if mask == S */  \
+        mkjpx_rx(W(XS), mask, lb)
+
 /****************** original FCTRL blocks (cannot be nested) ******************/
 
 #define FCTRL_ENTER(mode) /* assumes default mode (ROUNDN) upon entry */    \
@@ -569,9 +574,15 @@ struct rt_SIMD_REGS
 #define FCTRL_LEAVE(mode) /* resumes default mode (ROUNDN) upon leave */    \
         FCTRL_RESET()
 
-/****************** instructions for fixed-sized 32-bit SIMD ******************/
+/******************************************************************************/
+/**** var-len **** SIMD instructions with fixed-32-bit-element **** 512-bit ***/
+/******************************************************************************/
 
 #if   (RT_SIMD == 512)
+
+/*
+ * main block of var-len SIMD instructions is defined in 512-bit rtarch headers
+ */
 
 /* cbr (D = cbrt S) */
 
@@ -710,7 +721,9 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/****************** instructions for fixed-sized 32-bit SIMD ***** 256-bit ****/
+/******************************************************************************/
+/**** var-len **** SIMD instructions with fixed-32-bit-element **** 256-bit ***/
+/******************************************************************************/
 
 #elif (RT_SIMD == 256)
 
@@ -1069,6 +1082,15 @@ struct rt_SIMD_REGS
 #define svron_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrcn_ld(W(XG), W(MS), W(DS))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjox_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjcx_rx(W(XS), mask, lb)
+
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
@@ -1247,7 +1269,9 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/****************** instructions for fixed-sized 32-bit SIMD ***** 128-bit ****/
+/******************************************************************************/
+/**** var-len **** SIMD instructions with fixed-32-bit-element **** 128-bit ***/
+/******************************************************************************/
 
 #elif (RT_SIMD == 128)
 
@@ -1606,6 +1630,15 @@ struct rt_SIMD_REGS
 #define svron_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrin_ld(W(XG), W(MS), W(DS))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjox_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjix_rx(W(XS), mask, lb)
+
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
@@ -1786,9 +1819,15 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD: 512, 256, 128 */
 
-/****************** instructions for fixed-sized 64-bit SIMD ******************/
+/******************************************************************************/
+/**** var-len **** SIMD instructions with fixed-64-bit-element **** 512-bit ***/
+/******************************************************************************/
 
 #if   (RT_SIMD == 512)
+
+/*
+ * main block of var-len SIMD instructions is defined in 512-bit rtarch headers
+ */
 
 /* cbr (D = cbrt S) */
 
@@ -1927,7 +1966,9 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/****************** instructions for fixed-sized 64-bit SIMD ***** 256-bit ****/
+/******************************************************************************/
+/**** var-len **** SIMD instructions with fixed-64-bit-element **** 256-bit ***/
+/******************************************************************************/
 
 #elif (RT_SIMD == 256)
 
@@ -2286,6 +2327,15 @@ struct rt_SIMD_REGS
 #define svrqn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrdn_ld(W(XG), W(MS), W(DS))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjqx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjdx_rx(W(XS), mask, lb)
+
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
@@ -2464,7 +2514,9 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/****************** instructions for fixed-sized 64-bit SIMD ***** 128-bit ****/
+/******************************************************************************/
+/**** var-len **** SIMD instructions with fixed-64-bit-element **** 128-bit ***/
+/******************************************************************************/
 
 #elif (RT_SIMD == 128)
 
@@ -2823,6 +2875,15 @@ struct rt_SIMD_REGS
 #define svrqn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrjn_ld(W(XG), W(MS), W(DS))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjqx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjjx_rx(W(XS), mask, lb)
+
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
@@ -3003,7 +3064,9 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD: 512, 256, 128 */
 
-/***************** instructions for element-sized 32-bit SIMD *****************/
+/******************************************************************************/
+/**** var-len **** SIMD instructions with configurable-element **** 32-bit ****/
+/******************************************************************************/
 
 #if   RT_ELEMENT == 32
 
@@ -3362,6 +3425,15 @@ struct rt_SIMD_REGS
 #define svrpn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svron_ld(W(XG), W(MS), W(DS))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjpx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjox_rx(W(XS), mask, lb)
+
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
@@ -3403,7 +3475,9 @@ struct rt_SIMD_REGS
 #define cvrps_rr(XD, XS, mode)                                              \
         cvros_rr(W(XD), W(XS), mode)
 
-/***************** instructions for element-sized 32-bit SIMD **** 256-bit ****/
+/******************************************************************************/
+/**** 256-bit **** SIMD instructions with configurable-element **** 32-bit ****/
+/******************************************************************************/
 
 /* mov (D = S) */
 
@@ -3760,6 +3834,15 @@ struct rt_SIMD_REGS
 #define svrfn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrcn_ld(W(XG), W(MS), W(DS))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjfx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjcx_rx(W(XS), mask, lb)
+
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
@@ -3801,7 +3884,9 @@ struct rt_SIMD_REGS
 #define cvrfs_rr(XD, XS, mode)                                              \
         cvrcs_rr(W(XD), W(XS), mode)
 
-/***************** instructions for element-sized 32-bit SIMD **** 128-bit ****/
+/******************************************************************************/
+/**** 128-bit **** SIMD instructions with configurable-element **** 32-bit ****/
+/******************************************************************************/
 
 /* mov (D = S) */
 
@@ -4158,6 +4243,15 @@ struct rt_SIMD_REGS
 #define svrln_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrin_ld(W(XG), W(MS), W(DS))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjlx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjix_rx(W(XS), mask, lb)
+
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
@@ -4199,7 +4293,9 @@ struct rt_SIMD_REGS
 #define cvrls_rr(XD, XS, mode)                                              \
         cvris_rr(W(XD), W(XS), mode)
 
-/***************** instructions for element-sized 64-bit SIMD *****************/
+/******************************************************************************/
+/**** var-len **** SIMD instructions with configurable-element **** 64-bit ****/
+/******************************************************************************/
 
 #elif RT_ELEMENT == 64
 
@@ -4558,6 +4654,15 @@ struct rt_SIMD_REGS
 #define svrpn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrqn_ld(W(XG), W(MS), W(DS))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjpx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjqx_rx(W(XS), mask, lb)
+
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
@@ -4599,7 +4704,9 @@ struct rt_SIMD_REGS
 #define cvrps_rr(XD, XS, mode)                                              \
         cvrqs_rr(W(XD), W(XS), mode)
 
-/***************** instructions for element-sized 64-bit SIMD **** 256-bit ****/
+/******************************************************************************/
+/**** 256-bit **** SIMD instructions with configurable-element **** 64-bit ****/
+/******************************************************************************/
 
 /* mov (D = S) */
 
@@ -4956,6 +5063,15 @@ struct rt_SIMD_REGS
 #define svrfn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrdn_ld(W(XG), W(MS), W(DS))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjfx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjdx_rx(W(XS), mask, lb)
+
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
@@ -4997,7 +5113,9 @@ struct rt_SIMD_REGS
 #define cvrfs_rr(XD, XS, mode)                                              \
         cvrds_rr(W(XD), W(XS), mode)
 
-/***************** instructions for element-sized 64-bit SIMD **** 128-bit ****/
+/******************************************************************************/
+/**** 128-bit **** SIMD instructions with configurable-element **** 64-bit ****/
+/******************************************************************************/
 
 /* mov (D = S) */
 
@@ -5353,6 +5471,15 @@ struct rt_SIMD_REGS
 
 #define svrln_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrjn_ld(W(XG), W(MS), W(DS))
+
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjlx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjjx_rx(W(XS), mask, lb)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)

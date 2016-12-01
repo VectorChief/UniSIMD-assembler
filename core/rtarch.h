@@ -272,8 +272,9 @@
 
 #include "rtzero.h"
 
-/* determine mapping of vector-length-agnostic SIMD subsets: cmdo, cmdp, cmdq */
-
+/*
+ * Determine mapping of vector-length-agnostic SIMD subsets: cmdo, cmdp, cmdq.
+ */
 #if   defined (RT_SIMD)
 /* RT_SIMD is already defined outside */
 #elif defined (RT_512) && (RT_512 != 0)
@@ -284,8 +285,9 @@
 #define RT_SIMD 128
 #endif /* RT_512, RT_256, RT_128 */
 
-/* determine SIMD quad-factor for backend structs (maximal for a given build) */
-
+/*
+ * Determine SIMD quad-factor for backend structs (maximal for a given build).
+ */
 #if   defined (RT_512) && (RT_512 != 0)
 #define Q 4
 #elif defined (RT_256) && (RT_256 != 0)
@@ -293,6 +295,27 @@
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
 #endif /* RT_512, RT_256, RT_128 */
+
+/*
+ * Determine SIMD properties for a given SIMD target (vector-length-agnostic).
+ */
+#if   (RT_SIMD == 512) && (RT_512 != 0)
+/* RT_SIMD_* definitions come directly from 512-bit rtarch headers */
+#elif (RT_SIMD == 256) && (RT_256 != 0)
+#define RT_SIMD_REGS            RT_SIMD_REGS_256
+#define RT_SIMD_ALIGN           RT_SIMD_ALIGN_256
+#define RT_SIMD_WIDTH64         RT_SIMD_WIDTH64_256
+#define RT_SIMD_SET64(s, v)     RT_SIMD_SET64_256(s, v)
+#define RT_SIMD_WIDTH32         RT_SIMD_WIDTH32_256
+#define RT_SIMD_SET32(s, v)     RT_SIMD_SET32_256(s, v)
+#elif (RT_SIMD == 128) && (RT_128 != 0)
+#define RT_SIMD_REGS            RT_SIMD_REGS_128
+#define RT_SIMD_ALIGN           RT_SIMD_ALIGN_128
+#define RT_SIMD_WIDTH64         RT_SIMD_WIDTH64_128
+#define RT_SIMD_SET64(s, v)     RT_SIMD_SET64_128(s, v)
+#define RT_SIMD_WIDTH32         RT_SIMD_WIDTH32_128
+#define RT_SIMD_SET32(s, v)     RT_SIMD_SET32_128(s, v)
+#endif /* RT_SIMD: 512, 256, 128 */
 
 /*
  * SIMD quad-factor (number of 128-bit chunks) for chosen SIMD target.

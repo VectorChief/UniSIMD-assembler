@@ -9,12 +9,12 @@
 
 #include "rtarch_p64.h"
 
-#define RT_SIMD_REGS        16
-#define RT_SIMD_ALIGN       16
-#define RT_SIMD_WIDTH64     2
-#define RT_SIMD_SET64(s, v) s[0]=s[1]=v
-#define RT_SIMD_WIDTH32     4
-#define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=v
+#define RT_SIMD_REGS_128        16
+#define RT_SIMD_ALIGN_128       16
+#define RT_SIMD_WIDTH64_128     2
+#define RT_SIMD_SET64_128(s, v) s[0]=s[1]=v
+#define RT_SIMD_WIDTH32_128     4
+#define RT_SIMD_SET32_128(s, v) s[0]=s[1]=s[2]=s[3]=v
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
@@ -85,6 +85,9 @@
 #if defined (RT_SIMD_CODE)
 
 #if defined (RT_128) && (RT_128 < 2)
+
+#undef  sregs_sa
+#undef  sregs_la
 
 /* structural */
 
@@ -861,19 +864,24 @@
  * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
  * one hidden SIMD register holding all 1s and using one hidden mask register
  * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in CHECK_MASK to facilitate branching on a given condition value */
+ * then in mkj**_** to facilitate branching on a given condition value */
 
-#define RT_SIMD_MASK_NONE       MN      /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL       MF      /*  all satisfy the condition */
+#define RT_SIMD_MASK_NONE32_128  MN32_128   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL32_128  MF32_128   /*  all satisfy the condition */
 
 #define S0(mask)    S1(mask)
 #define S1(mask)    S##mask
-#define SMN(rg, lb) ASM_BEG ASM_OP2(beq, cr6, lb) ASM_END
-#define SMF(rg, lb) ASM_BEG ASM_OP2(blt, cr6, lb) ASM_END
 
-#define CHECK_MASK(lb, mask, XS) /* destroys Reax, jump lb if mask == S */  \
+#define SMN32_128(xs, lb) /* not portable, do not use outside */            \
+        ASM_BEG ASM_OP2(beq, cr6, lb) ASM_END
+
+#define SMF32_128(xs, lb) /* not portable, do not use outside */            \
+        ASM_BEG ASM_OP2(blt, cr6, lb) ASM_END
+
+#define mkjix_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         EMITW(0x10000486 | MXM(REG(XS), REG(XS), TmmQ))                     \
-        AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb, S0(RT_SIMD_MASK_##mask), EMPTY2)
+        AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb,                                 \
+        S0(RT_SIMD_MASK_##mask##32_128), EMPTY2)
 
 /* simd mode
  * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),
