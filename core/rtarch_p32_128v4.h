@@ -855,86 +855,92 @@
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movix_st(Xmm0, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(Xmm1, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(Xmm2, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(Xmm3, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(Xmm4, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(Xmm5, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(Xmm6, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(Xmm7, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(Xmm8, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(Xmm9, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(XmmA, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(XmmB, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(XmmC, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(XmmD, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITW(0x7C0001CE | MXM(TmmE,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITW(0x7C0001CE | MXM(TmmF,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITW(0x7C0001CE | MXM(TmmQ,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITW(0x7C0001CE | MXM(TmmM,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITP(0x7C000718 | MXM(TmmQ,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITP(0x7C000718 | MXM(TmmM,    0x00,    Teax))
 
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movix_ld(Xmm0, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(Xmm1, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(Xmm2, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(Xmm3, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(Xmm4, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(Xmm5, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(Xmm6, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(Xmm7, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(Xmm8, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(Xmm9, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(XmmA, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(XmmB, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(XmmC, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(XmmD, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITW(0x7C0000CE | MXM(TmmE,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITW(0x7C0000CE | MXM(TmmF,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITW(0x7C0000CE | MXM(TmmQ,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITW(0x7C0000CE | MXM(TmmM,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITP(0x7C000618 | MXM(TmmQ,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITP(0x7C000618 | MXM(TmmM,    0x00,    Teax))
+
+#ifndef RT_RTARCH_P64_256V2_H
+#undef  RT_256
+#define RT_256 ((RT_128)/2)
+#include "rtarch_p64_256v2.h"
+#endif /* RT_RTARCH_P64_256V2_H */
 
 #endif /* RT_128 */
 

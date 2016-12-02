@@ -7,7 +7,7 @@
 #ifndef RT_RTARCH_X32_512V2_H
 #define RT_RTARCH_X32_512V2_H
 
-#include "rtarch_x64_256v2.h"
+#include "rtarch_x64.h"
 
 #define RT_SIMD_REGS        16
 #define RT_SIMD_ALIGN       64
@@ -86,6 +86,12 @@
 #if defined (RT_SIMD_CODE)
 
 #if defined (RT_512) && (RT_512 != 0)
+
+#ifndef RT_RTARCH_X64_256V2_H
+#undef  RT_256
+#define RT_256  2
+#include "rtarch_x64_256v2.h"
+#endif /* RT_RTARCH_X64_256V2_H */
 
 #undef  sregs_sa
 #undef  sregs_la

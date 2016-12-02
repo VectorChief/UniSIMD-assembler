@@ -284,7 +284,7 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if defined (RT_256) && (RT_256 < 2)
+#if (RT_256 < 2)
 
 #if RT_SIMD_COMPAT_FMA == 0
 
@@ -717,7 +717,7 @@
 
 /**************************   packed integer (AVX1)   *************************/
 
-#if defined (RT_256) && (RT_256 < 2)
+#if (RT_256 < 2)
 
 #define prmdx_rr(XD, XS, IT) /* not portable, do not use outside */         \
         VEX(RXB(XD), RXB(XS), REN(XD), 1, 1, 3) EMITB(0x06)                 \

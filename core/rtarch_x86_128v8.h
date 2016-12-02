@@ -86,10 +86,6 @@
 
 #if defined (RT_128) && (RT_128 >= 8)
 
-#ifndef RT_RTARCH_X86_256V2_H
-#include "rtarch_x86_256v2.h"
-#endif /* RT_RTARCH_X86_256V2_H */
-
 #undef  sregs_sa
 #undef  sregs_la
 
@@ -334,8 +330,7 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if defined (RT_256) && (RT_256 < 2) || \
-    defined (RT_128) && (RT_SIMD_COMPAT_128 == 1)
+#if (RT_SIMD_COMPAT_128 == 1)
 
 #define addds_rr(XG, XS)     /* not portable, do not use outside */         \
         V2X(REG(XG), 1, 1) EMITB(0x58)                                      \
@@ -445,7 +440,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* (RT_SIMD_COMPAT_128 == 2) || RT_256 >= 2 */ /* FMA comes with AVX2 */
+#else /* (RT_SIMD_COMPAT_128 == 2) */ /* FMA comes with AVX2 */
 
 /* fma (G = G + S * T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -481,7 +476,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* (RT_SIMD_COMPAT_128 == 2) || RT_256 >= 2 */
+#endif /* (RT_SIMD_COMPAT_128 == 2) */
 
 /* min (G = G < S ? G : S) */
 
@@ -922,8 +917,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#if defined (RT_256) && (RT_256 < 2) || \
-    defined (RT_128) && (RT_SIMD_COMPAT_128 == 1)
+#if (RT_SIMD_COMPAT_128 == 1)
 
 #define svlix_rr(XG, XS)     /* variable shift with per-elem count */       \
         movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -956,7 +950,7 @@
         stack_ld(Recx)                                                      \
         movix_ld(W(XG), Mebp, inf_SCR01(0))
 
-#else /* (RT_SIMD_COMPAT_128 == 2) || RT_256 >= 2 */
+#else /* (RT_SIMD_COMPAT_128 == 2) */
 
 #define svlix_rr(XG, XS)     /* variable shift with per-elem count */       \
         VEX(REG(XG), 0, 1, 2) EMITB(0x47)                                   \
@@ -967,7 +961,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#endif /* (RT_SIMD_COMPAT_128 == 2) || RT_256 >= 2 */
+#endif /* (RT_SIMD_COMPAT_128 == 2) */
 
 /* shr (G = G >> S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -982,8 +976,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#if defined (RT_256) && (RT_256 < 2) || \
-    defined (RT_128) && (RT_SIMD_COMPAT_128 == 1)
+#if (RT_SIMD_COMPAT_128 == 1)
 
 #define svrix_rr(XG, XS)     /* variable shift with per-elem count */       \
         movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1016,7 +1009,7 @@
         stack_ld(Recx)                                                      \
         movix_ld(W(XG), Mebp, inf_SCR01(0))
 
-#else /* (RT_SIMD_COMPAT_128 == 2) || RT_256 >= 2 */
+#else /* (RT_SIMD_COMPAT_128 == 2) */
 
 #define svrix_rr(XG, XS)     /* variable shift with per-elem count */       \
         VEX(REG(XG), 0, 1, 2) EMITB(0x45)                                   \
@@ -1027,7 +1020,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#endif /* (RT_SIMD_COMPAT_128 == 2) || RT_256 >= 2 */
+#endif /* (RT_SIMD_COMPAT_128 == 2) */
 
 
 #define shrin_ri(XG, IS)                                                    \
@@ -1040,8 +1033,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#if defined (RT_256) && (RT_256 < 2) || \
-    defined (RT_128) && (RT_SIMD_COMPAT_128 == 1)
+#if (RT_SIMD_COMPAT_128 == 1)
 
 #define svrin_rr(XG, XS)     /* variable shift with per-elem count */       \
         movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1074,7 +1066,7 @@
         stack_ld(Recx)                                                      \
         movix_ld(W(XG), Mebp, inf_SCR01(0))
 
-#else /* (RT_SIMD_COMPAT_128 == 2) || RT_256 >= 2 */
+#else /* (RT_SIMD_COMPAT_128 == 2) */
 
 #define svrin_rr(XG, XS)     /* variable shift with per-elem count */       \
         VEX(REG(XG), 0, 1, 2) EMITB(0x46)                                   \
@@ -1085,7 +1077,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#endif /* (RT_SIMD_COMPAT_128 == 2) || RT_256 >= 2 */
+#endif /* (RT_SIMD_COMPAT_128 == 2) */
 
 /**************************   helper macros (AVX1)   **************************/
 
@@ -1223,38 +1215,44 @@
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movix_st(Xmm0, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(Xmm1, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(Xmm2, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(Xmm3, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(Xmm4, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(Xmm5, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(Xmm6, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_st(Xmm7, Oeax, PLAIN)
 
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movix_ld(Xmm0, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(Xmm1, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(Xmm2, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(Xmm3, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(Xmm4, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(Xmm5, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(Xmm6, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movix_ld(Xmm7, Oeax, PLAIN)
+
+#ifndef RT_RTARCH_X86_256V2_H
+#undef  RT_256
+#define RT_256  (RT_SIMD_COMPAT_128)
+#include "rtarch_x86_256v2.h"
+#endif /* RT_RTARCH_X86_256V2_H */
 
 #endif /* RT_128 */
 

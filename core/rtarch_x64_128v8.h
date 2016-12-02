@@ -284,8 +284,7 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if defined (RT_256) && (RT_256 < 2) || \
-    defined (RT_128) && (RT_SIMD_COMPAT_128 == 1)
+#if (RT_SIMD_COMPAT_128 == 1)
 
 #if RT_SIMD_COMPAT_FMA == 0
 
@@ -451,7 +450,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* (RT_SIMD_COMPAT_128 == 2) || RT_256 >= 2 */ /* FMA comes with AVX2 */
+#else /* (RT_SIMD_COMPAT_128 == 2) */ /* FMA comes with AVX2 */
 
 /* fma (G = G + S * T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -487,7 +486,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* (RT_SIMD_COMPAT_128 == 2) || RT_256 >= 2 */
+#endif /* (RT_SIMD_COMPAT_128 == 2) */
 
 /* min (G = G < S ? G : S) */
 
@@ -955,8 +954,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#if defined (RT_256) && (RT_256 < 2) || \
-    defined (RT_128) && (RT_SIMD_COMPAT_128 == 1)
+#if (RT_SIMD_COMPAT_128 == 1)
 
 #define svljx_rr(XG, XS)     /* variable shift with per-elem count */       \
         movjx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -981,7 +979,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         stack_ld(Recx)                                                      \
         movjx_ld(W(XG), Mebp, inf_SCR01(0))
 
-#else /* (RT_SIMD_COMPAT_128 == 2) || RT_256 >= 2 */
+#else /* (RT_SIMD_COMPAT_128 == 2) */
 
 #define svljx_rr(XG, XS)     /* variable shift with per-elem count */       \
         VEW(RXB(XG), RXB(XS), REN(XG), 0, 1, 2) EMITB(0x47)                 \
@@ -992,7 +990,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#endif /* (RT_SIMD_COMPAT_128 == 2) || RT_256 >= 2 */
+#endif /* (RT_SIMD_COMPAT_128 == 2) */
 
 /* shr (G = G >> S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -1007,8 +1005,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#if defined (RT_256) && (RT_256 < 2) || \
-    defined (RT_128) && (RT_SIMD_COMPAT_128 == 1)
+#if (RT_SIMD_COMPAT_128 == 1)
 
 #define svrjx_rr(XG, XS)     /* variable shift with per-elem count */       \
         movjx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1033,7 +1030,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         stack_ld(Recx)                                                      \
         movjx_ld(W(XG), Mebp, inf_SCR01(0))
 
-#else /* (RT_SIMD_COMPAT_128 == 2) || RT_256 >= 2 */
+#else /* (RT_SIMD_COMPAT_128 == 2) */
 
 #define svrjx_rr(XG, XS)     /* variable shift with per-elem count */       \
         VEW(RXB(XG), RXB(XS), REN(XG), 0, 1, 2) EMITB(0x45)                 \
@@ -1044,7 +1041,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#endif /* (RT_SIMD_COMPAT_128 == 2) || RT_256 >= 2 */
+#endif /* (RT_SIMD_COMPAT_128 == 2) */
 
 
 #define shrjn_ri(XG, IS)                                                    \
