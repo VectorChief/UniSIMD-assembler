@@ -347,18 +347,18 @@
 
 /* internal definitions for IEEE-compatible div & sqr */
 
-#define movfx_ld(fd, MS, DS) /* not portable, do not use outside */         \
+#define movws_ld(fd, MS, DS) /* not portable, do not use outside */         \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0xC0000000 | MDM(fd,      MOD(MS), VAL(DS), B1(DS), P1(DS)))
 
-#define movfx_st(fs, MD, DD) /* not portable, do not use outside */         \
+#define movws_st(fs, MD, DD) /* not portable, do not use outside */         \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0xD0000000 | MDM(fs,      MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
-#define divfs_rr(fg, fs) /* not portable, do not use outside */             \
+#define divws_rr(fg, fs) /* not portable, do not use outside */             \
         EMITW(0xEC000024 | MTM(fg,      fg,      fs))
 
-#define sqrfs_rr(fd, fs) /* not portable, do not use outside */             \
+#define sqrws_rr(fd, fs) /* not portable, do not use outside */             \
         EMITW(0xEC00002C | MTM(fd,      0x00,    fs))
 
 /* div (G = G / S) */
@@ -368,44 +368,44 @@
 #define divos_rr(XG, XS)                                                    \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
         movox_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movfx_ld(Tff1,  Mebp, inf_SCR01(0x00))                              \
-        movfx_ld(Tff2,  Mebp, inf_SCR02(0x00))                              \
-        divfs_rr(Tff1, Tff2)                                                \
-        movfx_st(Tff1,  Mebp, inf_SCR01(0x00))                              \
-        movfx_ld(Tff1,  Mebp, inf_SCR01(0x04))                              \
-        movfx_ld(Tff2,  Mebp, inf_SCR02(0x04))                              \
-        divfs_rr(Tff1, Tff2)                                                \
-        movfx_st(Tff1,  Mebp, inf_SCR01(0x04))                              \
-        movfx_ld(Tff1,  Mebp, inf_SCR01(0x08))                              \
-        movfx_ld(Tff2,  Mebp, inf_SCR02(0x08))                              \
-        divfs_rr(Tff1, Tff2)                                                \
-        movfx_st(Tff1,  Mebp, inf_SCR01(0x08))                              \
-        movfx_ld(Tff1,  Mebp, inf_SCR01(0x0C))                              \
-        movfx_ld(Tff2,  Mebp, inf_SCR02(0x0C))                              \
-        divfs_rr(Tff1, Tff2)                                                \
-        movfx_st(Tff1,  Mebp, inf_SCR01(0x0C))                              \
+        movws_ld(Tff1,  Mebp, inf_SCR01(0x00))                              \
+        movws_ld(Tff2,  Mebp, inf_SCR02(0x00))                              \
+        divws_rr(Tff1, Tff2)                                                \
+        movws_st(Tff1,  Mebp, inf_SCR01(0x00))                              \
+        movws_ld(Tff1,  Mebp, inf_SCR01(0x04))                              \
+        movws_ld(Tff2,  Mebp, inf_SCR02(0x04))                              \
+        divws_rr(Tff1, Tff2)                                                \
+        movws_st(Tff1,  Mebp, inf_SCR01(0x04))                              \
+        movws_ld(Tff1,  Mebp, inf_SCR01(0x08))                              \
+        movws_ld(Tff2,  Mebp, inf_SCR02(0x08))                              \
+        divws_rr(Tff1, Tff2)                                                \
+        movws_st(Tff1,  Mebp, inf_SCR01(0x08))                              \
+        movws_ld(Tff1,  Mebp, inf_SCR01(0x0C))                              \
+        movws_ld(Tff2,  Mebp, inf_SCR02(0x0C))                              \
+        divws_rr(Tff1, Tff2)                                                \
+        movws_st(Tff1,  Mebp, inf_SCR01(0x0C))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 #define divos_ld(XG, MS, DS)                                                \
         movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
         movox_ld(W(XG), W(MS), W(DS))                                       \
         movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        movfx_ld(Tff1,  Mebp, inf_SCR01(0x00))                              \
-        movfx_ld(Tff2,  Mebp, inf_SCR02(0x00))                              \
-        divfs_rr(Tff1, Tff2)                                                \
-        movfx_st(Tff1,  Mebp, inf_SCR01(0x00))                              \
-        movfx_ld(Tff1,  Mebp, inf_SCR01(0x04))                              \
-        movfx_ld(Tff2,  Mebp, inf_SCR02(0x04))                              \
-        divfs_rr(Tff1, Tff2)                                                \
-        movfx_st(Tff1,  Mebp, inf_SCR01(0x04))                              \
-        movfx_ld(Tff1,  Mebp, inf_SCR01(0x08))                              \
-        movfx_ld(Tff2,  Mebp, inf_SCR02(0x08))                              \
-        divfs_rr(Tff1, Tff2)                                                \
-        movfx_st(Tff1,  Mebp, inf_SCR01(0x08))                              \
-        movfx_ld(Tff1,  Mebp, inf_SCR01(0x0C))                              \
-        movfx_ld(Tff2,  Mebp, inf_SCR02(0x0C))                              \
-        divfs_rr(Tff1, Tff2)                                                \
-        movfx_st(Tff1,  Mebp, inf_SCR01(0x0C))                              \
+        movws_ld(Tff1,  Mebp, inf_SCR01(0x00))                              \
+        movws_ld(Tff2,  Mebp, inf_SCR02(0x00))                              \
+        divws_rr(Tff1, Tff2)                                                \
+        movws_st(Tff1,  Mebp, inf_SCR01(0x00))                              \
+        movws_ld(Tff1,  Mebp, inf_SCR01(0x04))                              \
+        movws_ld(Tff2,  Mebp, inf_SCR02(0x04))                              \
+        divws_rr(Tff1, Tff2)                                                \
+        movws_st(Tff1,  Mebp, inf_SCR01(0x04))                              \
+        movws_ld(Tff1,  Mebp, inf_SCR01(0x08))                              \
+        movws_ld(Tff2,  Mebp, inf_SCR02(0x08))                              \
+        divws_rr(Tff1, Tff2)                                                \
+        movws_st(Tff1,  Mebp, inf_SCR01(0x08))                              \
+        movws_ld(Tff1,  Mebp, inf_SCR01(0x0C))                              \
+        movws_ld(Tff2,  Mebp, inf_SCR02(0x0C))                              \
+        divws_rr(Tff1, Tff2)                                                \
+        movws_st(Tff1,  Mebp, inf_SCR01(0x0C))                              \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 #else /* RT_SIMD_COMPAT_DIV */
@@ -437,35 +437,35 @@
 
 #define sqros_rr(XD, XS)                                                    \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movfx_ld(Tff1,  Mebp, inf_SCR01(0x00))                              \
-        sqrfs_rr(Tff1, Tff1)                                                \
-        movfx_st(Tff1,  Mebp, inf_SCR01(0x00))                              \
-        movfx_ld(Tff1,  Mebp, inf_SCR01(0x04))                              \
-        sqrfs_rr(Tff1, Tff1)                                                \
-        movfx_st(Tff1,  Mebp, inf_SCR01(0x04))                              \
-        movfx_ld(Tff1,  Mebp, inf_SCR01(0x08))                              \
-        sqrfs_rr(Tff1, Tff1)                                                \
-        movfx_st(Tff1,  Mebp, inf_SCR01(0x08))                              \
-        movfx_ld(Tff1,  Mebp, inf_SCR01(0x0C))                              \
-        sqrfs_rr(Tff1, Tff1)                                                \
-        movfx_st(Tff1,  Mebp, inf_SCR01(0x0C))                              \
+        movws_ld(Tff1,  Mebp, inf_SCR01(0x00))                              \
+        sqrws_rr(Tff1, Tff1)                                                \
+        movws_st(Tff1,  Mebp, inf_SCR01(0x00))                              \
+        movws_ld(Tff1,  Mebp, inf_SCR01(0x04))                              \
+        sqrws_rr(Tff1, Tff1)                                                \
+        movws_st(Tff1,  Mebp, inf_SCR01(0x04))                              \
+        movws_ld(Tff1,  Mebp, inf_SCR01(0x08))                              \
+        sqrws_rr(Tff1, Tff1)                                                \
+        movws_st(Tff1,  Mebp, inf_SCR01(0x08))                              \
+        movws_ld(Tff1,  Mebp, inf_SCR01(0x0C))                              \
+        sqrws_rr(Tff1, Tff1)                                                \
+        movws_st(Tff1,  Mebp, inf_SCR01(0x0C))                              \
         movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define sqros_ld(XD, MS, DS)                                                \
         movox_ld(W(XD), W(MS), W(DS))                                       \
         movox_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movfx_ld(Tff1,  Mebp, inf_SCR01(0x00))                              \
-        sqrfs_rr(Tff1, Tff1)                                                \
-        movfx_st(Tff1,  Mebp, inf_SCR01(0x00))                              \
-        movfx_ld(Tff1,  Mebp, inf_SCR01(0x04))                              \
-        sqrfs_rr(Tff1, Tff1)                                                \
-        movfx_st(Tff1,  Mebp, inf_SCR01(0x04))                              \
-        movfx_ld(Tff1,  Mebp, inf_SCR01(0x08))                              \
-        sqrfs_rr(Tff1, Tff1)                                                \
-        movfx_st(Tff1,  Mebp, inf_SCR01(0x08))                              \
-        movfx_ld(Tff1,  Mebp, inf_SCR01(0x0C))                              \
-        sqrfs_rr(Tff1, Tff1)                                                \
-        movfx_st(Tff1,  Mebp, inf_SCR01(0x0C))                              \
+        movws_ld(Tff1,  Mebp, inf_SCR01(0x00))                              \
+        sqrws_rr(Tff1, Tff1)                                                \
+        movws_st(Tff1,  Mebp, inf_SCR01(0x00))                              \
+        movws_ld(Tff1,  Mebp, inf_SCR01(0x04))                              \
+        sqrws_rr(Tff1, Tff1)                                                \
+        movws_st(Tff1,  Mebp, inf_SCR01(0x04))                              \
+        movws_ld(Tff1,  Mebp, inf_SCR01(0x08))                              \
+        sqrws_rr(Tff1, Tff1)                                                \
+        movws_st(Tff1,  Mebp, inf_SCR01(0x08))                              \
+        movws_ld(Tff1,  Mebp, inf_SCR01(0x0C))                              \
+        sqrws_rr(Tff1, Tff1)                                                \
+        movws_st(Tff1,  Mebp, inf_SCR01(0x0C))                              \
         movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #else /* RT_SIMD_COMPAT_SQR */
