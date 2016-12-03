@@ -1833,7 +1833,6 @@
 #define sregs_sa()
 #define sregs_la()
 #define movox_ld(XD, MS, DS)
-#define movqx_ld(XD, MS, DS)
 #define EMITS(w) /* EMPTY */
 #define EMITM(w) /* EMPTY */
 #define EMITP(w) /* EMPTY */

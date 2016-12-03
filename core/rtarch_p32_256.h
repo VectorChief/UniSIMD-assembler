@@ -89,8 +89,6 @@
 #undef  sregs_sa
 #undef  sregs_la
 #undef  movox_ld
-#undef  movqx_ld
-#define movqx_ld(XD, MS, DS)
 #undef  EMITS
 #define EMITS(w) EMITW(w)
 #undef  EMITM
