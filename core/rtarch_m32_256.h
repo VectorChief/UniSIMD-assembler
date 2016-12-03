@@ -88,9 +88,6 @@
 
 #undef  sregs_sa
 #undef  sregs_la
-#undef  movox_ld
-#undef  movqx_ld
-#define movqx_ld(XD, MS, DS)
 #undef  EMITS
 #define EMITS(w) EMITW(w)
 
@@ -128,12 +125,9 @@
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
-#define TmmS    0x1C  /* w28, sign-mask 32-bit, optional (temp-load in TmmM) */
-#define TmmT    0x1D  /* w29, sign-mask 64-bit, optional (temp-load in TmmM) */
-
 #define Tmm0    0x00  /* w0,  internal name for Xmm0 (in mmv) */
 #define TmmE    0x0E  /* w14, internal name for XmmE (in sregs) */
-#define TmmZ    0x0F  /* w15, zero-mask all 0s, XmmF (in sregs) */
+#define TmmZ    0x0F  /* w15, temp-reg name for all 0s */
 #define TmmM    0x1F  /* w31, temp-reg name for mem-args */
 
 /******************************************************************************/
@@ -157,7 +151,7 @@
 #define XmmC    0x0C, $w12, EMPTY       /* w12 */
 #define XmmD    0x0D, $w13, EMPTY       /* w13 */
 #if     RT_SIMD_COMPAT_XMM < 2
-#define XmmE    0x0E, $w14, EMPTY       /* w14, may be reserved in some cases */
+#define XmmE    TmmE, $w14, EMPTY       /* w14, may be reserved in some cases */
 #if     RT_SIMD_COMPAT_XMM < 1
 #define XmmF    0x0F, $w15, EMPTY       /* w15, may be reserved in some cases */
 #endif/*RT_SIMD_COMPAT_XMM < 1*/

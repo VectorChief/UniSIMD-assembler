@@ -1480,10 +1480,6 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
-        movox_ld(Xmm8, Mebp, inf_GPC06_32)        /* w8  <- -0.0 32-bit */  \
-        movqx_ld(Xmm9, Mebp, inf_GPC06_64)        /* w9  <- -0.0 64-bit */  \
-        EMITS(0x78BE0019 | MXM(TmmS, 0x08, 0x00)) /* w28 <- w8 */           \
-        EMITS(0x78BE0019 | MXM(TmmT, 0x09, 0x00)) /* w29 <- w9 */           \
         EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
         EMITW(0x3C000000 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(0 << 24) */
 
@@ -1511,10 +1507,6 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
-        movox_ld(Xmm8, Mebp, inf_GPC06_32)        /* w8  <- -0.0 32-bit */  \
-        movqx_ld(Xmm9, Mebp, inf_GPC06_64)        /* w9  <- -0.0 64-bit */  \
-        EMITS(0x78BE0019 | MXM(TmmS, 0x08, 0x00)) /* w28 <- w8 */           \
-        EMITS(0x78BE0019 | MXM(TmmT, 0x09, 0x00)) /* w29 <- w9 */           \
         EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
         EMITW(0x3C000000 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(0 << 24) */  \
         EMITW(0x34000001 | MRM(0x00, TNxx, TAxx)) /* r21 <- 1|(0 << 24) */  \
@@ -1561,10 +1553,6 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
-        movox_ld(Xmm8, Mebp, inf_GPC06_32)        /* w8  <- -0.0 32-bit */  \
-        movqx_ld(Xmm9, Mebp, inf_GPC06_64)        /* w9  <- -0.0 64-bit */  \
-        EMITS(0x78BE0019 | MXM(TmmS, 0x08, 0x00)) /* w28 <- w8 */           \
-        EMITS(0x78BE0019 | MXM(TmmT, 0x09, 0x00)) /* w29 <- w9 */           \
         EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
         EMITW(0x3C000100 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(1 << 24) */  \
         EMITW(0x44C0F800 | MRM(0x00, 0x00, TNxx)) /* fcsr <- r20 */         \
@@ -1597,10 +1585,6 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
-        movox_ld(Xmm8, Mebp, inf_GPC06_32)        /* w8  <- -0.0 32-bit */  \
-        movqx_ld(Xmm9, Mebp, inf_GPC06_64)        /* w9  <- -0.0 64-bit */  \
-        EMITS(0x78BE0019 | MXM(TmmS, 0x08, 0x00)) /* w28 <- w8 */           \
-        EMITS(0x78BE0019 | MXM(TmmT, 0x09, 0x00)) /* w29 <- w9 */           \
         EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
         EMITW(0x3C000100 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(1 << 24) */  \
         EMITW(0x34000001 | MRM(0x00, TNxx, TAxx)) /* r21 <- 1|(1 << 24) */  \
@@ -1627,8 +1611,6 @@
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
 #define sregs_la()
-#define movox_ld(XD, MS, DS)
-#define movqx_ld(XD, MS, DS)
 #define EMITS(w) /* EMPTY */
 #else  /* RT_SIMD_CODE */
 #define EMITS(w)    EMITW(w)

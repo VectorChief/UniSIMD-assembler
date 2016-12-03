@@ -79,8 +79,6 @@
 
 #if defined (RT_128) && (RT_128 != 0)
 
-#undef  movqx_ld
-
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -181,7 +179,12 @@
 /* neg (G = -G) */
 
 #define negqs_rx(XG)                                                        \
-        EMITW(0x7860001E | MXM(REG(XG), REG(XG), TmmT))
+        movjx_xm(Mebp, inf_GPC06_64)                                        \
+        EMITW(0x7860001E | MXM(REG(XG), REG(XG), TmmM))
+
+#define movjx_xm(MS, DS) /* not portable, do not use outside */             \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))
 
 /* add (G = G + S) */
 
