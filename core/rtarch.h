@@ -352,28 +352,51 @@
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
+#ifndef RT_SIMD_FAST_FCTRL
 #define RT_SIMD_FAST_FCTRL      1*(Q/2) /* only if AVX is among build targets */
+#endif /* RT_SIMD_FAST_FCTRL */
+
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#ifndef RT_SIMD_FLUSH_ZERO
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
+#endif /* RT_SIMD_FLUSH_ZERO */
+
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RCP
 #define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
+#endif /* RT_SIMD_COMPAT_RCP */
+
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RSQ
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
+#endif /* RT_SIMD_COMPAT_RSQ */
+
 /* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
  * of fmaps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMA
 #define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
+#endif /* RT_SIMD_COMPAT_FMA */
+
 /* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
  * of fmsps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMS
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
+#endif /* RT_SIMD_COMPAT_FMS */
+
 /* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1 & AVX2
  * when RT_128=8 SIMD backend is present among build targets */
+#ifndef RT_SIMD_COMPAT_128
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
+#endif /* RT_SIMD_COMPAT_128 */
+
 /* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
  * of fm*ps_** instruction fallbacks to honour rounding mode */
+#ifndef RT_SIMD_COMPAT_FMR
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
+#endif /* RT_SIMD_COMPAT_FMR */
 
 #if   defined (RT_512) && (RT_512 != 0)
 #define Q 4
@@ -384,7 +407,7 @@
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
 #include "rtarch_x86_128.h"
-#endif /* RT_256, RT_128 */
+#endif /* RT_512, RT_256, RT_128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -559,28 +582,51 @@
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
+#ifndef RT_SIMD_FAST_FCTRL
 #define RT_SIMD_FAST_FCTRL      1*(Q/2) /* only if AVX is among build targets */
+#endif /* RT_SIMD_FAST_FCTRL */
+
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#ifndef RT_SIMD_FLUSH_ZERO
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
+#endif /* RT_SIMD_FLUSH_ZERO */
+
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RCP
 #define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
+#endif /* RT_SIMD_COMPAT_RCP */
+
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RSQ
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
+#endif /* RT_SIMD_COMPAT_RSQ */
+
 /* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
  * of fmaps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMA
 #define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
+#endif /* RT_SIMD_COMPAT_FMA */
+
 /* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
  * of fmsps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMS
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
+#endif /* RT_SIMD_COMPAT_FMS */
+
 /* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1 & AVX2
  * when RT_128=8 SIMD backend is present among build targets */
+#ifndef RT_SIMD_COMPAT_128
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
+#endif /* RT_SIMD_COMPAT_128 */
+
 /* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
  * of fm*ps_** instruction fallbacks to honour rounding mode */
+#ifndef RT_SIMD_COMPAT_FMR
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
+#endif /* RT_SIMD_COMPAT_FMR */
 
 #if   defined (RT_512) && (RT_512 != 0)
 #define Q 4
@@ -591,7 +637,7 @@
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
 #include "rtarch_x86_128.h"
-#endif /* RT_256, RT_128 */
+#endif /* RT_512, RT_256, RT_128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -787,31 +833,57 @@
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
+#ifndef RT_SIMD_FAST_FCTRL
 #define RT_SIMD_FAST_FCTRL      1*(Q/2) /* only if AVX is among build targets */
+#endif /* RT_SIMD_FAST_FCTRL */
+
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#ifndef RT_SIMD_FLUSH_ZERO
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
+#endif /* RT_SIMD_FLUSH_ZERO */
+
 /* RT_SIMD_COMPAT_XMM distinguishes between SIMD reg-file sizes
  * with current top values: 0 - 16, 1 - 15, 2 - 14 SIMD regs */
+#ifndef RT_SIMD_COMPAT_XMM
 #define RT_SIMD_COMPAT_XMM      RT_SIMD_COMPAT_XMM_MASTER
+#endif /* RT_SIMD_COMPAT_XMM */
+
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RCP
 #define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
+#endif /* RT_SIMD_COMPAT_RCP */
+
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RSQ
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
+#endif /* RT_SIMD_COMPAT_RSQ */
+
 /* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
  * of fmaps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMA
 #define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
+#endif /* RT_SIMD_COMPAT_FMA */
+
 /* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
  * of fmsps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMS
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
+#endif /* RT_SIMD_COMPAT_FMS */
+
 /* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1 & AVX2
  * when RT_128=8 SIMD backend is present among build targets */
+#ifndef RT_SIMD_COMPAT_128
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
+#endif /* RT_SIMD_COMPAT_128 */
+
 /* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
  * of fm*ps_** instruction fallbacks to honour rounding mode */
+#ifndef RT_SIMD_COMPAT_FMR
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
+#endif /* RT_SIMD_COMPAT_FMR */
 
 #if   defined (RT_512) && (RT_512 != 0)
 #define Q 4
@@ -822,7 +894,7 @@
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
 #include "rtarch_x64_128.h"
-#endif /* RT_256, RT_128 */
+#endif /* RT_512, RT_256, RT_128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -1003,36 +1075,62 @@
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
+#ifndef RT_SIMD_FAST_FCTRL
 #define RT_SIMD_FAST_FCTRL      1 /* takes all available regs except (SP, PC) */
+#endif /* RT_SIMD_FAST_FCTRL */
+
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#ifndef RT_SIMD_FLUSH_ZERO
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
+#endif /* RT_SIMD_FLUSH_ZERO */
+
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RCP
 #define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
+#endif /* RT_SIMD_COMPAT_RCP */
+
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RSQ
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
+#endif /* RT_SIMD_COMPAT_RSQ */
+
 /* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
  * of fmaps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMA
 #define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
+#endif /* RT_SIMD_COMPAT_FMA */
+
 /* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
  * of fmsps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMS
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
+#endif /* RT_SIMD_COMPAT_FMS */
+
 /* RT_SIMD_COMPAT_DIV when enabled changes the default behavior
  * of divps_** to the corresponding IEEE-compatible fallback */
+#ifndef RT_SIMD_COMPAT_DIV
 #define RT_SIMD_COMPAT_DIV      RT_SIMD_COMPAT_DIV_MASTER
+#endif /* RT_SIMD_COMPAT_DIV */
+
 /* RT_SIMD_COMPAT_SQR when enabled changes the default behavior
  * of sqrps_** to the corresponding IEEE-compatible fallback */
+#ifndef RT_SIMD_COMPAT_SQR
 #define RT_SIMD_COMPAT_SQR      RT_SIMD_COMPAT_SQR_MASTER
+#endif /* RT_SIMD_COMPAT_SQR */
 
-#if   defined (RT_256) && (RT_256 != 0)
+#if   defined (RT_512) && (RT_512 != 0)
+#define Q 4
+#error "AArch32 doesn't support SIMD wider than 128-bit, check build flags"
+#elif defined (RT_256) && (RT_256 != 0)
 #define Q 2
 #error "AArch32 doesn't support SIMD wider than 128-bit, check build flags"
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
 #include "rtarch_arm_128.h"
-#endif /* RT_256, RT_128 */
+#endif /* RT_512, RT_256, RT_128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -1223,27 +1321,56 @@
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
+#ifndef RT_SIMD_FAST_FCTRL
 #define RT_SIMD_FAST_FCTRL      1
+#endif /* RT_SIMD_FAST_FCTRL */
+
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#ifndef RT_SIMD_FLUSH_ZERO
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
+#endif /* RT_SIMD_FLUSH_ZERO */
+
 /* RT_SIMD_COMPAT_XMM distinguishes between SIMD reg-file sizes
  * with current top values: 0 - 16, 1 - 15, 2 - 14 SIMD regs */
+#ifndef RT_SIMD_COMPAT_XMM
 #define RT_SIMD_COMPAT_XMM      RT_SIMD_COMPAT_XMM_MASTER
+#endif /* RT_SIMD_COMPAT_XMM */
+
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RCP
 #define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
+#endif /* RT_SIMD_COMPAT_RCP */
+
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RSQ
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
+#endif /* RT_SIMD_COMPAT_RSQ */
 
-#if   defined (RT_256) && (RT_256 != 0)
+/* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
+ * of fmaps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMA
+#define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
+ * of fmsps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMS
+#define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
+#endif /* RT_SIMD_COMPAT_FMS */
+
+#if   defined (RT_512) && (RT_512 != 0)
+#define Q 4
+#error "AArch64 doesn't support SIMD wider than 256-bit, check build flags"
+#elif defined (RT_256) && (RT_256 != 0)
 #define Q 2
 #include "rtarch_a64_256.h"
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
 #include "rtarch_a64_128.h"
-#endif /* RT_256, RT_128 */
+#endif /* RT_512, RT_256, RT_128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -1436,27 +1563,56 @@
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
+#ifndef RT_SIMD_FAST_FCTRL
 #define RT_SIMD_FAST_FCTRL      1
+#endif /* RT_SIMD_FAST_FCTRL */
+
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#ifndef RT_SIMD_FLUSH_ZERO
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
+#endif /* RT_SIMD_FLUSH_ZERO */
+
 /* RT_SIMD_COMPAT_XMM distinguishes between SIMD reg-file sizes
  * with current top values: 0 - 16, 1 - 15, 2 - 14 SIMD regs */
+#ifndef RT_SIMD_COMPAT_XMM
 #define RT_SIMD_COMPAT_XMM      RT_SIMD_COMPAT_XMM_MASTER
+#endif /* RT_SIMD_COMPAT_XMM */
+
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RCP
 #define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
+#endif /* RT_SIMD_COMPAT_RCP */
+
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RSQ
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
+#endif /* RT_SIMD_COMPAT_RSQ */
 
-#if   defined (RT_256) && (RT_256 != 0)
+/* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
+ * of fmaps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMA
+#define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
+ * of fmsps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMS
+#define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
+#endif /* RT_SIMD_COMPAT_FMS */
+
+#if   defined (RT_512) && (RT_512 != 0)
+#define Q 4
+#error "mipsMSA doesn't support SIMD wider than 256-bit, check build flags"
+#elif defined (RT_256) && (RT_256 != 0)
 #define Q 2
 #include "rtarch_m64_256.h"
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
 #include "rtarch_m64_128.h"
-#endif /* RT_256, RT_128 */
+#endif /* RT_512, RT_256, RT_128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -1665,28 +1821,63 @@
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
+#ifndef RT_SIMD_FAST_FCTRL
 #define RT_SIMD_FAST_FCTRL      1 /* not applicable to Power */
+#endif /* RT_SIMD_FAST_FCTRL */
+
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
  * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#ifndef RT_SIMD_FLUSH_ZERO
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
+#endif /* RT_SIMD_FLUSH_ZERO */
+
 /* RT_SIMD_COMPAT_XMM distinguishes between SIMD reg-file sizes
  * with current top values: 0 - 16, 1 - 15, 2 - 14 SIMD regs */
+#ifndef RT_SIMD_COMPAT_XMM
 #define RT_SIMD_COMPAT_XMM      RT_SIMD_COMPAT_XMM_MASTER
+#endif /* RT_SIMD_COMPAT_XMM */
+
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RCP
 #define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
+#endif /* RT_SIMD_COMPAT_RCP */
+
 /* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
  * of rsqps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RSQ
 #define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+/* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
+ * of fmaps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMA
+#define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
+ * of fmsps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMS
+#define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
+#endif /* RT_SIMD_COMPAT_FMS */
+
 /* RT_SIMD_COMPAT_DIV when enabled changes the default behavior
  * of divps_** to the corresponding IEEE-compatible fallback */
+#ifndef RT_SIMD_COMPAT_DIV
 #define RT_SIMD_COMPAT_DIV      RT_SIMD_COMPAT_DIV_MASTER
+#endif /* RT_SIMD_COMPAT_DIV */
+
 /* RT_SIMD_COMPAT_SQR when enabled changes the default behavior
  * of sqrps_** to the corresponding IEEE-compatible fallback */
+#ifndef RT_SIMD_COMPAT_SQR
 #define RT_SIMD_COMPAT_SQR      RT_SIMD_COMPAT_SQR_MASTER
+#endif /* RT_SIMD_COMPAT_SQR */
+
 /* RT_BASE_COMPAT_ZFL when enabled makes setting-flags BASE ops
  * compatible with 64-bit processors running 32-bit ISA mode */
+#ifndef RT_BASE_COMPAT_ZFL
 #define RT_BASE_COMPAT_ZFL      1 /* only necessary on Power */
+#endif /* RT_BASE_COMPAT_ZFL */
 
 #if   defined (RT_512) && (RT_512 != 0)
 #define Q 4
@@ -1697,7 +1888,7 @@
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
 #include "rtarch_p64_128.h"
-#endif /* RT_256, RT_128 */
+#endif /* RT_512, RT_256, RT_128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
