@@ -50,6 +50,69 @@
  * More detailed description of the above is given in rtarch.h.
  */
 
+/*
+ * Configurable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtbase.h.
+ * Mixing of 64/32-bit fields in backend structures may lead to misalignment
+ * of 64-bit fields to 4-byte boundary, which is not supported on some targets.
+ * Place fields carefully to ensure natural alignment for all data types.
+ * Note that within cmdx*_** subset most of the instructions follow in-heap
+ * address size (RT_ADDRESS or A) and only label_ld/st, jmpxx_xr/xm follow
+ * pointer size (RT_POINTER or P) as code/data/stack segments are fixed.
+ * Stack ops always work with full registers regardless of the mode chosen.
+ *
+ * 32-bit and 64-bit BASE subsets are not easily compatible on all targets,
+ * thus any register modified with 32-bit op cannot be used in 64-bit subset.
+ * Alternatively, data flow must not exceed 31-bit range for 32-bit operations
+ * to produce consistent results usable in 64-bit subsets across all targets.
+ * Registers written with 64-bit op aren't always compatible with 32-bit either,
+ * as m64 requires the upper half to be all 0s or all 1s for m32 arithmetic.
+ * Only a64 and x64 have a complete 32-bit support in 64-bit mode both zeroing
+ * the upper half of the result, while m64 sign-extending all 32-bit operations
+ * and p64 overflowing 32-bit arithmetic into the upper half. Similar reasons
+ * of inconsistency prohibit use of IW immediate type within 64-bit subsets,
+ * where a64 and p64 zero-extend, while x64 and m64 sign-extend 32-bit value.
+ *
+ * Note that offset correction for endianness E is only applicable for addresses
+ * within pointer fields, when (in-heap) address and pointer sizes don't match.
+ * Working with 32-bit data in 64-bit fields in any other circumstances must be
+ * done consistently within a subset of one size (32-bit, 64-bit or C/C++).
+ * Alternatively, data written natively in C/C++ can be worked on from within
+ * a given (one) subset if appropriate offset correction is used from rtarch.h.
+ *
+ * Setting-flags instruction naming scheme may change again in the future for
+ * better orthogonality with operand size, type and args-list. It is therefore
+ * recommended to use combined-arithmetic-jump (arj) for better API stability
+ * and maximum efficiency across all supported targets. For similar reasons
+ * of higher performance on MIPS and Power use combined-compare-jump (cmj).
+ * Not all canonical forms of BASE instructions have efficient implementation.
+ * For example, some forms of shifts and division use stack ops on x86 targets,
+ * while standalone remainder operations can only be done natively on MIPS.
+ * Consider using special fixed-register forms for maximum performance.
+ *
+ * The cmdp*_** (rtbase.h) instructions are intended for SPMD programming model
+ * and can be configured to work with 32/64-bit data-elements (int, fp).
+ * In this model data-paths are fixed-width, BASE and SIMD data-elements are
+ * width-compatible, code-path divergence is handled via mkj**_** pseudo-ops.
+ * Matching element-sized BASE subset cmdy*_** is defined in rtbase.h as well.
+ *
+ * Note, when using fixed-data-size 128/256-bit SIMD subsets simultaneously
+ * upper 128-bit halves of full 256-bit SIMD registers may end up undefined.
+ * On RISC targets they remain unchanged, while on x86-AVX they are zeroed.
+ * This happens when registers written in 128-bit subset are then used/read
+ * from within 256-bit subset. The same rule applies to mixing of 256/512-bit.
+ *
+ * Working with sub-word BASE elements (byte, half) is reserved for future use.
+ * However, current displacement types may not work due to natural alignment.
+ * Signed/unsigned types can be supported orthogonally in cmd*n_**, cmd*x_**.
+ * Working with sub-word SIMD elements (byte, half) has not been investigated.
+ * However, as current major ISAs lack the ability to do sub-word fp-compute,
+ * these corresponding subsets cannot be viewed as valid targets for SPMD.
+ *
+ * Scalar SIMD subset, horizontal SIMD reductions, constructive 3/4-op syntax
+ * (potentially with zeroing/merging predicates) are being considered as future
+ * extensions to current 2-op (dest-as-1st-src) SPMD-driven vertical SIMD ISA.
+ */
+
 #undef Q /* short name for SIMD-quads in structs (number of 128-bit chunks) */
 
 #undef N /* short name for SIMD-width in structs (with rt_fp16 SIMD-fields) */
