@@ -247,6 +247,18 @@
  * while standalone remainder operations can only be done natively on MIPS.
  * Consider using special fixed-register forms for maximum performance.
  *
+ * The cmdp*_** (rtbase.h) instructions are intended for SPMD programming model
+ * and can be configured to work with 32/64-bit data-elements (int, fp).
+ * In this model data-paths are fixed-width, BASE and SIMD data-elements are
+ * width-compatible, code-path divergence is handled via mkj**_** pseudo-ops.
+ * Matching element-sized BASE subset cmdy*_** is defined in rtbase.h as well.
+ *
+ * Note, when using fixed-data-size 128/256-bit SIMD subsets simultaneously
+ * upper 128-bit halves of full 256-bit SIMD registers may end up undefined.
+ * On RISC targets they remain unchanged, while on x86-AVX they are zeroed.
+ * This happens when registers written in 128-bit subset are then used/read
+ * from within 256-bit subset. The same rule applies to mixing of 256/512-bit.
+ *
  * Working with sub-word BASE elements (byte, half) is reserved for future use.
  * However, current displacement types may not work due to natural alignment.
  * Signed/unsigned types can be supported orthogonally in cmd*n_**, cmd*x_**.

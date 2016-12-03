@@ -50,6 +50,12 @@
  * width-compatible, code-path divergence is handled via mkj**_** pseudo-ops.
  * Matching element-sized BASE subset cmdy*_** is defined in rtbase.h as well.
  *
+ * Note, when using fixed-data-size 128/256-bit SIMD subsets simultaneously
+ * upper 128-bit halves of full 256-bit SIMD registers may end up undefined.
+ * On RISC targets they remain unchanged, while on x86-AVX they are zeroed.
+ * This happens when registers written in 128-bit subset are then used/read
+ * from within 256-bit subset. The same rule applies to mixing of 256/512-bit.
+ *
  * Interpretation of instruction parameters:
  *
  * upper-case params have triplet structure and require W to pass-forward
