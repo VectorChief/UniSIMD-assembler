@@ -16,10 +16,12 @@ to current 2-operand (destination-as-1st-source) SPMD-driven vertical SIMD ISA.
 Heap-address, SIMD-element sizes are 32/64-bit configurable on 64-bit targets.
 All targets support FMA3 either natively or via higher-precision fpu-emulation.
 All legacy targets support 128-bit SIMD with 8 registers (32-bit elements only).
+All modern targets support 128-bit SIMD with 15 registers (x86, 1x128 on RISCs).
 All modern targets support 256-bit SIMD with 15 registers (x86, 2x128 on RISCs).
 Select few targets support 512-bit SIMD with 15 registers (x86, 4x128 on Power).
 
-Common SIMD ISA remains vector-length-agnostic and is best suited for SPMD.
+In addition to simultaneously exposed fixed-data-size 128/256-bit SIMD subsets
+common SIMD ISA remains vector-length-agnostic and is best suited for SPMD.
 C/C++ backend structures passed to the assembler need to be instrumented with
 offsets/factors in order for configurable instruction subsets to work properly.
 Application-specific backend structures also need to be SIMD-aligned, which can
