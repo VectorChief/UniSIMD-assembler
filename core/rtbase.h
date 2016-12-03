@@ -559,6 +559,66 @@ struct rt_SIMD_REGS
 /************************   COMMON SIMD INSTRUCTIONS   ************************/
 /******************************************************************************/
 
+/*
+ * Recommended naming scheme for instructions:
+ *
+ * cmdp*_ri - applies [cmd] to [p]acked: [r]egister from [i]mmediate
+ * cmdp*_rr - applies [cmd] to [p]acked: [r]egister from [r]egister
+ *
+ * cmdp*_rm - applies [cmd] to [p]acked: [r]egister from [m]emory
+ * cmdp*_ld - applies [cmd] to [p]acked: as above
+ *
+ * cmdi*_** - applies [cmd] to 32-bit SIMD element args, packed-128-bit
+ * cmdj*_** - applies [cmd] to 64-bit SIMD element args, packed-128-bit
+ * cmdl*_** - applies [cmd] to L-size SIMD element args, packed-128-bit
+ *
+ * cmdc*_** - applies [cmd] to 32-bit SIMD element args, packed-256-bit
+ * cmdd*_** - applies [cmd] to 64-bit SIMD element args, packed-256-bit
+ * cmdf*_** - applies [cmd] to L-size SIMD element args, packed-256-bit
+ *
+ * cmdo*_** - applies [cmd] to 32-bit SIMD element args, packed-var-len
+ * cmdp*_** - applies [cmd] to L-size SIMD element args, packed-var-len
+ * cmdq*_** - applies [cmd] to 64-bit SIMD element args, packed-var-len
+ *
+ * cmd*x_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
+ * cmd*n_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
+ * cmd*s_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
+ *
+ * The cmdp*_** (rtbase.h) instructions are intended for SPMD programming model
+ * and can be configured to work with 32/64-bit data-elements (int, fp).
+ * In this model data-paths are fixed-width, BASE and SIMD data-elements are
+ * width-compatible, code-path divergence is handled via mkj**_** pseudo-ops.
+ * Matching element-sized BASE subset cmdy*_** is defined in rtbase.h as well.
+ *
+ * Interpretation of instruction parameters:
+ *
+ * upper-case params have triplet structure and require W to pass-forward
+ * lower-case params are singular and can be used/passed as such directly
+ *
+ * XD - SIMD register serving as destination only, if present
+ * XG - SIMD register serving as destination and fisrt source
+ * XS - SIMD register serving as second source (first if any)
+ * XT - SIMD register serving as third source (second if any)
+ *
+ * RD - BASE register serving as destination only, if present
+ * RG - BASE register serving as destination and fisrt source
+ * RS - BASE register serving as second source (first if any)
+ * RT - BASE register serving as third source (second if any)
+ *
+ * MD - BASE addressing mode (Oeax, M***, I***) (memory-dest)
+ * MG - BASE addressing mode (Oeax, M***, I***) (memory-dsrc)
+ * MS - BASE addressing mode (Oeax, M***, I***) (memory-src2)
+ * MT - BASE addressing mode (Oeax, M***, I***) (memory-src3)
+ *
+ * DD - displacement value (DP, DF, DG, DH, DV) (memory-dest)
+ * DG - displacement value (DP, DF, DG, DH, DV) (memory-dsrc)
+ * DS - displacement value (DP, DF, DG, DH, DV) (memory-src2)
+ * DT - displacement value (DP, DF, DG, DH, DV) (memory-src3)
+ *
+ * IS - immediate value (is used as a second or first source)
+ * IT - immediate value (is used as a third or second source)
+ */
+
 #if defined (RT_SIMD_CODE)
 
 /****************** original CHECK_MASK macro (configurable) ******************/
@@ -5529,6 +5589,119 @@ struct rt_SIMD_REGS
 /******************************************************************************/
 /************************   COMMON BASE INSTRUCTIONS   ************************/
 /******************************************************************************/
+
+/*
+ * Recommended naming scheme for instructions:
+ *
+ * cmdxx_ri - applies [cmd] to [r]egister from [i]mmediate
+ * cmdxx_mi - applies [cmd] to [m]emory   from [i]mmediate
+ * cmdxx_rz - applies [cmd] to [r]egister from [z]ero-arg
+ * cmdxx_mz - applies [cmd] to [m]emory   from [z]ero-arg
+ *
+ * cmdxx_rm - applies [cmd] to [r]egister from [m]emory
+ * cmdxx_ld - applies [cmd] as above
+ * cmdxx_mr - applies [cmd] to [m]emory   from [r]egister
+ * cmdxx_st - applies [cmd] as above (arg list as cmdxx_ld)
+ *
+ * cmdxx_rr - applies [cmd] to [r]egister from [r]egister
+ * cmdxx_mm - applies [cmd] to [m]emory   from [m]emory
+ * cmdxx_rx - applies [cmd] to [r]egister (one-operand cmd)
+ * cmdxx_mx - applies [cmd] to [m]emory   (one-operand cmd)
+ *
+ * cmdxx_rx - applies [cmd] to [r]egister from x-register
+ * cmdxx_mx - applies [cmd] to [m]emory   from x-register
+ * cmdxx_xr - applies [cmd] to x-register from [r]egister
+ * cmdxx_xm - applies [cmd] to x-register from [m]emory
+ *
+ * cmdxx_rl - applies [cmd] to [r]egister from [l]abel
+ * cmdxx_xl - applies [cmd] to x-register from [l]abel
+ * cmdxx_lb - applies [cmd] as above
+ * label_ld - applies [adr] as above
+ *
+ * stack_st - applies [mov] to stack from register (push)
+ * stack_ld - applies [mov] to register from stack (pop)
+ * stack_sa - applies [mov] to stack from all registers
+ * stack_la - applies [mov] to all registers from stack
+ *
+ * cmdw*_** - applies [cmd] to 32-bit BASE register/memory/immediate args
+ * cmdx*_** - applies [cmd] to A-size BASE register/memory/immediate args
+ * cmdy*_** - applies [cmd] to L-size BASE register/memory/immediate args
+ * cmdz*_** - applies [cmd] to 64-bit BASE register/memory/immediate args
+ *
+ * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
+ * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
+ * cmd*p_** - applies [cmd] to   signed integer args, [p] - part-range
+ *
+ * cmd*z_** - applies [cmd] while setting condition flags, [z] - zero flag.
+ * Regular cmd*x_**, cmd*n_** instructions may or may not set flags depending
+ * on the target architecture, thus no assumptions can be made for jezxx/jnzxx.
+ *
+ * Interpretation of instruction parameters:
+ *
+ * upper-case params have triplet structure and require W to pass-forward
+ * lower-case params are singular and can be used/passed as such directly
+ *
+ * RD - BASE register serving as destination only, if present
+ * RG - BASE register serving as destination and fisrt source
+ * RS - BASE register serving as second source (first if any)
+ * RT - BASE register serving as third source (second if any)
+ *
+ * MD - BASE addressing mode (Oeax, M***, I***) (memory-dest)
+ * MG - BASE addressing mode (Oeax, M***, I***) (memory-dsrc)
+ * MS - BASE addressing mode (Oeax, M***, I***) (memory-src2)
+ * MT - BASE addressing mode (Oeax, M***, I***) (memory-src3)
+ *
+ * DD - displacement value (DP, DF, DG, DH, DV) (memory-dest)
+ * DG - displacement value (DP, DF, DG, DH, DV) (memory-dsrc)
+ * DS - displacement value (DP, DF, DG, DH, DV) (memory-src2)
+ * DT - displacement value (DP, DF, DG, DH, DV) (memory-src3)
+ *
+ * IS - immediate value (is used as a second or first source)
+ * IT - immediate value (is used as a third or second source)
+ *
+ * Alphabetical view of current/future instruction namespaces is in rtzero.h.
+ * Configurable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtbase.h.
+ * Mixing of 64/32-bit fields in backend structures may lead to misalignment
+ * of 64-bit fields to 4-byte boundary, which is not supported on some targets.
+ * Place fields carefully to ensure natural alignment for all data types.
+ * Note that within cmdx*_** subset most of the instructions follow in-heap
+ * address size (RT_ADDRESS or A) and only label_ld/st, jmpxx_xr/xm follow
+ * pointer size (RT_POINTER or P) as code/data/stack segments are fixed.
+ * Stack ops always work with full registers regardless of the mode chosen.
+ *
+ * 32-bit and 64-bit BASE subsets are not easily compatible on all targets,
+ * thus any register modified with 32-bit op cannot be used in 64-bit subset.
+ * Alternatively, data flow must not exceed 31-bit range for 32-bit operations
+ * to produce consistent results usable in 64-bit subsets across all targets.
+ * Registers written with 64-bit op aren't always compatible with 32-bit either,
+ * as m64 requires the upper half to be all 0s or all 1s for m32 arithmetic.
+ * Only a64 and x64 have a complete 32-bit support in 64-bit mode both zeroing
+ * the upper half of the result, while m64 sign-extending all 32-bit operations
+ * and p64 overflowing 32-bit arithmetic into the upper half. Similar reasons
+ * of inconsistency prohibit use of IW immediate type within 64-bit subsets,
+ * where a64 and p64 zero-extend, while x64 and m64 sign-extend 32-bit value.
+ *
+ * Note that offset correction for endianness E is only applicable for addresses
+ * within pointer fields, when (in-heap) address and pointer sizes don't match.
+ * Working with 32-bit data in 64-bit fields in any other circumstances must be
+ * done consistently within a subset of one size (32-bit, 64-bit or C/C++).
+ * Alternatively, data written natively in C/C++ can be worked on from within
+ * a given (one) subset if appropriate offset correction is used from rtarch.h.
+ *
+ * Setting-flags instruction naming scheme may change again in the future for
+ * better orthogonality with operand size, type and args-list. It is therefore
+ * recommended to use combined-arithmetic-jump (arj) for better API stability
+ * and maximum efficiency across all supported targets. For similar reasons
+ * of higher performance on MIPS and Power use combined-compare-jump (cmj).
+ * Not all canonical forms of BASE instructions have efficient implementation.
+ * For example, some forms of shifts and division use stack ops on x86 targets,
+ * while standalone remainder operations can only be done natively on MIPS.
+ * Consider using special fixed-register forms for maximum performance.
+ *
+ * Argument x-register (implied) is fixed by the implementation.
+ * Some formal definitions are not given below to encourage
+ * use of friendly aliases for better code readability.
+ */
 
 /***************** original forms of deprecated cmdx* aliases *****************/
 

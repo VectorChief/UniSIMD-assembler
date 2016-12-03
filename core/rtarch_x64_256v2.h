@@ -28,19 +28,27 @@
  * cmdp*_rm - applies [cmd] to [p]acked: [r]egister from [m]emory
  * cmdp*_ld - applies [cmd] to [p]acked: as above
  *
- * cmdpx_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
- * cmdpn_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
- * cmdps_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
+ * cmdi*_** - applies [cmd] to 32-bit SIMD element args, packed-128-bit
+ * cmdj*_** - applies [cmd] to 64-bit SIMD element args, packed-128-bit
+ * cmdl*_** - applies [cmd] to L-size SIMD element args, packed-128-bit
  *
- * cmdo*_** - applies [cmd] to 32-bit SIMD register/memory/immediate args
- * cmdp*_** - applies [cmd] to L-size SIMD register/memory/immediate args
- * cmdq*_** - applies [cmd] to 64-bit SIMD register/memory/immediate args
+ * cmdc*_** - applies [cmd] to 32-bit SIMD element args, packed-256-bit
+ * cmdd*_** - applies [cmd] to 64-bit SIMD element args, packed-256-bit
+ * cmdf*_** - applies [cmd] to L-size SIMD element args, packed-256-bit
+ *
+ * cmdo*_** - applies [cmd] to 32-bit SIMD element args, packed-var-len
+ * cmdp*_** - applies [cmd] to L-size SIMD element args, packed-var-len
+ * cmdq*_** - applies [cmd] to 64-bit SIMD element args, packed-var-len
+ *
+ * cmd*x_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
+ * cmd*n_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
+ * cmd*s_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
  *
  * The cmdp*_** (rtbase.h) instructions are intended for SPMD programming model
  * and can be configured to work with 32/64-bit data-elements (int, fp).
  * In this model data-paths are fixed-width, BASE and SIMD data-elements are
- * width-compatible, code-path divergence is handled via CHECK_MASK macro.
- * Matching element-sized BASE subset cmdy*_** is defined in rtbase.h.
+ * width-compatible, code-path divergence is handled via mkj**_** pseudo-ops.
+ * Matching element-sized BASE subset cmdy*_** is defined in rtbase.h as well.
  *
  * Interpretation of instruction parameters:
  *

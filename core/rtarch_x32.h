@@ -89,7 +89,7 @@
  * IT - immediate value (is used as a third or second source)
  *
  * Alphabetical view of current/future instruction namespaces is in rtzero.h.
- * Adjustable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtbase.h.
+ * Configurable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtbase.h.
  * Mixing of 64/32-bit fields in backend structures may lead to misalignment
  * of 64-bit fields to 4-byte boundary, which is not supported on some targets.
  * Place fields carefully to ensure natural alignment for all data types.
@@ -101,13 +101,13 @@
  * 32-bit and 64-bit BASE subsets are not easily compatible on all targets,
  * thus any register modified with 32-bit op cannot be used in 64-bit subset.
  * Alternatively, data flow must not exceed 31-bit range for 32-bit operations
- * to produce consistent results usable in 64-bit subset across all targets.
- * Also registers written with 64-bit ops aren't always compatible with 32-bit,
+ * to produce consistent results usable in 64-bit subsets across all targets.
+ * Registers written with 64-bit op aren't always compatible with 32-bit either,
  * as m64 requires the upper half to be all 0s or all 1s for m32 arithmetic.
  * Only a64 and x64 have a complete 32-bit support in 64-bit mode both zeroing
  * the upper half of the result, while m64 sign-extending all 32-bit operations
  * and p64 overflowing 32-bit arithmetic into the upper half. Similar reasons
- * of inconsistency prohibit use of IW immediate type within 64-bit subset,
+ * of inconsistency prohibit use of IW immediate type within 64-bit subsets,
  * where a64 and p64 zero-extend, while x64 and m64 sign-extend 32-bit value.
  *
  * Note that offset correction for endianness E is only applicable for addresses
@@ -117,8 +117,8 @@
  * Alternatively, data written natively in C/C++ can be worked on from within
  * a given (one) subset if appropriate offset correction is used from rtarch.h.
  *
- * Setting-flags instructions' naming scheme may change again in the future for
- * better orthogonality with operands size, type and args-list. It is therefore
+ * Setting-flags instruction naming scheme may change again in the future for
+ * better orthogonality with operand size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
  * of higher performance on MIPS and Power use combined-compare-jump (cmj).
@@ -126,6 +126,7 @@
  * For example, some forms of shifts and division use stack ops on x86 targets,
  * while standalone remainder operations can only be done natively on MIPS.
  * Consider using special fixed-register forms for maximum performance.
+ *
  * Argument x-register (implied) is fixed by the implementation.
  * Some formal definitions are not given below to encourage
  * use of friendly aliases for better code readability.
