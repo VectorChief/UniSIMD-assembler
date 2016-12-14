@@ -1168,43 +1168,69 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
+#if   (RT_SIMD == 256)
+
+#define muvcx_ld(XD, MS, DS) /* not portable, do not use outside */         \
+        V2X(0x00,    1, 0) EMITB(0x28)                                      \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define muvcx_st(XS, MD, DD) /* not portable, do not use outside */         \
+        V2X(0x00,    1, 0) EMITB(0x29)                                      \
+        MRM(REG(XS), MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+#elif (RT_SIMD == 128)
+
+#define muvcx_ld(XD, MS, DS) /* not portable, do not use outside */         \
+        V2X(0x00,    1, 0) EMITB(0x10)                                      \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define muvcx_st(XS, MD, DD) /* not portable, do not use outside */         \
+        V2X(0x00,    1, 0) EMITB(0x11)                                      \
+        MRM(REG(XS), MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+#endif /* RT_SIMD: 256, 128 */
+
 /* sregs */
 
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
-        movcx_st(Xmm0, Oeax, PLAIN)                                         \
+        muvcx_st(Xmm0, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        movcx_st(Xmm1, Oeax, PLAIN)                                         \
+        muvcx_st(Xmm1, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        movcx_st(Xmm2, Oeax, PLAIN)                                         \
+        muvcx_st(Xmm2, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        movcx_st(Xmm3, Oeax, PLAIN)                                         \
+        muvcx_st(Xmm3, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        movcx_st(Xmm4, Oeax, PLAIN)                                         \
+        muvcx_st(Xmm4, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        movcx_st(Xmm5, Oeax, PLAIN)                                         \
+        muvcx_st(Xmm5, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        movcx_st(Xmm6, Oeax, PLAIN)                                         \
+        muvcx_st(Xmm6, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        movcx_st(Xmm7, Oeax, PLAIN)
+        muvcx_st(Xmm7, Oeax, PLAIN)
 
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
-        movcx_ld(Xmm0, Oeax, PLAIN)                                         \
+        muvcx_ld(Xmm0, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        movcx_ld(Xmm1, Oeax, PLAIN)                                         \
+        muvcx_ld(Xmm1, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        movcx_ld(Xmm2, Oeax, PLAIN)                                         \
+        muvcx_ld(Xmm2, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        movcx_ld(Xmm3, Oeax, PLAIN)                                         \
+        muvcx_ld(Xmm3, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        movcx_ld(Xmm4, Oeax, PLAIN)                                         \
+        muvcx_ld(Xmm4, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        movcx_ld(Xmm5, Oeax, PLAIN)                                         \
+        muvcx_ld(Xmm5, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        movcx_ld(Xmm6, Oeax, PLAIN)                                         \
+        muvcx_ld(Xmm6, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        movcx_ld(Xmm7, Oeax, PLAIN)
+        muvcx_ld(Xmm7, Oeax, PLAIN)
 
 #endif /* RT_256 */
 
