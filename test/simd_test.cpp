@@ -3623,7 +3623,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
         verxx_xx()
     ASM_LEAVE(inf0)
 
-#if defined (RT_512) && (RT_512 != 0)
+#if (RT_SIMD == 512) && (RT_512 != 0)
     if ((inf0->ver & (RT_512 << 16)) == 0)
     {
         RT_LOGI("Chosen SIMD target not supported, check build flags\n");
@@ -3632,7 +3632,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     simd = simd == 0 ? (RT_512 << 8) | 16 : simd;
 #endif /* RT_512 */
 
-#if defined (RT_256) && (RT_256 != 0)
+#if (RT_SIMD == 256) && (RT_256 != 0)
     if ((inf0->ver & (RT_256 << 8)) == 0)
     {
         RT_LOGI("Chosen SIMD target not supported, check build flags\n");
@@ -3641,7 +3641,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     simd = simd == 0 ? (RT_256 << 8) | 8 : simd;
 #endif /* RT_256 */
 
-#if defined (RT_128) && (RT_128 != 0)
+#if (RT_SIMD == 128) && (RT_128 != 0)
     if ((inf0->ver & (RT_128 << 0)) == 0)
     {
         RT_LOGI("Chosen SIMD target not supported, check build flags\n");
