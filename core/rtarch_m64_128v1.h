@@ -642,6 +642,212 @@
         cvtjs_rr(W(XD), W(XS))                                              \
         FCTRL_LEAVE(mode)
 
+/**************   scalar double precision floating point (SIMD)   *************/
+
+/* mov (D = S) */
+
+#define movtx_rr(XD, XS)                                                    \
+        EMITW(0x46200006 | MXM(REG(XD), REG(XS), 0x00))
+
+#define movtx_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(REG(XD), MOD(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define movtx_st(XS, MD, DD)                                                \
+        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
+        EMITW(0xF4000000 | MDM(REG(XS), MOD(MD), VAL(DD), B1(DD), P1(DD)))
+
+/* add (G = G + S) */
+
+#define addts_rr(XG, XS)                                                    \
+        EMITW(0x46200000 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define addts_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x46200000 | MXM(REG(XG), REG(XG), TmmM))
+
+/* sub (G = G - S) */
+
+#define subts_rr(XG, XS)                                                    \
+        EMITW(0x46200001 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define subts_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x46200001 | MXM(REG(XG), REG(XG), TmmM))
+
+/* mul (G = G * S) */
+
+#define mults_rr(XG, XS)                                                    \
+        EMITW(0x46200002 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define mults_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x46200002 | MXM(REG(XG), REG(XG), TmmM))
+
+/* div (G = G / S) */
+
+#define divts_rr(XG, XS)                                                    \
+        EMITW(0x46200003 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define divts_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x46200003 | MXM(REG(XG), REG(XG), TmmM))
+
+/* sqr (D = sqrt S) */
+
+#define sqrts_rr(XD, XS)                                                    \
+        EMITW(0x46200004 | MXM(REG(XD), REG(XS), 0x00))
+
+#define sqrts_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x46200004 | MXM(REG(XD), TmmM,    0x00))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RCP != 1
+
+#define rcets_rr(XD, XS)                                                    \
+        EMITW(0x46200015 | MXM(REG(XD), REG(XS), 0x00))
+
+#define rcsts_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+        /* rcp defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RSQ != 1
+
+#define rsets_rr(XD, XS)                                                    \
+        EMITW(0x46200016 | MXM(REG(XD), REG(XS), 0x00))
+
+#define rssts_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+        /* rsq defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* pre-r6 */
+#if (defined (RT_M32) && RT_M32 < 6) || (defined (RT_M64) && RT_M64 < 6)
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA <= 1
+
+#define fmats_rr(XG, XS, XT)                                                \
+        EMITW(0x7920001B | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmats_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMITW(0x7920001B | MXM(REG(XG), REG(XS), TmmM))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS <= 1
+
+#define fmsts_rr(XG, XS, XT)                                                \
+        EMITW(0x7960001B | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmsts_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMITW(0x7960001B | MXM(REG(XG), REG(XS), TmmM))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/* min (G = G < S ? G : S) */
+
+#define mints_rr(XG, XS)                                                    \
+        EMITW(0x7B20001B | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define mints_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x7B20001B | MXM(REG(XG), REG(XG), TmmM))
+
+/* max (G = G > S ? G : S) */
+
+#define maxts_rr(XG, XS)                                                    \
+        EMITW(0x7BA0001B | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define maxts_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x7BA0001B | MXM(REG(XG), REG(XG), TmmM))
+
+#else  /* r6 */
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA <= 1
+
+#define fmats_rr(XG, XS, XT)                                                \
+        EMITW(0x46200018 | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmats_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMITW(0x46200018 | MXM(REG(XG), REG(XS), TmmM))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS <= 1
+
+#define fmsts_rr(XG, XS, XT)                                                \
+        EMITW(0x46200019 | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmsts_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMITW(0x46200019 | MXM(REG(XG), REG(XS), TmmM))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/* min (G = G < S ? G : S) */
+
+#define mints_rr(XG, XS)                                                    \
+        EMITW(0x4620001C | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define mints_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x4620001C | MXM(REG(XG), REG(XG), TmmM))
+
+/* max (G = G > S ? G : S) */
+
+#define maxts_rr(XG, XS)                                                    \
+        EMITW(0x4620001E | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define maxts_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x4620001E | MXM(REG(XG), REG(XG), TmmM))
+
+#endif /* r6 */
+
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/

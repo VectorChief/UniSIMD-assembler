@@ -328,7 +328,7 @@
 /* displacement VAL,  TP1,  TP2    (all displacement types are unsigned) */
 
 #define DP(dp)  ((dp) & 0xFFC),      0, 0    /* native on all ARMs, MIPS */
-#define DF(dp)  ((dp) & 0x3FFC),     0, 0   /* native AArch64 BASE ld/st */
+#define DF(dp)  ((dp) & 0x3FFC),     1, 0   /* native AArch64 BASE ld/st */
 #define DG(dp)  ((dp) & 0x7FFC),     1, 0      /* native MIPS BASE ld/st */
 #define DH(dp)  ((dp) & 0xFFFC),     1, 0   /* second native on all ARMs */
 #define DV(dp)  ((dp) & 0x7FFFFFFC), 2, 2        /* native x64 long mode */

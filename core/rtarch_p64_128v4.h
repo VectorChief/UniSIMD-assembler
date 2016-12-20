@@ -870,6 +870,345 @@
         rnrjs_rr(W(XD), W(XS), mode)                                        \
         cvzjs_rr(W(XD), W(XD))
 
+/**************   scalar double precision floating point (SIMD)   *************/
+
+#if (RT_128 < 4)
+
+/* mov (D = S) */
+
+#define movtx_rr(XD, XS)                                                    \
+        EMITW(0xFC000090 | MXM(REG(XD), 0x00,    REG(XS)))
+
+#define movtx_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC8000000 | MDM(REG(XD), MOD(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define movtx_st(XS, MD, DD)                                                \
+        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
+        EMITW(0xD8000000 | MDM(REG(XS), MOD(MD), VAL(DD), B1(DD), P1(DD)))
+
+/* add (G = G + S) */
+
+#define addts_rr(XG, XS)                                                    \
+        EMITW(0xFC00002A | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define addts_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC8000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0xFC00002A | MXM(REG(XG), REG(XG), TmmM))
+
+/* sub (G = G - S) */
+
+#define subts_rr(XG, XS)                                                    \
+        EMITW(0xFC000028 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define subts_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC8000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0xFC000028 | MXM(REG(XG), REG(XG), TmmM))
+
+/* mul (G = G * S) */
+
+#define mults_rr(XG, XS)                                                    \
+        EMITW(0xFC000032 | MXM(REG(XG), REG(XG), 0x00) | REG(XS) << 6)
+
+#define mults_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC8000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0xFC000032 | MXM(REG(XG), REG(XG), 0x00) | TmmM << 6)
+
+/* div (G = G / S) */
+
+#define divts_rr(XG, XS)                                                    \
+        EMITW(0xFC000024 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define divts_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC8000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0xFC000024 | MXM(REG(XG), REG(XG), TmmM))
+
+/* sqr (D = sqrt S) */
+
+#define sqrts_rr(XD, XS)                                                    \
+        EMITW(0xFC00002C | MXM(REG(XD), 0x00,    REG(XS)))
+
+#define sqrts_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC8000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0xFC00002C | MXM(REG(XD), 0x00,    TmmM))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RCP != 1
+
+#define rcets_rr(XD, XS)                                                    \
+        movtx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divts_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rcsts_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+        /* rcp defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RSQ != 1
+
+#define rsets_rr(XD, XS)                                                    \
+        sqrts_rr(W(XD), W(XS))                                              \
+        movtx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divts_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rssts_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+        /* rsq defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA <= 1
+
+#define fmats_rr(XG, XS, XT)                                                \
+        EMITW(0xFC00003A | MXM(REG(XG), REG(XS), REG(XG)) | REG(XT) << 6)
+
+#define fmats_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0xC8000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMITW(0xFC00003A | MXM(REG(XG), REG(XS), REG(XG)) | TmmM << 6)
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS <= 1
+
+#define fmsts_rr(XG, XS, XT)                                                \
+        EMITW(0xFC00003C | MXM(REG(XG), REG(XS), REG(XG)) | REG(XT) << 6)
+
+#define fmsts_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0xC8000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMITW(0xFC00003C | MXM(REG(XG), REG(XS), REG(XG)) | TmmM << 6)
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/* min (G = G < S ? G : S) */
+
+#define mints_rr(XG, XS)                                                    \
+        movtx_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movtx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movjx_ld(W(XG), Mebp, inf_SCR01(0))                                 \
+        minjs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movjx_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movtx_ld(W(XG), Mebp, inf_SCR01(0))
+
+#define mints_ld(XG, MS, DS)                                                \
+        movtx_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movtx_ld(W(XG), W(MS), W(DS))                                       \
+        movtx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        movjx_ld(W(XG), Mebp, inf_SCR01(0))                                 \
+        minjs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movjx_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movtx_ld(W(XG), Mebp, inf_SCR01(0))
+
+/* max (G = G > S ? G : S) */
+
+#define maxts_rr(XG, XS)                                                    \
+        movtx_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movtx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movjx_ld(W(XG), Mebp, inf_SCR01(0))                                 \
+        maxjs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movjx_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movtx_ld(W(XG), Mebp, inf_SCR01(0))
+
+#define maxts_ld(XG, MS, DS)                                                \
+        movtx_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movtx_ld(W(XG), W(MS), W(DS))                                       \
+        movtx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        movjx_ld(W(XG), Mebp, inf_SCR01(0))                                 \
+        maxjs_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movjx_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movtx_ld(W(XG), Mebp, inf_SCR01(0))
+
+#else /* RT_128 >= 4 */
+
+/* mov (D = S) */
+
+#define movtx_rr(XD, XS)                                                    \
+        EMITW(0xF0000497 | MXM(REG(XD), REG(XS), REG(XS)))
+
+#define movtx_ld(XD, MS, DS)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000499 | MXM(REG(XD), Teax & (MOD(MS) == TPxx), TPxx))    \
+                                                       /* ^ == -1 if true */
+
+#define movtx_st(XS, MD, DD)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MD), VAL(DD), B2(DD), P2(DD)))  \
+        EMITW(0x7C000599 | MXM(REG(XS), Teax & (MOD(MD) == TPxx), TPxx))    \
+                                                       /* ^ == -1 if true */
+
+/* add (G = G + S) */
+
+#define addts_rr(XG, XS)                                                    \
+        EMITW(0xF0000107 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define addts_ld(XG, MS, DS)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000499 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF0000107 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
+
+/* sub (G = G - S) */
+
+#define subts_rr(XG, XS)                                                    \
+        EMITW(0xF0000147 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define subts_ld(XG, MS, DS)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000499 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF0000147 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
+
+/* mul (G = G * S) */
+
+#define mults_rr(XG, XS)                                                    \
+        EMITW(0xF0000187 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define mults_ld(XG, MS, DS)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000499 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF0000187 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
+
+/* div (G = G / S) */
+
+#define divts_rr(XG, XS)                                                    \
+        EMITW(0xF00001C7 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define divts_ld(XG, MS, DS)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000499 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF00001C7 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
+
+/* sqr (D = sqrt S) */
+
+#define sqrts_rr(XD, XS)                                                    \
+        EMITW(0xF000012F | MXM(REG(XD), 0x00,    REG(XS)))
+
+#define sqrts_ld(XD, MS, DS)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000499 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF000012F | MXM(REG(XD), 0x00,    TmmM))/* ^ == -1 if true */
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RCP != 1
+
+#define rcets_rr(XD, XS)                                                    \
+        movtx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divts_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rcsts_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+        /* rcp defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RSQ != 1
+
+#define rsets_rr(XD, XS)                                                    \
+        sqrts_rr(W(XD), W(XS))                                              \
+        movtx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divts_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rssts_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+        /* rsq defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA <= 1
+
+#define fmats_rr(XG, XS, XT)                                                \
+        EMITW(0xF000010F | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmats_ld(XG, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000499 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0xF000010F | MXM(REG(XG), REG(XS), TmmM))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS <= 1
+
+#define fmsts_rr(XG, XS, XT)                                                \
+        EMITW(0xF000058F | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmsts_ld(XG, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000499 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0xF000058F | MXM(REG(XG), REG(XS), TmmM))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/* min (G = G < S ? G : S) */
+
+#define mints_rr(XG, XS)                                                    \
+        EMITW(0xF0000547 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define mints_ld(XG, MS, DS)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000499 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF0000547 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
+
+/* max (G = G > S ? G : S) */
+
+#define maxts_rr(XG, XS)                                                    \
+        EMITW(0xF0000507 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define maxts_ld(XG, MS, DS)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000499 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF0000507 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
+
+#endif /* RT_128 >= 4 */
+
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/

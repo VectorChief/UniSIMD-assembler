@@ -10,6 +10,7 @@
 
 #define RT_SIMD_CODE /* enable SIMD instruction definitions */
 #define RT_BASE_TEST /* enable BASE instruction sub-tests */
+#define RT_ELEM_TEST /* enable scalar SIMD instruction sub-tests */
 
 #include "rtarch.h"
 #include "rtbase.h"
@@ -188,6 +189,16 @@ rt_void s_test01(rt_SIMD_INFOX *info)
         subps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
+#ifdef RT_ELEM_TEST
+        movsx_ld(Xmm0, Mecx, AJ0)
+        movsx_ld(Xmm1, Mecx, AJ1)
+        movsx_rr(Xmm2, Xmm0)
+        addss_rr(Xmm2, Xmm1)
+        movsx_rr(Xmm3, Xmm0)
+        subss_rr(Xmm3, Xmm1)
+        movsx_st(Xmm2, Medx, AJ0)
+        movsx_st(Xmm3, Mebx, AJ0)
+#endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ1)
         movpx_rr(Xmm2, Xmm0)
@@ -196,6 +207,15 @@ rt_void s_test01(rt_SIMD_INFOX *info)
         subps_ld(Xmm3, Mecx, AJ2)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
+#ifdef RT_ELEM_TEST
+        movsx_ld(Xmm0, Mecx, AJ1)
+        movsx_rr(Xmm2, Xmm0)
+        addss_ld(Xmm2, Mecx, AJ2)
+        movsx_rr(Xmm3, Xmm0)
+        subss_ld(Xmm3, Mecx, AJ2)
+        movsx_st(Xmm2, Medx, AJ1)
+        movsx_st(Xmm3, Mebx, AJ1)
+#endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ2)
         movpx_ld(Xmm1, Mecx, AJ0)
@@ -205,6 +225,16 @@ rt_void s_test01(rt_SIMD_INFOX *info)
         subps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
+#ifdef RT_ELEM_TEST
+        movsx_ld(Xmm0, Mecx, AJ2)
+        movsx_ld(Xmm1, Mecx, AJ0)
+        movsx_rr(Xmm2, Xmm0)
+        addss_rr(Xmm2, Xmm1)
+        movsx_rr(Xmm3, Xmm0)
+        subss_rr(Xmm3, Xmm1)
+        movsx_st(Xmm2, Medx, AJ2)
+        movsx_st(Xmm3, Mebx, AJ2)
+#endif /* RT_ELEM_TEST */
 
         ASM_LEAVE(info)
     }
@@ -295,6 +325,16 @@ rt_void s_test02(rt_SIMD_INFOX *info)
         divps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
+#ifdef RT_ELEM_TEST
+        movsx_ld(Xmm0, Mecx, AJ0)
+        movsx_ld(Xmm1, Mecx, AJ1)
+        movsx_rr(Xmm2, Xmm0)
+        mulss_rr(Xmm2, Xmm1)
+        movsx_rr(Xmm3, Xmm0)
+        divss_rr(Xmm3, Xmm1)
+        movsx_st(Xmm2, Medx, AJ0)
+        movsx_st(Xmm3, Mebx, AJ0)
+#endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ1)
         movpx_rr(Xmm2, Xmm0)
@@ -303,6 +343,15 @@ rt_void s_test02(rt_SIMD_INFOX *info)
         divps_ld(Xmm3, Mecx, AJ2)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
+#ifdef RT_ELEM_TEST
+        movsx_ld(Xmm0, Mecx, AJ1)
+        movsx_rr(Xmm2, Xmm0)
+        mulss_ld(Xmm2, Mecx, AJ2)
+        movsx_rr(Xmm3, Xmm0)
+        divss_ld(Xmm3, Mecx, AJ2)
+        movsx_st(Xmm2, Medx, AJ1)
+        movsx_st(Xmm3, Mebx, AJ1)
+#endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ2)
         movpx_ld(Xmm1, Mecx, AJ0)
@@ -312,6 +361,16 @@ rt_void s_test02(rt_SIMD_INFOX *info)
         divps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
+#ifdef RT_ELEM_TEST
+        movsx_ld(Xmm0, Mecx, AJ2)
+        movsx_ld(Xmm1, Mecx, AJ0)
+        movsx_rr(Xmm2, Xmm0)
+        mulss_rr(Xmm2, Xmm1)
+        movsx_rr(Xmm3, Xmm0)
+        divss_rr(Xmm3, Xmm1)
+        movsx_st(Xmm2, Medx, AJ2)
+        movsx_st(Xmm3, Mebx, AJ2)
+#endif /* RT_ELEM_TEST */
 
         ASM_LEAVE(info)
     }
@@ -829,18 +888,39 @@ rt_void s_test07(rt_SIMD_INFOX *info)
         rcpps_rr(Xmm3, Xmm0) /* destroys Xmm0 */
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
+#ifdef RT_ELEM_TEST
+        movsx_ld(Xmm0, Mecx, AJ0)
+        sqrss_rr(Xmm2, Xmm0)
+        rcpss_rr(Xmm3, Xmm0) /* destroys Xmm0 */
+        movsx_st(Xmm2, Medx, AJ0)
+        movsx_st(Xmm3, Mebx, AJ0)
+#endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ1)
         sqrps_ld(Xmm2, Mecx, AJ1)
         rcpps_rr(Xmm3, Xmm0) /* destroys Xmm0 */
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
+#ifdef RT_ELEM_TEST
+        movsx_ld(Xmm0, Mecx, AJ1)
+        sqrss_ld(Xmm2, Mecx, AJ1)
+        rcpss_rr(Xmm3, Xmm0) /* destroys Xmm0 */
+        movsx_st(Xmm2, Medx, AJ1)
+        movsx_st(Xmm3, Mebx, AJ1)
+#endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ2)
         sqrps_rr(Xmm2, Xmm0)
         rcpps_rr(Xmm3, Xmm0) /* destroys Xmm0 */
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
+#ifdef RT_ELEM_TEST
+        movsx_ld(Xmm0, Mecx, AJ2)
+        sqrss_rr(Xmm2, Xmm0)
+        rcpss_rr(Xmm3, Xmm0) /* destroys Xmm0 */
+        movsx_st(Xmm2, Medx, AJ2)
+        movsx_st(Xmm3, Mebx, AJ2)
+#endif /* RT_ELEM_TEST */
 
         ASM_LEAVE(info)
     }
@@ -1228,6 +1308,16 @@ rt_void s_test10(rt_SIMD_INFOX *info)
         maxps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
+#ifdef RT_ELEM_TEST
+        movsx_ld(Xmm0, Mecx, AJ0)
+        movsx_ld(Xmm1, Mecx, AJ1)
+        movsx_rr(Xmm2, Xmm0)
+        minss_rr(Xmm2, Xmm1)
+        movsx_rr(Xmm3, Xmm0)
+        maxss_rr(Xmm3, Xmm1)
+        movsx_st(Xmm2, Medx, AJ0)
+        movsx_st(Xmm3, Mebx, AJ0)
+#endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ1)
         movpx_rr(Xmm2, Xmm0)
@@ -1236,6 +1326,15 @@ rt_void s_test10(rt_SIMD_INFOX *info)
         maxps_ld(Xmm3, Mecx, AJ2)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
+#ifdef RT_ELEM_TEST
+        movsx_ld(Xmm0, Mecx, AJ1)
+        movsx_rr(Xmm2, Xmm0)
+        minss_ld(Xmm2, Mecx, AJ2)
+        movsx_rr(Xmm3, Xmm0)
+        maxss_ld(Xmm3, Mecx, AJ2)
+        movsx_st(Xmm2, Medx, AJ1)
+        movsx_st(Xmm3, Mebx, AJ1)
+#endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ2)
         movpx_ld(Xmm1, Mecx, AJ0)
@@ -1245,6 +1344,16 @@ rt_void s_test10(rt_SIMD_INFOX *info)
         maxps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
+#ifdef RT_ELEM_TEST
+        movsx_ld(Xmm0, Mecx, AJ2)
+        movsx_ld(Xmm1, Mecx, AJ0)
+        movsx_rr(Xmm2, Xmm0)
+        minss_rr(Xmm2, Xmm1)
+        movsx_rr(Xmm3, Xmm0)
+        maxss_rr(Xmm3, Xmm1)
+        movsx_st(Xmm2, Medx, AJ2)
+        movsx_st(Xmm3, Mebx, AJ2)
+#endif /* RT_ELEM_TEST */
 
         ASM_LEAVE(info)
     }
@@ -2595,6 +2704,16 @@ rt_void s_test20(rt_SIMD_INFOX *info)
         fmsps_rr(Xmm3, Xmm1, Xmm2)
         movpx_st(Xmm0, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
+#ifdef RT_ELEM_TEST
+        movsx_ld(Xmm0, Mecx, AJ0)
+        movsx_ld(Xmm1, Mecx, AJ1)
+        movsx_ld(Xmm2, Mecx, AJ2)
+        movsx_rr(Xmm3, Xmm0)
+        fmass_rr(Xmm0, Xmm1, Xmm2)
+        fmsss_rr(Xmm3, Xmm1, Xmm2)
+        movsx_st(Xmm0, Medx, AJ0)
+        movsx_st(Xmm3, Mebx, AJ0)
+#endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ1)
         movpx_ld(Xmm1, Mecx, AJ2)
@@ -2603,6 +2722,15 @@ rt_void s_test20(rt_SIMD_INFOX *info)
         fmsps_ld(Xmm3, Xmm1, Mecx, AJ0)
         movpx_st(Xmm0, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
+#ifdef RT_ELEM_TEST
+        movsx_ld(Xmm0, Mecx, AJ1)
+        movsx_ld(Xmm1, Mecx, AJ2)
+        movsx_rr(Xmm3, Xmm0)
+        fmass_ld(Xmm0, Xmm1, Mecx, AJ0)
+        fmsss_ld(Xmm3, Xmm1, Mecx, AJ0)
+        movsx_st(Xmm0, Medx, AJ1)
+        movsx_st(Xmm3, Mebx, AJ1)
+#endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ2)
         movpx_ld(Xmm1, Mecx, AJ0)
@@ -2612,6 +2740,16 @@ rt_void s_test20(rt_SIMD_INFOX *info)
         fmsps_rr(Xmm3, Xmm1, Xmm2)
         movpx_st(Xmm0, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
+#ifdef RT_ELEM_TEST
+        movsx_ld(Xmm0, Mecx, AJ2)
+        movsx_ld(Xmm1, Mecx, AJ0)
+        movsx_ld(Xmm2, Mecx, AJ1)
+        movsx_rr(Xmm3, Xmm0)
+        fmass_rr(Xmm0, Xmm1, Xmm2)
+        fmsss_rr(Xmm3, Xmm1, Xmm2)
+        movsx_st(Xmm0, Medx, AJ2)
+        movsx_st(Xmm3, Mebx, AJ2)
+#endif /* RT_ELEM_TEST */
 
         ASM_LEAVE(info)
     }

@@ -93,6 +93,10 @@
 
 #if defined (RT_128) && (RT_128 >= 2 && RT_128 < 8)
 
+/* mandatory escape prefix for some opcodes (must preceed rex) */
+#define xF2                                                                 \
+        EMITB(0xF2)
+
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -755,224 +759,6 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
         movjx_ld(W(XD), W(MS), W(DS))                                       \
         cvnjn_rr(W(XD), W(XD))
 
-/**************************   extended float (x87)   **************************/
-
-#define fpuzs_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xDD)                                   \
-        MRM(0x00,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define fpuzs_st(MD, DD) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MD)) EMITB(0xDD)                                   \
-        MRM(0x03,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-
-#define fpuzn_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xDF)                                   \
-        MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define fpuzn_st(MD, DD) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MD)) EMITB(0xDF)                                   \
-        MRM(0x07,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-#define fpuzt_st(MD, DD) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MD)) EMITB(0xDD)                                   \
-        MRM(0x01,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-
-#define addzs_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
-        MRM(0x00,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define subzs_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
-        MRM(0x04,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define sbrzs_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
-        MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-
-#define mulzs_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
-        MRM(0x01,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define divzs_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
-        MRM(0x06,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define dvrzs_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
-        MRM(0x07,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-
-#define addes_xn(n)      /* ST(0) = ST(0) + ST(n), don't pop */             \
-        EMITB(0xD8) EMITB(0xC0+(n))
-
-#define addes_nx(n)      /* ST(n) = ST(n) + ST(0), don't pop */             \
-        EMITB(0xDC) EMITB(0xC0+(n))
-
-#define addes_np(n)      /* ST(n) = ST(n) + ST(0), pop stack */             \
-        EMITB(0xDE) EMITB(0xC0+(n))
-
-
-#define subes_xn(n)      /* ST(0) = ST(0) - ST(n), don't pop */             \
-        EMITB(0xD8) EMITB(0xE0+(n))
-
-#define subes_nx(n)      /* ST(n) = ST(n) - ST(0), don't pop */             \
-        EMITB(0xDC) EMITB(0xE8+(n))
-
-#define subes_np(n)      /* ST(n) = ST(n) - ST(0), pop stack */             \
-        EMITB(0xDE) EMITB(0xE8+(n))
-
-
-#define sbres_xn(n)      /* ST(0) = ST(n) - ST(0), don't pop */             \
-        EMITB(0xD8) EMITB(0xE8+(n))
-
-#define sbres_nx(n)      /* ST(n) = ST(0) - ST(n), don't pop */             \
-        EMITB(0xDC) EMITB(0xE0+(n))
-
-#define sbres_np(n)      /* ST(n) = ST(0) - ST(n), pop stack */             \
-        EMITB(0xDE) EMITB(0xE0+(n))
-
-
-#define mules_xn(n)      /* ST(0) = ST(0) * ST(n), don't pop */             \
-        EMITB(0xD8) EMITB(0xC8+(n))
-
-#define mules_nx(n)      /* ST(n) = ST(n) * ST(0), don't pop */             \
-        EMITB(0xDC) EMITB(0xC8+(n))
-
-#define mules_np(n)      /* ST(n) = ST(n) * ST(0), pop stack */             \
-        EMITB(0xDE) EMITB(0xC8+(n))
-
-
-#define dives_xn(n)      /* ST(0) = ST(0) / ST(n), don't pop */             \
-        EMITB(0xD8) EMITB(0xF0+(n))
-
-#define dives_nx(n)      /* ST(n) = ST(n) / ST(0), don't pop */             \
-        EMITB(0xDC) EMITB(0xF8+(n))
-
-#define dives_np(n)      /* ST(n) = ST(n) / ST(0), pop stack */             \
-        EMITB(0xDE) EMITB(0xF8+(n))
-
-
-#define dvres_xn(n)      /* ST(0) = ST(n) / ST(0), don't pop */             \
-        EMITB(0xD8) EMITB(0xF8+(n))
-
-#define dvres_nx(n)      /* ST(n) = ST(0) / ST(n), don't pop */             \
-        EMITB(0xDC) EMITB(0xF0+(n))
-
-#define dvres_np(n)      /* ST(n) = ST(0) / ST(n), pop stack */             \
-        EMITB(0xDE) EMITB(0xF0+(n))
-
-
-#define sqres_xx()       /* ST(0) = sqr ST(0), don't pop */                 \
-        EMITB(0xD9) EMITB(0xFA)
-
-#define neges_xx()       /* ST(0) = neg ST(0), don't pop */                 \
-        EMITB(0xD9) EMITB(0xE0)
-
-#define abses_xx()       /* ST(0) = abs ST(0), don't pop */                 \
-        EMITB(0xD9) EMITB(0xE1)
-
-
-#define xm2es_xx()       /* ST(0) = 2^ST(0)-1, don't pop, [-1.0 : +1.0] */  \
-        EMITB(0xD9) EMITB(0xF0)
-
-#define lg2es_xx()       /* ST(1) = ST(1)*lg2 ST(0), pop stack */           \
-        EMITB(0xD9) EMITB(0xF1)
-
-#define lp2es_xx()       /* ST(1) = ST(1)*lg2 ST(0)+1.0, pop stack */       \
-        EMITB(0xD9) EMITB(0xF9)
-
-
-#define sines_xx()       /* ST(0) = sin ST(0), don't pop, [-2^63:+2^63] */  \
-        EMITB(0xD9) EMITB(0xFE)
-
-#define coses_xx()       /* ST(0) = cos ST(0), don't pop, [-2^63:+2^63] */  \
-        EMITB(0xD9) EMITB(0xFF)
-
-#define scses_xx()       /* ST(0) = sin ST(0), push cos ST(0), original */  \
-        EMITB(0xD9) EMITB(0xFB)
-
-#define tanes_xx()       /* ST(0) = tan ST(0), push +1.0, [-2^63:+2^63] */  \
-        EMITB(0xD9) EMITB(0xF2)
-
-#define atnes_xx()       /* ST(1) = atn ST(1)/ST(0), pop stack */           \
-        EMITB(0xD9) EMITB(0xF3)
-
-
-#define remes_xx()       /* ST(0) = ST(0)-Q*ST(1), Q = rnd ST(0)/ST(1) */   \
-        EMITB(0xD9) EMITB(0xF5)
-
-#define rexes_xx()       /* ST(0) = ST(0)-Q*ST(1), Q = trn ST(0)/ST(1) */   \
-        EMITB(0xD9) EMITB(0xF8)
-
-#define rndes_xx()       /* ST(0) = rnd ST(0), round to integral value */   \
-        EMITB(0xD9) EMITB(0xFC)
-
-#define extes_xx()       /* ST(0) = exp ST(0), push mts ST(0) */            \
-        EMITB(0xD9) EMITB(0xF4)
-
-#define scles_xx()       /* exp ST(0) = exp ST(0) + rnd ST(1) */            \
-        EMITB(0xD9) EMITB(0xFD)
-
-
-#define cmpes_xn(n)      /* flags = ST(0) ? ST(n), don't pop */             \
-        EMITB(0xDB) EMITB(0xF0+(n))
-
-#define cmpes_pn(n)      /* flags = ST(0) ? ST(n), pop stack */             \
-        EMITB(0xDF) EMITB(0xF0+(n))
-
-#define moves_nx(n)      /* ST(n) = ST(0), don't pop */                     \
-        EMITB(0xDD) EMITB(0xD0+(n))
-
-#define moves_np(n)      /* ST(n) = ST(0), pop stack */                     \
-        EMITB(0xDD) EMITB(0xD8+(n))
-
-#define popes_xx()       /* ST(0) = ST(0), pop stack */                     \
-        EMITB(0xDD) EMITB(0xD8)
-
-
-#define fpucw_ld(MS, DS) /* not portable, do not use outside */             \
-    ADR REX(0,       RXB(MS)) EMITB(0xD9)                                   \
-        MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define fpucw_st(MD, DD) /* not portable, do not use outside */             \
-FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
-        MRM(0x07,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-
-#define fpurz_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        movwx_mi(Mebp,  inf_SCR02(0), IH(0x0C7F))                           \
-        fpucw_ld(Mebp,  inf_SCR02(0))
-
-#define fpurp_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        movwx_mi(Mebp,  inf_SCR02(0), IH(0x087F))                           \
-        fpucw_ld(Mebp,  inf_SCR02(0))
-
-#define fpurm_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        movwx_mi(Mebp,  inf_SCR02(0), IH(0x047F))                           \
-        fpucw_ld(Mebp,  inf_SCR02(0))
-
-#define fpurn_xx()       /* not portable, do not use outside */             \
-        fpucw_ld(Mebp,  inf_SCR02(4))
-
 /**************************   packed integer (SSE2)   *************************/
 
 /* add (G = G + S) */
@@ -1231,6 +1017,382 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
         cvzjs_rr(W(XD), W(XD))
 
 #endif /* RT_128 >= 4 */
+
+/**************   scalar double precision floating point (SSE2)   *************/
+
+/* mov (D = S) */
+
+#define movtx_rr(XD, XS)                                                    \
+    xF2 REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x10)                       \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define movtx_ld(XD, MS, DS)                                                \
+ADR xF2 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x10)                       \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define movtx_st(XS, MD, DD)                                                \
+ADR xF2 REX(RXB(XS), RXB(MD)) EMITB(0x0F) EMITB(0x11)                       \
+        MRM(REG(XS), MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+/* add (G = G + S) */
+
+#define addts_rr(XG, XS)                                                    \
+    xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x58)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define addts_ld(XG, MS, DS)                                                \
+ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x58)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* sub (G = G - S) */
+
+#define subts_rr(XG, XS)                                                    \
+    xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5C)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define subts_ld(XG, MS, DS)                                                \
+ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5C)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* mul (G = G * S) */
+
+#define mults_rr(XG, XS)                                                    \
+    xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x59)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define mults_ld(XG, MS, DS)                                                \
+ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* div (G = G / S) */
+
+#define divts_rr(XG, XS)                                                    \
+    xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5E)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define divts_ld(XG, MS, DS)                                                \
+ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5E)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* sqr (D = sqrt S) */
+
+#define sqrts_rr(XD, XS)                                                    \
+    xF2 REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x51)                       \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define sqrts_ld(XD, MS, DS)                                                \
+ADR xF2 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RCP != 1
+
+#define rcets_rr(XD, XS)                                                    \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divts_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define rcsts_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+        /* rcp defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RSQ != 1
+
+#define rsets_rr(XD, XS)                                                    \
+        sqrts_rr(W(XD), W(XS))                                              \
+        movtx_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divts_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define rssts_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+        /* rsq defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+#if RT_SIMD_COMPAT_FMA == 0
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#define fmats_rr(XG, XS, XT)                                                \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mults_rr(W(XS), W(XT))                                              \
+        addts_rr(W(XG), W(XS))                                              \
+        movtx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmats_ld(XG, XS, MT, DT)                                            \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mults_ld(W(XS), W(MT), W(DT))                                       \
+        addts_rr(W(XG), W(XS))                                              \
+        movtx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#elif RT_SIMD_COMPAT_FMA == 1
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMR == 0
+
+#define fmats_rr(XG, XS, XT)                                                \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movtx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        fmats_rx(W(XG))
+
+#define fmats_ld(XG, XS, MT, DT)                                            \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movtx_ld(W(XS), W(MT), W(DT))                                       \
+        movtx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movtx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        fmats_rx(W(XG))
+
+#elif RT_SIMD_COMPAT_FMR == 1
+
+#define fmats_rr(XG, XS, XT)                                                \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movtx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        fmats_rx(W(XG))                                                     \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#define fmats_ld(XG, XS, MT, DT)                                            \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movtx_ld(W(XS), W(MT), W(DT))                                       \
+        movtx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movtx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        fmats_rx(W(XG))                                                     \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#endif /* RT_SIMD_COMPAT_FMR */
+
+#define fmats_rx(XG) /* not portable, do not use outside */                 \
+        fpuzs_ld(Mebp,  inf_SCR01(0x00))                                    \
+        mulzs_ld(Mebp,  inf_SCR02(0x00))                                    \
+        movtx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        addzs_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_st(Mebp,  inf_SCR02(0x00))                                    \
+        movtx_ld(W(XG), Mebp, inf_SCR02(0))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+#if RT_SIMD_COMPAT_FMS == 0
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsts_rr(XG, XS, XT)                                                \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mults_rr(W(XS), W(XT))                                              \
+        subts_rr(W(XG), W(XS))                                              \
+        movtx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmsts_ld(XG, XS, MT, DT)                                            \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mults_ld(W(XS), W(MT), W(DT))                                       \
+        subts_rr(W(XG), W(XS))                                              \
+        movtx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#elif RT_SIMD_COMPAT_FMS == 1
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMR == 0
+
+#define fmsts_rr(XG, XS, XT)                                                \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movtx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        fmsts_rx(W(XG))
+
+#define fmsts_ld(XG, XS, MT, DT)                                            \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movtx_ld(W(XS), W(MT), W(DT))                                       \
+        movtx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movtx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        fmsts_rx(W(XG))
+
+#elif RT_SIMD_COMPAT_FMR == 1
+
+#define fmsts_rr(XG, XS, XT)                                                \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movtx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        fmsts_rx(W(XG))                                                     \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#define fmsts_ld(XG, XS, MT, DT)                                            \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movtx_ld(W(XS), W(MT), W(DT))                                       \
+        movtx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movtx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        fmsts_rx(W(XG))                                                     \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#endif /* RT_SIMD_COMPAT_FMR */
+
+#define fmsts_rx(XG) /* not portable, do not use outside */                 \
+        fpuzs_ld(Mebp,  inf_SCR01(0x00))                                    \
+        mulzs_ld(Mebp,  inf_SCR02(0x00))                                    \
+        movtx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        sbrzs_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_st(Mebp,  inf_SCR02(0x00))                                    \
+        movtx_ld(W(XG), Mebp, inf_SCR02(0))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/* min (G = G < S ? G : S) */
+
+#define mints_rr(XG, XS)                                                    \
+    xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5D)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define mints_ld(XG, MS, DS)                                                \
+ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5D)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* max (G = G > S ? G : S) */
+
+#define maxts_rr(XG, XS)                                                    \
+    xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5F)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define maxts_ld(XG, MS, DS)                                                \
+ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5F)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/**************************   extended float (x87)   **************************/
+
+#define fpuzs_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDD)                                   \
+        MRM(0x00,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define fpuzs_st(MD, DD) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MD)) EMITB(0xDD)                                   \
+        MRM(0x03,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+
+#define fpuzn_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDF)                                   \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define fpuzn_st(MD, DD) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MD)) EMITB(0xDF)                                   \
+        MRM(0x07,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+#define fpuzt_st(MD, DD) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MD)) EMITB(0xDD)                                   \
+        MRM(0x01,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+
+#define addzs_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
+        MRM(0x00,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define subzs_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
+        MRM(0x04,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define sbrzs_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+
+#define mulzs_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
+        MRM(0x01,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define divzs_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
+        MRM(0x06,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define dvrzs_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
+        MRM(0x07,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+
+#define fpucw_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xD9)                                   \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define fpucw_st(MD, DD) /* not portable, do not use outside */             \
+FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
+        MRM(0x07,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+
+#define fpurz_xx()       /* not portable, do not use outside */             \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x0C7F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#define fpurp_xx()       /* not portable, do not use outside */             \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x087F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#define fpurm_xx()       /* not portable, do not use outside */             \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        movwx_mi(Mebp,  inf_SCR02(0), IH(0x047F))                           \
+        fpucw_ld(Mebp,  inf_SCR02(0))
+
+#define fpurn_xx()       /* not portable, do not use outside */             \
+        fpucw_ld(Mebp,  inf_SCR02(4))
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

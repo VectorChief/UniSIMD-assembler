@@ -532,7 +532,7 @@ struct rt_SIMD_REGS
 {
     /* register file */
 
-    rt_real file[S*32];
+    rt_real file[S*64];
 #define reg_FILE            DP(Q*0x000)
 
 };
@@ -1886,6 +1886,100 @@ struct rt_SIMD_REGS
 #endif /* RT_SIMD: 512, 256, 128 */
 
 /******************************************************************************/
+/**** scalar ***** SIMD instructions with fixed-32-bit-element ****************/
+/******************************************************************************/
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if   RT_SIMD_COMPAT_RCP == 0 || RT_SIMD_COMPAT_RCP == 2
+
+#define rcprs_rr(XD, XS) /* destroys XS */                                  \
+        rcers_rr(W(XD), W(XS))                                              \
+        rcsrs_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
+
+#elif RT_SIMD_COMPAT_RCP == 1
+
+#define rcprs_rr(XD, XS) /* destroys XS */                                  \
+        movrx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        divrs_rr(W(XD), W(XS))
+
+#define rcers_rr(XD, XS)                                                    \
+        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        divrs_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rcsrs_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if   RT_SIMD_COMPAT_RSQ == 0 || RT_SIMD_COMPAT_RSQ == 2
+
+#define rsqrs_rr(XD, XS) /* destroys XS */                                  \
+        rsers_rr(W(XD), W(XS))                                              \
+        rssrs_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
+
+#elif RT_SIMD_COMPAT_RSQ == 1
+
+#define rsqrs_rr(XD, XS) /* destroys XS */                                  \
+        sqrrs_rr(W(XS), W(XS))                                              \
+        movrx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        divrs_rr(W(XD), W(XS))
+
+#define rsers_rr(XD, XS)                                                    \
+        sqrrs_rr(W(XD), W(XS))                                              \
+        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        divrs_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rssrs_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA == 2
+
+#define fmars_rr(XG, XS, XT)                                                \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulrs_rr(W(XS), W(XT))                                              \
+        addrs_rr(W(XG), W(XS))                                              \
+        movrx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmars_ld(XG, XS, MT, DT)                                            \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulrs_ld(W(XS), W(MT), W(DT))                                       \
+        addrs_rr(W(XG), W(XS))                                              \
+        movrx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS == 2
+
+#define fmsrs_rr(XG, XS, XT)                                                \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulrs_rr(W(XS), W(XT))                                              \
+        subrs_rr(W(XG), W(XS))                                              \
+        movrx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmsrs_ld(XG, XS, MT, DT)                                            \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulrs_ld(W(XS), W(MT), W(DT))                                       \
+        subrs_rr(W(XG), W(XS))                                              \
+        movrx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/******************************************************************************/
 /**** var-len **** SIMD instructions with fixed-64-bit-element **** 512-bit ***/
 /******************************************************************************/
 
@@ -3131,6 +3225,100 @@ struct rt_SIMD_REGS
 #endif /* RT_SIMD: 512, 256, 128 */
 
 /******************************************************************************/
+/**** scalar ***** SIMD instructions with fixed-64-bit-element ****************/
+/******************************************************************************/
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if   RT_SIMD_COMPAT_RCP == 0 || RT_SIMD_COMPAT_RCP == 2
+
+#define rcpts_rr(XD, XS) /* destroys XS */                                  \
+        rcets_rr(W(XD), W(XS))                                              \
+        rcsts_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
+
+#elif RT_SIMD_COMPAT_RCP == 1
+
+#define rcpts_rr(XD, XS) /* destroys XS */                                  \
+        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divts_rr(W(XD), W(XS))
+
+#define rcets_rr(XD, XS)                                                    \
+        movtx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divts_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rcsts_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if   RT_SIMD_COMPAT_RSQ == 0 || RT_SIMD_COMPAT_RSQ == 2
+
+#define rsqts_rr(XD, XS) /* destroys XS */                                  \
+        rsets_rr(W(XD), W(XS))                                              \
+        rssts_rr(W(XD), W(XS)) /* <- not reusable without extra temp reg */
+
+#elif RT_SIMD_COMPAT_RSQ == 1
+
+#define rsqts_rr(XD, XS) /* destroys XS */                                  \
+        sqrts_rr(W(XS), W(XS))                                              \
+        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divts_rr(W(XD), W(XS))
+
+#define rsets_rr(XD, XS)                                                    \
+        sqrts_rr(W(XD), W(XS))                                              \
+        movtx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        divts_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rssts_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA == 2
+
+#define fmats_rr(XG, XS, XT)                                                \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mults_rr(W(XS), W(XT))                                              \
+        addts_rr(W(XG), W(XS))                                              \
+        movtx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmats_ld(XG, XS, MT, DT)                                            \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mults_ld(W(XS), W(MT), W(DT))                                       \
+        addts_rr(W(XG), W(XS))                                              \
+        movtx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS == 2
+
+#define fmsts_rr(XG, XS, XT)                                                \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mults_rr(W(XS), W(XT))                                              \
+        subts_rr(W(XG), W(XS))                                              \
+        movtx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmsts_ld(XG, XS, MT, DT)                                            \
+        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mults_ld(W(XS), W(MT), W(DT))                                       \
+        subts_rr(W(XG), W(XS))                                              \
+        movtx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/******************************************************************************/
 /**** var-len **** SIMD instructions with configurable-element **** 32-bit ****/
 /******************************************************************************/
 
@@ -4360,6 +4548,121 @@ struct rt_SIMD_REGS
         cvris_rr(W(XD), W(XS), mode)
 
 /******************************************************************************/
+/**** scalar ***** SIMD instructions with configurable-element **** 32-bit ****/
+/******************************************************************************/
+
+/* mov (D = S) */
+
+#define movsx_rr(XD, XS)                                                    \
+        movrx_rr(W(XD), W(XS))
+
+#define movsx_ld(XD, MS, DS)                                                \
+        movrx_ld(W(XD), W(MS), W(DS))
+
+#define movsx_st(XS, MD, DD)                                                \
+        movrx_st(W(XS), W(MD), W(DD))
+
+/* add (G = G + S) */
+
+#define addss_rr(XG, XS)                                                    \
+        addrs_rr(W(XG), W(XS))
+
+#define addss_ld(XG, MS, DS)                                                \
+        addrs_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define subss_rr(XG, XS)                                                    \
+        subrs_rr(W(XG), W(XS))
+
+#define subss_ld(XG, MS, DS)                                                \
+        subrs_ld(W(XG), W(MS), W(DS))
+
+/* mul (G = G * S) */
+
+#define mulss_rr(XG, XS)                                                    \
+        mulrs_rr(W(XG), W(XS))
+
+#define mulss_ld(XG, MS, DS)                                                \
+        mulrs_ld(W(XG), W(MS), W(DS))
+
+/* div (G = G / S) */
+
+#define divss_rr(XG, XS)                                                    \
+        divrs_rr(W(XG), W(XS))
+
+#define divss_ld(XG, MS, DS)                                                \
+        divrs_ld(W(XG), W(MS), W(DS))
+
+/* sqr (D = sqrt S) */
+
+#define sqrss_rr(XD, XS)                                                    \
+        sqrrs_rr(W(XD), W(XS))
+
+#define sqrss_ld(XD, MS, DS)                                                \
+        sqrrs_ld(W(XD), W(MS), W(DS))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rcpss_rr(XD, XS) /* destroys XS */                                  \
+        rcprs_rr(W(XD), W(XS))
+
+#define rcess_rr(XD, XS)                                                    \
+        rcers_rr(W(XD), W(XS))
+
+#define rcsss_rr(XG, XS) /* destroys XS */                                  \
+        rcsrs_rr(W(XG), W(XS))
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rsqss_rr(XD, XS) /* destroys XS */                                  \
+        rsqrs_rr(W(XD), W(XS))
+
+#define rsess_rr(XD, XS)                                                    \
+        rsers_rr(W(XD), W(XS))
+
+#define rssss_rr(XG, XS) /* destroys XS */                                  \
+        rssrs_rr(W(XG), W(XS))
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#define fmass_rr(XG, XS, XT)                                                \
+        fmars_rr(W(XG), W(XS), W(XT))
+
+#define fmass_ld(XG, XS, MT, DT)                                            \
+        fmars_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsss_rr(XG, XS, XT)                                                \
+        fmsrs_rr(W(XG), W(XS), W(XT))
+
+#define fmsss_ld(XG, XS, MT, DT)                                            \
+        fmsrs_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S) */
+
+#define minss_rr(XG, XS)                                                    \
+        minrs_rr(W(XG), W(XS))
+
+#define minss_ld(XG, MS, DS)                                                \
+        minrs_ld(W(XG), W(MS), W(DS))
+
+/* max (G = G > S ? G : S) */
+
+#define maxss_rr(XG, XS)                                                    \
+        maxrs_rr(W(XG), W(XS))
+
+#define maxss_ld(XG, MS, DS)                                                \
+        maxrs_ld(W(XG), W(MS), W(DS))
+
+/******************************************************************************/
 /**** var-len **** SIMD instructions with configurable-element **** 64-bit ****/
 /******************************************************************************/
 
@@ -5587,6 +5890,121 @@ struct rt_SIMD_REGS
 
 #define cvrls_rr(XD, XS, mode)                                              \
         cvrjs_rr(W(XD), W(XS), mode)
+
+/******************************************************************************/
+/**** scalar ***** SIMD instructions with configurable-element **** 64-bit ****/
+/******************************************************************************/
+
+/* mov (D = S) */
+
+#define movsx_rr(XD, XS)                                                    \
+        movtx_rr(W(XD), W(XS))
+
+#define movsx_ld(XD, MS, DS)                                                \
+        movtx_ld(W(XD), W(MS), W(DS))
+
+#define movsx_st(XS, MD, DD)                                                \
+        movtx_st(W(XS), W(MD), W(DD))
+
+/* add (G = G + S) */
+
+#define addss_rr(XG, XS)                                                    \
+        addts_rr(W(XG), W(XS))
+
+#define addss_ld(XG, MS, DS)                                                \
+        addts_ld(W(XG), W(MS), W(DS))
+
+/* sub (G = G - S) */
+
+#define subss_rr(XG, XS)                                                    \
+        subts_rr(W(XG), W(XS))
+
+#define subss_ld(XG, MS, DS)                                                \
+        subts_ld(W(XG), W(MS), W(DS))
+
+/* mul (G = G * S) */
+
+#define mulss_rr(XG, XS)                                                    \
+        mults_rr(W(XG), W(XS))
+
+#define mulss_ld(XG, MS, DS)                                                \
+        mults_ld(W(XG), W(MS), W(DS))
+
+/* div (G = G / S) */
+
+#define divss_rr(XG, XS)                                                    \
+        divts_rr(W(XG), W(XS))
+
+#define divss_ld(XG, MS, DS)                                                \
+        divts_ld(W(XG), W(MS), W(DS))
+
+/* sqr (D = sqrt S) */
+
+#define sqrss_rr(XD, XS)                                                    \
+        sqrts_rr(W(XD), W(XS))
+
+#define sqrss_ld(XD, MS, DS)                                                \
+        sqrts_ld(W(XD), W(MS), W(DS))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rcpss_rr(XD, XS) /* destroys XS */                                  \
+        rcpts_rr(W(XD), W(XS))
+
+#define rcess_rr(XD, XS)                                                    \
+        rcets_rr(W(XD), W(XS))
+
+#define rcsss_rr(XG, XS) /* destroys XS */                                  \
+        rcsts_rr(W(XG), W(XS))
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#define rsqss_rr(XD, XS) /* destroys XS */                                  \
+        rsqts_rr(W(XD), W(XS))
+
+#define rsess_rr(XD, XS)                                                    \
+        rsets_rr(W(XD), W(XS))
+
+#define rssss_rr(XG, XS) /* destroys XS */                                  \
+        rssts_rr(W(XG), W(XS))
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#define fmass_rr(XG, XS, XT)                                                \
+        fmats_rr(W(XG), W(XS), W(XT))
+
+#define fmass_ld(XG, XS, MT, DT)                                            \
+        fmats_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsss_rr(XG, XS, XT)                                                \
+        fmsts_rr(W(XG), W(XS), W(XT))
+
+#define fmsss_ld(XG, XS, MT, DT)                                            \
+        fmsts_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S) */
+
+#define minss_rr(XG, XS)                                                    \
+        mints_rr(W(XG), W(XS))
+
+#define minss_ld(XG, MS, DS)                                                \
+        mints_ld(W(XG), W(MS), W(DS))
+
+/* max (G = G > S ? G : S) */
+
+#define maxss_rr(XG, XS)                                                    \
+        maxts_rr(W(XG), W(XS))
+
+#define maxss_ld(XG, MS, DS)                                                \
+        maxts_ld(W(XG), W(MS), W(DS))
 
 #endif /* RT_ELEMENT */
 

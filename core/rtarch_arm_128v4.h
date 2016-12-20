@@ -11,10 +11,10 @@
 
 #define RT_SIMD_REGS_128        8
 #define RT_SIMD_ALIGN_128       16
-#define RT_SIMD_WIDTH32_128     4
-#define RT_SIMD_SET32_128(s, v) s[0]=s[1]=s[2]=s[3]=v
 #define RT_SIMD_WIDTH64_128     2
 #define RT_SIMD_SET64_128(s, v) s[0]=s[1]=v
+#define RT_SIMD_WIDTH32_128     4
+#define RT_SIMD_SET32_128(s, v) s[0]=s[1]=s[2]=s[3]=v
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
@@ -115,6 +115,7 @@
 
 /* selectors  */
 
+#define REH(reg, mod, sib)  (reg+1)
 #define  B2(val, tp1, tp2)  B2##tp2
 #define  P2(val, tp1, tp2)  P2##tp2
 #define  C2(val, tp1, tp2)  C2##tp2
@@ -323,10 +324,16 @@
         EMITW(0xEEC00AA0 | MXM(REG(XG)+1, REG(XG)+1, REG(XS)+1))
 
 #define divis_ld(XG, MS, DS)                                                \
-        movix_st(V(XG), Mebp, inf_SCR01(0))                                 \
+        movix_xr(V(XG))                                                     \
         movix_ld(V(XG), W(MS), W(DS))                                       \
         divis_rr(W(XG), V(XG))                                              \
-        movix_ld(V(XG), Mebp, inf_SCR01(0))
+        movix_rx(V(XG))
+
+#define movix_xr(XS) /* not portable, do not use outside */                 \
+        EMITW(0xF2200150 | MXM(TmmM,    REG(XS), REG(XS)))
+
+#define movix_rx(XD) /* not portable, do not use outside */                 \
+        EMITW(0xF2200150 | MXM(REG(XD), TmmM,    TmmM))
 
 #else /* RT_SIMD_COMPAT_DIV */
 
@@ -1207,6 +1214,257 @@
         ((RT_SIMD_MODE_##mode&3)+1 + 3*(((RT_SIMD_MODE_##mode&3)+1) >> 2)) << 8)
 
 #endif /* RT_128 >= 4 */
+
+/**************   scalar single precision floating point (NEON)   *************/
+
+/* mov (D = S) */
+
+#define movrx_rr(XD, XS)                                                    \
+        EMITW(0xEEB00A40 | MXM(REG(XD), 0x00,    REG(XS)))
+
+#define movrx_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4A0083F | MXM(REG(XD), TPxx,    0x00))
+
+#define movrx_st(XS, MD, DD)                                                \
+        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MD), VAL(DD), B2(DD), P2(DD)))  \
+        EMITW(0xF480083F | MXM(REG(XS), TPxx,    0x00))
+
+/* add (G = G + S) */
+
+#define addrs_rr(XG, XS)                                                    \
+        EMITW(0xEE300A00 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define addrs_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4A0083F | MXM(REH(XG), TPxx,    0x00))                     \
+        EMITW(0xEE300A00 | MXM(REG(XG), REG(XG), REH(XG)))
+
+/* sub (G = G - S) */
+
+#define subrs_rr(XG, XS)                                                    \
+        EMITW(0xEE300A40 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define subrs_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4A0083F | MXM(REH(XG), TPxx,    0x00))                     \
+        EMITW(0xEE300A40 | MXM(REG(XG), REG(XG), REH(XG)))
+
+/* mul (G = G * S) */
+
+#define mulrs_rr(XG, XS)                                                    \
+        EMITW(0xEE200A00 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define mulrs_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4A0083F | MXM(REH(XG), TPxx,    0x00))                     \
+        EMITW(0xEE200A00 | MXM(REG(XG), REG(XG), REH(XG)))
+
+/* div (G = G / S) */
+
+#define divrs_rr(XG, XS)                                                    \
+        EMITW(0xEE800A00 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define divrs_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4A0083F | MXM(REH(XG), TPxx,    0x00))                     \
+        EMITW(0xEE800A00 | MXM(REG(XG), REG(XG), REH(XG)))
+
+/* sqr (D = sqrt S) */
+
+#define sqrrs_rr(XD, XS)                                                    \
+        EMITW(0xEEB10AC0 | MXM(REG(XD), 0x00, REG(XS)))
+
+#define sqrrs_ld(XD, MS, DS)                                                \
+        movrx_ld(W(XD), W(MS), W(DS))                                       \
+        sqrrs_rr(W(XD), W(XD))
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RCP != 1
+
+#define rcers_rr(XD, XS)                                                    \
+        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        divrs_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rcsrs_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RCP */
+
+        /* rcp defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+#if RT_SIMD_COMPAT_RSQ != 1
+
+#define rsers_rr(XD, XS)                                                    \
+        sqrrs_rr(W(XD), W(XS))                                              \
+        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        divrs_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define rssrs_rr(XG, XS) /* destroys XS */
+
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+        /* rsq defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+#if (RT_128 < 2) /* NOTE: only VFP fpu fallback is available for fp32 FMA */
+
+#if RT_SIMD_COMPAT_FMA == 0
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#define fmars_rr(XG, XS, XT)                                                \
+        EMITW(0xEE000A00 | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmars_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4A0083F | MXM(REH(XG), TPxx,    0x00))                     \
+        EMITW(0xEE000A00 | MXM(REG(XG), REG(XS), REH(XG)))
+
+#elif RT_SIMD_COMPAT_FMA == 1
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#define fmars_rr(XG, XS, XT)                                                \
+        EMITW(0xEEB70AC0 | MXM(TmmC+0,  0x00,    REG(XS)+0))                \
+        EMITW(0xEEB70AC0 | MXM(TmmC+1,  0x00,    REG(XT)+0))                \
+        EMITW(0xEE200B00 | MXM(TmmC+0,  TmmC+0,  TmmC+1))                   \
+        EMITW(0xEEB70AC0 | MXM(TmmC+1,  0x00,    REG(XG)+0))                \
+        EMITW(0xEE300B00 | MXM(TmmC+1,  TmmC+1,  TmmC+0))                   \
+        EMITW(0xEEB70BC0 | MXM(REG(XG)+0, 0x00,  TmmC+1))
+
+#define fmars_ld(XG, XS, MT, DT)                                            \
+        EMITW(0xEEB70AC0 | MXM(TmmC+0,  0x00,    REG(XS)+0))                \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XS), W(MT), W(DT))                                       \
+        EMITW(0xEEB70AC0 | MXM(TmmC+1,  0x00,    REG(XS)+0))                \
+        EMITW(0xEE200B00 | MXM(TmmC+0,  TmmC+0,  TmmC+1))                   \
+        EMITW(0xEEB70AC0 | MXM(TmmC+1,  0x00,    REG(XG)+0))                \
+        EMITW(0xEE300B00 | MXM(TmmC+1,  TmmC+1,  TmmC+0))                   \
+        EMITW(0xEEB70BC0 | MXM(REG(XG)+0, 0x00,  TmmC+1))                   \
+        movrx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+#if RT_SIMD_COMPAT_FMS == 0
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsrs_rr(XG, XS, XT)                                                \
+        EMITW(0xEE000A40 | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmsrs_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4A0083F | MXM(REH(XG), TPxx,    0x00))                     \
+        EMITW(0xEE000A40 | MXM(REG(XG), REG(XS), REH(XG)))
+
+#elif RT_SIMD_COMPAT_FMS == 1
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#define fmsrs_rr(XG, XS, XT)                                                \
+        EMITW(0xEEB70AC0 | MXM(TmmC+0,  0x00,    REG(XS)+0))                \
+        EMITW(0xEEB70AC0 | MXM(TmmC+1,  0x00,    REG(XT)+0))                \
+        EMITW(0xEE200B00 | MXM(TmmC+0,  TmmC+0,  TmmC+1))                   \
+        EMITW(0xEEB70AC0 | MXM(TmmC+1,  0x00,    REG(XG)+0))                \
+        EMITW(0xEE300B40 | MXM(TmmC+1,  TmmC+1,  TmmC+0))                   \
+        EMITW(0xEEB70BC0 | MXM(REG(XG)+0, 0x00,  TmmC+1))
+
+#define fmsrs_ld(XG, XS, MT, DT)                                            \
+        EMITW(0xEEB70AC0 | MXM(TmmC+0,  0x00,    REG(XS)+0))                \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XS), W(MT), W(DT))                                       \
+        EMITW(0xEEB70AC0 | MXM(TmmC+1,  0x00,    REG(XS)+0))                \
+        EMITW(0xEE200B00 | MXM(TmmC+0,  TmmC+0,  TmmC+1))                   \
+        EMITW(0xEEB70AC0 | MXM(TmmC+1,  0x00,    REG(XG)+0))                \
+        EMITW(0xEE300B40 | MXM(TmmC+1,  TmmC+1,  TmmC+0))                   \
+        EMITW(0xEEB70BC0 | MXM(REG(XG)+0, 0x00,  TmmC+1))                   \
+        movrx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+#else /* RT_128 >= 2 */ /* NOTE: FMA is available in processors with ASIMDv2 */
+
+/* fma (G = G + S * T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA <= 1
+
+#define fmars_rr(XG, XS, XT)                                                \
+        EMITW(0xEEA00A00 | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmars_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4A0083F | MXM(REH(XG), TPxx,    0x00))                     \
+        EMITW(0xEEA00A00 | MXM(REG(XG), REG(XS), REH(XG)))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T)
+ * NOTE: due to final negation being outside of rounding on all Power systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS <= 1
+
+#define fmsrs_rr(XG, XS, XT)                                                \
+        EMITW(0xEEA00A40 | MXM(REG(XG), REG(XS), REG(XT)))
+
+#define fmsrs_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4A0083F | MXM(REH(XG), TPxx,    0x00))                     \
+        EMITW(0xEEA00A40 | MXM(REG(XG), REG(XS), REH(XG)))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+#endif /* RT_128 >= 2 */
+
+/* min (G = G < S ? G : S) */
+
+#define minrs_rr(XG, XS)                                                    \
+        EMITW(0xF2200F00 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define minrs_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4A0083F | MXM(REH(XG), TPxx,    0x00))                     \
+        EMITW(0xF2200F00 | MXM(REG(XG), REG(XG), REH(XG)))
+
+/* max (G = G > S ? G : S) */
+
+#define maxrs_rr(XG, XS)                                                    \
+        EMITW(0xF2000F00 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define maxrs_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4A0083F | MXM(REH(XG), TPxx,    0x00))                     \
+        EMITW(0xF2000F00 | MXM(REG(XG), REG(XG), REH(XG)))
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
