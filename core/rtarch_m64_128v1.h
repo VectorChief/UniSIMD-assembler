@@ -848,6 +848,56 @@
 
 #endif /* r6 */
 
+/* cmp (G = G ? S) */
+
+#define ceqts_rr(XG, XS)                                                    \
+        EMITW(0x78A0001A | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define ceqts_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x78A0001A | MXM(REG(XG), REG(XG), TmmM))
+
+#define cnets_rr(XG, XS)                                                    \
+        EMITW(0x78E0001C | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define cnets_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x78E0001C | MXM(REG(XG), REG(XG), TmmM))
+
+#define cltts_rr(XG, XS)                                                    \
+        EMITW(0x7920001A | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define cltts_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x7920001A | MXM(REG(XG), REG(XG), TmmM))
+
+#define clets_rr(XG, XS)                                                    \
+        EMITW(0x79A0001A | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define clets_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x79A0001A | MXM(REG(XG), REG(XG), TmmM))
+
+#define cgtts_rr(XG, XS)                                                    \
+        EMITW(0x7920001A | MXM(REG(XG), REG(XS), REG(XG)))
+
+#define cgtts_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x7920001A | MXM(REG(XG), TmmM,    REG(XG)))
+
+#define cgets_rr(XG, XS)                                                    \
+        EMITW(0x79A0001A | MXM(REG(XG), REG(XS), REG(XG)))
+
+#define cgets_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xD4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x79A0001A | MXM(REG(XG), TmmM,    REG(XG)))
+
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/

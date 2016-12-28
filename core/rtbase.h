@@ -4662,6 +4662,44 @@ struct rt_SIMD_REGS
 #define maxss_ld(XG, MS, DS)                                                \
         maxrs_ld(W(XG), W(MS), W(DS))
 
+/* cmp (G = G ? S) */
+
+#define ceqss_rr(XG, XS)                                                    \
+        ceqrs_rr(W(XG), W(XS))
+
+#define ceqss_ld(XG, MS, DS)                                                \
+        ceqrs_ld(W(XG), W(MS), W(DS))
+
+#define cness_rr(XG, XS)                                                    \
+        cners_rr(W(XG), W(XS))
+
+#define cness_ld(XG, MS, DS)                                                \
+        cners_ld(W(XG), W(MS), W(DS))
+
+#define cltss_rr(XG, XS)                                                    \
+        cltrs_rr(W(XG), W(XS))
+
+#define cltss_ld(XG, MS, DS)                                                \
+        cltrs_ld(W(XG), W(MS), W(DS))
+
+#define cless_rr(XG, XS)                                                    \
+        clers_rr(W(XG), W(XS))
+
+#define cless_ld(XG, MS, DS)                                                \
+        clers_ld(W(XG), W(MS), W(DS))
+
+#define cgtss_rr(XG, XS)                                                    \
+        cgtrs_rr(W(XG), W(XS))
+
+#define cgtss_ld(XG, MS, DS)                                                \
+        cgtrs_ld(W(XG), W(MS), W(DS))
+
+#define cgess_rr(XG, XS)                                                    \
+        cgers_rr(W(XG), W(XS))
+
+#define cgess_ld(XG, MS, DS)                                                \
+        cgers_ld(W(XG), W(MS), W(DS))
+
 /******************************************************************************/
 /**** var-len **** SIMD instructions with configurable-element **** 64-bit ****/
 /******************************************************************************/
@@ -6005,6 +6043,44 @@ struct rt_SIMD_REGS
 
 #define maxss_ld(XG, MS, DS)                                                \
         maxts_ld(W(XG), W(MS), W(DS))
+
+/* cmp (G = G ? S) */
+
+#define ceqss_rr(XG, XS)                                                    \
+        ceqts_rr(W(XG), W(XS))
+
+#define ceqss_ld(XG, MS, DS)                                                \
+        ceqts_ld(W(XG), W(MS), W(DS))
+
+#define cness_rr(XG, XS)                                                    \
+        cnets_rr(W(XG), W(XS))
+
+#define cness_ld(XG, MS, DS)                                                \
+        cnets_ld(W(XG), W(MS), W(DS))
+
+#define cltss_rr(XG, XS)                                                    \
+        cltts_rr(W(XG), W(XS))
+
+#define cltss_ld(XG, MS, DS)                                                \
+        cltts_ld(W(XG), W(MS), W(DS))
+
+#define cless_rr(XG, XS)                                                    \
+        clets_rr(W(XG), W(XS))
+
+#define cless_ld(XG, MS, DS)                                                \
+        clets_ld(W(XG), W(MS), W(DS))
+
+#define cgtss_rr(XG, XS)                                                    \
+        cgtts_rr(W(XG), W(XS))
+
+#define cgtss_ld(XG, MS, DS)                                                \
+        cgtts_ld(W(XG), W(MS), W(DS))
+
+#define cgess_rr(XG, XS)                                                    \
+        cgets_rr(W(XG), W(XS))
+
+#define cgess_ld(XG, MS, DS)                                                \
+        cgets_ld(W(XG), W(MS), W(DS))
 
 #endif /* RT_ELEMENT */
 

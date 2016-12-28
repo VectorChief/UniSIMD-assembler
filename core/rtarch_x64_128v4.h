@@ -1304,6 +1304,68 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5F)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
+/* cmp (G = G ? S) */
+
+#define ceqts_rr(XG, XS)                                                    \
+    xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+
+#define ceqts_ld(XG, MS, DS)                                                \
+ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x00))
+
+#define cnets_rr(XG, XS)                                                    \
+    xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define cnets_ld(XG, MS, DS)                                                \
+ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x04))
+
+#define cltts_rr(XG, XS)                                                    \
+    xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+
+#define cltts_ld(XG, MS, DS)                                                \
+ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x01))
+
+#define clets_rr(XG, XS)                                                    \
+    xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+
+#define clets_ld(XG, MS, DS)                                                \
+ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x02))
+
+#define cgtts_rr(XG, XS)                                                    \
+    xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))
+
+#define cgtts_ld(XG, MS, DS)                                                \
+ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x06))
+
+#define cgets_rr(XG, XS)                                                    \
+    xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))
+
+#define cgets_ld(XG, MS, DS)                                                \
+ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x05))
+
 /**************************   extended float (x87)   **************************/
 
 #define fpuzs_ld(MS, DS) /* not portable, do not use outside */             \

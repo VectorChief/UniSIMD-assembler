@@ -802,6 +802,64 @@
         EMITW(0x0D408400 | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0x1E604800 | MXM(REG(XG), REG(XG), TmmM))
 
+/* cmp (G = G ? S) */
+
+#define ceqts_rr(XG, XS)                                                    \
+        EMITW(0x5E60E400 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define ceqts_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x91000000 | MDM(TPxx,    MOD(MS), VSL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x0D408400 | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0x5E60E400 | MXM(REG(XG), REG(XG), TmmM))
+
+#define cnets_rr(XG, XS)                                                    \
+        EMITW(0x5E60E400 | MXM(REG(XG), REG(XG), REG(XS)))                  \
+        EMITW(0x6E205800 | MXM(REG(XG), REG(XG), 0x00))
+
+#define cnets_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x91000000 | MDM(TPxx,    MOD(MS), VSL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x0D408400 | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0x5E60E400 | MXM(REG(XG), REG(XG), TmmM))                     \
+        EMITW(0x6E205800 | MXM(REG(XG), REG(XG), 0x00))
+
+#define cltts_rr(XG, XS)                                                    \
+        EMITW(0x7EE0E400 | MXM(REG(XG), REG(XS), REG(XG)))
+
+#define cltts_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x91000000 | MDM(TPxx,    MOD(MS), VSL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x0D408400 | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0x7EE0E400 | MXM(REG(XG), TmmM,    REG(XG)))
+
+#define clets_rr(XG, XS)                                                    \
+        EMITW(0x7E60E400 | MXM(REG(XG), REG(XS), REG(XG)))
+
+#define clets_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x91000000 | MDM(TPxx,    MOD(MS), VSL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x0D408400 | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0x7E60E400 | MXM(REG(XG), TmmM,    REG(XG)))
+
+#define cgtts_rr(XG, XS)                                                    \
+        EMITW(0x7EE0E400 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define cgtts_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x91000000 | MDM(TPxx,    MOD(MS), VSL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x0D408400 | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0x7EE0E400 | MXM(REG(XG), REG(XG), TmmM))
+
+#define cgets_rr(XG, XS)                                                    \
+        EMITW(0x7E60E400 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define cgets_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x91000000 | MDM(TPxx,    MOD(MS), VSL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x0D408400 | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0x7E60E400 | MXM(REG(XG), REG(XG), TmmM))
+
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
