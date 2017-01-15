@@ -22,25 +22,25 @@ clean:
 
 simd_test_x64_32:
 	x86_64-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_X64 -DRT_128=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_X64 -DRT_256=8 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_32
 
 simd_test_x64_64:
 	x86_64-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_X64 -DRT_128=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_X64 -DRT_256=8 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_64
 
 simd_test_x64f32:
 	x86_64-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_X64 -DRT_128=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_X64 -DRT_256=8 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f32
 
 simd_test_x64f64:
 	x86_64-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_X64 -DRT_128=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_X64 -DRT_256=8 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f64
 
@@ -58,6 +58,7 @@ simd_test_x64f64:
 # sudo apt-get install clang
 
 # For 128-bit SSE1 build use (replace): RT_128=1
+# For 128-bit SSE2 build use (replace): RT_128=2
 # For 128-bit SSE4 build use (replace): RT_128=4
 
 # For 128-bit AVX1 build use (replace): RT_128=8
@@ -65,6 +66,9 @@ simd_test_x64f64:
 
 # For 256-bit AVX1 build use (replace): RT_256=1
 # For 256-bit AVX2 build use (replace): RT_256=2
+
+# For 256-bit SSE2 build use (replace): RT_256=8
+# For 256-bit SSE4 build use (replace): RT_256=8, RT_SIMD_COMPAT_256=4 in rtarch.h
 
 # For 512-bit AVX3.1 build use (replace): RT_512=1
 # For 512-bit AVX3.2 build use (replace): RT_512=2

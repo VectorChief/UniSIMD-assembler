@@ -194,6 +194,7 @@
 #define SIB(reg, mod, sib)  sib
 
 #define VAL(val, typ, cmd)  val
+#define VYL(val, typ, cmd)  ((val) | 0x10)
 #define TYP(val, typ, cmd)  typ
 #define CMD(val, typ, cmd)  cmd
 
@@ -1463,6 +1464,10 @@
         movwx_rr(Recx, Resi)                                                \
         shrwx_ri(Recx, IB(4 + RT_SIMD_COMPAT_128)) /* <- AVX1,2 to bit3 */  \
         andwx_ri(Recx, IB(0x08))                                            \
+        orrwx_rr(Resi, Recx)                                                \
+        movwx_rr(Recx, Resi)                                                \
+        shlwx_ri(Recx, IB(11 - RT_SIMD_COMPAT_256/2))/* <- SSE2,4 to bit7 */\
+        andwx_ri(Recx, IH(0x0800))                                          \
         orrwx_rr(Resi, Recx)                                                \
         movwx_st(Resi, Mebp, inf_VER)
 
