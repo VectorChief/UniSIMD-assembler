@@ -101,6 +101,8 @@
 #if defined (RT_256) && (RT_256 != 0)
 
 #ifndef RT_RTARCH_X64_128V8_H
+#undef  RT_128
+#define RT_128  8
 #undef  RT_SIMD_COMPAT_128
 #define RT_SIMD_COMPAT_128  (RT_256)
 #include "rtarch_x64_128v8.h"

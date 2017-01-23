@@ -2109,6 +2109,14 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
     ADR REX(1,             0) EMITB(0x0F) EMITB(0x28)                       \
         MRM(0x07,       0x00, 0x00)
 
+#ifndef RT_RTARCH_X64_256V8_H
+#undef  RT_256
+#define RT_256  8
+#undef  RT_SIMD_COMPAT_256
+#define RT_SIMD_COMPAT_256  (RT_128)
+#include "rtarch_x64_256v8.h"
+#endif /* RT_RTARCH_X64_256V8_H */
+
 #endif /* RT_128 */
 
 #endif /* RT_SIMD_CODE */

@@ -463,12 +463,6 @@
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
 #endif /* RT_SIMD_COMPAT_128 */
 
-/* RT_SIMD_COMPAT_256 distinguishes between 256-bit SSE2 & SSE4
- * when RT_256=8 SIMD backend is present among build targets */
-#ifndef RT_SIMD_COMPAT_256
-#define RT_SIMD_COMPAT_256      RT_SIMD_COMPAT_256_MASTER
-#endif /* RT_SIMD_COMPAT_256 */
-
 /* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
  * of fm*ps_** instruction fallbacks to honour rounding mode */
 #ifndef RT_SIMD_COMPAT_FMR
@@ -697,12 +691,6 @@
 #ifndef RT_SIMD_COMPAT_128
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
 #endif /* RT_SIMD_COMPAT_128 */
-
-/* RT_SIMD_COMPAT_256 distinguishes between 256-bit SSE2 & SSE4
- * when RT_256=8 SIMD backend is present among build targets */
-#ifndef RT_SIMD_COMPAT_256
-#define RT_SIMD_COMPAT_256      RT_SIMD_COMPAT_256_MASTER
-#endif /* RT_SIMD_COMPAT_256 */
 
 /* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
  * of fm*ps_** instruction fallbacks to honour rounding mode */
