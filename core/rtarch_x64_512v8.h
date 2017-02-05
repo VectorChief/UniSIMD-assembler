@@ -1208,7 +1208,7 @@
         VEX(0,             0, REG(XG), 1, 1, 1) EMITB(0x73)                 \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))                        \
-        VEX(1,             1, REH(XG), 1, 1, 1) EMITB(0x73)                 \
+        VEX(0,             1, REH(XG), 1, 1, 1) EMITB(0x73)                 \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
 
@@ -1241,7 +1241,7 @@
         VEX(0,             0, REG(XG), 1, 1, 1) EMITB(0x73)                 \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))                        \
-        VEX(1,             1, REH(XG), 1, 1, 1) EMITB(0x73)                 \
+        VEX(0,             1, REH(XG), 1, 1, 1) EMITB(0x73)                 \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
 
