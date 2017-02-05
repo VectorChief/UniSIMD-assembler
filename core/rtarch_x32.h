@@ -197,6 +197,7 @@
 #define VAL(val, typ, cmd)  val
 #define VYL(val, typ, cmd)  ((val) | 0x10)
 #define VXL(val, typ, cmd)  ((val) | 0x20)
+#define VZL(val, typ, cmd)  ((val) | 0x40)
 #define TYP(val, typ, cmd)  typ
 #define CMD(val, typ, cmd)  cmd
 
@@ -268,16 +269,17 @@
 
 /* displacement VAL,  TYP,  CMD         (all displacement types are unsigned) */
 
-#define DP(dp)  (dp), 0x00, EMITW((dp) & ((0xFFC  * Q) | 0xC)) /* ext Q=1,2,4 */
-#define DF(dp)  (dp), 0x00, EMITW((dp) & ((0x3FFC * Q) | 0xC)) /* ext Q=1,2,4 */
-#define DG(dp)  (dp), 0x00, EMITW((dp) & ((0x7FFC * Q) | 0xC)) /* ext Q=1,2,4 */
-#define DH(dp)  (dp), 0x00, EMITW((dp) & ((0xFFFC * Q) | 0xC)) /* ext Q=1,2,4 */
+#define DP(dp)  (dp), 0x00, EMITW((dp) & ((0xFFC *Q) | 0xFFC)) /* ext Q=1,2,4 */
+#define DF(dp)  (dp), 0x00, EMITW((dp) & ((0x3FFC*Q) | 0xFFC)) /* ext Q=1,2,4 */
+#define DG(dp)  (dp), 0x00, EMITW((dp) & ((0x7FFC*Q) | 0xFFC)) /* ext Q=1,2,4 */
+#define DH(dp)  (dp), 0x00, EMITW((dp) & ((0xFFFC*Q) | 0xFFC)) /* ext Q=1,2,4 */
 #define DV(dp)  (dp), 0x00, EMITW((dp) & 0x7FFFFFFC)  /* native x64 long mode */
 #define PLAIN   0x00, 0x00, EMPTY    /* special type for Oeax addressing mode */
 
 /* triplet pass-through wrapper */
 
 #define W(p1, p2, p3)       p1,  p2,  p3
+#define V(p1, p2, p3)   (p1+8),  p2,  p3
 
 /******************************************************************************/
 /**********************************   X32   ***********************************/
@@ -1474,6 +1476,10 @@
         movwx_rr(Recx, Resi)                                                \
         shlwx_ri(Recx, IB(12 - RT_SIMD_COMPAT_512)) /* <- AVX1,2 to bit19 */\
         andwx_ri(Recx, IV(0x080000))                                        \
+        orrwx_rr(Resi, Recx)                                                \
+        movwx_rr(Recx, Resi)                                                \
+        shlwx_ri(Recx, IB(12 - RT_SIMD_COMPAT_1K4)) /* <- AVX3.x to bit27 */\
+        andwx_ri(Recx, IV(0x08000000))                                      \
         orrwx_rr(Resi, Recx)                                                \
         movwx_st(Resi, Mebp, inf_VER)
 

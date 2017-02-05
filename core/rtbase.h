@@ -644,7 +644,7 @@ struct rt_SIMD_REGS
 /**** var-len **** SIMD instructions with fixed-32-bit-element **** 512-bit ***/
 /******************************************************************************/
 
-#if   (RT_SIMD == 512)
+#if   (RT_SIMD >= 512)
 
 /*
  * main block of var-len SIMD instructions is defined in 512-bit rtarch headers
@@ -1983,7 +1983,7 @@ struct rt_SIMD_REGS
 /**** var-len **** SIMD instructions with fixed-64-bit-element **** 512-bit ***/
 /******************************************************************************/
 
-#if   (RT_SIMD == 512)
+#if   (RT_SIMD >= 512)
 
 /*
  * main block of var-len SIMD instructions is defined in 512-bit rtarch headers
