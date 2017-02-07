@@ -2559,8 +2559,8 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
         }
     }
 
-    rt_pntr marr = sys_alloc(10 * ARR_SIZE * sizeof(rt_ui32) + MASK);
-    memset(marr, 0, 10 * ARR_SIZE * sizeof(rt_ui32) + MASK);
+    rt_pntr marr = sys_alloc(10 * ARR_SIZE * sizeof(rt_elem) + MASK);
+    memset(marr, 0, 10 * ARR_SIZE * sizeof(rt_elem) + MASK);
     rt_pntr mar0 = (rt_pntr)(((rt_full)marr + MASK) & ~MASK);
 
 #if   RT_ELEMENT == 32
