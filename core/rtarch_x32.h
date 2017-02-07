@@ -175,20 +175,62 @@
 /* 4-byte EVEX prefix with full customization (W0, K0) */
 #define EVX(rxg, rxm, ren, len, pfx, aux)                                   \
         EMITB(0x62)                                                         \
-        EMITB(0x10 | (1 - (rxg)) << 7 | 1 << 6 | (1 - (rxm)) << 5 | (aux))  \
-        EMITB(0x00 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
-        EMITB(0x08 | (len) << 5)
+        EMITB(0x00 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
+        EMITB(0x04 | (15-((ren)&15))<<3 | (pfx))                            \
+        EMITB(0x00 | (16-((ren)&16))>>1 | (len) << 5)
 
 /* 4-byte EVEX prefix with full customization (W1, K0) */
 #define EVW(rxg, rxm, ren, len, pfx, aux)                                   \
         EMITB(0x62)                                                         \
-        EMITB(0x10 | (1 - (rxg)) << 7 | 1 << 6 | (1 - (rxm)) << 5 | (aux))  \
-        EMITB(0x80 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
-        EMITB(0x08 | (len) << 5)
+        EMITB(0x00 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
+        EMITB(0x84 | (15-((ren)&15))<<3 | (pfx))                            \
+        EMITB(0x00 | (16-((ren)&16))>>1 | (len) << 5)
+
+/* 4-byte EVEX prefix with full customization (W0, K1, Z0) */
+#define EKX(rxg, rxm, ren, len, pfx, aux)                                   \
+        EMITB(0x62)                                                         \
+        EMITB(0x00 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
+        EMITB(0x04 | (15-((ren)&15))<<3 | (pfx))                            \
+        EMITB(0x01 | (16-((ren)&16))>>1 | (len) << 5)
+
+/* 4-byte EVEX prefix with full customization (W1, K1, Z0) */
+#define EKW(rxg, rxm, ren, len, pfx, aux)                                   \
+        EMITB(0x62)                                                         \
+        EMITB(0x00 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
+        EMITB(0x84 | (15-((ren)&15))<<3 | (pfx))                            \
+        EMITB(0x01 | (16-((ren)&16))>>1 | (len) << 5)
+
+/* 4-byte EVEX prefix with full customization (W0, K1, Z1) */
+#define EZX(rxg, rxm, ren, len, pfx, aux)                                   \
+        EMITB(0x62)                                                         \
+        EMITB(0x00 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
+        EMITB(0x04 | (15-((ren)&15))<<3 | (pfx))                            \
+        EMITB(0x81 | (16-((ren)&16))>>1 | (len) << 5)
+
+/* 4-byte EVEX prefix with full customization (W1, K1, Z1) */
+#define EZW(rxg, rxm, ren, len, pfx, aux)                                   \
+        EMITB(0x62)                                                         \
+        EMITB(0x00 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
+        EMITB(0x84 | (15-((ren)&15))<<3 | (pfx))                            \
+        EMITB(0x81 | (16-((ren)&16))>>1 | (len) << 5)
+
+/* 4-byte EVEX prefix with full customization (W0, B1, RM) */
+#define ERX(rxg, rxm, ren, erm, pfx, aux)                                   \
+        EMITB(0x62)                                                         \
+        EMITB(0x00 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
+        EMITB(0x04 | (15-((ren)&15))<<3 | (pfx))                            \
+        EMITB(0x10 | (16-((ren)&16))>>1 | (erm) << 5)
+
+/* 4-byte EVEX prefix with full customization (W1, B1, RM) */
+#define ERW(rxg, rxm, ren, erm, pfx, aux)                                   \
+        EMITB(0x62)                                                         \
+        EMITB(0x00 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
+        EMITB(0x84 | (15-((ren)&15))<<3 | (pfx))                            \
+        EMITB(0x10 | (16-((ren)&16))>>1 | (erm) << 5)
 
 /* selectors  */
 
-#define RXB(reg, mod, sib)  ((reg) >> 3 & 0x01) /* register-extension-bit */
+#define RXB(reg, mod, sib)  ((reg) >> 3 & 0x03) /* register-extension-bit */
 #define REG(reg, mod, sib)  ((reg) >> 0 & 0x07) /* register, lower 3-bits */
 #define REH(reg, mod, sib)  (((reg) & 0x07) + 8) /* register, full 4-bits */
 #define MOD(reg, mod, sib)  mod
