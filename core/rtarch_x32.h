@@ -233,6 +233,8 @@
 #define RXB(reg, mod, sib)  ((reg) >> 3 & 0x03) /* register-extension-bit */
 #define REG(reg, mod, sib)  ((reg) >> 0 & 0x07) /* register, lower 3-bits */
 #define REH(reg, mod, sib)  (((reg) & 0x07) + 8) /* register, full 4-bits */
+#define REI(reg, mod, sib)  (((reg) & 0x07) +16) /* register, full 4-bits */
+#define REJ(reg, mod, sib)  (((reg) & 0x07) +24) /* register, full 4-bits */
 #define MOD(reg, mod, sib)  mod
 #define SIB(reg, mod, sib)  sib
 
@@ -240,6 +242,8 @@
 #define VYL(val, typ, cmd)  ((val) | 0x10)
 #define VXL(val, typ, cmd)  ((val) | 0x20)
 #define VZL(val, typ, cmd)  ((val) | 0x40)
+#define VSL(val, typ, cmd)  ((val) | 0x80)
+#define VTL(val, typ, cmd)  ((val) | 0xC0)
 #define TYP(val, typ, cmd)  typ
 #define CMD(val, typ, cmd)  cmd
 
@@ -322,6 +326,8 @@
 
 #define W(p1, p2, p3)       p1,  p2,  p3
 #define V(p1, p2, p3)   (p1+8),  p2,  p3
+#define X(p1, p2, p3)  (p1+16),  p2,  p3
+#define Z(p1, p2, p3)  (p1+24),  p2,  p3
 
 /******************************************************************************/
 /**********************************   X32   ***********************************/
@@ -1522,6 +1528,10 @@
         movwx_rr(Recx, Resi)                                                \
         shlwx_ri(Recx, IB(12 - RT_SIMD_COMPAT_1K4)) /* <- AVX3.x to bit27 */\
         andwx_ri(Recx, IV(0x08000000))                                      \
+        orrwx_rr(Resi, Recx)                                                \
+        movwx_rr(Recx, Resi)                                                \
+        shlwx_ri(Recx, IB(16 - RT_SIMD_COMPAT_2K8)) /* <- AVX3.x to bit31 */\
+        andwx_ri(Recx, IW(0x80000000))                                      \
         orrwx_rr(Resi, Recx)                                                \
         movwx_st(Resi, Mebp, inf_VER)
 

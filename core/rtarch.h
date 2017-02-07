@@ -297,6 +297,7 @@
 #define RT_SIMD_COMPAT_256_MASTER       2 /* for 256-bit SSE(2,4) - 2,4 (x86) */
 #define RT_SIMD_COMPAT_512_MASTER       1 /* for 512-bit AVX(1,2) - 1,2 (x86) */
 #define RT_SIMD_COMPAT_1K4_MASTER       1 /* for 1K4-bit AVX3.1/2 - 1,2 (x86) */
+#define RT_SIMD_COMPAT_2K8_MASTER       1 /* for 2K8-bit AVX3.1/2 - 1,2 (x86) */
 #define RT_SIMD_COMPAT_FMR_MASTER       0 /* for fm*ps_** rounding mode (x86) */
 #define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and Power */
 
@@ -307,6 +308,8 @@
  */
 #if   defined (RT_SIMD)
 /* RT_SIMD is already defined outside */
+#elif defined (RT_2K8) && (RT_2K8 != 0)
+#define RT_SIMD 2048
 #elif defined (RT_1K4) && (RT_1K4 != 0)
 #define RT_SIMD 1024
 #elif defined (RT_512) && (RT_512 != 0)
@@ -320,7 +323,9 @@
 /*
  * Determine SIMD quad-factor for backend structs (maximal for a given build).
  */
-#if   defined (RT_1K4) && (RT_1K4 != 0)
+#if   defined (RT_2K8) && (RT_2K8 != 0)
+#define Q 16
+#elif defined (RT_1K4) && (RT_1K4 != 0)
 #define Q 8
 #elif defined (RT_512) && (RT_512 != 0)
 #define Q 4
@@ -333,7 +338,7 @@
 /*
  * Determine SIMD properties for a given SIMD target (vector-length-agnostic).
  */
-#if   (RT_SIMD >= 512) && (RT_512 != 0 || RT_1K4 != 0)
+#if   (RT_SIMD >= 512) && (RT_512 != 0 || RT_1K4 != 0 || RT_2K8 != 0)
 /* RT_SIMD_* definitions come directly from 512/1K4-bit rtarch headers */
 #elif (RT_SIMD == 256) && (RT_256 != 0)
 #define RT_SIMD_REGS            RT_SIMD_REGS_256
@@ -974,13 +979,21 @@
 #define RT_SIMD_COMPAT_1K4      RT_SIMD_COMPAT_1K4_MASTER
 #endif /* RT_SIMD_COMPAT_1K4 */
 
+/* RT_SIMD_COMPAT_2K8 distinguishes between 2K8-bit AVX3.1 & .2
+ * when RT_2K8=8 SIMD backend is present among build targets */
+#ifndef RT_SIMD_COMPAT_2K8
+#define RT_SIMD_COMPAT_2K8      RT_SIMD_COMPAT_2K8_MASTER
+#endif /* RT_SIMD_COMPAT_2K8 */
+
 /* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
  * of fm*ps_** instruction fallbacks to honour rounding mode */
 #ifndef RT_SIMD_COMPAT_FMR
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 #endif /* RT_SIMD_COMPAT_FMR */
 
-#if   (RT_SIMD == 1024) && (RT_1K4 >= 8)
+#if   (RT_SIMD == 2048) && (RT_2K8 >= 8)
+#include "rtarch_x64_2K8v8.h"
+#elif (RT_SIMD == 1024) && (RT_1K4 >= 8)
 #include "rtarch_x64_1K4v8.h"
 #elif (RT_SIMD == 512) && (RT_512 >= 8)
 #include "rtarch_x64_512v8.h"
