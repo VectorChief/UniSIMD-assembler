@@ -9,7 +9,7 @@
 
 #include "rtarch_x64.h"
 
-#define RT_SIMD_REGS        8
+#define RT_SIMD_REGS        16
 #define RT_SIMD_ALIGN       128
 #define RT_SIMD_WIDTH64     16
 #define RT_SIMD_SET64(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=\
@@ -116,6 +116,8 @@
 #undef  K
 #define K 2
 
+#define XmmG    0x10, 0x03, EMPTY
+
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -129,24 +131,24 @@
 /* mov (D = S) */
 
 #define movox_rr(XD, XS)                                                    \
-        EVX(0,             0,    0x00, K, 0, 1) EMITB(0x28)                 \
+        EVX(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x28)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVX(1,             1,    0x00, K, 0, 1) EMITB(0x28)                 \
+        EVX(RMB(XD), RMB(XS),    0x00, K, 0, 1) EMITB(0x28)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define movox_ld(XD, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS),    0x00, K, 0, 1) EMITB(0x28)                 \
+    ADR EVX(RXB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x28)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS),    0x00, K, 0, 1) EMITB(0x28)                 \
+    ADR EVX(RMB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x28)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 #define movox_st(XS, MD, DD)                                                \
-    ADR EVX(0,       RXB(MD),    0x00, K, 0, 1) EMITB(0x29)                 \
+    ADR EVX(RXB(XS), RXB(MD),    0x00, K, 0, 1) EMITB(0x29)                 \
         MRM(REG(XS),    0x02, REG(MD))                                      \
         AUX(SIB(MD), EMITW(VAL(DD)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MD),    0x00, K, 0, 1) EMITB(0x29)                 \
+    ADR EVX(RMB(XS), RXB(MD),    0x00, K, 0, 1) EMITB(0x29)                 \
         MRM(REG(XS),    0x02, REG(MD))                                      \
         AUX(SIB(MD), EMITW(VZL(DD)), EMPTY)
 
@@ -155,29 +157,29 @@
 
 #define mmvox_rr(XG, XS)                                                    \
         ck1ox_rm(Xmm0, Mebp, inf_GPC07)                                     \
-        EKX(0,             0,    0x00, K, 0, 1) EMITB(0x28)                 \
+        EKX(RXB(XG), RXB(XS),    0x00, K, 0, 1) EMITB(0x28)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        ck1ox_rm(Xmm8, Mebp, inf_GPC07)                                     \
-        EKX(1,             1,    0x00, K, 0, 1) EMITB(0x28)                 \
+        ck1ox_rm(XmmG, Mebp, inf_GPC07)                                     \
+        EKX(RMB(XG), RMB(XS),    0x00, K, 0, 1) EMITB(0x28)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define mmvox_ld(XG, MS, DS)                                                \
         ck1ox_rm(Xmm0, Mebp, inf_GPC07)                                     \
-    ADR EKX(0,       RXB(MS),    0x00, K, 0, 1) EMITB(0x28)                 \
+    ADR EKX(RXB(XG), RXB(MS),    0x00, K, 0, 1) EMITB(0x28)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-        ck1ox_rm(Xmm8, Mebp, inf_GPC07)                                     \
-    ADR EKX(1,       RXB(MS),    0x00, K, 0, 1) EMITB(0x28)                 \
+        ck1ox_rm(XmmG, Mebp, inf_GPC07)                                     \
+    ADR EKX(RMB(XG), RXB(MS),    0x00, K, 0, 1) EMITB(0x28)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 #define mmvox_st(XS, MG, DG)                                                \
         ck1ox_rm(Xmm0, Mebp, inf_GPC07)                                     \
-    ADR EKX(0,       RXB(MG),    0x00, K, 0, 1) EMITB(0x29)                 \
+    ADR EKX(RXB(XS), RXB(MG),    0x00, K, 0, 1) EMITB(0x29)                 \
         MRM(REG(XS),    0x02, REG(MG))                                      \
         AUX(SIB(MG), EMITW(VAL(DG)), EMPTY)                                 \
-        ck1ox_rm(Xmm8, Mebp, inf_GPC07)                                     \
-    ADR EKX(1,       RXB(MG),    0x00, K, 0, 1) EMITB(0x29)                 \
+        ck1ox_rm(XmmG, Mebp, inf_GPC07)                                     \
+    ADR EKX(RMB(XS), RXB(MG),    0x00, K, 0, 1) EMITB(0x29)                 \
         MRM(REG(XS),    0x02, REG(MG))                                      \
         AUX(SIB(MG), EMITW(VZL(DG)), EMPTY)
 
@@ -186,48 +188,48 @@
 /* and (G = G & S) */
 
 #define andox_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 1, 1) EMITB(0xDB)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xDB)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 1, 1) EMITB(0xDB)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 1, 1) EMITB(0xDB)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define andox_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0xDB)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xDB)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0xDB)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0xDB)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 /* ann (G = ~G & S) */
 
 #define annox_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 1, 1) EMITB(0xDF)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xDF)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 1, 1) EMITB(0xDF)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 1, 1) EMITB(0xDF)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define annox_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0xDF)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xDF)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0xDF)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0xDF)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 /* orr (G = G | S) */
 
 #define orrox_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 1, 1) EMITB(0xEB)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xEB)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 1, 1) EMITB(0xEB)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 1, 1) EMITB(0xEB)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define orrox_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0xEB)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xEB)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0xEB)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0xEB)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
@@ -244,16 +246,16 @@
 /* xor (G = G ^ S) */
 
 #define xorox_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 1, 1) EMITB(0xEF)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xEF)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 1, 1) EMITB(0xEF)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 1, 1) EMITB(0xEF)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define xorox_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0xEF)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xEF)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0xEF)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0xEF)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
@@ -262,48 +264,48 @@
 /* and (G = G & S) */
 
 #define andox_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 0, 1) EMITB(0x54)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x54)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 0, 1) EMITB(0x54)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 0, 1) EMITB(0x54)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define andox_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 0, 1) EMITB(0x54)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x54)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 0, 1) EMITB(0x54)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 0, 1) EMITB(0x54)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 /* ann (G = ~G & S) */
 
 #define annox_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 0, 1) EMITB(0x55)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x55)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 0, 1) EMITB(0x55)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 0, 1) EMITB(0x55)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define annox_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 0, 1) EMITB(0x55)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x55)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 0, 1) EMITB(0x55)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 0, 1) EMITB(0x55)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 /* orr (G = G | S) */
 
 #define orrox_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 0, 1) EMITB(0x56)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x56)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 0, 1) EMITB(0x56)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 0, 1) EMITB(0x56)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define orrox_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 0, 1) EMITB(0x56)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x56)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 0, 1) EMITB(0x56)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 0, 1) EMITB(0x56)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
@@ -320,16 +322,16 @@
 /* xor (G = G ^ S) */
 
 #define xorox_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 0, 1) EMITB(0x57)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x57)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 0, 1) EMITB(0x57)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 0, 1) EMITB(0x57)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define xorox_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 0, 1) EMITB(0x57)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x57)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 0, 1) EMITB(0x57)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 0, 1) EMITB(0x57)                 \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
@@ -350,80 +352,80 @@
 /* add (G = G + S) */
 
 #define addos_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 0, 1) EMITB(0x58)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x58)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 0, 1) EMITB(0x58)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 0, 1) EMITB(0x58)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define addos_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 0, 1) EMITB(0x58)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x58)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 0, 1) EMITB(0x58)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 0, 1) EMITB(0x58)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 /* sub (G = G - S) */
 
 #define subos_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 0, 1) EMITB(0x5C)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x5C)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 0, 1) EMITB(0x5C)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 0, 1) EMITB(0x5C)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define subos_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 0, 1) EMITB(0x5C)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x5C)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 0, 1) EMITB(0x5C)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 0, 1) EMITB(0x5C)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 /* mul (G = G * S) */
 
 #define mulos_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 0, 1) EMITB(0x59)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x59)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 0, 1) EMITB(0x59)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 0, 1) EMITB(0x59)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define mulos_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 0, 1) EMITB(0x59)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x59)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 0, 1) EMITB(0x59)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 0, 1) EMITB(0x59)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 /* div (G = G / S) */
 
 #define divos_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 0, 1) EMITB(0x5E)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x5E)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 0, 1) EMITB(0x5E)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 0, 1) EMITB(0x5E)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define divos_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 0, 1) EMITB(0x5E)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x5E)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 0, 1) EMITB(0x5E)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 0, 1) EMITB(0x5E)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 /* sqr (D = sqrt S) */
 
 #define sqros_rr(XD, XS)                                                    \
-        EVX(0,             0,    0x00, K, 0, 1) EMITB(0x51)                 \
+        EVX(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x51)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVX(1,             1,    0x00, K, 0, 1) EMITB(0x51)                 \
+        EVX(RMB(XD), RMB(XS),    0x00, K, 0, 1) EMITB(0x51)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define sqros_ld(XD, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS),    0x00, K, 0, 1) EMITB(0x51)                 \
+    ADR EVX(RXB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x51)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS),    0x00, K, 0, 1) EMITB(0x51)                 \
+    ADR EVX(RMB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x51)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
@@ -438,9 +440,9 @@
 #if   RT_SIMD_COMPAT_RCP == 0
 
 #define rceos_rr(XD, XS)                                                    \
-        EVX(0,             0,    0x00, K, 1, 2) EMITB(0xCA)                 \
+        EVX(RXB(XD), RXB(XS),    0x00, K, 1, 2) EMITB(0xCA)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVX(1,             1,    0x00, K, 1, 2) EMITB(0xCA)                 \
+        EVX(RMB(XD), RMB(XS),    0x00, K, 1, 2) EMITB(0xCA)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define rcsos_rr(XG, XS) /* destroys XS */
@@ -448,9 +450,9 @@
 #elif RT_SIMD_COMPAT_RCP == 2
 
 #define rceos_rr(XD, XS)                                                    \
-        EVX(0,             0,    0x00, K, 1, 2) EMITB(0x4C)                 \
+        EVX(RXB(XD), RXB(XS),    0x00, K, 1, 2) EMITB(0x4C)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVX(1,             1,    0x00, K, 1, 2) EMITB(0x4C)                 \
+        EVX(RMB(XD), RMB(XS),    0x00, K, 1, 2) EMITB(0x4C)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define rcsos_rr(XG, XS) /* destroys XS */                                  \
@@ -470,9 +472,9 @@
 #if   RT_SIMD_COMPAT_RSQ == 0
 
 #define rseos_rr(XD, XS)                                                    \
-        EVX(0,             0,    0x00, K, 1, 2) EMITB(0xCC)                 \
+        EVX(RXB(XD), RXB(XS),    0x00, K, 1, 2) EMITB(0xCC)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVX(1,             1,    0x00, K, 1, 2) EMITB(0xCC)                 \
+        EVX(RMB(XD), RMB(XS),    0x00, K, 1, 2) EMITB(0xCC)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define rssos_rr(XG, XS) /* destroys XS */
@@ -480,9 +482,9 @@
 #elif RT_SIMD_COMPAT_RSQ == 2
 
 #define rseos_rr(XD, XS)                                                    \
-        EVX(0,             0,    0x00, K, 1, 2) EMITB(0x4E)                 \
+        EVX(RXB(XD), RXB(XS),    0x00, K, 1, 2) EMITB(0x4E)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVX(1,             1,    0x00, K, 1, 2) EMITB(0x4E)                 \
+        EVX(RMB(XD), RMB(XS),    0x00, K, 1, 2) EMITB(0x4E)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define rssos_rr(XG, XS) /* destroys XS */                                  \
@@ -504,16 +506,16 @@
 #if RT_SIMD_COMPAT_FMA <= 1
 
 #define fmaos_rr(XG, XS, XT)                                                \
-    ADR EVX(0,             0, REG(XS), K, 1, 2) EMITB(0xB8)                 \
+    ADR EVX(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG), MOD(XT), REG(XT))                                      \
-    ADR EVX(1,             1, REH(XS), K, 1, 2) EMITB(0xB8)                 \
+    ADR EVX(RMB(XG), RMB(XT), REM(XS), K, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmaos_ld(XG, XS, MT, DT)                                            \
-    ADR EVX(0,       RXB(MT), REG(XS), K, 1, 2) EMITB(0xB8)                 \
+    ADR EVX(RXB(XG), RXB(MT), REN(XS), K, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MT), REH(XS), K, 1, 2) EMITB(0xB8)                 \
+    ADR EVX(RMB(XG), RXB(MT), REM(XS), K, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
@@ -526,16 +528,16 @@
 #if RT_SIMD_COMPAT_FMS <= 1
 
 #define fmsos_rr(XG, XS, XT)                                                \
-    ADR EVX(0,             0, REG(XS), K, 1, 2) EMITB(0xBC)                 \
+    ADR EVX(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG), MOD(XT), REG(XT))                                      \
-    ADR EVX(1,             1, REH(XS), K, 1, 2) EMITB(0xBC)                 \
+    ADR EVX(RMB(XG), RMB(XT), REM(XS), K, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmsos_ld(XG, XS, MT, DT)                                            \
-    ADR EVX(0,       RXB(MT), REG(XS), K, 1, 2) EMITB(0xBC)                 \
+    ADR EVX(RXB(XG), RXB(MT), REN(XS), K, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MT), REH(XS), K, 1, 2) EMITB(0xBC)                 \
+    ADR EVX(RMB(XG), RXB(MT), REM(XS), K, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
@@ -544,156 +546,156 @@
 /* min (G = G < S ? G : S) */
 
 #define minos_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 0, 1) EMITB(0x5D)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x5D)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 0, 1) EMITB(0x5D)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 0, 1) EMITB(0x5D)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define minos_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 0, 1) EMITB(0x5D)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x5D)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 0, 1) EMITB(0x5D)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 0, 1) EMITB(0x5D)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 /* max (G = G > S ? G : S) */
 
 #define maxos_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 0, 1) EMITB(0x5F)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 0, 1) EMITB(0x5F)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 0, 1) EMITB(0x5F)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 0, 1) EMITB(0x5F)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define maxos_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 0, 1) EMITB(0x5F)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 0, 1) EMITB(0x5F)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 0, 1) EMITB(0x5F)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 0, 1) EMITB(0x5F)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 /* cmp (G = G ? S) */
 
 #define ceqos_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 0, 1) EMITB(0xC2)                 \
+        EVX(0,       RXB(XS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,    MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))                                  \
         mz1ox_ld(W(XG), Mebp, inf_GPC07)                                    \
-        EVX(0,             1, REH(XG), K, 0, 1) EMITB(0xC2)                 \
+        EVX(0,       RMB(XS), REM(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,    MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))                                  \
-        mz1ox_ld(V(XG), Mebp, inf_GPC07)
+        mz1ox_ld(X(XG), Mebp, inf_GPC07)
 
 #define ceqos_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR EVX(0,       RXB(MS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,       0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x00))                           \
         mz1ox_ld(W(XG), Mebp, inf_GPC07)                                    \
-    ADR EVX(0,       RXB(MS), REH(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR EVX(0,       RXB(MS), REM(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,       0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x00))                           \
-        mz1ox_ld(V(XG), Mebp, inf_GPC07)
+        mz1ox_ld(X(XG), Mebp, inf_GPC07)
 
 #define cneos_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 0, 1) EMITB(0xC2)                 \
+        EVX(0,       RXB(XS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,    MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
         mz1ox_ld(W(XG), Mebp, inf_GPC07)                                    \
-        EVX(0,             1, REH(XG), K, 0, 1) EMITB(0xC2)                 \
+        EVX(0,       RMB(XS), REM(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,    MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
-        mz1ox_ld(V(XG), Mebp, inf_GPC07)
+        mz1ox_ld(X(XG), Mebp, inf_GPC07)
 
 #define cneos_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR EVX(0,       RXB(MS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,       0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x04))                           \
         mz1ox_ld(W(XG), Mebp, inf_GPC07)                                    \
-    ADR EVX(0,       RXB(MS), REH(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR EVX(0,       RXB(MS), REM(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,       0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x04))                           \
-        mz1ox_ld(V(XG), Mebp, inf_GPC07)
+        mz1ox_ld(X(XG), Mebp, inf_GPC07)
 
 #define cltos_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 0, 1) EMITB(0xC2)                 \
+        EVX(0,       RXB(XS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,    MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
         mz1ox_ld(W(XG), Mebp, inf_GPC07)                                    \
-        EVX(0,             1, REH(XG), K, 0, 1) EMITB(0xC2)                 \
+        EVX(0,       RMB(XS), REM(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,    MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
-        mz1ox_ld(V(XG), Mebp, inf_GPC07)
+        mz1ox_ld(X(XG), Mebp, inf_GPC07)
 
 #define cltos_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR EVX(0,       RXB(MS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,       0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x01))                           \
         mz1ox_ld(W(XG), Mebp, inf_GPC07)                                    \
-    ADR EVX(0,       RXB(MS), REH(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR EVX(0,       RXB(MS), REM(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,       0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x01))                           \
-        mz1ox_ld(V(XG), Mebp, inf_GPC07)
+        mz1ox_ld(X(XG), Mebp, inf_GPC07)
 
 #define cleos_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 0, 1) EMITB(0xC2)                 \
+        EVX(0,       RXB(XS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,    MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
         mz1ox_ld(W(XG), Mebp, inf_GPC07)                                    \
-        EVX(0,             1, REH(XG), K, 0, 1) EMITB(0xC2)                 \
+        EVX(0,       RMB(XS), REM(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,    MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
-        mz1ox_ld(V(XG), Mebp, inf_GPC07)
+        mz1ox_ld(X(XG), Mebp, inf_GPC07)
 
 #define cleos_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR EVX(0,       RXB(MS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,       0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x02))                           \
         mz1ox_ld(W(XG), Mebp, inf_GPC07)                                    \
-    ADR EVX(0,       RXB(MS), REH(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR EVX(0,       RXB(MS), REM(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,       0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x02))                           \
-        mz1ox_ld(V(XG), Mebp, inf_GPC07)
+        mz1ox_ld(X(XG), Mebp, inf_GPC07)
 
 #define cgtos_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 0, 1) EMITB(0xC2)                 \
+        EVX(0,       RXB(XS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,    MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x06))                                  \
         mz1ox_ld(W(XG), Mebp, inf_GPC07)                                    \
-        EVX(0,             1, REH(XG), K, 0, 1) EMITB(0xC2)                 \
+        EVX(0,       RMB(XS), REM(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,    MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x06))                                  \
-        mz1ox_ld(V(XG), Mebp, inf_GPC07)
+        mz1ox_ld(X(XG), Mebp, inf_GPC07)
 
 #define cgtos_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR EVX(0,       RXB(MS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,       0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x06))                           \
         mz1ox_ld(W(XG), Mebp, inf_GPC07)                                    \
-    ADR EVX(0,       RXB(MS), REH(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR EVX(0,       RXB(MS), REM(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,       0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x06))                           \
-        mz1ox_ld(V(XG), Mebp, inf_GPC07)
+        mz1ox_ld(X(XG), Mebp, inf_GPC07)
 
 #define cgeos_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 0, 1) EMITB(0xC2)                 \
+        EVX(0,       RXB(XS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,    MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x05))                                  \
         mz1ox_ld(W(XG), Mebp, inf_GPC07)                                    \
-        EVX(0,             1, REH(XG), K, 0, 1) EMITB(0xC2)                 \
+        EVX(0,       RMB(XS), REM(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,    MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x05))                                  \
-        mz1ox_ld(V(XG), Mebp, inf_GPC07)
+        mz1ox_ld(X(XG), Mebp, inf_GPC07)
 
 #define cgeos_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR EVX(0,       RXB(MS), REN(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,       0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x05))                           \
         mz1ox_ld(W(XG), Mebp, inf_GPC07)                                    \
-    ADR EVX(0,       RXB(MS), REH(XG), K, 0, 1) EMITB(0xC2)                 \
+    ADR EVX(0,       RXB(MS), REM(XG), K, 0, 1) EMITB(0xC2)                 \
         MRM(0x01,       0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x05))                           \
-        mz1ox_ld(V(XG), Mebp, inf_GPC07)
+        mz1ox_ld(X(XG), Mebp, inf_GPC07)
 
 #define mz1ox_ld(XG, MS, DS) /* not portable, do not use outside */         \
     ADR EZX(RXB(XG), RXB(MS),    0x00, K, 0, 1) EMITB(0x28)                 \
@@ -706,32 +708,32 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnzos_rr(XD, XS)     /* round towards zero */                       \
-        EVX(0,             0,    0x00, K, 1, 3) EMITB(0x08)                 \
+        EVX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x03))                                  \
-        EVX(1,             1,    0x00, K, 1, 3) EMITB(0x08)                 \
+        EVX(RMB(XD), RMB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x03))
 
 #define rnzos_ld(XD, MS, DS) /* round towards zero */                       \
-    ADR EVX(0,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+    ADR EVX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x03))                           \
-    ADR EVX(1,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+    ADR EVX(RMB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x03))
 
 #define cvzos_rr(XD, XS)     /* round towards zero */                       \
-        EVX(0,             0,    0x00, K, 2, 1) EMITB(0x5B)                 \
+        EVX(RXB(XD), RXB(XS),    0x00, K, 2, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVX(1,             1,    0x00, K, 2, 1) EMITB(0x5B)                 \
+        EVX(RMB(XD), RMB(XS),    0x00, K, 2, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvzos_ld(XD, MS, DS) /* round towards zero */                       \
-    ADR EVX(0,       RXB(MS),    0x00, K, 2, 1) EMITB(0x5B)                 \
+    ADR EVX(RXB(XD), RXB(MS),    0x00, K, 2, 1) EMITB(0x5B)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS),    0x00, K, 2, 1) EMITB(0x5B)                 \
+    ADR EVX(RMB(XD), RXB(MS),    0x00, K, 2, 1) EMITB(0x5B)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
@@ -741,25 +743,25 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnpos_rr(XD, XS)     /* round towards +inf */                       \
-        EVX(0,             0,    0x00, K, 1, 3) EMITB(0x08)                 \
+        EVX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
-        EVX(1,             1,    0x00, K, 1, 3) EMITB(0x08)                 \
+        EVX(RMB(XD), RMB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x02))
 
 #define rnpos_ld(XD, MS, DS) /* round towards +inf */                       \
-    ADR EVX(0,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+    ADR EVX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x02))                           \
-    ADR EVX(1,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+    ADR EVX(RMB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x02))
 
 #define cvpos_rr(XD, XS)     /* round towards +inf */                       \
-        ERX(0,             0,    0x00, 2, 1, 1) EMITB(0x5B)                 \
+        ERX(RXB(XD), RXB(XS),    0x00, 2, 1, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        ERX(1,             1,    0x00, 2, 1, 1) EMITB(0x5B)                 \
+        ERX(RMB(XD), RMB(XS),    0x00, 2, 1, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvpos_ld(XD, MS, DS) /* round towards +inf */                       \
@@ -772,25 +774,25 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnmos_rr(XD, XS)     /* round towards -inf */                       \
-        EVX(0,             0,    0x00, K, 1, 3) EMITB(0x08)                 \
+        EVX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
-        EVX(1,             1,    0x00, K, 1, 3) EMITB(0x08)                 \
+        EVX(RMB(XD), RMB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x01))
 
 #define rnmos_ld(XD, MS, DS) /* round towards -inf */                       \
-    ADR EVX(0,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+    ADR EVX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x01))                           \
-    ADR EVX(1,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+    ADR EVX(RMB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x01))
 
 #define cvmos_rr(XD, XS)     /* round towards -inf */                       \
-        ERX(0,             0,    0x00, 1, 1, 1) EMITB(0x5B)                 \
+        ERX(RXB(XD), RXB(XS),    0x00, 1, 1, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        ERX(1,             1,    0x00, 1, 1, 1) EMITB(0x5B)                 \
+        ERX(RMB(XD), RMB(XS),    0x00, 1, 1, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvmos_ld(XD, MS, DS) /* round towards -inf */                       \
@@ -803,18 +805,18 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnnos_rr(XD, XS)     /* round towards near */                       \
-        EVX(0,             0,    0x00, K, 1, 3) EMITB(0x08)                 \
+        EVX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))                                  \
-        EVX(1,             1,    0x00, K, 1, 3) EMITB(0x08)                 \
+        EVX(RMB(XD), RMB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))
 
 #define rnnos_ld(XD, MS, DS) /* round towards near */                       \
-    ADR EVX(0,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+    ADR EVX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x00))                           \
-    ADR EVX(1,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+    ADR EVX(RMB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x00))
 
@@ -838,32 +840,32 @@
 /* add (G = G + S) */
 
 #define addox_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 1, 1) EMITB(0xFE)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xFE)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 1, 1) EMITB(0xFE)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 1, 1) EMITB(0xFE)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define addox_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0xFE)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xFE)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0xFE)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0xFE)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 /* sub (G = G - S) */
 
 #define subox_rr(XG, XS)                                                    \
-        EVX(0,             0, REG(XG), K, 1, 1) EMITB(0xFA)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xFA)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 1, 1) EMITB(0xFA)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 1, 1) EMITB(0xFA)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define subox_ld(XG, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0xFA)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xFA)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0xFA)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0xFA)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
@@ -871,32 +873,32 @@
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlox_ri(XG, IS)                                                    \
-        EVX(0,             0, REG(XG), K, 1, 1) EMITB(0x72)                 \
+        EVX(0,       RXB(XG), REN(XG), K, 1, 1) EMITB(0x72)                 \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))                        \
-        EVX(0,             1, REH(XG), K, 1, 1) EMITB(0x72)                 \
+        EVX(0,       RMB(XG), REM(XG), K, 1, 1) EMITB(0x72)                 \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
 #define shlox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0xF2)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xF2)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0xF2)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0xF2)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)
 
 #define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EVX(0,             0, REG(XG), K, 1, 2) EMITB(0x47)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 1, 2) EMITB(0x47)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 1, 2) EMITB(0x47)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 1, 2) EMITB(0x47)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define svlox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        EVX(0,       RXB(MS), REG(XG), K, 1, 2) EMITB(0x47)                 \
+        EVX(RXB(XG), RXB(MS), REN(XG), K, 1, 2) EMITB(0x47)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-        EVX(1,       RXB(MS), REH(XG), K, 1, 2) EMITB(0x47)                 \
+        EVX(RMB(XG), RXB(MS), REM(XG), K, 1, 2) EMITB(0x47)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
@@ -904,63 +906,63 @@
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrox_ri(XG, IS)                                                    \
-        EVX(0,             0, REG(XG), K, 1, 1) EMITB(0x72)                 \
+        EVX(0,       RXB(XG), REN(XG), K, 1, 1) EMITB(0x72)                 \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))                        \
-        EVX(0,             1, REH(XG), K, 1, 1) EMITB(0x72)                 \
+        EVX(0,       RMB(XG), REM(XG), K, 1, 1) EMITB(0x72)                 \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
 #define shrox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0xD2)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xD2)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0xD2)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0xD2)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)
 
 #define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EVX(0,             0, REG(XG), K, 1, 2) EMITB(0x45)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 1, 2) EMITB(0x45)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 1, 2) EMITB(0x45)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 1, 2) EMITB(0x45)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define svrox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        EVX(0,       RXB(MS), REG(XG), K, 1, 2) EMITB(0x45)                 \
+        EVX(RXB(XG), RXB(MS), REN(XG), K, 1, 2) EMITB(0x45)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-        EVX(1,       RXB(MS), REH(XG), K, 1, 2) EMITB(0x45)                 \
+        EVX(RMB(XG), RXB(MS), REM(XG), K, 1, 2) EMITB(0x45)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 
 #define shron_ri(XG, IS)                                                    \
-        EVX(0,             0, REG(XG), K, 1, 1) EMITB(0x72)                 \
+        EVX(0,       RXB(XG), REN(XG), K, 1, 1) EMITB(0x72)                 \
         MRM(0x04,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))                        \
-        EVX(0,             1, REH(XG), K, 1, 1) EMITB(0x72)                 \
+        EVX(0,       RMB(XG), REM(XG), K, 1, 1) EMITB(0x72)                 \
         MRM(0x04,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
 
 #define shron_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0xE2)                 \
+    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xE2)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0xE2)                 \
+    ADR EVX(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0xE2)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)
 
 #define svron_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EVX(0,             0, REG(XG), K, 1, 2) EMITB(0x46)                 \
+        EVX(RXB(XG), RXB(XS), REN(XG), K, 1, 2) EMITB(0x46)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 1, 2) EMITB(0x46)                 \
+        EVX(RMB(XG), RMB(XS), REM(XG), K, 1, 2) EMITB(0x46)                 \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define svron_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        EVX(0,       RXB(MS), REG(XG), K, 1, 2) EMITB(0x46)                 \
+        EVX(RXB(XG), RXB(MS), REN(XG), K, 1, 2) EMITB(0x46)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-        EVX(1,       RXB(MS), REH(XG), K, 1, 2) EMITB(0x46)                 \
+        EVX(RMB(XG), RXB(MS), REM(XG), K, 1, 2) EMITB(0x46)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
@@ -989,7 +991,7 @@
         mk1wx_rx(Reax)                                                      \
         REX(1,             0) EMITB(0x8B)                                   \
         MRM(0x07,       0x03, 0x00)                                         \
-        ck1ox_rm(V(XS), Mebp, inf_GPC07)                                    \
+        ck1ox_rm(X(XS), Mebp, inf_GPC07)                                    \
         mk1wx_rx(Reax)                                                      \
         REX(0,             1)                                               \
         EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##32_1K4 >> 15) << 1)))  \
@@ -1004,32 +1006,32 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rndos_rr(XD, XS)                                                    \
-        EVX(0,             0,    0x00, K, 1, 3) EMITB(0x08)                 \
+        EVX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
-        EVX(1,             1,    0x00, K, 1, 3) EMITB(0x08)                 \
+        EVX(RMB(XD), RMB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x04))
 
 #define rndos_ld(XD, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+    ADR EVX(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x04))                           \
-    ADR EVX(1,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+    ADR EVX(RMB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x04))
 
 #define cvtos_rr(XD, XS)                                                    \
-        EVX(0,             0,    0x00, K, 1, 1) EMITB(0x5B)                 \
+        EVX(RXB(XD), RXB(XS),    0x00, K, 1, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVX(1,             1,    0x00, K, 1, 1) EMITB(0x5B)                 \
+        EVX(RMB(XD), RMB(XS),    0x00, K, 1, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvtos_ld(XD, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS),    0x00, K, 1, 1) EMITB(0x5B)                 \
+    ADR EVX(RXB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x5B)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS),    0x00, K, 1, 1) EMITB(0x5B)                 \
+    ADR EVX(RMB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x5B)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
@@ -1038,16 +1040,16 @@
  * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
 
 #define cvton_rr(XD, XS)                                                    \
-        EVX(0,             0,    0x00, K, 0, 1) EMITB(0x5B)                 \
+        EVX(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVX(1,             1,    0x00, K, 0, 1) EMITB(0x5B)                 \
+        EVX(RMB(XD), RMB(XS),    0x00, K, 0, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvton_ld(XD, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS),    0x00, K, 0, 1) EMITB(0x5B)                 \
+    ADR EVX(RXB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x5B)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS),    0x00, K, 0, 1) EMITB(0x5B)                 \
+    ADR EVX(RMB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x5B)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
@@ -1059,17 +1061,17 @@
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnros_rr(XD, XS, mode)                                              \
-        EVX(0,             0,    0x00, K, 1, 3) EMITB(0x08)                 \
+        EVX(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
-        EVX(1,             1,    0x00, K, 1, 3) EMITB(0x08)                 \
+        EVX(RMB(XD), RMB(XS),    0x00, K, 1, 3) EMITB(0x08)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
 
 #define cvros_rr(XD, XS, mode)                                              \
-        ERX(0,             0, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x5B)\
+        ERX(RXB(XD), RXB(XS), 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x5B)\
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        ERX(1,             1, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x5B)\
+        ERX(RMB(XD), RMB(XS), 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x5B)\
         MRM(REG(XD), MOD(XS), REG(XS))
 
 /******************************************************************************/
@@ -1094,7 +1096,31 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         movox_st(Xmm6, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        movox_st(Xmm7, Oeax, PLAIN)
+        movox_st(Xmm7, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(Xmm8, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(Xmm9, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmA, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmB, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmC, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmD, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+    ADR EVX(1,             0,    0x00, K, 0, 1) EMITB(0x29)                 \
+        MRM(0x06,       0x00,    0x00)                                      \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*2))                               \
+    ADR EVX(3,             0,    0x00, K, 0, 1) EMITB(0x29)                 \
+        MRM(0x06,       0x00,    0x00)                                      \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*2))                               \
+    ADR EVX(1,             0,    0x00, K, 0, 1) EMITB(0x29)                 \
+        MRM(0x07,       0x00,    0x00)                                      \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*2))                               \
+    ADR EVX(3,             0,    0x00, K, 0, 1) EMITB(0x29)                 \
+        MRM(0x07,       0x00,    0x00)
 
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
@@ -1112,7 +1138,31 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         movox_ld(Xmm6, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        movox_ld(Xmm7, Oeax, PLAIN)
+        movox_ld(Xmm7, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(Xmm8, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(Xmm9, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmA, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmB, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmC, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmD, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+    ADR EVX(1,             0,    0x00, K, 0, 1) EMITB(0x28)                 \
+        MRM(0x06,       0x00,    0x00)                                      \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*2))                               \
+    ADR EVX(3,             0,    0x00, K, 0, 1) EMITB(0x28)                 \
+        MRM(0x06,       0x00,    0x00)                                      \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*2))                               \
+    ADR EVX(1,             0,    0x00, K, 0, 1) EMITB(0x28)                 \
+        MRM(0x07,       0x00,    0x00)                                      \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*2))                               \
+    ADR EVX(3,             0,    0x00, K, 0, 1) EMITB(0x28)                 \
+        MRM(0x07,       0x00,    0x00)
 
 #endif /* RT_1K4 */
 

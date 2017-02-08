@@ -231,6 +231,7 @@
 /* selectors  */
 
 #define RXB(reg, mod, sib)  ((reg) >> 3 & 0x03) /* register-extension-bit */
+#define RMB(reg, mod, sib)  ((reg) >> 3 | 0x02) /* register-extension-bit */
 #define REG(reg, mod, sib)  ((reg) >> 0 & 0x07) /* register, lower 3-bits */
 #define REH(reg, mod, sib)  (((reg) & 0x07) + 8) /* register, full 4-bits */
 #define REI(reg, mod, sib)  (((reg) & 0x07) +16) /* register, full 4-bits */
@@ -248,7 +249,8 @@
 #define CMD(val, typ, cmd)  cmd
 
 /* selector for full register (3rd operand, 4-bits-wide) */
-#define REN(reg, mod, sib)  reg
+#define REN(reg, mod, sib)  (reg)
+#define REM(reg, mod, sib)  (((reg) & 0x0F) + 16)
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
