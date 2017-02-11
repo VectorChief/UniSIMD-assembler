@@ -71,6 +71,11 @@ simd_test_w64f64:
 # For 512-bit AVX1 build use (replace): RT_512=8
 # For 512-bit AVX2 build use (replace): RT_512=8 RT_SIMD_COMPAT_512=2
 
+# For 1024-bit AVX3.1 build use (replace): RT_1K4=8
+# For 1024-bit AVX3.2 build use (replace): RT_1K4=8 RT_SIMD_COMPAT_1K4=2
+# For 2048-bit AVX3.1 build use (replace): RT_2K8=8
+# For 2048-bit AVX3.2 build use (replace): RT_2K8=8 RT_SIMD_COMPAT_2K8=2
+
 # For generic BASE X64 build keep: RT_X64 (default)
 # For 3-op-VEX BASE X64 build use (replace): RT_X64=1 (reserved)
 # For BMI1+BMI2 BASE X64 build use (replace): RT_X64=2
