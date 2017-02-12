@@ -262,7 +262,7 @@
 #define negcs_rx(XG)                                                        \
         xorcx_ld(W(XG), Mebp, inf_GPC06_32)
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) */
 
 #define addcs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0x58)                       \
@@ -278,7 +278,15 @@
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
-/* sub (G = G - S) */
+#define addcs3rr(XD, XS, XT)                                                \
+        movcx_rr(W(XD), W(XS))                                              \
+        addcs_rr(W(XD), W(XT))
+
+#define addcs3ld(XD, XS, MT, DT)                                            \
+        movcx_rr(W(XD), W(XS))                                              \
+        addcs_ld(W(XD), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) */
 
 #define subcs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0x5C)                       \
@@ -294,7 +302,15 @@
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
-/* mul (G = G * S) */
+#define subcs3rr(XD, XS, XT)                                                \
+        movcx_rr(W(XD), W(XS))                                              \
+        subcs_rr(W(XD), W(XT))
+
+#define subcs3ld(XD, XS, MT, DT)                                            \
+        movcx_rr(W(XD), W(XS))                                              \
+        subcs_ld(W(XD), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) */
 
 #define mulcs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0x59)                       \
@@ -310,7 +326,15 @@
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
-/* div (G = G / S) */
+#define mulcs3rr(XD, XS, XT)                                                \
+        movcx_rr(W(XD), W(XS))                                              \
+        mulcs_rr(W(XD), W(XT))
+
+#define mulcs3ld(XD, XS, MT, DT)                                            \
+        movcx_rr(W(XD), W(XS))                                              \
+        mulcs_ld(W(XD), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) */
 
 #define divcs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0x5E)                       \
@@ -325,6 +349,14 @@
     ADR REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x5E)                       \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
+
+#define divcs3rr(XD, XS, XT)                                                \
+        movcx_rr(W(XD), W(XS))                                              \
+        divcs_rr(W(XD), W(XT))
+
+#define divcs3ld(XD, XS, MT, DT)                                            \
+        movcx_rr(W(XD), W(XS))                                              \
+        divcs_ld(W(XD), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 

@@ -282,7 +282,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
 #define negis_rx(XG)                                                        \
         xorix_ld(W(XG), Mebp, inf_GPC06_32)
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) */
 
 #define addis_rr(XG, XS)                                                    \
         REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x58)                       \
@@ -293,7 +293,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* sub (G = G - S) */
+#define addis3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        addis_rr(W(XD), W(XT))
+
+#define addis3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        addis_ld(W(XD), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) */
 
 #define subis_rr(XG, XS)                                                    \
         REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5C)                       \
@@ -304,7 +312,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* mul (G = G * S) */
+#define subis3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        subis_rr(W(XD), W(XT))
+
+#define subis3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        subis_ld(W(XD), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) */
 
 #define mulis_rr(XG, XS)                                                    \
         REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x59)                       \
@@ -315,7 +331,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* div (G = G / S) */
+#define mulis3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        mulis_rr(W(XD), W(XT))
+
+#define mulis3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        mulis_ld(W(XD), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) */
 
 #define divis_rr(XG, XS)                                                    \
         REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5E)                       \
@@ -325,6 +349,14 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
     ADR REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5E)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define divis3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        divis_rr(W(XD), W(XT))
+
+#define divis3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        divis_ld(W(XD), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 

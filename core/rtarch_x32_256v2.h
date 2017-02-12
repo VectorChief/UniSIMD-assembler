@@ -221,49 +221,73 @@
 #define negcs_rx(XG)                                                        \
         xorcx_ld(W(XG), Mebp, inf_GPC06_32)
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) */
 
 #define addcs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x58)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        addcs3rr(W(XG), W(XG), W(XS))
 
 #define addcs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x58)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        addcs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addcs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x58)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define addcs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x58)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* sub (G = G - S), (D = S - T) */
 
 #define subcs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x5C)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        subcs3rr(W(XG), W(XG), W(XS))
 
 #define subcs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x5C)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        subcs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subcs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x5C)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define subcs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x5C)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* mul (G = G * S), (D = S * T) */
 
 #define mulcs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x59)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        mulcs3rr(W(XG), W(XG), W(XS))
 
 #define mulcs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x59)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        mulcs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulcs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x59)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define mulcs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x59)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* div (G = G / S), (D = S / T) */
 
 #define divcs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x5E)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        divcs3rr(W(XG), W(XG), W(XS))
 
 #define divcs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x5E)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        divcs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divcs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x5E)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define divcs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x5E)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* sqr (D = sqrt S) */
 

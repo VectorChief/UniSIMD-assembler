@@ -235,49 +235,73 @@
 #define negis_rx(XG)                                                        \
         xorix_ld(W(XG), Mebp, inf_GPC06_32)
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) */
 
 #define addis_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 0) EMITB(0x58)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        addis3rr(W(XG), W(XG), W(XS))
 
 #define addis_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 0) EMITB(0x58)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        addis3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addis3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 0) EMITB(0x58)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define addis3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 0) EMITB(0x58)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* sub (G = G - S), (D = S - T) */
 
 #define subis_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 0) EMITB(0x5C)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        subis3rr(W(XG), W(XG), W(XS))
 
 #define subis_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 0) EMITB(0x5C)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        subis3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subis3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 0) EMITB(0x5C)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define subis3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 0) EMITB(0x5C)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* mul (G = G * S), (D = S * T) */
 
 #define mulis_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 0) EMITB(0x59)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        mulis3rr(W(XG), W(XG), W(XS))
 
 #define mulis_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 0) EMITB(0x59)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        mulis3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulis3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 0) EMITB(0x59)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define mulis3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 0) EMITB(0x59)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* div (G = G / S), (D = S / T) */
 
 #define divis_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 0) EMITB(0x5E)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        divis3rr(W(XG), W(XG), W(XS))
 
 #define divis_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 0) EMITB(0x5E)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        divis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divis3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 0) EMITB(0x5E)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define divis3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 0) EMITB(0x5E)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* sqr (D = sqrt S) */
 

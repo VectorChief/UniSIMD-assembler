@@ -225,7 +225,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x57)                       \
 #define negjs_rx(XG)                                                        \
         xorjx_ld(W(XG), Mebp, inf_GPC06_64)
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) */
 
 #define addjs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x58)                       \
@@ -236,7 +236,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x58)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* sub (G = G - S) */
+#define addjs3rr(XD, XS, XT)                                                \
+        movjx_rr(W(XD), W(XS))                                              \
+        addjs_rr(W(XD), W(XT))
+
+#define addjs3ld(XD, XS, MT, DT)                                            \
+        movjx_rr(W(XD), W(XS))                                              \
+        addjs_ld(W(XD), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) */
 
 #define subjs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5C)                       \
@@ -247,7 +255,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5C)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* mul (G = G * S) */
+#define subjs3rr(XD, XS, XT)                                                \
+        movjx_rr(W(XD), W(XS))                                              \
+        subjs_rr(W(XD), W(XT))
+
+#define subjs3ld(XD, XS, MT, DT)                                            \
+        movjx_rr(W(XD), W(XS))                                              \
+        subjs_ld(W(XD), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) */
 
 #define muljs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x59)                       \
@@ -258,7 +274,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* div (G = G / S) */
+#define muljs3rr(XD, XS, XT)                                                \
+        movjx_rr(W(XD), W(XS))                                              \
+        muljs_rr(W(XD), W(XT))
+
+#define muljs3ld(XD, XS, MT, DT)                                            \
+        movjx_rr(W(XD), W(XS))                                              \
+        muljs_ld(W(XD), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) */
 
 #define divjs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5E)                       \
@@ -268,6 +292,14 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
 ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5E)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define divjs3rr(XD, XS, XT)                                                \
+        movjx_rr(W(XD), W(XS))                                              \
+        divjs_rr(W(XD), W(XT))
+
+#define divjs3ld(XD, XS, MT, DT)                                            \
+        movjx_rr(W(XD), W(XS))                                              \
+        divjs_ld(W(XD), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 

@@ -447,109 +447,133 @@
 #define negqs_rx(XG)                                                        \
         xorqx_ld(W(XG), Mebp, inf_GPC06_64)
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) */
 
 #define addqs_rr(XG, XS)                                                    \
-        EVW(0,             0, REG(XG), K, 1, 1) EMITB(0x58)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(1,             1, REH(XG), K, 1, 1) EMITB(0x58)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(2,             2, REI(XG), K, 1, 1) EMITB(0x58)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(3,             3, REJ(XG), K, 1, 1) EMITB(0x58)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        addqs3rr(W(XG), W(XG), W(XS))
 
 #define addqs_ld(XG, MS, DS)                                                \
-    ADR EVW(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0x58)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0x58)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
-    ADR EVW(2,       RXB(MS), REI(XG), K, 1, 1) EMITB(0x58)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
-    ADR EVW(3,       RXB(MS), REJ(XG), K, 1, 1) EMITB(0x58)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+        addqs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addqs3rr(XD, XS, XT)                                                \
+        EVW(0,             0, REG(XS), K, 1, 1) EMITB(0x58)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(1,             1, REH(XS), K, 1, 1) EMITB(0x58)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(2,             2, REI(XS), K, 1, 1) EMITB(0x58)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(3,             3, REJ(XS), K, 1, 1) EMITB(0x58)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define addqs3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REG(XS), K, 1, 1) EMITB(0x58)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(1,       RXB(MT), REH(XS), K, 1, 1) EMITB(0x58)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)                                 \
+    ADR EVW(2,       RXB(MT), REI(XS), K, 1, 1) EMITB(0x58)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VSL(DT)), EMPTY)                                 \
+    ADR EVW(3,       RXB(MT), REJ(XS), K, 1, 1) EMITB(0x58)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
+
+/* sub (G = G - S), (D = S - T) */
 
 #define subqs_rr(XG, XS)                                                    \
-        EVW(0,             0, REG(XG), K, 1, 1) EMITB(0x5C)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(1,             1, REH(XG), K, 1, 1) EMITB(0x5C)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(2,             2, REI(XG), K, 1, 1) EMITB(0x5C)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(3,             3, REJ(XG), K, 1, 1) EMITB(0x5C)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        subqs3rr(W(XG), W(XG), W(XS))
 
 #define subqs_ld(XG, MS, DS)                                                \
-    ADR EVW(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0x5C)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0x5C)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
-    ADR EVW(2,       RXB(MS), REI(XG), K, 1, 1) EMITB(0x5C)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
-    ADR EVW(3,       RXB(MS), REJ(XG), K, 1, 1) EMITB(0x5C)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+        subqs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subqs3rr(XD, XS, XT)                                                \
+        EVW(0,             0, REG(XS), K, 1, 1) EMITB(0x5C)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(1,             1, REH(XS), K, 1, 1) EMITB(0x5C)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(2,             2, REI(XS), K, 1, 1) EMITB(0x5C)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(3,             3, REJ(XS), K, 1, 1) EMITB(0x5C)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define subqs3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REG(XS), K, 1, 1) EMITB(0x5C)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(1,       RXB(MT), REH(XS), K, 1, 1) EMITB(0x5C)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)                                 \
+    ADR EVW(2,       RXB(MT), REI(XS), K, 1, 1) EMITB(0x5C)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VSL(DT)), EMPTY)                                 \
+    ADR EVW(3,       RXB(MT), REJ(XS), K, 1, 1) EMITB(0x5C)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
+
+/* mul (G = G * S), (D = S * T) */
 
 #define mulqs_rr(XG, XS)                                                    \
-        EVW(0,             0, REG(XG), K, 1, 1) EMITB(0x59)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(1,             1, REH(XG), K, 1, 1) EMITB(0x59)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(2,             2, REI(XG), K, 1, 1) EMITB(0x59)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(3,             3, REJ(XG), K, 1, 1) EMITB(0x59)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        mulqs3rr(W(XG), W(XG), W(XS))
 
 #define mulqs_ld(XG, MS, DS)                                                \
-    ADR EVW(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0x59)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0x59)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
-    ADR EVW(2,       RXB(MS), REI(XG), K, 1, 1) EMITB(0x59)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
-    ADR EVW(3,       RXB(MS), REJ(XG), K, 1, 1) EMITB(0x59)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+        mulqs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulqs3rr(XD, XS, XT)                                                \
+        EVW(0,             0, REG(XS), K, 1, 1) EMITB(0x59)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(1,             1, REH(XS), K, 1, 1) EMITB(0x59)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(2,             2, REI(XS), K, 1, 1) EMITB(0x59)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(3,             3, REJ(XS), K, 1, 1) EMITB(0x59)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define mulqs3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REG(XS), K, 1, 1) EMITB(0x59)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(1,       RXB(MT), REH(XS), K, 1, 1) EMITB(0x59)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)                                 \
+    ADR EVW(2,       RXB(MT), REI(XS), K, 1, 1) EMITB(0x59)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VSL(DT)), EMPTY)                                 \
+    ADR EVW(3,       RXB(MT), REJ(XS), K, 1, 1) EMITB(0x59)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
+
+/* div (G = G / S), (D = S / T) */
 
 #define divqs_rr(XG, XS)                                                    \
-        EVW(0,             0, REG(XG), K, 1, 1) EMITB(0x5E)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(1,             1, REH(XG), K, 1, 1) EMITB(0x5E)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(2,             2, REI(XG), K, 1, 1) EMITB(0x5E)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(3,             3, REJ(XG), K, 1, 1) EMITB(0x5E)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        divqs3rr(W(XG), W(XG), W(XS))
 
 #define divqs_ld(XG, MS, DS)                                                \
-    ADR EVW(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0x5E)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0x5E)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
-    ADR EVW(2,       RXB(MS), REI(XG), K, 1, 1) EMITB(0x5E)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
-    ADR EVW(3,       RXB(MS), REJ(XG), K, 1, 1) EMITB(0x5E)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+        divqs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divqs3rr(XD, XS, XT)                                                \
+        EVW(0,             0, REG(XS), K, 1, 1) EMITB(0x5E)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(1,             1, REH(XS), K, 1, 1) EMITB(0x5E)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(2,             2, REI(XS), K, 1, 1) EMITB(0x5E)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(3,             3, REJ(XS), K, 1, 1) EMITB(0x5E)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define divqs3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REG(XS), K, 1, 1) EMITB(0x5E)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(1,       RXB(MT), REH(XS), K, 1, 1) EMITB(0x5E)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)                                 \
+    ADR EVW(2,       RXB(MT), REI(XS), K, 1, 1) EMITB(0x5E)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VSL(DT)), EMPTY)                                 \
+    ADR EVW(3,       RXB(MT), REJ(XS), K, 1, 1) EMITB(0x5E)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
 
 /* sqr (D = sqrt S) */
 
