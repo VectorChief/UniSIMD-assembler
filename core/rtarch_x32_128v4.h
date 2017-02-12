@@ -339,7 +339,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
         movix_rr(W(XD), W(XS))                                              \
         mulis_ld(W(XD), W(MT), W(DT))
 
-/* div (G = G / S), (D = S / T) */
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divis_rr(XG, XS)                                                    \
         REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5E)                       \

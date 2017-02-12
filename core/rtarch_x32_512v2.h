@@ -336,7 +336,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* div (G = G / S), (D = S / T) */
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divos_rr(XG, XS)                                                    \
         divos3rr(W(XG), W(XG), W(XS))

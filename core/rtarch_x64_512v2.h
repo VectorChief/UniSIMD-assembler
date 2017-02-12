@@ -321,7 +321,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* div (G = G / S), (D = S / T) */
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divqs_rr(XG, XS)                                                    \
         divqs3rr(W(XG), W(XG), W(XS))

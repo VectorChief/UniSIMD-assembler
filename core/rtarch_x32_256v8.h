@@ -334,7 +334,7 @@
         movcx_rr(W(XD), W(XS))                                              \
         mulcs_ld(W(XD), W(MT), W(DT))
 
-/* div (G = G / S), (D = S / T) */
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divcs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0x5E)                       \

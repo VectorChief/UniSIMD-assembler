@@ -282,7 +282,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
         movjx_rr(W(XD), W(XS))                                              \
         muljs_ld(W(XD), W(MT), W(DT))
 
-/* div (G = G / S), (D = S / T) */
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divjs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5E)                       \

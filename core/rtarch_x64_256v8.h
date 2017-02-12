@@ -310,7 +310,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
         movcx_rr(W(XD), W(XS))                                              \
         mulds_ld(W(XD), W(MT), W(DT))
 
-/* div (G = G / S), (D = S / T) */
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x5E)                       \
