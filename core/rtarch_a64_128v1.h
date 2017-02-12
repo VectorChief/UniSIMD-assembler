@@ -195,45 +195,69 @@
 #define negjs_rx(XG)                                                        \
         EMITW(0x6EE0F800 | MXM(REG(XG), REG(XG), 0x00))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) */
 
 #define addjs_rr(XG, XS)                                                    \
-        EMITW(0x4E60D400 | MXM(REG(XG), REG(XG), REG(XS)))
+        addjs3rr(W(XG), W(XG), W(XS))
 
 #define addjs_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x4E60D400 | MXM(REG(XG), REG(XG), TmmM))
+        addjs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addjs3rr(XD, XS, XT)                                                \
+        EMITW(0x4E60D400 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define addjs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x4E60D400 | MXM(REG(XD), REG(XS), TmmM))
+
+/* sub (G = G - S), (D = S - T) */
 
 #define subjs_rr(XG, XS)                                                    \
-        EMITW(0x4EE0D400 | MXM(REG(XG), REG(XG), REG(XS)))
+        subjs3rr(W(XG), W(XG), W(XS))
 
 #define subjs_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x4EE0D400 | MXM(REG(XG), REG(XG), TmmM))
+        subjs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subjs3rr(XD, XS, XT)                                                \
+        EMITW(0x4EE0D400 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define subjs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x4EE0D400 | MXM(REG(XD), REG(XS), TmmM))
+
+/* mul (G = G * S), (D = S * T) */
 
 #define muljs_rr(XG, XS)                                                    \
-        EMITW(0x6E60DC00 | MXM(REG(XG), REG(XG), REG(XS)))
+        muljs3rr(W(XG), W(XG), W(XS))
 
 #define muljs_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x6E60DC00 | MXM(REG(XG), REG(XG), TmmM))
+        muljs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define muljs3rr(XD, XS, XT)                                                \
+        EMITW(0x6E60DC00 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define muljs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x6E60DC00 | MXM(REG(XD), REG(XS), TmmM))
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divjs_rr(XG, XS)                                                    \
-        EMITW(0x6E60FC00 | MXM(REG(XG), REG(XG), REG(XS)))
+        divjs3rr(W(XG), W(XG), W(XS))
 
 #define divjs_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x6E60FC00 | MXM(REG(XG), REG(XG), TmmM))
+        divjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divjs3rr(XD, XS, XT)                                                \
+        EMITW(0x6E60FC00 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define divjs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x6E60FC00 | MXM(REG(XD), REG(XS), TmmM))
 
 /* sqr (D = sqrt S) */
 

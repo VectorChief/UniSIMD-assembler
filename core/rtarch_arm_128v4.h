@@ -280,48 +280,63 @@
 #define negis_rx(XG)                                                        \
         EMITW(0xF3B907C0 | MXM(REG(XG), 0x00,    REG(XG)))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) */
 
 #define addis_rr(XG, XS)                                                    \
-        EMITW(0xF2000D40 | MXM(REG(XG), REG(XG), REG(XS)))
+        addis3rr(W(XG), W(XG), W(XS))
 
 #define addis_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF2000D40 | MXM(REG(XG), REG(XG), TmmM))
+        addis3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addis3rr(XD, XS, XT)                                                \
+        EMITW(0xF2000D40 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define addis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF2000D40 | MXM(REG(XD), REG(XS), TmmM))
+
+/* sub (G = G - S), (D = S - T) */
 
 #define subis_rr(XG, XS)                                                    \
-        EMITW(0xF2200D40 | MXM(REG(XG), REG(XG), REG(XS)))
+        subis3rr(W(XG), W(XG), W(XS))
 
 #define subis_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF2200D40 | MXM(REG(XG), REG(XG), TmmM))
+        subis3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subis3rr(XD, XS, XT)                                                \
+        EMITW(0xF2200D40 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define subis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF2200D40 | MXM(REG(XD), REG(XS), TmmM))
+
+/* mul (G = G * S), (D = S * T) */
 
 #define mulis_rr(XG, XS)                                                    \
-        EMITW(0xF3000D50 | MXM(REG(XG), REG(XG), REG(XS)))
+        mulis3rr(W(XG), W(XG), W(XS))
 
 #define mulis_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        mulis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulis3rr(XD, XS, XT)                                                \
+        EMITW(0xF3000D50 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define mulis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF3000D50 | MXM(REG(XG), REG(XG), TmmM))
+        EMITW(0xF3000D50 | MXM(REG(XD), REG(XS), TmmM))
 
-/* div (G = G / S) */
-
-#if RT_SIMD_COMPAT_DIV == 1
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divis_rr(XG, XS)                                                    \
-        EMITW(0xEE800A00 | MXM(REG(XG)+0, REG(XG)+0, REG(XS)+0))            \
-        EMITW(0xEEC00AA0 | MXM(REG(XG)+0, REG(XG)+0, REG(XS)+0))            \
-        EMITW(0xEE800A00 | MXM(REG(XG)+1, REG(XG)+1, REG(XS)+1))            \
-        EMITW(0xEEC00AA0 | MXM(REG(XG)+1, REG(XG)+1, REG(XS)+1))
+        divis3rr(W(XG), W(XG), W(XS))
+
+#if RT_SIMD_COMPAT_DIV == 1
 
 #define divis_ld(XG, MS, DS)                                                \
         movix_xr(V(XG))                                                     \
@@ -335,26 +350,39 @@
 #define movix_rx(XD) /* not portable, do not use outside */                 \
         EMITW(0xF2200150 | MXM(REG(XD), TmmM,    TmmM))
 
+#define divis3rr(XD, XS, XT)                                                \
+        EMITW(0xEE800A00 | MXM(REG(XD)+0, REG(XS)+0, REG(XT)+0))            \
+        EMITW(0xEEC00AA0 | MXM(REG(XD)+0, REG(XS)+0, REG(XT)+0))            \
+        EMITW(0xEE800A00 | MXM(REG(XD)+1, REG(XS)+1, REG(XT)+1))            \
+        EMITW(0xEEC00AA0 | MXM(REG(XD)+1, REG(XS)+1, REG(XT)+1))
+
+#define divis3ld(XD, XS, MT, DT)                                            \
+        movix_ld(W(XD), W(MT), W(DT))                                       \
+        divis3rr(W(XD), W(XS), W(XD))
+
 #else /* RT_SIMD_COMPAT_DIV */
+
+#define divis_ld(XG, MS, DS)                                                \
+        divis3ld(W(XG), W(XG), W(MS), W(DS))
 
 #if (RT_128 < 2)
 
-#define divis_rr(XG, XS)                                                    \
-        EMITW(0xF3BB0540 | MXM(TmmM,    0x00,    REG(XS))) /* estimate */   \
-        EMITW(0xF2000F50 | MXM(TmmC,    TmmM,    REG(XS))) /* 1st N-R */    \
+#define divis3rr(XD, XS, XT)                                                \
+        EMITW(0xF3BB0540 | MXM(TmmM,    0x00,    REG(XT))) /* estimate */   \
+        EMITW(0xF2000F50 | MXM(TmmC,    TmmM,    REG(XT))) /* 1st N-R */    \
         EMITW(0xF3000D50 | MXM(TmmM,    TmmM,    TmmC))    /* post-mul */   \
-        EMITW(0xF2000F50 | MXM(TmmC,    TmmM,    REG(XS))) /* 2nd N-R */    \
+        EMITW(0xF2000F50 | MXM(TmmC,    TmmM,    REG(XT))) /* 2nd N-R */    \
         EMITW(0xF3000D50 | MXM(TmmM,    TmmM,    TmmC))    /* post-mul */   \
-        EMITW(0xF2000F50 | MXM(TmmC,    TmmM,    REG(XS))) /* 3rd N-R */    \
+        EMITW(0xF2000F50 | MXM(TmmC,    TmmM,    REG(XT))) /* 3rd N-R */    \
         EMITW(0xF3000D50 | MXM(TmmM,    TmmM,    TmmC))    /* post-mul */   \
-        EMITW(0xF3000D50 | MXM(TmmC,    REG(XG), TmmM))                     \
-        EMITW(0xF2200D50 | MXM(REG(XG), REG(XS), TmmC))    /* residual */   \
-        EMITW(0xF2000D50 | MXM(TmmC,    REG(XG), TmmM))    /* correction */ \
-        EMITW(0xF2200150 | MXM(REG(XG), TmmC,    TmmC))
+        EMITW(0xF3000D50 | MXM(TmmC,    REG(XS), TmmM))                     \
+        EMITW(0xF2200D50 | MXM(REG(XD), REG(XT), TmmC))    /* residual */   \
+        EMITW(0xF2000D50 | MXM(TmmC,    REG(XD), TmmM))    /* correction */ \
+        EMITW(0xF2200150 | MXM(REG(XD), TmmC,    TmmC))
 
-#define divis_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+#define divis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF4200AAF | MXM(TmmD,    TPxx,    0x00))                     \
         EMITW(0xF3BB0540 | MXM(TmmM,    0x00,    TmmD))    /* estimate */   \
         EMITW(0xF2000F50 | MXM(TmmC,    TmmM,    TmmD))    /* 1st N-R */    \
@@ -363,33 +391,33 @@
         EMITW(0xF3000D50 | MXM(TmmM,    TmmM,    TmmC))    /* post-mul */   \
         EMITW(0xF2000F50 | MXM(TmmC,    TmmM,    TmmD))    /* 3rd N-R */    \
         EMITW(0xF3000D50 | MXM(TmmM,    TmmM,    TmmC))    /* post-mul */   \
-        EMITW(0xF3000D50 | MXM(TmmC,    REG(XG), TmmM))                     \
-        EMITW(0xF2200D50 | MXM(REG(XG), TmmD,    TmmC))    /* residual */   \
-        EMITW(0xF2000D50 | MXM(TmmC,    REG(XG), TmmM))    /* correction */ \
-        EMITW(0xF2200150 | MXM(REG(XG), TmmC,    TmmC))
+        EMITW(0xF3000D50 | MXM(TmmC,    REG(XS), TmmM))                     \
+        EMITW(0xF2200D50 | MXM(REG(XD), TmmD,    TmmC))    /* residual */   \
+        EMITW(0xF2000D50 | MXM(TmmC,    REG(XD), TmmM))    /* correction */ \
+        EMITW(0xF2200150 | MXM(REG(XD), TmmC,    TmmC))
 
 #else /* RT_128 >= 2 */ /* NOTE: FMA is available in processors with ASIMDv2 */
 
-#define divis_rr(XG, XS)                                                    \
-        EMITW(0xF3BB0540 | MXM(TmmM,    0x00,    REG(XS))) /* estimate */   \
-        EMITW(0xF2000F50 | MXM(TmmC,    TmmM,    REG(XS))) /* 1st N-R */    \
+#define divis3rr(XD, XS, XT)                                                \
+        EMITW(0xF3BB0540 | MXM(TmmM,    0x00,    REG(XT))) /* estimate */   \
+        EMITW(0xF2000F50 | MXM(TmmC,    TmmM,    REG(XT))) /* 1st N-R */    \
         EMITW(0xF3000D50 | MXM(TmmM,    TmmM,    TmmC))    /* post-mul */   \
-        EMITW(0xF3000D50 | MXM(TmmC,    REG(XG), TmmM))                     \
-        EMITW(0xF2200C50 | MXM(REG(XG), REG(XS), TmmC))    /* residual */   \
-        EMITW(0xF2000C50 | MXM(TmmC,    REG(XG), TmmM))    /* correction */ \
-        EMITW(0xF2200150 | MXM(REG(XG), TmmC,    TmmC))
+        EMITW(0xF3000D50 | MXM(TmmC,    REG(XS), TmmM))                     \
+        EMITW(0xF2200C50 | MXM(REG(XD), REG(XT), TmmC))    /* residual */   \
+        EMITW(0xF2000C50 | MXM(TmmC,    REG(XD), TmmM))    /* correction */ \
+        EMITW(0xF2200150 | MXM(REG(XD), TmmC,    TmmC))
 
-#define divis_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+#define divis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF4200AAF | MXM(TmmD,    TPxx,    0x00))                     \
         EMITW(0xF3BB0540 | MXM(TmmM,    0x00,    TmmD))    /* estimate */   \
         EMITW(0xF2000F50 | MXM(TmmC,    TmmM,    TmmD))    /* 1st N-R */    \
         EMITW(0xF3000D50 | MXM(TmmM,    TmmM,    TmmC))    /* post-mul */   \
-        EMITW(0xF3000D50 | MXM(TmmC,    REG(XG), TmmM))                     \
-        EMITW(0xF2200C50 | MXM(REG(XG), TmmD,    TmmC))    /* residual */   \
-        EMITW(0xF2000C50 | MXM(TmmC,    REG(XG), TmmM))    /* correction */ \
-        EMITW(0xF2200150 | MXM(REG(XG), TmmC,    TmmC))
+        EMITW(0xF3000D50 | MXM(TmmC,    REG(XS), TmmM))                     \
+        EMITW(0xF2200C50 | MXM(REG(XD), TmmD,    TmmC))    /* residual */   \
+        EMITW(0xF2000C50 | MXM(TmmC,    REG(XD), TmmM))    /* correction */ \
+        EMITW(0xF2200150 | MXM(REG(XD), TmmC,    TmmC))
 
 #endif /* RT_128 >= 2 */
 
