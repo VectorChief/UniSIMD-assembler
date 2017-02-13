@@ -863,7 +863,7 @@ struct rt_SIMD_REGS
 #define negos_rx(XG)                                                        \
         negcs_rx(W(XG))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addos_rr(XG, XS)                                                    \
         addcs_rr(W(XG), W(XS))
@@ -871,7 +871,13 @@ struct rt_SIMD_REGS
 #define addos_ld(XG, MS, DS)                                                \
         addcs_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addos3rr(XD, XS, XT)                                                \
+        addcs3rr(W(XD), W(XS), W(XT))
+
+#define addos3ld(XD, XS, MT, DT)                                            \
+        addcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subos_rr(XG, XS)                                                    \
         subcs_rr(W(XG), W(XS))
@@ -879,7 +885,13 @@ struct rt_SIMD_REGS
 #define subos_ld(XG, MS, DS)                                                \
         subcs_ld(W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subos3rr(XD, XS, XT)                                                \
+        subcs3rr(W(XD), W(XS), W(XT))
+
+#define subos3ld(XD, XS, MT, DT)                                            \
+        subcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulos_rr(XG, XS)                                                    \
         mulcs_rr(W(XG), W(XS))
@@ -887,13 +899,25 @@ struct rt_SIMD_REGS
 #define mulos_ld(XG, MS, DS)                                                \
         mulcs_ld(W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulos3rr(XD, XS, XT)                                                \
+        mulcs3rr(W(XD), W(XS), W(XT))
+
+#define mulos3ld(XD, XS, MT, DT)                                            \
+        mulcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divos_rr(XG, XS)                                                    \
         divcs_rr(W(XG), W(XS))
 
 #define divos_ld(XG, MS, DS)                                                \
         divcs_ld(W(XG), W(MS), W(DS))
+
+#define divos3rr(XD, XS, XT)                                                \
+        divcs3rr(W(XD), W(XS), W(XT))
+
+#define divos3ld(XD, XS, MT, DT)                                            \
+        divcs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 
@@ -1411,7 +1435,7 @@ struct rt_SIMD_REGS
 #define negos_rx(XG)                                                        \
         negis_rx(W(XG))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addos_rr(XG, XS)                                                    \
         addis_rr(W(XG), W(XS))
@@ -1419,7 +1443,13 @@ struct rt_SIMD_REGS
 #define addos_ld(XG, MS, DS)                                                \
         addis_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addos3rr(XD, XS, XT)                                                \
+        addis3rr(W(XD), W(XS), W(XT))
+
+#define addos3ld(XD, XS, MT, DT)                                            \
+        addis3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subos_rr(XG, XS)                                                    \
         subis_rr(W(XG), W(XS))
@@ -1427,7 +1457,13 @@ struct rt_SIMD_REGS
 #define subos_ld(XG, MS, DS)                                                \
         subis_ld(W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subos3rr(XD, XS, XT)                                                \
+        subis3rr(W(XD), W(XS), W(XT))
+
+#define subos3ld(XD, XS, MT, DT)                                            \
+        subis3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulos_rr(XG, XS)                                                    \
         mulis_rr(W(XG), W(XS))
@@ -1435,13 +1471,25 @@ struct rt_SIMD_REGS
 #define mulos_ld(XG, MS, DS)                                                \
         mulis_ld(W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulos3rr(XD, XS, XT)                                                \
+        mulis3rr(W(XD), W(XS), W(XT))
+
+#define mulos3ld(XD, XS, MT, DT)                                            \
+        mulis3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divos_rr(XG, XS)                                                    \
         divis_rr(W(XG), W(XS))
 
 #define divos_ld(XG, MS, DS)                                                \
         divis_ld(W(XG), W(MS), W(DS))
+
+#define divos3rr(XD, XS, XT)                                                \
+        divis3rr(W(XD), W(XS), W(XT))
+
+#define divos3ld(XD, XS, MT, DT)                                            \
+        divis3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 
@@ -2202,7 +2250,7 @@ struct rt_SIMD_REGS
 #define negqs_rx(XG)                                                        \
         negds_rx(W(XG))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addqs_rr(XG, XS)                                                    \
         addds_rr(W(XG), W(XS))
@@ -2210,7 +2258,13 @@ struct rt_SIMD_REGS
 #define addqs_ld(XG, MS, DS)                                                \
         addds_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addqs3rr(XD, XS, XT)                                                \
+        addds3rr(W(XD), W(XS), W(XT))
+
+#define addqs3ld(XD, XS, MT, DT)                                            \
+        addds3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subqs_rr(XG, XS)                                                    \
         subds_rr(W(XG), W(XS))
@@ -2218,7 +2272,13 @@ struct rt_SIMD_REGS
 #define subqs_ld(XG, MS, DS)                                                \
         subds_ld(W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subqs3rr(XD, XS, XT)                                                \
+        subds3rr(W(XD), W(XS), W(XT))
+
+#define subqs3ld(XD, XS, MT, DT)                                            \
+        subds3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulqs_rr(XG, XS)                                                    \
         mulds_rr(W(XG), W(XS))
@@ -2226,13 +2286,25 @@ struct rt_SIMD_REGS
 #define mulqs_ld(XG, MS, DS)                                                \
         mulds_ld(W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulqs3rr(XD, XS, XT)                                                \
+        mulds3rr(W(XD), W(XS), W(XT))
+
+#define mulqs3ld(XD, XS, MT, DT)                                            \
+        mulds3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divqs_rr(XG, XS)                                                    \
         divds_rr(W(XG), W(XS))
 
 #define divqs_ld(XG, MS, DS)                                                \
         divds_ld(W(XG), W(MS), W(DS))
+
+#define divqs3rr(XD, XS, XT)                                                \
+        divds3rr(W(XD), W(XS), W(XT))
+
+#define divqs3ld(XD, XS, MT, DT)                                            \
+        divds3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 
@@ -2750,7 +2822,7 @@ struct rt_SIMD_REGS
 #define negqs_rx(XG)                                                        \
         negjs_rx(W(XG))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addqs_rr(XG, XS)                                                    \
         addjs_rr(W(XG), W(XS))
@@ -2758,7 +2830,13 @@ struct rt_SIMD_REGS
 #define addqs_ld(XG, MS, DS)                                                \
         addjs_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addqs3rr(XD, XS, XT)                                                \
+        addjs3rr(W(XD), W(XS), W(XT))
+
+#define addqs3ld(XD, XS, MT, DT)                                            \
+        addjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subqs_rr(XG, XS)                                                    \
         subjs_rr(W(XG), W(XS))
@@ -2766,7 +2844,13 @@ struct rt_SIMD_REGS
 #define subqs_ld(XG, MS, DS)                                                \
         subjs_ld(W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subqs3rr(XD, XS, XT)                                                \
+        subjs3rr(W(XD), W(XS), W(XT))
+
+#define subqs3ld(XD, XS, MT, DT)                                            \
+        subjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulqs_rr(XG, XS)                                                    \
         muljs_rr(W(XG), W(XS))
@@ -2774,13 +2858,25 @@ struct rt_SIMD_REGS
 #define mulqs_ld(XG, MS, DS)                                                \
         muljs_ld(W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulqs3rr(XD, XS, XT)                                                \
+        muljs3rr(W(XD), W(XS), W(XT))
+
+#define mulqs3ld(XD, XS, MT, DT)                                            \
+        muljs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divqs_rr(XG, XS)                                                    \
         divjs_rr(W(XG), W(XS))
 
 #define divqs_ld(XG, MS, DS)                                                \
         divjs_ld(W(XG), W(MS), W(DS))
+
+#define divqs3rr(XD, XS, XT)                                                \
+        divjs3rr(W(XD), W(XS), W(XT))
+
+#define divqs3ld(XD, XS, MT, DT)                                            \
+        divjs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 
@@ -3394,7 +3490,7 @@ struct rt_SIMD_REGS
 #define negps_rx(XG)                                                        \
         negos_rx(W(XG))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addps_rr(XG, XS)                                                    \
         addos_rr(W(XG), W(XS))
@@ -3402,7 +3498,13 @@ struct rt_SIMD_REGS
 #define addps_ld(XG, MS, DS)                                                \
         addos_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addps3rr(XD, XS, XT)                                                \
+        addos3rr(W(XD), W(XS), W(XT))
+
+#define addps3ld(XD, XS, MT, DT)                                            \
+        addos3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subps_rr(XG, XS)                                                    \
         subos_rr(W(XG), W(XS))
@@ -3410,7 +3512,13 @@ struct rt_SIMD_REGS
 #define subps_ld(XG, MS, DS)                                                \
         subos_ld(W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subps3rr(XD, XS, XT)                                                \
+        subos3rr(W(XD), W(XS), W(XT))
+
+#define subps3ld(XD, XS, MT, DT)                                            \
+        subos3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulps_rr(XG, XS)                                                    \
         mulos_rr(W(XG), W(XS))
@@ -3418,13 +3526,25 @@ struct rt_SIMD_REGS
 #define mulps_ld(XG, MS, DS)                                                \
         mulos_ld(W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulps3rr(XD, XS, XT)                                                \
+        mulos3rr(W(XD), W(XS), W(XT))
+
+#define mulps3ld(XD, XS, MT, DT)                                            \
+        mulos3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divps_rr(XG, XS)                                                    \
         divos_rr(W(XG), W(XS))
 
 #define divps_ld(XG, MS, DS)                                                \
         divos_ld(W(XG), W(MS), W(DS))
+
+#define divps3rr(XD, XS, XT)                                                \
+        divos3rr(W(XD), W(XS), W(XT))
+
+#define divps3ld(XD, XS, MT, DT)                                            \
+        divos3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 
@@ -3803,7 +3923,7 @@ struct rt_SIMD_REGS
 #define negfs_rx(XG)                                                        \
         negcs_rx(W(XG))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addfs_rr(XG, XS)                                                    \
         addcs_rr(W(XG), W(XS))
@@ -3811,7 +3931,13 @@ struct rt_SIMD_REGS
 #define addfs_ld(XG, MS, DS)                                                \
         addcs_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addfs3rr(XD, XS, XT)                                                \
+        addcs3rr(W(XD), W(XS), W(XT))
+
+#define addfs3ld(XD, XS, MT, DT)                                            \
+        addcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subfs_rr(XG, XS)                                                    \
         subcs_rr(W(XG), W(XS))
@@ -3819,7 +3945,13 @@ struct rt_SIMD_REGS
 #define subfs_ld(XG, MS, DS)                                                \
         subcs_ld(W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subfs3rr(XD, XS, XT)                                                \
+        subcs3rr(W(XD), W(XS), W(XT))
+
+#define subfs3ld(XD, XS, MT, DT)                                            \
+        subcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulfs_rr(XG, XS)                                                    \
         mulcs_rr(W(XG), W(XS))
@@ -3827,13 +3959,25 @@ struct rt_SIMD_REGS
 #define mulfs_ld(XG, MS, DS)                                                \
         mulcs_ld(W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulfs3rr(XD, XS, XT)                                                \
+        mulcs3rr(W(XD), W(XS), W(XT))
+
+#define mulfs3ld(XD, XS, MT, DT)                                            \
+        mulcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divfs_rr(XG, XS)                                                    \
         divcs_rr(W(XG), W(XS))
 
 #define divfs_ld(XG, MS, DS)                                                \
         divcs_ld(W(XG), W(MS), W(DS))
+
+#define divfs3rr(XD, XS, XT)                                                \
+        divcs3rr(W(XD), W(XS), W(XT))
+
+#define divfs3ld(XD, XS, MT, DT)                                            \
+        divcs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 
@@ -4212,7 +4356,7 @@ struct rt_SIMD_REGS
 #define negls_rx(XG)                                                        \
         negis_rx(W(XG))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addls_rr(XG, XS)                                                    \
         addis_rr(W(XG), W(XS))
@@ -4220,7 +4364,13 @@ struct rt_SIMD_REGS
 #define addls_ld(XG, MS, DS)                                                \
         addis_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addls3rr(XD, XS, XT)                                                \
+        addis3rr(W(XD), W(XS), W(XT))
+
+#define addls3ld(XD, XS, MT, DT)                                            \
+        addis3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subls_rr(XG, XS)                                                    \
         subis_rr(W(XG), W(XS))
@@ -4228,7 +4378,13 @@ struct rt_SIMD_REGS
 #define subls_ld(XG, MS, DS)                                                \
         subis_ld(W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subls3rr(XD, XS, XT)                                                \
+        subis3rr(W(XD), W(XS), W(XT))
+
+#define subls3ld(XD, XS, MT, DT)                                            \
+        subis3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulls_rr(XG, XS)                                                    \
         mulis_rr(W(XG), W(XS))
@@ -4236,13 +4392,25 @@ struct rt_SIMD_REGS
 #define mulls_ld(XG, MS, DS)                                                \
         mulis_ld(W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulls3rr(XD, XS, XT)                                                \
+        mulis3rr(W(XD), W(XS), W(XT))
+
+#define mulls3ld(XD, XS, MT, DT)                                            \
+        mulis3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divls_rr(XG, XS)                                                    \
         divis_rr(W(XG), W(XS))
 
 #define divls_ld(XG, MS, DS)                                                \
         divis_ld(W(XG), W(MS), W(DS))
+
+#define divls3rr(XD, XS, XT)                                                \
+        divis3rr(W(XD), W(XS), W(XT))
+
+#define divls3ld(XD, XS, MT, DT)                                            \
+        divis3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 
@@ -4776,7 +4944,7 @@ struct rt_SIMD_REGS
 #define negps_rx(XG)                                                        \
         negqs_rx(W(XG))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addps_rr(XG, XS)                                                    \
         addqs_rr(W(XG), W(XS))
@@ -4784,7 +4952,13 @@ struct rt_SIMD_REGS
 #define addps_ld(XG, MS, DS)                                                \
         addqs_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addps3rr(XD, XS, XT)                                                \
+        addqs3rr(W(XD), W(XS), W(XT))
+
+#define addps3ld(XD, XS, MT, DT)                                            \
+        addqs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subps_rr(XG, XS)                                                    \
         subqs_rr(W(XG), W(XS))
@@ -4792,7 +4966,13 @@ struct rt_SIMD_REGS
 #define subps_ld(XG, MS, DS)                                                \
         subqs_ld(W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subps3rr(XD, XS, XT)                                                \
+        subqs3rr(W(XD), W(XS), W(XT))
+
+#define subps3ld(XD, XS, MT, DT)                                            \
+        subqs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulps_rr(XG, XS)                                                    \
         mulqs_rr(W(XG), W(XS))
@@ -4800,13 +4980,25 @@ struct rt_SIMD_REGS
 #define mulps_ld(XG, MS, DS)                                                \
         mulqs_ld(W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulps3rr(XD, XS, XT)                                                \
+        mulqs3rr(W(XD), W(XS), W(XT))
+
+#define mulps3ld(XD, XS, MT, DT)                                            \
+        mulqs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divps_rr(XG, XS)                                                    \
         divqs_rr(W(XG), W(XS))
 
 #define divps_ld(XG, MS, DS)                                                \
         divqs_ld(W(XG), W(MS), W(DS))
+
+#define divps3rr(XD, XS, XT)                                                \
+        divqs3rr(W(XD), W(XS), W(XT))
+
+#define divps3ld(XD, XS, MT, DT)                                            \
+        divqs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 
@@ -5185,7 +5377,7 @@ struct rt_SIMD_REGS
 #define negfs_rx(XG)                                                        \
         negds_rx(W(XG))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addfs_rr(XG, XS)                                                    \
         addds_rr(W(XG), W(XS))
@@ -5193,7 +5385,13 @@ struct rt_SIMD_REGS
 #define addfs_ld(XG, MS, DS)                                                \
         addds_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addfs3rr(XD, XS, XT)                                                \
+        addds3rr(W(XD), W(XS), W(XT))
+
+#define addfs3ld(XD, XS, MT, DT)                                            \
+        addds3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subfs_rr(XG, XS)                                                    \
         subds_rr(W(XG), W(XS))
@@ -5201,7 +5399,13 @@ struct rt_SIMD_REGS
 #define subfs_ld(XG, MS, DS)                                                \
         subds_ld(W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subfs3rr(XD, XS, XT)                                                \
+        subds3rr(W(XD), W(XS), W(XT))
+
+#define subfs3ld(XD, XS, MT, DT)                                            \
+        subds3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulfs_rr(XG, XS)                                                    \
         mulds_rr(W(XG), W(XS))
@@ -5209,13 +5413,25 @@ struct rt_SIMD_REGS
 #define mulfs_ld(XG, MS, DS)                                                \
         mulds_ld(W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulfs3rr(XD, XS, XT)                                                \
+        mulds3rr(W(XD), W(XS), W(XT))
+
+#define mulfs3ld(XD, XS, MT, DT)                                            \
+        mulds3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divfs_rr(XG, XS)                                                    \
         divds_rr(W(XG), W(XS))
 
 #define divfs_ld(XG, MS, DS)                                                \
         divds_ld(W(XG), W(MS), W(DS))
+
+#define divfs3rr(XD, XS, XT)                                                \
+        divds3rr(W(XD), W(XS), W(XT))
+
+#define divfs3ld(XD, XS, MT, DT)                                            \
+        divds3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 
@@ -5594,7 +5810,7 @@ struct rt_SIMD_REGS
 #define negls_rx(XG)                                                        \
         negjs_rx(W(XG))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addls_rr(XG, XS)                                                    \
         addjs_rr(W(XG), W(XS))
@@ -5602,7 +5818,13 @@ struct rt_SIMD_REGS
 #define addls_ld(XG, MS, DS)                                                \
         addjs_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addls3rr(XD, XS, XT)                                                \
+        addjs3rr(W(XD), W(XS), W(XT))
+
+#define addls3ld(XD, XS, MT, DT)                                            \
+        addjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subls_rr(XG, XS)                                                    \
         subjs_rr(W(XG), W(XS))
@@ -5610,7 +5832,13 @@ struct rt_SIMD_REGS
 #define subls_ld(XG, MS, DS)                                                \
         subjs_ld(W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subls3rr(XD, XS, XT)                                                \
+        subjs3rr(W(XD), W(XS), W(XT))
+
+#define subls3ld(XD, XS, MT, DT)                                            \
+        subjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulls_rr(XG, XS)                                                    \
         muljs_rr(W(XG), W(XS))
@@ -5618,13 +5846,25 @@ struct rt_SIMD_REGS
 #define mulls_ld(XG, MS, DS)                                                \
         muljs_ld(W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulls3rr(XD, XS, XT)                                                \
+        muljs3rr(W(XD), W(XS), W(XT))
+
+#define mulls3ld(XD, XS, MT, DT)                                            \
+        muljs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divls_rr(XG, XS)                                                    \
         divjs_rr(W(XG), W(XS))
 
 #define divls_ld(XG, MS, DS)                                                \
         divjs_ld(W(XG), W(MS), W(DS))
+
+#define divls3rr(XD, XS, XT)                                                \
+        divjs3rr(W(XD), W(XS), W(XT))
+
+#define divls3ld(XD, XS, MT, DT)                                            \
+        divjs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 
