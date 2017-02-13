@@ -221,7 +221,7 @@
 #define negcs_rx(XG)                                                        \
         xorcx_ld(W(XG), Mebp, inf_GPC06_32)
 
-/* add (G = G + S), (D = S + T) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addcs_rr(XG, XS)                                                    \
         addcs3rr(W(XG), W(XG), W(XS))
@@ -238,7 +238,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* sub (G = G - S), (D = S - T) */
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subcs_rr(XG, XS)                                                    \
         subcs3rr(W(XG), W(XG), W(XS))
@@ -255,7 +255,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* mul (G = G * S), (D = S * T) */
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulcs_rr(XG, XS)                                                    \
         mulcs3rr(W(XG), W(XG), W(XS))

@@ -203,7 +203,7 @@
 #define negds_rx(XG)                                                        \
         xordx_ld(W(XG), Mebp, inf_GPC06_64)
 
-/* add (G = G + S), (D = S + T) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addds_rr(XG, XS)                                                    \
         addds3rr(W(XG), W(XG), W(XS))
@@ -220,7 +220,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* sub (G = G - S), (D = S - T) */
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subds_rr(XG, XS)                                                    \
         subds3rr(W(XG), W(XG), W(XS))
@@ -237,7 +237,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* mul (G = G * S), (D = S * T) */
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulds_rr(XG, XS)                                                    \
         mulds3rr(W(XG), W(XG), W(XS))

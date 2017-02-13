@@ -474,7 +474,7 @@
 #define negos_rx(XG)                                                        \
         xorox_ld(W(XG), Mebp, inf_GPC06_32)
 
-/* add (G = G + S), (D = S + T) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addos_rr(XG, XS)                                                    \
         addos3rr(W(XG), W(XG), W(XS))
@@ -506,7 +506,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
 
-/* sub (G = G - S), (D = S - T) */
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subos_rr(XG, XS)                                                    \
         subos3rr(W(XG), W(XG), W(XS))
@@ -538,7 +538,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
 
-/* mul (G = G * S), (D = S * T) */
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulos_rr(XG, XS)                                                    \
         mulos3rr(W(XG), W(XG), W(XS))

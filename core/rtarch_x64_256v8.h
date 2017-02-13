@@ -238,7 +238,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x57)                       \
 #define negds_rx(XG)                                                        \
         xordx_ld(W(XG), Mebp, inf_GPC06_64)
 
-/* add (G = G + S), (D = S + T) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x58)                       \
@@ -262,7 +262,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x58)                       \
         movcx_rr(W(XD), W(XS))                                              \
         addds_ld(W(XD), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) */
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x5C)                       \
@@ -286,7 +286,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x5C)                       \
         movcx_rr(W(XD), W(XS))                                              \
         subds_ld(W(XD), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) */
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x59)                       \

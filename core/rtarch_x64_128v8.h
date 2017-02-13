@@ -203,7 +203,7 @@
 #define negjs_rx(XG)                                                        \
         xorjx_ld(W(XG), Mebp, inf_GPC06_64)
 
-/* add (G = G + S), (D = S + T) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addjs_rr(XG, XS)                                                    \
         addjs3rr(W(XG), W(XG), W(XS))
@@ -220,7 +220,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* sub (G = G - S), (D = S - T) */
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subjs_rr(XG, XS)                                                    \
         subjs3rr(W(XG), W(XG), W(XS))
@@ -237,7 +237,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* mul (G = G * S), (D = S * T) */
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define muljs_rr(XG, XS)                                                    \
         muljs3rr(W(XG), W(XG), W(XS))

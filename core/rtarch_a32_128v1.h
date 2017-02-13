@@ -279,7 +279,7 @@
 #define negis_rx(XG)                                                        \
         EMITW(0x6EA0F800 | MXM(REG(XG), REG(XG), 0x00))
 
-/* add (G = G + S), (D = S + T) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addis_rr(XG, XS)                                                    \
         addis3rr(W(XG), W(XG), W(XS))
@@ -295,7 +295,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4E20D400 | MXM(REG(XD), REG(XS), TmmM))
 
-/* sub (G = G - S), (D = S - T) */
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subis_rr(XG, XS)                                                    \
         subis3rr(W(XG), W(XG), W(XS))
@@ -311,7 +311,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4EA0D400 | MXM(REG(XD), REG(XS), TmmM))
 
-/* mul (G = G * S), (D = S * T) */
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulis_rr(XG, XS)                                                    \
         mulis3rr(W(XG), W(XG), W(XS))

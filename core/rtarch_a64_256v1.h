@@ -230,7 +230,7 @@
         EMITW(0x6EE0F800 | MXM(REG(XG), REG(XG), 0x00))                     \
         EMITW(0x6EE0F800 | MXM(RYG(XG), RYG(XG), 0x00))
 
-/* add (G = G + S), (D = S + T) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addds_rr(XG, XS)                                                    \
         addds3rr(W(XG), W(XG), W(XS))
@@ -250,7 +250,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4E60D400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* sub (G = G - S), (D = S - T) */
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subds_rr(XG, XS)                                                    \
         subds3rr(W(XG), W(XG), W(XS))
@@ -270,7 +270,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4EE0D400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* mul (G = G * S), (D = S * T) */
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulds_rr(XG, XS)                                                    \
         mulds3rr(W(XG), W(XG), W(XS))

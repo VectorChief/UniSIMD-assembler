@@ -262,7 +262,7 @@
 #define negcs_rx(XG)                                                        \
         xorcx_ld(W(XG), Mebp, inf_GPC06_32)
 
-/* add (G = G + S), (D = S + T) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addcs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0x58)                       \
@@ -286,7 +286,7 @@
         movcx_rr(W(XD), W(XS))                                              \
         addcs_ld(W(XD), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) */
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subcs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0x5C)                       \
@@ -310,7 +310,7 @@
         movcx_rr(W(XD), W(XS))                                              \
         subcs_ld(W(XD), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) */
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulcs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0x59)                       \

@@ -240,7 +240,7 @@
 #define negqs_rx(XG)                                                        \
         xorqx_ld(W(XG), Mebp, inf_GPC06_64)
 
-/* add (G = G + S), (D = S + T) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addqs_rr(XG, XS)                                                    \
         addqs3rr(W(XG), W(XG), W(XS))
@@ -262,7 +262,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-/* sub (G = G - S), (D = S - T) */
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subqs_rr(XG, XS)                                                    \
         subqs3rr(W(XG), W(XG), W(XS))
@@ -284,7 +284,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-/* mul (G = G * S), (D = S * T) */
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulqs_rr(XG, XS)                                                    \
         mulqs3rr(W(XG), W(XG), W(XS))
