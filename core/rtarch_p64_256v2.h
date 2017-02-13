@@ -265,69 +265,93 @@
         EMITW(0xF00007E7 | MXM(REG(XG), 0x00,    REG(XG)))                  \
         EMITW(0xF00007E7 | MXM(RYG(XG), 0x00,    RYG(XG)))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addds_rr(XG, XS)                                                    \
-        EMITW(0xF0000307 | MXM(REG(XG), REG(XG), REG(XS)))                  \
-        EMITW(0xF0000307 | MXM(RYG(XG), RYG(XG), RYG(XS)))
+        addds3rr(W(XG), W(XG), W(XS))
 
 #define addds_ld(XG, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF0000307 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */\
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VYL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF0000307 | MXM(RYG(XG), RYG(XG), TmmM))/* ^ == -1 if true */
+        addds3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addds3rr(XD, XS, XT)                                                \
+        EMITW(0xF0000307 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0xF0000307 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define addds3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0xF0000307 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */\
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VYL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0xF0000307 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subds_rr(XG, XS)                                                    \
-        EMITW(0xF0000347 | MXM(REG(XG), REG(XG), REG(XS)))                  \
-        EMITW(0xF0000347 | MXM(RYG(XG), RYG(XG), RYG(XS)))
+        subds3rr(W(XG), W(XG), W(XS))
 
 #define subds_ld(XG, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF0000347 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */\
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VYL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF0000347 | MXM(RYG(XG), RYG(XG), TmmM))/* ^ == -1 if true */
+        subds3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subds3rr(XD, XS, XT)                                                \
+        EMITW(0xF0000347 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0xF0000347 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define subds3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0xF0000347 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */\
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VYL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0xF0000347 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulds_rr(XG, XS)                                                    \
-        EMITW(0xF0000387 | MXM(REG(XG), REG(XG), REG(XS)))                  \
-        EMITW(0xF0000387 | MXM(RYG(XG), RYG(XG), RYG(XS)))
+        mulds3rr(W(XG), W(XG), W(XS))
 
 #define mulds_ld(XG, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF0000387 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */\
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VYL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF0000387 | MXM(RYG(XG), RYG(XG), TmmM))/* ^ == -1 if true */
+        mulds3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulds3rr(XD, XS, XT)                                                \
+        EMITW(0xF0000387 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0xF0000387 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define mulds3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0xF0000387 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */\
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VYL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0xF0000387 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divds_rr(XG, XS)                                                    \
-        EMITW(0xF00003C7 | MXM(REG(XG), REG(XG), REG(XS)))                  \
-        EMITW(0xF00003C7 | MXM(RYG(XG), RYG(XG), RYG(XS)))
+        divds3rr(W(XG), W(XG), W(XS))
 
 #define divds_ld(XG, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF00003C7 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */\
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VYL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF00003C7 | MXM(RYG(XG), RYG(XG), TmmM))/* ^ == -1 if true */
+        divds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divds3rr(XD, XS, XT)                                                \
+        EMITW(0xF00003C7 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0xF00003C7 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define divds3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0xF00003C7 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */\
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VYL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0xF00003C7 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
 /* sqr (D = sqrt S) */
 

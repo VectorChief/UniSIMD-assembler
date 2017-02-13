@@ -221,49 +221,73 @@
 #define negjs_rx(XG)                                                        \
         EMITW(0xF00007E7 | MXM(REG(XG), 0x00,    REG(XG)))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addjs_rr(XG, XS)                                                    \
-        EMITW(0xF0000307 | MXM(REG(XG), REG(XG), REG(XS)))
+        addjs3rr(W(XG), W(XG), W(XS))
 
 #define addjs_ld(XG, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF0000307 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
+        addjs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addjs3rr(XD, XS, XT)                                                \
+        EMITW(0xF0000307 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define addjs3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0xF0000307 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subjs_rr(XG, XS)                                                    \
-        EMITW(0xF0000347 | MXM(REG(XG), REG(XG), REG(XS)))
+        subjs3rr(W(XG), W(XG), W(XS))
 
 #define subjs_ld(XG, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF0000347 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
+        subjs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subjs3rr(XD, XS, XT)                                                \
+        EMITW(0xF0000347 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define subjs3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0xF0000347 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define muljs_rr(XG, XS)                                                    \
-        EMITW(0xF0000387 | MXM(REG(XG), REG(XG), REG(XS)))
+        muljs3rr(W(XG), W(XG), W(XS))
 
 #define muljs_ld(XG, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF0000387 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
+        muljs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define muljs3rr(XD, XS, XT)                                                \
+        EMITW(0xF0000387 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define muljs3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0xF0000387 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divjs_rr(XG, XS)                                                    \
-        EMITW(0xF00003C7 | MXM(REG(XG), REG(XG), REG(XS)))
+        divjs3rr(W(XG), W(XG), W(XS))
 
 #define divjs_ld(XG, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF00003C7 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
+        divjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divjs3rr(XD, XS, XT)                                                \
+        EMITW(0xF00003C7 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define divjs3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0xF00003C7 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
 /* sqr (D = sqrt S) */
 

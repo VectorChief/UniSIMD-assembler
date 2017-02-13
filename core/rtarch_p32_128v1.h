@@ -299,38 +299,64 @@
 #define negis_rx(XG)                                                        \
         EMITW(0x100004C4 | MXM(REG(XG), REG(XG), TmmS))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addis_rr(XG, XS)                                                    \
-        EMITW(0x1000000A | MXM(REG(XG), REG(XG), REG(XS)))
+        addis3rr(W(XG), W(XG), W(XS))
 
 #define addis_ld(XG, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0x1000000A | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
+        addis3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addis3rr(XD, XS, XT)                                                \
+        EMITW(0x1000000A | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define addis3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0x1000000A | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subis_rr(XG, XS)                                                    \
-        EMITW(0x1000004A | MXM(REG(XG), REG(XG), REG(XS)))
+        subis3rr(W(XG), W(XG), W(XS))
 
 #define subis_ld(XG, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0x1000004A | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
+        subis3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subis3rr(XD, XS, XT)                                                \
+        EMITW(0x1000004A | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define subis3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0x1000004A | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulis_rr(XG, XS)                                                    \
-        EMITW(0x1000002E | MXM(REG(XG), REG(XG), TmmS) | REG(XS) << 6)
+        mulis3rr(W(XG), W(XG), W(XS))
 
 #define mulis_ld(XG, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0x1000002E | MXM(REG(XG), REG(XG), TmmS) | TmmM << 6)
+        mulis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulis3rr(XD, XS, XT)                                                \
+        EMITW(0x1000002E | MXM(REG(XD), REG(XS), TmmS) | REG(XT) << 6)
+
+#define mulis3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0x1000002E | MXM(REG(XD), REG(XS), TmmS) | TmmM << 6)
+
+/* div (G = G / S), (D = S / T) if (D != S) */
+
+#define divis_rr(XG, XS)                                                    \
+        divis3rr(W(XG), W(XG), W(XS))
+
+#define divis_ld(XG, MS, DS)                                                \
+        divis3ld(W(XG), W(XG), W(MS), W(DS))
 
 /* internal definitions for IEEE-compatible div & sqr */
 
@@ -348,13 +374,11 @@
 #define sqrws_rr(fd, fs) /* not portable, do not use outside */             \
         EMITW(0xEC00002C | MTM(fd,      0x00,    fs))
 
-/* div (G = G / S) */
-
 #if RT_SIMD_COMPAT_DIV == 1
 
-#define divis_rr(XG, XS)                                                    \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movix_st(W(XS), Mebp, inf_SCR02(0))                                 \
+#define divis3rr(XD, XS, XT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
         movws_ld(Tff1,  Mebp, inf_SCR01(0x00))                              \
         movws_ld(Tff2,  Mebp, inf_SCR02(0x00))                              \
         divws_rr(Tff1, Tff2)                                                \
@@ -371,12 +395,12 @@
         movws_ld(Tff2,  Mebp, inf_SCR02(0x0C))                              \
         divws_rr(Tff1, Tff2)                                                \
         movws_st(Tff1,  Mebp, inf_SCR01(0x0C))                              \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
 
-#define divis_ld(XG, MS, DS)                                                \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movix_ld(W(XG), W(MS), W(DS))                                       \
-        movix_st(W(XG), Mebp, inf_SCR02(0))                                 \
+#define divis3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XD), W(MT), W(DT))                                       \
+        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
         movws_ld(Tff1,  Mebp, inf_SCR01(0x00))                              \
         movws_ld(Tff2,  Mebp, inf_SCR02(0x00))                              \
         divws_rr(Tff1, Tff2)                                                \
@@ -393,28 +417,28 @@
         movws_ld(Tff2,  Mebp, inf_SCR02(0x0C))                              \
         divws_rr(Tff1, Tff2)                                                \
         movws_st(Tff1,  Mebp, inf_SCR01(0x0C))                              \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 #else /* RT_SIMD_COMPAT_DIV */
 
-#define divis_rr(XG, XS)                                                    \
-        EMITW(0x1000010A | MXM(TmmW,    0x00,    REG(XS)))                  \
-        EMITW(0x1000002F | MXM(TmmZ,    TmmW,    TmmU) | REG(XS) << 6)      \
+#define divis3rr(XD, XS, XT)                                                \
+        EMITW(0x1000010A | MXM(TmmW,    0x00,    REG(XT)))                  \
+        EMITW(0x1000002F | MXM(TmmZ,    TmmW,    TmmU) | REG(XT) << 6)      \
         EMITW(0x1000002E | MXM(TmmW,    TmmW,    TmmW) | TmmZ << 6)         \
-        EMITW(0x1000002E | MXM(TmmZ,    REG(XG), TmmS) | TmmW << 6)         \
-        EMITW(0x1000002F | MXM(REG(XG), TmmZ, REG(XG)) | REG(XS) << 6)      \
-        EMITW(0x1000002E | MXM(REG(XG), REG(XG), TmmZ) | TmmW << 6)
+        EMITW(0x1000002E | MXM(TmmZ,    REG(XS), TmmS) | TmmW << 6)         \
+        EMITW(0x1000002F | MXM(REG(XD), TmmZ, REG(XS)) | REG(XT) << 6)      \
+        EMITW(0x1000002E | MXM(REG(XD), REG(XD), TmmZ) | TmmW << 6)
 
-#define divis_ld(XG, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+#define divis3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x1000010A | MXM(TmmW,    0x00,    TmmM))/* ^ == -1 if true */\
         EMITW(0x1000002F | MXM(TmmZ,    TmmW,    TmmU) | TmmM << 6)         \
         EMITW(0x1000002E | MXM(TmmW,    TmmW,    TmmW) | TmmZ << 6)         \
-        EMITW(0x1000002E | MXM(TmmZ,    REG(XG), TmmS) | TmmW << 6)         \
-        EMITW(0x1000002F | MXM(REG(XG), TmmZ, REG(XG)) | TmmM << 6)         \
-        EMITW(0x1000002E | MXM(REG(XG), REG(XG), TmmZ) | TmmW << 6)
+        EMITW(0x1000002E | MXM(TmmZ,    REG(XS), TmmS) | TmmW << 6)         \
+        EMITW(0x1000002F | MXM(REG(XD), TmmZ, REG(XS)) | TmmM << 6)         \
+        EMITW(0x1000002E | MXM(REG(XD), REG(XD), TmmZ) | TmmW << 6)
 
 #endif /* RT_SIMD_COMPAT_DIV */
 
