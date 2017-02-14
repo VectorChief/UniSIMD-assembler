@@ -171,55 +171,73 @@
         MRM(REG(XS),    0x02, REG(MG))                                      \
         AUX(SIB(MG), EMITW(VXL(DG)), EMPTY)
 
-/* and (G = G & S) */
+/* and (G = G & S), (D = S & T) if (D != S) */
 
 #define andox_rr(XG, XS)                                                    \
-        VEX(0,             0, REG(XG), 1, 0, 1) EMITB(0x54)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        VEX(1,             1, REH(XG), 1, 0, 1) EMITB(0x54)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        andox3rr(W(XG), W(XG), W(XS))
 
 #define andox_ld(XG, MS, DS)                                                \
-    ADR VEX(0,       RXB(MS), REG(XG), 1, 0, 1) EMITB(0x54)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR VEX(1,       RXB(MS), REH(XG), 1, 0, 1) EMITB(0x54)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VXL(DS)), EMPTY)
+        andox3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* ann (G = ~G & S) */
+#define andox3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 0, 1) EMITB(0x54)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 0, 1) EMITB(0x54)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define andox3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 0, 1) EMITB(0x54)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 0, 1) EMITB(0x54)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
 
 #define annox_rr(XG, XS)                                                    \
-        VEX(0,             0, REG(XG), 1, 0, 1) EMITB(0x55)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        VEX(1,             1, REH(XG), 1, 0, 1) EMITB(0x55)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        annox3rr(W(XG), W(XG), W(XS))
 
 #define annox_ld(XG, MS, DS)                                                \
-    ADR VEX(0,       RXB(MS), REG(XG), 1, 0, 1) EMITB(0x55)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR VEX(1,       RXB(MS), REH(XG), 1, 0, 1) EMITB(0x55)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VXL(DS)), EMPTY)
+        annox3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* orr (G = G | S) */
+#define annox3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 0, 1) EMITB(0x55)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 0, 1) EMITB(0x55)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define annox3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 0, 1) EMITB(0x55)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 0, 1) EMITB(0x55)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+/* orr (G = G | S), (D = S | T) if (D != S) */
 
 #define orrox_rr(XG, XS)                                                    \
-        VEX(0,             0, REG(XG), 1, 0, 1) EMITB(0x56)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        VEX(1,             1, REH(XG), 1, 0, 1) EMITB(0x56)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        orrox3rr(W(XG), W(XG), W(XS))
 
 #define orrox_ld(XG, MS, DS)                                                \
-    ADR VEX(0,       RXB(MS), REG(XG), 1, 0, 1) EMITB(0x56)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR VEX(1,       RXB(MS), REH(XG), 1, 0, 1) EMITB(0x56)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VXL(DS)), EMPTY)
+        orrox3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* orn (G = ~G | S) */
+#define orrox3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 0, 1) EMITB(0x56)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 0, 1) EMITB(0x56)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define orrox3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 0, 1) EMITB(0x56)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 0, 1) EMITB(0x56)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
 
 #define ornox_rr(XG, XS)                                                    \
         notox_rx(W(XG))                                                     \
@@ -229,21 +247,35 @@
         notox_rx(W(XG))                                                     \
         orrox_ld(W(XG), W(MS), W(DS))
 
-/* xor (G = G ^ S) */
+#define ornox3rr(XD, XS, XT)                                                \
+        movox_rr(W(XD), W(XS))                                              \
+        ornox_rr(W(XD), W(XT))
+
+#define ornox3ld(XD, XS, MT, DT)                                            \
+        movox_rr(W(XD), W(XS))                                              \
+        ornox_ld(W(XD), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
 #define xorox_rr(XG, XS)                                                    \
-        VEX(0,             0, REG(XG), 1, 0, 1) EMITB(0x57)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        VEX(1,             1, REH(XG), 1, 0, 1) EMITB(0x57)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        xorox3rr(W(XG), W(XG), W(XS))
 
 #define xorox_ld(XG, MS, DS)                                                \
-    ADR VEX(0,       RXB(MS), REG(XG), 1, 0, 1) EMITB(0x57)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR VEX(1,       RXB(MS), REH(XG), 1, 0, 1) EMITB(0x57)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VXL(DS)), EMPTY)
+        xorox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define xorox3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 0, 1) EMITB(0x57)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 0, 1) EMITB(0x57)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define xorox3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 0, 1) EMITB(0x57)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 0, 1) EMITB(0x57)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
 /* not (G = ~G) */
 

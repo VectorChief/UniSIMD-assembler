@@ -155,40 +155,58 @@
         MRM(REG(XS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
-/* and (G = G & S) */
+/* and (G = G & S), (D = S & T) if (D != S) */
 
 #define andcx_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x54)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        andcx3rr(W(XG), W(XG), W(XS))
 
 #define andcx_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x54)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        andcx3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* ann (G = ~G & S) */
+#define andcx3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x54)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define andcx3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x54)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
 
 #define anncx_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x55)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        anncx3rr(W(XG), W(XG), W(XS))
 
 #define anncx_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x55)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        anncx3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* orr (G = G | S) */
+#define anncx3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x55)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define anncx3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x55)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* orr (G = G | S), (D = S | T) if (D != S) */
 
 #define orrcx_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x56)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        orrcx3rr(W(XG), W(XG), W(XS))
 
 #define orrcx_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x56)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        orrcx3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* orn (G = ~G | S) */
+#define orrcx3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x56)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define orrcx3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x56)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
 
 #define orncx_rr(XG, XS)                                                    \
         notcx_rx(W(XG))                                                     \
@@ -198,16 +216,30 @@
         notcx_rx(W(XG))                                                     \
         orrcx_ld(W(XG), W(MS), W(DS))
 
-/* xor (G = G ^ S) */
+#define orncx3rr(XD, XS, XT)                                                \
+        movcx_rr(W(XD), W(XS))                                              \
+        orncx_rr(W(XD), W(XT))
+
+#define orncx3ld(XD, XS, MT, DT)                                            \
+        movcx_rr(W(XD), W(XS))                                              \
+        orncx_ld(W(XD), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
 #define xorcx_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x57)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        xorcx3rr(W(XG), W(XG), W(XS))
 
 #define xorcx_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x57)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        xorcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define xorcx3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x57)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define xorcx3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x57)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* not (G = ~G) */
 

@@ -165,55 +165,73 @@
 
 #if (RT_SIMD_COMPAT_1K4 < 2)
 
-/* and (G = G & S) */
+/* and (G = G & S), (D = S & T) if (D != S) */
 
 #define andqx_rr(XG, XS)                                                    \
-        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xDB)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(RMB(XG), RMB(XS), REM(XG), K, 1, 1) EMITB(0xDB)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        andqx3rr(W(XG), W(XG), W(XS))
 
 #define andqx_ld(XG, MS, DS)                                                \
-    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xDB)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0xDB)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
+        andqx3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* ann (G = ~G & S) */
+#define andqx3rr(XD, XS, XT)                                                \
+        EVW(RXB(XD), RXB(XT), REN(XS), K, 1, 1) EMITB(0xDB)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(RMB(XD), RMB(XT), REM(XS), K, 1, 1) EMITB(0xDB)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define andqx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(RXB(XD), RXB(MT), REN(XS), K, 1, 1) EMITB(0xDB)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(RMB(XD), RXB(MT), REM(XS), K, 1, 1) EMITB(0xDB)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
+
+/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
 
 #define annqx_rr(XG, XS)                                                    \
-        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xDF)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(RMB(XG), RMB(XS), REM(XG), K, 1, 1) EMITB(0xDF)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        annqx3rr(W(XG), W(XG), W(XS))
 
 #define annqx_ld(XG, MS, DS)                                                \
-    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xDF)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0xDF)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
+        annqx3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* orr (G = G | S) */
+#define annqx3rr(XD, XS, XT)                                                \
+        EVW(RXB(XD), RXB(XT), REN(XS), K, 1, 1) EMITB(0xDF)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(RMB(XD), RMB(XT), REM(XS), K, 1, 1) EMITB(0xDF)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define annqx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(RXB(XD), RXB(MT), REN(XS), K, 1, 1) EMITB(0xDF)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(RMB(XD), RXB(MT), REM(XS), K, 1, 1) EMITB(0xDF)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
+
+/* orr (G = G | S), (D = S | T) if (D != S) */
 
 #define orrqx_rr(XG, XS)                                                    \
-        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xEB)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(RMB(XG), RMB(XS), REM(XG), K, 1, 1) EMITB(0xEB)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        orrqx3rr(W(XG), W(XG), W(XS))
 
 #define orrqx_ld(XG, MS, DS)                                                \
-    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xEB)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0xEB)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
+        orrqx3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* orn (G = ~G | S) */
+#define orrqx3rr(XD, XS, XT)                                                \
+        EVW(RXB(XD), RXB(XT), REN(XS), K, 1, 1) EMITB(0xEB)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(RMB(XD), RMB(XT), REM(XS), K, 1, 1) EMITB(0xEB)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define orrqx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(RXB(XD), RXB(MT), REN(XS), K, 1, 1) EMITB(0xEB)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(RMB(XD), RXB(MT), REM(XS), K, 1, 1) EMITB(0xEB)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
+
+/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
 
 #define ornqx_rr(XG, XS)                                                    \
         notqx_rx(W(XG))                                                     \
@@ -223,73 +241,105 @@
         notqx_rx(W(XG))                                                     \
         orrqx_ld(W(XG), W(MS), W(DS))
 
-/* xor (G = G ^ S) */
+#define ornqx3rr(XD, XS, XT)                                                \
+        movqx_rr(W(XD), W(XS))                                              \
+        ornqx_rr(W(XD), W(XT))
+
+#define ornqx3ld(XD, XS, MT, DT)                                            \
+        movqx_rr(W(XD), W(XS))                                              \
+        ornqx_ld(W(XD), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
 #define xorqx_rr(XG, XS)                                                    \
-        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xEF)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(RMB(XG), RMB(XS), REM(XG), K, 1, 1) EMITB(0xEF)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        xorqx3rr(W(XG), W(XG), W(XS))
 
 #define xorqx_ld(XG, MS, DS)                                                \
-    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xEF)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0xEF)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
+        xorqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define xorqx3rr(XD, XS, XT)                                                \
+        EVW(RXB(XD), RXB(XT), REN(XS), K, 1, 1) EMITB(0xEF)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(RMB(XD), RMB(XT), REM(XS), K, 1, 1) EMITB(0xEF)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define xorqx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(RXB(XD), RXB(MT), REN(XS), K, 1, 1) EMITB(0xEF)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(RMB(XD), RXB(MT), REM(XS), K, 1, 1) EMITB(0xEF)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
 #else /* RT_SIMD_COMPAT_1K4 >= 2 */
 
-/* and (G = G & S) */
+/* and (G = G & S), (D = S & T) if (D != S) */
 
 #define andqx_rr(XG, XS)                                                    \
-        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0x54)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(RMB(XG), RMB(XS), REM(XG), K, 1, 1) EMITB(0x54)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        andqx3rr(W(XG), W(XG), W(XS))
 
 #define andqx_ld(XG, MS, DS)                                                \
-    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0x54)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0x54)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
+        andqx3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* ann (G = ~G & S) */
+#define andqx3rr(XD, XS, XT)                                                \
+        EVW(RXB(XD), RXB(XT), REN(XS), K, 1, 1) EMITB(0x54)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(RMB(XD), RMB(XT), REM(XS), K, 1, 1) EMITB(0x54)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define andqx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(RXB(XD), RXB(MT), REN(XS), K, 1, 1) EMITB(0x54)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(RMB(XD), RXB(MT), REM(XS), K, 1, 1) EMITB(0x54)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
+
+/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
 
 #define annqx_rr(XG, XS)                                                    \
-        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0x55)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(RMB(XG), RMB(XS), REM(XG), K, 1, 1) EMITB(0x55)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        annqx3rr(W(XG), W(XG), W(XS))
 
 #define annqx_ld(XG, MS, DS)                                                \
-    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0x55)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0x55)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
+        annqx3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* orr (G = G | S) */
+#define annqx3rr(XD, XS, XT)                                                \
+        EVW(RXB(XD), RXB(XT), REN(XS), K, 1, 1) EMITB(0x55)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(RMB(XD), RMB(XT), REM(XS), K, 1, 1) EMITB(0x55)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define annqx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(RXB(XD), RXB(MT), REN(XS), K, 1, 1) EMITB(0x55)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(RMB(XD), RXB(MT), REM(XS), K, 1, 1) EMITB(0x55)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
+
+/* orr (G = G | S), (D = S | T) if (D != S) */
 
 #define orrqx_rr(XG, XS)                                                    \
-        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0x56)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(RMB(XG), RMB(XS), REM(XG), K, 1, 1) EMITB(0x56)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        orrqx3rr(W(XG), W(XG), W(XS))
 
 #define orrqx_ld(XG, MS, DS)                                                \
-    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0x56)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0x56)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
+        orrqx3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* orn (G = ~G | S) */
+#define orrqx3rr(XD, XS, XT)                                                \
+        EVW(RXB(XD), RXB(XT), REN(XS), K, 1, 1) EMITB(0x56)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(RMB(XD), RMB(XT), REM(XS), K, 1, 1) EMITB(0x56)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define orrqx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(RXB(XD), RXB(MT), REN(XS), K, 1, 1) EMITB(0x56)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(RMB(XD), RXB(MT), REM(XS), K, 1, 1) EMITB(0x56)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
+
+/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
 
 #define ornqx_rr(XG, XS)                                                    \
         notqx_rx(W(XG))                                                     \
@@ -299,21 +349,35 @@
         notqx_rx(W(XG))                                                     \
         orrqx_ld(W(XG), W(MS), W(DS))
 
-/* xor (G = G ^ S) */
+#define ornqx3rr(XD, XS, XT)                                                \
+        movqx_rr(W(XD), W(XS))                                              \
+        ornqx_rr(W(XD), W(XT))
+
+#define ornqx3ld(XD, XS, MT, DT)                                            \
+        movqx_rr(W(XD), W(XS))                                              \
+        ornqx_ld(W(XD), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
 #define xorqx_rr(XG, XS)                                                    \
-        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0x57)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(RMB(XG), RMB(XS), REM(XG), K, 1, 1) EMITB(0x57)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        xorqx3rr(W(XG), W(XG), W(XS))
 
 #define xorqx_ld(XG, MS, DS)                                                \
-    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0x57)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(RMB(XG), RXB(MS), REM(XG), K, 1, 1) EMITB(0x57)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
+        xorqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define xorqx3rr(XD, XS, XT)                                                \
+        EVW(RXB(XD), RXB(XT), REN(XS), K, 1, 1) EMITB(0x57)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(RMB(XD), RMB(XT), REM(XS), K, 1, 1) EMITB(0x57)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define xorqx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(RXB(XD), RXB(MT), REN(XS), K, 1, 1) EMITB(0x57)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(RMB(XD), RXB(MT), REM(XS), K, 1, 1) EMITB(0x57)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
 #endif /* RT_SIMD_COMPAT_1K4 >= 2 */
 

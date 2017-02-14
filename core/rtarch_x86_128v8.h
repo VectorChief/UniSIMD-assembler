@@ -169,40 +169,58 @@
         MRM(REG(XS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
-/* and (G = G & S) */
+/* and (G = G & S), (D = S & T) if (D != S) */
 
 #define andix_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 0) EMITB(0x54)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        andix3rr(W(XG), W(XG), W(XS))
 
 #define andix_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 0) EMITB(0x54)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        andix3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* ann (G = ~G & S) */
+#define andix3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 0) EMITB(0x54)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define andix3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 0) EMITB(0x54)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
 
 #define annix_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 0) EMITB(0x55)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        annix3rr(W(XG), W(XG), W(XS))
 
 #define annix_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 0) EMITB(0x55)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        annix3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* orr (G = G | S) */
+#define annix3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 0) EMITB(0x55)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define annix3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 0) EMITB(0x55)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* orr (G = G | S), (D = S | T) if (D != S) */
 
 #define orrix_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 0) EMITB(0x56)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        orrix3rr(W(XG), W(XG), W(XS))
 
 #define orrix_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 0) EMITB(0x56)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        orrix3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* orn (G = ~G | S) */
+#define orrix3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 0) EMITB(0x56)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define orrix3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 0) EMITB(0x56)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
 
 #define ornix_rr(XG, XS)                                                    \
         notix_rx(W(XG))                                                     \
@@ -212,16 +230,30 @@
         notix_rx(W(XG))                                                     \
         orrix_ld(W(XG), W(MS), W(DS))
 
-/* xor (G = G ^ S) */
+#define ornix3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        ornix_rr(W(XD), W(XT))
+
+#define ornix3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        ornix_ld(W(XD), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
 #define xorix_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 0) EMITB(0x57)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        xorix3rr(W(XG), W(XG), W(XS))
 
 #define xorix_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 0) EMITB(0x57)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        xorix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define xorix3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 0) EMITB(0x57)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define xorix3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 0) EMITB(0x57)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* not (G = ~G) */
 
