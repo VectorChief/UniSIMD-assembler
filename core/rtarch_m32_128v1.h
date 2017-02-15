@@ -221,17 +221,23 @@
         EMITW(0x7880001E | MXM(TmmM,    REG(XS), Tmm0))                     \
         EMITW(0x78000027 | MPM(TmmM,    MOD(MG), VAL(DG), B2(DG), P2(DG)))
 
-/* and (G = G & S) */
+/* and (G = G & S), (D = S & T) if (D != S) */
 
 #define andix_rr(XG, XS)                                                    \
-        EMITW(0x7800001E | MXM(REG(XG), REG(XG), REG(XS)))
+        andix3rr(W(XG), W(XG), W(XS))
 
 #define andix_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7800001E | MXM(REG(XG), REG(XG), TmmM))
+        andix3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* ann (G = ~G & S) */
+#define andix3rr(XD, XS, XT)                                                \
+        EMITW(0x7800001E | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define andix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7800001E | MXM(REG(XD), REG(XS), TmmM))
+
+/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
 
 #define annix_rr(XG, XS)                                                    \
         EMITW(0x78C0001E | MXM(REG(XG), REG(XS), TmmZ))
@@ -241,17 +247,31 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x78C0001E | MXM(REG(XG), TmmM,    TmmZ))
 
-/* orr (G = G | S) */
+#define annix3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        annix_rr(W(XD), W(XT))
+
+#define annix3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        annix_ld(W(XD), W(MT), W(DT))
+
+/* orr (G = G | S), (D = S | T) if (D != S) */
 
 #define orrix_rr(XG, XS)                                                    \
-        EMITW(0x7820001E | MXM(REG(XG), REG(XG), REG(XS)))
+        orrix3rr(W(XG), W(XG), W(XS))
 
 #define orrix_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7820001E | MXM(REG(XG), REG(XG), TmmM))
+        orrix3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* orn (G = ~G | S) */
+#define orrix3rr(XD, XS, XT)                                                \
+        EMITW(0x7820001E | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define orrix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7820001E | MXM(REG(XD), REG(XS), TmmM))
+
+/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
 
 #define ornix_rr(XG, XS)                                                    \
         notix_rx(W(XG))                                                     \
@@ -261,15 +281,29 @@
         notix_rx(W(XG))                                                     \
         orrix_ld(W(XG), W(MS), W(DS))
 
-/* xor (G = G ^ S) */
+#define ornix3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        ornix_rr(W(XD), W(XT))
+
+#define ornix3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        ornix_ld(W(XD), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
 #define xorix_rr(XG, XS)                                                    \
-        EMITW(0x7860001E | MXM(REG(XG), REG(XG), REG(XS)))
+        xorix3rr(W(XG), W(XG), W(XS))
 
 #define xorix_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7860001E | MXM(REG(XG), REG(XG), TmmM))
+        xorix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define xorix3rr(XD, XS, XT)                                                \
+        EMITW(0x7860001E | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define xorix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7860001E | MXM(REG(XD), REG(XS), TmmM))
 
 /* not (G = ~G) */
 
