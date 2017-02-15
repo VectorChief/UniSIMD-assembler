@@ -813,7 +813,7 @@ struct rt_SIMD_REGS
 #define mmvox_st(XS, MG, DG)                                                \
         mmvcx_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S) */
+/* and (G = G & S), (D = S & T) if (D != S) */
 
 #define andox_rr(XG, XS)                                                    \
         andcx_rr(W(XG), W(XS))
@@ -821,7 +821,13 @@ struct rt_SIMD_REGS
 #define andox_ld(XG, MS, DS)                                                \
         andcx_ld(W(XG), W(MS), W(DS))
 
-/* ann (G = ~G & S) */
+#define andox3rr(XD, XS, XT)                                                \
+        andcx3rr(W(XD), W(XS), W(XT))
+
+#define andox3ld(XD, XS, MT, DT)                                            \
+        andcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
 
 #define annox_rr(XG, XS)                                                    \
         anncx_rr(W(XG), W(XS))
@@ -829,7 +835,13 @@ struct rt_SIMD_REGS
 #define annox_ld(XG, MS, DS)                                                \
         anncx_ld(W(XG), W(MS), W(DS))
 
-/* orr (G = G | S) */
+#define annox3rr(XD, XS, XT)                                                \
+        anncx3rr(W(XD), W(XS), W(XT))
+
+#define annox3ld(XD, XS, MT, DT)                                            \
+        anncx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orr (G = G | S), (D = S | T) if (D != S) */
 
 #define orrox_rr(XG, XS)                                                    \
         orrcx_rr(W(XG), W(XS))
@@ -837,7 +849,13 @@ struct rt_SIMD_REGS
 #define orrox_ld(XG, MS, DS)                                                \
         orrcx_ld(W(XG), W(MS), W(DS))
 
-/* orn (G = ~G | S) */
+#define orrox3rr(XD, XS, XT)                                                \
+        orrcx3rr(W(XD), W(XS), W(XT))
+
+#define orrox3ld(XD, XS, MT, DT)                                            \
+        orrcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
 
 #define ornox_rr(XG, XS)                                                    \
         orncx_rr(W(XG), W(XS))
@@ -845,13 +863,25 @@ struct rt_SIMD_REGS
 #define ornox_ld(XG, MS, DS)                                                \
         orncx_ld(W(XG), W(MS), W(DS))
 
-/* xor (G = G ^ S) */
+#define ornox3rr(XD, XS, XT)                                                \
+        orncx3rr(W(XD), W(XS), W(XT))
+
+#define ornox3ld(XD, XS, MT, DT)                                            \
+        orncx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
 #define xorox_rr(XG, XS)                                                    \
         xorcx_rr(W(XG), W(XS))
 
 #define xorox_ld(XG, MS, DS)                                                \
         xorcx_ld(W(XG), W(MS), W(DS))
+
+#define xorox3rr(XD, XS, XT)                                                \
+        xorcx3rr(W(XD), W(XS), W(XT))
+
+#define xorox3ld(XD, XS, MT, DT)                                            \
+        xorcx3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* not (G = ~G) */
 
@@ -1385,7 +1415,7 @@ struct rt_SIMD_REGS
 #define mmvox_st(XS, MG, DG)                                                \
         mmvix_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S) */
+/* and (G = G & S), (D = S & T) if (D != S) */
 
 #define andox_rr(XG, XS)                                                    \
         andix_rr(W(XG), W(XS))
@@ -1393,7 +1423,13 @@ struct rt_SIMD_REGS
 #define andox_ld(XG, MS, DS)                                                \
         andix_ld(W(XG), W(MS), W(DS))
 
-/* ann (G = ~G & S) */
+#define andox3rr(XD, XS, XT)                                                \
+        andix3rr(W(XD), W(XS), W(XT))
+
+#define andox3ld(XD, XS, MT, DT)                                            \
+        andix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
 
 #define annox_rr(XG, XS)                                                    \
         annix_rr(W(XG), W(XS))
@@ -1401,7 +1437,13 @@ struct rt_SIMD_REGS
 #define annox_ld(XG, MS, DS)                                                \
         annix_ld(W(XG), W(MS), W(DS))
 
-/* orr (G = G | S) */
+#define annox3rr(XD, XS, XT)                                                \
+        annix3rr(W(XD), W(XS), W(XT))
+
+#define annox3ld(XD, XS, MT, DT)                                            \
+        annix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orr (G = G | S), (D = S | T) if (D != S) */
 
 #define orrox_rr(XG, XS)                                                    \
         orrix_rr(W(XG), W(XS))
@@ -1409,7 +1451,13 @@ struct rt_SIMD_REGS
 #define orrox_ld(XG, MS, DS)                                                \
         orrix_ld(W(XG), W(MS), W(DS))
 
-/* orn (G = ~G | S) */
+#define orrox3rr(XD, XS, XT)                                                \
+        orrix3rr(W(XD), W(XS), W(XT))
+
+#define orrox3ld(XD, XS, MT, DT)                                            \
+        orrix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
 
 #define ornox_rr(XG, XS)                                                    \
         ornix_rr(W(XG), W(XS))
@@ -1417,13 +1465,25 @@ struct rt_SIMD_REGS
 #define ornox_ld(XG, MS, DS)                                                \
         ornix_ld(W(XG), W(MS), W(DS))
 
-/* xor (G = G ^ S) */
+#define ornox3rr(XD, XS, XT)                                                \
+        ornix3rr(W(XD), W(XS), W(XT))
+
+#define ornox3ld(XD, XS, MT, DT)                                            \
+        ornix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
 #define xorox_rr(XG, XS)                                                    \
         xorix_rr(W(XG), W(XS))
 
 #define xorox_ld(XG, MS, DS)                                                \
         xorix_ld(W(XG), W(MS), W(DS))
+
+#define xorox3rr(XD, XS, XT)                                                \
+        xorix3rr(W(XD), W(XS), W(XT))
+
+#define xorox3ld(XD, XS, MT, DT)                                            \
+        xorix3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* not (G = ~G) */
 
@@ -2200,7 +2260,7 @@ struct rt_SIMD_REGS
 #define mmvqx_st(XS, MG, DG)                                                \
         mmvdx_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S) */
+/* and (G = G & S), (D = S & T) if (D != S) */
 
 #define andqx_rr(XG, XS)                                                    \
         anddx_rr(W(XG), W(XS))
@@ -2208,7 +2268,13 @@ struct rt_SIMD_REGS
 #define andqx_ld(XG, MS, DS)                                                \
         anddx_ld(W(XG), W(MS), W(DS))
 
-/* ann (G = ~G & S) */
+#define andqx3rr(XD, XS, XT)                                                \
+        anddx3rr(W(XD), W(XS), W(XT))
+
+#define andqx3ld(XD, XS, MT, DT)                                            \
+        anddx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
 
 #define annqx_rr(XG, XS)                                                    \
         anndx_rr(W(XG), W(XS))
@@ -2216,7 +2282,13 @@ struct rt_SIMD_REGS
 #define annqx_ld(XG, MS, DS)                                                \
         anndx_ld(W(XG), W(MS), W(DS))
 
-/* orr (G = G | S) */
+#define annqx3rr(XD, XS, XT)                                                \
+        anndx3rr(W(XD), W(XS), W(XT))
+
+#define annqx3ld(XD, XS, MT, DT)                                            \
+        anndx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orr (G = G | S), (D = S | T) if (D != S) */
 
 #define orrqx_rr(XG, XS)                                                    \
         orrdx_rr(W(XG), W(XS))
@@ -2224,7 +2296,13 @@ struct rt_SIMD_REGS
 #define orrqx_ld(XG, MS, DS)                                                \
         orrdx_ld(W(XG), W(MS), W(DS))
 
-/* orn (G = ~G | S) */
+#define orrqx3rr(XD, XS, XT)                                                \
+        orrdx3rr(W(XD), W(XS), W(XT))
+
+#define orrqx3ld(XD, XS, MT, DT)                                            \
+        orrdx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
 
 #define ornqx_rr(XG, XS)                                                    \
         orndx_rr(W(XG), W(XS))
@@ -2232,13 +2310,25 @@ struct rt_SIMD_REGS
 #define ornqx_ld(XG, MS, DS)                                                \
         orndx_ld(W(XG), W(MS), W(DS))
 
-/* xor (G = G ^ S) */
+#define ornqx3rr(XD, XS, XT)                                                \
+        orndx3rr(W(XD), W(XS), W(XT))
+
+#define ornqx3ld(XD, XS, MT, DT)                                            \
+        orndx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
 #define xorqx_rr(XG, XS)                                                    \
         xordx_rr(W(XG), W(XS))
 
 #define xorqx_ld(XG, MS, DS)                                                \
         xordx_ld(W(XG), W(MS), W(DS))
+
+#define xorqx3rr(XD, XS, XT)                                                \
+        xordx3rr(W(XD), W(XS), W(XT))
+
+#define xorqx3ld(XD, XS, MT, DT)                                            \
+        xordx3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* not (G = ~G) */
 
@@ -2772,7 +2862,7 @@ struct rt_SIMD_REGS
 #define mmvqx_st(XS, MG, DG)                                                \
         mmvjx_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S) */
+/* and (G = G & S), (D = S & T) if (D != S) */
 
 #define andqx_rr(XG, XS)                                                    \
         andjx_rr(W(XG), W(XS))
@@ -2780,7 +2870,13 @@ struct rt_SIMD_REGS
 #define andqx_ld(XG, MS, DS)                                                \
         andjx_ld(W(XG), W(MS), W(DS))
 
-/* ann (G = ~G & S) */
+#define andqx3rr(XD, XS, XT)                                                \
+        andjx3rr(W(XD), W(XS), W(XT))
+
+#define andqx3ld(XD, XS, MT, DT)                                            \
+        andjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
 
 #define annqx_rr(XG, XS)                                                    \
         annjx_rr(W(XG), W(XS))
@@ -2788,7 +2884,13 @@ struct rt_SIMD_REGS
 #define annqx_ld(XG, MS, DS)                                                \
         annjx_ld(W(XG), W(MS), W(DS))
 
-/* orr (G = G | S) */
+#define annqx3rr(XD, XS, XT)                                                \
+        annjx3rr(W(XD), W(XS), W(XT))
+
+#define annqx3ld(XD, XS, MT, DT)                                            \
+        annjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orr (G = G | S), (D = S | T) if (D != S) */
 
 #define orrqx_rr(XG, XS)                                                    \
         orrjx_rr(W(XG), W(XS))
@@ -2796,7 +2898,13 @@ struct rt_SIMD_REGS
 #define orrqx_ld(XG, MS, DS)                                                \
         orrjx_ld(W(XG), W(MS), W(DS))
 
-/* orn (G = ~G | S) */
+#define orrqx3rr(XD, XS, XT)                                                \
+        orrjx3rr(W(XD), W(XS), W(XT))
+
+#define orrqx3ld(XD, XS, MT, DT)                                            \
+        orrjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
 
 #define ornqx_rr(XG, XS)                                                    \
         ornjx_rr(W(XG), W(XS))
@@ -2804,13 +2912,25 @@ struct rt_SIMD_REGS
 #define ornqx_ld(XG, MS, DS)                                                \
         ornjx_ld(W(XG), W(MS), W(DS))
 
-/* xor (G = G ^ S) */
+#define ornqx3rr(XD, XS, XT)                                                \
+        ornjx3rr(W(XD), W(XS), W(XT))
+
+#define ornqx3ld(XD, XS, MT, DT)                                            \
+        ornjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
 #define xorqx_rr(XG, XS)                                                    \
         xorjx_rr(W(XG), W(XS))
 
 #define xorqx_ld(XG, MS, DS)                                                \
         xorjx_ld(W(XG), W(MS), W(DS))
+
+#define xorqx3rr(XD, XS, XT)                                                \
+        xorjx3rr(W(XD), W(XS), W(XT))
+
+#define xorqx3ld(XD, XS, MT, DT)                                            \
+        xorjx3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* not (G = ~G) */
 
@@ -3440,7 +3560,7 @@ struct rt_SIMD_REGS
 #define mmvpx_st(XS, MG, DG)                                                \
         mmvox_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S) */
+/* and (G = G & S), (D = S & T) if (D != S) */
 
 #define andpx_rr(XG, XS)                                                    \
         andox_rr(W(XG), W(XS))
@@ -3448,7 +3568,13 @@ struct rt_SIMD_REGS
 #define andpx_ld(XG, MS, DS)                                                \
         andox_ld(W(XG), W(MS), W(DS))
 
-/* ann (G = ~G & S) */
+#define andpx3rr(XD, XS, XT)                                                \
+        andox3rr(W(XD), W(XS), W(XT))
+
+#define andpx3ld(XD, XS, MT, DT)                                            \
+        andox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
 
 #define annpx_rr(XG, XS)                                                    \
         annox_rr(W(XG), W(XS))
@@ -3456,7 +3582,13 @@ struct rt_SIMD_REGS
 #define annpx_ld(XG, MS, DS)                                                \
         annox_ld(W(XG), W(MS), W(DS))
 
-/* orr (G = G | S) */
+#define annpx3rr(XD, XS, XT)                                                \
+        annox3rr(W(XD), W(XS), W(XT))
+
+#define annpx3ld(XD, XS, MT, DT)                                            \
+        annox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orr (G = G | S), (D = S | T) if (D != S) */
 
 #define orrpx_rr(XG, XS)                                                    \
         orrox_rr(W(XG), W(XS))
@@ -3464,7 +3596,13 @@ struct rt_SIMD_REGS
 #define orrpx_ld(XG, MS, DS)                                                \
         orrox_ld(W(XG), W(MS), W(DS))
 
-/* orn (G = ~G | S) */
+#define orrpx3rr(XD, XS, XT)                                                \
+        orrox3rr(W(XD), W(XS), W(XT))
+
+#define orrpx3ld(XD, XS, MT, DT)                                            \
+        orrox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
 
 #define ornpx_rr(XG, XS)                                                    \
         ornox_rr(W(XG), W(XS))
@@ -3472,13 +3610,25 @@ struct rt_SIMD_REGS
 #define ornpx_ld(XG, MS, DS)                                                \
         ornox_ld(W(XG), W(MS), W(DS))
 
-/* xor (G = G ^ S) */
+#define ornpx3rr(XD, XS, XT)                                                \
+        ornox3rr(W(XD), W(XS), W(XT))
+
+#define ornpx3ld(XD, XS, MT, DT)                                            \
+        ornox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
 #define xorpx_rr(XG, XS)                                                    \
         xorox_rr(W(XG), W(XS))
 
 #define xorpx_ld(XG, MS, DS)                                                \
         xorox_ld(W(XG), W(MS), W(DS))
+
+#define xorpx3rr(XD, XS, XT)                                                \
+        xorox3rr(W(XD), W(XS), W(XT))
+
+#define xorpx3ld(XD, XS, MT, DT)                                            \
+        xorox3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* not (G = ~G) */
 
@@ -3873,7 +4023,7 @@ struct rt_SIMD_REGS
 #define mmvfx_st(XS, MG, DG)                                                \
         mmvcx_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S) */
+/* and (G = G & S), (D = S & T) if (D != S) */
 
 #define andfx_rr(XG, XS)                                                    \
         andcx_rr(W(XG), W(XS))
@@ -3881,7 +4031,13 @@ struct rt_SIMD_REGS
 #define andfx_ld(XG, MS, DS)                                                \
         andcx_ld(W(XG), W(MS), W(DS))
 
-/* ann (G = ~G & S) */
+#define andfx3rr(XD, XS, XT)                                                \
+        andcx3rr(W(XD), W(XS), W(XT))
+
+#define andfx3ld(XD, XS, MT, DT)                                            \
+        andcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
 
 #define annfx_rr(XG, XS)                                                    \
         anncx_rr(W(XG), W(XS))
@@ -3889,7 +4045,13 @@ struct rt_SIMD_REGS
 #define annfx_ld(XG, MS, DS)                                                \
         anncx_ld(W(XG), W(MS), W(DS))
 
-/* orr (G = G | S) */
+#define annfx3rr(XD, XS, XT)                                                \
+        anncx3rr(W(XD), W(XS), W(XT))
+
+#define annfx3ld(XD, XS, MT, DT)                                            \
+        anncx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orr (G = G | S), (D = S | T) if (D != S) */
 
 #define orrfx_rr(XG, XS)                                                    \
         orrcx_rr(W(XG), W(XS))
@@ -3897,7 +4059,13 @@ struct rt_SIMD_REGS
 #define orrfx_ld(XG, MS, DS)                                                \
         orrcx_ld(W(XG), W(MS), W(DS))
 
-/* orn (G = ~G | S) */
+#define orrfx3rr(XD, XS, XT)                                                \
+        orrcx3rr(W(XD), W(XS), W(XT))
+
+#define orrfx3ld(XD, XS, MT, DT)                                            \
+        orrcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
 
 #define ornfx_rr(XG, XS)                                                    \
         orncx_rr(W(XG), W(XS))
@@ -3905,13 +4073,25 @@ struct rt_SIMD_REGS
 #define ornfx_ld(XG, MS, DS)                                                \
         orncx_ld(W(XG), W(MS), W(DS))
 
-/* xor (G = G ^ S) */
+#define ornfx3rr(XD, XS, XT)                                                \
+        orncx3rr(W(XD), W(XS), W(XT))
+
+#define ornfx3ld(XD, XS, MT, DT)                                            \
+        orncx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
 #define xorfx_rr(XG, XS)                                                    \
         xorcx_rr(W(XG), W(XS))
 
 #define xorfx_ld(XG, MS, DS)                                                \
         xorcx_ld(W(XG), W(MS), W(DS))
+
+#define xorfx3rr(XD, XS, XT)                                                \
+        xorcx3rr(W(XD), W(XS), W(XT))
+
+#define xorfx3ld(XD, XS, MT, DT)                                            \
+        xorcx3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* not (G = ~G) */
 
@@ -4306,7 +4486,7 @@ struct rt_SIMD_REGS
 #define mmvlx_st(XS, MG, DG)                                                \
         mmvix_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S) */
+/* and (G = G & S), (D = S & T) if (D != S) */
 
 #define andlx_rr(XG, XS)                                                    \
         andix_rr(W(XG), W(XS))
@@ -4314,7 +4494,13 @@ struct rt_SIMD_REGS
 #define andlx_ld(XG, MS, DS)                                                \
         andix_ld(W(XG), W(MS), W(DS))
 
-/* ann (G = ~G & S) */
+#define andlx3rr(XD, XS, XT)                                                \
+        andix3rr(W(XD), W(XS), W(XT))
+
+#define andlx3ld(XD, XS, MT, DT)                                            \
+        andix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
 
 #define annlx_rr(XG, XS)                                                    \
         annix_rr(W(XG), W(XS))
@@ -4322,7 +4508,13 @@ struct rt_SIMD_REGS
 #define annlx_ld(XG, MS, DS)                                                \
         annix_ld(W(XG), W(MS), W(DS))
 
-/* orr (G = G | S) */
+#define annlx3rr(XD, XS, XT)                                                \
+        annix3rr(W(XD), W(XS), W(XT))
+
+#define annlx3ld(XD, XS, MT, DT)                                            \
+        annix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orr (G = G | S), (D = S | T) if (D != S) */
 
 #define orrlx_rr(XG, XS)                                                    \
         orrix_rr(W(XG), W(XS))
@@ -4330,7 +4522,13 @@ struct rt_SIMD_REGS
 #define orrlx_ld(XG, MS, DS)                                                \
         orrix_ld(W(XG), W(MS), W(DS))
 
-/* orn (G = ~G | S) */
+#define orrlx3rr(XD, XS, XT)                                                \
+        orrix3rr(W(XD), W(XS), W(XT))
+
+#define orrlx3ld(XD, XS, MT, DT)                                            \
+        orrix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
 
 #define ornlx_rr(XG, XS)                                                    \
         ornix_rr(W(XG), W(XS))
@@ -4338,13 +4536,25 @@ struct rt_SIMD_REGS
 #define ornlx_ld(XG, MS, DS)                                                \
         ornix_ld(W(XG), W(MS), W(DS))
 
-/* xor (G = G ^ S) */
+#define ornlx3rr(XD, XS, XT)                                                \
+        ornix3rr(W(XD), W(XS), W(XT))
+
+#define ornlx3ld(XD, XS, MT, DT)                                            \
+        ornix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
 #define xorlx_rr(XG, XS)                                                    \
         xorix_rr(W(XG), W(XS))
 
 #define xorlx_ld(XG, MS, DS)                                                \
         xorix_ld(W(XG), W(MS), W(DS))
+
+#define xorlx3rr(XD, XS, XT)                                                \
+        xorix3rr(W(XD), W(XS), W(XT))
+
+#define xorlx3ld(XD, XS, MT, DT)                                            \
+        xorix3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* not (G = ~G) */
 
@@ -4894,7 +5104,7 @@ struct rt_SIMD_REGS
 #define mmvpx_st(XS, MG, DG)                                                \
         mmvqx_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S) */
+/* and (G = G & S), (D = S & T) if (D != S) */
 
 #define andpx_rr(XG, XS)                                                    \
         andqx_rr(W(XG), W(XS))
@@ -4902,7 +5112,13 @@ struct rt_SIMD_REGS
 #define andpx_ld(XG, MS, DS)                                                \
         andqx_ld(W(XG), W(MS), W(DS))
 
-/* ann (G = ~G & S) */
+#define andpx3rr(XD, XS, XT)                                                \
+        andqx3rr(W(XD), W(XS), W(XT))
+
+#define andpx3ld(XD, XS, MT, DT)                                            \
+        andqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
 
 #define annpx_rr(XG, XS)                                                    \
         annqx_rr(W(XG), W(XS))
@@ -4910,7 +5126,13 @@ struct rt_SIMD_REGS
 #define annpx_ld(XG, MS, DS)                                                \
         annqx_ld(W(XG), W(MS), W(DS))
 
-/* orr (G = G | S) */
+#define annpx3rr(XD, XS, XT)                                                \
+        annqx3rr(W(XD), W(XS), W(XT))
+
+#define annpx3ld(XD, XS, MT, DT)                                            \
+        annqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orr (G = G | S), (D = S | T) if (D != S) */
 
 #define orrpx_rr(XG, XS)                                                    \
         orrqx_rr(W(XG), W(XS))
@@ -4918,7 +5140,13 @@ struct rt_SIMD_REGS
 #define orrpx_ld(XG, MS, DS)                                                \
         orrqx_ld(W(XG), W(MS), W(DS))
 
-/* orn (G = ~G | S) */
+#define orrpx3rr(XD, XS, XT)                                                \
+        orrqx3rr(W(XD), W(XS), W(XT))
+
+#define orrpx3ld(XD, XS, MT, DT)                                            \
+        orrqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
 
 #define ornpx_rr(XG, XS)                                                    \
         ornqx_rr(W(XG), W(XS))
@@ -4926,13 +5154,25 @@ struct rt_SIMD_REGS
 #define ornpx_ld(XG, MS, DS)                                                \
         ornqx_ld(W(XG), W(MS), W(DS))
 
-/* xor (G = G ^ S) */
+#define ornpx3rr(XD, XS, XT)                                                \
+        ornqx3rr(W(XD), W(XS), W(XT))
+
+#define ornpx3ld(XD, XS, MT, DT)                                            \
+        ornqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
 #define xorpx_rr(XG, XS)                                                    \
         xorqx_rr(W(XG), W(XS))
 
 #define xorpx_ld(XG, MS, DS)                                                \
         xorqx_ld(W(XG), W(MS), W(DS))
+
+#define xorpx3rr(XD, XS, XT)                                                \
+        xorqx3rr(W(XD), W(XS), W(XT))
+
+#define xorpx3ld(XD, XS, MT, DT)                                            \
+        xorqx3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* not (G = ~G) */
 
@@ -5327,7 +5567,7 @@ struct rt_SIMD_REGS
 #define mmvfx_st(XS, MG, DG)                                                \
         mmvdx_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S) */
+/* and (G = G & S), (D = S & T) if (D != S) */
 
 #define andfx_rr(XG, XS)                                                    \
         anddx_rr(W(XG), W(XS))
@@ -5335,7 +5575,13 @@ struct rt_SIMD_REGS
 #define andfx_ld(XG, MS, DS)                                                \
         anddx_ld(W(XG), W(MS), W(DS))
 
-/* ann (G = ~G & S) */
+#define andfx3rr(XD, XS, XT)                                                \
+        anddx3rr(W(XD), W(XS), W(XT))
+
+#define andfx3ld(XD, XS, MT, DT)                                            \
+        anddx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
 
 #define annfx_rr(XG, XS)                                                    \
         anndx_rr(W(XG), W(XS))
@@ -5343,7 +5589,13 @@ struct rt_SIMD_REGS
 #define annfx_ld(XG, MS, DS)                                                \
         anndx_ld(W(XG), W(MS), W(DS))
 
-/* orr (G = G | S) */
+#define annfx3rr(XD, XS, XT)                                                \
+        anndx3rr(W(XD), W(XS), W(XT))
+
+#define annfx3ld(XD, XS, MT, DT)                                            \
+        anndx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orr (G = G | S), (D = S | T) if (D != S) */
 
 #define orrfx_rr(XG, XS)                                                    \
         orrdx_rr(W(XG), W(XS))
@@ -5351,7 +5603,13 @@ struct rt_SIMD_REGS
 #define orrfx_ld(XG, MS, DS)                                                \
         orrdx_ld(W(XG), W(MS), W(DS))
 
-/* orn (G = ~G | S) */
+#define orrfx3rr(XD, XS, XT)                                                \
+        orrdx3rr(W(XD), W(XS), W(XT))
+
+#define orrfx3ld(XD, XS, MT, DT)                                            \
+        orrdx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
 
 #define ornfx_rr(XG, XS)                                                    \
         orndx_rr(W(XG), W(XS))
@@ -5359,13 +5617,25 @@ struct rt_SIMD_REGS
 #define ornfx_ld(XG, MS, DS)                                                \
         orndx_ld(W(XG), W(MS), W(DS))
 
-/* xor (G = G ^ S) */
+#define ornfx3rr(XD, XS, XT)                                                \
+        orndx3rr(W(XD), W(XS), W(XT))
+
+#define ornfx3ld(XD, XS, MT, DT)                                            \
+        orndx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
 #define xorfx_rr(XG, XS)                                                    \
         xordx_rr(W(XG), W(XS))
 
 #define xorfx_ld(XG, MS, DS)                                                \
         xordx_ld(W(XG), W(MS), W(DS))
+
+#define xorfx3rr(XD, XS, XT)                                                \
+        xordx3rr(W(XD), W(XS), W(XT))
+
+#define xorfx3ld(XD, XS, MT, DT)                                            \
+        xordx3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* not (G = ~G) */
 
@@ -5760,7 +6030,7 @@ struct rt_SIMD_REGS
 #define mmvlx_st(XS, MG, DG)                                                \
         mmvjx_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S) */
+/* and (G = G & S), (D = S & T) if (D != S) */
 
 #define andlx_rr(XG, XS)                                                    \
         andjx_rr(W(XG), W(XS))
@@ -5768,7 +6038,13 @@ struct rt_SIMD_REGS
 #define andlx_ld(XG, MS, DS)                                                \
         andjx_ld(W(XG), W(MS), W(DS))
 
-/* ann (G = ~G & S) */
+#define andlx3rr(XD, XS, XT)                                                \
+        andjx3rr(W(XD), W(XS), W(XT))
+
+#define andlx3ld(XD, XS, MT, DT)                                            \
+        andjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
 
 #define annlx_rr(XG, XS)                                                    \
         annjx_rr(W(XG), W(XS))
@@ -5776,7 +6052,13 @@ struct rt_SIMD_REGS
 #define annlx_ld(XG, MS, DS)                                                \
         annjx_ld(W(XG), W(MS), W(DS))
 
-/* orr (G = G | S) */
+#define annlx3rr(XD, XS, XT)                                                \
+        annjx3rr(W(XD), W(XS), W(XT))
+
+#define annlx3ld(XD, XS, MT, DT)                                            \
+        annjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orr (G = G | S), (D = S | T) if (D != S) */
 
 #define orrlx_rr(XG, XS)                                                    \
         orrjx_rr(W(XG), W(XS))
@@ -5784,7 +6066,13 @@ struct rt_SIMD_REGS
 #define orrlx_ld(XG, MS, DS)                                                \
         orrjx_ld(W(XG), W(MS), W(DS))
 
-/* orn (G = ~G | S) */
+#define orrlx3rr(XD, XS, XT)                                                \
+        orrjx3rr(W(XD), W(XS), W(XT))
+
+#define orrlx3ld(XD, XS, MT, DT)                                            \
+        orrjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
 
 #define ornlx_rr(XG, XS)                                                    \
         ornjx_rr(W(XG), W(XS))
@@ -5792,13 +6080,25 @@ struct rt_SIMD_REGS
 #define ornlx_ld(XG, MS, DS)                                                \
         ornjx_ld(W(XG), W(MS), W(DS))
 
-/* xor (G = G ^ S) */
+#define ornlx3rr(XD, XS, XT)                                                \
+        ornjx3rr(W(XD), W(XS), W(XT))
+
+#define ornlx3ld(XD, XS, MT, DT)                                            \
+        ornjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
 #define xorlx_rr(XG, XS)                                                    \
         xorjx_rr(W(XG), W(XS))
 
 #define xorlx_ld(XG, MS, DS)                                                \
         xorjx_ld(W(XG), W(MS), W(DS))
+
+#define xorlx3rr(XD, XS, XT)                                                \
+        xorjx3rr(W(XD), W(XS), W(XT))
+
+#define xorlx3ld(XD, XS, MT, DT)                                            \
+        xorjx3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* not (G = ~G) */
 
