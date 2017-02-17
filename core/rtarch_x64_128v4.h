@@ -556,7 +556,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minjs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5D)                       \
@@ -567,7 +567,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5D)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* max (G = G > S ? G : S) */
+#define minjs3rr(XD, XS, XT)                                                \
+        movjx_rr(W(XD), W(XS))                                              \
+        minjs_rr(W(XD), W(XT))
+
+#define minjs3ld(XD, XS, MT, DT)                                            \
+        movjx_rr(W(XD), W(XS))                                              \
+        minjs_ld(W(XD), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxjs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5F)                       \
@@ -578,7 +586,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5F)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* cmp (G = G ? S) */
+#define maxjs3rr(XD, XS, XT)                                                \
+        movjx_rr(W(XD), W(XS))                                              \
+        maxjs_rr(W(XD), W(XT))
+
+#define maxjs3ld(XD, XS, MT, DT)                                            \
+        movjx_rr(W(XD), W(XS))                                              \
+        maxjs_ld(W(XD), W(MT), W(DT))
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqjs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
@@ -590,6 +606,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x00))
 
+#define ceqjs3rr(XD, XS, XT)                                                \
+        movjx_rr(W(XD), W(XS))                                              \
+        ceqjs_rr(W(XD), W(XT))
+
+#define ceqjs3ld(XD, XS, MT, DT)                                            \
+        movjx_rr(W(XD), W(XS))                                              \
+        ceqjs_ld(W(XD), W(MT), W(DT))
+
+
 #define cnejs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
@@ -599,6 +624,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
 ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x04))
+
+#define cnejs3rr(XD, XS, XT)                                                \
+        movjx_rr(W(XD), W(XS))                                              \
+        cnejs_rr(W(XD), W(XT))
+
+#define cnejs3ld(XD, XS, MT, DT)                                            \
+        movjx_rr(W(XD), W(XS))                                              \
+        cnejs_ld(W(XD), W(MT), W(DT))
+
 
 #define cltjs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
@@ -610,6 +644,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x01))
 
+#define cltjs3rr(XD, XS, XT)                                                \
+        movjx_rr(W(XD), W(XS))                                              \
+        cltjs_rr(W(XD), W(XT))
+
+#define cltjs3ld(XD, XS, MT, DT)                                            \
+        movjx_rr(W(XD), W(XS))                                              \
+        cltjs_ld(W(XD), W(MT), W(DT))
+
+
 #define clejs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
@@ -619,6 +662,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
 ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x02))
+
+#define clejs3rr(XD, XS, XT)                                                \
+        movjx_rr(W(XD), W(XS))                                              \
+        clejs_rr(W(XD), W(XT))
+
+#define clejs3ld(XD, XS, MT, DT)                                            \
+        movjx_rr(W(XD), W(XS))                                              \
+        clejs_ld(W(XD), W(MT), W(DT))
+
 
 #define cgtjs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
@@ -630,6 +682,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x06))
 
+#define cgtjs3rr(XD, XS, XT)                                                \
+        movjx_rr(W(XD), W(XS))                                              \
+        cgtjs_rr(W(XD), W(XT))
+
+#define cgtjs3ld(XD, XS, MT, DT)                                            \
+        movjx_rr(W(XD), W(XS))                                              \
+        cgtjs_ld(W(XD), W(MT), W(DT))
+
+
 #define cgejs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
@@ -639,6 +700,14 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
 ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x05))
+
+#define cgejs3rr(XD, XS, XT)                                                \
+        movjx_rr(W(XD), W(XS))                                              \
+        cgejs_rr(W(XD), W(XT))
+
+#define cgejs3ld(XD, XS, MT, DT)                                            \
+        movjx_rr(W(XD), W(XS))                                              \
+        cgejs_ld(W(XD), W(MT), W(DT))
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)

@@ -614,7 +614,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0x5D)                                             \
@@ -625,7 +625,15 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* max (G = G > S ? G : S) */
+#define minis3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        minis_rr(W(XD), W(XT))
+
+#define minis3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        minis_ld(W(XD), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0x5F)                                             \
@@ -636,7 +644,15 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* cmp (G = G ? S) */
+#define maxis3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        maxis_rr(W(XD), W(XT))
+
+#define maxis3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        maxis_ld(W(XD), W(MT), W(DT))
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0xC2)                                             \
@@ -648,6 +664,15 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x00))
 
+#define ceqis3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        ceqis_rr(W(XD), W(XT))
+
+#define ceqis3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        ceqis_ld(W(XD), W(MT), W(DT))
+
+
 #define cneis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0xC2)                                             \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
@@ -657,6 +682,15 @@
         EMITB(0x0F) EMITB(0xC2)                                             \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x04))
+
+#define cneis3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        cneis_rr(W(XD), W(XT))
+
+#define cneis3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        cneis_ld(W(XD), W(MT), W(DT))
+
 
 #define cltis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0xC2)                                             \
@@ -668,6 +702,15 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x01))
 
+#define cltis3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        cltis_rr(W(XD), W(XT))
+
+#define cltis3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        cltis_ld(W(XD), W(MT), W(DT))
+
+
 #define cleis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0xC2)                                             \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
@@ -677,6 +720,15 @@
         EMITB(0x0F) EMITB(0xC2)                                             \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x02))
+
+#define cleis3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        cleis_rr(W(XD), W(XT))
+
+#define cleis3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        cleis_ld(W(XD), W(MT), W(DT))
+
 
 #define cgtis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0xC2)                                             \
@@ -688,6 +740,15 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x06))
 
+#define cgtis3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        cgtis_rr(W(XD), W(XT))
+
+#define cgtis3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        cgtis_ld(W(XD), W(MT), W(DT))
+
+
 #define cgeis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0xC2)                                             \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
@@ -697,6 +758,14 @@
         EMITB(0x0F) EMITB(0xC2)                                             \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x05))
+
+#define cgeis3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        cgeis_rr(W(XD), W(XT))
+
+#define cgeis3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        cgeis_ld(W(XD), W(MT), W(DT))
 
 #if (RT_128 < 2)
 

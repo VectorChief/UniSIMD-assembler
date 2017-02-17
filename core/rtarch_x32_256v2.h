@@ -598,89 +598,142 @@
 
 #endif /* RT_256 >= 2 */
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define mincs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x5D)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        mincs3rr(W(XG), W(XG), W(XS))
 
 #define mincs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x5D)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        mincs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define mincs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x5D)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define mincs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x5D)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxcs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0x5F)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        maxcs3rr(W(XG), W(XG), W(XS))
 
 #define maxcs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0x5F)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        maxcs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* cmp (G = G ? S) */
+#define maxcs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x5F)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define maxcs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x5F)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqcs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+        ceqcs3rr(W(XG), W(XG), W(XS))
 
 #define ceqcs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x00))
+        ceqcs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqcs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+
+#define ceqcs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x00))
+
 
 #define cnecs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+        cnecs3rr(W(XG), W(XG), W(XS))
 
 #define cnecs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x04))
+        cnecs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cnecs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define cnecs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x04))
+
 
 #define cltcs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+        cltcs3rr(W(XG), W(XG), W(XS))
 
 #define cltcs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x01))
+        cltcs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltcs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+
+#define cltcs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x01))
+
 
 #define clecs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+        clecs3rr(W(XG), W(XG), W(XS))
 
 #define clecs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x02))
+        clecs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clecs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+
+#define clecs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x02))
+
 
 #define cgtcs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x06))
+        cgtcs3rr(W(XG), W(XG), W(XS))
 
 #define cgtcs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x06))
+        cgtcs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtcs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))
+
+#define cgtcs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x06))
+
 
 #define cgecs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x05))
+        cgecs3rr(W(XG), W(XG), W(XS))
 
 #define cgecs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 0, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x05))
+        cgecs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgecs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))
+
+#define cgecs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x05))
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)

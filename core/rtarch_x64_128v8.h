@@ -558,89 +558,142 @@
 
 #endif /* (RT_SIMD_COMPAT_128 == 2) */
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minjs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 1, 1) EMITB(0x5D)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        minjs3rr(W(XG), W(XG), W(XS))
 
 #define minjs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 1, 1) EMITB(0x5D)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        minjs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minjs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 1, 1) EMITB(0x5D)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define minjs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 1, 1) EMITB(0x5D)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxjs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 1, 1) EMITB(0x5F)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        maxjs3rr(W(XG), W(XG), W(XS))
 
 #define maxjs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 1, 1) EMITB(0x5F)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        maxjs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* cmp (G = G ? S) */
+#define maxjs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 1, 1) EMITB(0x5F)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define maxjs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 1, 1) EMITB(0x5F)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqjs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 1, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+        ceqjs3rr(W(XG), W(XG), W(XS))
 
 #define ceqjs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 1, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x00))
+        ceqjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqjs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 1, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+
+#define ceqjs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 1, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x00))
+
 
 #define cnejs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 1, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+        cnejs3rr(W(XG), W(XG), W(XS))
 
 #define cnejs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 1, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x04))
+        cnejs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cnejs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 1, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define cnejs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 1, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x04))
+
 
 #define cltjs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 1, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+        cltjs3rr(W(XG), W(XG), W(XS))
 
 #define cltjs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 1, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x01))
+        cltjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltjs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 1, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+
+#define cltjs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 1, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x01))
+
 
 #define clejs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 1, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+        clejs3rr(W(XG), W(XG), W(XS))
 
 #define clejs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 1, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x02))
+        clejs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clejs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 1, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+
+#define clejs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 1, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x02))
+
 
 #define cgtjs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 1, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x06))
+        cgtjs3rr(W(XG), W(XG), W(XS))
 
 #define cgtjs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 1, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x06))
+        cgtjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtjs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 1, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))
+
+#define cgtjs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 1, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x06))
+
 
 #define cgejs_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 1, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x05))
+        cgejs3rr(W(XG), W(XG), W(XS))
 
 #define cgejs_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 1, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x05))
+        cgejs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgejs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 1, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))
+
+#define cgejs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 1, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x05))
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)

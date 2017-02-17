@@ -676,7 +676,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define mincs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0x5D)                       \
@@ -692,7 +692,15 @@
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
-/* max (G = G > S ? G : S) */
+#define mincs3rr(XD, XS, XT)                                                \
+        movcx_rr(W(XD), W(XS))                                              \
+        mincs_rr(W(XD), W(XT))
+
+#define mincs3ld(XD, XS, MT, DT)                                            \
+        movcx_rr(W(XD), W(XS))                                              \
+        mincs_ld(W(XD), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxcs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0x5F)                       \
@@ -708,7 +716,15 @@
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
-/* cmp (G = G ? S) */
+#define maxcs3rr(XD, XS, XT)                                                \
+        movcx_rr(W(XD), W(XS))                                              \
+        maxcs_rr(W(XD), W(XT))
+
+#define maxcs3ld(XD, XS, MT, DT)                                            \
+        movcx_rr(W(XD), W(XS))                                              \
+        maxcs_ld(W(XD), W(MT), W(DT))
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqcs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -726,6 +742,15 @@
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMITB(0x00))
 
+#define ceqcs3rr(XD, XS, XT)                                                \
+        movcx_rr(W(XD), W(XS))                                              \
+        ceqcs_rr(W(XD), W(XT))
+
+#define ceqcs3ld(XD, XS, MT, DT)                                            \
+        movcx_rr(W(XD), W(XS))                                              \
+        ceqcs_ld(W(XD), W(MT), W(DT))
+
+
 #define cnecs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
@@ -741,6 +766,15 @@
     ADR REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMITB(0x04))
+
+#define cnecs3rr(XD, XS, XT)                                                \
+        movcx_rr(W(XD), W(XS))                                              \
+        cnecs_rr(W(XD), W(XT))
+
+#define cnecs3ld(XD, XS, MT, DT)                                            \
+        movcx_rr(W(XD), W(XS))                                              \
+        cnecs_ld(W(XD), W(MT), W(DT))
+
 
 #define cltcs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -758,6 +792,15 @@
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMITB(0x01))
 
+#define cltcs3rr(XD, XS, XT)                                                \
+        movcx_rr(W(XD), W(XS))                                              \
+        cltcs_rr(W(XD), W(XT))
+
+#define cltcs3ld(XD, XS, MT, DT)                                            \
+        movcx_rr(W(XD), W(XS))                                              \
+        cltcs_ld(W(XD), W(MT), W(DT))
+
+
 #define clecs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
@@ -773,6 +816,15 @@
     ADR REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMITB(0x02))
+
+#define clecs3rr(XD, XS, XT)                                                \
+        movcx_rr(W(XD), W(XS))                                              \
+        clecs_rr(W(XD), W(XT))
+
+#define clecs3ld(XD, XS, MT, DT)                                            \
+        movcx_rr(W(XD), W(XS))                                              \
+        clecs_ld(W(XD), W(MT), W(DT))
+
 
 #define cgtcs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -790,6 +842,15 @@
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMITB(0x06))
 
+#define cgtcs3rr(XD, XS, XT)                                                \
+        movcx_rr(W(XD), W(XS))                                              \
+        cgtcs_rr(W(XD), W(XT))
+
+#define cgtcs3ld(XD, XS, MT, DT)                                            \
+        movcx_rr(W(XD), W(XS))                                              \
+        cgtcs_ld(W(XD), W(MT), W(DT))
+
+
 #define cgecs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
@@ -805,6 +866,14 @@
     ADR REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMITB(0x05))
+
+#define cgecs3rr(XD, XS, XT)                                                \
+        movcx_rr(W(XD), W(XS))                                              \
+        cgecs_rr(W(XD), W(XT))
+
+#define cgecs3ld(XD, XS, MT, DT)                                            \
+        movcx_rr(W(XD), W(XS))                                              \
+        cgecs_ld(W(XD), W(MT), W(DT))
 
 #if (RT_SIMD_COMPAT_256 < 2)
 

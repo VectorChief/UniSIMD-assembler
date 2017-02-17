@@ -545,101 +545,155 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minos_rr(XG, XS)                                                    \
-        EVX(REG(XG), K, 0, 1) EMITB(0x5D)                                   \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        minos3rr(W(XG), W(XG), W(XS))
 
 #define minos_ld(XG, MS, DS)                                                \
-        EVX(REG(XG), K, 0, 1) EMITB(0x5D)                                   \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        minos3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minos3rr(XD, XS, XT)                                                \
+        EVX(REG(XS), K, 0, 1) EMITB(0x5D)                                   \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define minos3ld(XD, XS, MT, DT)                                            \
+        EVX(REG(XS), K, 0, 1) EMITB(0x5D)                                   \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxos_rr(XG, XS)                                                    \
-        EVX(REG(XG), K, 0, 1) EMITB(0x5F)                                   \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        maxos3rr(W(XG), W(XG), W(XS))
 
 #define maxos_ld(XG, MS, DS)                                                \
-        EVX(REG(XG), K, 0, 1) EMITB(0x5F)                                   \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        maxos3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* cmp (G = G ? S) */
+#define maxos3rr(XD, XS, XT)                                                \
+        EVX(REG(XS), K, 0, 1) EMITB(0x5F)                                   \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define maxos3ld(XD, XS, MT, DT)                                            \
+        EVX(REG(XS), K, 0, 1) EMITB(0x5F)                                   \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqos_rr(XG, XS)                                                    \
-        EVX(REG(XG), K, 0, 1) EMITB(0xC2)                                   \
-        MRM(0x01,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x00))                                  \
-        mz1ox_ld(W(XG), Mebp, inf_GPC07)
+        ceqos3rr(W(XG), W(XG), W(XS))
 
 #define ceqos_ld(XG, MS, DS)                                                \
-        EVX(REG(XG), K, 0, 1) EMITB(0xC2)                                   \
-        MRM(0x01,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x00))                                  \
-        mz1ox_ld(W(XG), Mebp, inf_GPC07)
+        ceqos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqos3rr(XD, XS, XT)                                                \
+        EVX(REG(XS), K, 0, 1) EMITB(0xC2)                                   \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))                                  \
+        mz1ox_ld(W(XD), Mebp, inf_GPC07)
+
+#define ceqos3ld(XD, XS, MT, DT)                                            \
+        EVX(REG(XS), K, 0, 1) EMITB(0xC2)                                   \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x00))                                  \
+        mz1ox_ld(W(XD), Mebp, inf_GPC07)
+
 
 #define cneos_rr(XG, XS)                                                    \
-        EVX(REG(XG), K, 0, 1) EMITB(0xC2)                                   \
-        MRM(0x01,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
-        mz1ox_ld(W(XG), Mebp, inf_GPC07)
+        cneos3rr(W(XG), W(XG), W(XS))
 
 #define cneos_ld(XG, MS, DS)                                                \
-        EVX(REG(XG), K, 0, 1) EMITB(0xC2)                                   \
-        MRM(0x01,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x04))                                  \
-        mz1ox_ld(W(XG), Mebp, inf_GPC07)
+        cneos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cneos3rr(XD, XS, XT)                                                \
+        EVX(REG(XS), K, 0, 1) EMITB(0xC2)                                   \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+        mz1ox_ld(W(XD), Mebp, inf_GPC07)
+
+#define cneos3ld(XD, XS, MT, DT)                                            \
+        EVX(REG(XS), K, 0, 1) EMITB(0xC2)                                   \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x04))                                  \
+        mz1ox_ld(W(XD), Mebp, inf_GPC07)
+
 
 #define cltos_rr(XG, XS)                                                    \
-        EVX(REG(XG), K, 0, 1) EMITB(0xC2)                                   \
-        MRM(0x01,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
-        mz1ox_ld(W(XG), Mebp, inf_GPC07)
+        cltos3rr(W(XG), W(XG), W(XS))
 
 #define cltos_ld(XG, MS, DS)                                                \
-        EVX(REG(XG), K, 0, 1) EMITB(0xC2)                                   \
-        MRM(0x01,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x01))                                  \
-        mz1ox_ld(W(XG), Mebp, inf_GPC07)
+        cltos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltos3rr(XD, XS, XT)                                                \
+        EVX(REG(XS), K, 0, 1) EMITB(0xC2)                                   \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
+        mz1ox_ld(W(XD), Mebp, inf_GPC07)
+
+#define cltos3ld(XD, XS, MT, DT)                                            \
+        EVX(REG(XS), K, 0, 1) EMITB(0xC2)                                   \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x01))                                  \
+        mz1ox_ld(W(XD), Mebp, inf_GPC07)
+
 
 #define cleos_rr(XG, XS)                                                    \
-        EVX(REG(XG), K, 0, 1) EMITB(0xC2)                                   \
-        MRM(0x01,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
-        mz1ox_ld(W(XG), Mebp, inf_GPC07)
+        cleos3rr(W(XG), W(XG), W(XS))
 
 #define cleos_ld(XG, MS, DS)                                                \
-        EVX(REG(XG), K, 0, 1) EMITB(0xC2)                                   \
-        MRM(0x01,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x02))                                  \
-        mz1ox_ld(W(XG), Mebp, inf_GPC07)
+        cleos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cleos3rr(XD, XS, XT)                                                \
+        EVX(REG(XS), K, 0, 1) EMITB(0xC2)                                   \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
+        mz1ox_ld(W(XD), Mebp, inf_GPC07)
+
+#define cleos3ld(XD, XS, MT, DT)                                            \
+        EVX(REG(XS), K, 0, 1) EMITB(0xC2)                                   \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x02))                                  \
+        mz1ox_ld(W(XD), Mebp, inf_GPC07)
+
 
 #define cgtos_rr(XG, XS)                                                    \
-        EVX(REG(XG), K, 0, 1) EMITB(0xC2)                                   \
-        MRM(0x01,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x06))                                  \
-        mz1ox_ld(W(XG), Mebp, inf_GPC07)
+        cgtos3rr(W(XG), W(XG), W(XS))
 
 #define cgtos_ld(XG, MS, DS)                                                \
-        EVX(REG(XG), K, 0, 1) EMITB(0xC2)                                   \
-        MRM(0x01,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x06))                                  \
-        mz1ox_ld(W(XG), Mebp, inf_GPC07)
+        cgtos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtos3rr(XD, XS, XT)                                                \
+        EVX(REG(XS), K, 0, 1) EMITB(0xC2)                                   \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))                                  \
+        mz1ox_ld(W(XD), Mebp, inf_GPC07)
+
+#define cgtos3ld(XD, XS, MT, DT)                                            \
+        EVX(REG(XS), K, 0, 1) EMITB(0xC2)                                   \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x06))                                  \
+        mz1ox_ld(W(XD), Mebp, inf_GPC07)
+
 
 #define cgeos_rr(XG, XS)                                                    \
-        EVX(REG(XG), K, 0, 1) EMITB(0xC2)                                   \
-        MRM(0x01,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x05))                                  \
-        mz1ox_ld(W(XG), Mebp, inf_GPC07)
+        cgeos3rr(W(XG), W(XG), W(XS))
 
 #define cgeos_ld(XG, MS, DS)                                                \
-        EVX(REG(XG), K, 0, 1) EMITB(0xC2)                                   \
-        MRM(0x01,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x05))                                  \
-        mz1ox_ld(W(XG), Mebp, inf_GPC07)
+        cgeos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgeos3rr(XD, XS, XT)                                                \
+        EVX(REG(XS), K, 0, 1) EMITB(0xC2)                                   \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))                                  \
+        mz1ox_ld(W(XD), Mebp, inf_GPC07)
+
+#define cgeos3ld(XD, XS, MT, DT)                                            \
+        EVX(REG(XS), K, 0, 1) EMITB(0xC2)                                   \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
+        mz1ox_ld(W(XD), Mebp, inf_GPC07)
+
 
 #define mz1ox_ld(XG, MS, DS) /* not portable, do not use outside */         \
         EZX(0x00,    K, 0, 1) EMITB(0x28)                                   \
