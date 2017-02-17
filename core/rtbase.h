@@ -1012,7 +1012,7 @@ struct rt_SIMD_REGS
 #define fmsos_ld(XG, XS, MT, DT)                                            \
         fmscs_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minos_rr(XG, XS)                                                    \
         mincs_rr(W(XG), W(XS))
@@ -1020,7 +1020,13 @@ struct rt_SIMD_REGS
 #define minos_ld(XG, MS, DS)                                                \
         mincs_ld(W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minos3rr(XD, XS, XT)                                                \
+        mincs3rr(W(XD), W(XS), W(XT))
+
+#define minos3ld(XD, XS, MT, DT)                                            \
+        mincs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxos_rr(XG, XS)                                                    \
         maxcs_rr(W(XG), W(XS))
@@ -1028,7 +1034,13 @@ struct rt_SIMD_REGS
 #define maxos_ld(XG, MS, DS)                                                \
         maxcs_ld(W(XG), W(MS), W(DS))
 
-/* cmp (G = G ? S) */
+#define maxos3rr(XD, XS, XT)                                                \
+        maxcs3rr(W(XD), W(XS), W(XT))
+
+#define maxos3ld(XD, XS, MT, DT)                                            \
+        maxcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqos_rr(XG, XS)                                                    \
         ceqcs_rr(W(XG), W(XS))
@@ -1036,11 +1048,25 @@ struct rt_SIMD_REGS
 #define ceqos_ld(XG, MS, DS)                                                \
         ceqcs_ld(W(XG), W(MS), W(DS))
 
+#define ceqos3rr(XD, XS, XT)                                                \
+        ceqcs3rr(W(XD), W(XS), W(XT))
+
+#define ceqos3ld(XD, XS, MT, DT)                                            \
+        ceqcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cneos_rr(XG, XS)                                                    \
         cnecs_rr(W(XG), W(XS))
 
 #define cneos_ld(XG, MS, DS)                                                \
         cnecs_ld(W(XG), W(MS), W(DS))
+
+#define cneos3rr(XD, XS, XT)                                                \
+        cnecs3rr(W(XD), W(XS), W(XT))
+
+#define cneos3ld(XD, XS, MT, DT)                                            \
+        cnecs3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cltos_rr(XG, XS)                                                    \
         cltcs_rr(W(XG), W(XS))
@@ -1048,11 +1074,25 @@ struct rt_SIMD_REGS
 #define cltos_ld(XG, MS, DS)                                                \
         cltcs_ld(W(XG), W(MS), W(DS))
 
+#define cltos3rr(XD, XS, XT)                                                \
+        cltcs3rr(W(XD), W(XS), W(XT))
+
+#define cltos3ld(XD, XS, MT, DT)                                            \
+        cltcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cleos_rr(XG, XS)                                                    \
         clecs_rr(W(XG), W(XS))
 
 #define cleos_ld(XG, MS, DS)                                                \
         clecs_ld(W(XG), W(MS), W(DS))
+
+#define cleos3rr(XD, XS, XT)                                                \
+        clecs3rr(W(XD), W(XS), W(XT))
+
+#define cleos3ld(XD, XS, MT, DT)                                            \
+        clecs3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cgtos_rr(XG, XS)                                                    \
         cgtcs_rr(W(XG), W(XS))
@@ -1060,11 +1100,24 @@ struct rt_SIMD_REGS
 #define cgtos_ld(XG, MS, DS)                                                \
         cgtcs_ld(W(XG), W(MS), W(DS))
 
+#define cgtos3rr(XD, XS, XT)                                                \
+        cgtcs3rr(W(XD), W(XS), W(XT))
+
+#define cgtos3ld(XD, XS, MT, DT)                                            \
+        cgtcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cgeos_rr(XG, XS)                                                    \
         cgecs_rr(W(XG), W(XS))
 
 #define cgeos_ld(XG, MS, DS)                                                \
         cgecs_ld(W(XG), W(MS), W(DS))
+
+#define cgeos3rr(XD, XS, XT)                                                \
+        cgecs3rr(W(XD), W(XS), W(XT))
+
+#define cgeos3ld(XD, XS, MT, DT)                                            \
+        cgecs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -1614,7 +1667,7 @@ struct rt_SIMD_REGS
 #define fmsos_ld(XG, XS, MT, DT)                                            \
         fmsis_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minos_rr(XG, XS)                                                    \
         minis_rr(W(XG), W(XS))
@@ -1622,7 +1675,13 @@ struct rt_SIMD_REGS
 #define minos_ld(XG, MS, DS)                                                \
         minis_ld(W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minos3rr(XD, XS, XT)                                                \
+        minis3rr(W(XD), W(XS), W(XT))
+
+#define minos3ld(XD, XS, MT, DT)                                            \
+        minis3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxos_rr(XG, XS)                                                    \
         maxis_rr(W(XG), W(XS))
@@ -1630,7 +1689,13 @@ struct rt_SIMD_REGS
 #define maxos_ld(XG, MS, DS)                                                \
         maxis_ld(W(XG), W(MS), W(DS))
 
-/* cmp (G = G ? S) */
+#define maxos3rr(XD, XS, XT)                                                \
+        maxis3rr(W(XD), W(XS), W(XT))
+
+#define maxos3ld(XD, XS, MT, DT)                                            \
+        maxis3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqos_rr(XG, XS)                                                    \
         ceqis_rr(W(XG), W(XS))
@@ -1638,11 +1703,25 @@ struct rt_SIMD_REGS
 #define ceqos_ld(XG, MS, DS)                                                \
         ceqis_ld(W(XG), W(MS), W(DS))
 
+#define ceqos3rr(XD, XS, XT)                                                \
+        ceqis3rr(W(XD), W(XS), W(XT))
+
+#define ceqos3ld(XD, XS, MT, DT)                                            \
+        ceqis3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cneos_rr(XG, XS)                                                    \
         cneis_rr(W(XG), W(XS))
 
 #define cneos_ld(XG, MS, DS)                                                \
         cneis_ld(W(XG), W(MS), W(DS))
+
+#define cneos3rr(XD, XS, XT)                                                \
+        cneis3rr(W(XD), W(XS), W(XT))
+
+#define cneos3ld(XD, XS, MT, DT)                                            \
+        cneis3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cltos_rr(XG, XS)                                                    \
         cltis_rr(W(XG), W(XS))
@@ -1650,11 +1729,25 @@ struct rt_SIMD_REGS
 #define cltos_ld(XG, MS, DS)                                                \
         cltis_ld(W(XG), W(MS), W(DS))
 
+#define cltos3rr(XD, XS, XT)                                                \
+        cltis3rr(W(XD), W(XS), W(XT))
+
+#define cltos3ld(XD, XS, MT, DT)                                            \
+        cltis3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cleos_rr(XG, XS)                                                    \
         cleis_rr(W(XG), W(XS))
 
 #define cleos_ld(XG, MS, DS)                                                \
         cleis_ld(W(XG), W(MS), W(DS))
+
+#define cleos3rr(XD, XS, XT)                                                \
+        cleis3rr(W(XD), W(XS), W(XT))
+
+#define cleos3ld(XD, XS, MT, DT)                                            \
+        cleis3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cgtos_rr(XG, XS)                                                    \
         cgtis_rr(W(XG), W(XS))
@@ -1662,11 +1755,24 @@ struct rt_SIMD_REGS
 #define cgtos_ld(XG, MS, DS)                                                \
         cgtis_ld(W(XG), W(MS), W(DS))
 
+#define cgtos3rr(XD, XS, XT)                                                \
+        cgtis3rr(W(XD), W(XS), W(XT))
+
+#define cgtos3ld(XD, XS, MT, DT)                                            \
+        cgtis3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cgeos_rr(XG, XS)                                                    \
         cgeis_rr(W(XG), W(XS))
 
 #define cgeos_ld(XG, MS, DS)                                                \
         cgeis_ld(W(XG), W(MS), W(DS))
+
+#define cgeos3rr(XD, XS, XT)                                                \
+        cgeis3rr(W(XD), W(XS), W(XT))
+
+#define cgeos3ld(XD, XS, MT, DT)                                            \
+        cgeis3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -2459,7 +2565,7 @@ struct rt_SIMD_REGS
 #define fmsqs_ld(XG, XS, MT, DT)                                            \
         fmsds_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minqs_rr(XG, XS)                                                    \
         minds_rr(W(XG), W(XS))
@@ -2467,7 +2573,13 @@ struct rt_SIMD_REGS
 #define minqs_ld(XG, MS, DS)                                                \
         minds_ld(W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minqs3rr(XD, XS, XT)                                                \
+        minds3rr(W(XD), W(XS), W(XT))
+
+#define minqs3ld(XD, XS, MT, DT)                                            \
+        minds3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxqs_rr(XG, XS)                                                    \
         maxds_rr(W(XG), W(XS))
@@ -2475,7 +2587,13 @@ struct rt_SIMD_REGS
 #define maxqs_ld(XG, MS, DS)                                                \
         maxds_ld(W(XG), W(MS), W(DS))
 
-/* cmp (G = G ? S) */
+#define maxqs3rr(XD, XS, XT)                                                \
+        maxds3rr(W(XD), W(XS), W(XT))
+
+#define maxqs3ld(XD, XS, MT, DT)                                            \
+        maxds3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqqs_rr(XG, XS)                                                    \
         ceqds_rr(W(XG), W(XS))
@@ -2483,11 +2601,25 @@ struct rt_SIMD_REGS
 #define ceqqs_ld(XG, MS, DS)                                                \
         ceqds_ld(W(XG), W(MS), W(DS))
 
+#define ceqqs3rr(XD, XS, XT)                                                \
+        ceqds3rr(W(XD), W(XS), W(XT))
+
+#define ceqqs3ld(XD, XS, MT, DT)                                            \
+        ceqds3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cneqs_rr(XG, XS)                                                    \
         cneds_rr(W(XG), W(XS))
 
 #define cneqs_ld(XG, MS, DS)                                                \
         cneds_ld(W(XG), W(MS), W(DS))
+
+#define cneqs3rr(XD, XS, XT)                                                \
+        cneds3rr(W(XD), W(XS), W(XT))
+
+#define cneqs3ld(XD, XS, MT, DT)                                            \
+        cneds3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cltqs_rr(XG, XS)                                                    \
         cltds_rr(W(XG), W(XS))
@@ -2495,11 +2627,25 @@ struct rt_SIMD_REGS
 #define cltqs_ld(XG, MS, DS)                                                \
         cltds_ld(W(XG), W(MS), W(DS))
 
+#define cltqs3rr(XD, XS, XT)                                                \
+        cltds3rr(W(XD), W(XS), W(XT))
+
+#define cltqs3ld(XD, XS, MT, DT)                                            \
+        cltds3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cleqs_rr(XG, XS)                                                    \
         cleds_rr(W(XG), W(XS))
 
 #define cleqs_ld(XG, MS, DS)                                                \
         cleds_ld(W(XG), W(MS), W(DS))
+
+#define cleqs3rr(XD, XS, XT)                                                \
+        cleds3rr(W(XD), W(XS), W(XT))
+
+#define cleqs3ld(XD, XS, MT, DT)                                            \
+        cleds3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cgtqs_rr(XG, XS)                                                    \
         cgtds_rr(W(XG), W(XS))
@@ -2507,11 +2653,24 @@ struct rt_SIMD_REGS
 #define cgtqs_ld(XG, MS, DS)                                                \
         cgtds_ld(W(XG), W(MS), W(DS))
 
+#define cgtqs3rr(XD, XS, XT)                                                \
+        cgtds3rr(W(XD), W(XS), W(XT))
+
+#define cgtqs3ld(XD, XS, MT, DT)                                            \
+        cgtds3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cgeqs_rr(XG, XS)                                                    \
         cgeds_rr(W(XG), W(XS))
 
 #define cgeqs_ld(XG, MS, DS)                                                \
         cgeds_ld(W(XG), W(MS), W(DS))
+
+#define cgeqs3rr(XD, XS, XT)                                                \
+        cgeds3rr(W(XD), W(XS), W(XT))
+
+#define cgeqs3ld(XD, XS, MT, DT)                                            \
+        cgeds3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -3061,7 +3220,7 @@ struct rt_SIMD_REGS
 #define fmsqs_ld(XG, XS, MT, DT)                                            \
         fmsjs_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minqs_rr(XG, XS)                                                    \
         minjs_rr(W(XG), W(XS))
@@ -3069,7 +3228,13 @@ struct rt_SIMD_REGS
 #define minqs_ld(XG, MS, DS)                                                \
         minjs_ld(W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minqs3rr(XD, XS, XT)                                                \
+        minjs3rr(W(XD), W(XS), W(XT))
+
+#define minqs3ld(XD, XS, MT, DT)                                            \
+        minjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxqs_rr(XG, XS)                                                    \
         maxjs_rr(W(XG), W(XS))
@@ -3077,7 +3242,13 @@ struct rt_SIMD_REGS
 #define maxqs_ld(XG, MS, DS)                                                \
         maxjs_ld(W(XG), W(MS), W(DS))
 
-/* cmp (G = G ? S) */
+#define maxqs3rr(XD, XS, XT)                                                \
+        maxjs3rr(W(XD), W(XS), W(XT))
+
+#define maxqs3ld(XD, XS, MT, DT)                                            \
+        maxjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqqs_rr(XG, XS)                                                    \
         ceqjs_rr(W(XG), W(XS))
@@ -3085,11 +3256,25 @@ struct rt_SIMD_REGS
 #define ceqqs_ld(XG, MS, DS)                                                \
         ceqjs_ld(W(XG), W(MS), W(DS))
 
+#define ceqqs3rr(XD, XS, XT)                                                \
+        ceqjs3rr(W(XD), W(XS), W(XT))
+
+#define ceqqs3ld(XD, XS, MT, DT)                                            \
+        ceqjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cneqs_rr(XG, XS)                                                    \
         cnejs_rr(W(XG), W(XS))
 
 #define cneqs_ld(XG, MS, DS)                                                \
         cnejs_ld(W(XG), W(MS), W(DS))
+
+#define cneqs3rr(XD, XS, XT)                                                \
+        cnejs3rr(W(XD), W(XS), W(XT))
+
+#define cneqs3ld(XD, XS, MT, DT)                                            \
+        cnejs3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cltqs_rr(XG, XS)                                                    \
         cltjs_rr(W(XG), W(XS))
@@ -3097,11 +3282,25 @@ struct rt_SIMD_REGS
 #define cltqs_ld(XG, MS, DS)                                                \
         cltjs_ld(W(XG), W(MS), W(DS))
 
+#define cltqs3rr(XD, XS, XT)                                                \
+        cltjs3rr(W(XD), W(XS), W(XT))
+
+#define cltqs3ld(XD, XS, MT, DT)                                            \
+        cltjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cleqs_rr(XG, XS)                                                    \
         clejs_rr(W(XG), W(XS))
 
 #define cleqs_ld(XG, MS, DS)                                                \
         clejs_ld(W(XG), W(MS), W(DS))
+
+#define cleqs3rr(XD, XS, XT)                                                \
+        clejs3rr(W(XD), W(XS), W(XT))
+
+#define cleqs3ld(XD, XS, MT, DT)                                            \
+        clejs3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cgtqs_rr(XG, XS)                                                    \
         cgtjs_rr(W(XG), W(XS))
@@ -3109,11 +3308,24 @@ struct rt_SIMD_REGS
 #define cgtqs_ld(XG, MS, DS)                                                \
         cgtjs_ld(W(XG), W(MS), W(DS))
 
+#define cgtqs3rr(XD, XS, XT)                                                \
+        cgtjs3rr(W(XD), W(XS), W(XT))
+
+#define cgtqs3ld(XD, XS, MT, DT)                                            \
+        cgtjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cgeqs_rr(XG, XS)                                                    \
         cgejs_rr(W(XG), W(XS))
 
 #define cgeqs_ld(XG, MS, DS)                                                \
         cgejs_ld(W(XG), W(MS), W(DS))
+
+#define cgeqs3rr(XD, XS, XT)                                                \
+        cgejs3rr(W(XD), W(XS), W(XT))
+
+#define cgeqs3ld(XD, XS, MT, DT)                                            \
+        cgejs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -3759,7 +3971,7 @@ struct rt_SIMD_REGS
 #define fmsps_ld(XG, XS, MT, DT)                                            \
         fmsos_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minps_rr(XG, XS)                                                    \
         minos_rr(W(XG), W(XS))
@@ -3767,7 +3979,13 @@ struct rt_SIMD_REGS
 #define minps_ld(XG, MS, DS)                                                \
         minos_ld(W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minps3rr(XD, XS, XT)                                                \
+        minos3rr(W(XD), W(XS), W(XT))
+
+#define minps3ld(XD, XS, MT, DT)                                            \
+        minos3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxps_rr(XG, XS)                                                    \
         maxos_rr(W(XG), W(XS))
@@ -3775,7 +3993,13 @@ struct rt_SIMD_REGS
 #define maxps_ld(XG, MS, DS)                                                \
         maxos_ld(W(XG), W(MS), W(DS))
 
-/* cmp (G = G ? S) */
+#define maxps3rr(XD, XS, XT)                                                \
+        maxos3rr(W(XD), W(XS), W(XT))
+
+#define maxps3ld(XD, XS, MT, DT)                                            \
+        maxos3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqps_rr(XG, XS)                                                    \
         ceqos_rr(W(XG), W(XS))
@@ -3783,11 +4007,25 @@ struct rt_SIMD_REGS
 #define ceqps_ld(XG, MS, DS)                                                \
         ceqos_ld(W(XG), W(MS), W(DS))
 
+#define ceqps3rr(XD, XS, XT)                                                \
+        ceqos3rr(W(XD), W(XS), W(XT))
+
+#define ceqps3ld(XD, XS, MT, DT)                                            \
+        ceqos3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cneps_rr(XG, XS)                                                    \
         cneos_rr(W(XG), W(XS))
 
 #define cneps_ld(XG, MS, DS)                                                \
         cneos_ld(W(XG), W(MS), W(DS))
+
+#define cneps3rr(XD, XS, XT)                                                \
+        cneos3rr(W(XD), W(XS), W(XT))
+
+#define cneps3ld(XD, XS, MT, DT)                                            \
+        cneos3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cltps_rr(XG, XS)                                                    \
         cltos_rr(W(XG), W(XS))
@@ -3795,11 +4033,25 @@ struct rt_SIMD_REGS
 #define cltps_ld(XG, MS, DS)                                                \
         cltos_ld(W(XG), W(MS), W(DS))
 
+#define cltps3rr(XD, XS, XT)                                                \
+        cltos3rr(W(XD), W(XS), W(XT))
+
+#define cltps3ld(XD, XS, MT, DT)                                            \
+        cltos3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cleps_rr(XG, XS)                                                    \
         cleos_rr(W(XG), W(XS))
 
 #define cleps_ld(XG, MS, DS)                                                \
         cleos_ld(W(XG), W(MS), W(DS))
+
+#define cleps3rr(XD, XS, XT)                                                \
+        cleos3rr(W(XD), W(XS), W(XT))
+
+#define cleps3ld(XD, XS, MT, DT)                                            \
+        cleos3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cgtps_rr(XG, XS)                                                    \
         cgtos_rr(W(XG), W(XS))
@@ -3807,11 +4059,24 @@ struct rt_SIMD_REGS
 #define cgtps_ld(XG, MS, DS)                                                \
         cgtos_ld(W(XG), W(MS), W(DS))
 
+#define cgtps3rr(XD, XS, XT)                                                \
+        cgtos3rr(W(XD), W(XS), W(XT))
+
+#define cgtps3ld(XD, XS, MT, DT)                                            \
+        cgtos3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cgeps_rr(XG, XS)                                                    \
         cgeos_rr(W(XG), W(XS))
 
 #define cgeps_ld(XG, MS, DS)                                                \
         cgeos_ld(W(XG), W(MS), W(DS))
+
+#define cgeps3rr(XD, XS, XT)                                                \
+        cgeos3rr(W(XD), W(XS), W(XT))
+
+#define cgeps3ld(XD, XS, MT, DT)                                            \
+        cgeos3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -4222,7 +4487,7 @@ struct rt_SIMD_REGS
 #define fmsfs_ld(XG, XS, MT, DT)                                            \
         fmscs_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minfs_rr(XG, XS)                                                    \
         mincs_rr(W(XG), W(XS))
@@ -4230,7 +4495,13 @@ struct rt_SIMD_REGS
 #define minfs_ld(XG, MS, DS)                                                \
         mincs_ld(W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minfs3rr(XD, XS, XT)                                                \
+        mincs3rr(W(XD), W(XS), W(XT))
+
+#define minfs3ld(XD, XS, MT, DT)                                            \
+        mincs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxfs_rr(XG, XS)                                                    \
         maxcs_rr(W(XG), W(XS))
@@ -4238,7 +4509,13 @@ struct rt_SIMD_REGS
 #define maxfs_ld(XG, MS, DS)                                                \
         maxcs_ld(W(XG), W(MS), W(DS))
 
-/* cmp (G = G ? S) */
+#define maxfs3rr(XD, XS, XT)                                                \
+        maxcs3rr(W(XD), W(XS), W(XT))
+
+#define maxfs3ld(XD, XS, MT, DT)                                            \
+        maxcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqfs_rr(XG, XS)                                                    \
         ceqcs_rr(W(XG), W(XS))
@@ -4246,11 +4523,25 @@ struct rt_SIMD_REGS
 #define ceqfs_ld(XG, MS, DS)                                                \
         ceqcs_ld(W(XG), W(MS), W(DS))
 
+#define ceqfs3rr(XD, XS, XT)                                                \
+        ceqcs3rr(W(XD), W(XS), W(XT))
+
+#define ceqfs3ld(XD, XS, MT, DT)                                            \
+        ceqcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cnefs_rr(XG, XS)                                                    \
         cnecs_rr(W(XG), W(XS))
 
 #define cnefs_ld(XG, MS, DS)                                                \
         cnecs_ld(W(XG), W(MS), W(DS))
+
+#define cnefs3rr(XD, XS, XT)                                                \
+        cnecs3rr(W(XD), W(XS), W(XT))
+
+#define cnefs3ld(XD, XS, MT, DT)                                            \
+        cnecs3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cltfs_rr(XG, XS)                                                    \
         cltcs_rr(W(XG), W(XS))
@@ -4258,11 +4549,25 @@ struct rt_SIMD_REGS
 #define cltfs_ld(XG, MS, DS)                                                \
         cltcs_ld(W(XG), W(MS), W(DS))
 
+#define cltfs3rr(XD, XS, XT)                                                \
+        cltcs3rr(W(XD), W(XS), W(XT))
+
+#define cltfs3ld(XD, XS, MT, DT)                                            \
+        cltcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define clefs_rr(XG, XS)                                                    \
         clecs_rr(W(XG), W(XS))
 
 #define clefs_ld(XG, MS, DS)                                                \
         clecs_ld(W(XG), W(MS), W(DS))
+
+#define clefs3rr(XD, XS, XT)                                                \
+        clecs3rr(W(XD), W(XS), W(XT))
+
+#define clefs3ld(XD, XS, MT, DT)                                            \
+        clecs3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cgtfs_rr(XG, XS)                                                    \
         cgtcs_rr(W(XG), W(XS))
@@ -4270,11 +4575,24 @@ struct rt_SIMD_REGS
 #define cgtfs_ld(XG, MS, DS)                                                \
         cgtcs_ld(W(XG), W(MS), W(DS))
 
+#define cgtfs3rr(XD, XS, XT)                                                \
+        cgtcs3rr(W(XD), W(XS), W(XT))
+
+#define cgtfs3ld(XD, XS, MT, DT)                                            \
+        cgtcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cgefs_rr(XG, XS)                                                    \
         cgecs_rr(W(XG), W(XS))
 
 #define cgefs_ld(XG, MS, DS)                                                \
         cgecs_ld(W(XG), W(MS), W(DS))
+
+#define cgefs3rr(XD, XS, XT)                                                \
+        cgecs3rr(W(XD), W(XS), W(XT))
+
+#define cgefs3ld(XD, XS, MT, DT)                                            \
+        cgecs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -4685,7 +5003,7 @@ struct rt_SIMD_REGS
 #define fmsls_ld(XG, XS, MT, DT)                                            \
         fmsis_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minls_rr(XG, XS)                                                    \
         minis_rr(W(XG), W(XS))
@@ -4693,7 +5011,13 @@ struct rt_SIMD_REGS
 #define minls_ld(XG, MS, DS)                                                \
         minis_ld(W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minls3rr(XD, XS, XT)                                                \
+        minis3rr(W(XD), W(XS), W(XT))
+
+#define minls3ld(XD, XS, MT, DT)                                            \
+        minis3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxls_rr(XG, XS)                                                    \
         maxis_rr(W(XG), W(XS))
@@ -4701,7 +5025,13 @@ struct rt_SIMD_REGS
 #define maxls_ld(XG, MS, DS)                                                \
         maxis_ld(W(XG), W(MS), W(DS))
 
-/* cmp (G = G ? S) */
+#define maxls3rr(XD, XS, XT)                                                \
+        maxis3rr(W(XD), W(XS), W(XT))
+
+#define maxls3ld(XD, XS, MT, DT)                                            \
+        maxis3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqls_rr(XG, XS)                                                    \
         ceqis_rr(W(XG), W(XS))
@@ -4709,11 +5039,25 @@ struct rt_SIMD_REGS
 #define ceqls_ld(XG, MS, DS)                                                \
         ceqis_ld(W(XG), W(MS), W(DS))
 
+#define ceqls3rr(XD, XS, XT)                                                \
+        ceqis3rr(W(XD), W(XS), W(XT))
+
+#define ceqls3ld(XD, XS, MT, DT)                                            \
+        ceqis3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cnels_rr(XG, XS)                                                    \
         cneis_rr(W(XG), W(XS))
 
 #define cnels_ld(XG, MS, DS)                                                \
         cneis_ld(W(XG), W(MS), W(DS))
+
+#define cnels3rr(XD, XS, XT)                                                \
+        cneis3rr(W(XD), W(XS), W(XT))
+
+#define cnels3ld(XD, XS, MT, DT)                                            \
+        cneis3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cltls_rr(XG, XS)                                                    \
         cltis_rr(W(XG), W(XS))
@@ -4721,11 +5065,25 @@ struct rt_SIMD_REGS
 #define cltls_ld(XG, MS, DS)                                                \
         cltis_ld(W(XG), W(MS), W(DS))
 
+#define cltls3rr(XD, XS, XT)                                                \
+        cltis3rr(W(XD), W(XS), W(XT))
+
+#define cltls3ld(XD, XS, MT, DT)                                            \
+        cltis3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define clels_rr(XG, XS)                                                    \
         cleis_rr(W(XG), W(XS))
 
 #define clels_ld(XG, MS, DS)                                                \
         cleis_ld(W(XG), W(MS), W(DS))
+
+#define clels3rr(XD, XS, XT)                                                \
+        cleis3rr(W(XD), W(XS), W(XT))
+
+#define clels3ld(XD, XS, MT, DT)                                            \
+        cleis3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cgtls_rr(XG, XS)                                                    \
         cgtis_rr(W(XG), W(XS))
@@ -4733,11 +5091,24 @@ struct rt_SIMD_REGS
 #define cgtls_ld(XG, MS, DS)                                                \
         cgtis_ld(W(XG), W(MS), W(DS))
 
+#define cgtls3rr(XD, XS, XT)                                                \
+        cgtis3rr(W(XD), W(XS), W(XT))
+
+#define cgtls3ld(XD, XS, MT, DT)                                            \
+        cgtis3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cgels_rr(XG, XS)                                                    \
         cgeis_rr(W(XG), W(XS))
 
 #define cgels_ld(XG, MS, DS)                                                \
         cgeis_ld(W(XG), W(MS), W(DS))
+
+#define cgels3rr(XD, XS, XT)                                                \
+        cgeis3rr(W(XD), W(XS), W(XT))
+
+#define cgels3ld(XD, XS, MT, DT)                                            \
+        cgeis3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -5303,7 +5674,7 @@ struct rt_SIMD_REGS
 #define fmsps_ld(XG, XS, MT, DT)                                            \
         fmsqs_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minps_rr(XG, XS)                                                    \
         minqs_rr(W(XG), W(XS))
@@ -5311,7 +5682,13 @@ struct rt_SIMD_REGS
 #define minps_ld(XG, MS, DS)                                                \
         minqs_ld(W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minps3rr(XD, XS, XT)                                                \
+        minqs3rr(W(XD), W(XS), W(XT))
+
+#define minps3ld(XD, XS, MT, DT)                                            \
+        minqs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxps_rr(XG, XS)                                                    \
         maxqs_rr(W(XG), W(XS))
@@ -5319,7 +5696,13 @@ struct rt_SIMD_REGS
 #define maxps_ld(XG, MS, DS)                                                \
         maxqs_ld(W(XG), W(MS), W(DS))
 
-/* cmp (G = G ? S) */
+#define maxps3rr(XD, XS, XT)                                                \
+        maxqs3rr(W(XD), W(XS), W(XT))
+
+#define maxps3ld(XD, XS, MT, DT)                                            \
+        maxqs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqps_rr(XG, XS)                                                    \
         ceqqs_rr(W(XG), W(XS))
@@ -5327,11 +5710,25 @@ struct rt_SIMD_REGS
 #define ceqps_ld(XG, MS, DS)                                                \
         ceqqs_ld(W(XG), W(MS), W(DS))
 
+#define ceqps3rr(XD, XS, XT)                                                \
+        ceqqs3rr(W(XD), W(XS), W(XT))
+
+#define ceqps3ld(XD, XS, MT, DT)                                            \
+        ceqqs3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cneps_rr(XG, XS)                                                    \
         cneqs_rr(W(XG), W(XS))
 
 #define cneps_ld(XG, MS, DS)                                                \
         cneqs_ld(W(XG), W(MS), W(DS))
+
+#define cneps3rr(XD, XS, XT)                                                \
+        cneqs3rr(W(XD), W(XS), W(XT))
+
+#define cneps3ld(XD, XS, MT, DT)                                            \
+        cneqs3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cltps_rr(XG, XS)                                                    \
         cltqs_rr(W(XG), W(XS))
@@ -5339,11 +5736,25 @@ struct rt_SIMD_REGS
 #define cltps_ld(XG, MS, DS)                                                \
         cltqs_ld(W(XG), W(MS), W(DS))
 
+#define cltps3rr(XD, XS, XT)                                                \
+        cltqs3rr(W(XD), W(XS), W(XT))
+
+#define cltps3ld(XD, XS, MT, DT)                                            \
+        cltqs3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cleps_rr(XG, XS)                                                    \
         cleqs_rr(W(XG), W(XS))
 
 #define cleps_ld(XG, MS, DS)                                                \
         cleqs_ld(W(XG), W(MS), W(DS))
+
+#define cleps3rr(XD, XS, XT)                                                \
+        cleqs3rr(W(XD), W(XS), W(XT))
+
+#define cleps3ld(XD, XS, MT, DT)                                            \
+        cleqs3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cgtps_rr(XG, XS)                                                    \
         cgtqs_rr(W(XG), W(XS))
@@ -5351,11 +5762,24 @@ struct rt_SIMD_REGS
 #define cgtps_ld(XG, MS, DS)                                                \
         cgtqs_ld(W(XG), W(MS), W(DS))
 
+#define cgtps3rr(XD, XS, XT)                                                \
+        cgtqs3rr(W(XD), W(XS), W(XT))
+
+#define cgtps3ld(XD, XS, MT, DT)                                            \
+        cgtqs3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cgeps_rr(XG, XS)                                                    \
         cgeqs_rr(W(XG), W(XS))
 
 #define cgeps_ld(XG, MS, DS)                                                \
         cgeqs_ld(W(XG), W(MS), W(DS))
+
+#define cgeps3rr(XD, XS, XT)                                                \
+        cgeqs3rr(W(XD), W(XS), W(XT))
+
+#define cgeps3ld(XD, XS, MT, DT)                                            \
+        cgeqs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -5766,7 +6190,7 @@ struct rt_SIMD_REGS
 #define fmsfs_ld(XG, XS, MT, DT)                                            \
         fmsds_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minfs_rr(XG, XS)                                                    \
         minds_rr(W(XG), W(XS))
@@ -5774,7 +6198,13 @@ struct rt_SIMD_REGS
 #define minfs_ld(XG, MS, DS)                                                \
         minds_ld(W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minfs3rr(XD, XS, XT)                                                \
+        minds3rr(W(XD), W(XS), W(XT))
+
+#define minfs3ld(XD, XS, MT, DT)                                            \
+        minds3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxfs_rr(XG, XS)                                                    \
         maxds_rr(W(XG), W(XS))
@@ -5782,7 +6212,13 @@ struct rt_SIMD_REGS
 #define maxfs_ld(XG, MS, DS)                                                \
         maxds_ld(W(XG), W(MS), W(DS))
 
-/* cmp (G = G ? S) */
+#define maxfs3rr(XD, XS, XT)                                                \
+        maxds3rr(W(XD), W(XS), W(XT))
+
+#define maxfs3ld(XD, XS, MT, DT)                                            \
+        maxds3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqfs_rr(XG, XS)                                                    \
         ceqds_rr(W(XG), W(XS))
@@ -5790,11 +6226,25 @@ struct rt_SIMD_REGS
 #define ceqfs_ld(XG, MS, DS)                                                \
         ceqds_ld(W(XG), W(MS), W(DS))
 
+#define ceqfs3rr(XD, XS, XT)                                                \
+        ceqds3rr(W(XD), W(XS), W(XT))
+
+#define ceqfs3ld(XD, XS, MT, DT)                                            \
+        ceqds3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cnefs_rr(XG, XS)                                                    \
         cneds_rr(W(XG), W(XS))
 
 #define cnefs_ld(XG, MS, DS)                                                \
         cneds_ld(W(XG), W(MS), W(DS))
+
+#define cnefs3rr(XD, XS, XT)                                                \
+        cneds3rr(W(XD), W(XS), W(XT))
+
+#define cnefs3ld(XD, XS, MT, DT)                                            \
+        cneds3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cltfs_rr(XG, XS)                                                    \
         cltds_rr(W(XG), W(XS))
@@ -5802,11 +6252,25 @@ struct rt_SIMD_REGS
 #define cltfs_ld(XG, MS, DS)                                                \
         cltds_ld(W(XG), W(MS), W(DS))
 
+#define cltfs3rr(XD, XS, XT)                                                \
+        cltds3rr(W(XD), W(XS), W(XT))
+
+#define cltfs3ld(XD, XS, MT, DT)                                            \
+        cltds3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define clefs_rr(XG, XS)                                                    \
         cleds_rr(W(XG), W(XS))
 
 #define clefs_ld(XG, MS, DS)                                                \
         cleds_ld(W(XG), W(MS), W(DS))
+
+#define clefs3rr(XD, XS, XT)                                                \
+        cleds3rr(W(XD), W(XS), W(XT))
+
+#define clefs3ld(XD, XS, MT, DT)                                            \
+        cleds3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cgtfs_rr(XG, XS)                                                    \
         cgtds_rr(W(XG), W(XS))
@@ -5814,11 +6278,24 @@ struct rt_SIMD_REGS
 #define cgtfs_ld(XG, MS, DS)                                                \
         cgtds_ld(W(XG), W(MS), W(DS))
 
+#define cgtfs3rr(XD, XS, XT)                                                \
+        cgtds3rr(W(XD), W(XS), W(XT))
+
+#define cgtfs3ld(XD, XS, MT, DT)                                            \
+        cgtds3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cgefs_rr(XG, XS)                                                    \
         cgeds_rr(W(XG), W(XS))
 
 #define cgefs_ld(XG, MS, DS)                                                \
         cgeds_ld(W(XG), W(MS), W(DS))
+
+#define cgefs3rr(XD, XS, XT)                                                \
+        cgeds3rr(W(XD), W(XS), W(XT))
+
+#define cgefs3ld(XD, XS, MT, DT)                                            \
+        cgeds3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -6229,7 +6706,7 @@ struct rt_SIMD_REGS
 #define fmsls_ld(XG, XS, MT, DT)                                            \
         fmsjs_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minls_rr(XG, XS)                                                    \
         minjs_rr(W(XG), W(XS))
@@ -6237,7 +6714,13 @@ struct rt_SIMD_REGS
 #define minls_ld(XG, MS, DS)                                                \
         minjs_ld(W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minls3rr(XD, XS, XT)                                                \
+        minjs3rr(W(XD), W(XS), W(XT))
+
+#define minls3ld(XD, XS, MT, DT)                                            \
+        minjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxls_rr(XG, XS)                                                    \
         maxjs_rr(W(XG), W(XS))
@@ -6245,7 +6728,13 @@ struct rt_SIMD_REGS
 #define maxls_ld(XG, MS, DS)                                                \
         maxjs_ld(W(XG), W(MS), W(DS))
 
-/* cmp (G = G ? S) */
+#define maxls3rr(XD, XS, XT)                                                \
+        maxjs3rr(W(XD), W(XS), W(XT))
+
+#define maxls3ld(XD, XS, MT, DT)                                            \
+        maxjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqls_rr(XG, XS)                                                    \
         ceqjs_rr(W(XG), W(XS))
@@ -6253,11 +6742,25 @@ struct rt_SIMD_REGS
 #define ceqls_ld(XG, MS, DS)                                                \
         ceqjs_ld(W(XG), W(MS), W(DS))
 
+#define ceqls3rr(XD, XS, XT)                                                \
+        ceqjs3rr(W(XD), W(XS), W(XT))
+
+#define ceqls3ld(XD, XS, MT, DT)                                            \
+        ceqjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cnels_rr(XG, XS)                                                    \
         cnejs_rr(W(XG), W(XS))
 
 #define cnels_ld(XG, MS, DS)                                                \
         cnejs_ld(W(XG), W(MS), W(DS))
+
+#define cnels3rr(XD, XS, XT)                                                \
+        cnejs3rr(W(XD), W(XS), W(XT))
+
+#define cnels3ld(XD, XS, MT, DT)                                            \
+        cnejs3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cltls_rr(XG, XS)                                                    \
         cltjs_rr(W(XG), W(XS))
@@ -6265,11 +6768,25 @@ struct rt_SIMD_REGS
 #define cltls_ld(XG, MS, DS)                                                \
         cltjs_ld(W(XG), W(MS), W(DS))
 
+#define cltls3rr(XD, XS, XT)                                                \
+        cltjs3rr(W(XD), W(XS), W(XT))
+
+#define cltls3ld(XD, XS, MT, DT)                                            \
+        cltjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define clels_rr(XG, XS)                                                    \
         clejs_rr(W(XG), W(XS))
 
 #define clels_ld(XG, MS, DS)                                                \
         clejs_ld(W(XG), W(MS), W(DS))
+
+#define clels3rr(XD, XS, XT)                                                \
+        clejs3rr(W(XD), W(XS), W(XT))
+
+#define clels3ld(XD, XS, MT, DT)                                            \
+        clejs3ld(W(XD), W(XS), W(MT), W(DT))
+
 
 #define cgtls_rr(XG, XS)                                                    \
         cgtjs_rr(W(XG), W(XS))
@@ -6277,11 +6794,24 @@ struct rt_SIMD_REGS
 #define cgtls_ld(XG, MS, DS)                                                \
         cgtjs_ld(W(XG), W(MS), W(DS))
 
+#define cgtls3rr(XD, XS, XT)                                                \
+        cgtjs3rr(W(XD), W(XS), W(XT))
+
+#define cgtls3ld(XD, XS, MT, DT)                                            \
+        cgtjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+
 #define cgels_rr(XG, XS)                                                    \
         cgejs_rr(W(XG), W(XS))
 
 #define cgels_ld(XG, MS, DS)                                                \
         cgejs_ld(W(XG), W(MS), W(DS))
+
+#define cgels3rr(XD, XS, XT)                                                \
+        cgejs3rr(W(XD), W(XS), W(XT))
+
+#define cgels3ld(XD, XS, MT, DT)                                            \
+        cgejs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
