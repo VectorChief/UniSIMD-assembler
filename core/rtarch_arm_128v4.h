@@ -730,85 +730,138 @@
 
 #endif /* RT_128 >= 2 */
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minis_rr(XG, XS)                                                    \
-        EMITW(0xF2200F40 | MXM(REG(XG), REG(XG), REG(XS)))
+        minis3rr(W(XG), W(XG), W(XS))
 
 #define minis_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF2200F40 | MXM(REG(XG), REG(XG), TmmM))
+        minis3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minis3rr(XD, XS, XT)                                                \
+        EMITW(0xF2200F40 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define minis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF2200F40 | MXM(REG(XD), REG(XS), TmmM))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxis_rr(XG, XS)                                                    \
-        EMITW(0xF2000F40 | MXM(REG(XG), REG(XG), REG(XS)))
+        maxis3rr(W(XG), W(XG), W(XS))
 
 #define maxis_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF2000F40 | MXM(REG(XG), REG(XG), TmmM))
+        maxis3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* cmp (G = G ? S) */
+#define maxis3rr(XD, XS, XT)                                                \
+        EMITW(0xF2000F40 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define maxis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF2000F40 | MXM(REG(XD), REG(XS), TmmM))
+
+/* cmp (G = G ? S), (D = S ? T) if (D != S) */
 
 #define ceqis_rr(XG, XS)                                                    \
-        EMITW(0xF2000E40 | MXM(REG(XG), REG(XG), REG(XS)))
+        ceqis3rr(W(XG), W(XG), W(XS))
 
 #define ceqis_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        ceqis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqis3rr(XD, XS, XT)                                                \
+        EMITW(0xF2000E40 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define ceqis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF2000E40 | MXM(REG(XG), REG(XG), TmmM))
+        EMITW(0xF2000E40 | MXM(REG(XD), REG(XS), TmmM))
+
 
 #define cneis_rr(XG, XS)                                                    \
-        EMITW(0xF2000E40 | MXM(REG(XG), REG(XG), REG(XS)))                  \
-        EMITW(0xF3B005C0 | MXM(REG(XG), 0x00,    REG(XG)))
+        cneis3rr(W(XG), W(XG), W(XS))
 
 #define cneis_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        cneis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cneis3rr(XD, XS, XT)                                                \
+        EMITW(0xF2000E40 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0xF3B005C0 | MXM(REG(XD), 0x00,    REG(XS)))
+
+#define cneis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF2000E40 | MXM(REG(XG), REG(XG), TmmM))                     \
-        EMITW(0xF3B005C0 | MXM(REG(XG), 0x00,    REG(XG)))
+        EMITW(0xF2000E40 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0xF3B005C0 | MXM(REG(XD), 0x00,    REG(XS)))
+
 
 #define cltis_rr(XG, XS)                                                    \
-        EMITW(0xF3200E40 | MXM(REG(XG), REG(XS), REG(XG)))
+        cltis3rr(W(XG), W(XG), W(XS))
 
 #define cltis_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        cltis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltis3rr(XD, XS, XT)                                                \
+        EMITW(0xF3200E40 | MXM(REG(XD), REG(XT), REG(XS)))
+
+#define cltis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF3200E40 | MXM(REG(XG), TmmM,    REG(XG)))
+        EMITW(0xF3200E40 | MXM(REG(XD), TmmM,    REG(XS)))
+
 
 #define cleis_rr(XG, XS)                                                    \
-        EMITW(0xF3000E40 | MXM(REG(XG), REG(XS), REG(XG)))
+        cleis3rr(W(XG), W(XG), W(XS))
 
 #define cleis_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        cleis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cleis3rr(XD, XS, XT)                                                \
+        EMITW(0xF3000E40 | MXM(REG(XD), REG(XT), REG(XS)))
+
+#define cleis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF3000E40 | MXM(REG(XG), TmmM,    REG(XG)))
+        EMITW(0xF3000E40 | MXM(REG(XD), TmmM,    REG(XS)))
+
 
 #define cgtis_rr(XG, XS)                                                    \
-        EMITW(0xF3200E40 | MXM(REG(XG), REG(XG), REG(XS)))
+        cgtis3rr(W(XG), W(XG), W(XS))
 
 #define cgtis_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        cgtis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtis3rr(XD, XS, XT)                                                \
+        EMITW(0xF3200E40 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define cgtis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF3200E40 | MXM(REG(XG), REG(XG), TmmM))
+        EMITW(0xF3200E40 | MXM(REG(XD), REG(XS), TmmM))
+
 
 #define cgeis_rr(XG, XS)                                                    \
-        EMITW(0xF3000E40 | MXM(REG(XG), REG(XG), REG(XS)))
+        cgeis3rr(W(XG), W(XG), W(XS))
 
 #define cgeis_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        cgeis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgeis3rr(XD, XS, XT)                                                \
+        EMITW(0xF3000E40 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define cgeis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF3000E40 | MXM(REG(XG), REG(XG), TmmM))
+        EMITW(0xF3000E40 | MXM(REG(XD), REG(XS), TmmM))
 
 /**************************   packed integer (NEON)   *************************/
 
