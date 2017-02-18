@@ -47,6 +47,8 @@
  *  - rtarch_x64_256v8.h   - 64-bit elements, 16 SIMD regs, SSE 128-bit pairs, 8
  *  - rtarch_x32_512v8.h   - 32-bit elements, 16 SIMD regs, AVX 256-bit pairs, 8
  *  - rtarch_x64_512v8.h   - 64-bit elements, 16 SIMD regs, AVX 256-bit pairs, 8
+ *  - rtarch_x32_2K8v8.h   - 32-bit elements, 32 SIMD regs, AVX 512-bit quads, 8
+ *  - rtarch_x64_2K8v8.h   - 64-bit elements, 32 SIMD regs, AVX 512-bit quads, 8
  *  - rtarch_x86.h         - x86 32-bit ISA, 8 BASE regs, 6 + esp, ebp used
  *  - rtarch_x86_128v4.h   - 32-bit elements, 8 SIMD regs, SSE 128-bit, 8 used
  *  - rtarch_x86_256v2.h   - 32-bit elements, 8 SIMD regs, AVX 256-bit, 8 used
@@ -83,6 +85,8 @@
  *  - rtarch_x64_256v2.h   - 64-bit elements, 16 SIMD regs, AVX 256-bit, 16 used
  *  - rtarch_x32_512v2.h   - 32-bit elements, 32 SIMD regs, AVX 512-bit, 16 used
  *  - rtarch_x64_512v2.h   - 64-bit elements, 32 SIMD regs, AVX 512-bit, 16 used
+ *  - rtarch_x32_1K4v2.h   - 32-bit elements, 32 SIMD regs, AVX 512-bit pairs*16
+ *  - rtarch_x64_1K4v2.h   - 64-bit elements, 32 SIMD regs, AVX 512-bit pairs*16
  *
  * Future 32/64-bit BASE
  *    and 32/64-bit SIMD targets:
@@ -296,7 +300,6 @@
 #define RT_SIMD_COMPAT_128_MASTER       1 /* for 128-bit AVX(1,2) - 1,2 (x86) */
 #define RT_SIMD_COMPAT_256_MASTER       2 /* for 256-bit SSE(2,4) - 2,4 (x86) */
 #define RT_SIMD_COMPAT_512_MASTER       1 /* for 512-bit AVX(1,2) - 1,2 (x86) */
-#define RT_SIMD_COMPAT_1K4_MASTER       1 /* for 1K4-bit AVX3.1/2 - 1,2 (x86) */
 #define RT_SIMD_COMPAT_2K8_MASTER       1 /* for 2K8-bit AVX3.1/2 - 1,2 (x86) */
 #define RT_SIMD_COMPAT_FMR_MASTER       0 /* for fm*ps_** rounding mode (x86) */
 #define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and Power */
@@ -318,7 +321,7 @@
 #define RT_SIMD 256
 #elif defined (RT_128) && (RT_128 != 0)
 #define RT_SIMD 128
-#endif /* RT_512, RT_256, RT_128 */
+#endif /* RT_2K8, RT_1K4, RT_512, RT_256, RT_128 */
 
 /*
  * Determine SIMD quad-factor for backend structs (maximal for a given build).
@@ -333,13 +336,13 @@
 #define Q 2
 #elif defined (RT_128) && (RT_128 != 0)
 #define Q 1
-#endif /* RT_512, RT_256, RT_128 */
+#endif /* RT_2K8, RT_1K4, RT_512, RT_256, RT_128 */
 
 /*
  * Determine SIMD properties for a given SIMD target (vector-length-agnostic).
  */
 #if   (RT_SIMD >= 512) && (RT_512 != 0 || RT_1K4 != 0 || RT_2K8 != 0)
-/* RT_SIMD_* definitions come directly from 512/1K4-bit rtarch headers */
+/* RT_SIMD_* definitions come directly from 512/1K4/2K8-bit rtarch headers */
 #elif (RT_SIMD == 256) && (RT_256 != 0)
 #define RT_SIMD_REGS            RT_SIMD_REGS_256
 #define RT_SIMD_ALIGN           RT_SIMD_ALIGN_256
@@ -354,7 +357,7 @@
 #define RT_SIMD_SET64(s, v)     RT_SIMD_SET64_128(s, v)
 #define RT_SIMD_WIDTH32         RT_SIMD_WIDTH32_128
 #define RT_SIMD_SET32(s, v)     RT_SIMD_SET32_128(s, v)
-#endif /* RT_SIMD: 512, 256, 128 */
+#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
 /*
  * SIMD quad-factor (number of 128-bit chunks) for chosen SIMD target.
@@ -973,12 +976,6 @@
 #define RT_SIMD_COMPAT_512      RT_SIMD_COMPAT_512_MASTER
 #endif /* RT_SIMD_COMPAT_512 */
 
-/* RT_SIMD_COMPAT_1K4 distinguishes between 1K4-bit AVX3.1 & .2
- * when RT_1K4=8 SIMD backend is present among build targets */
-#ifndef RT_SIMD_COMPAT_1K4
-#define RT_SIMD_COMPAT_1K4      RT_SIMD_COMPAT_1K4_MASTER
-#endif /* RT_SIMD_COMPAT_1K4 */
-
 /* RT_SIMD_COMPAT_2K8 distinguishes between 2K8-bit AVX3.1 & .2
  * when RT_2K8=8 SIMD backend is present among build targets */
 #ifndef RT_SIMD_COMPAT_2K8
@@ -993,8 +990,8 @@
 
 #if   (RT_SIMD == 2048) && (RT_2K8 >= 8)
 #include "rtarch_x64_2K8v8.h"
-#elif (RT_SIMD == 1024) && (RT_1K4 >= 8)
-#include "rtarch_x64_1K4v8.h"
+#elif (RT_SIMD == 1024) && (RT_1K4 >= 1)
+#include "rtarch_x64_1K4v2.h"
 #elif (RT_SIMD == 512) && (RT_512 >= 8)
 #include "rtarch_x64_512v8.h"
 #elif (RT_SIMD == 512) && (RT_512 >= 1)
@@ -1007,7 +1004,7 @@
 #include "rtarch_x64_128v8.h"
 #elif (RT_SIMD == 128) && (RT_128 >= 1)
 #include "rtarch_x64_128v4.h"
-#endif /* RT_512, RT_256, RT_128 */
+#endif /* RT_2K8, RT_1K4, RT_512, RT_256, RT_128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from

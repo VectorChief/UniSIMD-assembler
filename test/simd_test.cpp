@@ -3720,7 +3720,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
             t_diff = argv[k][0] - '0';
             if (strlen(argv[k]) == 1 && t_diff >= 0 && t_diff <= 9)
             {
-                RT_LOGI("Diff threshold overriden: %d\n", t_diff);
+                RT_LOGI("Diff threshold overridden: %d\n", t_diff);
             }
             else
             {
@@ -3851,7 +3851,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 #if (RT_SIMD == 2048) && (RT_2K8 != 0)
     if ((inf0->ver & (RT_2K8 << 28)) == 0)
     {
-        RT_LOGI("Chosen SIMD target not supported, check build flags\n");
+        RT_LOGI("Chosen SIMD target is not supported, check build flags\n");
         run_level = 0;
     }
     simd = simd == 0 ? (RT_2K8 << 8) | 64 : simd;
@@ -3860,7 +3860,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 #if (RT_SIMD == 1024) && (RT_1K4 != 0)
     if ((inf0->ver & (RT_1K4 << 24)) == 0)
     {
-        RT_LOGI("Chosen SIMD target not supported, check build flags\n");
+        RT_LOGI("Chosen SIMD target is not supported, check build flags\n");
         run_level = 0;
     }
     simd = simd == 0 ? (RT_1K4 << 8) | 32 : simd;
@@ -3869,7 +3869,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 #if (RT_SIMD == 512) && (RT_512 != 0)
     if ((inf0->ver & (RT_512 << 16)) == 0)
     {
-        RT_LOGI("Chosen SIMD target not supported, check build flags\n");
+        RT_LOGI("Chosen SIMD target is not supported, check build flags\n");
         run_level = 0;
     }
     simd = simd == 0 ? (RT_512 << 8) | 16 : simd;
@@ -3878,7 +3878,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 #if (RT_SIMD == 256) && (RT_256 != 0)
     if ((inf0->ver & (RT_256 << 8)) == 0)
     {
-        RT_LOGI("Chosen SIMD target not supported, check build flags\n");
+        RT_LOGI("Chosen SIMD target is not supported, check build flags\n");
         run_level = 0;
     }
     simd = simd == 0 ? (RT_256 << 8) | 8 : simd;
@@ -3887,7 +3887,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 #if (RT_SIMD == 128) && (RT_128 != 0)
     if ((inf0->ver & (RT_128 << 0)) == 0)
     {
-        RT_LOGI("Chosen SIMD target not supported, check build flags\n");
+        RT_LOGI("Chosen SIMD target is not supported, check build flags\n");
         run_level = 0;
     }
     simd = simd == 0 ? (RT_128 << 8) | 4 : simd;

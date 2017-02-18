@@ -56,8 +56,8 @@ simd_test_x32:
 # For 512-bit AVX1 build use (replace): RT_512=8
 # For 512-bit AVX2 build use (replace): RT_512=8 RT_SIMD_COMPAT_512=2
 
-# For 1024-bit AVX3.1 build use (replace): RT_1K4=8
-# For 1024-bit AVX3.2 build use (replace): RT_1K4=8 RT_SIMD_COMPAT_1K4=2
+# For 1024-bit AVX3.1 build use (replace): RT_1K4=1
+# For 1024-bit AVX3.2 build use (replace): RT_1K4=2
 # For 2048-bit AVX3.1 build use (replace): RT_2K8=8
 # For 2048-bit AVX3.2 build use (replace): RT_2K8=8 RT_SIMD_COMPAT_2K8=2
 

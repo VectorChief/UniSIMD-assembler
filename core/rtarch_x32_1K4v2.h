@@ -4,8 +4,8 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_X32_1K4V8_H
-#define RT_RTARCH_X32_1K4V8_H
+#ifndef RT_RTARCH_X32_1K4V2_H
+#define RT_RTARCH_X32_1K4V2_H
 
 #include "rtarch_x64.h"
 
@@ -25,7 +25,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x32_1K4v8.h: Implementation of x86_64 fp32 AVX-512 instruction pairs.
+ * rtarch_x32_1K4v2.h: Implementation of x86_64 fp32 AVX-512 instruction pairs.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -102,7 +102,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if defined (RT_1K4) && (RT_1K4 >= 8)
+#if defined (RT_1K4) && (RT_1K4 != 0)
 
 #ifndef RT_RTARCH_X64_256V2_H
 #undef  RT_256
@@ -183,7 +183,7 @@
         MRM(REG(XS),    0x02, REG(MG))                                      \
         AUX(SIB(MG), EMITW(VZL(DG)), EMPTY)
 
-#if (RT_SIMD_COMPAT_1K4 < 2)
+#if (RT_1K4 < 2)
 
 /* and (G = G & S), (D = S & T) if (D != S) */
 
@@ -291,7 +291,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
-#else /* RT_SIMD_COMPAT_1K4 >= 2 */
+#else /* RT_1K4 >= 2 */
 
 /* and (G = G & S), (D = S & T) if (D != S) */
 
@@ -399,7 +399,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
-#endif /* RT_SIMD_COMPAT_1K4 >= 2 */
+#endif /* RT_1K4 >= 2 */
 
 /* not (G = ~G) */
 
@@ -1310,7 +1310,7 @@
 
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_RTARCH_X32_1K4V8_H */
+#endif /* RT_RTARCH_X32_1K4V2_H */
 
 /******************************************************************************/
 /******************************************************************************/
