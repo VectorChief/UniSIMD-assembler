@@ -3849,48 +3849,48 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     ASM_LEAVE(inf0)
 
 #if (RT_SIMD == 2048) && (RT_2K8 != 0)
-    if ((inf0->ver & (RT_2K8 << 28)) == 0)
+    if ((inf0->ver & (RT_2K8 << 0x1C)) == 0)
     {
         RT_LOGI("Chosen SIMD target is not supported, check build flags\n");
         run_level = 0;
     }
-    simd = simd == 0 ? (RT_2K8 << 8) | 64 : simd;
+    simd = simd == 0 ? (RT_2K8 << 8) | 0x40 : simd;
 #endif /* RT_2K8 */
 
 #if (RT_SIMD == 1024) && (RT_1K4 != 0)
-    if ((inf0->ver & (RT_1K4 << 24)) == 0)
+    if ((inf0->ver & (RT_1K4 << 0x18)) == 0)
     {
         RT_LOGI("Chosen SIMD target is not supported, check build flags\n");
         run_level = 0;
     }
-    simd = simd == 0 ? (RT_1K4 << 8) | 32 : simd;
+    simd = simd == 0 ? (RT_1K4 << 8) | 0x20 : simd;
 #endif /* RT_1K4 */
 
 #if (RT_SIMD == 512) && (RT_512 != 0)
-    if ((inf0->ver & (RT_512 << 16)) == 0)
+    if ((inf0->ver & (RT_512 << 0x10)) == 0)
     {
         RT_LOGI("Chosen SIMD target is not supported, check build flags\n");
         run_level = 0;
     }
-    simd = simd == 0 ? (RT_512 << 8) | 16 : simd;
+    simd = simd == 0 ? (RT_512 << 8) | 0x10 : simd;
 #endif /* RT_512 */
 
 #if (RT_SIMD == 256) && (RT_256 != 0)
-    if ((inf0->ver & (RT_256 << 8)) == 0)
+    if ((inf0->ver & (RT_256 << 0x08)) == 0)
     {
         RT_LOGI("Chosen SIMD target is not supported, check build flags\n");
         run_level = 0;
     }
-    simd = simd == 0 ? (RT_256 << 8) | 8 : simd;
+    simd = simd == 0 ? (RT_256 << 8) | 0x08 : simd;
 #endif /* RT_256 */
 
 #if (RT_SIMD == 128) && (RT_128 != 0)
-    if ((inf0->ver & (RT_128 << 0)) == 0)
+    if ((inf0->ver & (RT_128 << 0x00)) == 0)
     {
         RT_LOGI("Chosen SIMD target is not supported, check build flags\n");
         run_level = 0;
     }
-    simd = simd == 0 ? (RT_128 << 8) | 4 : simd;
+    simd = simd == 0 ? (RT_128 << 8) | 0x04 : simd;
 #endif /* RT_128 */
 
     rt_time time1 = 0;
