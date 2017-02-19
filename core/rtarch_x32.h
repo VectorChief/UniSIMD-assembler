@@ -230,12 +230,14 @@
 
 /* selectors  */
 
-#define RXB(reg, mod, sib)  ((reg) >> 3 & 0x03) /* register-extension-bit */
-#define RMB(reg, mod, sib)  ((reg) >> 3 | 0x02) /* register-extension-bit */
+#define RXB(reg, mod, sib)  ((reg) >> 3 & 0x03) /* full-reg-extension-bit */
+#define RMB(reg, mod, sib)  ((reg) >> 3 | 0x02) /* reg-bank-extension-bit */
 #define REG(reg, mod, sib)  ((reg) >> 0 & 0x07) /* register, lower 3-bits */
-#define REH(reg, mod, sib)  (((reg) & 0x07) + 8) /* register, full 4-bits */
-#define REI(reg, mod, sib)  (((reg) & 0x07) +16) /* register, full 4-bits */
-#define REJ(reg, mod, sib)  (((reg) & 0x07) +24) /* register, full 4-bits */
+#define REH(reg, mod, sib)  (((reg) & 0x07) + 8) /* 2nd 8-reg-bank 4-bits */
+#define REI(reg, mod, sib)  (((reg) & 0x07) +16) /* 3rd 8-reg-bank 5-bits */
+#define REJ(reg, mod, sib)  (((reg) & 0x07) +24) /* 4th 8-reg-bank 5-bits */
+#define REN(reg, mod, sib)  (reg) /* 3rd operand,  full-reg-bank, 4/5-bits */
+#define REM(reg, mod, sib)  (((reg) & 0x0F) +16) /* 2nd 16-reg-bank 5-bits */
 #define MOD(reg, mod, sib)  mod
 #define SIB(reg, mod, sib)  sib
 
@@ -248,9 +250,11 @@
 #define TYP(val, typ, cmd)  typ
 #define CMD(val, typ, cmd)  cmd
 
-/* selector for full register (3rd operand, 4-bits-wide) */
-#define REN(reg, mod, sib)  (reg)
-#define REM(reg, mod, sib)  (((reg) & 0x0F) + 16)
+/* register-bank pass-through selectors */
+
+#define V(reg, mod, sib)   (reg+8), mod, sib
+#define X(reg, mod, sib)  (reg+16), mod, sib
+#define Z(reg, mod, sib)  (reg+24), mod, sib
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -327,9 +331,6 @@
 /* triplet pass-through wrapper */
 
 #define W(p1, p2, p3)       p1,  p2,  p3
-#define V(p1, p2, p3)   (p1+8),  p2,  p3
-#define X(p1, p2, p3)  (p1+16),  p2,  p3
-#define Z(p1, p2, p3)  (p1+24),  p2,  p3
 
 /******************************************************************************/
 /**********************************   X32   ***********************************/
