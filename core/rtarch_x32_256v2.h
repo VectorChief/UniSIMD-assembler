@@ -98,7 +98,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if defined (RT_256) && (RT_256 != 0)
+#if defined (RT_256) && (RT_256 >= 1 && RT_256 < 8)
 
 #ifndef RT_RTARCH_X64_128V8_H
 #undef  RT_128
