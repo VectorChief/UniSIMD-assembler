@@ -1982,7 +1982,9 @@
 
 #if   (RT_SIMD == 512) && (RT_512 != 0)
 #include "rtarch_p64_512v2.h"
-#elif (RT_SIMD == 256) && (RT_256 != 0)
+#elif (RT_SIMD == 256) && (RT_256 >= 8)
+#include "rtarch_p32_256v8.h"
+#elif (RT_SIMD == 256) && (RT_256 >= 1)
 #include "rtarch_p64_256v2.h"
 #elif (RT_SIMD == 128) && (RT_128 >= 2)
 #include "rtarch_p64_128v4.h"
@@ -2018,11 +2020,11 @@
         EMITS(0x3800FFFF | MRM(TIxx, 0x00, 0x00)) /* r25 <- -1 */           \
         EMITS(0x7C0003A6 | MRM(TIxx, 0x08, 0x00)) /* vrsave <- r25 */       \
         EMITS(0x1000038C | MXM(TmmQ, 0x1F, 0x00)) /* v15 <- all-ones */     \
-        movox_ld(Xmm2, Mebp, inf_GPC01_32)        /* v2  <- +1.0f 32-bit */ \
-        movox_ld(Xmm4, Mebp, inf_GPC02_32)        /* v4  <- -0.5f 32-bit */ \
-        movox_ld(Xmm8, Mebp, inf_GPC04_32)        /* v8  <- 0x7FFFFFFF */   \
-        EMITM(0x100004C4 | MXM(TmmR, TmmR, TmmR)) /* v23 <- v23 xor v23 */  \
-        EMITM(0x10000504 | MXM(TmmS, 0x08, 0x08)) /* v24 <- not v8 */       \
+        movix_ld(Xmm2, Mebp, inf_GPC01_32)        /* v2  <- +1.0f 32-bit */ \
+        movix_ld(Xmm4, Mebp, inf_GPC02_32)        /* v4  <- -0.5f 32-bit */ \
+        movix_ld(Xmm8, Mebp, inf_GPC04_32)        /* v8  <- 0x7FFFFFFF */   \
+        EMITM(0x100004C4 | MXM(TmmR, TmmR, TmmR)) /* v24 <- v24 xor v24 */  \
+        EMITM(0x10000504 | MXM(TmmS, 0x08, 0x08)) /* v25 <- not v8 */       \
         EMITM(0x10000484 | MXM(TmmU, 0x02, 0x02)) /* v26 <- v2 */           \
         EMITM(0x10000484 | MXM(TmmV, 0x04, 0x04)) /* v27 <- v4 */           \
         EMITP(0xF0000496 | MXM(TmmQ, 0x02, 0x02)) /* vs15 <- v2 */          \
@@ -2074,11 +2076,11 @@
         EMITS(0x3800FFFF | MRM(TIxx, 0x00, 0x00)) /* r25 <- -1 */           \
         EMITS(0x7C0003A6 | MRM(TIxx, 0x08, 0x00)) /* vrsave <- r25 */       \
         EMITS(0x1000038C | MXM(TmmQ, 0x1F, 0x00)) /* v15 <- all-ones */     \
-        movox_ld(Xmm2, Mebp, inf_GPC01_32)        /* v2  <- +1.0f 32-bit */ \
-        movox_ld(Xmm4, Mebp, inf_GPC02_32)        /* v4  <- -0.5f 32-bit */ \
-        movox_ld(Xmm8, Mebp, inf_GPC04_32)        /* v8  <- 0x7FFFFFFF */   \
-        EMITM(0x100004C4 | MXM(TmmR, TmmR, TmmR)) /* v23 <- v23 xor v23 */  \
-        EMITM(0x10000504 | MXM(TmmS, 0x08, 0x08)) /* v24 <- not v8 */       \
+        movix_ld(Xmm2, Mebp, inf_GPC01_32)        /* v2  <- +1.0f 32-bit */ \
+        movix_ld(Xmm4, Mebp, inf_GPC02_32)        /* v4  <- -0.5f 32-bit */ \
+        movix_ld(Xmm8, Mebp, inf_GPC04_32)        /* v8  <- 0x7FFFFFFF */   \
+        EMITM(0x100004C4 | MXM(TmmR, TmmR, TmmR)) /* v24 <- v24 xor v24 */  \
+        EMITM(0x10000504 | MXM(TmmS, 0x08, 0x08)) /* v25 <- not v8 */       \
         EMITM(0x10000484 | MXM(TmmU, 0x02, 0x02)) /* v26 <- v2 */           \
         EMITM(0x10000484 | MXM(TmmV, 0x04, 0x04)) /* v27 <- v4 */           \
         EMITP(0xF0000496 | MXM(TmmQ, 0x02, 0x02)) /* vs15 <- v2 */          \
@@ -2105,15 +2107,15 @@
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
 #define sregs_la()
-#define movox_ld(XD, MS, DS)
+#define movix_ld(XD, MS, DS)
 #define EMITS(w) /* EMPTY */
 #define EMITM(w) /* EMPTY */
 #define EMITP(w) /* EMPTY */
-#elif (RT_128 >= 2) || (RT_256 != 0) || (RT_512 != 0)
+#elif (RT_128 >= 2) || (RT_256 != 0 && RT_256 < 8) || (RT_512 != 0)
 #define EMITS(w)    EMITW(w)
 #define EMITM(w) /* EMPTY */
 #define EMITP(w)    EMITW(w)
-#else  /* RT_128 < 2 */
+#else  /* RT_128 < 2, RT_256 >= 8 */
 #define EMITS(w)    EMITW(w)
 #define EMITM(w)    EMITW(w)
 #define EMITP(w) /* EMPTY */

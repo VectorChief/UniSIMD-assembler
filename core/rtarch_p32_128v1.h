@@ -135,8 +135,8 @@
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
-#define TmmR    0x17  /* v23, VMX only, Rounding Mode */
-#define TmmS    0x18  /* v24, VMX only, sign-mask 32-bit */
+#define TmmR    0x18  /* v24, VMX only, Rounding Mode */
+#define TmmS    0x19  /* v25, VMX only, sign-mask 32-bit */
 #define TmmT    0x1E  /* v30, VMX only */
 #define TmmU    0x1A  /* v26, VMX only, +1.0 32-bit */
 #define TmmV    0x1B  /* v27, VMX only, -0.5 32-bit */
@@ -1569,6 +1569,12 @@
         EMITW(0xC8000000 | MXM(TmmE,    Teax,    0x00))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITW(0xC8000000 | MXM(TmmF,    Teax,    0x00))
+
+#ifndef RT_RTARCH_P32_256V8_H
+#undef  RT_256
+#define RT_256  8
+#include "rtarch_p32_256v8.h"
+#endif /* RT_RTARCH_P32_256V8_H */
 
 #endif /* RT_128 */
 
