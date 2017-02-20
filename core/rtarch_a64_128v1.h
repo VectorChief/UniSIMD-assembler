@@ -498,6 +498,21 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x6E60E400 | MXM(REG(XD), REG(XS), TmmM))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define RT_SIMD_MASK_NONE64_128     0x00    /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL64_128     0x04    /*  all satisfy the condition */
+
+#define mkjjx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        EMITW(0x4EB1B800 | MXM(TmmM,    REG(XS), 0x00))                     \
+        EMITW(0x0E043C00 | MXM(Teax,    TmmM,    0x00))                     \
+        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask##64_128))                     \
+        jezxx_lb(lb)
+
 /*************   packed double-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -685,21 +700,6 @@
         EMITW(0x4EE04400 | MXM(REG(XG), REG(XG), TmmM))
 
 /**************************   helper macros (NEON)   **************************/
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define RT_SIMD_MASK_NONE64_128     0x00    /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL64_128     0x04    /*  all satisfy the condition */
-
-#define mkjjx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        EMITW(0x4EB1B800 | MXM(TmmM,    REG(XS), 0x00))                     \
-        EMITW(0x0E043C00 | MXM(Teax,    TmmM,    0x00))                     \
-        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask##64_128))                     \
-        jezxx_lb(lb)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)

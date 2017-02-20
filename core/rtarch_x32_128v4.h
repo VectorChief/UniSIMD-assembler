@@ -790,6 +790,21 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
         movix_rr(W(XD), W(XS))                                              \
         cgeis_ld(W(XD), W(MT), W(DT))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define RT_SIMD_MASK_NONE32_128    0x00     /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL32_128    0x0F     /*  all satisfy the condition */
+
+#define mkjix_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        REX(0,       RXB(XS)) EMITB(0x0F) EMITB(0x50)                       \
+        MRM(0x00,    MOD(XS), REG(XS))                                      \
+        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##32_128))                     \
+        jeqxx_lb(lb)
+
 /*************   packed single-precision floating-point convert   *************/
 
 #if (RT_128 < 2)
@@ -1395,21 +1410,6 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
         movix_ld(W(XG), Mebp, inf_SCR01(0))
 
 /**************************   helper macros (SSE1)   **************************/
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define RT_SIMD_MASK_NONE32_128    0x00     /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL32_128    0x0F     /*  all satisfy the condition */
-
-#define mkjix_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        REX(0,       RXB(XS)) EMITB(0x0F) EMITB(0x50)                       \
-        MRM(0x00,    MOD(XS), REG(XS))                                      \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##32_128))                     \
-        jeqxx_lb(lb)
 
 /* simd mode
  * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),

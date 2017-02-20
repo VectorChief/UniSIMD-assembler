@@ -865,6 +865,22 @@
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3000E40 | MXM(REG(XD), REG(XS), TmmM))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define RT_SIMD_MASK_NONE32_128     0x00    /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL32_128     0x01    /*  all satisfy the condition */
+
+#define mkjix_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        EMITW(0xF3B60200 | MXM(TmmM+0,  0x00,    REG(XS)))                  \
+        EMITW(0xF3B20200 | MXM(TmmM+0,  0x00,    TmmM))                     \
+        EMITW(0xEE100B10 | MXM(Teax,    TmmM+0,  0x00))                     \
+        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask##32_128))                     \
+        jezxx_lb(lb)
+
 /*************   packed single-precision floating-point convert   *************/
 
 #if (RT_128 < 4) /* ASIMDv4 is used here for ARMv8:AArch32 processors */
@@ -1161,22 +1177,6 @@
         EMITW(0xF2200440 | MXM(REG(XG), TmmM,    REG(XG)))
 
 /**************************   helper macros (NEON)   **************************/
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define RT_SIMD_MASK_NONE32_128     0x00    /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL32_128     0x01    /*  all satisfy the condition */
-
-#define mkjix_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        EMITW(0xF3B60200 | MXM(TmmM+0,  0x00,    REG(XS)))                  \
-        EMITW(0xF3B20200 | MXM(TmmM+0,  0x00,    TmmM))                     \
-        EMITW(0xEE100B10 | MXM(Teax,    TmmM+0,  0x00))                     \
-        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask##32_128))                     \
-        jezxx_lb(lb)
 
 /* simd mode
  * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),

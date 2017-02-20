@@ -711,6 +711,21 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movjx_rr(W(XD), W(XS))                                              \
         cgejs_ld(W(XD), W(MT), W(DT))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define RT_SIMD_MASK_NONE64_128    0x00     /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL64_128    0x0F     /*  all satisfy the condition */
+
+#define mkjjx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        REX(0,       RXB(XS)) EMITB(0x0F) EMITB(0x50)                       \
+        MRM(0x00,    MOD(XS), REG(XS))                                      \
+        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##64_128))                     \
+        jeqxx_lb(lb)
+
 /*************   packed double-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -1040,21 +1055,6 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         movjx_ld(W(XG), Mebp, inf_SCR01(0))
 
 /**************************   helper macros (SSE2)   **************************/
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define RT_SIMD_MASK_NONE64_128    0x00     /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL64_128    0x0F     /*  all satisfy the condition */
-
-#define mkjjx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        REX(0,       RXB(XS)) EMITB(0x0F) EMITB(0x50)                       \
-        MRM(0x00,    MOD(XS), REG(XS))                                      \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##64_128))                     \
-        jeqxx_lb(lb)
 
 #if (RT_128 < 4)
 

@@ -666,6 +666,24 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define RT_SIMD_MASK_NONE64_512    0x0000   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL64_512    0xFFFF   /*  all satisfy the condition */
+
+/* #define mk1wx_rx(RD)                    (defined in 32_512-bit header) */
+/* #define ck1ox_rm(XS, MT, DT)            (defined in 32_512-bit header) */
+
+#define mkjqx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        ck1ox_rm(W(XS), Mebp, inf_GPC07)                                    \
+        mk1wx_rx(Reax)                                                      \
+        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##64_512))                     \
+        jeqxx_lb(lb)
+
 /*************   packed double-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -981,24 +999,6 @@
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 /**************************   helper macros (AVX3)   **************************/
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define RT_SIMD_MASK_NONE64_512    0x0000   /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL64_512    0xFFFF   /*  all satisfy the condition */
-
-/* #define mk1wx_rx(RD)                    (defined in 32_512-bit header) */
-/* #define ck1ox_rm(XS, MT, DT)            (defined in 32_512-bit header) */
-
-#define mkjqx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        ck1ox_rm(W(XS), Mebp, inf_GPC07)                                    \
-        mk1wx_rx(Reax)                                                      \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##64_512))                     \
-        jeqxx_lb(lb)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)

@@ -582,6 +582,21 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x6E20E400 | MXM(REG(XD), REG(XS), TmmM))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define RT_SIMD_MASK_NONE32_128     0x00    /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL32_128     0x04    /*  all satisfy the condition */
+
+#define mkjix_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        EMITW(0x4EB1B800 | MXM(TmmM,    REG(XS), 0x00))                     \
+        EMITW(0x0E043C00 | MXM(Teax,    TmmM,    0x00))                     \
+        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask##32_128))                     \
+        jezxx_lb(lb)
+
 /*************   packed single-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -769,21 +784,6 @@
         EMITW(0x4EA04400 | MXM(REG(XG), REG(XG), TmmM))
 
 /**************************   helper macros (NEON)   **************************/
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define RT_SIMD_MASK_NONE32_128     0x00    /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL32_128     0x04    /*  all satisfy the condition */
-
-#define mkjix_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        EMITW(0x4EB1B800 | MXM(TmmM,    REG(XS), 0x00))                     \
-        EMITW(0x0E043C00 | MXM(Teax,    TmmM,    0x00))                     \
-        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask##32_128))                     \
-        jezxx_lb(lb)
 
 /* simd mode
  * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),

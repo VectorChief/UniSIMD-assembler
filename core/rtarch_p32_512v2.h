@@ -952,6 +952,38 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000029A | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define RT_SIMD_MASK_NONE32_512  MN32_512   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL32_512  MF32_512   /*  all satisfy the condition */
+
+/* #define S0(mask)    S1(mask)            (defined in 32_128-bit header) */
+/* #define S1(mask)    S##mask             (defined in 32_128-bit header) */
+
+#define SMN32_512(xs, lb) /* not portable, do not use outside */            \
+        EMITW(0xF0000497 | MXM(TmmM, xs,  xs+16))                           \
+        EMITW(0xF0000491 | MXM(TmmQ, xs,  xs+16))                           \
+        EMITW(0xF0000497 | MXM(TmmM, TmmM, TmmQ))                           \
+        EMITW(0x1000038C | MXM(TmmQ, 0x1F, 0x00))                           \
+        EMITW(0x10000486 | MXM(TmmM, TmmM, TmmQ))                           \
+        ASM_BEG ASM_OP2(beq, cr6, lb) ASM_END
+
+#define SMF32_512(xs, lb) /* not portable, do not use outside */            \
+        EMITW(0xF0000417 | MXM(TmmM, xs,  xs+16))                           \
+        EMITW(0xF0000411 | MXM(TmmQ, xs,  xs+16))                           \
+        EMITW(0xF0000417 | MXM(TmmM, TmmM, TmmQ))                           \
+        EMITW(0x1000038C | MXM(TmmQ, 0x1F, 0x00))                           \
+        EMITW(0x10000486 | MXM(TmmM, TmmM, TmmQ))                           \
+        ASM_BEG ASM_OP2(blt, cr6, lb) ASM_END
+
+#define mkjox_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        AUW(EMPTY, EMPTY, EMPTY, REG(XS), lb,                               \
+        S0(RT_SIMD_MASK_##mask##32_512), EMPTY2)
+
 /*************   packed single-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -1446,38 +1478,6 @@
         EMITW(0xF0000496 | MXM(RYG(XG), TmmQ,    TmmQ))
 
 /**************************   helper macros (SIMD)   **************************/
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define RT_SIMD_MASK_NONE32_512  MN32_512   /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL32_512  MF32_512   /*  all satisfy the condition */
-
-/* #define S0(mask)    S1(mask)            (defined in 32_128-bit header) */
-/* #define S1(mask)    S##mask             (defined in 32_128-bit header) */
-
-#define SMN32_512(xs, lb) /* not portable, do not use outside */            \
-        EMITW(0xF0000497 | MXM(TmmM, xs,  xs+16))                           \
-        EMITW(0xF0000491 | MXM(TmmQ, xs,  xs+16))                           \
-        EMITW(0xF0000497 | MXM(TmmM, TmmM, TmmQ))                           \
-        EMITW(0x1000038C | MXM(TmmQ, 0x1F, 0x00))                           \
-        EMITW(0x10000486 | MXM(TmmM, TmmM, TmmQ))                           \
-        ASM_BEG ASM_OP2(beq, cr6, lb) ASM_END
-
-#define SMF32_512(xs, lb) /* not portable, do not use outside */            \
-        EMITW(0xF0000417 | MXM(TmmM, xs,  xs+16))                           \
-        EMITW(0xF0000411 | MXM(TmmQ, xs,  xs+16))                           \
-        EMITW(0xF0000417 | MXM(TmmM, TmmM, TmmQ))                           \
-        EMITW(0x1000038C | MXM(TmmQ, 0x1F, 0x00))                           \
-        EMITW(0x10000486 | MXM(TmmM, TmmM, TmmQ))                           \
-        ASM_BEG ASM_OP2(blt, cr6, lb) ASM_END
-
-#define mkjox_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        AUW(EMPTY, EMPTY, EMPTY, REG(XS), lb,                               \
-        S0(RT_SIMD_MASK_##mask##32_512), EMPTY2)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)

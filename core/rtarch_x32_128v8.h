@@ -688,6 +688,21 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x05))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define RT_SIMD_MASK_NONE32_128    0x00     /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL32_128    0x0F     /*  all satisfy the condition */
+
+#define mkjix_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        VEX(0,       RXB(XS),    0x00, 0, 0, 1) EMITB(0x50)                 \
+        MRM(0x00,    MOD(XS), REG(XS))                                      \
+        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##32_128))                     \
+        jeqxx_lb(lb)
+
 /*************   packed single-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -990,21 +1005,6 @@
 #endif /* (RT_SIMD_COMPAT_128 == 2) */
 
 /**************************   helper macros (AVX1)   **************************/
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define RT_SIMD_MASK_NONE32_128    0x00     /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL32_128    0x0F     /*  all satisfy the condition */
-
-#define mkjix_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        VEX(0,       RXB(XS),    0x00, 0, 0, 1) EMITB(0x50)                 \
-        MRM(0x00,    MOD(XS), REG(XS))                                      \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##32_128))                     \
-        jeqxx_lb(lb)
 
 /* simd mode
  * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),

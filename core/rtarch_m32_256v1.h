@@ -609,6 +609,30 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x7980001A | MXM(RYG(XD), TmmM,    RYG(XS)))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define RT_SIMD_MASK_NONE32_256  MN32_256   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL32_256  MF32_256   /*  all satisfy the condition */
+
+/* #define S0(mask)    S1(mask)            (defined in 32_128-bit header) */
+/* #define S1(mask)    S##mask             (defined in 32_128-bit header) */
+
+#define SMN32_256(xs, lb) /* not portable, do not use outside */            \
+        EMITW(0x7820001E | MXM(TmmM, xs, xs+16))                            \
+        ASM_BEG ASM_OP2( bz.v, $w31, lb) ASM_END
+
+#define SMF32_256(xs, lb) /* not portable, do not use outside */            \
+        EMITW(0x7800001E | MXM(TmmM, xs, xs+16))                            \
+        ASM_BEG ASM_OP2(bnz.w, $w31, lb) ASM_END
+
+#define mkjcx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        AUW(EMPTY, EMPTY, EMPTY, REG(XS), lb,                               \
+        S0(RT_SIMD_MASK_##mask##32_256), EMPTY2)
+
 /*************   packed single-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -825,30 +849,6 @@
         EMITW(0x78C0000D | MXM(RYG(XG), RYG(XG), TmmM))
 
 /**************************   helper macros (SIMD)   **************************/
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define RT_SIMD_MASK_NONE32_256  MN32_256   /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL32_256  MF32_256   /*  all satisfy the condition */
-
-/* #define S0(mask)    S1(mask)            (defined in 32_128-bit header) */
-/* #define S1(mask)    S##mask             (defined in 32_128-bit header) */
-
-#define SMN32_256(xs, lb) /* not portable, do not use outside */            \
-        EMITW(0x7820001E | MXM(TmmM, xs, xs+16))                            \
-        ASM_BEG ASM_OP2( bz.v, $w31, lb) ASM_END
-
-#define SMF32_256(xs, lb) /* not portable, do not use outside */            \
-        EMITW(0x7800001E | MXM(TmmM, xs, xs+16))                            \
-        ASM_BEG ASM_OP2(bnz.w, $w31, lb) ASM_END
-
-#define mkjcx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        AUW(EMPTY, EMPTY, EMPTY, REG(XS), lb,                               \
-        S0(RT_SIMD_MASK_##mask##32_256), EMPTY2)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)

@@ -1125,6 +1125,15 @@ struct rt_SIMD_REGS
 #define cgeos3ld(XD, XS, MT, DT)                                            \
         cgecs3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjox_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjcx_rx(W(XS), mask, lb)
+
 /*************   packed single-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -1264,15 +1273,6 @@ struct rt_SIMD_REGS
 
 #define svron_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrcn_ld(W(XG), W(MS), W(DS))
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define mkjox_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        mkjcx_rx(W(XS), mask, lb)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -1790,6 +1790,15 @@ struct rt_SIMD_REGS
 #define cgeos3ld(XD, XS, MT, DT)                                            \
         cgeis3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjox_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjix_rx(W(XS), mask, lb)
+
 /*************   packed single-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -1929,15 +1938,6 @@ struct rt_SIMD_REGS
 
 #define svron_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrin_ld(W(XG), W(MS), W(DS))
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define mkjox_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        mkjix_rx(W(XS), mask, lb)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -2698,6 +2698,15 @@ struct rt_SIMD_REGS
 #define cgeqs3ld(XD, XS, MT, DT)                                            \
         cgeds3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjqx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjdx_rx(W(XS), mask, lb)
+
 /*************   packed double-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -2837,15 +2846,6 @@ struct rt_SIMD_REGS
 
 #define svrqn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrdn_ld(W(XG), W(MS), W(DS))
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define mkjqx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        mkjdx_rx(W(XS), mask, lb)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -3363,6 +3363,15 @@ struct rt_SIMD_REGS
 #define cgeqs3ld(XD, XS, MT, DT)                                            \
         cgejs3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjqx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjjx_rx(W(XS), mask, lb)
+
 /*************   packed double-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -3502,15 +3511,6 @@ struct rt_SIMD_REGS
 
 #define svrqn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrjn_ld(W(XG), W(MS), W(DS))
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define mkjqx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        mkjjx_rx(W(XS), mask, lb)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -4124,6 +4124,15 @@ struct rt_SIMD_REGS
 #define cgeps3ld(XD, XS, MT, DT)                                            \
         cgeos3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjpx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjox_rx(W(XS), mask, lb)
+
 /*************   packed single-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -4263,15 +4272,6 @@ struct rt_SIMD_REGS
 
 #define svrpn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svron_ld(W(XG), W(MS), W(DS))
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define mkjpx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        mkjox_rx(W(XS), mask, lb)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -4650,6 +4650,15 @@ struct rt_SIMD_REGS
 #define cgefs3ld(XD, XS, MT, DT)                                            \
         cgecs3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjfx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjcx_rx(W(XS), mask, lb)
+
 /*************   packed single-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -4789,15 +4798,6 @@ struct rt_SIMD_REGS
 
 #define svrfn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrcn_ld(W(XG), W(MS), W(DS))
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define mkjfx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        mkjcx_rx(W(XS), mask, lb)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -5176,6 +5176,15 @@ struct rt_SIMD_REGS
 #define cgels3ld(XD, XS, MT, DT)                                            \
         cgeis3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjlx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjix_rx(W(XS), mask, lb)
+
 /*************   packed single-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -5315,15 +5324,6 @@ struct rt_SIMD_REGS
 
 #define svrln_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrin_ld(W(XG), W(MS), W(DS))
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define mkjlx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        mkjix_rx(W(XS), mask, lb)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -5863,6 +5863,15 @@ struct rt_SIMD_REGS
 #define cgeps3ld(XD, XS, MT, DT)                                            \
         cgeqs3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjpx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjqx_rx(W(XS), mask, lb)
+
 /*************   packed double-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -6002,15 +6011,6 @@ struct rt_SIMD_REGS
 
 #define svrpn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrqn_ld(W(XG), W(MS), W(DS))
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define mkjpx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        mkjqx_rx(W(XS), mask, lb)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -6389,6 +6389,15 @@ struct rt_SIMD_REGS
 #define cgefs3ld(XD, XS, MT, DT)                                            \
         cgeds3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjfx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjdx_rx(W(XS), mask, lb)
+
 /*************   packed double-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -6528,15 +6537,6 @@ struct rt_SIMD_REGS
 
 #define svrfn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrdn_ld(W(XG), W(MS), W(DS))
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define mkjfx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        mkjdx_rx(W(XS), mask, lb)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -6915,6 +6915,15 @@ struct rt_SIMD_REGS
 #define cgels3ld(XD, XS, MT, DT)                                            \
         cgejs3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define mkjlx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjjx_rx(W(XS), mask, lb)
+
 /*************   packed double-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -7054,15 +7063,6 @@ struct rt_SIMD_REGS
 
 #define svrln_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrjn_ld(W(XG), W(MS), W(DS))
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define mkjlx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        mkjjx_rx(W(XS), mask, lb)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)

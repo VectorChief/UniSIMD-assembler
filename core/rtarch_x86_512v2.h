@@ -702,6 +702,30 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define RT_SIMD_MASK_NONE32_512    0x0000   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL32_512    0xFFFF   /*  all satisfy the condition */
+
+#define mk1wx_rx(RD)         /* not portable, do not use outside */         \
+        V2X(0x00,    0, 0) EMITB(0x93)                                      \
+        MRM(REG(RD),    0x03,    0x01)
+
+#define ck1ox_rm(XS, MT, DT) /* not portable, do not use outside */         \
+        EVX(REG(XS), K, 1, 1) EMITB(0x76)                                   \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+#define mkjox_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        ck1ox_rm(W(XS), Mebp, inf_GPC07)                                    \
+        mk1wx_rx(Reax)                                                      \
+        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##32_512))                     \
+        jeqxx_lb(lb)
+
 /*************   packed single-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -893,30 +917,6 @@
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 /**************************   helper macros (AVX3)   **************************/
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define RT_SIMD_MASK_NONE32_512    0x0000   /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL32_512    0xFFFF   /*  all satisfy the condition */
-
-#define mk1wx_rx(RD)         /* not portable, do not use outside */         \
-        V2X(0x00,    0, 0) EMITB(0x93)                                      \
-        MRM(REG(RD),    0x03,    0x01)
-
-#define ck1ox_rm(XS, MT, DT) /* not portable, do not use outside */         \
-        EVX(REG(XS), K, 1, 1) EMITB(0x76)                                   \
-        MRM(0x01,    MOD(MT), REG(MT))                                      \
-        AUX(SIB(MT), CMD(DT), EMPTY)
-
-#define mkjox_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        ck1ox_rm(W(XS), Mebp, inf_GPC07)                                    \
-        mk1wx_rx(Reax)                                                      \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##32_512))                     \
-        jeqxx_lb(lb)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)

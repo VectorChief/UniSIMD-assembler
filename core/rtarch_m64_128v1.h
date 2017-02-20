@@ -500,6 +500,28 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x79A0001A | MXM(REG(XD), TmmM,    REG(XS)))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define RT_SIMD_MASK_NONE64_128  MN64_128   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL64_128  MF64_128   /*  all satisfy the condition */
+
+/* #define S0(mask)    S1(mask)            (defined in 32_128-bit header) */
+/* #define S1(mask)    S##mask             (defined in 32_128-bit header) */
+
+#define SMN64_128(xs, lb) /* not portable, do not use outside */            \
+        ASM_BEG ASM_OP2( bz.v, xs, lb) ASM_END
+
+#define SMF64_128(xs, lb) /* not portable, do not use outside */            \
+        ASM_BEG ASM_OP2(bnz.w, xs, lb) ASM_END
+
+#define mkjjx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        AUW(EMPTY, EMPTY, EMPTY, MOD(XS), lb,                               \
+        S0(RT_SIMD_MASK_##mask##64_128), EMPTY2)
+
 /*************   packed double-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -683,28 +705,6 @@
         EMITW(0x78E0000D | MXM(REG(XG), REG(XG), TmmM))
 
 /**************************   helper macros (SIMD)   **************************/
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define RT_SIMD_MASK_NONE64_128  MN64_128   /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL64_128  MF64_128   /*  all satisfy the condition */
-
-/* #define S0(mask)    S1(mask)            (defined in 32_128-bit header) */
-/* #define S1(mask)    S##mask             (defined in 32_128-bit header) */
-
-#define SMN64_128(xs, lb) /* not portable, do not use outside */            \
-        ASM_BEG ASM_OP2( bz.v, xs, lb) ASM_END
-
-#define SMF64_128(xs, lb) /* not portable, do not use outside */            \
-        ASM_BEG ASM_OP2(bnz.w, xs, lb) ASM_END
-
-#define mkjjx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        AUW(EMPTY, EMPTY, EMPTY, MOD(XS), lb,                               \
-        S0(RT_SIMD_MASK_##mask##64_128), EMPTY2)
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)

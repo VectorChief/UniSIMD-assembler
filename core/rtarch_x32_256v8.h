@@ -877,6 +877,28 @@
         movcx_rr(W(XD), W(XS))                                              \
         cgecs_ld(W(XD), W(MT), W(DT))
 
+/* simd mask
+ * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
+ * one hidden SIMD register holding all 1s and using one hidden mask register
+ * first in cmp (c**ps) to produce compatible result in target SIMD register
+ * then in mkj**_** to facilitate branching on a given condition value */
+
+#define RT_SIMD_MASK_NONE32_256    0x00     /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL32_256    0x0F     /*  all satisfy the condition */
+
+#define mkjcx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        REX(0,             0) EMITB(0x0F) EMITB(0x50)                       \
+        MRM(0x00,    MOD(XS), REG(XS))                                      \
+        REX(1,             0) EMITB(0x8B)                                   \
+        MRM(0x07,       0x03, 0x00)                                         \
+        REX(0,             1) EMITB(0x0F) EMITB(0x50)                       \
+        MRM(0x00,    MOD(XS), REG(XS))                                      \
+        REX(0,             1)                                               \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##32_256 >> 3) << 1)))   \
+        MRM(0x00,       0x03, 0x07)                                         \
+        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##32_256))                     \
+        jeqxx_lb(lb)
+
 /*************   packed single-precision floating-point convert   *************/
 
 #if (RT_SIMD_COMPAT_256 < 2)
@@ -1475,28 +1497,6 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
         movcx_ld(W(XG), Mebp, inf_SCR01(0))
 
 /**************************   helper macros (SSE1)   **************************/
-
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
-
-#define RT_SIMD_MASK_NONE32_256    0x00     /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL32_256    0x0F     /*  all satisfy the condition */
-
-#define mkjcx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        REX(0,             0) EMITB(0x0F) EMITB(0x50)                       \
-        MRM(0x00,    MOD(XS), REG(XS))                                      \
-        REX(1,             0) EMITB(0x8B)                                   \
-        MRM(0x07,       0x03, 0x00)                                         \
-        REX(0,             1) EMITB(0x0F) EMITB(0x50)                       \
-        MRM(0x00,    MOD(XS), REG(XS))                                      \
-        REX(0,             1)                                               \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##32_256 >> 3) << 1)))   \
-        MRM(0x00,       0x03, 0x07)                                         \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##32_256))                     \
-        jeqxx_lb(lb)
 
 #if (RT_SIMD_COMPAT_256 < 2)
 
