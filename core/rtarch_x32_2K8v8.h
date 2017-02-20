@@ -1415,6 +1415,123 @@
 #define cvnon_ld(XD, MS, DS) /* round towards near */                       \
         cvton_ld(W(XD), W(MS), W(DS))
 
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rndos_rr(XD, XS)                                                    \
+        EVX(0,             0,    0x00, K, 1, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+        EVX(1,             1,    0x00, K, 1, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+        EVX(2,             2,    0x00, K, 1, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+        EVX(3,             3,    0x00, K, 1, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define rndos_ld(XD, MS, DS)                                                \
+    ADR EVX(0,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x04))                           \
+    ADR EVX(1,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x04))                           \
+    ADR EVX(2,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VSL(DS)), EMITB(0x04))                           \
+    ADR EVX(3,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VTL(DS)), EMITB(0x04))
+
+#define cvtos_rr(XD, XS)                                                    \
+        EVX(0,             0,    0x00, K, 1, 1) EMITB(0x5B)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVX(1,             1,    0x00, K, 1, 1) EMITB(0x5B)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVX(2,             2,    0x00, K, 1, 1) EMITB(0x5B)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVX(3,             3,    0x00, K, 1, 1) EMITB(0x5B)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define cvtos_ld(XD, MS, DS)                                                \
+    ADR EVX(0,       RXB(MS),    0x00, K, 1, 1) EMITB(0x5B)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EVX(1,       RXB(MS),    0x00, K, 1, 1) EMITB(0x5B)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
+    ADR EVX(2,       RXB(MS),    0x00, K, 1, 1) EMITB(0x5B)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
+    ADR EVX(3,       RXB(MS),    0x00, K, 1, 1) EMITB(0x5B)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+
+#define cvton_rr(XD, XS)                                                    \
+        EVX(0,             0,    0x00, K, 0, 1) EMITB(0x5B)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVX(1,             1,    0x00, K, 0, 1) EMITB(0x5B)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVX(2,             2,    0x00, K, 0, 1) EMITB(0x5B)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVX(3,             3,    0x00, K, 0, 1) EMITB(0x5B)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define cvton_ld(XD, MS, DS)                                                \
+    ADR EVX(0,       RXB(MS),    0x00, K, 0, 1) EMITB(0x5B)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EVX(1,       RXB(MS),    0x00, K, 0, 1) EMITB(0x5B)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
+    ADR EVX(2,       RXB(MS),    0x00, K, 0, 1) EMITB(0x5B)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
+    ADR EVX(3,       RXB(MS),    0x00, K, 0, 1) EMITB(0x5B)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnros_rr(XD, XS, mode)                                              \
+        EVX(0,             0,    0x00, K, 1, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
+        EVX(1,             1,    0x00, K, 1, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
+        EVX(2,             2,    0x00, K, 1, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
+        EVX(3,             3,    0x00, K, 1, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
+
+#define cvros_rr(XD, XS, mode)                                              \
+        ERX(0,             0, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x5B)\
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        ERX(1,             1, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x5B)\
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        ERX(2,             2, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x5B)\
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        ERX(3,             3, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x5B)\
+        MRM(REG(XD), MOD(XS), REG(XS))
+
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
@@ -1631,125 +1748,6 @@
         EVX(3,       RXB(MS), REJ(XG), K, 1, 2) EMITB(0x46)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
-
-/**************************   helper macros (AVX3)   **************************/
-
-/* cvt (D = fp-to-signed-int S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
-
-#define rndos_rr(XD, XS)                                                    \
-        EVX(0,             0,    0x00, K, 1, 3) EMITB(0x08)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
-        EVX(1,             1,    0x00, K, 1, 3) EMITB(0x08)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
-        EVX(2,             2,    0x00, K, 1, 3) EMITB(0x08)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
-        EVX(3,             3,    0x00, K, 1, 3) EMITB(0x08)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x04))
-
-#define rndos_ld(XD, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x04))                           \
-    ADR EVX(1,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x04))                           \
-    ADR EVX(2,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VSL(DS)), EMITB(0x04))                           \
-    ADR EVX(3,       RXB(MS),    0x00, K, 1, 3) EMITB(0x08)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VTL(DS)), EMITB(0x04))
-
-#define cvtos_rr(XD, XS)                                                    \
-        EVX(0,             0,    0x00, K, 1, 1) EMITB(0x5B)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVX(1,             1,    0x00, K, 1, 1) EMITB(0x5B)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVX(2,             2,    0x00, K, 1, 1) EMITB(0x5B)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVX(3,             3,    0x00, K, 1, 1) EMITB(0x5B)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))
-
-#define cvtos_ld(XD, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS),    0x00, K, 1, 1) EMITB(0x5B)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS),    0x00, K, 1, 1) EMITB(0x5B)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
-    ADR EVX(2,       RXB(MS),    0x00, K, 1, 1) EMITB(0x5B)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
-    ADR EVX(3,       RXB(MS),    0x00, K, 1, 1) EMITB(0x5B)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
-
-/* cvt (D = signed-int-to-fp S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
-
-#define cvton_rr(XD, XS)                                                    \
-        EVX(0,             0,    0x00, K, 0, 1) EMITB(0x5B)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVX(1,             1,    0x00, K, 0, 1) EMITB(0x5B)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVX(2,             2,    0x00, K, 0, 1) EMITB(0x5B)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVX(3,             3,    0x00, K, 0, 1) EMITB(0x5B)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))
-
-#define cvton_ld(XD, MS, DS)                                                \
-    ADR EVX(0,       RXB(MS),    0x00, K, 0, 1) EMITB(0x5B)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS),    0x00, K, 0, 1) EMITB(0x5B)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
-    ADR EVX(2,       RXB(MS),    0x00, K, 0, 1) EMITB(0x5B)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
-    ADR EVX(3,       RXB(MS),    0x00, K, 0, 1) EMITB(0x5B)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
-
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (cannot be used in FCTRL blocks)
- * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
- * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
-
-#define rnros_rr(XD, XS, mode)                                              \
-        EVX(0,             0,    0x00, K, 1, 3) EMITB(0x08)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
-        EVX(1,             1,    0x00, K, 1, 3) EMITB(0x08)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
-        EVX(2,             2,    0x00, K, 1, 3) EMITB(0x08)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
-        EVX(3,             3,    0x00, K, 1, 3) EMITB(0x08)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
-
-#define cvros_rr(XD, XS, mode)                                              \
-        ERX(0,             0, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x5B)\
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        ERX(1,             1, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x5B)\
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        ERX(2,             2, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x5B)\
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        ERX(3,             3, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x5B)\
-        MRM(REG(XD), MOD(XS), REG(XS))
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

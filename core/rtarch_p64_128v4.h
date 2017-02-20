@@ -670,6 +670,58 @@
 #define cvnjn_ld(XD, MS, DS) /* round towards near */                       \
         cvtjn_ld(W(XD), W(MS), W(DS))
 
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rndjs_rr(XD, XS)                                                    \
+        EMITW(0xF00003AF | MXM(REG(XD), 0x00,    REG(XS)))
+
+#define rndjs_ld(XD, MS, DS)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF00003AF | MXM(REG(XD), 0x00,    TmmM))/* ^ == -1 if true */
+
+#define cvtjs_rr(XD, XS)                                                    \
+        rndjs_rr(W(XD), W(XS))                                              \
+        cvzjs_rr(W(XD), W(XD))
+
+#define cvtjs_ld(XD, MS, DS)                                                \
+        rndjs_ld(W(XD), W(MS), W(DS))                                       \
+        cvzjs_rr(W(XD), W(XD))
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+
+#define cvtjn_rr(XD, XS)                                                    \
+        EMITW(0xF00007E3 | MXM(REG(XD), 0x00,    REG(XS)))
+
+#define cvtjn_ld(XD, MS, DS)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF00007E3 | MXM(REG(XD), 0x00,    TmmM))/* ^ == -1 if true */
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrjs_rr(XD, XS, mode)                                              \
+        FCTRL_ENTER(mode)                                                   \
+        rndjs_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(mode)
+
+#define cvrjs_rr(XD, XS, mode)                                              \
+        rnrjs_rr(W(XD), W(XS), mode)                                        \
+        cvzjs_rr(W(XD), W(XD))
+
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
 #if (RT_128 < 4)
@@ -934,60 +986,6 @@
         EMITW(0x100003C4 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
 
 #endif /* RT_128 >= 4 */
-
-/**************************   helper macros (SIMD)   **************************/
-
-/* cvt (D = fp-to-signed-int S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
-
-#define rndjs_rr(XD, XS)                                                    \
-        EMITW(0xF00003AF | MXM(REG(XD), 0x00,    REG(XS)))
-
-#define rndjs_ld(XD, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF00003AF | MXM(REG(XD), 0x00,    TmmM))/* ^ == -1 if true */
-
-#define cvtjs_rr(XD, XS)                                                    \
-        rndjs_rr(W(XD), W(XS))                                              \
-        cvzjs_rr(W(XD), W(XD))
-
-#define cvtjs_ld(XD, MS, DS)                                                \
-        rndjs_ld(W(XD), W(MS), W(DS))                                       \
-        cvzjs_rr(W(XD), W(XD))
-
-/* cvt (D = signed-int-to-fp S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
-
-#define cvtjn_rr(XD, XS)                                                    \
-        EMITW(0xF00007E3 | MXM(REG(XD), 0x00,    REG(XS)))
-
-#define cvtjn_ld(XD, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF00007E3 | MXM(REG(XD), 0x00,    TmmM))/* ^ == -1 if true */
-
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (cannot be used in FCTRL blocks)
- * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
- * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
-
-#define rnrjs_rr(XD, XS, mode)                                              \
-        FCTRL_ENTER(mode)                                                   \
-        rndjs_rr(W(XD), W(XS))                                              \
-        FCTRL_LEAVE(mode)
-
-#define cvrjs_rr(XD, XS, mode)                                              \
-        rnrjs_rr(W(XD), W(XS), mode)                                        \
-        cvzjs_rr(W(XD), W(XD))
 
 /***************   scalar double-precision floating-point move   **************/
 

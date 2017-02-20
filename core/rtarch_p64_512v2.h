@@ -1117,6 +1117,88 @@
 #define cvnqn_ld(XD, MS, DS) /* round towards near */                       \
         cvtqn_ld(W(XD), W(MS), W(DS))
 
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rndqs_rr(XD, XS)                                                    \
+        EMITW(0xF00003AF | MXM(REG(XD), 0x00,    REG(XS)))                  \
+        EMITW(0xF00003AF | MXM(RYG(XD), 0x00,    RYG(XS)))                  \
+        EMITW(0xF00003AC | MXM(REG(XD), 0x00,    REG(XS)))                  \
+        EMITW(0xF00003AC | MXM(RYG(XD), 0x00,    RYG(XS)))
+
+#define rndqs_ld(XD, MS, DS)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF00003AF | MXM(REG(XD), 0x00,    TmmM))/* ^ == -1 if true */\
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VYL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF00003AF | MXM(RYG(XD), 0x00,    TmmM))/* ^ == -1 if true */\
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VXL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VXL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF00003AE | MXM(REG(XD), 0x00,    TmmM))/* ^ == -1 if true */\
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VZL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VZL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF00003AE | MXM(RYG(XD), 0x00,    TmmM))/* ^ == -1 if true */
+
+#define cvtqs_rr(XD, XS)                                                    \
+        rndqs_rr(W(XD), W(XS))                                              \
+        cvzqs_rr(W(XD), W(XD))
+
+#define cvtqs_ld(XD, MS, DS)                                                \
+        rndqs_ld(W(XD), W(MS), W(DS))                                       \
+        cvzqs_rr(W(XD), W(XD))
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+
+#define cvtqn_rr(XD, XS)                                                    \
+        EMITW(0xF00007E3 | MXM(REG(XD), 0x00,    REG(XS)))                  \
+        EMITW(0xF00007E3 | MXM(RYG(XD), 0x00,    RYG(XS)))                  \
+        EMITW(0xF00007E0 | MXM(REG(XD), 0x00,    REG(XS)))                  \
+        EMITW(0xF00007E0 | MXM(RYG(XD), 0x00,    RYG(XS)))
+
+#define cvtqn_ld(XD, MS, DS)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF00007E3 | MXM(REG(XD), 0x00,    TmmM))/* ^ == -1 if true */\
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VYL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF00007E3 | MXM(RYG(XD), 0x00,    TmmM))/* ^ == -1 if true */\
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VXL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VXL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF00007E2 | MXM(REG(XD), 0x00,    TmmM))/* ^ == -1 if true */\
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VZL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VZL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF00007E2 | MXM(RYG(XD), 0x00,    TmmM))/* ^ == -1 if true */
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrqs_rr(XD, XS, mode)                                              \
+        FCTRL_ENTER(mode)                                                   \
+        rndqs_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(mode)
+
+#define cvrqs_rr(XD, XS, mode)                                              \
+        rnrqs_rr(W(XD), W(XS), mode)                                        \
+        cvzqs_rr(W(XD), W(XD))
+
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
 #if (RT_512 < 2)
@@ -1683,90 +1765,6 @@
         EMITW(0xF0000496 | MXM(RYG(XG), TmmQ,    TmmQ))
 
 #endif /* RT_512 >= 2 */
-
-/**************************   helper macros (SIMD)   **************************/
-
-/* cvt (D = fp-to-signed-int S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
-
-#define rndqs_rr(XD, XS)                                                    \
-        EMITW(0xF00003AF | MXM(REG(XD), 0x00,    REG(XS)))                  \
-        EMITW(0xF00003AF | MXM(RYG(XD), 0x00,    RYG(XS)))                  \
-        EMITW(0xF00003AC | MXM(REG(XD), 0x00,    REG(XS)))                  \
-        EMITW(0xF00003AC | MXM(RYG(XD), 0x00,    RYG(XS)))
-
-#define rndqs_ld(XD, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF00003AF | MXM(REG(XD), 0x00,    TmmM))/* ^ == -1 if true */\
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VYL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF00003AF | MXM(RYG(XD), 0x00,    TmmM))/* ^ == -1 if true */\
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VXL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VXL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF00003AE | MXM(REG(XD), 0x00,    TmmM))/* ^ == -1 if true */\
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VZL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VZL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF00003AE | MXM(RYG(XD), 0x00,    TmmM))/* ^ == -1 if true */
-
-#define cvtqs_rr(XD, XS)                                                    \
-        rndqs_rr(W(XD), W(XS))                                              \
-        cvzqs_rr(W(XD), W(XD))
-
-#define cvtqs_ld(XD, MS, DS)                                                \
-        rndqs_ld(W(XD), W(MS), W(DS))                                       \
-        cvzqs_rr(W(XD), W(XD))
-
-/* cvt (D = signed-int-to-fp S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
-
-#define cvtqn_rr(XD, XS)                                                    \
-        EMITW(0xF00007E3 | MXM(REG(XD), 0x00,    REG(XS)))                  \
-        EMITW(0xF00007E3 | MXM(RYG(XD), 0x00,    RYG(XS)))                  \
-        EMITW(0xF00007E0 | MXM(REG(XD), 0x00,    REG(XS)))                  \
-        EMITW(0xF00007E0 | MXM(RYG(XD), 0x00,    RYG(XS)))
-
-#define cvtqn_ld(XD, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF00007E3 | MXM(REG(XD), 0x00,    TmmM))/* ^ == -1 if true */\
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VYL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF00007E3 | MXM(RYG(XD), 0x00,    TmmM))/* ^ == -1 if true */\
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VXL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VXL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF00007E2 | MXM(REG(XD), 0x00,    TmmM))/* ^ == -1 if true */\
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VZL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VZL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0xF00007E2 | MXM(RYG(XD), 0x00,    TmmM))/* ^ == -1 if true */
-
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (cannot be used in FCTRL blocks)
- * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
- * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
-
-#define rnrqs_rr(XD, XS, mode)                                              \
-        FCTRL_ENTER(mode)                                                   \
-        rndqs_rr(W(XD), W(XS))                                              \
-        FCTRL_LEAVE(mode)
-
-#define cvrqs_rr(XD, XS, mode)                                              \
-        rnrqs_rr(W(XD), W(XS), mode)                                        \
-        cvzqs_rr(W(XD), W(XD))
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

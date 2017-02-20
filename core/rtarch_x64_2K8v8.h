@@ -1680,6 +1680,167 @@
 
 #endif /* RT_SIMD_COMPAT_2K8 >= 2 */
 
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rndqs_rr(XD, XS)                                                    \
+        EVW(0,             0,    0x00, K, 1, 3) EMITB(0x09)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+        EVW(1,             1,    0x00, K, 1, 3) EMITB(0x09)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+        EVW(2,             2,    0x00, K, 1, 3) EMITB(0x09)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+        EVW(3,             3,    0x00, K, 1, 3) EMITB(0x09)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define rndqs_ld(XD, MS, DS)                                                \
+    ADR EVW(0,       RXB(MS),    0x00, K, 1, 3) EMITB(0x09)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x04))                           \
+    ADR EVW(1,       RXB(MS),    0x00, K, 1, 3) EMITB(0x09)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x04))                           \
+    ADR EVW(2,       RXB(MS),    0x00, K, 1, 3) EMITB(0x09)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VSL(DS)), EMITB(0x04))                           \
+    ADR EVW(3,       RXB(MS),    0x00, K, 1, 3) EMITB(0x09)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VTL(DS)), EMITB(0x04))
+
+#if (RT_SIMD_COMPAT_2K8 < 2)
+
+#define cvtqs_rr(XD, XS)                                                    \
+        rndqs_rr(W(XD), W(XS))                                              \
+        cvzqs_rr(W(XD), W(XD))
+
+#define cvtqs_ld(XD, MS, DS)                                                \
+        rndqs_ld(W(XD), W(MS), W(DS))                                       \
+        cvzqs_rr(W(XD), W(XD))
+
+#else /* RT_SIMD_COMPAT_2K8 >= 2 */
+
+#define cvtqs_rr(XD, XS)                                                    \
+        EVW(0,             0,    0x00, K, 1, 1) EMITB(0x7B)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVW(1,             1,    0x00, K, 1, 1) EMITB(0x7B)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVW(2,             2,    0x00, K, 1, 1) EMITB(0x7B)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVW(3,             3,    0x00, K, 1, 1) EMITB(0x7B)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define cvtqs_ld(XD, MS, DS)                                                \
+        EVW(0,       RXB(MS),    0x00, K, 1, 1) EMITB(0x7B)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+        EVW(1,       RXB(MS),    0x00, K, 1, 1) EMITB(0x7B)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
+        EVW(2,       RXB(MS),    0x00, K, 1, 1) EMITB(0x7B)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
+        EVW(3,       RXB(MS),    0x00, K, 1, 1) EMITB(0x7B)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+
+#endif /* RT_SIMD_COMPAT_2K8 >= 2 */
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+
+#if (RT_SIMD_COMPAT_2K8 < 2)
+
+#define cvtqn_rr(XD, XS)                                                    \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        cvnqn_rr(W(XD), W(XS))                                              \
+        fpucw_ld(Mebp,  inf_SCR02(4))
+
+#define cvtqn_ld(XD, MS, DS)                                                \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
+        cvtqn_rr(W(XD), W(XD))
+
+#else /* RT_SIMD_COMPAT_2K8 >= 2 */
+
+#define cvtqn_rr(XD, XS)                                                    \
+        EVW(0,             0,    0x00, K, 2, 1) EMITB(0xE6)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVW(1,             1,    0x00, K, 2, 1) EMITB(0xE6)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVW(2,             2,    0x00, K, 2, 1) EMITB(0xE6)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVW(3,             3,    0x00, K, 2, 1) EMITB(0xE6)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define cvtqn_ld(XD, MS, DS)                                                \
+        EVW(0,       RXB(MS),    0x00, K, 2, 1) EMITB(0xE6)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+        EVW(1,       RXB(MS),    0x00, K, 2, 1) EMITB(0xE6)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
+        EVW(2,       RXB(MS),    0x00, K, 2, 1) EMITB(0xE6)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
+        EVW(3,       RXB(MS),    0x00, K, 2, 1) EMITB(0xE6)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+
+#endif /* RT_SIMD_COMPAT_2K8 >= 2 */
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrqs_rr(XD, XS, mode)                                              \
+        EVW(0,             0,    0x00, K, 1, 3) EMITB(0x09)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
+        EVW(1,             1,    0x00, K, 1, 3) EMITB(0x09)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
+        EVW(2,             2,    0x00, K, 1, 3) EMITB(0x09)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
+        EVW(3,             3,    0x00, K, 1, 3) EMITB(0x09)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
+
+#if (RT_SIMD_COMPAT_2K8 < 2)
+
+#define cvrqs_rr(XD, XS, mode)                                              \
+        rnrqs_rr(W(XD), W(XS), mode)                                        \
+        cvzqs_rr(W(XD), W(XD))
+
+#else /* RT_SIMD_COMPAT_2K8 >= 2 */
+
+#define cvrqs_rr(XD, XS, mode)                                              \
+        ERW(0,             0, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x7B)\
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        ERW(1,             1, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x7B)\
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        ERW(2,             2, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x7B)\
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        ERW(3,             3, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x7B)\
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#endif /* RT_SIMD_COMPAT_2K8 >= 2 */
+
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
@@ -1896,169 +2057,6 @@
         EVW(3,       RXB(MS), REJ(XG), K, 1, 2) EMITB(0x46)                 \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
-
-/**************************   helper macros (AVX3)   **************************/
-
-/* cvt (D = fp-to-signed-int S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
-
-#define rndqs_rr(XD, XS)                                                    \
-        EVW(0,             0,    0x00, K, 1, 3) EMITB(0x09)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
-        EVW(1,             1,    0x00, K, 1, 3) EMITB(0x09)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
-        EVW(2,             2,    0x00, K, 1, 3) EMITB(0x09)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
-        EVW(3,             3,    0x00, K, 1, 3) EMITB(0x09)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x04))
-
-#define rndqs_ld(XD, MS, DS)                                                \
-    ADR EVW(0,       RXB(MS),    0x00, K, 1, 3) EMITB(0x09)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x04))                           \
-    ADR EVW(1,       RXB(MS),    0x00, K, 1, 3) EMITB(0x09)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x04))                           \
-    ADR EVW(2,       RXB(MS),    0x00, K, 1, 3) EMITB(0x09)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VSL(DS)), EMITB(0x04))                           \
-    ADR EVW(3,       RXB(MS),    0x00, K, 1, 3) EMITB(0x09)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VTL(DS)), EMITB(0x04))
-
-#if (RT_SIMD_COMPAT_2K8 < 2)
-
-#define cvtqs_rr(XD, XS)                                                    \
-        rndqs_rr(W(XD), W(XS))                                              \
-        cvzqs_rr(W(XD), W(XD))
-
-#define cvtqs_ld(XD, MS, DS)                                                \
-        rndqs_ld(W(XD), W(MS), W(DS))                                       \
-        cvzqs_rr(W(XD), W(XD))
-
-#else /* RT_SIMD_COMPAT_2K8 >= 2 */
-
-#define cvtqs_rr(XD, XS)                                                    \
-        EVW(0,             0,    0x00, K, 1, 1) EMITB(0x7B)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVW(1,             1,    0x00, K, 1, 1) EMITB(0x7B)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVW(2,             2,    0x00, K, 1, 1) EMITB(0x7B)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVW(3,             3,    0x00, K, 1, 1) EMITB(0x7B)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))
-
-#define cvtqs_ld(XD, MS, DS)                                                \
-        EVW(0,       RXB(MS),    0x00, K, 1, 1) EMITB(0x7B)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-        EVW(1,       RXB(MS),    0x00, K, 1, 1) EMITB(0x7B)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
-        EVW(2,       RXB(MS),    0x00, K, 1, 1) EMITB(0x7B)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
-        EVW(3,       RXB(MS),    0x00, K, 1, 1) EMITB(0x7B)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
-
-#endif /* RT_SIMD_COMPAT_2K8 >= 2 */
-
-/* cvt (D = signed-int-to-fp S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
-
-#if (RT_SIMD_COMPAT_2K8 < 2)
-
-#define cvtqn_rr(XD, XS)                                                    \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
-        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
-        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
-        orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
-        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
-        cvnqn_rr(W(XD), W(XS))                                              \
-        fpucw_ld(Mebp,  inf_SCR02(4))
-
-#define cvtqn_ld(XD, MS, DS)                                                \
-        movqx_ld(W(XD), W(MS), W(DS))                                       \
-        cvtqn_rr(W(XD), W(XD))
-
-#else /* RT_SIMD_COMPAT_2K8 >= 2 */
-
-#define cvtqn_rr(XD, XS)                                                    \
-        EVW(0,             0,    0x00, K, 2, 1) EMITB(0xE6)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVW(1,             1,    0x00, K, 2, 1) EMITB(0xE6)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVW(2,             2,    0x00, K, 2, 1) EMITB(0xE6)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EVW(3,             3,    0x00, K, 2, 1) EMITB(0xE6)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))
-
-#define cvtqn_ld(XD, MS, DS)                                                \
-        EVW(0,       RXB(MS),    0x00, K, 2, 1) EMITB(0xE6)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-        EVW(1,       RXB(MS),    0x00, K, 2, 1) EMITB(0xE6)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
-        EVW(2,       RXB(MS),    0x00, K, 2, 1) EMITB(0xE6)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
-        EVW(3,       RXB(MS),    0x00, K, 2, 1) EMITB(0xE6)                 \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
-
-#endif /* RT_SIMD_COMPAT_2K8 >= 2 */
-
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (cannot be used in FCTRL blocks)
- * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
- * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
-
-#define rnrqs_rr(XD, XS, mode)                                              \
-        EVW(0,             0,    0x00, K, 1, 3) EMITB(0x09)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
-        EVW(1,             1,    0x00, K, 1, 3) EMITB(0x09)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
-        EVW(2,             2,    0x00, K, 1, 3) EMITB(0x09)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
-        EVW(3,             3,    0x00, K, 1, 3) EMITB(0x09)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
-
-#if (RT_SIMD_COMPAT_2K8 < 2)
-
-#define cvrqs_rr(XD, XS, mode)                                              \
-        rnrqs_rr(W(XD), W(XS), mode)                                        \
-        cvzqs_rr(W(XD), W(XD))
-
-#else /* RT_SIMD_COMPAT_2K8 >= 2 */
-
-#define cvrqs_rr(XD, XS, mode)                                              \
-        ERW(0,             0, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x7B)\
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        ERW(1,             1, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x7B)\
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        ERW(2,             2, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x7B)\
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        ERW(3,             3, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x7B)\
-        MRM(REG(XD), MOD(XS), REG(XS))
-
-#endif /* RT_SIMD_COMPAT_2K8 >= 2 */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

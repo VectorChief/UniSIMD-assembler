@@ -1062,6 +1062,122 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
         movdx_ld(W(XD), W(MS), W(DS))                                       \
         cvndn_rr(W(XD), W(XD))
 
+#if (RT_SIMD_COMPAT_256 < 4)
+
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rndds_rr(XD, XS)                                                    \
+        cvtds_rr(W(XD), W(XS))                                              \
+        cvndn_rr(W(XD), W(XD))
+
+#define rndds_ld(XD, MS, DS)                                                \
+        cvtds_ld(W(XD), W(MS), W(DS))                                       \
+        cvndn_rr(W(XD), W(XD))
+
+#define cvtds_rr(XD, XS)                                                    \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        cvnds_rr(W(XD), W(XS))                                              \
+        fpucw_ld(Mebp,  inf_SCR02(4))
+
+#define cvtds_ld(XD, MS, DS)                                                \
+        movdx_ld(W(XD), W(MS), W(DS))                                       \
+        cvtds_rr(W(XD), W(XD))
+
+#else /* RT_SIMD_COMPAT_256 >= 4 */
+
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rndds_rr(XD, XS)                                                    \
+    ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+    ESC REX(1,             1) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define rndds_ld(XD, MS, DS)                                                \
+ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x04))                           \
+ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VYL(DS)), EMITB(0x04))
+
+#define cvtds_rr(XD, XS)                                                    \
+        rndds_rr(W(XD), W(XS))                                              \
+        cvzds_rr(W(XD), W(XD))
+
+#define cvtds_ld(XD, MS, DS)                                                \
+        rndds_ld(W(XD), W(MS), W(DS))                                       \
+        cvzds_rr(W(XD), W(XD))
+
+#endif /* RT_SIMD_COMPAT_256 >= 4 */
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+
+#define cvtdn_rr(XD, XS)                                                    \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        cvndn_rr(W(XD), W(XS))                                              \
+        fpucw_ld(Mebp,  inf_SCR02(4))
+
+#define cvtdn_ld(XD, MS, DS)                                                \
+        movdx_ld(W(XD), W(MS), W(DS))                                       \
+        cvtdn_rr(W(XD), W(XD))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#if (RT_SIMD_COMPAT_256 < 4)
+
+#define rnrds_rr(XD, XS, mode)                                              \
+        cvrds_rr(W(XD), W(XS), mode)                                        \
+        cvndn_rr(W(XD), W(XD))
+
+#define cvrds_rr(XD, XS, mode)                                              \
+        FCTRL_ENTER(mode)                                                   \
+        cvtds_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(mode)
+
+#else /* RT_SIMD_COMPAT_256 >= 4 */
+
+#define rnrds_rr(XD, XS, mode)                                              \
+    ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
+    ESC REX(1,             1) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
+
+#define cvrds_rr(XD, XS, mode)                                              \
+        rnrds_rr(W(XD), W(XS), mode)                                        \
+        cvzds_rr(W(XD), W(XD))
+
+#endif /* RT_SIMD_COMPAT_256 >= 4 */
+
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
@@ -1246,124 +1362,6 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         shrzn_mx(Mebp,  inf_SCR01(0x18))                                    \
         stack_ld(Recx)                                                      \
         movdx_ld(W(XG), Mebp, inf_SCR01(0))
-
-/**************************   helper macros (SSE2)   **************************/
-
-#if (RT_SIMD_COMPAT_256 < 4)
-
-/* cvt (D = fp-to-signed-int S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
-
-#define rndds_rr(XD, XS)                                                    \
-        cvtds_rr(W(XD), W(XS))                                              \
-        cvndn_rr(W(XD), W(XD))
-
-#define rndds_ld(XD, MS, DS)                                                \
-        cvtds_ld(W(XD), W(MS), W(DS))                                       \
-        cvndn_rr(W(XD), W(XD))
-
-#define cvtds_rr(XD, XS)                                                    \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
-        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
-        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
-        orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
-        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
-        cvnds_rr(W(XD), W(XS))                                              \
-        fpucw_ld(Mebp,  inf_SCR02(4))
-
-#define cvtds_ld(XD, MS, DS)                                                \
-        movdx_ld(W(XD), W(MS), W(DS))                                       \
-        cvtds_rr(W(XD), W(XD))
-
-#else /* RT_SIMD_COMPAT_256 >= 4 */
-
-/* cvt (D = fp-to-signed-int S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
-
-#define rndds_rr(XD, XS)                                                    \
-    ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
-    ESC REX(1,             1) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x04))
-
-#define rndds_ld(XD, MS, DS)                                                \
-ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x04))                           \
-ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VYL(DS)), EMITB(0x04))
-
-#define cvtds_rr(XD, XS)                                                    \
-        rndds_rr(W(XD), W(XS))                                              \
-        cvzds_rr(W(XD), W(XD))
-
-#define cvtds_ld(XD, MS, DS)                                                \
-        rndds_ld(W(XD), W(MS), W(DS))                                       \
-        cvzds_rr(W(XD), W(XD))
-
-#endif /* RT_SIMD_COMPAT_256 >= 4 */
-
-/* cvt (D = signed-int-to-fp S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
-
-#define cvtdn_rr(XD, XS)                                                    \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
-        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
-        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
-        orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
-        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
-        cvndn_rr(W(XD), W(XS))                                              \
-        fpucw_ld(Mebp,  inf_SCR02(4))
-
-#define cvtdn_ld(XD, MS, DS)                                                \
-        movdx_ld(W(XD), W(MS), W(DS))                                       \
-        cvtdn_rr(W(XD), W(XD))
-
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (cannot be used in FCTRL blocks)
- * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
- * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
-
-#if (RT_SIMD_COMPAT_256 < 4)
-
-#define rnrds_rr(XD, XS, mode)                                              \
-        cvrds_rr(W(XD), W(XS), mode)                                        \
-        cvndn_rr(W(XD), W(XD))
-
-#define cvrds_rr(XD, XS, mode)                                              \
-        FCTRL_ENTER(mode)                                                   \
-        cvtds_rr(W(XD), W(XS))                                              \
-        FCTRL_LEAVE(mode)
-
-#else /* RT_SIMD_COMPAT_256 >= 4 */
-
-#define rnrds_rr(XD, XS, mode)                                              \
-    ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
-    ESC REX(1,             1) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
-
-#define cvrds_rr(XD, XS, mode)                                              \
-        rnrds_rr(W(XD), W(XS), mode)                                        \
-        cvzds_rr(W(XD), W(XD))
-
-#endif /* RT_SIMD_COMPAT_256 >= 4 */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

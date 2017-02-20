@@ -709,6 +709,57 @@
 #define cvnin_ld(XD, MS, DS) /* round towards near */                       \
         cvtin_ld(W(XD), W(MS), W(DS))
 
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rndis_rr(XD, XS)                                                    \
+        EMITW(0x7B2C001E | MXM(REG(XD), REG(XS), 0x00))
+
+#define rndis_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7B2C001E | MXM(REG(XD), TmmM,    0x00))
+
+#define cvtis_rr(XD, XS)                                                    \
+        EMITW(0x7B38001E | MXM(REG(XD), REG(XS), 0x00))
+
+#define cvtis_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7B38001E | MXM(REG(XD), TmmM,    0x00))
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+
+#define cvtin_rr(XD, XS)                                                    \
+        EMITW(0x7B3C001E | MXM(REG(XD), REG(XS), 0x00))
+
+#define cvtin_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7B3C001E | MXM(REG(XD), TmmM,    0x00))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnris_rr(XD, XS, mode)                                              \
+        FCTRL_ENTER(mode)                                                   \
+        rndis_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(mode)
+
+#define cvris_rr(XD, XS, mode)                                              \
+        FCTRL_ENTER(mode)                                                   \
+        cvtis_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(mode)
+
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
@@ -792,7 +843,7 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x78C0000D | MXM(REG(XG), REG(XG), TmmM))
 
-/**************************   helper macros (SIMD)   **************************/
+/************************   helper macros (FPU mode)   ************************/
 
 /* simd mode
  * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),
@@ -846,57 +897,6 @@
         EMITW(0x783E0019 | MXM(0x01,    TNxx,    0x00))
 
 #endif /* RT_SIMD_FAST_FCTRL */
-
-/* cvt (D = fp-to-signed-int S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
-
-#define rndis_rr(XD, XS)                                                    \
-        EMITW(0x7B2C001E | MXM(REG(XD), REG(XS), 0x00))
-
-#define rndis_ld(XD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7B2C001E | MXM(REG(XD), TmmM,    0x00))
-
-#define cvtis_rr(XD, XS)                                                    \
-        EMITW(0x7B38001E | MXM(REG(XD), REG(XS), 0x00))
-
-#define cvtis_ld(XD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7B38001E | MXM(REG(XD), TmmM,    0x00))
-
-/* cvt (D = signed-int-to-fp S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
-
-#define cvtin_rr(XD, XS)                                                    \
-        EMITW(0x7B3C001E | MXM(REG(XD), REG(XS), 0x00))
-
-#define cvtin_ld(XD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7B3C001E | MXM(REG(XD), TmmM,    0x00))
-
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (cannot be used in FCTRL blocks)
- * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
- * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
-
-#define rnris_rr(XD, XS, mode)                                              \
-        FCTRL_ENTER(mode)                                                   \
-        rndis_rr(W(XD), W(XS))                                              \
-        FCTRL_LEAVE(mode)
-
-#define cvris_rr(XD, XS, mode)                                              \
-        FCTRL_ENTER(mode)                                                   \
-        cvtis_rr(W(XD), W(XS))                                              \
-        FCTRL_LEAVE(mode)
 
 /***************   scalar single-precision floating-point move   **************/
 

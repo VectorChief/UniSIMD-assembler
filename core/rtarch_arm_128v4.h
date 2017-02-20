@@ -1080,157 +1080,6 @@
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3BB0640 | MXM(REG(XD), 0x00,    TmmM))
 
-/************   packed single-precision integer arithmetic/shifts   ***********/
-
-/* add (G = G + S) */
-
-#define addix_rr(XG, XS)                                                    \
-        EMITW(0xF2200840 | MXM(REG(XG), REG(XG), REG(XS)))
-
-#define addix_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF2200840 | MXM(REG(XG), REG(XG), TmmM))
-
-/* sub (G = G - S) */
-
-#define subix_rr(XG, XS)                                                    \
-        EMITW(0xF3200840 | MXM(REG(XG), REG(XG), REG(XS)))
-
-#define subix_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF3200840 | MXM(REG(XG), REG(XG), TmmM))
-
-/* shl (G = G << S)
- * for maximum compatibility, shift count mustn't exceed elem-size */
-
-#define shlix_ri(XG, IS)                                                    \
-        EMITW(0xF2A00550 | MXM(REG(XG), 0x00,    REG(XG)) |                 \
-                                                 (0x1F & VAL(IS)) << 16)
-
-#define shlix_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0xF4A00CBF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF3200440 | MXM(REG(XG), TmmM,    REG(XG)))
-
-#define svlix_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EMITW(0xF3200440 | MXM(REG(XG), REG(XS), REG(XG)))
-
-#define svlix_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF3200440 | MXM(REG(XG), TmmM,    REG(XG)))
-
-/* shr (G = G >> S)
- * for maximum compatibility, shift count mustn't exceed elem-size */
-
-#define shrix_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
-        EMITW(0xF2A00050 | MXM(REG(XG), 0x00,    REG(XG)) |                 \
-        (+(VAL(IS) == 0) & 0x00000500) | (+(VAL(IS) != 0) & 0x01000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IS)) << 16)
-
-#define shrix_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0xF4A00CBF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    TmmM))                     \
-        EMITW(0xF3200440 | MXM(REG(XG), TmmM,    REG(XG)))
-
-#define svrix_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    REG(XS)))                  \
-        EMITW(0xF3200440 | MXM(REG(XG), TmmM,    REG(XG)))
-
-#define svrix_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    TmmM))                     \
-        EMITW(0xF3200440 | MXM(REG(XG), TmmM,    REG(XG)))
-
-
-#define shrin_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
-        EMITW(0xF2A00050 | MXM(REG(XG), 0x00,    REG(XG)) |                 \
-        (+(VAL(IS) == 0) & 0x00000500) | (+(VAL(IS) != 0) & 0x00000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IS)) << 16)
-
-#define shrin_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0xF4A00CBF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    TmmM))                     \
-        EMITW(0xF2200440 | MXM(REG(XG), TmmM,    REG(XG)))
-
-#define svrin_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    REG(XS)))                  \
-        EMITW(0xF2200440 | MXM(REG(XG), TmmM,    REG(XG)))
-
-#define svrin_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    TmmM))                     \
-        EMITW(0xF2200440 | MXM(REG(XG), TmmM,    REG(XG)))
-
-/**************************   helper macros (NEON)   **************************/
-
-/* simd mode
- * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),
- * original FCTRL blocks (FCTRL_ENTER/FCTRL_LEAVE) are defined in rtbase.h
- * NOTE: ARMv7 always uses ROUNDN non-IEEE mode for SIMD fp-arithmetic,
- * while fp<->int conversion takes ROUND* into account via VFP fallback */
-
-#if RT_SIMD_FLUSH_ZERO == 0
-
-#define RT_SIMD_MODE_ROUNDN     0x00    /* round towards near */
-#define RT_SIMD_MODE_ROUNDM     0x02    /* round towards -inf */
-#define RT_SIMD_MODE_ROUNDP     0x01    /* round towards +inf */
-#define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
-
-#else /* RT_SIMD_FLUSH_ZERO */
-
-#define RT_SIMD_MODE_ROUNDN     0x04    /* round towards near */
-#define RT_SIMD_MODE_ROUNDM     0x06    /* round towards -inf */
-#define RT_SIMD_MODE_ROUNDP     0x05    /* round towards +inf */
-#define RT_SIMD_MODE_ROUNDZ     0x07    /* round towards zero */
-
-#endif /* RT_SIMD_FLUSH_ZERO */
-
-#define RT_SIMD_MODE_ROUNDN_F   0x04    /* round towards near */
-#define RT_SIMD_MODE_ROUNDM_F   0x06    /* round towards -inf */
-#define RT_SIMD_MODE_ROUNDP_F   0x05    /* round towards +inf */
-#define RT_SIMD_MODE_ROUNDZ_F   0x07    /* round towards zero */
-
-#define fpscr_ld(RS) /* not portable, do not use outside */                 \
-        EMITW(0xEEE10A10 | MRM(REG(RS), 0x00,    0x00))
-
-#define fpscr_st(RD) /* not portable, do not use outside */                 \
-        EMITW(0xEEF10A10 | MRM(REG(RD), 0x00,    0x00))
-
-#if RT_SIMD_FAST_FCTRL == 0
-
-#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
-        EMITW(0xE3A00500 | MRM(TIxx,    0x00,    0x00) |                    \
-                           RT_SIMD_MODE_##mode)                             \
-        EMITW(0xEEE10A10 | MRM(TIxx,    0x00,    0x00))
-
-#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
-        EMITW(0xEEE10A10 | MRM(TNxx,    0x00,    0x00))
-
-#else /* RT_SIMD_FAST_FCTRL */
-
-#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
-        EMITW(0xEEE10A10 | MRM((RT_SIMD_MODE_##mode&3)*2+8, 0x00, 0x00))
-
-#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
-        EMITW(0xEEE10A10 | MRM(TNxx,    0x00,    0x00))
-
-#endif /* RT_SIMD_FAST_FCTRL */
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
@@ -1329,6 +1178,157 @@
         ((RT_SIMD_MODE_##mode&3)+1 + 3*(((RT_SIMD_MODE_##mode&3)+1) >> 2)) << 8)
 
 #endif /* RT_128 >= 4 */
+
+/************   packed single-precision integer arithmetic/shifts   ***********/
+
+/* add (G = G + S) */
+
+#define addix_rr(XG, XS)                                                    \
+        EMITW(0xF2200840 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define addix_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF2200840 | MXM(REG(XG), REG(XG), TmmM))
+
+/* sub (G = G - S) */
+
+#define subix_rr(XG, XS)                                                    \
+        EMITW(0xF3200840 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define subix_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3200840 | MXM(REG(XG), REG(XG), TmmM))
+
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shlix_ri(XG, IS)                                                    \
+        EMITW(0xF2A00550 | MXM(REG(XG), 0x00,    REG(XG)) |                 \
+                                                 (0x1F & VAL(IS)) << 16)
+
+#define shlix_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4A00CBF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3200440 | MXM(REG(XG), TmmM,    REG(XG)))
+
+#define svlix_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EMITW(0xF3200440 | MXM(REG(XG), REG(XS), REG(XG)))
+
+#define svlix_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3200440 | MXM(REG(XG), TmmM,    REG(XG)))
+
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shrix_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
+        EMITW(0xF2A00050 | MXM(REG(XG), 0x00,    REG(XG)) |                 \
+        (+(VAL(IS) == 0) & 0x00000500) | (+(VAL(IS) != 0) & 0x01000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IS)) << 16)
+
+#define shrix_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4A00CBF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    TmmM))                     \
+        EMITW(0xF3200440 | MXM(REG(XG), TmmM,    REG(XG)))
+
+#define svrix_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    REG(XS)))                  \
+        EMITW(0xF3200440 | MXM(REG(XG), TmmM,    REG(XG)))
+
+#define svrix_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    TmmM))                     \
+        EMITW(0xF3200440 | MXM(REG(XG), TmmM,    REG(XG)))
+
+
+#define shrin_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
+        EMITW(0xF2A00050 | MXM(REG(XG), 0x00,    REG(XG)) |                 \
+        (+(VAL(IS) == 0) & 0x00000500) | (+(VAL(IS) != 0) & 0x00000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IS)) << 16)
+
+#define shrin_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4A00CBF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    TmmM))                     \
+        EMITW(0xF2200440 | MXM(REG(XG), TmmM,    REG(XG)))
+
+#define svrin_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    REG(XS)))                  \
+        EMITW(0xF2200440 | MXM(REG(XG), TmmM,    REG(XG)))
+
+#define svrin_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    TmmM))                     \
+        EMITW(0xF2200440 | MXM(REG(XG), TmmM,    REG(XG)))
+
+/************************   helper macros (FPU mode)   ************************/
+
+/* simd mode
+ * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),
+ * original FCTRL blocks (FCTRL_ENTER/FCTRL_LEAVE) are defined in rtbase.h
+ * NOTE: ARMv7 always uses ROUNDN non-IEEE mode for SIMD fp-arithmetic,
+ * while fp<->int conversion takes ROUND* into account via VFP fallback */
+
+#if RT_SIMD_FLUSH_ZERO == 0
+
+#define RT_SIMD_MODE_ROUNDN     0x00    /* round towards near */
+#define RT_SIMD_MODE_ROUNDM     0x02    /* round towards -inf */
+#define RT_SIMD_MODE_ROUNDP     0x01    /* round towards +inf */
+#define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
+
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define RT_SIMD_MODE_ROUNDN     0x04    /* round towards near */
+#define RT_SIMD_MODE_ROUNDM     0x06    /* round towards -inf */
+#define RT_SIMD_MODE_ROUNDP     0x05    /* round towards +inf */
+#define RT_SIMD_MODE_ROUNDZ     0x07    /* round towards zero */
+
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+#define RT_SIMD_MODE_ROUNDN_F   0x04    /* round towards near */
+#define RT_SIMD_MODE_ROUNDM_F   0x06    /* round towards -inf */
+#define RT_SIMD_MODE_ROUNDP_F   0x05    /* round towards +inf */
+#define RT_SIMD_MODE_ROUNDZ_F   0x07    /* round towards zero */
+
+#define fpscr_ld(RS) /* not portable, do not use outside */                 \
+        EMITW(0xEEE10A10 | MRM(REG(RS), 0x00,    0x00))
+
+#define fpscr_st(RD) /* not portable, do not use outside */                 \
+        EMITW(0xEEF10A10 | MRM(REG(RD), 0x00,    0x00))
+
+#if RT_SIMD_FAST_FCTRL == 0
+
+#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
+        EMITW(0xE3A00500 | MRM(TIxx,    0x00,    0x00) |                    \
+                           RT_SIMD_MODE_##mode)                             \
+        EMITW(0xEEE10A10 | MRM(TIxx,    0x00,    0x00))
+
+#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
+        EMITW(0xEEE10A10 | MRM(TNxx,    0x00,    0x00))
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
+        EMITW(0xEEE10A10 | MRM((RT_SIMD_MODE_##mode&3)*2+8, 0x00, 0x00))
+
+#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
+        EMITW(0xEEE10A10 | MRM(TNxx,    0x00,    0x00))
+
+#endif /* RT_SIMD_FAST_FCTRL */
 
 /***************   scalar single-precision floating-point move   **************/
 

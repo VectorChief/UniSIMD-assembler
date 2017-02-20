@@ -910,96 +910,6 @@
 
 #endif /* RT_512 >= 2 */
 
-/************   packed double-precision integer arithmetic/shifts   ***********/
-
-/* add (G = G + S) */
-
-#define addqx_rr(XG, XS)                                                    \
-        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xD4)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define addqx_ld(XG, MS, DS)                                                \
-    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xD4)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-/* sub (G = G - S) */
-
-#define subqx_rr(XG, XS)                                                    \
-        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xFB)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define subqx_ld(XG, MS, DS)                                                \
-    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xFB)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-/* shl (G = G << S)
- * for maximum compatibility, shift count mustn't exceed elem-size */
-
-#define shlqx_ri(XG, IS)                                                    \
-        EVW(0,       RXB(XG), REN(XG), K, 1, 1) EMITB(0x73)                 \
-        MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
-
-#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xF3)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define svlqx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define svlqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-/* shr (G = G >> S)
- * for maximum compatibility, shift count mustn't exceed elem-size */
-
-#define shrqx_ri(XG, IS)                                                    \
-        EVW(0,       RXB(XG), REN(XG), K, 1, 1) EMITB(0x73)                 \
-        MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
-
-#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xD3)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define svrqx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define svrqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-
-#define shrqn_ri(XG, IS)                                                    \
-        EVW(0,       RXB(XG), REN(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x04,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
-
-#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xE2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define svrqn_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define svrqn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-/**************************   helper macros (AVX3)   **************************/
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
@@ -1097,6 +1007,94 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #endif /* RT_512 >= 2 */
+
+/************   packed double-precision integer arithmetic/shifts   ***********/
+
+/* add (G = G + S) */
+
+#define addqx_rr(XG, XS)                                                    \
+        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xD4)                 \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define addqx_ld(XG, MS, DS)                                                \
+    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xD4)                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* sub (G = G - S) */
+
+#define subqx_rr(XG, XS)                                                    \
+        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xFB)                 \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define subqx_ld(XG, MS, DS)                                                \
+    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xFB)                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* shl (G = G << S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shlqx_ri(XG, IS)                                                    \
+        EVW(0,       RXB(XG), REN(XG), K, 1, 1) EMITB(0x73)                 \
+        MRM(0x06,    MOD(XG), REG(XG))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
+
+#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xF3)                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define svlqx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define svlqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* shr (G = G >> S)
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define shrqx_ri(XG, IS)                                                    \
+        EVW(0,       RXB(XG), REN(XG), K, 1, 1) EMITB(0x73)                 \
+        MRM(0x02,    MOD(XG), REG(XG))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
+
+#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xD3)                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define svrqx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define svrqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+
+#define shrqn_ri(XG, IS)                                                    \
+        EVW(0,       RXB(XG), REN(XG), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x04,    MOD(XG), REG(XG))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
+
+#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+    ADR EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xE2)                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define svrqn_rr(XG, XS)     /* variable shift with per-elem count */       \
+        EVW(RXB(XG), RXB(XS), REN(XG), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define svrqn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        EVW(RXB(XG), RXB(MS), REN(XG), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
