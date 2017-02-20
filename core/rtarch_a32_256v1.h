@@ -117,7 +117,7 @@
 /**********************************   MPE   ***********************************/
 /******************************************************************************/
 
-/**************************   packed generic (NEON)   *************************/
+/***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -268,7 +268,7 @@
         EMITW(0x6E205800 | MXM(REG(XG), REG(XG), 0x00))                     \
         EMITW(0x6E205800 | MXM(RYG(XG), RYG(XG), 0x00))
 
-/**************   packed single precision floating point (NEON)   *************/
+/************   packed single-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -457,6 +457,8 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
+/*************   packed single-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define mincs_rr(XG, XS)                                                    \
@@ -616,7 +618,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x6E20E400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/**************************   packed integer (NEON)   *************************/
+/*************   packed single-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -742,6 +744,8 @@
 
 #define cvncn_ld(XD, MS, DS) /* round towards near */                       \
         cvtcn_ld(W(XD), W(MS), W(DS))
+
+/************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 

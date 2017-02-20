@@ -101,7 +101,7 @@
 /**********************************   MPE   ***********************************/
 /******************************************************************************/
 
-/**************************   packed generic (NEON)   *************************/
+/***************   packed double-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -218,7 +218,7 @@
 #define notjx_rx(XG)                                                        \
         EMITW(0x6E205800 | MXM(REG(XG), REG(XG), 0x00))
 
-/**************   packed double precision floating point (NEON)   *************/
+/************   packed double-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -371,6 +371,8 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
+/*************   packed double-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minjs_rr(XG, XS)                                                    \
@@ -496,7 +498,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x6E60E400 | MXM(REG(XD), REG(XS), TmmM))
 
-/**************************   packed integer (NEON)   *************************/
+/*************   packed double-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -590,6 +592,8 @@
 
 #define cvnjn_ld(XD, MS, DS) /* round towards near */                       \
         cvtjn_ld(W(XD), W(MS), W(DS))
+
+/************   packed double-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 
@@ -746,7 +750,7 @@
         EMITW(0x4E61A800 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (RT_SIMD_MODE_##mode&1) << 23 | (RT_SIMD_MODE_##mode&2) << 11)
 
-/**************   scalar double precision floating point (NEON)   *************/
+/***************   scalar double-precision floating-point move   **************/
 
 /* mov (D = S) */
 
@@ -762,6 +766,8 @@
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0x91000000 | MDM(TPxx,    MOD(MD), VSL(DD), B1(DD), P1(DD)))  \
         EMITW(0x0D008400 | MXM(REG(XS), TPxx,    0x00))
+
+/************   scalar double-precision floating-point arithmetic   ***********/
 
 /* add (G = G + S) */
 
@@ -886,6 +892,8 @@
         EMITW(0x1F408000 | MXM(REG(XG), REG(XS), TmmM) | REG(XG) << 10)
 
 #endif /* RT_SIMD_COMPAT_FMS */
+
+/*************   scalar double-precision floating-point compare   *************/
 
 /* min (G = G < S ? G : S) */
 

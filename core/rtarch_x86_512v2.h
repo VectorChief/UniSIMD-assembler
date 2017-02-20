@@ -142,7 +142,7 @@
 /**********************************   AVX   ***********************************/
 /******************************************************************************/
 
-/**************************   packed generic (AVX3)   *************************/
+/***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -363,7 +363,7 @@
 #define notox_rx(XG)                                                        \
         annox_ld(W(XG), Mebp, inf_GPC07)
 
-/**************   packed single precision floating point (AVX3)   *************/
+/************   packed single-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -545,6 +545,8 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
+/*************   packed single-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minos_rr(XG, XS)                                                    \
@@ -700,6 +702,8 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
+/*************   packed single-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -800,7 +804,7 @@
 #define cvnon_ld(XD, MS, DS) /* round towards near */                       \
         cvton_ld(W(XD), W(MS), W(DS))
 
-/**************************   packed integer (AVX3)   *************************/
+/************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 

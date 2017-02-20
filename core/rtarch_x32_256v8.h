@@ -129,7 +129,7 @@
 /**********************************   SSE   ***********************************/
 /******************************************************************************/
 
-/**************************   packed generic (SSE1)   *************************/
+/***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -295,7 +295,7 @@
 #define notcx_rx(XG)                                                        \
         anncx_ld(W(XG), Mebp, inf_GPC07)
 
-/**************   packed single precision floating point (SSE1)   *************/
+/************   packed single-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -676,6 +676,8 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
+/*************   packed single-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define mincs_rr(XG, XS)                                                    \
@@ -874,6 +876,8 @@
 #define cgecs3ld(XD, XS, MT, DT)                                            \
         movcx_rr(W(XD), W(XS))                                              \
         cgecs_ld(W(XD), W(MT), W(DT))
+
+/*************   packed single-precision floating-point convert   *************/
 
 #if (RT_SIMD_COMPAT_256 < 2)
 
@@ -1233,7 +1237,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
 
 #endif /* RT_SIMD_COMPAT_256 >= 2 */
 
-/**************************   packed integer (SSE2)   *************************/
+/************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 

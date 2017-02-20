@@ -105,7 +105,7 @@
 /**********************************   SSE   ***********************************/
 /******************************************************************************/
 
-/**************************   packed generic (SSE2)   *************************/
+/***************   packed double-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -271,7 +271,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x57)                       \
 #define notdx_rx(XG)                                                        \
         anndx_ld(W(XG), Mebp, inf_GPC07)
 
-/**************   packed double precision floating point (SSE2)   *************/
+/************   packed double-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -610,6 +610,8 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
+/*************   packed double-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minds_rr(XG, XS)                                                    \
@@ -808,6 +810,8 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
 #define cgeds3ld(XD, XS, MT, DT)                                            \
         movdx_rr(W(XD), W(XS))                                              \
         cgeds_ld(W(XD), W(MT), W(DT))
+
+/*************   packed double-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -1036,7 +1040,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
         movdx_ld(W(XD), W(MS), W(DS))                                       \
         cvndn_rr(W(XD), W(XD))
 
-/**************************   packed integer (SSE2)   *************************/
+/************   packed double-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 

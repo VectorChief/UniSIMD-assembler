@@ -194,7 +194,7 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x38000000 | MPM(REG(RD), MOD(MS), VAL(DS), B2(DS), P2(DS)))
 
-/**************************   packed generic (VMX)   **************************/
+/***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -324,7 +324,7 @@
 #define notix_rx(XG)                                                        \
         EMITW(0x10000504 | MXM(REG(XG), REG(XG), REG(XG)))
 
-/**************   packed single precision floating point (VMX)   **************/
+/************   packed single-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -617,6 +617,8 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
+/*************   packed single-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minis_rr(XG, XS)                                                    \
@@ -750,6 +752,8 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100001C6 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
+/*************   packed single-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -851,7 +855,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0x1000034A | MXM(REG(XD), 0x00,    TmmM))/* ^ == -1 if true */
 
-/**************************   packed integer (VMX)   **************************/
+/************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 
@@ -1106,7 +1110,7 @@
         rnris_rr(W(XD), W(XS), mode)                                        \
         cvzis_rr(W(XD), W(XD))
 
-/**************   scalar single precision floating point (FPU)   **************/
+/***************   scalar single-precision floating-point move   **************/
 
 /* mov (D = S) */
 
@@ -1120,6 +1124,8 @@
 #define movrx_st(XS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0xD0000000 | MDM(REG(XS), MOD(MD), VAL(DD), B1(DD), P1(DD)))
+
+/************   scalar single-precision floating-point arithmetic   ***********/
 
 /* add (G = G + S) */
 
@@ -1237,6 +1243,8 @@
         EMITW(0xEC00003C | MXM(REG(XG), REG(XS), REG(XG)) | TmmM << 6)
 
 #endif /* RT_SIMD_COMPAT_FMS */
+
+/*************   scalar single-precision floating-point compare   *************/
 
 /* min (G = G < S ? G : S) */
 

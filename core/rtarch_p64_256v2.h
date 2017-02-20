@@ -101,7 +101,7 @@
 /**********************************   VSX   ***********************************/
 /******************************************************************************/
 
-/**************************   packed generic (SIMD)   *************************/
+/***************   packed double-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -295,7 +295,7 @@
         EMITW(0xF0000517 | MXM(REG(XG), REG(XG), REG(XG)))                  \
         EMITW(0xF0000517 | MXM(RYG(XG), RYG(XG), RYG(XG)))
 
-/**************   packed double precision floating point (SIMD)   *************/
+/************   packed double-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -491,6 +491,8 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
+/*************   packed double-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minds_rr(XG, XS)                                                    \
@@ -666,6 +668,8 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000039F | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
+/*************   packed double-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -789,7 +793,7 @@
 #define cvndn_ld(XD, MS, DS) /* round towards near */                       \
         cvtdn_ld(W(XD), W(MS), W(DS))
 
-/**************************   packed integer (SIMD)   *************************/
+/************   packed double-precision integer arithmetic/shifts   ***********/
 
 #if (RT_256 < 2)
 

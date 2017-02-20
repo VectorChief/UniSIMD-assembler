@@ -154,7 +154,7 @@
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/**************************   packed generic (AVX1)   *************************/
+/***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -281,7 +281,7 @@
 #define notix_rx(XG)                                                        \
         annix_ld(W(XG), Mebp, inf_GPC07)
 
-/**************   packed single precision floating point (AVX1)   *************/
+/************   packed single-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -549,6 +549,8 @@
 
 #endif /* (RT_SIMD_COMPAT_128 == 2) */
 
+/*************   packed single-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minis_rr(XG, XS)                                                    \
@@ -686,6 +688,8 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x05))
 
+/*************   packed single-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -786,7 +790,7 @@
 #define cvnin_ld(XD, MS, DS) /* round towards near */                       \
         cvtin_ld(W(XD), W(MS), W(DS))
 
-/**************************   packed integer (AVX1)   *************************/
+/************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 
@@ -1112,7 +1116,7 @@
         rnris_rr(W(XD), W(XS), mode)                                        \
         cvzis_rr(W(XD), W(XD))
 
-/**************   scalar single precision floating point (AVX1)   *************/
+/***************   scalar single-precision floating-point move   **************/
 
 /* mov (D = S) */
 
@@ -1129,6 +1133,8 @@
     ADR VEX(RXB(XS), RXB(MD),    0x00, 0, 2, 1) EMITB(0x11)                 \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
+
+/************   scalar single-precision floating-point arithmetic   ***********/
 
 /* add (G = G + S) */
 
@@ -1421,6 +1427,8 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 #endif /* (RT_SIMD_COMPAT_128 == 2) */
+
+/*************   scalar single-precision floating-point compare   *************/
 
 /* min (G = G < S ? G : S) */
 

@@ -793,6 +793,8 @@ struct rt_SIMD_REGS
 
 #elif (RT_SIMD == 256)
 
+/***************   packed single-precision generic move/logic   ***************/
+
 /* mov (D = S) */
 
 #define movox_rr(XD, XS)                                                    \
@@ -887,6 +889,8 @@ struct rt_SIMD_REGS
 
 #define notox_rx(XG)                                                        \
         notcx_rx(W(XG))
+
+/************   packed single-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -1012,6 +1016,8 @@ struct rt_SIMD_REGS
 #define fmsos_ld(XG, XS, MT, DT)                                            \
         fmscs_ld(W(XG), W(XS), W(MT), W(DT))
 
+/*************   packed single-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minos_rr(XG, XS)                                                    \
@@ -1119,6 +1125,8 @@ struct rt_SIMD_REGS
 #define cgeos3ld(XD, XS, MT, DT)                                            \
         cgecs3ld(W(XD), W(XS), W(MT), W(DT))
 
+/*************   packed single-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -1195,6 +1203,8 @@ struct rt_SIMD_REGS
 
 #define cvnon_ld(XD, MS, DS) /* round towards near */                       \
         cvncn_ld(W(XD), W(MS), W(DS))
+
+/************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 
@@ -1448,6 +1458,8 @@ struct rt_SIMD_REGS
 
 #elif (RT_SIMD == 128)
 
+/***************   packed single-precision generic move/logic   ***************/
+
 /* mov (D = S) */
 
 #define movox_rr(XD, XS)                                                    \
@@ -1542,6 +1554,8 @@ struct rt_SIMD_REGS
 
 #define notox_rx(XG)                                                        \
         notix_rx(W(XG))
+
+/************   packed single-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -1667,6 +1681,8 @@ struct rt_SIMD_REGS
 #define fmsos_ld(XG, XS, MT, DT)                                            \
         fmsis_ld(W(XG), W(XS), W(MT), W(DT))
 
+/*************   packed single-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minos_rr(XG, XS)                                                    \
@@ -1774,6 +1790,8 @@ struct rt_SIMD_REGS
 #define cgeos3ld(XD, XS, MT, DT)                                            \
         cgeis3ld(W(XD), W(XS), W(MT), W(DT))
 
+/*************   packed single-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -1850,6 +1868,8 @@ struct rt_SIMD_REGS
 
 #define cvnon_ld(XD, MS, DS) /* round towards near */                       \
         cvnin_ld(W(XD), W(MS), W(DS))
+
+/************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 
@@ -2346,6 +2366,8 @@ struct rt_SIMD_REGS
 
 #elif (RT_SIMD == 256)
 
+/***************   packed double-precision generic move/logic   ***************/
+
 /* mov (D = S) */
 
 #define movqx_rr(XD, XS)                                                    \
@@ -2440,6 +2462,8 @@ struct rt_SIMD_REGS
 
 #define notqx_rx(XG)                                                        \
         notdx_rx(W(XG))
+
+/************   packed double-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -2565,6 +2589,8 @@ struct rt_SIMD_REGS
 #define fmsqs_ld(XG, XS, MT, DT)                                            \
         fmsds_ld(W(XG), W(XS), W(MT), W(DT))
 
+/*************   packed double-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minqs_rr(XG, XS)                                                    \
@@ -2672,6 +2698,8 @@ struct rt_SIMD_REGS
 #define cgeqs3ld(XD, XS, MT, DT)                                            \
         cgeds3ld(W(XD), W(XS), W(MT), W(DT))
 
+/*************   packed double-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -2748,6 +2776,8 @@ struct rt_SIMD_REGS
 
 #define cvnqn_ld(XD, MS, DS) /* round towards near */                       \
         cvndn_ld(W(XD), W(MS), W(DS))
+
+/************   packed double-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 
@@ -3001,6 +3031,8 @@ struct rt_SIMD_REGS
 
 #elif (RT_SIMD == 128)
 
+/***************   packed double-precision generic move/logic   ***************/
+
 /* mov (D = S) */
 
 #define movqx_rr(XD, XS)                                                    \
@@ -3095,6 +3127,8 @@ struct rt_SIMD_REGS
 
 #define notqx_rx(XG)                                                        \
         notjx_rx(W(XG))
+
+/************   packed double-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -3220,6 +3254,8 @@ struct rt_SIMD_REGS
 #define fmsqs_ld(XG, XS, MT, DT)                                            \
         fmsjs_ld(W(XG), W(XS), W(MT), W(DT))
 
+/*************   packed double-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minqs_rr(XG, XS)                                                    \
@@ -3327,6 +3363,8 @@ struct rt_SIMD_REGS
 #define cgeqs3ld(XD, XS, MT, DT)                                            \
         cgejs3ld(W(XD), W(XS), W(MT), W(DT))
 
+/*************   packed double-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -3403,6 +3441,8 @@ struct rt_SIMD_REGS
 
 #define cvnqn_ld(XD, MS, DS) /* round towards near */                       \
         cvnjn_ld(W(XD), W(MS), W(DS))
+
+/************   packed double-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 
@@ -3752,6 +3792,8 @@ struct rt_SIMD_REGS
 
 #if   RT_ELEMENT == 32
 
+/***************   packed single-precision generic move/logic   ***************/
+
 /* mov (D = S) */
 
 #define movpx_rr(XD, XS)                                                    \
@@ -3846,6 +3888,8 @@ struct rt_SIMD_REGS
 
 #define notpx_rx(XG)                                                        \
         notox_rx(W(XG))
+
+/************   packed single-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -3971,6 +4015,8 @@ struct rt_SIMD_REGS
 #define fmsps_ld(XG, XS, MT, DT)                                            \
         fmsos_ld(W(XG), W(XS), W(MT), W(DT))
 
+/*************   packed single-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minps_rr(XG, XS)                                                    \
@@ -4078,6 +4124,8 @@ struct rt_SIMD_REGS
 #define cgeps3ld(XD, XS, MT, DT)                                            \
         cgeos3ld(W(XD), W(XS), W(MT), W(DT))
 
+/*************   packed single-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -4154,6 +4202,8 @@ struct rt_SIMD_REGS
 
 #define cvnpn_ld(XD, MS, DS) /* round towards near */                       \
         cvnon_ld(W(XD), W(MS), W(DS))
+
+/************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 
@@ -4268,6 +4318,8 @@ struct rt_SIMD_REGS
 /**** 256-bit **** SIMD instructions with configurable-element **** 32-bit ****/
 /******************************************************************************/
 
+/***************   packed single-precision generic move/logic   ***************/
+
 /* mov (D = S) */
 
 #define movfx_rr(XD, XS)                                                    \
@@ -4362,6 +4414,8 @@ struct rt_SIMD_REGS
 
 #define notfx_rx(XG)                                                        \
         notcx_rx(W(XG))
+
+/************   packed single-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -4487,6 +4541,8 @@ struct rt_SIMD_REGS
 #define fmsfs_ld(XG, XS, MT, DT)                                            \
         fmscs_ld(W(XG), W(XS), W(MT), W(DT))
 
+/*************   packed single-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minfs_rr(XG, XS)                                                    \
@@ -4594,6 +4650,8 @@ struct rt_SIMD_REGS
 #define cgefs3ld(XD, XS, MT, DT)                                            \
         cgecs3ld(W(XD), W(XS), W(MT), W(DT))
 
+/*************   packed single-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -4670,6 +4728,8 @@ struct rt_SIMD_REGS
 
 #define cvnfn_ld(XD, MS, DS) /* round towards near */                       \
         cvncn_ld(W(XD), W(MS), W(DS))
+
+/************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 
@@ -4784,6 +4844,8 @@ struct rt_SIMD_REGS
 /**** 128-bit **** SIMD instructions with configurable-element **** 32-bit ****/
 /******************************************************************************/
 
+/***************   packed single-precision generic move/logic   ***************/
+
 /* mov (D = S) */
 
 #define movlx_rr(XD, XS)                                                    \
@@ -4878,6 +4940,8 @@ struct rt_SIMD_REGS
 
 #define notlx_rx(XG)                                                        \
         notix_rx(W(XG))
+
+/************   packed single-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -5003,6 +5067,8 @@ struct rt_SIMD_REGS
 #define fmsls_ld(XG, XS, MT, DT)                                            \
         fmsis_ld(W(XG), W(XS), W(MT), W(DT))
 
+/*************   packed single-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minls_rr(XG, XS)                                                    \
@@ -5110,6 +5176,8 @@ struct rt_SIMD_REGS
 #define cgels3ld(XD, XS, MT, DT)                                            \
         cgeis3ld(W(XD), W(XS), W(MT), W(DT))
 
+/*************   packed single-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -5186,6 +5254,8 @@ struct rt_SIMD_REGS
 
 #define cvnln_ld(XD, MS, DS) /* round towards near */                       \
         cvnin_ld(W(XD), W(MS), W(DS))
+
+/************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 
@@ -5300,6 +5370,8 @@ struct rt_SIMD_REGS
 /**** scalar ***** SIMD instructions with configurable-element **** 32-bit ****/
 /******************************************************************************/
 
+/***************   scalar single-precision floating-point move   **************/
+
 /* mov (D = S) */
 
 #define movsx_rr(XD, XS)                                                    \
@@ -5310,6 +5382,8 @@ struct rt_SIMD_REGS
 
 #define movsx_st(XS, MD, DD)                                                \
         movrx_st(W(XS), W(MD), W(DD))
+
+/************   scalar single-precision floating-point arithmetic   ***********/
 
 /* add (G = G + S) */
 
@@ -5395,6 +5469,8 @@ struct rt_SIMD_REGS
 #define fmsss_ld(XG, XS, MT, DT)                                            \
         fmsrs_ld(W(XG), W(XS), W(MT), W(DT))
 
+/*************   scalar single-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S) */
 
 #define minss_rr(XG, XS)                                                    \
@@ -5454,6 +5530,8 @@ struct rt_SIMD_REGS
 /******************************************************************************/
 
 #elif RT_ELEMENT == 64
+
+/***************   packed double-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -5549,6 +5627,8 @@ struct rt_SIMD_REGS
 
 #define notpx_rx(XG)                                                        \
         notqx_rx(W(XG))
+
+/************   packed double-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -5674,6 +5754,8 @@ struct rt_SIMD_REGS
 #define fmsps_ld(XG, XS, MT, DT)                                            \
         fmsqs_ld(W(XG), W(XS), W(MT), W(DT))
 
+/*************   packed double-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minps_rr(XG, XS)                                                    \
@@ -5781,6 +5863,8 @@ struct rt_SIMD_REGS
 #define cgeps3ld(XD, XS, MT, DT)                                            \
         cgeqs3ld(W(XD), W(XS), W(MT), W(DT))
 
+/*************   packed double-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -5857,6 +5941,8 @@ struct rt_SIMD_REGS
 
 #define cvnpn_ld(XD, MS, DS) /* round towards near */                       \
         cvnqn_ld(W(XD), W(MS), W(DS))
+
+/************   packed double-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 
@@ -5971,6 +6057,8 @@ struct rt_SIMD_REGS
 /**** 256-bit **** SIMD instructions with configurable-element **** 64-bit ****/
 /******************************************************************************/
 
+/***************   packed double-precision generic move/logic   ***************/
+
 /* mov (D = S) */
 
 #define movfx_rr(XD, XS)                                                    \
@@ -6065,6 +6153,8 @@ struct rt_SIMD_REGS
 
 #define notfx_rx(XG)                                                        \
         notdx_rx(W(XG))
+
+/************   packed double-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -6190,6 +6280,8 @@ struct rt_SIMD_REGS
 #define fmsfs_ld(XG, XS, MT, DT)                                            \
         fmsds_ld(W(XG), W(XS), W(MT), W(DT))
 
+/*************   packed double-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minfs_rr(XG, XS)                                                    \
@@ -6297,6 +6389,8 @@ struct rt_SIMD_REGS
 #define cgefs3ld(XD, XS, MT, DT)                                            \
         cgeds3ld(W(XD), W(XS), W(MT), W(DT))
 
+/*************   packed double-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -6373,6 +6467,8 @@ struct rt_SIMD_REGS
 
 #define cvnfn_ld(XD, MS, DS) /* round towards near */                       \
         cvndn_ld(W(XD), W(MS), W(DS))
+
+/************   packed double-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 
@@ -6487,6 +6583,8 @@ struct rt_SIMD_REGS
 /**** 128-bit **** SIMD instructions with configurable-element **** 64-bit ****/
 /******************************************************************************/
 
+/***************   packed double-precision generic move/logic   ***************/
+
 /* mov (D = S) */
 
 #define movlx_rr(XD, XS)                                                    \
@@ -6581,6 +6679,8 @@ struct rt_SIMD_REGS
 
 #define notlx_rx(XG)                                                        \
         notjx_rx(W(XG))
+
+/************   packed double-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -6706,6 +6806,8 @@ struct rt_SIMD_REGS
 #define fmsls_ld(XG, XS, MT, DT)                                            \
         fmsjs_ld(W(XG), W(XS), W(MT), W(DT))
 
+/*************   packed double-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minls_rr(XG, XS)                                                    \
@@ -6813,6 +6915,8 @@ struct rt_SIMD_REGS
 #define cgels3ld(XD, XS, MT, DT)                                            \
         cgejs3ld(W(XD), W(XS), W(MT), W(DT))
 
+/*************   packed double-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -6889,6 +6993,8 @@ struct rt_SIMD_REGS
 
 #define cvnln_ld(XD, MS, DS) /* round towards near */                       \
         cvnjn_ld(W(XD), W(MS), W(DS))
+
+/************   packed double-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 
@@ -7003,6 +7109,8 @@ struct rt_SIMD_REGS
 /**** scalar ***** SIMD instructions with configurable-element **** 64-bit ****/
 /******************************************************************************/
 
+/***************   scalar double-precision floating-point move   **************/
+
 /* mov (D = S) */
 
 #define movsx_rr(XD, XS)                                                    \
@@ -7013,6 +7121,8 @@ struct rt_SIMD_REGS
 
 #define movsx_st(XS, MD, DD)                                                \
         movtx_st(W(XS), W(MD), W(DD))
+
+/************   scalar double-precision floating-point arithmetic   ***********/
 
 /* add (G = G + S) */
 
@@ -7097,6 +7207,8 @@ struct rt_SIMD_REGS
 
 #define fmsss_ld(XG, XS, MT, DT)                                            \
         fmsts_ld(W(XG), W(XS), W(MT), W(DT))
+
+/*************   scalar double-precision floating-point compare   *************/
 
 /* min (G = G < S ? G : S) */
 

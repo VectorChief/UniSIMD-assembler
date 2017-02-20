@@ -101,7 +101,7 @@
 /**********************************   AVX   ***********************************/
 /******************************************************************************/
 
-/**************************   packed generic (AVX1)   *************************/
+/***************   packed double-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -265,7 +265,7 @@
 #define notqx_rx(XG)                                                        \
         annqx_ld(W(XG), Mebp, inf_GPC07)
 
-/**************   packed double precision floating point (AVX1)   *************/
+/************   packed double-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -678,6 +678,8 @@
 
 #endif /* RT_SIMD_COMPAT_512 >= 2 */
 
+/*************   packed double-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minqs_rr(XG, XS)                                                    \
@@ -861,6 +863,8 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMITB(0x05))
 
+/*************   packed double-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -1036,7 +1040,7 @@
         movqx_ld(W(XD), W(MS), W(DS))                                       \
         cvnqn_rr(W(XD), W(XD))
 
-/**************************   packed integer (AVX1)   *************************/
+/************   packed double-precision integer arithmetic/shifts   ***********/
 
 #if (RT_SIMD_COMPAT_512 < 2)
 
@@ -1273,8 +1277,6 @@
         shrzx_mx(Mebp,  inf_SCR01(0x38))                                    \
         stack_ld(Recx)                                                      \
         movqx_ld(W(XG), Mebp, inf_SCR01(0))
-
-/**************************   packed integer (AVX2)   *************************/
 
 #else /* RT_SIMD_COMPAT_512 >= 2 */
 

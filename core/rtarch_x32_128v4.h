@@ -162,7 +162,7 @@
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/**************************   packed generic (SSE1)   *************************/
+/***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -315,7 +315,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
 #define notix_rx(XG)                                                        \
         annix_ld(W(XG), Mebp, inf_GPC07)
 
-/**************   packed single precision floating point (SSE1)   *************/
+/************   packed single-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -635,6 +635,8 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
+/*************   packed single-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minis_rr(XG, XS)                                                    \
@@ -787,6 +789,8 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
 #define cgeis3ld(XD, XS, MT, DT)                                            \
         movix_rr(W(XD), W(XS))                                              \
         cgeis_ld(W(XD), W(MT), W(DT))
+
+/*************   packed single-precision floating-point convert   *************/
 
 #if (RT_128 < 2)
 
@@ -1093,7 +1097,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
 
 #endif /* RT_128 >= 2 */
 
-/**************************   packed integer (SSE1)   *************************/
+/************   packed single-precision integer arithmetic/shifts   ***********/
 
 #if (RT_128 < 2)
 
@@ -1226,8 +1230,6 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
         shrwn_mx(Mebp,  inf_SCR01(0x0C))                                    \
         stack_ld(Recx)                                                      \
         movix_ld(W(XG), Mebp, inf_SCR01(0))
-
-/**************************   packed integer (SSE2)   *************************/
 
 #else /* RT_128 >= 2 */
 
@@ -1600,7 +1602,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
 
 #endif /* RT_128 >= 4 */
 
-/**************   scalar single precision floating point (SSE1)   *************/
+/***************   scalar single-precision floating-point move   **************/
 
 /* mov (D = S) */
 
@@ -1617,6 +1619,8 @@ ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x10)                       \
 ADR xF3 REX(RXB(XS), RXB(MD)) EMITB(0x0F) EMITB(0x11)                       \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
+
+/************   scalar single-precision floating-point arithmetic   ***********/
 
 /* add (G = G + S) */
 
@@ -1869,6 +1873,8 @@ ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
         movrx_ld(W(XG), Mebp, inf_SCR02(0))
 
 #endif /* RT_SIMD_COMPAT_FMS */
+
+/*************   scalar single-precision floating-point compare   *************/
 
 /* min (G = G < S ? G : S) */
 

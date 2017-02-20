@@ -177,7 +177,7 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0xE0800000 | MPM(REG(RD), MOD(MS), VAL(DS), B2(DS), P2(DS)))
 
-/**************************   packed generic (NEON)   *************************/
+/***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -303,7 +303,7 @@
 #define notix_rx(XG)                                                        \
         EMITW(0xF3B005C0 | MXM(REG(XG), 0x00,    REG(XG)))
 
-/**************   packed single precision floating point (NEON)   *************/
+/************   packed single-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -730,6 +730,8 @@
 
 #endif /* RT_128 >= 2 */
 
+/*************   packed single-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minis_rr(XG, XS)                                                    \
@@ -863,7 +865,7 @@
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3000E40 | MXM(REG(XD), REG(XS), TmmM))
 
-/**************************   packed integer (NEON)   *************************/
+/*************   packed single-precision floating-point convert   *************/
 
 #if (RT_128 < 4) /* ASIMDv4 is used here for ARMv8:AArch32 processors */
 
@@ -1061,6 +1063,8 @@
         EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3BB0640 | MXM(REG(XD), 0x00,    TmmM))
+
+/************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 
@@ -1326,7 +1330,7 @@
 
 #endif /* RT_128 >= 4 */
 
-/**************   scalar single precision floating point (NEON)   *************/
+/***************   scalar single-precision floating-point move   **************/
 
 /* mov (D = S) */
 
@@ -1342,6 +1346,8 @@
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
         EMITW(0xE0800000 | MPM(TPxx,    MOD(MD), VAL(DD), B2(DD), P2(DD)))  \
         EMITW(0xF480083F | MXM(REG(XS), TPxx,    0x00))
+
+/************   scalar single-precision floating-point arithmetic   ***********/
 
 /* add (G = G + S) */
 
@@ -1554,6 +1560,8 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 #endif /* RT_128 >= 2 */
+
+/*************   scalar single-precision floating-point compare   *************/
 
 /* min (G = G < S ? G : S) */
 

@@ -117,7 +117,7 @@
 /**********************************   VMX   ***********************************/
 /******************************************************************************/
 
-/**************************   packed generic (SIMD)   *************************/
+/***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -285,7 +285,7 @@
         EMITW(0x10000504 | MXM(REG(XG), REG(XG), REG(XG)))                  \
         EMITW(0x10000504 | MXM(RYG(XG), RYG(XG), RYG(XG)))
 
-/**************   packed single precision floating point (SIMD)   *************/
+/************   packed single-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -690,6 +690,8 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
+/*************   packed single-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define mincs_rr(XG, XS)                                                    \
@@ -865,6 +867,8 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100001C6 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
+/*************   packed single-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -996,7 +1000,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0x1000034A | MXM(RYG(XD), 0x00,    TmmM))/* ^ == -1 if true */
 
-/**************************   packed integer (SIMD)   *************************/
+/************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 

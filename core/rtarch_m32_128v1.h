@@ -189,7 +189,7 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C3(DS), EMPTY2)   \
         EMITW(0x00000021 | MRM(REG(RD), MOD(MS), TDxx) | ADR)
 
-/**************************   packed generic (SIMD)   *************************/
+/***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -310,7 +310,7 @@
 #define notix_rx(XG)                                                        \
         EMITW(0x7840001E | MXM(REG(XG), TmmZ,    REG(XG)))
 
-/**************   packed single precision floating point (SIMD)   *************/
+/************   packed single-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -463,6 +463,8 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
+/*************   packed single-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minis_rr(XG, XS)                                                    \
@@ -586,7 +588,7 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x7980001A | MXM(REG(XD), TmmM,    REG(XS)))
 
-/**************************   packed integer (SIMD)   *************************/
+/*************   packed single-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -684,6 +686,8 @@
 
 #define cvnin_ld(XD, MS, DS) /* round towards near */                       \
         cvtin_ld(W(XD), W(MS), W(DS))
+
+/************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 
@@ -894,7 +898,7 @@
         cvtis_rr(W(XD), W(XS))                                              \
         FCTRL_LEAVE(mode)
 
-/**************   scalar single precision floating point (SIMD)   *************/
+/***************   scalar single-precision floating-point move   **************/
 
 /* mov (D = S) */
 
@@ -908,6 +912,8 @@
 #define movrx_st(XS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0xE4000000 | MDM(REG(XS), MOD(MD), VAL(DD), B1(DD), P1(DD)))
+
+/************   scalar single-precision floating-point arithmetic   ***********/
 
 /* add (G = G + S) */
 
@@ -1024,26 +1030,6 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/* min (G = G < S ? G : S) */
-
-#define minrs_rr(XG, XS)                                                    \
-        EMITW(0x7B00001B | MXM(REG(XG), REG(XG), REG(XS)))
-
-#define minrs_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0xC4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x7B00001B | MXM(REG(XG), REG(XG), TmmM))
-
-/* max (G = G > S ? G : S) */
-
-#define maxrs_rr(XG, XS)                                                    \
-        EMITW(0x7B80001B | MXM(REG(XG), REG(XG), REG(XS)))
-
-#define maxrs_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0xC4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x7B80001B | MXM(REG(XG), REG(XG), TmmM))
-
 #else  /* r6 */
 
 /* fma (G = G + S * T)
@@ -1077,6 +1063,35 @@
         EMITW(0x46000019 | MXM(REG(XG), REG(XS), TmmM))
 
 #endif /* RT_SIMD_COMPAT_FMS */
+
+#endif /* r6 */
+
+/*************   scalar single-precision floating-point compare   *************/
+
+/* pre-r6 */
+#if (defined (RT_M32) && RT_M32 < 6) || (defined (RT_M64) && RT_M64 < 6)
+
+/* min (G = G < S ? G : S) */
+
+#define minrs_rr(XG, XS)                                                    \
+        EMITW(0x7B00001B | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define minrs_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x7B00001B | MXM(REG(XG), REG(XG), TmmM))
+
+/* max (G = G > S ? G : S) */
+
+#define maxrs_rr(XG, XS)                                                    \
+        EMITW(0x7B80001B | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define maxrs_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC4000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x7B80001B | MXM(REG(XG), REG(XG), TmmM))
+
+#else  /* r6 */
 
 /* min (G = G < S ? G : S) */
 

@@ -186,7 +186,7 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x38000000 | MPM(REG(RD), MOD(MS), VAL(DS), B2(DS), P2(DS)))
 
-/**************************   packed generic (VSX1)   *************************/
+/***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -337,7 +337,7 @@
 #define notix_rx(XG)                                                        \
         EMITW(0xF0000517 | MXM(REG(XG), REG(XG), REG(XG)))
 
-/**************   packed single precision floating point (VSX1)   *************/
+/************   packed single-precision floating-point arithmetic   ***********/
 
 /* neg (G = -G) */
 
@@ -499,6 +499,8 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
+/*************   packed single-precision floating-point compare   *************/
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minis_rr(XG, XS)                                                    \
@@ -632,6 +634,8 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000029F | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
+/*************   packed single-precision floating-point convert   *************/
+
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -730,7 +734,7 @@
 #define cvnin_ld(XD, MS, DS) /* round towards near */                       \
         cvtin_ld(W(XD), W(MS), W(DS))
 
-/**************************   packed integer (VSX1)   *************************/
+/************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S) */
 
@@ -975,7 +979,7 @@
         rnris_rr(W(XD), W(XS), mode)                                        \
         cvzis_rr(W(XD), W(XD))
 
-/**************   scalar single precision floating point (VSX1)   *************/
+/***************   scalar single-precision floating-point move   **************/
 
 #if (RT_128 < 4)
 
@@ -991,6 +995,31 @@
 #define movrx_st(XS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0xD0000000 | MDM(REG(XS), MOD(MD), VAL(DD), B1(DD), P1(DD)))
+
+#else /* RT_128 >= 4 */
+
+/* mov (D = S) */
+
+#define movrx_rr(XD, XS)                                                    \
+        EMITW(0xF0000497 | MXM(REG(XD), REG(XS), REG(XS)))
+
+#define movrx_ld(XD, MS, DS)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000419 | MXM(REG(XD), Teax & (MOD(MS) == TPxx), TPxx))    \
+                                                       /* ^ == -1 if true */
+
+#define movrx_st(XS, MD, DD)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MD), VAL(DD), B2(DD), P2(DD)))  \
+        EMITW(0x7C000519 | MXM(REG(XS), Teax & (MOD(MD) == TPxx), TPxx))    \
+                                                       /* ^ == -1 if true */
+
+#endif /* RT_128 >= 4 */
+
+/************   scalar single-precision floating-point arithmetic   ***********/
+
+#if (RT_128 < 4)
 
 /* add (G = G + S) */
 
@@ -1109,96 +1138,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/* min (G = G < S ? G : S) */
-
-#define minrs_rr(XG, XS)                                                    \
-        EMITW(0xF0000640 | MXM(REG(XG), REG(XG), REG(XS)))
-
-#define minrs_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(0xF0000640 | MXM(REG(XG), REG(XG), TmmM))
-
-/* max (G = G > S ? G : S) */
-
-#define maxrs_rr(XG, XS)                                                    \
-        EMITW(0xF0000600 | MXM(REG(XG), REG(XG), REG(XS)))
-
-#define maxrs_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(0xF0000600 | MXM(REG(XG), REG(XG), TmmM))
-
-/* cmp (G = G ? S) */
-
-#define ceqrs_rr(XG, XS)                                                    \
-        EMITW(0xF0000318 | MXM(REG(XG), REG(XG), REG(XS)))
-
-#define ceqrs_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(0xF0000318 | MXM(REG(XG), REG(XG), TmmM))
-
-#define cners_rr(XG, XS)                                                    \
-        EMITW(0xF0000318 | MXM(REG(XG), REG(XG), REG(XS)))                  \
-        EMITW(0xF0000510 | MXM(REG(XG), REG(XG), REG(XG)))
-
-#define cners_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(0xF0000318 | MXM(REG(XG), REG(XG), TmmM))                     \
-        EMITW(0xF0000510 | MXM(REG(XG), REG(XG), REG(XG)))
-
-#define cltrs_rr(XG, XS)                                                    \
-        EMITW(0xF0000358 | MXM(REG(XG), REG(XS), REG(XG)))
-
-#define cltrs_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(0xF0000358 | MXM(REG(XG), TmmM,    REG(XG)))
-
-#define clers_rr(XG, XS)                                                    \
-        EMITW(0xF0000398 | MXM(REG(XG), REG(XS), REG(XG)))
-
-#define clers_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(0xF0000398 | MXM(REG(XG), TmmM,    REG(XG)))
-
-#define cgtrs_rr(XG, XS)                                                    \
-        EMITW(0xF0000358 | MXM(REG(XG), REG(XG), REG(XS)))
-
-#define cgtrs_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(0xF0000358 | MXM(REG(XG), REG(XG), TmmM))
-
-#define cgers_rr(XG, XS)                                                    \
-        EMITW(0xF0000398 | MXM(REG(XG), REG(XG), REG(XS)))
-
-#define cgers_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(0xF0000398 | MXM(REG(XG), REG(XG), TmmM))
-
 #else /* RT_128 >= 4 */
-
-/* mov (D = S) */
-
-#define movrx_rr(XD, XS)                                                    \
-        EMITW(0xF0000497 | MXM(REG(XD), REG(XS), REG(XS)))
-
-#define movrx_ld(XD, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000419 | MXM(REG(XD), Teax & (MOD(MS) == TPxx), TPxx))    \
-                                                       /* ^ == -1 if true */
-
-#define movrx_st(XS, MD, DD)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MD), VAL(DD), B2(DD), P2(DD)))  \
-        EMITW(0x7C000519 | MXM(REG(XS), Teax & (MOD(MD) == TPxx), TPxx))    \
-                                                       /* ^ == -1 if true */
 
 /* add (G = G + S) */
 
@@ -1323,6 +1263,86 @@
         EMITW(0xF000048F | MXM(REG(XG), REG(XS), TmmM))
 
 #endif /* RT_SIMD_COMPAT_FMS */
+
+#endif /* RT_128 >= 4 */
+
+/*************   scalar single-precision floating-point compare   *************/
+
+#if (RT_128 < 4)
+
+/* min (G = G < S ? G : S) */
+
+#define minrs_rr(XG, XS)                                                    \
+        EMITW(0xF0000640 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define minrs_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0xF0000640 | MXM(REG(XG), REG(XG), TmmM))
+
+/* max (G = G > S ? G : S) */
+
+#define maxrs_rr(XG, XS)                                                    \
+        EMITW(0xF0000600 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define maxrs_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0xF0000600 | MXM(REG(XG), REG(XG), TmmM))
+
+/* cmp (G = G ? S) */
+
+#define ceqrs_rr(XG, XS)                                                    \
+        EMITW(0xF0000318 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define ceqrs_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0xF0000318 | MXM(REG(XG), REG(XG), TmmM))
+
+#define cners_rr(XG, XS)                                                    \
+        EMITW(0xF0000318 | MXM(REG(XG), REG(XG), REG(XS)))                  \
+        EMITW(0xF0000510 | MXM(REG(XG), REG(XG), REG(XG)))
+
+#define cners_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0xF0000318 | MXM(REG(XG), REG(XG), TmmM))                     \
+        EMITW(0xF0000510 | MXM(REG(XG), REG(XG), REG(XG)))
+
+#define cltrs_rr(XG, XS)                                                    \
+        EMITW(0xF0000358 | MXM(REG(XG), REG(XS), REG(XG)))
+
+#define cltrs_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0xF0000358 | MXM(REG(XG), TmmM,    REG(XG)))
+
+#define clers_rr(XG, XS)                                                    \
+        EMITW(0xF0000398 | MXM(REG(XG), REG(XS), REG(XG)))
+
+#define clers_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0xF0000398 | MXM(REG(XG), TmmM,    REG(XG)))
+
+#define cgtrs_rr(XG, XS)                                                    \
+        EMITW(0xF0000358 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define cgtrs_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0xF0000358 | MXM(REG(XG), REG(XG), TmmM))
+
+#define cgers_rr(XG, XS)                                                    \
+        EMITW(0xF0000398 | MXM(REG(XG), REG(XG), REG(XS)))
+
+#define cgers_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0xF0000398 | MXM(REG(XG), REG(XG), TmmM))
+
+#else /* RT_128 >= 4 */
 
 /* min (G = G < S ? G : S) */
 
