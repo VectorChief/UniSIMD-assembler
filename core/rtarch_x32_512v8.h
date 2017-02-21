@@ -248,12 +248,12 @@
         orrox_ld(W(XG), W(MS), W(DS))
 
 #define ornox3rr(XD, XS, XT)                                                \
-        movox_rr(W(XD), W(XS))                                              \
-        ornox_rr(W(XD), W(XT))
+        notox_rr(W(XD), W(XS))                                              \
+        orrox_rr(W(XD), W(XT))
 
 #define ornox3ld(XD, XS, MT, DT)                                            \
-        movox_rr(W(XD), W(XS))                                              \
-        ornox_ld(W(XD), W(MT), W(DT))
+        notox_rr(W(XD), W(XS))                                              \
+        orrox_ld(W(XD), W(MT), W(DT))
 
 /* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
@@ -277,17 +277,23 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notox_rx(XG)                                                        \
-        annox_ld(W(XG), Mebp, inf_GPC07)
+        notox_rr(W(XG), W(XG))
+
+#define notox_rr(XD, XS)                                                    \
+        annox3ld(W(XD), W(XS), Mebp, inf_GPC07)
 
 /************   packed single-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negos_rx(XG)                                                        \
-        xorox_ld(W(XG), Mebp, inf_GPC06_32)
+        negos_rr(W(XG), W(XG))
+
+#define negos_rr(XD, XS)                                                    \
+        xorox3ld(W(XD), W(XS), Mebp, inf_GPC06_32)
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 

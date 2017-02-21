@@ -227,12 +227,12 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x56)                       \
         orrjx_ld(W(XG), W(MS), W(DS))
 
 #define ornjx3rr(XD, XS, XT)                                                \
-        movjx_rr(W(XD), W(XS))                                              \
-        ornjx_rr(W(XD), W(XT))
+        notjx_rr(W(XD), W(XS))                                              \
+        orrjx_rr(W(XD), W(XT))
 
 #define ornjx3ld(XD, XS, MT, DT)                                            \
-        movjx_rr(W(XD), W(XS))                                              \
-        ornjx_ld(W(XD), W(MT), W(DT))
+        notjx_rr(W(XD), W(XS))                                              \
+        orrjx_ld(W(XD), W(MT), W(DT))
 
 /* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
@@ -253,17 +253,25 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x57)                       \
         movjx_rr(W(XD), W(XS))                                              \
         xorjx_ld(W(XD), W(MT), W(DT))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notjx_rx(XG)                                                        \
         annjx_ld(W(XG), Mebp, inf_GPC07)
 
+#define notjx_rr(XD, XS)                                                    \
+        movjx_rr(W(XD), W(XS))                                              \
+        notjx_rx(W(XD))
+
 /************   packed double-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negjs_rx(XG)                                                        \
         xorjx_ld(W(XG), Mebp, inf_GPC06_64)
+
+#define negjs_rr(XD, XS)                                                    \
+        movjx_rr(W(XD), W(XS))                                              \
+        negjs_rx(W(XD))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 

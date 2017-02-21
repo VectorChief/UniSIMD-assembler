@@ -235,12 +235,12 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x56)                       \
         orrdx_ld(W(XG), W(MS), W(DS))
 
 #define orndx3rr(XD, XS, XT)                                                \
-        movdx_rr(W(XD), W(XS))                                              \
-        orndx_rr(W(XD), W(XT))
+        notdx_rr(W(XD), W(XS))                                              \
+        orrdx_rr(W(XD), W(XT))
 
 #define orndx3ld(XD, XS, MT, DT)                                            \
-        movdx_rr(W(XD), W(XS))                                              \
-        orndx_ld(W(XD), W(MT), W(DT))
+        notdx_rr(W(XD), W(XS))                                              \
+        orrdx_ld(W(XD), W(MT), W(DT))
 
 /* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
@@ -266,17 +266,25 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x57)                       \
         movdx_rr(W(XD), W(XS))                                              \
         xordx_ld(W(XD), W(MT), W(DT))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notdx_rx(XG)                                                        \
         anndx_ld(W(XG), Mebp, inf_GPC07)
 
+#define notdx_rr(XD, XS)                                                    \
+        movdx_rr(W(XD), W(XS))                                              \
+        notdx_rx(W(XD))
+
 /************   packed double-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negds_rx(XG)                                                        \
         xordx_ld(W(XG), Mebp, inf_GPC06_64)
+
+#define negds_rr(XD, XS)                                                    \
+        movdx_rr(W(XD), W(XS))                                              \
+        negds_rx(W(XD))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 

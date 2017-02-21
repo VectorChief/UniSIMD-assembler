@@ -298,17 +298,23 @@
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3000150 | MXM(REG(XD), REG(XS), TmmM))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notix_rx(XG)                                                        \
-        EMITW(0xF3B005C0 | MXM(REG(XG), 0x00,    REG(XG)))
+        notix_rr(W(XG), W(XG))
+
+#define notix_rr(XD, XS)                                                    \
+        EMITW(0xF3B005C0 | MXM(REG(XD), 0x00,    REG(XS)))
 
 /************   packed single-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negis_rx(XG)                                                        \
-        EMITW(0xF3B907C0 | MXM(REG(XG), 0x00,    REG(XG)))
+        negis_rr(W(XG), W(XG))
+
+#define negis_rr(XD, XS)                                                    \
+        EMITW(0xF3B907C0 | MXM(REG(XD), 0x00,    REG(XS)))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 

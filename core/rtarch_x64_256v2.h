@@ -199,12 +199,12 @@
         orrdx_ld(W(XG), W(MS), W(DS))
 
 #define orndx3rr(XD, XS, XT)                                                \
-        movdx_rr(W(XD), W(XS))                                              \
-        orndx_rr(W(XD), W(XT))
+        notdx_rr(W(XD), W(XS))                                              \
+        orrdx_rr(W(XD), W(XT))
 
 #define orndx3ld(XD, XS, MT, DT)                                            \
-        movdx_rr(W(XD), W(XS))                                              \
-        orndx_ld(W(XD), W(MT), W(DT))
+        notdx_rr(W(XD), W(XS))                                              \
+        orrdx_ld(W(XD), W(MT), W(DT))
 
 /* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
@@ -223,17 +223,23 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notdx_rx(XG)                                                        \
-        anndx_ld(W(XG), Mebp, inf_GPC07)
+        notdx_rr(W(XG), W(XG))
+
+#define notdx_rr(XD, XS)                                                    \
+        anndx3ld(W(XD), W(XS), Mebp, inf_GPC07)
 
 /************   packed double-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negds_rx(XG)                                                        \
-        xordx_ld(W(XG), Mebp, inf_GPC06_64)
+        negds_rr(W(XG), W(XG))
+
+#define negds_rr(XD, XS)                                                    \
+        xordx3ld(W(XD), W(XS), Mebp, inf_GPC06_64)
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 

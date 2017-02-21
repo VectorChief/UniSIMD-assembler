@@ -204,12 +204,12 @@
         orrjx_ld(W(XG), W(MS), W(DS))
 
 #define ornjx3rr(XD, XS, XT)                                                \
-        movjx_rr(W(XD), W(XS))                                              \
-        ornjx_rr(W(XD), W(XT))
+        notjx_rr(W(XD), W(XS))                                              \
+        orrjx_rr(W(XD), W(XT))
 
 #define ornjx3ld(XD, XS, MT, DT)                                            \
-        movjx_rr(W(XD), W(XS))                                              \
-        ornjx_ld(W(XD), W(MT), W(DT))
+        notjx_rr(W(XD), W(XS))                                              \
+        orrjx_ld(W(XD), W(MT), W(DT))
 
 #else /* RT_128 >= 4 */
 
@@ -247,17 +247,23 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF00004D7 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notjx_rx(XG)                                                        \
-        EMITW(0xF0000517 | MXM(REG(XG), REG(XG), REG(XG)))
+        notjx_rr(W(XG), W(XG))
+
+#define notjx_rr(XD, XS)                                                    \
+        EMITW(0xF0000517 | MXM(REG(XD), REG(XS), REG(XS)))
 
 /************   packed double-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negjs_rx(XG)                                                        \
-        EMITW(0xF00007E7 | MXM(REG(XG), 0x00,    REG(XG)))
+        negjs_rr(W(XG), W(XG))
+
+#define negjs_rr(XD, XS)                                                    \
+        EMITW(0xF00007E7 | MXM(REG(XD), 0x00,    REG(XS)))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 

@@ -236,12 +236,12 @@
         orrdx_ld(W(XG), W(MS), W(DS))
 
 #define orndx3rr(XD, XS, XT)                                                \
-        movdx_rr(W(XD), W(XS))                                              \
-        orndx_rr(W(XD), W(XT))
+        notdx_rr(W(XD), W(XS))                                              \
+        orrdx_rr(W(XD), W(XT))
 
 #define orndx3ld(XD, XS, MT, DT)                                            \
-        movdx_rr(W(XD), W(XS))                                              \
-        orndx_ld(W(XD), W(MT), W(DT))
+        notdx_rr(W(XD), W(XS))                                              \
+        orrdx_ld(W(XD), W(MT), W(DT))
 
 #else /* RT_256 >= 2 */
 
@@ -289,19 +289,25 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF00004D7 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notdx_rx(XG)                                                        \
-        EMITW(0xF0000517 | MXM(REG(XG), REG(XG), REG(XG)))                  \
-        EMITW(0xF0000517 | MXM(RYG(XG), RYG(XG), RYG(XG)))
+        notdx_rr(W(XG), W(XG))
+
+#define notdx_rr(XD, XS)                                                    \
+        EMITW(0xF0000517 | MXM(REG(XD), REG(XS), REG(XS)))                  \
+        EMITW(0xF0000517 | MXM(RYG(XD), RYG(XS), RYG(XS)))
 
 /************   packed double-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negds_rx(XG)                                                        \
-        EMITW(0xF00007E7 | MXM(REG(XG), 0x00,    REG(XG)))                  \
-        EMITW(0xF00007E7 | MXM(RYG(XG), 0x00,    RYG(XG)))
+        negds_rr(W(XG), W(XG))
+
+#define negds_rr(XD, XS)                                                    \
+        EMITW(0xF00007E7 | MXM(REG(XD), 0x00,    REG(XS)))                  \
+        EMITW(0xF00007E7 | MXM(RYG(XD), 0x00,    RYG(XS)))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 

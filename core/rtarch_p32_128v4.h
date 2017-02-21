@@ -289,12 +289,12 @@
         orrix_ld(W(XG), W(MS), W(DS))
 
 #define ornix3rr(XD, XS, XT)                                                \
-        movix_rr(W(XD), W(XS))                                              \
-        ornix_rr(W(XD), W(XT))
+        notix_rr(W(XD), W(XS))                                              \
+        orrix_rr(W(XD), W(XT))
 
 #define ornix3ld(XD, XS, MT, DT)                                            \
-        movix_rr(W(XD), W(XS))                                              \
-        ornix_ld(W(XD), W(MT), W(DT))
+        notix_rr(W(XD), W(XS))                                              \
+        orrix_ld(W(XD), W(MT), W(DT))
 
 #else /* RT_128 >= 4 */
 
@@ -332,17 +332,23 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF00004D7 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notix_rx(XG)                                                        \
-        EMITW(0xF0000517 | MXM(REG(XG), REG(XG), REG(XG)))
+        notix_rr(W(XG), W(XG))
+
+#define notix_rr(XD, XS)                                                    \
+        EMITW(0xF0000517 | MXM(REG(XD), REG(XS), REG(XS)))
 
 /************   packed single-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negis_rx(XG)                                                        \
-        EMITW(0xF00006E7 | MXM(REG(XG), 0x00,    REG(XG)))
+        negis_rr(W(XG), W(XG))
+
+#define negis_rr(XD, XS)                                                    \
+        EMITW(0xF00006E7 | MXM(REG(XD), 0x00,    REG(XS)))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 

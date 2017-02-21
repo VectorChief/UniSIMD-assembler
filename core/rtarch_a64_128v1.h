@@ -213,17 +213,23 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x6E201C00 | MXM(REG(XD), REG(XS), TmmM))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notjx_rx(XG)                                                        \
-        EMITW(0x6E205800 | MXM(REG(XG), REG(XG), 0x00))
+        notjx_rr(W(XG), W(XG))
+
+#define notjx_rr(XD, XS)                                                    \
+        EMITW(0x6E205800 | MXM(REG(XD), REG(XS), 0x00))
 
 /************   packed double-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negjs_rx(XG)                                                        \
-        EMITW(0x6EE0F800 | MXM(REG(XG), REG(XG), 0x00))
+        negjs_rr(W(XG), W(XG))
+
+#define negjs_rr(XD, XS)                                                    \
+        EMITW(0x6EE0F800 | MXM(REG(XD), REG(XS), 0x00))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 

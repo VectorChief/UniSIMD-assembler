@@ -235,12 +235,12 @@
         orrcx_ld(W(XG), W(MS), W(DS))
 
 #define orncx3rr(XD, XS, XT)                                                \
-        movcx_rr(W(XD), W(XS))                                              \
-        orncx_rr(W(XD), W(XT))
+        notcx_rr(W(XD), W(XS))                                              \
+        orrcx_rr(W(XD), W(XT))
 
 #define orncx3ld(XD, XS, MT, DT)                                            \
-        movcx_rr(W(XD), W(XS))                                              \
-        orncx_ld(W(XD), W(MT), W(DT))
+        notcx_rr(W(XD), W(XS))                                              \
+        orrcx_ld(W(XD), W(MT), W(DT))
 
 /* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
@@ -262,24 +262,28 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x7860001E | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notcx_rx(XG)                                                        \
-        EMITW(0x7840001E | MXM(REG(XG), TmmZ,    REG(XG)))                  \
-        EMITW(0x7840001E | MXM(RYG(XG), TmmZ,    RYG(XG)))
+        notcx_rr(W(XG), W(XG))
+
+#define notcx_rr(XD, XS)                                                    \
+        EMITW(0x7840001E | MXM(REG(XD), TmmZ,    REG(XS)))                  \
+        EMITW(0x7840001E | MXM(RYG(XD), TmmZ,    RYG(XS)))
 
 /************   packed single-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negcs_rx(XG)                                                        \
-        movix_xm(Mebp, inf_GPC06_32)                                        \
-        EMITW(0x7860001E | MXM(REG(XG), REG(XG), TmmM))                     \
-        EMITW(0x7860001E | MXM(RYG(XG), RYG(XG), TmmM))
+        negcs_rr(W(XG), W(XG))
 
-#define movix_xm(MS, DS) /* not portable, do not use outside */             \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))
+#define negcs_rr(XD, XS)                                                    \
+        movix_xm(Mebp, inf_GPC06_32)                                        \
+        EMITW(0x7860001E | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x7860001E | MXM(RYG(XD), RYG(XS), TmmM))
+
+/* #define movix_xm(MS, DS)                (defined in 32_128-bit header) */
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 

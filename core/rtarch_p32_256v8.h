@@ -250,12 +250,12 @@
         orrcx_ld(W(XG), W(MS), W(DS))
 
 #define orncx3rr(XD, XS, XT)                                                \
-        movcx_rr(W(XD), W(XS))                                              \
-        orncx_rr(W(XD), W(XT))
+        notcx_rr(W(XD), W(XS))                                              \
+        orrcx_rr(W(XD), W(XT))
 
 #define orncx3ld(XD, XS, MT, DT)                                            \
-        movcx_rr(W(XD), W(XS))                                              \
-        orncx_ld(W(XD), W(MT), W(DT))
+        notcx_rr(W(XD), W(XS))                                              \
+        orrcx_ld(W(XD), W(MT), W(DT))
 
 /* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
@@ -279,19 +279,25 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100004C4 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notcx_rx(XG)                                                        \
-        EMITW(0x10000504 | MXM(REG(XG), REG(XG), REG(XG)))                  \
-        EMITW(0x10000504 | MXM(RYG(XG), RYG(XG), RYG(XG)))
+        notcx_rr(W(XG), W(XG))
+
+#define notcx_rr(XD, XS)                                                    \
+        EMITW(0x10000504 | MXM(REG(XD), REG(XS), REG(XS)))                  \
+        EMITW(0x10000504 | MXM(RYG(XD), RYG(XS), RYG(XS)))
 
 /************   packed single-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negcs_rx(XG)                                                        \
-        EMITW(0x100004C4 | MXM(REG(XG), REG(XG), TmmS))                     \
-        EMITW(0x100004C4 | MXM(RYG(XG), RYG(XG), TmmS))
+        negcs_rr(W(XG), W(XG))
+
+#define negcs_rr(XD, XS)                                                    \
+        EMITW(0x100004C4 | MXM(REG(XD), REG(XS), TmmS))                     \
+        EMITW(0x100004C4 | MXM(RYG(XD), RYG(XS), TmmS))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 

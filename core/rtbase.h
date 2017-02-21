@@ -647,7 +647,7 @@ struct rt_SIMD_REGS
 #if   (RT_SIMD >= 512)
 
 /*
- * main block of var-len SIMD instructions is defined in 512-bit rtarch headers
+ * main block of var-len SIMD instructions is defined in 512/1K4/2K8-bit headers
  */
 
 /* cbr (D = cbrt S) */
@@ -885,17 +885,23 @@ struct rt_SIMD_REGS
 #define xorox3ld(XD, XS, MT, DT)                                            \
         xorcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notox_rx(XG)                                                        \
         notcx_rx(W(XG))
 
+#define notox_rr(XD, XS)                                                    \
+        notcx_rr(W(XD), W(XS))
+
 /************   packed single-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negos_rx(XG)                                                        \
         negcs_rx(W(XG))
+
+#define negos_rr(XD, XS)                                                    \
+        negcs_rr(W(XD), W(XS))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 
@@ -1555,17 +1561,23 @@ struct rt_SIMD_REGS
 #define xorox3ld(XD, XS, MT, DT)                                            \
         xorix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notox_rx(XG)                                                        \
         notix_rx(W(XG))
 
+#define notox_rr(XD, XS)                                                    \
+        notix_rr(W(XD), W(XS))
+
 /************   packed single-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negos_rx(XG)                                                        \
         negis_rx(W(XG))
+
+#define negos_rr(XD, XS)                                                    \
+        negis_rr(W(XD), W(XS))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 
@@ -2230,7 +2242,7 @@ struct rt_SIMD_REGS
 #if   (RT_SIMD >= 512)
 
 /*
- * main block of var-len SIMD instructions is defined in 512-bit rtarch headers
+ * main block of var-len SIMD instructions is defined in 512/1K4/2K8-bit headers
  */
 
 /* cbr (D = cbrt S) */
@@ -2468,17 +2480,23 @@ struct rt_SIMD_REGS
 #define xorqx3ld(XD, XS, MT, DT)                                            \
         xordx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notqx_rx(XG)                                                        \
         notdx_rx(W(XG))
 
+#define notqx_rr(XD, XS)                                                    \
+        notdx_rr(W(XD), W(XS))
+
 /************   packed double-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negqs_rx(XG)                                                        \
         negds_rx(W(XG))
+
+#define negqs_rr(XD, XS)                                                    \
+        negds_rr(W(XD), W(XS))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 
@@ -3138,17 +3156,23 @@ struct rt_SIMD_REGS
 #define xorqx3ld(XD, XS, MT, DT)                                            \
         xorjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notqx_rx(XG)                                                        \
         notjx_rx(W(XG))
 
+#define notqx_rr(XD, XS)                                                    \
+        notjx_rr(W(XD), W(XS))
+
 /************   packed double-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negqs_rx(XG)                                                        \
         negjs_rx(W(XG))
+
+#define negqs_rr(XD, XS)                                                    \
+        negjs_rr(W(XD), W(XS))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 
@@ -3904,17 +3928,23 @@ struct rt_SIMD_REGS
 #define xorpx3ld(XD, XS, MT, DT)                                            \
         xorox3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notpx_rx(XG)                                                        \
         notox_rx(W(XG))
 
+#define notpx_rr(XD, XS)                                                    \
+        notox_rr(W(XD), W(XS))
+
 /************   packed single-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negps_rx(XG)                                                        \
         negos_rx(W(XG))
+
+#define negps_rr(XD, XS)                                                    \
+        negos_rr(W(XD), W(XS))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 
@@ -4431,17 +4461,23 @@ struct rt_SIMD_REGS
 #define xorfx3ld(XD, XS, MT, DT)                                            \
         xorcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notfx_rx(XG)                                                        \
         notcx_rx(W(XG))
 
+#define notfx_rr(XD, XS)                                                    \
+        notcx_rr(W(XD), W(XS))
+
 /************   packed single-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negfs_rx(XG)                                                        \
         negcs_rx(W(XG))
+
+#define negfs_rr(XD, XS)                                                    \
+        negcs_rr(W(XD), W(XS))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 
@@ -4958,17 +4994,23 @@ struct rt_SIMD_REGS
 #define xorlx3ld(XD, XS, MT, DT)                                            \
         xorix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notlx_rx(XG)                                                        \
         notix_rx(W(XG))
 
+#define notlx_rr(XD, XS)                                                    \
+        notix_rr(W(XD), W(XS))
+
 /************   packed single-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negls_rx(XG)                                                        \
         negis_rx(W(XG))
+
+#define negls_rr(XD, XS)                                                    \
+        negis_rr(W(XD), W(XS))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 
@@ -5656,17 +5698,23 @@ struct rt_SIMD_REGS
 #define xorpx3ld(XD, XS, MT, DT)                                            \
         xorqx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notpx_rx(XG)                                                        \
         notqx_rx(W(XG))
 
+#define notpx_rr(XD, XS)                                                    \
+        notqx_rr(W(XD), W(XS))
+
 /************   packed double-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negps_rx(XG)                                                        \
         negqs_rx(W(XG))
+
+#define negps_rr(XD, XS)                                                    \
+        negqs_rr(W(XD), W(XS))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 
@@ -6183,17 +6231,23 @@ struct rt_SIMD_REGS
 #define xorfx3ld(XD, XS, MT, DT)                                            \
         xordx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notfx_rx(XG)                                                        \
         notdx_rx(W(XG))
 
+#define notfx_rr(XD, XS)                                                    \
+        notdx_rr(W(XD), W(XS))
+
 /************   packed double-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negfs_rx(XG)                                                        \
         negds_rx(W(XG))
+
+#define negfs_rr(XD, XS)                                                    \
+        negds_rr(W(XD), W(XS))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 
@@ -6710,17 +6764,23 @@ struct rt_SIMD_REGS
 #define xorlx3ld(XD, XS, MT, DT)                                            \
         xorjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notlx_rx(XG)                                                        \
         notjx_rx(W(XG))
 
+#define notlx_rr(XD, XS)                                                    \
+        notjx_rr(W(XD), W(XS))
+
 /************   packed double-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negls_rx(XG)                                                        \
         negjs_rx(W(XG))
+
+#define negls_rr(XD, XS)                                                    \
+        negjs_rr(W(XD), W(XS))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 

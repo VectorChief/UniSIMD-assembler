@@ -317,12 +317,12 @@
         orrox_ld(W(XG), W(MS), W(DS))
 
 #define ornox3rr(XD, XS, XT)                                                \
-        movox_rr(W(XD), W(XS))                                              \
-        ornox_rr(W(XD), W(XT))
+        notox_rr(W(XD), W(XS))                                              \
+        orrox_rr(W(XD), W(XT))
 
 #define ornox3ld(XD, XS, MT, DT)                                            \
-        movox_rr(W(XD), W(XS))                                              \
-        ornox_ld(W(XD), W(MT), W(DT))
+        notox_rr(W(XD), W(XS))                                              \
+        orrox_ld(W(XD), W(MT), W(DT))
 
 #else /* RT_512 >= 2 */
 
@@ -390,23 +390,29 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF00004D2 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notox_rx(XG)                                                        \
-        EMITW(0xF0000517 | MXM(REG(XG), REG(XG), REG(XG)))                  \
-        EMITW(0xF0000517 | MXM(RYG(XG), RYG(XG), RYG(XG)))                  \
-        EMITW(0xF0000510 | MXM(REG(XG), REG(XG), REG(XG)))                  \
-        EMITW(0xF0000510 | MXM(RYG(XG), RYG(XG), RYG(XG)))
+        notox_rr(W(XG), W(XG))
+
+#define notox_rr(XD, XS)                                                    \
+        EMITW(0xF0000517 | MXM(REG(XD), REG(XS), REG(XS)))                  \
+        EMITW(0xF0000517 | MXM(RYG(XD), RYG(XS), RYG(XS)))                  \
+        EMITW(0xF0000510 | MXM(REG(XD), REG(XS), REG(XS)))                  \
+        EMITW(0xF0000510 | MXM(RYG(XD), RYG(XS), RYG(XS)))
 
 /************   packed single-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negos_rx(XG)                                                        \
-        EMITW(0xF00006E7 | MXM(REG(XG), 0x00,    REG(XG)))                  \
-        EMITW(0xF00006E7 | MXM(RYG(XG), 0x00,    RYG(XG)))                  \
-        EMITW(0xF00006E4 | MXM(REG(XG), 0x00,    REG(XG)))                  \
-        EMITW(0xF00006E4 | MXM(RYG(XG), 0x00,    RYG(XG)))
+        negos_rr(W(XG), W(XG))
+
+#define negos_rr(XD, XS)                                                    \
+        EMITW(0xF00006E7 | MXM(REG(XD), 0x00,    REG(XS)))                  \
+        EMITW(0xF00006E7 | MXM(RYG(XD), 0x00,    RYG(XS)))                  \
+        EMITW(0xF00006E4 | MXM(REG(XD), 0x00,    REG(XS)))                  \
+        EMITW(0xF00006E4 | MXM(RYG(XD), 0x00,    RYG(XS)))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 

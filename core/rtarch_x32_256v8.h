@@ -259,12 +259,12 @@
         orrcx_ld(W(XG), W(MS), W(DS))
 
 #define orncx3rr(XD, XS, XT)                                                \
-        movcx_rr(W(XD), W(XS))                                              \
-        orncx_rr(W(XD), W(XT))
+        notcx_rr(W(XD), W(XS))                                              \
+        orrcx_rr(W(XD), W(XT))
 
 #define orncx3ld(XD, XS, MT, DT)                                            \
-        movcx_rr(W(XD), W(XS))                                              \
-        orncx_ld(W(XD), W(MT), W(DT))
+        notcx_rr(W(XD), W(XS))                                              \
+        orrcx_ld(W(XD), W(MT), W(DT))
 
 /* xor (G = G ^ S), (D = S ^ T) if (D != S) */
 
@@ -290,17 +290,25 @@
         movcx_rr(W(XD), W(XS))                                              \
         xorcx_ld(W(XD), W(MT), W(DT))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notcx_rx(XG)                                                        \
         anncx_ld(W(XG), Mebp, inf_GPC07)
 
+#define notcx_rr(XD, XS)                                                    \
+        movcx_rr(W(XD), W(XS))                                              \
+        notcx_rx(W(XD))
+
 /************   packed single-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negcs_rx(XG)                                                        \
         xorcx_ld(W(XG), Mebp, inf_GPC06_32)
+
+#define negcs_rr(XD, XS)                                                    \
+        movcx_rr(W(XD), W(XS))                                              \
+        negcs_rx(W(XD))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 

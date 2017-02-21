@@ -246,19 +246,25 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x6E201C00 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* not (G = ~G) */
+/* not (G = ~G), (D = ~S) */
 
 #define notdx_rx(XG)                                                        \
-        EMITW(0x6E205800 | MXM(REG(XG), REG(XG), 0x00))                     \
-        EMITW(0x6E205800 | MXM(RYG(XG), RYG(XG), 0x00))
+        notdx_rr(W(XG), W(XG))
+
+#define notdx_rr(XD, XS)                                                    \
+        EMITW(0x6E205800 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x6E205800 | MXM(RYG(XD), RYG(XS), 0x00))
 
 /************   packed double-precision floating-point arithmetic   ***********/
 
-/* neg (G = -G) */
+/* neg (G = -G), (D = -S) */
 
 #define negds_rx(XG)                                                        \
-        EMITW(0x6EE0F800 | MXM(REG(XG), REG(XG), 0x00))                     \
-        EMITW(0x6EE0F800 | MXM(RYG(XG), RYG(XG), 0x00))
+        negds_rr(W(XG), W(XG))
+
+#define negds_rr(XD, XS)                                                    \
+        EMITW(0x6EE0F800 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x6EE0F800 | MXM(RYG(XD), RYG(XS), 0x00))
 
 /* add (G = G + S), (D = S + T) if (D != S) */
 
