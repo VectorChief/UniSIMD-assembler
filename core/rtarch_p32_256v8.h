@@ -736,7 +736,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x1000040A | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* cmp (G = G ? S), (D = S ? T) if (D != S) */
+/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
 
 #define ceqcs_rr(XG, XS)                                                    \
         ceqcs3rr(W(XG), W(XG), W(XS))
@@ -758,6 +758,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100000C6 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
+/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
 
 #define cnecs_rr(XG, XS)                                                    \
         cnecs3rr(W(XG), W(XG), W(XS))
@@ -783,6 +784,7 @@
         EMITW(0x100000C6 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */\
         EMITW(0x10000504 | MXM(RYG(XD), RYG(XD), RYG(XD)))
 
+/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
 
 #define cltcs_rr(XG, XS)                                                    \
         cltcs3rr(W(XG), W(XG), W(XS))
@@ -804,6 +806,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100002C6 | MXM(RYG(XD), TmmM,    RYG(XS)))
 
+/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
 
 #define clecs_rr(XG, XS)                                                    \
         clecs3rr(W(XG), W(XG), W(XS))
@@ -825,6 +828,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100001C6 | MXM(RYG(XD), TmmM,    RYG(XS)))
 
+/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
 
 #define cgtcs_rr(XG, XS)                                                    \
         cgtcs3rr(W(XG), W(XG), W(XS))
@@ -846,6 +850,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100002C6 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
+/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
 
 #define cgecs_rr(XG, XS)                                                    \
         cgecs3rr(W(XG), W(XG), W(XS))
@@ -867,11 +872,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100001C6 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
+/* mkj (jump to lb) if (S satisfies mask condition) */
 
 #define RT_SIMD_MASK_NONE32_256  MN32_256   /* none satisfy the condition */
 #define RT_SIMD_MASK_FULL32_256  MF32_256   /*  all satisfy the condition */

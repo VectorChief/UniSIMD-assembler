@@ -545,7 +545,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* cmp (G = G ? S), (D = S ? T) if (D != S) */
+/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
 
 #define ceqqs_rr(XG, XS)                                                    \
         ceqqs3rr(W(XG), W(XG), W(XS))
@@ -565,6 +565,7 @@
         AUX(SIB(MT), CMD(DT), EMITB(0x00))                                  \
         mz1qx_ld(W(XD), Mebp, inf_GPC07)
 
+/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
 
 #define cneqs_rr(XG, XS)                                                    \
         cneqs3rr(W(XG), W(XG), W(XS))
@@ -584,6 +585,7 @@
         AUX(SIB(MT), CMD(DT), EMITB(0x04))                                  \
         mz1qx_ld(W(XD), Mebp, inf_GPC07)
 
+/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
 
 #define cltqs_rr(XG, XS)                                                    \
         cltqs3rr(W(XG), W(XG), W(XS))
@@ -603,6 +605,7 @@
         AUX(SIB(MT), CMD(DT), EMITB(0x01))                                  \
         mz1qx_ld(W(XD), Mebp, inf_GPC07)
 
+/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
 
 #define cleqs_rr(XG, XS)                                                    \
         cleqs3rr(W(XG), W(XG), W(XS))
@@ -622,6 +625,7 @@
         AUX(SIB(MT), CMD(DT), EMITB(0x02))                                  \
         mz1qx_ld(W(XD), Mebp, inf_GPC07)
 
+/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
 
 #define cgtqs_rr(XG, XS)                                                    \
         cgtqs3rr(W(XG), W(XG), W(XS))
@@ -641,6 +645,7 @@
         AUX(SIB(MT), CMD(DT), EMITB(0x06))                                  \
         mz1qx_ld(W(XD), Mebp, inf_GPC07)
 
+/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
 
 #define cgeqs_rr(XG, XS)                                                    \
         cgeqs3rr(W(XG), W(XG), W(XS))
@@ -666,11 +671,7 @@
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
+/* mkj (jump to lb) if (S satisfies mask condition) */
 
 #define RT_SIMD_MASK_NONE64_512    0x0000   /* none satisfy the condition */
 #define RT_SIMD_MASK_FULL64_512    0xFFFF   /*  all satisfy the condition */

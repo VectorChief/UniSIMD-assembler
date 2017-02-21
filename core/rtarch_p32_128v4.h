@@ -535,7 +535,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF0000607 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-/* cmp (G = G ? S), (D = S ? T) if (D != S) */
+/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
 
 #define ceqis_rr(XG, XS)                                                    \
         ceqis3rr(W(XG), W(XG), W(XS))
@@ -552,6 +552,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000021F | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
+/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
 
 #define cneis_rr(XG, XS)                                                    \
         cneis3rr(W(XG), W(XG), W(XS))
@@ -570,6 +571,7 @@
         EMITW(0xF000021F | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */\
         EMITW(0xF0000517 | MXM(REG(XD), REG(XD), REG(XD)))
 
+/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
 
 #define cltis_rr(XG, XS)                                                    \
         cltis3rr(W(XG), W(XG), W(XS))
@@ -586,6 +588,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000025F | MXM(REG(XD), TmmM,    REG(XS)))/* ^ == -1 if true */
 
+/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
 
 #define cleis_rr(XG, XS)                                                    \
         cleis3rr(W(XG), W(XG), W(XS))
@@ -602,6 +605,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000029F | MXM(REG(XD), TmmM,    REG(XS)))/* ^ == -1 if true */
 
+/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
 
 #define cgtis_rr(XG, XS)                                                    \
         cgtis3rr(W(XG), W(XG), W(XS))
@@ -618,6 +622,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000025F | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
+/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
 
 #define cgeis_rr(XG, XS)                                                    \
         cgeis3rr(W(XG), W(XG), W(XS))
@@ -634,11 +639,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000029F | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
+/* mkj (jump to lb) if (S satisfies mask condition) */
 
 #define RT_SIMD_MASK_NONE32_128  MN32_128   /* none satisfy the condition */
 #define RT_SIMD_MASK_FULL32_128  MF32_128   /*  all satisfy the condition */
@@ -1290,7 +1291,7 @@
         EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0xF0000600 | MXM(REG(XG), REG(XG), TmmM))
 
-/* cmp (G = G ? S) */
+/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
 
 #define ceqrs_rr(XG, XS)                                                    \
         EMITW(0xF0000318 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -1299,6 +1300,8 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0xF0000318 | MXM(REG(XG), REG(XG), TmmM))
+
+/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
 
 #define cners_rr(XG, XS)                                                    \
         EMITW(0xF0000318 | MXM(REG(XG), REG(XG), REG(XS)))                  \
@@ -1310,6 +1313,8 @@
         EMITW(0xF0000318 | MXM(REG(XG), REG(XG), TmmM))                     \
         EMITW(0xF0000510 | MXM(REG(XG), REG(XG), REG(XG)))
 
+/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+
 #define cltrs_rr(XG, XS)                                                    \
         EMITW(0xF0000358 | MXM(REG(XG), REG(XS), REG(XG)))
 
@@ -1317,6 +1322,8 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0xF0000358 | MXM(REG(XG), TmmM,    REG(XG)))
+
+/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
 
 #define clers_rr(XG, XS)                                                    \
         EMITW(0xF0000398 | MXM(REG(XG), REG(XS), REG(XG)))
@@ -1326,6 +1333,8 @@
         EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0xF0000398 | MXM(REG(XG), TmmM,    REG(XG)))
 
+/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+
 #define cgtrs_rr(XG, XS)                                                    \
         EMITW(0xF0000358 | MXM(REG(XG), REG(XG), REG(XS)))
 
@@ -1333,6 +1342,8 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0xC0000000 | MDM(TmmM,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0xF0000358 | MXM(REG(XG), REG(XG), TmmM))
+
+/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
 
 #define cgers_rr(XG, XS)                                                    \
         EMITW(0xF0000398 | MXM(REG(XG), REG(XG), REG(XS)))
@@ -1366,7 +1377,7 @@
         EMITW(0x7C000419 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0xF0000507 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
 
-/* cmp (G = G ? S) */
+/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
 
 #define ceqrs_rr(XG, XS)                                                    \
         EMITW(0xF000031F | MXM(REG(XG), REG(XG), REG(XS)))
@@ -1376,6 +1387,8 @@
         EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x7C000419 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0xF000031F | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
+
+/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
 
 #define cners_rr(XG, XS)                                                    \
         EMITW(0xF000031F | MXM(REG(XG), REG(XG), REG(XS)))                  \
@@ -1388,6 +1401,8 @@
         EMITW(0xF000031F | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */\
         EMITW(0xF0000517 | MXM(REG(XG), REG(XG), REG(XG)))
 
+/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+
 #define cltrs_rr(XG, XS)                                                    \
         EMITW(0xF000035F | MXM(REG(XG), REG(XS), REG(XG)))
 
@@ -1396,6 +1411,8 @@
         EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x7C000419 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0xF000035F | MXM(REG(XG), TmmM,    REG(XG)))/* ^ == -1 if true */
+
+/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
 
 #define clers_rr(XG, XS)                                                    \
         EMITW(0xF000039F | MXM(REG(XG), REG(XS), REG(XG)))
@@ -1406,6 +1423,8 @@
         EMITW(0x7C000419 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0xF000039F | MXM(REG(XG), TmmM,    REG(XG)))/* ^ == -1 if true */
 
+/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+
 #define cgtrs_rr(XG, XS)                                                    \
         EMITW(0xF000035F | MXM(REG(XG), REG(XG), REG(XS)))
 
@@ -1414,6 +1433,8 @@
         EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x7C000419 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
         EMITW(0xF000035F | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */
+
+/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
 
 #define cgers_rr(XG, XS)                                                    \
         EMITW(0xF000039F | MXM(REG(XG), REG(XG), REG(XS)))

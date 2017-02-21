@@ -653,7 +653,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x1000040A | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-/* cmp (G = G ? S), (D = S ? T) if (D != S) */
+/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
 
 #define ceqis_rr(XG, XS)                                                    \
         ceqis3rr(W(XG), W(XG), W(XS))
@@ -670,6 +670,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100000C6 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
+/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
 
 #define cneis_rr(XG, XS)                                                    \
         cneis3rr(W(XG), W(XG), W(XS))
@@ -688,6 +689,7 @@
         EMITW(0x100000C6 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */\
         EMITW(0x10000504 | MXM(REG(XD), REG(XD), REG(XD)))
 
+/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
 
 #define cltis_rr(XG, XS)                                                    \
         cltis3rr(W(XG), W(XG), W(XS))
@@ -704,6 +706,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100002C6 | MXM(REG(XD), TmmM,    REG(XS)))/* ^ == -1 if true */
 
+/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
 
 #define cleis_rr(XG, XS)                                                    \
         cleis3rr(W(XG), W(XG), W(XS))
@@ -720,6 +723,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100001C6 | MXM(REG(XD), TmmM,    REG(XS)))/* ^ == -1 if true */
 
+/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
 
 #define cgtis_rr(XG, XS)                                                    \
         cgtis3rr(W(XG), W(XG), W(XS))
@@ -736,6 +740,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100002C6 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
+/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
 
 #define cgeis_rr(XG, XS)                                                    \
         cgeis3rr(W(XG), W(XG), W(XS))
@@ -752,11 +757,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100001C6 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
+/* mkj (jump to lb) if (S satisfies mask condition) */
 
 #define RT_SIMD_MASK_NONE32_128  MN32_128   /* none satisfy the condition */
 #define RT_SIMD_MASK_FULL32_128  MF32_128   /*  all satisfy the condition */
@@ -1284,7 +1285,7 @@
         movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
         movrx_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* cmp (G = G ? S) */
+/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
 
 #define ceqrs_rr(XG, XS)                                                    \
         movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1303,6 +1304,8 @@
         movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
         movrx_ld(W(XG), Mebp, inf_SCR01(0))
 
+/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+
 #define cners_rr(XG, XS)                                                    \
         movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
@@ -1319,6 +1322,8 @@
         cneis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
         movrx_ld(W(XG), Mebp, inf_SCR01(0))
+
+/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
 
 #define cltrs_rr(XG, XS)                                                    \
         movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1337,6 +1342,8 @@
         movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
         movrx_ld(W(XG), Mebp, inf_SCR01(0))
 
+/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+
 #define clers_rr(XG, XS)                                                    \
         movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
@@ -1354,6 +1361,8 @@
         movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
         movrx_ld(W(XG), Mebp, inf_SCR01(0))
 
+/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+
 #define cgtrs_rr(XG, XS)                                                    \
         movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
         movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
@@ -1370,6 +1379,8 @@
         cgtis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
         movrx_ld(W(XG), Mebp, inf_SCR01(0))
+
+/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
 
 #define cgers_rr(XG, XS)                                                    \
         movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \

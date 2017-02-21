@@ -660,7 +660,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x5F)                       \
         movdx_rr(W(XD), W(XS))                                              \
         maxds_ld(W(XD), W(MT), W(DT))
 
-/* cmp (G = G ? S), (D = S ? T) if (D != S) */
+/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
 
 #define ceqds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -686,6 +686,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movdx_rr(W(XD), W(XS))                                              \
         ceqds_ld(W(XD), W(MT), W(DT))
 
+/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
 
 #define cneds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -711,6 +712,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movdx_rr(W(XD), W(XS))                                              \
         cneds_ld(W(XD), W(MT), W(DT))
 
+/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
 
 #define cltds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -736,6 +738,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movdx_rr(W(XD), W(XS))                                              \
         cltds_ld(W(XD), W(MT), W(DT))
 
+/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
 
 #define cleds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -761,6 +764,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movdx_rr(W(XD), W(XS))                                              \
         cleds_ld(W(XD), W(MT), W(DT))
 
+/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
 
 #define cgtds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -786,6 +790,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movdx_rr(W(XD), W(XS))                                              \
         cgtds_ld(W(XD), W(MT), W(DT))
 
+/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
 
 #define cgeds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -811,11 +816,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movdx_rr(W(XD), W(XS))                                              \
         cgeds_ld(W(XD), W(MT), W(DT))
 
-/* simd mask
- * compatibility with AVX-512 and ARM-SVE can be achieved by always keeping
- * one hidden SIMD register holding all 1s and using one hidden mask register
- * first in cmp (c**ps) to produce compatible result in target SIMD register
- * then in mkj**_** to facilitate branching on a given condition value */
+/* mkj (jump to lb) if (S satisfies mask condition) */
 
 #define RT_SIMD_MASK_NONE64_256    0x00     /* none satisfy the condition */
 #define RT_SIMD_MASK_FULL64_256    0x0F     /*  all satisfy the condition */
