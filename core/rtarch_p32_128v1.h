@@ -659,7 +659,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x1000040A | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqis_rr(XG, XS)                                                    \
         ceqis3rr(W(XG), W(XG), W(XS))
@@ -676,7 +676,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100000C6 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cneis_rr(XG, XS)                                                    \
         cneis3rr(W(XG), W(XG), W(XS))
@@ -695,7 +695,7 @@
         EMITW(0x100000C6 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */\
         EMITW(0x10000504 | MXM(REG(XD), REG(XD), REG(XD)))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltis_rr(XG, XS)                                                    \
         cltis3rr(W(XG), W(XG), W(XS))
@@ -712,7 +712,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100002C6 | MXM(REG(XD), TmmM,    REG(XS)))/* ^ == -1 if true */
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define cleis_rr(XG, XS)                                                    \
         cleis3rr(W(XG), W(XG), W(XS))
@@ -729,7 +729,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100001C6 | MXM(REG(XD), TmmM,    REG(XS)))/* ^ == -1 if true */
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtis_rr(XG, XS)                                                    \
         cgtis3rr(W(XG), W(XG), W(XS))
@@ -746,7 +746,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x100002C6 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgeis_rr(XG, XS)                                                    \
         cgeis3rr(W(XG), W(XG), W(XS))
@@ -1289,157 +1289,205 @@
 
 /*************   scalar single-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minrs_rr(XG, XS)                                                    \
-        movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))                                 \
-        minis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), Mebp, inf_SCR01(0))
+        minrs3rr(W(XG), W(XG), W(XS))
 
 #define minrs_ld(XG, MS, DS)                                                \
-        movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), W(MS), W(DS))                                       \
-        movrx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))                                 \
-        minis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), Mebp, inf_SCR01(0))
+        minrs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minrs3rr(XD, XS, XT)                                                \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        minis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define minrs3ld(XD, XS, MT, DT)                                            \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), W(MT), W(DT))                                       \
+        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        minis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxrs_rr(XG, XS)                                                    \
-        movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))                                 \
-        maxis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), Mebp, inf_SCR01(0))
+        maxrs3rr(W(XG), W(XG), W(XS))
 
 #define maxrs_ld(XG, MS, DS)                                                \
-        movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), W(MS), W(DS))                                       \
-        movrx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))                                 \
-        maxis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), Mebp, inf_SCR01(0))
+        maxrs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+#define maxrs3rr(XD, XS, XT)                                                \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        maxis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define maxrs3ld(XD, XS, MT, DT)                                            \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), W(MT), W(DT))                                       \
+        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        maxis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqrs_rr(XG, XS)                                                    \
-        movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))                                 \
-        ceqis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), Mebp, inf_SCR01(0))
+        ceqrs3rr(W(XG), W(XG), W(XS))
 
 #define ceqrs_ld(XG, MS, DS)                                                \
-        movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), W(MS), W(DS))                                       \
-        movrx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))                                 \
-        ceqis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), Mebp, inf_SCR01(0))
+        ceqrs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+#define ceqrs3rr(XD, XS, XT)                                                \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        ceqis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define ceqrs3ld(XD, XS, MT, DT)                                            \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), W(MT), W(DT))                                       \
+        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        ceqis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cners_rr(XG, XS)                                                    \
-        movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))                                 \
-        cneis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), Mebp, inf_SCR01(0))
+        cners3rr(W(XG), W(XG), W(XS))
 
 #define cners_ld(XG, MS, DS)                                                \
-        movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), W(MS), W(DS))                                       \
-        movrx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))                                 \
-        cneis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), Mebp, inf_SCR01(0))
+        cners3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+#define cners3rr(XD, XS, XT)                                                \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cneis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define cners3ld(XD, XS, MT, DT)                                            \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), W(MT), W(DT))                                       \
+        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cneis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltrs_rr(XG, XS)                                                    \
-        movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))                                 \
-        cltis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), Mebp, inf_SCR01(0))
+        cltrs3rr(W(XG), W(XG), W(XS))
 
 #define cltrs_ld(XG, MS, DS)                                                \
-        movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), W(MS), W(DS))                                       \
-        movrx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))                                 \
-        cltis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), Mebp, inf_SCR01(0))
+        cltrs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+#define cltrs3rr(XD, XS, XT)                                                \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cltis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define cltrs3ld(XD, XS, MT, DT)                                            \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), W(MT), W(DT))                                       \
+        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cltis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define clers_rr(XG, XS)                                                    \
-        movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))                                 \
-        cleis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), Mebp, inf_SCR01(0))
+        clers3rr(W(XG), W(XG), W(XS))
 
 #define clers_ld(XG, MS, DS)                                                \
-        movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), W(MS), W(DS))                                       \
-        movrx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))                                 \
-        cleis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), Mebp, inf_SCR01(0))
+        clers3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+#define clers3rr(XD, XS, XT)                                                \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cleis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define clers3ld(XD, XS, MT, DT)                                            \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), W(MT), W(DT))                                       \
+        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cleis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtrs_rr(XG, XS)                                                    \
-        movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))                                 \
-        cgtis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), Mebp, inf_SCR01(0))
+        cgtrs3rr(W(XG), W(XG), W(XS))
 
 #define cgtrs_ld(XG, MS, DS)                                                \
-        movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), W(MS), W(DS))                                       \
-        movrx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))                                 \
-        cgtis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), Mebp, inf_SCR01(0))
+        cgtrs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+#define cgtrs3rr(XD, XS, XT)                                                \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cgtis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define cgtrs3ld(XD, XS, MT, DT)                                            \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), W(MT), W(DT))                                       \
+        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cgtis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgers_rr(XG, XS)                                                    \
-        movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))                                 \
-        cgeis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), Mebp, inf_SCR01(0))
+        cgers3rr(W(XG), W(XG), W(XS))
 
 #define cgers_ld(XG, MS, DS)                                                \
-        movrx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), W(MS), W(DS))                                       \
-        movrx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))                                 \
-        cgeis_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XG), Mebp, inf_SCR01(0))
+        cgers3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgers3rr(XD, XS, XT)                                                \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cgeis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define cgers3ld(XD, XS, MT, DT)                                            \
+        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), W(MT), W(DT))                                       \
+        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cgeis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movrx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

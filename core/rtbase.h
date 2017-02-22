@@ -1052,7 +1052,7 @@ struct rt_SIMD_REGS
 #define maxos3ld(XD, XS, MT, DT)                                            \
         maxcs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqos_rr(XG, XS)                                                    \
         ceqcs_rr(W(XG), W(XS))
@@ -1066,7 +1066,7 @@ struct rt_SIMD_REGS
 #define ceqos3ld(XD, XS, MT, DT)                                            \
         ceqcs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cneos_rr(XG, XS)                                                    \
         cnecs_rr(W(XG), W(XS))
@@ -1080,7 +1080,7 @@ struct rt_SIMD_REGS
 #define cneos3ld(XD, XS, MT, DT)                                            \
         cnecs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltos_rr(XG, XS)                                                    \
         cltcs_rr(W(XG), W(XS))
@@ -1094,7 +1094,7 @@ struct rt_SIMD_REGS
 #define cltos3ld(XD, XS, MT, DT)                                            \
         cltcs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define cleos_rr(XG, XS)                                                    \
         clecs_rr(W(XG), W(XS))
@@ -1108,7 +1108,7 @@ struct rt_SIMD_REGS
 #define cleos3ld(XD, XS, MT, DT)                                            \
         clecs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtos_rr(XG, XS)                                                    \
         cgtcs_rr(W(XG), W(XS))
@@ -1122,7 +1122,7 @@ struct rt_SIMD_REGS
 #define cgtos3ld(XD, XS, MT, DT)                                            \
         cgtcs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgeos_rr(XG, XS)                                                    \
         cgecs_rr(W(XG), W(XS))
@@ -1740,7 +1740,7 @@ struct rt_SIMD_REGS
 #define maxos3ld(XD, XS, MT, DT)                                            \
         maxis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqos_rr(XG, XS)                                                    \
         ceqis_rr(W(XG), W(XS))
@@ -1754,7 +1754,7 @@ struct rt_SIMD_REGS
 #define ceqos3ld(XD, XS, MT, DT)                                            \
         ceqis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cneos_rr(XG, XS)                                                    \
         cneis_rr(W(XG), W(XS))
@@ -1768,7 +1768,7 @@ struct rt_SIMD_REGS
 #define cneos3ld(XD, XS, MT, DT)                                            \
         cneis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltos_rr(XG, XS)                                                    \
         cltis_rr(W(XG), W(XS))
@@ -1782,7 +1782,7 @@ struct rt_SIMD_REGS
 #define cltos3ld(XD, XS, MT, DT)                                            \
         cltis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define cleos_rr(XG, XS)                                                    \
         cleis_rr(W(XG), W(XS))
@@ -1796,7 +1796,7 @@ struct rt_SIMD_REGS
 #define cleos3ld(XD, XS, MT, DT)                                            \
         cleis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtos_rr(XG, XS)                                                    \
         cgtis_rr(W(XG), W(XS))
@@ -1810,7 +1810,7 @@ struct rt_SIMD_REGS
 #define cgtos3ld(XD, XS, MT, DT)                                            \
         cgtis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgeos_rr(XG, XS)                                                    \
         cgeis_rr(W(XG), W(XS))
@@ -2671,7 +2671,7 @@ struct rt_SIMD_REGS
 #define maxqs3ld(XD, XS, MT, DT)                                            \
         maxds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqqs_rr(XG, XS)                                                    \
         ceqds_rr(W(XG), W(XS))
@@ -2685,7 +2685,7 @@ struct rt_SIMD_REGS
 #define ceqqs3ld(XD, XS, MT, DT)                                            \
         ceqds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cneqs_rr(XG, XS)                                                    \
         cneds_rr(W(XG), W(XS))
@@ -2699,7 +2699,7 @@ struct rt_SIMD_REGS
 #define cneqs3ld(XD, XS, MT, DT)                                            \
         cneds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltqs_rr(XG, XS)                                                    \
         cltds_rr(W(XG), W(XS))
@@ -2713,7 +2713,7 @@ struct rt_SIMD_REGS
 #define cltqs3ld(XD, XS, MT, DT)                                            \
         cltds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define cleqs_rr(XG, XS)                                                    \
         cleds_rr(W(XG), W(XS))
@@ -2727,7 +2727,7 @@ struct rt_SIMD_REGS
 #define cleqs3ld(XD, XS, MT, DT)                                            \
         cleds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtqs_rr(XG, XS)                                                    \
         cgtds_rr(W(XG), W(XS))
@@ -2741,7 +2741,7 @@ struct rt_SIMD_REGS
 #define cgtqs3ld(XD, XS, MT, DT)                                            \
         cgtds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgeqs_rr(XG, XS)                                                    \
         cgeds_rr(W(XG), W(XS))
@@ -3359,7 +3359,7 @@ struct rt_SIMD_REGS
 #define maxqs3ld(XD, XS, MT, DT)                                            \
         maxjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqqs_rr(XG, XS)                                                    \
         ceqjs_rr(W(XG), W(XS))
@@ -3373,7 +3373,7 @@ struct rt_SIMD_REGS
 #define ceqqs3ld(XD, XS, MT, DT)                                            \
         ceqjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cneqs_rr(XG, XS)                                                    \
         cnejs_rr(W(XG), W(XS))
@@ -3387,7 +3387,7 @@ struct rt_SIMD_REGS
 #define cneqs3ld(XD, XS, MT, DT)                                            \
         cnejs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltqs_rr(XG, XS)                                                    \
         cltjs_rr(W(XG), W(XS))
@@ -3401,7 +3401,7 @@ struct rt_SIMD_REGS
 #define cltqs3ld(XD, XS, MT, DT)                                            \
         cltjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define cleqs_rr(XG, XS)                                                    \
         clejs_rr(W(XG), W(XS))
@@ -3415,7 +3415,7 @@ struct rt_SIMD_REGS
 #define cleqs3ld(XD, XS, MT, DT)                                            \
         clejs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtqs_rr(XG, XS)                                                    \
         cgtjs_rr(W(XG), W(XS))
@@ -3429,7 +3429,7 @@ struct rt_SIMD_REGS
 #define cgtqs3ld(XD, XS, MT, DT)                                            \
         cgtjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgeqs_rr(XG, XS)                                                    \
         cgejs_rr(W(XG), W(XS))
@@ -4143,7 +4143,7 @@ struct rt_SIMD_REGS
 #define maxps3ld(XD, XS, MT, DT)                                            \
         maxos3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqps_rr(XG, XS)                                                    \
         ceqos_rr(W(XG), W(XS))
@@ -4157,7 +4157,7 @@ struct rt_SIMD_REGS
 #define ceqps3ld(XD, XS, MT, DT)                                            \
         ceqos3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cneps_rr(XG, XS)                                                    \
         cneos_rr(W(XG), W(XS))
@@ -4171,7 +4171,7 @@ struct rt_SIMD_REGS
 #define cneps3ld(XD, XS, MT, DT)                                            \
         cneos3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltps_rr(XG, XS)                                                    \
         cltos_rr(W(XG), W(XS))
@@ -4185,7 +4185,7 @@ struct rt_SIMD_REGS
 #define cltps3ld(XD, XS, MT, DT)                                            \
         cltos3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define cleps_rr(XG, XS)                                                    \
         cleos_rr(W(XG), W(XS))
@@ -4199,7 +4199,7 @@ struct rt_SIMD_REGS
 #define cleps3ld(XD, XS, MT, DT)                                            \
         cleos3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtps_rr(XG, XS)                                                    \
         cgtos_rr(W(XG), W(XS))
@@ -4213,7 +4213,7 @@ struct rt_SIMD_REGS
 #define cgtps3ld(XD, XS, MT, DT)                                            \
         cgtos3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgeps_rr(XG, XS)                                                    \
         cgeos_rr(W(XG), W(XS))
@@ -4688,7 +4688,7 @@ struct rt_SIMD_REGS
 #define maxfs3ld(XD, XS, MT, DT)                                            \
         maxcs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqfs_rr(XG, XS)                                                    \
         ceqcs_rr(W(XG), W(XS))
@@ -4702,7 +4702,7 @@ struct rt_SIMD_REGS
 #define ceqfs3ld(XD, XS, MT, DT)                                            \
         ceqcs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cnefs_rr(XG, XS)                                                    \
         cnecs_rr(W(XG), W(XS))
@@ -4716,7 +4716,7 @@ struct rt_SIMD_REGS
 #define cnefs3ld(XD, XS, MT, DT)                                            \
         cnecs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltfs_rr(XG, XS)                                                    \
         cltcs_rr(W(XG), W(XS))
@@ -4730,7 +4730,7 @@ struct rt_SIMD_REGS
 #define cltfs3ld(XD, XS, MT, DT)                                            \
         cltcs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define clefs_rr(XG, XS)                                                    \
         clecs_rr(W(XG), W(XS))
@@ -4744,7 +4744,7 @@ struct rt_SIMD_REGS
 #define clefs3ld(XD, XS, MT, DT)                                            \
         clecs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtfs_rr(XG, XS)                                                    \
         cgtcs_rr(W(XG), W(XS))
@@ -4758,7 +4758,7 @@ struct rt_SIMD_REGS
 #define cgtfs3ld(XD, XS, MT, DT)                                            \
         cgtcs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgefs_rr(XG, XS)                                                    \
         cgecs_rr(W(XG), W(XS))
@@ -5233,7 +5233,7 @@ struct rt_SIMD_REGS
 #define maxls3ld(XD, XS, MT, DT)                                            \
         maxis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqls_rr(XG, XS)                                                    \
         ceqis_rr(W(XG), W(XS))
@@ -5247,7 +5247,7 @@ struct rt_SIMD_REGS
 #define ceqls3ld(XD, XS, MT, DT)                                            \
         ceqis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cnels_rr(XG, XS)                                                    \
         cneis_rr(W(XG), W(XS))
@@ -5261,7 +5261,7 @@ struct rt_SIMD_REGS
 #define cnels3ld(XD, XS, MT, DT)                                            \
         cneis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltls_rr(XG, XS)                                                    \
         cltis_rr(W(XG), W(XS))
@@ -5275,7 +5275,7 @@ struct rt_SIMD_REGS
 #define cltls3ld(XD, XS, MT, DT)                                            \
         cltis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define clels_rr(XG, XS)                                                    \
         cleis_rr(W(XG), W(XS))
@@ -5289,7 +5289,7 @@ struct rt_SIMD_REGS
 #define clels3ld(XD, XS, MT, DT)                                            \
         cleis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtls_rr(XG, XS)                                                    \
         cgtis_rr(W(XG), W(XS))
@@ -5303,7 +5303,7 @@ struct rt_SIMD_REGS
 #define cgtls3ld(XD, XS, MT, DT)                                            \
         cgtis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgels_rr(XG, XS)                                                    \
         cgeis_rr(W(XG), W(XS))
@@ -5644,7 +5644,7 @@ struct rt_SIMD_REGS
 
 /*************   scalar single-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minss_rr(XG, XS)                                                    \
         minrs_rr(W(XG), W(XS))
@@ -5652,7 +5652,13 @@ struct rt_SIMD_REGS
 #define minss_ld(XG, MS, DS)                                                \
         minrs_ld(W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minss3rr(XD, XS, XT)                                                \
+        minrs3rr(W(XD), W(XS), W(XT))
+
+#define minss3ld(XD, XS, MT, DT)                                            \
+        minrs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxss_rr(XG, XS)                                                    \
         maxrs_rr(W(XG), W(XS))
@@ -5660,7 +5666,13 @@ struct rt_SIMD_REGS
 #define maxss_ld(XG, MS, DS)                                                \
         maxrs_ld(W(XG), W(MS), W(DS))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+#define maxss3rr(XD, XS, XT)                                                \
+        maxrs3rr(W(XD), W(XS), W(XT))
+
+#define maxss3ld(XD, XS, MT, DT)                                            \
+        maxrs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqss_rr(XG, XS)                                                    \
         ceqrs_rr(W(XG), W(XS))
@@ -5668,7 +5680,13 @@ struct rt_SIMD_REGS
 #define ceqss_ld(XG, MS, DS)                                                \
         ceqrs_ld(W(XG), W(MS), W(DS))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+#define ceqss3rr(XD, XS, XT)                                                \
+        ceqrs3rr(W(XD), W(XS), W(XT))
+
+#define ceqss3ld(XD, XS, MT, DT)                                            \
+        ceqrs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cness_rr(XG, XS)                                                    \
         cners_rr(W(XG), W(XS))
@@ -5676,7 +5694,13 @@ struct rt_SIMD_REGS
 #define cness_ld(XG, MS, DS)                                                \
         cners_ld(W(XG), W(MS), W(DS))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+#define cness3rr(XD, XS, XT)                                                \
+        cners3rr(W(XD), W(XS), W(XT))
+
+#define cness3ld(XD, XS, MT, DT)                                            \
+        cners3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltss_rr(XG, XS)                                                    \
         cltrs_rr(W(XG), W(XS))
@@ -5684,7 +5708,13 @@ struct rt_SIMD_REGS
 #define cltss_ld(XG, MS, DS)                                                \
         cltrs_ld(W(XG), W(MS), W(DS))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+#define cltss3rr(XD, XS, XT)                                                \
+        cltrs3rr(W(XD), W(XS), W(XT))
+
+#define cltss3ld(XD, XS, MT, DT)                                            \
+        cltrs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define cless_rr(XG, XS)                                                    \
         clers_rr(W(XG), W(XS))
@@ -5692,7 +5722,13 @@ struct rt_SIMD_REGS
 #define cless_ld(XG, MS, DS)                                                \
         clers_ld(W(XG), W(MS), W(DS))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+#define cless3rr(XD, XS, XT)                                                \
+        clers3rr(W(XD), W(XS), W(XT))
+
+#define cless3ld(XD, XS, MT, DT)                                            \
+        clers3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtss_rr(XG, XS)                                                    \
         cgtrs_rr(W(XG), W(XS))
@@ -5700,13 +5736,25 @@ struct rt_SIMD_REGS
 #define cgtss_ld(XG, MS, DS)                                                \
         cgtrs_ld(W(XG), W(MS), W(DS))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+#define cgtss3rr(XD, XS, XT)                                                \
+        cgtrs3rr(W(XD), W(XS), W(XT))
+
+#define cgtss3ld(XD, XS, MT, DT)                                            \
+        cgtrs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgess_rr(XG, XS)                                                    \
         cgers_rr(W(XG), W(XS))
 
 #define cgess_ld(XG, MS, DS)                                                \
         cgers_ld(W(XG), W(MS), W(DS))
+
+#define cgess3rr(XD, XS, XT)                                                \
+        cgers3rr(W(XD), W(XS), W(XT))
+
+#define cgess3ld(XD, XS, MT, DT)                                            \
+        cgers3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
 /**** var-len **** SIMD instructions with configurable-element **** 64-bit ****/
@@ -5973,7 +6021,7 @@ struct rt_SIMD_REGS
 #define maxps3ld(XD, XS, MT, DT)                                            \
         maxqs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqps_rr(XG, XS)                                                    \
         ceqqs_rr(W(XG), W(XS))
@@ -5987,7 +6035,7 @@ struct rt_SIMD_REGS
 #define ceqps3ld(XD, XS, MT, DT)                                            \
         ceqqs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cneps_rr(XG, XS)                                                    \
         cneqs_rr(W(XG), W(XS))
@@ -6001,7 +6049,7 @@ struct rt_SIMD_REGS
 #define cneps3ld(XD, XS, MT, DT)                                            \
         cneqs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltps_rr(XG, XS)                                                    \
         cltqs_rr(W(XG), W(XS))
@@ -6015,7 +6063,7 @@ struct rt_SIMD_REGS
 #define cltps3ld(XD, XS, MT, DT)                                            \
         cltqs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define cleps_rr(XG, XS)                                                    \
         cleqs_rr(W(XG), W(XS))
@@ -6029,7 +6077,7 @@ struct rt_SIMD_REGS
 #define cleps3ld(XD, XS, MT, DT)                                            \
         cleqs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtps_rr(XG, XS)                                                    \
         cgtqs_rr(W(XG), W(XS))
@@ -6043,7 +6091,7 @@ struct rt_SIMD_REGS
 #define cgtps3ld(XD, XS, MT, DT)                                            \
         cgtqs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgeps_rr(XG, XS)                                                    \
         cgeqs_rr(W(XG), W(XS))
@@ -6518,7 +6566,7 @@ struct rt_SIMD_REGS
 #define maxfs3ld(XD, XS, MT, DT)                                            \
         maxds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqfs_rr(XG, XS)                                                    \
         ceqds_rr(W(XG), W(XS))
@@ -6532,7 +6580,7 @@ struct rt_SIMD_REGS
 #define ceqfs3ld(XD, XS, MT, DT)                                            \
         ceqds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cnefs_rr(XG, XS)                                                    \
         cneds_rr(W(XG), W(XS))
@@ -6546,7 +6594,7 @@ struct rt_SIMD_REGS
 #define cnefs3ld(XD, XS, MT, DT)                                            \
         cneds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltfs_rr(XG, XS)                                                    \
         cltds_rr(W(XG), W(XS))
@@ -6560,7 +6608,7 @@ struct rt_SIMD_REGS
 #define cltfs3ld(XD, XS, MT, DT)                                            \
         cltds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define clefs_rr(XG, XS)                                                    \
         cleds_rr(W(XG), W(XS))
@@ -6574,7 +6622,7 @@ struct rt_SIMD_REGS
 #define clefs3ld(XD, XS, MT, DT)                                            \
         cleds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtfs_rr(XG, XS)                                                    \
         cgtds_rr(W(XG), W(XS))
@@ -6588,7 +6636,7 @@ struct rt_SIMD_REGS
 #define cgtfs3ld(XD, XS, MT, DT)                                            \
         cgtds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgefs_rr(XG, XS)                                                    \
         cgeds_rr(W(XG), W(XS))
@@ -7063,7 +7111,7 @@ struct rt_SIMD_REGS
 #define maxls3ld(XD, XS, MT, DT)                                            \
         maxjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqls_rr(XG, XS)                                                    \
         ceqjs_rr(W(XG), W(XS))
@@ -7077,7 +7125,7 @@ struct rt_SIMD_REGS
 #define ceqls3ld(XD, XS, MT, DT)                                            \
         ceqjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cnels_rr(XG, XS)                                                    \
         cnejs_rr(W(XG), W(XS))
@@ -7091,7 +7139,7 @@ struct rt_SIMD_REGS
 #define cnels3ld(XD, XS, MT, DT)                                            \
         cnejs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltls_rr(XG, XS)                                                    \
         cltjs_rr(W(XG), W(XS))
@@ -7105,7 +7153,7 @@ struct rt_SIMD_REGS
 #define cltls3ld(XD, XS, MT, DT)                                            \
         cltjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define clels_rr(XG, XS)                                                    \
         clejs_rr(W(XG), W(XS))
@@ -7119,7 +7167,7 @@ struct rt_SIMD_REGS
 #define clels3ld(XD, XS, MT, DT)                                            \
         clejs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtls_rr(XG, XS)                                                    \
         cgtjs_rr(W(XG), W(XS))
@@ -7133,7 +7181,7 @@ struct rt_SIMD_REGS
 #define cgtls3ld(XD, XS, MT, DT)                                            \
         cgtjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgels_rr(XG, XS)                                                    \
         cgejs_rr(W(XG), W(XS))
@@ -7474,7 +7522,7 @@ struct rt_SIMD_REGS
 
 /*************   scalar double-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minss_rr(XG, XS)                                                    \
         mints_rr(W(XG), W(XS))
@@ -7482,7 +7530,13 @@ struct rt_SIMD_REGS
 #define minss_ld(XG, MS, DS)                                                \
         mints_ld(W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minss3rr(XD, XS, XT)                                                \
+        mints3rr(W(XD), W(XS), W(XT))
+
+#define minss3ld(XD, XS, MT, DT)                                            \
+        mints3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxss_rr(XG, XS)                                                    \
         maxts_rr(W(XG), W(XS))
@@ -7490,7 +7544,13 @@ struct rt_SIMD_REGS
 #define maxss_ld(XG, MS, DS)                                                \
         maxts_ld(W(XG), W(MS), W(DS))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+#define maxss3rr(XD, XS, XT)                                                \
+        maxts3rr(W(XD), W(XS), W(XT))
+
+#define maxss3ld(XD, XS, MT, DT)                                            \
+        maxts3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqss_rr(XG, XS)                                                    \
         ceqts_rr(W(XG), W(XS))
@@ -7498,7 +7558,13 @@ struct rt_SIMD_REGS
 #define ceqss_ld(XG, MS, DS)                                                \
         ceqts_ld(W(XG), W(MS), W(DS))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+#define ceqss3rr(XD, XS, XT)                                                \
+        ceqts3rr(W(XD), W(XS), W(XT))
+
+#define ceqss3ld(XD, XS, MT, DT)                                            \
+        ceqts3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cness_rr(XG, XS)                                                    \
         cnets_rr(W(XG), W(XS))
@@ -7506,7 +7572,13 @@ struct rt_SIMD_REGS
 #define cness_ld(XG, MS, DS)                                                \
         cnets_ld(W(XG), W(MS), W(DS))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+#define cness3rr(XD, XS, XT)                                                \
+        cnets3rr(W(XD), W(XS), W(XT))
+
+#define cness3ld(XD, XS, MT, DT)                                            \
+        cnets3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltss_rr(XG, XS)                                                    \
         cltts_rr(W(XG), W(XS))
@@ -7514,7 +7586,13 @@ struct rt_SIMD_REGS
 #define cltss_ld(XG, MS, DS)                                                \
         cltts_ld(W(XG), W(MS), W(DS))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+#define cltss3rr(XD, XS, XT)                                                \
+        cltts3rr(W(XD), W(XS), W(XT))
+
+#define cltss3ld(XD, XS, MT, DT)                                            \
+        cltts3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define cless_rr(XG, XS)                                                    \
         clets_rr(W(XG), W(XS))
@@ -7522,7 +7600,13 @@ struct rt_SIMD_REGS
 #define cless_ld(XG, MS, DS)                                                \
         clets_ld(W(XG), W(MS), W(DS))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+#define cless3rr(XD, XS, XT)                                                \
+        clets3rr(W(XD), W(XS), W(XT))
+
+#define cless3ld(XD, XS, MT, DT)                                            \
+        clets3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtss_rr(XG, XS)                                                    \
         cgtts_rr(W(XG), W(XS))
@@ -7530,13 +7614,25 @@ struct rt_SIMD_REGS
 #define cgtss_ld(XG, MS, DS)                                                \
         cgtts_ld(W(XG), W(MS), W(DS))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+#define cgtss3rr(XD, XS, XT)                                                \
+        cgtts3rr(W(XD), W(XS), W(XT))
+
+#define cgtss3ld(XD, XS, MT, DT)                                            \
+        cgtts3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgess_rr(XG, XS)                                                    \
         cgets_rr(W(XG), W(XS))
 
 #define cgess_ld(XG, MS, DS)                                                \
         cgets_ld(W(XG), W(MS), W(DS))
+
+#define cgess3rr(XD, XS, XT)                                                \
+        cgets3rr(W(XD), W(XS), W(XT))
+
+#define cgess3ld(XD, XS, MT, DT)                                            \
+        cgets3ld(W(XD), W(XS), W(MT), W(DT))
 
 #endif /* RT_ELEMENT */
 

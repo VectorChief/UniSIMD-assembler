@@ -569,7 +569,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF0000607 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqcs_rr(XG, XS)                                                    \
         ceqcs3rr(W(XG), W(XG), W(XS))
@@ -591,7 +591,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000021F | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cnecs_rr(XG, XS)                                                    \
         cnecs3rr(W(XG), W(XG), W(XS))
@@ -617,7 +617,7 @@
         EMITW(0xF000021F | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */\
         EMITW(0xF0000517 | MXM(RYG(XD), RYG(XD), RYG(XD)))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltcs_rr(XG, XS)                                                    \
         cltcs3rr(W(XG), W(XG), W(XS))
@@ -639,7 +639,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000025F | MXM(RYG(XD), TmmM,    RYG(XS)))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define clecs_rr(XG, XS)                                                    \
         clecs3rr(W(XG), W(XG), W(XS))
@@ -661,7 +661,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000029F | MXM(RYG(XD), TmmM,    RYG(XS)))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtcs_rr(XG, XS)                                                    \
         cgtcs3rr(W(XG), W(XG), W(XS))
@@ -683,7 +683,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000025F | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgecs_rr(XG, XS)                                                    \
         cgecs3rr(W(XG), W(XG), W(XS))

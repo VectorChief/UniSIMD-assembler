@@ -482,7 +482,7 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x7BA0001B | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqds_rr(XG, XS)                                                    \
         ceqds3rr(W(XG), W(XG), W(XS))
@@ -502,7 +502,7 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x78A0001A | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cneds_rr(XG, XS)                                                    \
         cneds3rr(W(XG), W(XG), W(XS))
@@ -522,7 +522,7 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x78E0001C | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltds_rr(XG, XS)                                                    \
         cltds3rr(W(XG), W(XG), W(XS))
@@ -542,7 +542,7 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x7920001A | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define cleds_rr(XG, XS)                                                    \
         cleds3rr(W(XG), W(XG), W(XS))
@@ -562,7 +562,7 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x79A0001A | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtds_rr(XG, XS)                                                    \
         cgtds3rr(W(XG), W(XG), W(XS))
@@ -582,7 +582,7 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x7920001A | MXM(RYG(XD), TmmM,    RYG(XS)))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgeds_rr(XG, XS)                                                    \
         cgeds3rr(W(XG), W(XG), W(XS))

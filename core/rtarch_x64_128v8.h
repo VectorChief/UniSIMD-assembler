@@ -600,7 +600,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqjs_rr(XG, XS)                                                    \
         ceqjs3rr(W(XG), W(XG), W(XS))
@@ -618,7 +618,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x00))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cnejs_rr(XG, XS)                                                    \
         cnejs3rr(W(XG), W(XG), W(XS))
@@ -636,7 +636,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x04))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltjs_rr(XG, XS)                                                    \
         cltjs3rr(W(XG), W(XG), W(XS))
@@ -654,7 +654,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x01))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define clejs_rr(XG, XS)                                                    \
         clejs3rr(W(XG), W(XG), W(XS))
@@ -672,7 +672,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x02))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtjs_rr(XG, XS)                                                    \
         cgtjs3rr(W(XG), W(XG), W(XS))
@@ -690,7 +690,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x06))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgejs_rr(XG, XS)                                                    \
         cgejs3rr(W(XG), W(XG), W(XS))
@@ -1415,99 +1415,147 @@
 
 /*************   scalar double-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define mints_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 3, 1) EMITB(0x5D)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        mints3rr(W(XG), W(XG), W(XS))
 
 #define mints_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 3, 1) EMITB(0x5D)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        mints3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define mints3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 3, 1) EMITB(0x5D)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define mints3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 3, 1) EMITB(0x5D)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxts_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 3, 1) EMITB(0x5F)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        maxts3rr(W(XG), W(XG), W(XS))
 
 #define maxts_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 3, 1) EMITB(0x5F)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        maxts3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+#define maxts3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 3, 1) EMITB(0x5F)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define maxts3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 3, 1) EMITB(0x5F)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqts_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 3, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+        ceqts3rr(W(XG), W(XG), W(XS))
 
 #define ceqts_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 3, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x00))
+        ceqts3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+#define ceqts3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 3, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+
+#define ceqts3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 3, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x00))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cnets_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 3, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+        cnets3rr(W(XG), W(XG), W(XS))
 
 #define cnets_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 3, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x04))
+        cnets3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+#define cnets3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 3, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define cnets3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 3, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x04))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltts_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 3, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+        cltts3rr(W(XG), W(XG), W(XS))
 
 #define cltts_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 3, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x01))
+        cltts3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+#define cltts3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 3, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+
+#define cltts3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 3, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x01))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define clets_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 3, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+        clets3rr(W(XG), W(XG), W(XS))
 
 #define clets_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 3, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x02))
+        clets3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+#define clets3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 3, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+
+#define clets3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 3, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x02))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtts_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 3, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x06))
+        cgtts3rr(W(XG), W(XG), W(XS))
 
 #define cgtts_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 3, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x06))
+        cgtts3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+#define cgtts3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 3, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))
+
+#define cgtts3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 3, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x06))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgets_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 0, 3, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x05))
+        cgets3rr(W(XG), W(XG), W(XS))
 
 #define cgets_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 0, 3, 1) EMITB(0xC2)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x05))
+        cgets3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgets3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 3, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))
+
+#define cgets3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 3, 1) EMITB(0xC2)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x05))
 
 /**************************   extended float (x87)   **************************/
 

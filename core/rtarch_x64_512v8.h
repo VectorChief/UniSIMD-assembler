@@ -730,7 +730,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqqs_rr(XG, XS)                                                    \
         ceqqs3rr(W(XG), W(XG), W(XS))
@@ -754,7 +754,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMITB(0x00))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cneqs_rr(XG, XS)                                                    \
         cneqs3rr(W(XG), W(XG), W(XS))
@@ -778,7 +778,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMITB(0x04))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltqs_rr(XG, XS)                                                    \
         cltqs3rr(W(XG), W(XG), W(XS))
@@ -802,7 +802,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMITB(0x01))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define cleqs_rr(XG, XS)                                                    \
         cleqs3rr(W(XG), W(XG), W(XS))
@@ -826,7 +826,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMITB(0x02))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtqs_rr(XG, XS)                                                    \
         cgtqs3rr(W(XG), W(XG), W(XS))
@@ -850,7 +850,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMITB(0x06))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgeqs_rr(XG, XS)                                                    \
         cgeqs3rr(W(XG), W(XG), W(XS))

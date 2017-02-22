@@ -734,7 +734,7 @@
         movcx_rr(W(XD), W(XS))                                              \
         maxcs_ld(W(XD), W(MT), W(DT))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqcs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -760,7 +760,7 @@
         movcx_rr(W(XD), W(XS))                                              \
         ceqcs_ld(W(XD), W(MT), W(DT))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cnecs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -786,7 +786,7 @@
         movcx_rr(W(XD), W(XS))                                              \
         cnecs_ld(W(XD), W(MT), W(DT))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltcs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -812,7 +812,7 @@
         movcx_rr(W(XD), W(XS))                                              \
         cltcs_ld(W(XD), W(MT), W(DT))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define clecs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -838,7 +838,7 @@
         movcx_rr(W(XD), W(XS))                                              \
         clecs_ld(W(XD), W(MT), W(DT))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtcs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -864,7 +864,7 @@
         movcx_rr(W(XD), W(XS))                                              \
         cgtcs_ld(W(XD), W(MT), W(DT))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgecs_rr(XG, XS)                                                    \
         REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \

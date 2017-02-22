@@ -668,7 +668,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x5F)                       \
         movdx_rr(W(XD), W(XS))                                              \
         maxds_ld(W(XD), W(MT), W(DT))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -694,7 +694,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movdx_rr(W(XD), W(XS))                                              \
         ceqds_ld(W(XD), W(MT), W(DT))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cneds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -720,7 +720,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movdx_rr(W(XD), W(XS))                                              \
         cneds_ld(W(XD), W(MT), W(DT))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -746,7 +746,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movdx_rr(W(XD), W(XS))                                              \
         cltds_ld(W(XD), W(MT), W(DT))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define cleds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -772,7 +772,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movdx_rr(W(XD), W(XS))                                              \
         cleds_ld(W(XD), W(MT), W(DT))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -798,7 +798,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movdx_rr(W(XD), W(XS))                                              \
         cgtds_ld(W(XD), W(MT), W(DT))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgeds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \

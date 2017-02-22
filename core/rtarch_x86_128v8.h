@@ -582,7 +582,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqis_rr(XG, XS)                                                    \
         ceqis3rr(W(XG), W(XG), W(XS))
@@ -600,7 +600,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x00))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cneis_rr(XG, XS)                                                    \
         cneis3rr(W(XG), W(XG), W(XS))
@@ -618,7 +618,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x04))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltis_rr(XG, XS)                                                    \
         cltis3rr(W(XG), W(XG), W(XS))
@@ -636,7 +636,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x01))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define cleis_rr(XG, XS)                                                    \
         cleis3rr(W(XG), W(XG), W(XS))
@@ -654,7 +654,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x02))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtis_rr(XG, XS)                                                    \
         cgtis3rr(W(XG), W(XG), W(XS))
@@ -672,7 +672,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x06))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgeis_rr(XG, XS)                                                    \
         cgeis3rr(W(XG), W(XG), W(XS))
@@ -1464,99 +1464,147 @@
 
 /*************   scalar single-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define minrs_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 2) EMITB(0x5D)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        minrs3rr(W(XG), W(XG), W(XS))
 
 #define minrs_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 2) EMITB(0x5D)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        minrs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* max (G = G > S ? G : S) */
+#define minrs3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 2) EMITB(0x5D)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define minrs3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 2) EMITB(0x5D)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxrs_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 2) EMITB(0x5F)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        maxrs3rr(W(XG), W(XG), W(XS))
 
 #define maxrs_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 2) EMITB(0x5F)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        maxrs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+#define maxrs3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 2) EMITB(0x5F)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define maxrs3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 2) EMITB(0x5F)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqrs_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 2) EMITB(0xC2)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+        ceqrs3rr(W(XG), W(XG), W(XS))
 
 #define ceqrs_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 2) EMITB(0xC2)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x00))
+        ceqrs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+#define ceqrs3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 2) EMITB(0xC2)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+
+#define ceqrs3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 2) EMITB(0xC2)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x00))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cners_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 2) EMITB(0xC2)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+        cners3rr(W(XG), W(XG), W(XS))
 
 #define cners_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 2) EMITB(0xC2)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x04))
+        cners3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+#define cners3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 2) EMITB(0xC2)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define cners3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 2) EMITB(0xC2)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x04))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltrs_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 2) EMITB(0xC2)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+        cltrs3rr(W(XG), W(XG), W(XS))
 
 #define cltrs_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 2) EMITB(0xC2)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x01))
+        cltrs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+#define cltrs3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 2) EMITB(0xC2)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+
+#define cltrs3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 2) EMITB(0xC2)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x01))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define clers_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 2) EMITB(0xC2)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+        clers3rr(W(XG), W(XG), W(XS))
 
 #define clers_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 2) EMITB(0xC2)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x02))
+        clers3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+#define clers3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 2) EMITB(0xC2)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+
+#define clers3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 2) EMITB(0xC2)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x02))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtrs_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 2) EMITB(0xC2)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x06))
+        cgtrs3rr(W(XG), W(XG), W(XS))
 
 #define cgtrs_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 2) EMITB(0xC2)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x06))
+        cgtrs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+#define cgtrs3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 2) EMITB(0xC2)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))
+
+#define cgtrs3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 2) EMITB(0xC2)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x06))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgers_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 2) EMITB(0xC2)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x05))
+        cgers3rr(W(XG), W(XG), W(XS))
 
 #define cgers_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 2) EMITB(0xC2)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x05))
+        cgers3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgers3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 2) EMITB(0xC2)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))
+
+#define cgers3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 2) EMITB(0xC2)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x05))
 
 /**************************   extended float (x87)   **************************/
 

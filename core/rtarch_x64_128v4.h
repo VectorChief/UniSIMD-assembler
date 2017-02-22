@@ -604,7 +604,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5F)                       \
         movjx_rr(W(XD), W(XS))                                              \
         maxjs_ld(W(XD), W(MT), W(DT))
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqjs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
@@ -624,7 +624,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movjx_rr(W(XD), W(XS))                                              \
         ceqjs_ld(W(XD), W(MT), W(DT))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cnejs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
@@ -644,7 +644,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movjx_rr(W(XD), W(XS))                                              \
         cnejs_ld(W(XD), W(MT), W(DT))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltjs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
@@ -664,7 +664,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movjx_rr(W(XD), W(XS))                                              \
         cltjs_ld(W(XD), W(MT), W(DT))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define clejs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
@@ -684,7 +684,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movjx_rr(W(XD), W(XS))                                              \
         clejs_ld(W(XD), W(MT), W(DT))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtjs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
@@ -704,7 +704,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movjx_rr(W(XD), W(XS))                                              \
         cgtjs_ld(W(XD), W(MT), W(DT))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgejs_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
@@ -1486,7 +1486,7 @@ ADR xF2 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 
 /*************   scalar double-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
 
 #define mints_rr(XG, XS)                                                    \
     xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5D)                       \
@@ -1497,7 +1497,15 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5D)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* max (G = G > S ? G : S) */
+#define mints3rr(XD, XS, XT)                                                \
+        movtx_rr(W(XD), W(XS))                                              \
+        mints_rr(W(XD), W(XT))
+
+#define mints3ld(XD, XS, MT, DT)                                            \
+        movtx_rr(W(XD), W(XS))                                              \
+        mints_ld(W(XD), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
 
 #define maxts_rr(XG, XS)                                                    \
     xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5F)                       \
@@ -1508,7 +1516,15 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5F)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* ceq (G = G == S ? 1 : 0), (D = S == T ? 1 : 0) if (D != S) */
+#define maxts3rr(XD, XS, XT)                                                \
+        movtx_rr(W(XD), W(XS))                                              \
+        maxts_rr(W(XD), W(XT))
+
+#define maxts3ld(XD, XS, MT, DT)                                            \
+        movtx_rr(W(XD), W(XS))                                              \
+        maxts_ld(W(XD), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
 
 #define ceqts_rr(XG, XS)                                                    \
     xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
@@ -1520,7 +1536,15 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x00))
 
-/* cne (G = G != S ? 1 : 0), (D = S != T ? 1 : 0) if (D != S) */
+#define ceqts3rr(XD, XS, XT)                                                \
+        movtx_rr(W(XD), W(XS))                                              \
+        ceqts_rr(W(XD), W(XT))
+
+#define ceqts3ld(XD, XS, MT, DT)                                            \
+        movtx_rr(W(XD), W(XS))                                              \
+        ceqts_ld(W(XD), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
 
 #define cnets_rr(XG, XS)                                                    \
     xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
@@ -1532,7 +1556,15 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x04))
 
-/* clt (G = G < S ? 1 : 0), (D = S < T ? 1 : 0) if (D != S) */
+#define cnets3rr(XD, XS, XT)                                                \
+        movtx_rr(W(XD), W(XS))                                              \
+        cnets_rr(W(XD), W(XT))
+
+#define cnets3ld(XD, XS, MT, DT)                                            \
+        movtx_rr(W(XD), W(XS))                                              \
+        cnets_ld(W(XD), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
 
 #define cltts_rr(XG, XS)                                                    \
     xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
@@ -1544,7 +1576,15 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x01))
 
-/* cle (G = G <= S ? 1 : 0), (D = S <= T ? 1 : 0) if (D != S) */
+#define cltts3rr(XD, XS, XT)                                                \
+        movtx_rr(W(XD), W(XS))                                              \
+        cltts_rr(W(XD), W(XT))
+
+#define cltts3ld(XD, XS, MT, DT)                                            \
+        movtx_rr(W(XD), W(XS))                                              \
+        cltts_ld(W(XD), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
 
 #define clets_rr(XG, XS)                                                    \
     xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
@@ -1556,7 +1596,15 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x02))
 
-/* cgt (G = G > S ? 1 : 0), (D = S > T ? 1 : 0) if (D != S) */
+#define clets3rr(XD, XS, XT)                                                \
+        movtx_rr(W(XD), W(XS))                                              \
+        clets_rr(W(XD), W(XT))
+
+#define clets3ld(XD, XS, MT, DT)                                            \
+        movtx_rr(W(XD), W(XS))                                              \
+        clets_ld(W(XD), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
 
 #define cgtts_rr(XG, XS)                                                    \
     xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
@@ -1568,7 +1616,15 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x06))
 
-/* cge (G = G >= S ? 1 : 0), (D = S >= T ? 1 : 0) if (D != S) */
+#define cgtts3rr(XD, XS, XT)                                                \
+        movtx_rr(W(XD), W(XS))                                              \
+        cgtts_rr(W(XD), W(XT))
+
+#define cgtts3ld(XD, XS, MT, DT)                                            \
+        movtx_rr(W(XD), W(XS))                                              \
+        cgtts_ld(W(XD), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
 
 #define cgets_rr(XG, XS)                                                    \
     xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
@@ -1579,6 +1635,14 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
 ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x05))
+
+#define cgets3rr(XD, XS, XT)                                                \
+        movtx_rr(W(XD), W(XS))                                              \
+        cgets_rr(W(XD), W(XT))
+
+#define cgets3ld(XD, XS, MT, DT)                                            \
+        movtx_rr(W(XD), W(XS))                                              \
+        cgets_ld(W(XD), W(MT), W(DT))
 
 /**************************   extended float (x87)   **************************/
 
