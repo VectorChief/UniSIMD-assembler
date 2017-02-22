@@ -859,27 +859,39 @@
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addix_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 1) EMITB(0xFE)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        addix3rr(W(XG), W(XG), W(XS))
 
 #define addix_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 1) EMITB(0xFE)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        addix3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addix3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 1) EMITB(0xFE)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define addix3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 1) EMITB(0xFE)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subix_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 1) EMITB(0xFA)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        subix3rr(W(XG), W(XG), W(XS))
 
 #define subix_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 1) EMITB(0xFA)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        subix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subix3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 1) EMITB(0xFA)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define subix3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 1) EMITB(0xFA)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -1134,49 +1146,73 @@
 
 /************   scalar single-precision floating-point arithmetic   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addrs_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 2) EMITB(0x58)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        addrs3rr(W(XG), W(XG), W(XS))
 
 #define addrs_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 2) EMITB(0x58)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        addrs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addrs3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 2) EMITB(0x58)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define addrs3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 2) EMITB(0x58)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subrs_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 2) EMITB(0x5C)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        subrs3rr(W(XG), W(XG), W(XS))
 
 #define subrs_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 2) EMITB(0x5C)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        subrs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subrs3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 2) EMITB(0x5C)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define subrs3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 2) EMITB(0x5C)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulrs_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 2) EMITB(0x59)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        mulrs3rr(W(XG), W(XG), W(XS))
 
 #define mulrs_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 2) EMITB(0x59)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        mulrs3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulrs3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 2) EMITB(0x59)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define mulrs3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 2) EMITB(0x59)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divrs_rr(XG, XS)                                                    \
-        V2X(REG(XG), 0, 2) EMITB(0x5E)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        divrs3rr(W(XG), W(XG), W(XS))
 
 #define divrs_ld(XG, MS, DS)                                                \
-        V2X(REG(XG), 0, 2) EMITB(0x5E)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        divrs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divrs3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 2) EMITB(0x5E)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define divrs3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 2) EMITB(0x5E)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* sqr (D = sqrt S) */
 

@@ -1260,7 +1260,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
 
 #if (RT_128 < 2)
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addix_rr(XG, XS)                                                    \
         movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1293,7 +1293,15 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
         stack_ld(Reax)                                                      \
         movix_ld(W(XG), Mebp, inf_SCR01(0))
 
-/* sub (G = G - S) */
+#define addix3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        addix_rr(W(XD), W(XT))
+
+#define addix3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        addix_ld(W(XD), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subix_rr(XG, XS)                                                    \
         movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
@@ -1325,6 +1333,14 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
         subwx_st(Reax,  Mebp, inf_SCR01(0x0C))                              \
         stack_ld(Reax)                                                      \
         movix_ld(W(XG), Mebp, inf_SCR01(0))
+
+#define subix3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        subix_rr(W(XD), W(XT))
+
+#define subix3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        subix_ld(W(XD), W(MT), W(DT))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -1392,7 +1408,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
 
 #else /* RT_128 >= 2 */
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addix_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xFE)                       \
@@ -1403,7 +1419,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xFE)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* sub (G = G - S) */
+#define addix3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        addix_rr(W(XD), W(XT))
+
+#define addix3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        addix_ld(W(XD), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subix_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xFA)                       \
@@ -1413,6 +1437,14 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xFE)                       \
 ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xFA)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define subix3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        subix_rr(W(XD), W(XT))
+
+#define subix3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        subix_ld(W(XD), W(MT), W(DT))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -1631,7 +1663,7 @@ ADR xF3 REX(RXB(XS), RXB(MD)) EMITB(0x0F) EMITB(0x11)                       \
 
 /************   scalar single-precision floating-point arithmetic   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addrs_rr(XG, XS)                                                    \
     xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x58)                       \
@@ -1642,7 +1674,15 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x58)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* sub (G = G - S) */
+#define addrs3rr(XD, XS, XT)                                                \
+        movrx_rr(W(XD), W(XS))                                              \
+        addrs_rr(W(XD), W(XT))
+
+#define addrs3ld(XD, XS, MT, DT)                                            \
+        movrx_rr(W(XD), W(XS))                                              \
+        addrs_ld(W(XD), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subrs_rr(XG, XS)                                                    \
     xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5C)                       \
@@ -1653,7 +1693,15 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5C)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* mul (G = G * S) */
+#define subrs3rr(XD, XS, XT)                                                \
+        movrx_rr(W(XD), W(XS))                                              \
+        subrs_rr(W(XD), W(XT))
+
+#define subrs3ld(XD, XS, MT, DT)                                            \
+        movrx_rr(W(XD), W(XS))                                              \
+        subrs_ld(W(XD), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulrs_rr(XG, XS)                                                    \
     xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x59)                       \
@@ -1664,7 +1712,15 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* div (G = G / S) */
+#define mulrs3rr(XD, XS, XT)                                                \
+        movrx_rr(W(XD), W(XS))                                              \
+        mulrs_rr(W(XD), W(XT))
+
+#define mulrs3ld(XD, XS, MT, DT)                                            \
+        movrx_rr(W(XD), W(XS))                                              \
+        mulrs_ld(W(XD), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divrs_rr(XG, XS)                                                    \
     xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5E)                       \
@@ -1674,6 +1730,14 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
 ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5E)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define divrs3rr(XD, XS, XT)                                                \
+        movrx_rr(W(XD), W(XS))                                              \
+        divrs_rr(W(XD), W(XT))
+
+#define divrs3ld(XD, XS, MT, DT)                                            \
+        movrx_rr(W(XD), W(XS))                                              \
+        divrs_ld(W(XD), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 

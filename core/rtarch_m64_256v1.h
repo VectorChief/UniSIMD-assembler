@@ -790,33 +790,45 @@
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define adddx_rr(XG, XS)                                                    \
-        EMITW(0x7860000E | MXM(REG(XG), REG(XG), REG(XS)))                  \
-        EMITW(0x7860000E | MXM(RYG(XG), RYG(XG), RYG(XS)))
+        adddx3rr(W(XG), W(XG), W(XS))
 
 #define adddx_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7860000E | MXM(REG(XG), REG(XG), TmmM))                     \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7860000E | MXM(RYG(XG), RYG(XG), TmmM))
+        adddx3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define adddx3rr(XD, XS, XT)                                                \
+        EMITW(0x7860000E | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x7860000E | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define adddx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7860000E | MXM(REG(XD), REG(XS), TmmM))                     \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7860000E | MXM(RYG(XD), RYG(XS), TmmM))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subdx_rr(XG, XS)                                                    \
-        EMITW(0x78E0000E | MXM(REG(XG), REG(XG), REG(XS)))                  \
-        EMITW(0x78E0000E | MXM(RYG(XG), RYG(XG), RYG(XS)))
+        subdx3rr(W(XG), W(XG), W(XS))
 
 #define subdx_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x78E0000E | MXM(REG(XG), REG(XG), TmmM))                     \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x78E0000E | MXM(RYG(XG), RYG(XG), TmmM))
+        subdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subdx3rr(XD, XS, XT)                                                \
+        EMITW(0x78E0000E | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x78E0000E | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define subdx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x78E0000E | MXM(REG(XD), REG(XS), TmmM))                     \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x78E0000E | MXM(RYG(XD), RYG(XS), TmmM))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */

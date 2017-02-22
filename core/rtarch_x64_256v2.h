@@ -931,55 +931,67 @@
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define adddx_rr(XG, XS)                                                    \
-        movdx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        addjx_rr(W(XG), W(XS))                                              \
-        movjx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movjx_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        prmdx_rr(W(XS), W(XS), IB(1))                                       \
-        addjx_rr(W(XG), W(XS))                                              \
-        prmdx_rr(W(XS), W(XS), IB(1))                                       \
-        movjx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
-        movdx_ld(W(XG), Mebp, inf_SCR01(0))
+        adddx3rr(W(XG), W(XG), W(XS))
 
 #define adddx_ld(XG, MS, DS)                                                \
-        movdx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movdx_ld(W(XG), W(MS), W(DS))                                       \
-        movdx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        movjx_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
-        addjx_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
-        movjx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movjx_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        addjx_ld(W(XG), Mebp, inf_SCR02(0x10))                              \
-        movjx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
-        movdx_ld(W(XG), Mebp, inf_SCR01(0))
+        adddx3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define adddx3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        addjx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        addjx_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adddx3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        addjx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        addjx_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subdx_rr(XG, XS)                                                    \
-        movdx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        subjx_rr(W(XG), W(XS))                                              \
-        movjx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movjx_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        prmdx_rr(W(XS), W(XS), IB(1))                                       \
-        subjx_rr(W(XG), W(XS))                                              \
-        prmdx_rr(W(XS), W(XS), IB(1))                                       \
-        movjx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
-        movdx_ld(W(XG), Mebp, inf_SCR01(0))
+        subdx3rr(W(XG), W(XG), W(XS))
 
 #define subdx_ld(XG, MS, DS)                                                \
-        movdx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movdx_ld(W(XG), W(MS), W(DS))                                       \
-        movdx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        movjx_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
-        subjx_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
-        movjx_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movjx_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        subjx_ld(W(XG), Mebp, inf_SCR02(0x10))                              \
-        movjx_st(W(XG), Mebp, inf_SCR01(0x10))                              \
-        movdx_ld(W(XG), Mebp, inf_SCR01(0))
+        subdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subdx3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        subjx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        subjx_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define subdx3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        subjx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        subjx_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -1087,27 +1099,39 @@
 
 #else /* RT_256 >= 2 */
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define adddx_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0xD4)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        adddx3rr(W(XG), W(XG), W(XS))
 
 #define adddx_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0xD4)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        adddx3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define adddx3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 1, 1) EMITB(0xD4)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define adddx3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xD4)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subdx_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0xFB)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        subdx3rr(W(XG), W(XG), W(XS))
 
 #define subdx_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0xFB)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        subdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subdx3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 1, 1) EMITB(0xFB)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define subdx3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xFB)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */

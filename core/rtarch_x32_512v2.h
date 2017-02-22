@@ -870,27 +870,39 @@
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addox_rr(XG, XS)                                                    \
-        EVX(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xFE)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        addox3rr(W(XG), W(XG), W(XS))
 
 #define addox_ld(XG, MS, DS)                                                \
-    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xFE)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        addox3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addox3rr(XD, XS, XT)                                                \
+        EVX(RXB(XD), RXB(XT), REN(XS), K, 1, 1) EMITB(0xFE)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define addox3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(RXB(XD), RXB(MT), REN(XS), K, 1, 1) EMITB(0xFE)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subox_rr(XG, XS)                                                    \
-        EVX(RXB(XG), RXB(XS), REN(XG), K, 1, 1) EMITB(0xFA)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        subox3rr(W(XG), W(XG), W(XS))
 
 #define subox_ld(XG, MS, DS)                                                \
-    ADR EVX(RXB(XG), RXB(MS), REN(XG), K, 1, 1) EMITB(0xFA)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        subox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subox3rr(XD, XS, XT)                                                \
+        EVX(RXB(XD), RXB(XT), REN(XS), K, 1, 1) EMITB(0xFA)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define subox3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(RXB(XD), RXB(MT), REN(XS), K, 1, 1) EMITB(0xFA)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */

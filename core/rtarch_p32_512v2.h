@@ -1261,77 +1261,89 @@
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addox_rr(XG, XS)                                                    \
-        EMITW(0x10000080 | MXM(REG(XG), REG(XG), REG(XS)))                  \
-        EMITW(0x10000080 | MXM(RYG(XG), RYG(XG), RYG(XS)))                  \
-        EMITW(0xF0000491 | MXM(TmmQ,    REG(XG), REG(XG)))                  \
-        EMITW(0xF0000491 | MXM(TmmM,    REG(XS), REG(XS)))                  \
-        EMITW(0x10000080 | MXM(TmmQ,    TmmQ,    TmmM))                     \
-        EMITW(0xF0000496 | MXM(REG(XG), TmmQ,    TmmQ))                     \
-        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XG), RYG(XG)))                  \
-        EMITW(0xF0000491 | MXM(TmmM,    RYG(XS), RYG(XS)))                  \
-        EMITW(0x10000080 | MXM(TmmQ,    TmmQ,    TmmM))                     \
-        EMITW(0xF0000496 | MXM(RYG(XG), TmmQ,    TmmQ))
+        addox3rr(W(XG), W(XG), W(XS))
 
 #define addox_ld(XG, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0x10000080 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */\
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VYL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0x10000080 | MXM(RYG(XG), RYG(XG), TmmM))/* ^ == -1 if true */\
-        EMITW(0xF0000491 | MXM(TmmQ,    REG(XG), REG(XG)))                  \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VXL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VXL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0x10000080 | MXM(TmmQ,    TmmQ,    TmmM))/* ^ == -1 if true */\
-        EMITW(0xF0000496 | MXM(REG(XG), TmmQ,    TmmQ))                     \
-        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XG), RYG(XG)))                  \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VZL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VZL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0x10000080 | MXM(TmmQ,    TmmQ,    TmmM))/* ^ == -1 if true */\
-        EMITW(0xF0000496 | MXM(RYG(XG), TmmQ,    TmmQ))
+        addox3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addox3rr(XD, XS, XT)                                                \
+        EMITW(0x10000080 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x10000080 | MXM(RYG(XD), RYG(XS), RYG(XT)))                  \
+        EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
+        EMITW(0xF0000491 | MXM(TmmM,    REG(XT), REG(XT)))                  \
+        EMITW(0x10000080 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XS), RYG(XS)))                  \
+        EMITW(0xF0000491 | MXM(TmmM,    RYG(XT), RYG(XT)))                  \
+        EMITW(0x10000080 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
+
+#define addox3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0x10000080 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */\
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VYL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0x10000080 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */\
+        EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VXL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VXL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0x10000080 | MXM(TmmQ,    TmmQ,    TmmM))/* ^ == -1 if true */\
+        EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XS), RYG(XS)))                  \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VZL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VZL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0x10000080 | MXM(TmmQ,    TmmQ,    TmmM))/* ^ == -1 if true */\
+        EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subox_rr(XG, XS)                                                    \
-        EMITW(0x10000480 | MXM(REG(XG), REG(XG), REG(XS)))                  \
-        EMITW(0x10000480 | MXM(RYG(XG), RYG(XG), RYG(XS)))                  \
-        EMITW(0xF0000491 | MXM(TmmQ,    REG(XG), REG(XG)))                  \
-        EMITW(0xF0000491 | MXM(TmmM,    REG(XS), REG(XS)))                  \
-        EMITW(0x10000480 | MXM(TmmQ,    TmmQ,    TmmM))                     \
-        EMITW(0xF0000496 | MXM(REG(XG), TmmQ,    TmmQ))                     \
-        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XG), RYG(XG)))                  \
-        EMITW(0xF0000491 | MXM(TmmM,    RYG(XS), RYG(XS)))                  \
-        EMITW(0x10000480 | MXM(TmmQ,    TmmQ,    TmmM))                     \
-        EMITW(0xF0000496 | MXM(RYG(XG), TmmQ,    TmmQ))
+        subox3rr(W(XG), W(XG), W(XS))
 
 #define subox_ld(XG, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0x10000480 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */\
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VYL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0x10000480 | MXM(RYG(XG), RYG(XG), TmmM))/* ^ == -1 if true */\
-        EMITW(0xF0000491 | MXM(TmmQ,    REG(XG), REG(XG)))                  \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VXL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VXL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        subox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subox3rr(XD, XS, XT)                                                \
+        EMITW(0x10000480 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x10000480 | MXM(RYG(XD), RYG(XS), RYG(XT)))                  \
+        EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
+        EMITW(0xF0000491 | MXM(TmmM,    REG(XT), REG(XT)))                  \
+        EMITW(0x10000480 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XS), RYG(XS)))                  \
+        EMITW(0xF0000491 | MXM(TmmM,    RYG(XT), RYG(XT)))                  \
+        EMITW(0x10000480 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
+
+#define subox3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0x10000480 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */\
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VYL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0x10000480 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */\
+        EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VXL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VXL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x10000480 | MXM(TmmQ,    TmmQ,    TmmM))/* ^ == -1 if true */\
-        EMITW(0xF0000496 | MXM(REG(XG), TmmQ,    TmmQ))                     \
-        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XG), RYG(XG)))                  \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VZL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VZL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
+        EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XS), RYG(XS)))                  \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VZL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VZL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0x10000480 | MXM(TmmQ,    TmmQ,    TmmM))/* ^ == -1 if true */\
-        EMITW(0xF0000496 | MXM(RYG(XG), TmmQ,    TmmQ))
+        EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */

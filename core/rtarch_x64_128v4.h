@@ -1037,7 +1037,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addjx_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xD4)                       \
@@ -1048,7 +1048,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xD4)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* sub (G = G - S) */
+#define addjx3rr(XD, XS, XT)                                                \
+        movjx_rr(W(XD), W(XS))                                              \
+        addjx_rr(W(XD), W(XT))
+
+#define addjx3ld(XD, XS, MT, DT)                                            \
+        movjx_rr(W(XD), W(XS))                                              \
+        addjx_ld(W(XD), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subjx_rr(XG, XS)                                                    \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xFB)                       \
@@ -1058,6 +1066,14 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xD4)                       \
 ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xFB)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define subjx3rr(XD, XS, XT)                                                \
+        movjx_rr(W(XD), W(XS))                                              \
+        subjx_rr(W(XD), W(XT))
+
+#define subjx3ld(XD, XS, MT, DT)                                            \
+        movjx_rr(W(XD), W(XS))                                              \
+        subjx_ld(W(XD), W(MT), W(DT))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -1190,7 +1206,7 @@ ADR xF2 REX(RXB(XS), RXB(MD)) EMITB(0x0F) EMITB(0x11)                       \
 
 /************   scalar double-precision floating-point arithmetic   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addts_rr(XG, XS)                                                    \
     xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x58)                       \
@@ -1201,7 +1217,15 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x58)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* sub (G = G - S) */
+#define addts3rr(XD, XS, XT)                                                \
+        movtx_rr(W(XD), W(XS))                                              \
+        addts_rr(W(XD), W(XT))
+
+#define addts3ld(XD, XS, MT, DT)                                            \
+        movtx_rr(W(XD), W(XS))                                              \
+        addts_ld(W(XD), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subts_rr(XG, XS)                                                    \
     xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5C)                       \
@@ -1212,7 +1236,15 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5C)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* mul (G = G * S) */
+#define subts3rr(XD, XS, XT)                                                \
+        movtx_rr(W(XD), W(XS))                                              \
+        subts_rr(W(XD), W(XT))
+
+#define subts3ld(XD, XS, MT, DT)                                            \
+        movtx_rr(W(XD), W(XS))                                              \
+        subts_ld(W(XD), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mults_rr(XG, XS)                                                    \
     xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x59)                       \
@@ -1223,7 +1255,15 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* div (G = G / S) */
+#define mults3rr(XD, XS, XT)                                                \
+        movtx_rr(W(XD), W(XS))                                              \
+        mults_rr(W(XD), W(XT))
+
+#define mults3ld(XD, XS, MT, DT)                                            \
+        movtx_rr(W(XD), W(XS))                                              \
+        mults_ld(W(XD), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divts_rr(XG, XS)                                                    \
     xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5E)                       \
@@ -1233,6 +1273,14 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
 ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5E)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define divts3rr(XD, XS, XT)                                                \
+        movtx_rr(W(XD), W(XS))                                              \
+        divts_rr(W(XD), W(XT))
+
+#define divts3ld(XD, XS, MT, DT)                                            \
+        movtx_rr(W(XD), W(XS))                                              \
+        divts_ld(W(XD), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 

@@ -1263,7 +1263,7 @@ struct rt_SIMD_REGS
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addox_rr(XG, XS)                                                    \
         addcx_rr(W(XG), W(XS))
@@ -1271,13 +1271,25 @@ struct rt_SIMD_REGS
 #define addox_ld(XG, MS, DS)                                                \
         addcx_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addox3rr(XD, XS, XT)                                                \
+        addcx3rr(W(XD), W(XS), W(XT))
+
+#define addox3ld(XD, XS, MT, DT)                                            \
+        addcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subox_rr(XG, XS)                                                    \
         subcx_rr(W(XG), W(XS))
 
 #define subox_ld(XG, MS, DS)                                                \
         subcx_ld(W(XG), W(MS), W(DS))
+
+#define subox3rr(XD, XS, XT)                                                \
+        subcx3rr(W(XD), W(XS), W(XT))
+
+#define subox3ld(XD, XS, MT, DT)                                            \
+        subcx3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -1939,7 +1951,7 @@ struct rt_SIMD_REGS
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addox_rr(XG, XS)                                                    \
         addix_rr(W(XG), W(XS))
@@ -1947,13 +1959,25 @@ struct rt_SIMD_REGS
 #define addox_ld(XG, MS, DS)                                                \
         addix_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addox3rr(XD, XS, XT)                                                \
+        addix3rr(W(XD), W(XS), W(XT))
+
+#define addox3ld(XD, XS, MT, DT)                                            \
+        addix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subox_rr(XG, XS)                                                    \
         subix_rr(W(XG), W(XS))
 
 #define subox_ld(XG, MS, DS)                                                \
         subix_ld(W(XG), W(MS), W(DS))
+
+#define subox3rr(XD, XS, XT)                                                \
+        subix3rr(W(XD), W(XS), W(XT))
+
+#define subox3ld(XD, XS, MT, DT)                                            \
+        subix3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -2858,7 +2882,7 @@ struct rt_SIMD_REGS
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addqx_rr(XG, XS)                                                    \
         adddx_rr(W(XG), W(XS))
@@ -2866,13 +2890,25 @@ struct rt_SIMD_REGS
 #define addqx_ld(XG, MS, DS)                                                \
         adddx_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addqx3rr(XD, XS, XT)                                                \
+        adddx3rr(W(XD), W(XS), W(XT))
+
+#define addqx3ld(XD, XS, MT, DT)                                            \
+        adddx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subqx_rr(XG, XS)                                                    \
         subdx_rr(W(XG), W(XS))
 
 #define subqx_ld(XG, MS, DS)                                                \
         subdx_ld(W(XG), W(MS), W(DS))
+
+#define subqx3rr(XD, XS, XT)                                                \
+        subdx3rr(W(XD), W(XS), W(XT))
+
+#define subqx3ld(XD, XS, MT, DT)                                            \
+        subdx3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -3534,7 +3570,7 @@ struct rt_SIMD_REGS
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addqx_rr(XG, XS)                                                    \
         addjx_rr(W(XG), W(XS))
@@ -3542,13 +3578,25 @@ struct rt_SIMD_REGS
 #define addqx_ld(XG, MS, DS)                                                \
         addjx_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addqx3rr(XD, XS, XT)                                                \
+        addjx3rr(W(XD), W(XS), W(XT))
+
+#define addqx3ld(XD, XS, MT, DT)                                            \
+        addjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subqx_rr(XG, XS)                                                    \
         subjx_rr(W(XG), W(XS))
 
 #define subqx_ld(XG, MS, DS)                                                \
         subjx_ld(W(XG), W(MS), W(DS))
+
+#define subqx3rr(XD, XS, XT)                                                \
+        subjx3rr(W(XD), W(XS), W(XT))
+
+#define subqx3ld(XD, XS, MT, DT)                                            \
+        subjx3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -4306,7 +4354,7 @@ struct rt_SIMD_REGS
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addpx_rr(XG, XS)                                                    \
         addox_rr(W(XG), W(XS))
@@ -4314,13 +4362,25 @@ struct rt_SIMD_REGS
 #define addpx_ld(XG, MS, DS)                                                \
         addox_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addpx3rr(XD, XS, XT)                                                \
+        addox3rr(W(XD), W(XS), W(XT))
+
+#define addpx3ld(XD, XS, MT, DT)                                            \
+        addox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subpx_rr(XG, XS)                                                    \
         subox_rr(W(XG), W(XS))
 
 #define subpx_ld(XG, MS, DS)                                                \
         subox_ld(W(XG), W(MS), W(DS))
+
+#define subpx3rr(XD, XS, XT)                                                \
+        subox3rr(W(XD), W(XS), W(XT))
+
+#define subpx3ld(XD, XS, MT, DT)                                            \
+        subox3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -4839,7 +4899,7 @@ struct rt_SIMD_REGS
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addfx_rr(XG, XS)                                                    \
         addcx_rr(W(XG), W(XS))
@@ -4847,13 +4907,25 @@ struct rt_SIMD_REGS
 #define addfx_ld(XG, MS, DS)                                                \
         addcx_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addfx3rr(XD, XS, XT)                                                \
+        addcx3rr(W(XD), W(XS), W(XT))
+
+#define addfx3ld(XD, XS, MT, DT)                                            \
+        addcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subfx_rr(XG, XS)                                                    \
         subcx_rr(W(XG), W(XS))
 
 #define subfx_ld(XG, MS, DS)                                                \
         subcx_ld(W(XG), W(MS), W(DS))
+
+#define subfx3rr(XD, XS, XT)                                                \
+        subcx3rr(W(XD), W(XS), W(XT))
+
+#define subfx3ld(XD, XS, MT, DT)                                            \
+        subcx3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -5372,7 +5444,7 @@ struct rt_SIMD_REGS
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addlx_rr(XG, XS)                                                    \
         addix_rr(W(XG), W(XS))
@@ -5380,13 +5452,25 @@ struct rt_SIMD_REGS
 #define addlx_ld(XG, MS, DS)                                                \
         addix_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addlx3rr(XD, XS, XT)                                                \
+        addix3rr(W(XD), W(XS), W(XT))
+
+#define addlx3ld(XD, XS, MT, DT)                                            \
+        addix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define sublx_rr(XG, XS)                                                    \
         subix_rr(W(XG), W(XS))
 
 #define sublx_ld(XG, MS, DS)                                                \
         subix_ld(W(XG), W(MS), W(DS))
+
+#define sublx3rr(XD, XS, XT)                                                \
+        subix3rr(W(XD), W(XS), W(XT))
+
+#define sublx3ld(XD, XS, MT, DT)                                            \
+        subix3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -5450,7 +5534,7 @@ struct rt_SIMD_REGS
 
 /************   scalar single-precision floating-point arithmetic   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addss_rr(XG, XS)                                                    \
         addrs_rr(W(XG), W(XS))
@@ -5458,7 +5542,13 @@ struct rt_SIMD_REGS
 #define addss_ld(XG, MS, DS)                                                \
         addrs_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addss3rr(XD, XS, XT)                                                \
+        addrs3rr(W(XD), W(XS), W(XT))
+
+#define addss3ld(XD, XS, MT, DT)                                            \
+        addrs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subss_rr(XG, XS)                                                    \
         subrs_rr(W(XG), W(XS))
@@ -5466,7 +5556,13 @@ struct rt_SIMD_REGS
 #define subss_ld(XG, MS, DS)                                                \
         subrs_ld(W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subss3rr(XD, XS, XT)                                                \
+        subrs3rr(W(XD), W(XS), W(XT))
+
+#define subss3ld(XD, XS, MT, DT)                                            \
+        subrs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulss_rr(XG, XS)                                                    \
         mulrs_rr(W(XG), W(XS))
@@ -5474,13 +5570,25 @@ struct rt_SIMD_REGS
 #define mulss_ld(XG, MS, DS)                                                \
         mulrs_ld(W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulss3rr(XD, XS, XT)                                                \
+        mulrs3rr(W(XD), W(XS), W(XT))
+
+#define mulss3ld(XD, XS, MT, DT)                                            \
+        mulrs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divss_rr(XG, XS)                                                    \
         divrs_rr(W(XG), W(XS))
 
 #define divss_ld(XG, MS, DS)                                                \
         divrs_ld(W(XG), W(MS), W(DS))
+
+#define divss3rr(XD, XS, XT)                                                \
+        divrs3rr(W(XD), W(XS), W(XT))
+
+#define divss3ld(XD, XS, MT, DT)                                            \
+        divrs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 
@@ -6076,7 +6184,7 @@ struct rt_SIMD_REGS
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addpx_rr(XG, XS)                                                    \
         addqx_rr(W(XG), W(XS))
@@ -6084,13 +6192,25 @@ struct rt_SIMD_REGS
 #define addpx_ld(XG, MS, DS)                                                \
         addqx_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addpx3rr(XD, XS, XT)                                                \
+        addqx3rr(W(XD), W(XS), W(XT))
+
+#define addpx3ld(XD, XS, MT, DT)                                            \
+        addqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subpx_rr(XG, XS)                                                    \
         subqx_rr(W(XG), W(XS))
 
 #define subpx_ld(XG, MS, DS)                                                \
         subqx_ld(W(XG), W(MS), W(DS))
+
+#define subpx3rr(XD, XS, XT)                                                \
+        subqx3rr(W(XD), W(XS), W(XT))
+
+#define subpx3ld(XD, XS, MT, DT)                                            \
+        subqx3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -6609,7 +6729,7 @@ struct rt_SIMD_REGS
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addfx_rr(XG, XS)                                                    \
         adddx_rr(W(XG), W(XS))
@@ -6617,13 +6737,25 @@ struct rt_SIMD_REGS
 #define addfx_ld(XG, MS, DS)                                                \
         adddx_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addfx3rr(XD, XS, XT)                                                \
+        adddx3rr(W(XD), W(XS), W(XT))
+
+#define addfx3ld(XD, XS, MT, DT)                                            \
+        adddx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subfx_rr(XG, XS)                                                    \
         subdx_rr(W(XG), W(XS))
 
 #define subfx_ld(XG, MS, DS)                                                \
         subdx_ld(W(XG), W(MS), W(DS))
+
+#define subfx3rr(XD, XS, XT)                                                \
+        subdx3rr(W(XD), W(XS), W(XT))
+
+#define subfx3ld(XD, XS, MT, DT)                                            \
+        subdx3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -7142,7 +7274,7 @@ struct rt_SIMD_REGS
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addlx_rr(XG, XS)                                                    \
         addjx_rr(W(XG), W(XS))
@@ -7150,13 +7282,25 @@ struct rt_SIMD_REGS
 #define addlx_ld(XG, MS, DS)                                                \
         addjx_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addlx3rr(XD, XS, XT)                                                \
+        addjx3rr(W(XD), W(XS), W(XT))
+
+#define addlx3ld(XD, XS, MT, DT)                                            \
+        addjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define sublx_rr(XG, XS)                                                    \
         subjx_rr(W(XG), W(XS))
 
 #define sublx_ld(XG, MS, DS)                                                \
         subjx_ld(W(XG), W(MS), W(DS))
+
+#define sublx3rr(XD, XS, XT)                                                \
+        subjx3rr(W(XD), W(XS), W(XT))
+
+#define sublx3ld(XD, XS, MT, DT)                                            \
+        subjx3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -7220,7 +7364,7 @@ struct rt_SIMD_REGS
 
 /************   scalar double-precision floating-point arithmetic   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addss_rr(XG, XS)                                                    \
         addts_rr(W(XG), W(XS))
@@ -7228,7 +7372,13 @@ struct rt_SIMD_REGS
 #define addss_ld(XG, MS, DS)                                                \
         addts_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addss3rr(XD, XS, XT)                                                \
+        addts3rr(W(XD), W(XS), W(XT))
+
+#define addss3ld(XD, XS, MT, DT)                                            \
+        addts3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subss_rr(XG, XS)                                                    \
         subts_rr(W(XG), W(XS))
@@ -7236,7 +7386,13 @@ struct rt_SIMD_REGS
 #define subss_ld(XG, MS, DS)                                                \
         subts_ld(W(XG), W(MS), W(DS))
 
-/* mul (G = G * S) */
+#define subss3rr(XD, XS, XT)                                                \
+        subts3rr(W(XD), W(XS), W(XT))
+
+#define subss3ld(XD, XS, MT, DT)                                            \
+        subts3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (D != S) */
 
 #define mulss_rr(XG, XS)                                                    \
         mults_rr(W(XG), W(XS))
@@ -7244,13 +7400,25 @@ struct rt_SIMD_REGS
 #define mulss_ld(XG, MS, DS)                                                \
         mults_ld(W(XG), W(MS), W(DS))
 
-/* div (G = G / S) */
+#define mulss3rr(XD, XS, XT)                                                \
+        mults3rr(W(XD), W(XS), W(XT))
+
+#define mulss3ld(XD, XS, MT, DT)                                            \
+        mults3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (D != S) */
 
 #define divss_rr(XG, XS)                                                    \
         divts_rr(W(XG), W(XS))
 
 #define divss_ld(XG, MS, DS)                                                \
         divts_ld(W(XG), W(MS), W(DS))
+
+#define divss3rr(XD, XS, XT)                                                \
+        divts3rr(W(XD), W(XS), W(XT))
+
+#define divss3ld(XD, XS, MT, DT)                                            \
+        divts3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
 

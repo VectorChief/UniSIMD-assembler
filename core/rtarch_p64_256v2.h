@@ -892,27 +892,17 @@
 
 #if (RT_256 < 2)
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define adddx_rr(XG, XS)                                                    \
-        movdx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movdx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        stack_st(Reax)                                                      \
-        movzx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
-        addzx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
-        addzx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR02(0x10))                              \
-        addzx_st(Reax,  Mebp, inf_SCR01(0x10))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR02(0x18))                              \
-        addzx_st(Reax,  Mebp, inf_SCR01(0x18))                              \
-        stack_ld(Reax)                                                      \
-        movdx_ld(W(XG), Mebp, inf_SCR01(0))
+        adddx3rr(W(XG), W(XG), W(XS))
 
 #define adddx_ld(XG, MS, DS)                                                \
-        movdx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movdx_ld(W(XG), W(MS), W(DS))                                       \
-        movdx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        adddx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adddx3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
         stack_st(Reax)                                                      \
         movzx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
         addzx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
@@ -923,29 +913,35 @@
         movzx_ld(Reax,  Mebp, inf_SCR02(0x18))                              \
         addzx_st(Reax,  Mebp, inf_SCR01(0x18))                              \
         stack_ld(Reax)                                                      \
-        movdx_ld(W(XG), Mebp, inf_SCR01(0))
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* sub (G = G - S) */
+#define adddx3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movzx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        addzx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
+        addzx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR02(0x10))                              \
+        addzx_st(Reax,  Mebp, inf_SCR01(0x10))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR02(0x18))                              \
+        addzx_st(Reax,  Mebp, inf_SCR01(0x18))                              \
+        stack_ld(Reax)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subdx_rr(XG, XS)                                                    \
-        movdx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movdx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        stack_st(Reax)                                                      \
-        movzx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
-        subzx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
-        subzx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR02(0x10))                              \
-        subzx_st(Reax,  Mebp, inf_SCR01(0x10))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR02(0x18))                              \
-        subzx_st(Reax,  Mebp, inf_SCR01(0x18))                              \
-        stack_ld(Reax)                                                      \
-        movdx_ld(W(XG), Mebp, inf_SCR01(0))
+        subdx3rr(W(XG), W(XG), W(XS))
 
 #define subdx_ld(XG, MS, DS)                                                \
-        movdx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movdx_ld(W(XG), W(MS), W(DS))                                       \
-        movdx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        subdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subdx3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
         stack_st(Reax)                                                      \
         movzx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
         subzx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
@@ -956,7 +952,23 @@
         movzx_ld(Reax,  Mebp, inf_SCR02(0x18))                              \
         subzx_st(Reax,  Mebp, inf_SCR01(0x18))                              \
         stack_ld(Reax)                                                      \
-        movdx_ld(W(XG), Mebp, inf_SCR01(0))
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define subdx3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movzx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        subzx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
+        subzx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR02(0x10))                              \
+        subzx_st(Reax,  Mebp, inf_SCR01(0x10))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR02(0x18))                              \
+        subzx_st(Reax,  Mebp, inf_SCR01(0x18))                              \
+        stack_ld(Reax)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -1117,37 +1129,49 @@
 
 #else /* RT_256 >= 2 */
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define adddx_rr(XG, XS)                                                    \
-        EMITW(0x100000C0 | MXM(REG(XG), REG(XG), REG(XS)))                  \
-        EMITW(0x100000C0 | MXM(RYG(XG), RYG(XG), RYG(XS)))
+        adddx3rr(W(XG), W(XG), W(XS))
 
 #define adddx_ld(XG, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0x100000C0 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */\
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VYL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0x100000C0 | MXM(RYG(XG), RYG(XG), TmmM))/* ^ == -1 if true */
+        adddx3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define adddx3rr(XD, XS, XT)                                                \
+        EMITW(0x100000C0 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x100000C0 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define adddx3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0x100000C0 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */\
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VYL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0x100000C0 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subdx_rr(XG, XS)                                                    \
-        EMITW(0x100004C0 | MXM(REG(XG), REG(XG), REG(XS)))                  \
-        EMITW(0x100004C0 | MXM(RYG(XG), RYG(XG), RYG(XS)))
+        subdx3rr(W(XG), W(XG), W(XS))
 
 #define subdx_ld(XG, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0x100004C0 | MXM(REG(XG), REG(XG), TmmM))/* ^ == -1 if true */\
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VYL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MS) == TPxx), TPxx))    \
-        EMITW(0x100004C0 | MXM(RYG(XG), RYG(XG), TmmM))/* ^ == -1 if true */
+        subdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subdx3rr(XD, XS, XT)                                                \
+        EMITW(0x100004C0 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x100004C0 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define subdx3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0x100004C0 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */\
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VYL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
+        EMITW(0x100004C0 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */

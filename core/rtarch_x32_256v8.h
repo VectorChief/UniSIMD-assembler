@@ -1424,7 +1424,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addcx_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xFE)                       \
@@ -1440,7 +1440,15 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xFE)                       \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
-/* sub (G = G - S) */
+#define addcx3rr(XD, XS, XT)                                                \
+        movcx_rr(W(XD), W(XS))                                              \
+        addcx_rr(W(XD), W(XT))
+
+#define addcx3ld(XD, XS, MT, DT)                                            \
+        movcx_rr(W(XD), W(XS))                                              \
+        addcx_ld(W(XD), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subcx_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xFA)                       \
@@ -1455,6 +1463,14 @@ ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0xFA)                       \
 ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xFA)                       \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
+
+#define subcx3rr(XD, XS, XT)                                                \
+        movcx_rr(W(XD), W(XS))                                              \
+        subcx_rr(W(XD), W(XT))
+
+#define subcx3ld(XD, XS, MT, DT)                                            \
+        movcx_rr(W(XD), W(XS))                                              \
+        subcx_ld(W(XD), W(MT), W(DT))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */

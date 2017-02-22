@@ -924,55 +924,67 @@
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addcx_rr(XG, XS)                                                    \
-        movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        addix_rr(W(XG), W(XS))                                              \
-        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        prmcx_rr(W(XS), W(XS), IB(1))                                       \
-        addix_rr(W(XG), W(XS))                                              \
-        prmcx_rr(W(XS), W(XS), IB(1))                                       \
-        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
-        movcx_ld(W(XG), Mebp, inf_SCR01(0))
+        addcx3rr(W(XG), W(XG), W(XS))
 
 #define addcx_ld(XG, MS, DS)                                                \
-        movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movcx_ld(W(XG), W(MS), W(DS))                                       \
-        movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
-        addix_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
-        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        addix_ld(W(XG), Mebp, inf_SCR02(0x10))                              \
-        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
-        movcx_ld(W(XG), Mebp, inf_SCR01(0))
+        addcx3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addcx3rr(XD, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        addix_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        addix_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define addcx3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_ld(W(XD), W(MT), W(DT))                                       \
+        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        addix_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        addix_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subcx_rr(XG, XS)                                                    \
-        movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        subix_rr(W(XG), W(XS))                                              \
-        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        prmcx_rr(W(XS), W(XS), IB(1))                                       \
-        subix_rr(W(XG), W(XS))                                              \
-        prmcx_rr(W(XS), W(XS), IB(1))                                       \
-        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
-        movcx_ld(W(XG), Mebp, inf_SCR01(0))
+        subcx3rr(W(XG), W(XG), W(XS))
 
 #define subcx_ld(XG, MS, DS)                                                \
-        movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movcx_ld(W(XG), W(MS), W(DS))                                       \
-        movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        movix_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
-        subix_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
-        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movix_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        subix_ld(W(XG), Mebp, inf_SCR02(0x10))                              \
-        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
-        movcx_ld(W(XG), Mebp, inf_SCR01(0))
+        subcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subcx3rr(XD, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        subix_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        subix_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define subcx3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_ld(W(XD), W(MT), W(DT))                                       \
+        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        subix_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        subix_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -1178,27 +1190,39 @@
 
 #else /* RT_256 >= 2 */
 
-/* add (G = G + S) */
+/* add (G = G + S), (D = S + T) if (D != S) */
 
 #define addcx_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0xFE)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        addcx3rr(W(XG), W(XG), W(XS))
 
 #define addcx_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0xFE)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        addcx3ld(W(XG), W(XG), W(MS), W(DS))
 
-/* sub (G = G - S) */
+#define addcx3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 1, 1) EMITB(0xFE)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define addcx3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xFE)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* sub (G = G - S), (D = S - T) if (D != S) */
 
 #define subcx_rr(XG, XS)                                                    \
-        VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 1) EMITB(0xFA)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        subcx3rr(W(XG), W(XG), W(XS))
 
 #define subcx_ld(XG, MS, DS)                                                \
-    ADR VEX(RXB(XG), RXB(MS), REN(XG), 1, 1, 1) EMITB(0xFA)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        subcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subcx3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 1, 1) EMITB(0xFA)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define subcx3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xFA)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* shl (G = G << S)
  * for maximum compatibility, shift count mustn't exceed elem-size */
