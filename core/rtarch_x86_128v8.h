@@ -155,12 +155,12 @@
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
 
 #define mmvix_rr(XG, XS)                                                    \
-        VEX(REN(XG), 0, 1, 3) EMITB(0x4A)                                   \
+        VEX(REG(XG), 0, 1, 3) EMITB(0x4A)                                   \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))
 
 #define mmvix_ld(XG, MS, DS)                                                \
-        VEX(REN(XG), 0, 1, 3) EMITB(0x4A)                                   \
+        VEX(REG(XG), 0, 1, 3) EMITB(0x4A)                                   \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x00))
 

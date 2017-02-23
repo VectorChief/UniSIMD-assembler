@@ -101,6 +101,8 @@
 #if defined (RT_256) && (RT_256 != 0)
 
 #ifndef RT_RTARCH_X86_128V8_H
+#undef  RT_128
+#define RT_128  8
 #undef  RT_SIMD_COMPAT_128
 #define RT_SIMD_COMPAT_128  (RT_256)
 #include "rtarch_x86_128v8.h"
@@ -139,12 +141,12 @@
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
 
 #define mmvcx_rr(XG, XS)                                                    \
-        VEX(REN(XG), 1, 1, 3) EMITB(0x4A)                                   \
+        VEX(REG(XG), 1, 1, 3) EMITB(0x4A)                                   \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))
 
 #define mmvcx_ld(XG, MS, DS)                                                \
-        VEX(REN(XG), 1, 1, 3) EMITB(0x4A)                                   \
+        VEX(REG(XG), 1, 1, 3) EMITB(0x4A)                                   \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x00))
 
