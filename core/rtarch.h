@@ -39,6 +39,7 @@
  *  - rtarch_arm_128v4.h   - 32-bit elements, 16 SIMD regs, 8 + temps used
  *  - rtarch_p32.h         - Power 32-bit ISA, 32 BASE regs, 14 + temps used
  *  - rtarch_p32_128v1.h   - 32-bit elements, 32 SIMD regs, VMX 128-bit, 16+9
+ *  - rtarch_p32_256v8.h   - 32-bit elements, 32 SIMD regs, VMX 128-bit pairs, 8
  *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 14 + temps used
  *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 14 + temps used
  *  - rtarch_x32_128v4.h   - 32-bit elements, 16 SIMD regs, SSE 128-bit, 16 used
