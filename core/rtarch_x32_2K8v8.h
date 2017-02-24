@@ -1605,168 +1605,215 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
 
-/* shl (G = G << S)
+/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlox_ri(XG, IS)                                                    \
-        EVX(0,             0, REG(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))                        \
-        EVX(0,             1, REH(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))                        \
-        EVX(0,             2, REI(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))                        \
-        EVX(0,             3, REJ(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
+        shlox3ri(W(XG), W(XG), W(IS))
 
 #define shlox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0xF2)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0xF2)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(2,       RXB(MS), REI(XG), K, 1, 1) EMITB(0xF2)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(3,       RXB(MS), REJ(XG), K, 1, 1) EMITB(0xF2)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)
+        shlox3ld(W(XG), W(XG), W(MS), W(DS))
 
-#define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EVX(0,             0, REG(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(2,             2, REI(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(3,             3, REJ(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+#define shlox3ri(XD, XS, IT)                                                \
+        EVX(0,             0, REG(XD), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x06,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x1F))                        \
+        EVX(0,             1, REH(XD), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x06,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x1F))                        \
+        EVX(0,             2, REI(XD), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x06,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x1F))                        \
+        EVX(0,             3, REJ(XD), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x06,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x1F))
 
-#define svlox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        EVX(0,       RXB(MS), REG(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-        EVX(1,       RXB(MS), REH(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
-        EVX(2,       RXB(MS), REI(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
-        EVX(3,       RXB(MS), REJ(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+#define shlox3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REG(XS), K, 1, 1) EMITB(0xF2)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVX(1,       RXB(MT), REH(XS), K, 1, 1) EMITB(0xF2)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVX(2,       RXB(MT), REI(XS), K, 1, 1) EMITB(0xF2)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVX(3,       RXB(MT), REJ(XS), K, 1, 1) EMITB(0xF2)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrox_ri(XG, IS)                                                    \
-        EVX(0,             0, REG(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))                        \
-        EVX(0,             1, REH(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))                        \
-        EVX(0,             2, REI(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))                        \
-        EVX(0,             3, REJ(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
+        shrox3ri(W(XG), W(XG), W(IS))
 
 #define shrox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0xD2)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0xD2)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(2,       RXB(MS), REI(XG), K, 1, 1) EMITB(0xD2)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(3,       RXB(MS), REJ(XG), K, 1, 1) EMITB(0xD2)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)
+        shrox3ld(W(XG), W(XG), W(MS), W(DS))
 
-#define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EVX(0,             0, REG(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(2,             2, REI(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(3,             3, REJ(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+#define shrox3ri(XD, XS, IT)                                                \
+        EVX(0,             0, REG(XD), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x02,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x1F))                        \
+        EVX(0,             1, REH(XD), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x02,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x1F))                        \
+        EVX(0,             2, REI(XD), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x02,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x1F))                        \
+        EVX(0,             3, REJ(XD), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x02,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x1F))
 
-#define svrox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        EVX(0,       RXB(MS), REG(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-        EVX(1,       RXB(MS), REH(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
-        EVX(2,       RXB(MS), REI(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
-        EVX(3,       RXB(MS), REJ(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+#define shrox3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REG(XS), K, 1, 1) EMITB(0xD2)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVX(1,       RXB(MT), REH(XS), K, 1, 1) EMITB(0xD2)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVX(2,       RXB(MT), REI(XS), K, 1, 1) EMITB(0xD2)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVX(3,       RXB(MT), REJ(XS), K, 1, 1) EMITB(0xD2)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)
 
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shron_ri(XG, IS)                                                    \
-        EVX(0,             0, REG(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x04,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))                        \
-        EVX(0,             1, REH(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x04,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))                        \
-        EVX(0,             2, REI(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x04,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))                        \
-        EVX(0,             3, REJ(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x04,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
+        shron3ri(W(XG), W(XG), W(IS))
 
 #define shron_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-    ADR EVX(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0xE2)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0xE2)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(2,       RXB(MS), REI(XG), K, 1, 1) EMITB(0xE2)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVX(3,       RXB(MS), REJ(XG), K, 1, 1) EMITB(0xE2)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)
+        shron3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shron3ri(XD, XS, IT)                                                \
+        EVX(0,             0, REG(XD), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x04,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x1F))                        \
+        EVX(0,             1, REH(XD), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x04,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x1F))                        \
+        EVX(0,             2, REI(XD), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x04,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x1F))                        \
+        EVX(0,             3, REJ(XD), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x04,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x1F))
+
+#define shron3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REG(XS), K, 1, 1) EMITB(0xE2)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVX(1,       RXB(MT), REH(XS), K, 1, 1) EMITB(0xE2)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVX(2,       RXB(MT), REI(XS), K, 1, 1) EMITB(0xE2)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVX(3,       RXB(MT), REJ(XS), K, 1, 1) EMITB(0xE2)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)
+
+/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlox3rr(W(XG), W(XG), W(XS))
+
+#define svlox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svlox3rr(XD, XS, XT)                                                \
+        EVX(0,             0, REG(XS), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVX(1,             1, REH(XS), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVX(2,             2, REI(XS), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVX(3,             3, REJ(XS), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define svlox3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REG(XS), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVX(1,       RXB(MT), REH(XS), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)                                 \
+    ADR EVX(2,       RXB(MT), REI(XS), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VSL(DT)), EMPTY)                                 \
+    ADR EVX(3,       RXB(MT), REJ(XS), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrox3rr(W(XG), W(XG), W(XS))
+
+#define svrox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrox3rr(XD, XS, XT)                                                \
+        EVX(0,             0, REG(XS), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVX(1,             1, REH(XS), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVX(2,             2, REI(XS), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVX(3,             3, REJ(XS), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define svrox3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REG(XS), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVX(1,       RXB(MT), REH(XS), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)                                 \
+    ADR EVX(2,       RXB(MT), REI(XS), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VSL(DT)), EMPTY)                                 \
+    ADR EVX(3,       RXB(MT), REJ(XS), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define svron_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EVX(0,             0, REG(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(1,             1, REH(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(2,             2, REI(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVX(3,             3, REJ(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        svron3rr(W(XG), W(XG), W(XS))
 
 #define svron_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        EVX(0,       RXB(MS), REG(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-        EVX(1,       RXB(MS), REH(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
-        EVX(2,       RXB(MS), REI(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
-        EVX(3,       RXB(MS), REJ(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+        svron3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svron3rr(XD, XS, XT)                                                \
+        EVX(0,             0, REG(XS), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVX(1,             1, REH(XS), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVX(2,             2, REI(XS), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVX(3,             3, REJ(XS), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define svron3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REG(XS), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVX(1,       RXB(MT), REH(XS), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)                                 \
+    ADR EVX(2,       RXB(MT), REI(XS), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VSL(DT)), EMPTY)                                 \
+    ADR EVX(3,       RXB(MT), REJ(XS), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

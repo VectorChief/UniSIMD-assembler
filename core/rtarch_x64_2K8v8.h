@@ -1914,168 +1914,215 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
 
-/* shl (G = G << S)
+/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlqx_ri(XG, IS)                                                    \
-        EVW(0,             0, REG(XG), K, 1, 1) EMITB(0x73)                 \
-        MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))                        \
-        EVW(0,             1, REH(XG), K, 1, 1) EMITB(0x73)                 \
-        MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))                        \
-        EVW(0,             2, REI(XG), K, 1, 1) EMITB(0x73)                 \
-        MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))                        \
-        EVW(0,             3, REJ(XG), K, 1, 1) EMITB(0x73)                 \
-        MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
+        shlqx3ri(W(XG), W(XG), W(IS))
 
 #define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-    ADR EVW(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0xF3)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0xF3)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(2,       RXB(MS), REI(XG), K, 1, 1) EMITB(0xF3)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(3,       RXB(MS), REJ(XG), K, 1, 1) EMITB(0xF3)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)
+        shlqx3ld(W(XG), W(XG), W(MS), W(DS))
 
-#define svlqx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EVW(0,             0, REG(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(1,             1, REH(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(2,             2, REI(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(3,             3, REJ(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+#define shlqx3ri(XD, XS, IT)                                                \
+        EVW(0,             0, REG(XD), K, 1, 1) EMITB(0x73)                 \
+        MRM(0x06,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        EVW(0,             1, REH(XD), K, 1, 1) EMITB(0x73)                 \
+        MRM(0x06,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        EVW(0,             2, REI(XD), K, 1, 1) EMITB(0x73)                 \
+        MRM(0x06,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        EVW(0,             3, REJ(XD), K, 1, 1) EMITB(0x73)                 \
+        MRM(0x06,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))
 
-#define svlqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        EVW(0,       RXB(MS), REG(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-        EVW(1,       RXB(MS), REH(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
-        EVW(2,       RXB(MS), REI(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
-        EVW(3,       RXB(MS), REJ(XG), K, 1, 2) EMITB(0x47)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+#define shlqx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REG(XS), K, 1, 1) EMITB(0xF3)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(1,       RXB(MT), REH(XS), K, 1, 1) EMITB(0xF3)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(2,       RXB(MT), REI(XS), K, 1, 1) EMITB(0xF3)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(3,       RXB(MT), REJ(XS), K, 1, 1) EMITB(0xF3)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrqx_ri(XG, IS)                                                    \
-        EVW(0,             0, REG(XG), K, 1, 1) EMITB(0x73)                 \
-        MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))                        \
-        EVW(0,             1, REH(XG), K, 1, 1) EMITB(0x73)                 \
-        MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))                        \
-        EVW(0,             2, REI(XG), K, 1, 1) EMITB(0x73)                 \
-        MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))                        \
-        EVW(0,             3, REJ(XG), K, 1, 1) EMITB(0x73)                 \
-        MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
+        shrqx3ri(W(XG), W(XG), W(IS))
 
 #define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-    ADR EVW(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0xD3)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0xD3)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(2,       RXB(MS), REI(XG), K, 1, 1) EMITB(0xD3)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(3,       RXB(MS), REJ(XG), K, 1, 1) EMITB(0xD3)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)
+        shrqx3ld(W(XG), W(XG), W(MS), W(DS))
 
-#define svrqx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EVW(0,             0, REG(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(1,             1, REH(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(2,             2, REI(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(3,             3, REJ(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+#define shrqx3ri(XD, XS, IT)                                                \
+        EVW(0,             0, REG(XD), K, 1, 1) EMITB(0x73)                 \
+        MRM(0x02,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        EVW(0,             1, REH(XD), K, 1, 1) EMITB(0x73)                 \
+        MRM(0x02,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        EVW(0,             2, REI(XD), K, 1, 1) EMITB(0x73)                 \
+        MRM(0x02,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        EVW(0,             3, REJ(XD), K, 1, 1) EMITB(0x73)                 \
+        MRM(0x02,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))
 
-#define svrqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        EVW(0,       RXB(MS), REG(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-        EVW(1,       RXB(MS), REH(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
-        EVW(2,       RXB(MS), REI(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
-        EVW(3,       RXB(MS), REJ(XG), K, 1, 2) EMITB(0x45)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+#define shrqx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REG(XS), K, 1, 1) EMITB(0xD3)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(1,       RXB(MT), REH(XS), K, 1, 1) EMITB(0xD3)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(2,       RXB(MT), REI(XS), K, 1, 1) EMITB(0xD3)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(3,       RXB(MT), REJ(XS), K, 1, 1) EMITB(0xD3)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)
 
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrqn_ri(XG, IS)                                                    \
-        EVW(0,             0, REG(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x04,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))                        \
-        EVW(0,             1, REH(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x04,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))                        \
-        EVW(0,             2, REI(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x04,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))                        \
-        EVW(0,             3, REJ(XG), K, 1, 1) EMITB(0x72)                 \
-        MRM(0x04,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
+        shrqn3ri(W(XG), W(XG), W(IS))
 
 #define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-    ADR EVW(0,       RXB(MS), REG(XG), K, 1, 1) EMITB(0xE2)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(1,       RXB(MS), REH(XG), K, 1, 1) EMITB(0xE2)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(2,       RXB(MS), REI(XG), K, 1, 1) EMITB(0xE2)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR EVW(3,       RXB(MS), REJ(XG), K, 1, 1) EMITB(0xE2)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)
+        shrqn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shrqn3ri(XD, XS, IT)                                                \
+        EVW(0,             0, REG(XD), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x04,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        EVW(0,             1, REH(XD), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x04,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        EVW(0,             2, REI(XD), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x04,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        EVW(0,             3, REJ(XD), K, 1, 1) EMITB(0x72)                 \
+        MRM(0x04,    MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))
+
+#define shrqn3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REG(XS), K, 1, 1) EMITB(0xE2)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(1,       RXB(MT), REH(XS), K, 1, 1) EMITB(0xE2)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(2,       RXB(MT), REI(XS), K, 1, 1) EMITB(0xE2)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(3,       RXB(MT), REJ(XS), K, 1, 1) EMITB(0xE2)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)
+
+/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svlqx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlqx3rr(W(XG), W(XG), W(XS))
+
+#define svlqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svlqx3rr(XD, XS, XT)                                                \
+        EVW(0,             0, REG(XS), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(1,             1, REH(XS), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(2,             2, REI(XS), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(3,             3, REJ(XS), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define svlqx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REG(XS), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(1,       RXB(MT), REH(XS), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)                                 \
+    ADR EVW(2,       RXB(MT), REI(XS), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VSL(DT)), EMPTY)                                 \
+    ADR EVW(3,       RXB(MT), REJ(XS), K, 1, 2) EMITB(0x47)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svrqx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrqx3rr(W(XG), W(XG), W(XS))
+
+#define svrqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrqx3rr(XD, XS, XT)                                                \
+        EVW(0,             0, REG(XS), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(1,             1, REH(XS), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(2,             2, REI(XS), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(3,             3, REJ(XS), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define svrqx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REG(XS), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(1,       RXB(MT), REH(XS), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)                                 \
+    ADR EVW(2,       RXB(MT), REI(XS), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VSL(DT)), EMPTY)                                 \
+    ADR EVW(3,       RXB(MT), REJ(XS), K, 1, 2) EMITB(0x45)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define svrqn_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EVW(0,             0, REG(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(1,             1, REH(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(2,             2, REI(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-        EVW(3,             3, REJ(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG), MOD(XS), REG(XS))
+        svrqn3rr(W(XG), W(XG), W(XS))
 
 #define svrqn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        EVW(0,       RXB(MS), REG(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-        EVW(1,       RXB(MS), REH(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
-        EVW(2,       RXB(MS), REI(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
-        EVW(3,       RXB(MS), REJ(XG), K, 1, 2) EMITB(0x46)                 \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+        svrqn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrqn3rr(XD, XS, XT)                                                \
+        EVW(0,             0, REG(XS), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(1,             1, REH(XS), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(2,             2, REI(XS), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVW(3,             3, REJ(XS), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define svrqn3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REG(XS), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVW(1,       RXB(MT), REH(XS), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)                                 \
+    ADR EVW(2,       RXB(MT), REI(XS), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VSL(DT)), EMPTY)                                 \
+    ADR EVW(3,       RXB(MT), REJ(XS), K, 1, 2) EMITB(0x46)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
