@@ -1222,77 +1222,124 @@
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3200840 | MXM(REG(XD), REG(XS), TmmM))
 
-/* shl (G = G << S)
+/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlix_ri(XG, IS)                                                    \
-        EMITW(0xF2A00550 | MXM(REG(XG), 0x00,    REG(XG)) |                 \
-                                                 (0x1F & VAL(IS)) << 16)
+        shlix3ri(W(XG), W(XG), W(IS))
 
 #define shlix_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        shlix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shlix3ri(XD, XS, IT)                                                \
+        EMITW(0xF2A00550 | MXM(REG(XD), 0x00,    REG(XS)) |                 \
+                                                 (0x1F & VAL(IT)) << 16)
+
+#define shlix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF4A00CBF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF3200440 | MXM(REG(XG), TmmM,    REG(XG)))
+        EMITW(0xF3200440 | MXM(REG(XD), TmmM,    REG(XS)))
 
-#define svlix_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EMITW(0xF3200440 | MXM(REG(XG), REG(XS), REG(XG)))
-
-#define svlix_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF3200440 | MXM(REG(XG), TmmM,    REG(XG)))
-
-/* shr (G = G >> S)
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
-#define shrix_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
-        EMITW(0xF2A00050 | MXM(REG(XG), 0x00,    REG(XG)) |                 \
-        (+(VAL(IS) == 0) & 0x00000500) | (+(VAL(IS) != 0) & 0x01000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IS)) << 16)
+#define shrix_ri(XG, IS)     /* emits shift-left for zero-immediate args */ \
+        shrix3ri(W(XG), W(XG), W(IS))
 
 #define shrix_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        shrix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shrix3ri(XD, XS, IT)                                                \
+        EMITW(0xF2A00050 | MXM(REG(XD), 0x00,    REG(XS)) |                 \
+        (+(VAL(IT) == 0) & 0x00000500) | (+(VAL(IT) != 0) & 0x01000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)
+
+#define shrix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF4A00CBF | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    TmmM))                     \
-        EMITW(0xF3200440 | MXM(REG(XG), TmmM,    REG(XG)))
+        EMITW(0xF3200440 | MXM(REG(XD), TmmM,    REG(XS)))
 
-#define svrix_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    REG(XS)))                  \
-        EMITW(0xF3200440 | MXM(REG(XG), TmmM,    REG(XG)))
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
-#define svrix_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    TmmM))                     \
-        EMITW(0xF3200440 | MXM(REG(XG), TmmM,    REG(XG)))
-
-
-#define shrin_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
-        EMITW(0xF2A00050 | MXM(REG(XG), 0x00,    REG(XG)) |                 \
-        (+(VAL(IS) == 0) & 0x00000500) | (+(VAL(IS) != 0) & 0x00000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IS)) << 16)
+#define shrin_ri(XG, IS)     /* emits shift-left for zero-immediate args */ \
+        shrin3ri(W(XG), W(XG), W(IS))
 
 #define shrin_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        shrin3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shrin3ri(XD, XS, IT)                                                \
+        EMITW(0xF2A00050 | MXM(REG(XD), 0x00,    REG(XS)) |                 \
+        (+(VAL(IT) == 0) & 0x00000500) | (+(VAL(IT) != 0) & 0x00000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)
+
+#define shrin3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF4A00CBF | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    TmmM))                     \
-        EMITW(0xF2200440 | MXM(REG(XG), TmmM,    REG(XG)))
+        EMITW(0xF2200440 | MXM(REG(XD), TmmM,    REG(XS)))
 
-#define svrin_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    REG(XS)))                  \
-        EMITW(0xF2200440 | MXM(REG(XG), TmmM,    REG(XG)))
+/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
-#define svrin_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+#define svlix_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlix3rr(W(XG), W(XG), W(XS))
+
+#define svlix_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svlix3rr(XD, XS, XT)                                                \
+        EMITW(0xF3200440 | MXM(REG(XD), REG(XT), REG(XS)))
+
+#define svlix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3200440 | MXM(REG(XD), TmmM,    REG(XS)))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svrix_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrix3rr(W(XG), W(XG), W(XS))
+
+#define svrix_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrix3rr(XD, XS, XT)                                                \
+        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    REG(XT)))                  \
+        EMITW(0xF3200440 | MXM(REG(XD), TmmM,    REG(XS)))
+
+#define svrix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    TmmM))                     \
-        EMITW(0xF2200440 | MXM(REG(XG), TmmM,    REG(XG)))
+        EMITW(0xF3200440 | MXM(REG(XD), TmmM,    REG(XS)))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svrin_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrin3rr(W(XG), W(XG), W(XS))
+
+#define svrin_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrin3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrin3rr(XD, XS, XT)                                                \
+        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    REG(XT)))                  \
+        EMITW(0xF2200440 | MXM(REG(XD), TmmM,    REG(XS)))
+
+#define svrin3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    TmmM))                     \
+        EMITW(0xF2200440 | MXM(REG(XD), TmmM,    REG(XS)))
 
 /************************   helper macros (FPU mode)   ************************/
 

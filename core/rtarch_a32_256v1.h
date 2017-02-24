@@ -872,101 +872,148 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x6EA08400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* shl (G = G << S)
+/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlcx_ri(XG, IS)                                                    \
-        EMITW(0x4F205400 | MXM(REG(XG), REG(XG), 0x00) |                    \
-                                                 (0x1F & VAL(IS)) << 16)    \
-        EMITW(0x4F205400 | MXM(RYG(XG), RYG(XG), 0x00) |                    \
-                                                 (0x1F & VAL(IS)) << 16)
+        shlcx3ri(W(XG), W(XG), W(IS))
 
 #define shlcx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        shlcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shlcx3ri(XD, XS, IT)                                                \
+        EMITW(0x4F205400 | MXM(REG(XD), REG(XS), 0x00) |                    \
+                                                 (0x1F & VAL(IT)) << 16)    \
+        EMITW(0x4F205400 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
+                                                 (0x1F & VAL(IT)) << 16)
+
+#define shlcx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4E040400 | MXM(TmmM,    TmmM,    0x00))                     \
-        EMITW(0x6EA04400 | MXM(REG(XG), REG(XG), TmmM))                     \
-        EMITW(0x6EA04400 | MXM(RYG(XG), RYG(XG), TmmM))
+        EMITW(0x6EA04400 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x6EA04400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-#define svlcx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EMITW(0x6EA04400 | MXM(REG(XG), REG(XG), REG(XS)))                  \
-        EMITW(0x6EA04400 | MXM(RYG(XG), RYG(XG), RYG(XS)))
-
-#define svlcx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x6EA04400 | MXM(REG(XG), REG(XG), TmmM))                     \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x6EA04400 | MXM(RYG(XG), RYG(XG), TmmM))
-
-/* shr (G = G >> S)
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
-#define shrcx_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
-        EMITW(0x4F200400 | MXM(REG(XG), REG(XG), 0x00) |                    \
-        (+(VAL(IS) == 0) & 0x00005000) | (+(VAL(IS) != 0) & 0x20000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IS)) << 16)    \
-        EMITW(0x4F200400 | MXM(RYG(XG), RYG(XG), 0x00) |                    \
-        (+(VAL(IS) == 0) & 0x00005000) | (+(VAL(IS) != 0) & 0x20000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IS)) << 16)
+#define shrcx_ri(XG, IS)     /* emits shift-left for zero-immediate args */ \
+        shrcx3ri(W(XG), W(XG), W(IS))
 
 #define shrcx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        shrcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shrcx3ri(XD, XS, IT)                                                \
+        EMITW(0x4F200400 | MXM(REG(XD), REG(XS), 0x00) |                    \
+        (+(VAL(IT) == 0) & 0x00005000) | (+(VAL(IT) != 0) & 0x20000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)    \
+        EMITW(0x4F200400 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
+        (+(VAL(IT) == 0) & 0x00005000) | (+(VAL(IT) != 0) & 0x20000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)
+
+#define shrcx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4E040400 | MXM(TmmM,    TmmM,    0x00))                     \
         EMITW(0x6EA0B800 | MXM(TmmM,    TmmM,    0x00))                     \
-        EMITW(0x6EA04400 | MXM(REG(XG), REG(XG), TmmM))                     \
-        EMITW(0x6EA04400 | MXM(RYG(XG), RYG(XG), TmmM))
+        EMITW(0x6EA04400 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x6EA04400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-#define svrcx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EMITW(0x6EA0B800 | MXM(TmmM,    REG(XS), 0x00))                     \
-        EMITW(0x6EA04400 | MXM(REG(XG), REG(XG), TmmM))                     \
-        EMITW(0x6EA0B800 | MXM(TmmM,    RYG(XS), 0x00))                     \
-        EMITW(0x6EA04400 | MXM(RYG(XG), RYG(XG), TmmM))
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
-#define svrcx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x6EA0B800 | MXM(TmmM,    TmmM,    0x00))                     \
-        EMITW(0x6EA04400 | MXM(REG(XG), REG(XG), TmmM))                     \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x6EA0B800 | MXM(TmmM,    TmmM,    0x00))                     \
-        EMITW(0x6EA04400 | MXM(RYG(XG), RYG(XG), TmmM))
-
-
-#define shrcn_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
-        EMITW(0x4F200400 | MXM(REG(XG), REG(XG), 0x00) |                    \
-        (+(VAL(IS) == 0) & 0x00005000) | (+(VAL(IS) != 0) & 0x00000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IS)) << 16)    \
-        EMITW(0x4F200400 | MXM(RYG(XG), RYG(XG), 0x00) |                    \
-        (+(VAL(IS) == 0) & 0x00005000) | (+(VAL(IS) != 0) & 0x00000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IS)) << 16)
+#define shrcn_ri(XG, IS)     /* emits shift-left for zero-immediate args */ \
+        shrcn3ri(W(XG), W(XG), W(IS))
 
 #define shrcn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        shrcn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shrcn3ri(XD, XS, IT)                                                \
+        EMITW(0x4F200400 | MXM(REG(XD), REG(XS), 0x00) |                    \
+        (+(VAL(IT) == 0) & 0x00005000) | (+(VAL(IT) != 0) & 0x00000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)    \
+        EMITW(0x4F200400 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
+        (+(VAL(IT) == 0) & 0x00005000) | (+(VAL(IT) != 0) & 0x00000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)
+
+#define shrcn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4E040400 | MXM(TmmM,    TmmM,    0x00))                     \
         EMITW(0x6EA0B800 | MXM(TmmM,    TmmM,    0x00))                     \
-        EMITW(0x4EA04400 | MXM(REG(XG), REG(XG), TmmM))                     \
-        EMITW(0x4EA04400 | MXM(RYG(XG), RYG(XG), TmmM))
+        EMITW(0x4EA04400 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x4EA04400 | MXM(RYG(XD), RYG(XS), TmmM))
+
+/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svlcx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlcx3rr(W(XG), W(XG), W(XS))
+
+#define svlcx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svlcx3rr(XD, XS, XT)                                                \
+        EMITW(0x6EA04400 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x6EA04400 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define svlcx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x6EA04400 | MXM(REG(XD), REG(XS), TmmM))                     \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x6EA04400 | MXM(RYG(XD), RYG(XS), TmmM))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svrcx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrcx3rr(W(XG), W(XG), W(XS))
+
+#define svrcx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrcx3rr(XD, XS, XT)                                                \
+        EMITW(0x6EA0B800 | MXM(TmmM,    REG(XT), 0x00))                     \
+        EMITW(0x6EA04400 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x6EA0B800 | MXM(TmmM,    RYG(XT), 0x00))                     \
+        EMITW(0x6EA04400 | MXM(RYG(XD), RYG(XS), TmmM))
+
+#define svrcx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x6EA0B800 | MXM(TmmM,    TmmM,    0x00))                     \
+        EMITW(0x6EA04400 | MXM(REG(XD), REG(XS), TmmM))                     \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x6EA0B800 | MXM(TmmM,    TmmM,    0x00))                     \
+        EMITW(0x6EA04400 | MXM(RYG(XD), RYG(XS), TmmM))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define svrcn_rr(XG, XS)     /* variable shift with per-elem count */       \
-        EMITW(0x6EA0B800 | MXM(TmmM,    REG(XS), 0x00))                     \
-        EMITW(0x4EA04400 | MXM(REG(XG), REG(XG), TmmM))                     \
-        EMITW(0x6EA0B800 | MXM(TmmM,    RYG(XS), 0x00))                     \
-        EMITW(0x4EA04400 | MXM(RYG(XG), RYG(XG), TmmM))
+        svrcn3rr(W(XG), W(XG), W(XS))
 
 #define svrcn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        svrcn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrcn3rr(XD, XS, XT)                                                \
+        EMITW(0x6EA0B800 | MXM(TmmM,    REG(XT), 0x00))                     \
+        EMITW(0x4EA04400 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x6EA0B800 | MXM(TmmM,    RYG(XT), 0x00))                     \
+        EMITW(0x4EA04400 | MXM(RYG(XD), RYG(XS), TmmM))
+
+#define svrcn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x6EA0B800 | MXM(TmmM,    TmmM,    0x00))                     \
-        EMITW(0x4EA04400 | MXM(REG(XG), REG(XG), TmmM))                     \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VYL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x4EA04400 | MXM(REG(XD), REG(XS), TmmM))                     \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x6EA0B800 | MXM(TmmM,    TmmM,    0x00))                     \
-        EMITW(0x4EA04400 | MXM(RYG(XG), RYG(XG), TmmM))
+        EMITW(0x4EA04400 | MXM(RYG(XD), RYG(XS), TmmM))
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
