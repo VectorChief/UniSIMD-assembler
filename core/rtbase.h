@@ -1291,7 +1291,7 @@ struct rt_SIMD_REGS
 #define subox3ld(XD, XS, MT, DT)                                            \
         subcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S)
+/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlox_ri(XG, IS)                                                    \
@@ -1300,13 +1300,13 @@ struct rt_SIMD_REGS
 #define shlox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shlcx_ld(W(XG), W(MS), W(DS))
 
-#define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svlcx_rr(W(XG), W(XS))
+#define shlox3ri(XD, XS, IT)                                                \
+        shlcx3ri(W(XD), W(XS), W(IT))
 
-#define svlox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svlcx_ld(W(XG), W(MS), W(DS))
+#define shlox3ld(XD, XS, MT, DT)                                            \
+        shlcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrox_ri(XG, IS)                                                    \
@@ -1315,12 +1315,14 @@ struct rt_SIMD_REGS
 #define shrox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrcx_ld(W(XG), W(MS), W(DS))
 
-#define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svrcx_rr(W(XG), W(XS))
+#define shrox3ri(XD, XS, IT)                                                \
+        shrcx3ri(W(XD), W(XS), W(IT))
 
-#define svrox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svrcx_ld(W(XG), W(MS), W(DS))
+#define shrox3ld(XD, XS, MT, DT)                                            \
+        shrcx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shron_ri(XG, IS)                                                    \
         shrcn_ri(W(XG), W(IS))
@@ -1328,11 +1330,56 @@ struct rt_SIMD_REGS
 #define shron_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrcn_ld(W(XG), W(MS), W(DS))
 
+#define shron3ri(XD, XS, IT)                                                \
+        shrcn3ri(W(XD), W(XS), W(IT))
+
+#define shron3ld(XD, XS, MT, DT)                                            \
+        shrcn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlcx_rr(W(XG), W(XS))
+
+#define svlox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlcx_ld(W(XG), W(MS), W(DS))
+
+#define svlox3rr(XD, XS, XT)                                                \
+        svlcx3rr(W(XD), W(XS), W(XT))
+
+#define svlox3ld(XD, XS, MT, DT)                                            \
+        svlcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrcx_rr(W(XG), W(XS))
+
+#define svrox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrcx_ld(W(XG), W(MS), W(DS))
+
+#define svrox3rr(XD, XS, XT)                                                \
+        svrcx3rr(W(XD), W(XS), W(XT))
+
+#define svrox3ld(XD, XS, MT, DT)                                            \
+        svrcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
 #define svron_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrcn_rr(W(XG), W(XS))
 
 #define svron_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrcn_ld(W(XG), W(MS), W(DS))
+
+#define svron3rr(XD, XS, XT)                                                \
+        svrcn3rr(W(XD), W(XS), W(XT))
+
+#define svron3ld(XD, XS, MT, DT)                                            \
+        svrcn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /*
  * common 256-bit floating-point SIMD instructions with 32-bit elements
@@ -1979,7 +2026,7 @@ struct rt_SIMD_REGS
 #define subox3ld(XD, XS, MT, DT)                                            \
         subix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S)
+/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlox_ri(XG, IS)                                                    \
@@ -1988,13 +2035,13 @@ struct rt_SIMD_REGS
 #define shlox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shlix_ld(W(XG), W(MS), W(DS))
 
-#define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svlix_rr(W(XG), W(XS))
+#define shlox3ri(XD, XS, IT)                                                \
+        shlix3ri(W(XD), W(XS), W(IT))
 
-#define svlox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svlix_ld(W(XG), W(MS), W(DS))
+#define shlox3ld(XD, XS, MT, DT)                                            \
+        shlix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrox_ri(XG, IS)                                                    \
@@ -2003,12 +2050,14 @@ struct rt_SIMD_REGS
 #define shrox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrix_ld(W(XG), W(MS), W(DS))
 
-#define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svrix_rr(W(XG), W(XS))
+#define shrox3ri(XD, XS, IT)                                                \
+        shrix3ri(W(XD), W(XS), W(IT))
 
-#define svrox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svrix_ld(W(XG), W(MS), W(DS))
+#define shrox3ld(XD, XS, MT, DT)                                            \
+        shrix3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shron_ri(XG, IS)                                                    \
         shrin_ri(W(XG), W(IS))
@@ -2016,11 +2065,56 @@ struct rt_SIMD_REGS
 #define shron_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrin_ld(W(XG), W(MS), W(DS))
 
+#define shron3ri(XD, XS, IT)                                                \
+        shrin3ri(W(XD), W(XS), W(IT))
+
+#define shron3ld(XD, XS, MT, DT)                                            \
+        shrin3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlix_rr(W(XG), W(XS))
+
+#define svlox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlix_ld(W(XG), W(MS), W(DS))
+
+#define svlox3rr(XD, XS, XT)                                                \
+        svlix3rr(W(XD), W(XS), W(XT))
+
+#define svlox3ld(XD, XS, MT, DT)                                            \
+        svlix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrix_rr(W(XG), W(XS))
+
+#define svrox_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrix_ld(W(XG), W(MS), W(DS))
+
+#define svrox3rr(XD, XS, XT)                                                \
+        svrix3rr(W(XD), W(XS), W(XT))
+
+#define svrox3ld(XD, XS, MT, DT)                                            \
+        svrix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
 #define svron_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrin_rr(W(XG), W(XS))
 
 #define svron_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrin_ld(W(XG), W(MS), W(DS))
+
+#define svron3rr(XD, XS, XT)                                                \
+        svrin3rr(W(XD), W(XS), W(XT))
+
+#define svron3ld(XD, XS, MT, DT)                                            \
+        svrin3ld(W(XD), W(XS), W(MT), W(DT))
 
 /*
  * common 128-bit floating-point SIMD instructions with 32-bit elements
@@ -2910,7 +3004,7 @@ struct rt_SIMD_REGS
 #define subqx3ld(XD, XS, MT, DT)                                            \
         subdx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S)
+/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlqx_ri(XG, IS)                                                    \
@@ -2919,13 +3013,13 @@ struct rt_SIMD_REGS
 #define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shldx_ld(W(XG), W(MS), W(DS))
 
-#define svlqx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svldx_rr(W(XG), W(XS))
+#define shlqx3ri(XD, XS, IT)                                                \
+        shldx3ri(W(XD), W(XS), W(IT))
 
-#define svlqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svldx_ld(W(XG), W(MS), W(DS))
+#define shlqx3ld(XD, XS, MT, DT)                                            \
+        shldx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrqx_ri(XG, IS)                                                    \
@@ -2934,12 +3028,14 @@ struct rt_SIMD_REGS
 #define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrdx_ld(W(XG), W(MS), W(DS))
 
-#define svrqx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svrdx_rr(W(XG), W(XS))
+#define shrqx3ri(XD, XS, IT)                                                \
+        shrdx3ri(W(XD), W(XS), W(IT))
 
-#define svrqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svrdx_ld(W(XG), W(MS), W(DS))
+#define shrqx3ld(XD, XS, MT, DT)                                            \
+        shrdx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrqn_ri(XG, IS)                                                    \
         shrdn_ri(W(XG), W(IS))
@@ -2947,11 +3043,56 @@ struct rt_SIMD_REGS
 #define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrdn_ld(W(XG), W(MS), W(DS))
 
+#define shrqn3ri(XD, XS, IT)                                                \
+        shrdn3ri(W(XD), W(XS), W(IT))
+
+#define shrqn3ld(XD, XS, MT, DT)                                            \
+        shrdn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svlqx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svldx_rr(W(XG), W(XS))
+
+#define svlqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svldx_ld(W(XG), W(MS), W(DS))
+
+#define svlqx3rr(XD, XS, XT)                                                \
+        svldx3rr(W(XD), W(XS), W(XT))
+
+#define svlqx3ld(XD, XS, MT, DT)                                            \
+        svldx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svrqx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrdx_rr(W(XG), W(XS))
+
+#define svrqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrdx_ld(W(XG), W(MS), W(DS))
+
+#define svrqx3rr(XD, XS, XT)                                                \
+        svrdx3rr(W(XD), W(XS), W(XT))
+
+#define svrqx3ld(XD, XS, MT, DT)                                            \
+        svrdx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
 #define svrqn_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrdn_rr(W(XG), W(XS))
 
 #define svrqn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrdn_ld(W(XG), W(MS), W(DS))
+
+#define svrqn3rr(XD, XS, XT)                                                \
+        svrdn3rr(W(XD), W(XS), W(XT))
+
+#define svrqn3ld(XD, XS, MT, DT)                                            \
+        svrdn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /*
  * common 256-bit floating-point SIMD instructions with 64-bit elements
@@ -3598,7 +3739,7 @@ struct rt_SIMD_REGS
 #define subqx3ld(XD, XS, MT, DT)                                            \
         subjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S)
+/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlqx_ri(XG, IS)                                                    \
@@ -3607,13 +3748,13 @@ struct rt_SIMD_REGS
 #define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shljx_ld(W(XG), W(MS), W(DS))
 
-#define svlqx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svljx_rr(W(XG), W(XS))
+#define shlqx3ri(XD, XS, IT)                                                \
+        shljx3ri(W(XD), W(XS), W(IT))
 
-#define svlqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svljx_ld(W(XG), W(MS), W(DS))
+#define shlqx3ld(XD, XS, MT, DT)                                            \
+        shljx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrqx_ri(XG, IS)                                                    \
@@ -3622,12 +3763,14 @@ struct rt_SIMD_REGS
 #define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrjx_ld(W(XG), W(MS), W(DS))
 
-#define svrqx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svrjx_rr(W(XG), W(XS))
+#define shrqx3ri(XD, XS, IT)                                                \
+        shrjx3ri(W(XD), W(XS), W(IT))
 
-#define svrqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svrjx_ld(W(XG), W(MS), W(DS))
+#define shrqx3ld(XD, XS, MT, DT)                                            \
+        shrjx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrqn_ri(XG, IS)                                                    \
         shrjn_ri(W(XG), W(IS))
@@ -3635,11 +3778,56 @@ struct rt_SIMD_REGS
 #define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrjn_ld(W(XG), W(MS), W(DS))
 
+#define shrqn3ri(XD, XS, IT)                                                \
+        shrjn3ri(W(XD), W(XS), W(IT))
+
+#define shrqn3ld(XD, XS, MT, DT)                                            \
+        shrjn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svlqx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svljx_rr(W(XG), W(XS))
+
+#define svlqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svljx_ld(W(XG), W(MS), W(DS))
+
+#define svlqx3rr(XD, XS, XT)                                                \
+        svljx3rr(W(XD), W(XS), W(XT))
+
+#define svlqx3ld(XD, XS, MT, DT)                                            \
+        svljx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svrqx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrjx_rr(W(XG), W(XS))
+
+#define svrqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrjx_ld(W(XG), W(MS), W(DS))
+
+#define svrqx3rr(XD, XS, XT)                                                \
+        svrjx3rr(W(XD), W(XS), W(XT))
+
+#define svrqx3ld(XD, XS, MT, DT)                                            \
+        svrjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
 #define svrqn_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrjn_rr(W(XG), W(XS))
 
 #define svrqn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrjn_ld(W(XG), W(MS), W(DS))
+
+#define svrqn3rr(XD, XS, XT)                                                \
+        svrjn3rr(W(XD), W(XS), W(XT))
+
+#define svrqn3ld(XD, XS, MT, DT)                                            \
+        svrjn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /*
  * common 128-bit floating-point SIMD instructions with 64-bit elements
@@ -4382,7 +4570,7 @@ struct rt_SIMD_REGS
 #define subpx3ld(XD, XS, MT, DT)                                            \
         subox3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S)
+/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlpx_ri(XG, IS)                                                    \
@@ -4391,13 +4579,13 @@ struct rt_SIMD_REGS
 #define shlpx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shlox_ld(W(XG), W(MS), W(DS))
 
-#define svlpx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svlox_rr(W(XG), W(XS))
+#define shlpx3ri(XD, XS, IT)                                                \
+        shlox3ri(W(XD), W(XS), W(IT))
 
-#define svlpx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svlox_ld(W(XG), W(MS), W(DS))
+#define shlpx3ld(XD, XS, MT, DT)                                            \
+        shlox3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrpx_ri(XG, IS)                                                    \
@@ -4406,12 +4594,14 @@ struct rt_SIMD_REGS
 #define shrpx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrox_ld(W(XG), W(MS), W(DS))
 
-#define svrpx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svrox_rr(W(XG), W(XS))
+#define shrpx3ri(XD, XS, IT)                                                \
+        shrox3ri(W(XD), W(XS), W(IT))
 
-#define svrpx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svrox_ld(W(XG), W(MS), W(DS))
+#define shrpx3ld(XD, XS, MT, DT)                                            \
+        shrox3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrpn_ri(XG, IS)                                                    \
         shron_ri(W(XG), W(IS))
@@ -4419,11 +4609,56 @@ struct rt_SIMD_REGS
 #define shrpn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shron_ld(W(XG), W(MS), W(DS))
 
+#define shrpn3ri(XD, XS, IT)                                                \
+        shron3ri(W(XD), W(XS), W(IT))
+
+#define shrpn3ld(XD, XS, MT, DT)                                            \
+        shron3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svlpx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlox_rr(W(XG), W(XS))
+
+#define svlpx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlox_ld(W(XG), W(MS), W(DS))
+
+#define svlpx3rr(XD, XS, XT)                                                \
+        svlox3rr(W(XD), W(XS), W(XT))
+
+#define svlpx3ld(XD, XS, MT, DT)                                            \
+        svlox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svrpx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrox_rr(W(XG), W(XS))
+
+#define svrpx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrox_ld(W(XG), W(MS), W(DS))
+
+#define svrpx3rr(XD, XS, XT)                                                \
+        svrox3rr(W(XD), W(XS), W(XT))
+
+#define svrpx3ld(XD, XS, MT, DT)                                            \
+        svrox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
 #define svrpn_rr(XG, XS)     /* variable shift with per-elem count */       \
         svron_rr(W(XG), W(XS))
 
 #define svrpn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svron_ld(W(XG), W(MS), W(DS))
+
+#define svrpn3rr(XD, XS, XT)                                                \
+        svron3rr(W(XD), W(XS), W(XT))
+
+#define svrpn3ld(XD, XS, MT, DT)                                            \
+        svron3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
 /**** 256-bit **** SIMD instructions with configurable-element **** 32-bit ****/
@@ -4927,7 +5162,7 @@ struct rt_SIMD_REGS
 #define subfx3ld(XD, XS, MT, DT)                                            \
         subcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S)
+/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlfx_ri(XG, IS)                                                    \
@@ -4936,13 +5171,13 @@ struct rt_SIMD_REGS
 #define shlfx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shlcx_ld(W(XG), W(MS), W(DS))
 
-#define svlfx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svlcx_rr(W(XG), W(XS))
+#define shlfx3ri(XD, XS, IT)                                                \
+        shlcx3ri(W(XD), W(XS), W(IT))
 
-#define svlfx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svlcx_ld(W(XG), W(MS), W(DS))
+#define shlfx3ld(XD, XS, MT, DT)                                            \
+        shlcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrfx_ri(XG, IS)                                                    \
@@ -4951,12 +5186,14 @@ struct rt_SIMD_REGS
 #define shrfx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrcx_ld(W(XG), W(MS), W(DS))
 
-#define svrfx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svrcx_rr(W(XG), W(XS))
+#define shrfx3ri(XD, XS, IT)                                                \
+        shrcx3ri(W(XD), W(XS), W(IT))
 
-#define svrfx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svrcx_ld(W(XG), W(MS), W(DS))
+#define shrfx3ld(XD, XS, MT, DT)                                            \
+        shrcx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrfn_ri(XG, IS)                                                    \
         shrcn_ri(W(XG), W(IS))
@@ -4964,11 +5201,56 @@ struct rt_SIMD_REGS
 #define shrfn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrcn_ld(W(XG), W(MS), W(DS))
 
+#define shrfn3ri(XD, XS, IT)                                                \
+        shrcn3ri(W(XD), W(XS), W(IT))
+
+#define shrfn3ld(XD, XS, MT, DT)                                            \
+        shrcn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svlfx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlcx_rr(W(XG), W(XS))
+
+#define svlfx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlcx_ld(W(XG), W(MS), W(DS))
+
+#define svlfx3rr(XD, XS, XT)                                                \
+        svlcx3rr(W(XD), W(XS), W(XT))
+
+#define svlfx3ld(XD, XS, MT, DT)                                            \
+        svlcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svrfx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrcx_rr(W(XG), W(XS))
+
+#define svrfx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrcx_ld(W(XG), W(MS), W(DS))
+
+#define svrfx3rr(XD, XS, XT)                                                \
+        svrcx3rr(W(XD), W(XS), W(XT))
+
+#define svrfx3ld(XD, XS, MT, DT)                                            \
+        svrcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
 #define svrfn_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrcn_rr(W(XG), W(XS))
 
 #define svrfn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrcn_ld(W(XG), W(MS), W(DS))
+
+#define svrfn3rr(XD, XS, XT)                                                \
+        svrcn3rr(W(XD), W(XS), W(XT))
+
+#define svrfn3ld(XD, XS, MT, DT)                                            \
+        svrcn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
 /**** 128-bit **** SIMD instructions with configurable-element **** 32-bit ****/
@@ -5472,7 +5754,7 @@ struct rt_SIMD_REGS
 #define sublx3ld(XD, XS, MT, DT)                                            \
         subix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S)
+/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shllx_ri(XG, IS)                                                    \
@@ -5481,13 +5763,13 @@ struct rt_SIMD_REGS
 #define shllx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shlix_ld(W(XG), W(MS), W(DS))
 
-#define svllx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svlix_rr(W(XG), W(XS))
+#define shllx3ri(XD, XS, IT)                                                \
+        shlix3ri(W(XD), W(XS), W(IT))
 
-#define svllx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svlix_ld(W(XG), W(MS), W(DS))
+#define shllx3ld(XD, XS, MT, DT)                                            \
+        shlix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrlx_ri(XG, IS)                                                    \
@@ -5496,12 +5778,14 @@ struct rt_SIMD_REGS
 #define shrlx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrix_ld(W(XG), W(MS), W(DS))
 
-#define svrlx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svrix_rr(W(XG), W(XS))
+#define shrlx3ri(XD, XS, IT)                                                \
+        shrix3ri(W(XD), W(XS), W(IT))
 
-#define svrlx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svrix_ld(W(XG), W(MS), W(DS))
+#define shrlx3ld(XD, XS, MT, DT)                                            \
+        shrix3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrln_ri(XG, IS)                                                    \
         shrin_ri(W(XG), W(IS))
@@ -5509,11 +5793,56 @@ struct rt_SIMD_REGS
 #define shrln_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrin_ld(W(XG), W(MS), W(DS))
 
+#define shrln3ri(XD, XS, IT)                                                \
+        shrin3ri(W(XD), W(XS), W(IT))
+
+#define shrln3ld(XD, XS, MT, DT)                                            \
+        shrin3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svllx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlix_rr(W(XG), W(XS))
+
+#define svllx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlix_ld(W(XG), W(MS), W(DS))
+
+#define svllx3rr(XD, XS, XT)                                                \
+        svlix3rr(W(XD), W(XS), W(XT))
+
+#define svllx3ld(XD, XS, MT, DT)                                            \
+        svlix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svrlx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrix_rr(W(XG), W(XS))
+
+#define svrlx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrix_ld(W(XG), W(MS), W(DS))
+
+#define svrlx3rr(XD, XS, XT)                                                \
+        svrix3rr(W(XD), W(XS), W(XT))
+
+#define svrlx3ld(XD, XS, MT, DT)                                            \
+        svrix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
 #define svrln_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrin_rr(W(XG), W(XS))
 
 #define svrln_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrin_ld(W(XG), W(MS), W(DS))
+
+#define svrln3rr(XD, XS, XT)                                                \
+        svrin3rr(W(XD), W(XS), W(XT))
+
+#define svrln3ld(XD, XS, MT, DT)                                            \
+        svrin3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
 /**** scalar ***** SIMD instructions with configurable-element **** 32-bit ****/
@@ -6260,7 +6589,7 @@ struct rt_SIMD_REGS
 #define subpx3ld(XD, XS, MT, DT)                                            \
         subqx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S)
+/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlpx_ri(XG, IS)                                                    \
@@ -6269,13 +6598,13 @@ struct rt_SIMD_REGS
 #define shlpx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shlqx_ld(W(XG), W(MS), W(DS))
 
-#define svlpx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svlqx_rr(W(XG), W(XS))
+#define shlpx3ri(XD, XS, IT)                                                \
+        shlqx3ri(W(XD), W(XS), W(IT))
 
-#define svlpx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svlqx_ld(W(XG), W(MS), W(DS))
+#define shlpx3ld(XD, XS, MT, DT)                                            \
+        shlqx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrpx_ri(XG, IS)                                                    \
@@ -6284,12 +6613,14 @@ struct rt_SIMD_REGS
 #define shrpx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrqx_ld(W(XG), W(MS), W(DS))
 
-#define svrpx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svrqx_rr(W(XG), W(XS))
+#define shrpx3ri(XD, XS, IT)                                                \
+        shrqx3ri(W(XD), W(XS), W(IT))
 
-#define svrpx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svrqx_ld(W(XG), W(MS), W(DS))
+#define shrpx3ld(XD, XS, MT, DT)                                            \
+        shrqx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrpn_ri(XG, IS)                                                    \
         shrqn_ri(W(XG), W(IS))
@@ -6297,11 +6628,56 @@ struct rt_SIMD_REGS
 #define shrpn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrqn_ld(W(XG), W(MS), W(DS))
 
+#define shrpn3ri(XD, XS, IT)                                                \
+        shrqn3ri(W(XD), W(XS), W(IT))
+
+#define shrpn3ld(XD, XS, MT, DT)                                            \
+        shrqn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svlpx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlqx_rr(W(XG), W(XS))
+
+#define svlpx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlqx_ld(W(XG), W(MS), W(DS))
+
+#define svlpx3rr(XD, XS, XT)                                                \
+        svlqx3rr(W(XD), W(XS), W(XT))
+
+#define svlpx3ld(XD, XS, MT, DT)                                            \
+        svlqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svrpx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrqx_rr(W(XG), W(XS))
+
+#define svrpx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrqx_ld(W(XG), W(MS), W(DS))
+
+#define svrpx3rr(XD, XS, XT)                                                \
+        svrqx3rr(W(XD), W(XS), W(XT))
+
+#define svrpx3ld(XD, XS, MT, DT)                                            \
+        svrqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
 #define svrpn_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrqn_rr(W(XG), W(XS))
 
 #define svrpn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrqn_ld(W(XG), W(MS), W(DS))
+
+#define svrpn3rr(XD, XS, XT)                                                \
+        svrqn3rr(W(XD), W(XS), W(XT))
+
+#define svrpn3ld(XD, XS, MT, DT)                                            \
+        svrqn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
 /**** 256-bit **** SIMD instructions with configurable-element **** 64-bit ****/
@@ -6805,7 +7181,7 @@ struct rt_SIMD_REGS
 #define subfx3ld(XD, XS, MT, DT)                                            \
         subdx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S)
+/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlfx_ri(XG, IS)                                                    \
@@ -6814,13 +7190,13 @@ struct rt_SIMD_REGS
 #define shlfx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shldx_ld(W(XG), W(MS), W(DS))
 
-#define svlfx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svldx_rr(W(XG), W(XS))
+#define shlfx3ri(XD, XS, IT)                                                \
+        shldx3ri(W(XD), W(XS), W(IT))
 
-#define svlfx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svldx_ld(W(XG), W(MS), W(DS))
+#define shlfx3ld(XD, XS, MT, DT)                                            \
+        shldx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrfx_ri(XG, IS)                                                    \
@@ -6829,12 +7205,14 @@ struct rt_SIMD_REGS
 #define shrfx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrdx_ld(W(XG), W(MS), W(DS))
 
-#define svrfx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svrdx_rr(W(XG), W(XS))
+#define shrfx3ri(XD, XS, IT)                                                \
+        shrdx3ri(W(XD), W(XS), W(IT))
 
-#define svrfx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svrdx_ld(W(XG), W(MS), W(DS))
+#define shrfx3ld(XD, XS, MT, DT)                                            \
+        shrdx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrfn_ri(XG, IS)                                                    \
         shrdn_ri(W(XG), W(IS))
@@ -6842,11 +7220,56 @@ struct rt_SIMD_REGS
 #define shrfn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrdn_ld(W(XG), W(MS), W(DS))
 
+#define shrfn3ri(XD, XS, IT)                                                \
+        shrdn3ri(W(XD), W(XS), W(IT))
+
+#define shrfn3ld(XD, XS, MT, DT)                                            \
+        shrdn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svlfx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svldx_rr(W(XG), W(XS))
+
+#define svlfx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svldx_ld(W(XG), W(MS), W(DS))
+
+#define svlfx3rr(XD, XS, XT)                                                \
+        svldx3rr(W(XD), W(XS), W(XT))
+
+#define svlfx3ld(XD, XS, MT, DT)                                            \
+        svldx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svrfx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrdx_rr(W(XG), W(XS))
+
+#define svrfx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrdx_ld(W(XG), W(MS), W(DS))
+
+#define svrfx3rr(XD, XS, XT)                                                \
+        svrdx3rr(W(XD), W(XS), W(XT))
+
+#define svrfx3ld(XD, XS, MT, DT)                                            \
+        svrdx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
 #define svrfn_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrdn_rr(W(XG), W(XS))
 
 #define svrfn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrdn_ld(W(XG), W(MS), W(DS))
+
+#define svrfn3rr(XD, XS, XT)                                                \
+        svrdn3rr(W(XD), W(XS), W(XT))
+
+#define svrfn3ld(XD, XS, MT, DT)                                            \
+        svrdn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
 /**** 128-bit **** SIMD instructions with configurable-element **** 64-bit ****/
@@ -7350,7 +7773,7 @@ struct rt_SIMD_REGS
 #define sublx3ld(XD, XS, MT, DT)                                            \
         subjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S)
+/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shllx_ri(XG, IS)                                                    \
@@ -7359,13 +7782,13 @@ struct rt_SIMD_REGS
 #define shllx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shljx_ld(W(XG), W(MS), W(DS))
 
-#define svllx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svljx_rr(W(XG), W(XS))
+#define shllx3ri(XD, XS, IT)                                                \
+        shljx3ri(W(XD), W(XS), W(IT))
 
-#define svllx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svljx_ld(W(XG), W(MS), W(DS))
+#define shllx3ld(XD, XS, MT, DT)                                            \
+        shljx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrlx_ri(XG, IS)                                                    \
@@ -7374,12 +7797,14 @@ struct rt_SIMD_REGS
 #define shrlx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrjx_ld(W(XG), W(MS), W(DS))
 
-#define svrlx_rr(XG, XS)     /* variable shift with per-elem count */       \
-        svrjx_rr(W(XG), W(XS))
+#define shrlx3ri(XD, XS, IT)                                                \
+        shrjx3ri(W(XD), W(XS), W(IT))
 
-#define svrlx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        svrjx_ld(W(XG), W(MS), W(DS))
+#define shrlx3ld(XD, XS, MT, DT)                                            \
+        shrjx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrln_ri(XG, IS)                                                    \
         shrjn_ri(W(XG), W(IS))
@@ -7387,11 +7812,56 @@ struct rt_SIMD_REGS
 #define shrln_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
         shrjn_ld(W(XG), W(MS), W(DS))
 
+#define shrln3ri(XD, XS, IT)                                                \
+        shrjn3ri(W(XD), W(XS), W(IT))
+
+#define shrln3ld(XD, XS, MT, DT)                                            \
+        shrjn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svllx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svljx_rr(W(XG), W(XS))
+
+#define svllx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svljx_ld(W(XG), W(MS), W(DS))
+
+#define svllx3rr(XD, XS, XT)                                                \
+        svljx3rr(W(XD), W(XS), W(XT))
+
+#define svllx3ld(XD, XS, MT, DT)                                            \
+        svljx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
+#define svrlx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrjx_rr(W(XG), W(XS))
+
+#define svrlx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrjx_ld(W(XG), W(MS), W(DS))
+
+#define svrlx3rr(XD, XS, XT)                                                \
+        svrjx3rr(W(XD), W(XS), W(XT))
+
+#define svrlx3ld(XD, XS, MT, DT)                                            \
+        svrjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+ * for maximum compatibility, shift count mustn't exceed elem-size */
+
 #define svrln_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrjn_rr(W(XG), W(XS))
 
 #define svrln_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrjn_ld(W(XG), W(MS), W(DS))
+
+#define svrln3rr(XD, XS, XT)                                                \
+        svrjn3rr(W(XD), W(XS), W(XT))
+
+#define svrln3ld(XD, XS, MT, DT)                                            \
+        svrjn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
 /**** scalar ***** SIMD instructions with configurable-element **** 64-bit ****/
