@@ -509,7 +509,7 @@
         EMITW(0x7860000D | MXM(REG(XG), REG(XG), REG(XS)))
 
 #define svlqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x7860000D | MXM(REG(XG), REG(XG), TmmM))
 
@@ -530,7 +530,7 @@
         EMITW(0x7960000D | MXM(REG(XG), REG(XG), REG(XS)))
 
 #define svrqx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x7960000D | MXM(REG(XG), REG(XG), TmmM))
 
@@ -549,7 +549,7 @@
         EMITW(0x78E0000D | MXM(REG(XG), REG(XG), REG(XS)))
 
 #define svrqn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x78E0000D | MXM(REG(XG), REG(XG), TmmM))
 
