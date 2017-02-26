@@ -143,8 +143,8 @@
         EMITW(0x7C0001CE | MXM(RYG(XS), Teax & (MOD(MD) == TPxx), TPxx))    \
                                                        /* ^ == -1 if true */
 
-/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
 #define mmvcx_rr(XG, XS)                                                    \
         EMITW(0x1000002A | MXM(REG(XG), REG(XG), REG(XS)))                  \

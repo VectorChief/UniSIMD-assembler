@@ -119,8 +119,8 @@
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
-/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
 #define mmvjx_rr(XG, XS)                                                    \
     ADR VEX(RXB(XG), RXB(XS), REN(XG), 0, 1, 3) EMITB(0x4B)                 \

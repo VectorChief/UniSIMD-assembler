@@ -194,8 +194,8 @@
         EMITW(0xE0800000 | MPM(TPxx,    MOD(MD), VAL(DD), B2(DD), P2(DD)))  \
         EMITW(0xF4000AAF | MXM(REG(XS), TPxx,    0x00))
 
-/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
 #define mmvix_rr(XG, XS)                                                    \
         EMITW(0xF3200150 | MXM(REG(XG), REG(XS), Tmm0))

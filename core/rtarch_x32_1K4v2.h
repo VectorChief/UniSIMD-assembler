@@ -152,8 +152,8 @@
         MRM(REG(XS),    0x02, REG(MD))                                      \
         AUX(SIB(MD), EMITW(VZL(DD)), EMPTY)
 
-/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
 #define mmvox_rr(XG, XS)                                                    \
         ck1ox_rm(Xmm0, Mebp, inf_GPC07)                                     \

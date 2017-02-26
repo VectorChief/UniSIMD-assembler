@@ -806,8 +806,8 @@ struct rt_SIMD_REGS
 #define movox_st(XS, MD, DD)                                                \
         movcx_st(W(XS), W(MD), W(DD))
 
-/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
 #define mmvox_ld(XG, MS, DS)                                                \
         mmvcx_ld(W(XG), W(MS), W(DS))
@@ -1541,8 +1541,8 @@ struct rt_SIMD_REGS
 #define movox_st(XS, MD, DD)                                                \
         movix_st(W(XS), W(MD), W(DD))
 
-/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
 #define mmvox_ld(XG, MS, DS)                                                \
         mmvix_ld(W(XG), W(MS), W(DS))
@@ -2519,8 +2519,8 @@ struct rt_SIMD_REGS
 #define movqx_st(XS, MD, DD)                                                \
         movdx_st(W(XS), W(MD), W(DD))
 
-/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
 #define mmvqx_ld(XG, MS, DS)                                                \
         mmvdx_ld(W(XG), W(MS), W(DS))
@@ -3254,8 +3254,8 @@ struct rt_SIMD_REGS
 #define movqx_st(XS, MD, DD)                                                \
         movjx_st(W(XS), W(MD), W(DD))
 
-/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
 #define mmvqx_ld(XG, MS, DS)                                                \
         mmvjx_ld(W(XG), W(MS), W(DS))
@@ -4085,8 +4085,8 @@ struct rt_SIMD_REGS
 #define movpx_st(XS, MD, DD)                                                \
         movox_st(W(XS), W(MD), W(DD))
 
-/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
 #define mmvpx_ld(XG, MS, DS)                                                \
         mmvox_ld(W(XG), W(MS), W(DS))
@@ -4677,8 +4677,8 @@ struct rt_SIMD_REGS
 #define movfx_st(XS, MD, DD)                                                \
         movcx_st(W(XS), W(MD), W(DD))
 
-/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
 #define mmvfx_ld(XG, MS, DS)                                                \
         mmvcx_ld(W(XG), W(MS), W(DS))
@@ -5269,8 +5269,8 @@ struct rt_SIMD_REGS
 #define movlx_st(XS, MD, DD)                                                \
         movix_st(W(XS), W(MD), W(DD))
 
-/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
 #define mmvlx_ld(XG, MS, DS)                                                \
         mmvix_ld(W(XG), W(MS), W(DS))
@@ -6104,8 +6104,8 @@ struct rt_SIMD_REGS
 #define movpx_st(XS, MD, DD)                                                \
         movqx_st(W(XS), W(MD), W(DD))
 
-/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
 #define mmvpx_ld(XG, MS, DS)                                                \
         mmvqx_ld(W(XG), W(MS), W(DS))
@@ -6696,8 +6696,8 @@ struct rt_SIMD_REGS
 #define movfx_st(XS, MD, DD)                                                \
         movdx_st(W(XS), W(MD), W(DD))
 
-/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
 #define mmvfx_ld(XG, MS, DS)                                                \
         mmvdx_ld(W(XG), W(MS), W(DS))
@@ -7288,8 +7288,8 @@ struct rt_SIMD_REGS
 #define movlx_st(XS, MD, DD)                                                \
         movjx_st(W(XS), W(MD), W(DD))
 
-/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
 #define mmvlx_ld(XG, MS, DS)                                                \
         mmvjx_ld(W(XG), W(MS), W(DS))

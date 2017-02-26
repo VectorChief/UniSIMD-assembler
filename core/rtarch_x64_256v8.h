@@ -131,8 +131,8 @@ ADR ESC REX(1,       RXB(MD)) EMITB(0x0F) EMITB(0x29)                       \
         MRM(REG(XS),    0x02, REG(MD))                                      \
         AUX(SIB(MD), EMITW(VYL(DD)), EMPTY)
 
-/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
 #define mmvdx_rr(XG, XS)                                                    \
         anddx_rr(W(XS), Xmm0)                                               \

@@ -121,8 +121,8 @@
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VYL(DD), C2(DD), EMPTY2)   \
         EMITW(0x3D800000 | MPM(RYG(XS), MOD(MD), VYL(DD), B2(DD), P2(DD)))
 
-/* mmv (G = G mask-merge S, mask: 0 - keeps G, 1 - picks S with elem-size frag)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked frags */
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
 #define mmvdx_rr(XG, XS)                                                    \
         EMITW(0x6EA01C00 | MXM(REG(XG), REG(XS), Tmm0))                     \
