@@ -152,7 +152,7 @@ ADR ESC REX(1,       RXB(MD)) EMITB(0x0F) EMITB(0x29)                       \
         orrdx_rr(Xmm0, W(XS))                                               \
         movdx_st(Xmm0, W(MG), W(DG))
 
-/* and (G = G & S), (D = S & T) if (D != S) */
+/* and (G = G & S), (D = S & T) if (#D != #S) */
 
 #define anddx_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x54)                       \
@@ -176,7 +176,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x54)                       \
         movdx_rr(W(XD), W(XS))                                              \
         anddx_ld(W(XD), W(MT), W(DT))
 
-/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
 
 #define anndx_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x55)                       \
@@ -200,7 +200,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x55)                       \
         movdx_rr(W(XD), W(XS))                                              \
         anndx_ld(W(XD), W(MT), W(DT))
 
-/* orr (G = G | S), (D = S | T) if (D != S) */
+/* orr (G = G | S), (D = S | T) if (#D != #S) */
 
 #define orrdx_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x56)                       \
@@ -224,7 +224,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x56)                       \
         movdx_rr(W(XD), W(XS))                                              \
         orrdx_ld(W(XD), W(MT), W(DT))
 
-/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
 
 #define orndx_rr(XG, XS)                                                    \
         notdx_rx(W(XG))                                                     \
@@ -242,7 +242,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x56)                       \
         notdx_rr(W(XD), W(XS))                                              \
         orrdx_ld(W(XD), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
 
 #define xordx_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x57)                       \
@@ -286,7 +286,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x57)                       \
         movdx_rr(W(XD), W(XS))                                              \
         negds_rx(W(XD))
 
-/* add (G = G + S), (D = S + T) if (D != S) */
+/* add (G = G + S), (D = S + T) if (#D != #S) */
 
 #define addds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x58)                       \
@@ -310,7 +310,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x58)                       \
         movdx_rr(W(XD), W(XS))                                              \
         addds_ld(W(XD), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (D != S) */
+/* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x5C)                       \
@@ -334,7 +334,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x5C)                       \
         movdx_rr(W(XD), W(XS))                                              \
         subds_ld(W(XD), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (D != S) */
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
 
 #define mulds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x59)                       \
@@ -358,7 +358,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
         movdx_rr(W(XD), W(XS))                                              \
         mulds_ld(W(XD), W(MT), W(DT))
 
-/* div (G = G / S), (D = S / T) if (D != S) */
+/* div (G = G / S), (D = S / T) if (#D != #S) */
 
 #define divds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x5E)                       \
@@ -620,7 +620,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 
 /*************   packed double-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
 #define minds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x5D)                       \
@@ -644,7 +644,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x5D)                       \
         movdx_rr(W(XD), W(XS))                                              \
         minds_ld(W(XD), W(MT), W(DT))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x5F)                       \
@@ -668,7 +668,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x5F)                       \
         movdx_rr(W(XD), W(XS))                                              \
         maxds_ld(W(XD), W(MT), W(DT))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
 #define ceqds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -694,7 +694,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movdx_rr(W(XD), W(XS))                                              \
         ceqds_ld(W(XD), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
 
 #define cneds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -720,7 +720,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movdx_rr(W(XD), W(XS))                                              \
         cneds_ld(W(XD), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
 
 #define cltds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -746,7 +746,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movdx_rr(W(XD), W(XS))                                              \
         cltds_ld(W(XD), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
 
 #define cleds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -772,7 +772,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movdx_rr(W(XD), W(XS))                                              \
         cleds_ld(W(XD), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
 
 #define cgtds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -798,7 +798,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         movdx_rr(W(XD), W(XS))                                              \
         cgtds_ld(W(XD), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
 
 #define cgeds_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xC2)                       \
@@ -1189,7 +1189,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S), (D = S + T) if (D != S) */
+/* add (G = G + S), (D = S + T) if (#D != #S) */
 
 #define adddx_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xD4)                       \
@@ -1213,7 +1213,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD4)                       \
         movdx_rr(W(XD), W(XS))                                              \
         adddx_ld(W(XD), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (D != S) */
+/* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subdx_rr(XG, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0xFB)                       \
@@ -1237,7 +1237,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xFB)                       \
         movdx_rr(W(XD), W(XS))                                              \
         subdx_ld(W(XD), W(MT), W(DT))
 
-/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shldx_ri(XG, IS)                                                    \
@@ -1264,7 +1264,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xF3)                       \
         movdx_rr(W(XD), W(XS))                                              \
         shldx_ld(W(XD), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrdx_ri(XG, IS)                                                    \
@@ -1291,7 +1291,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         movdx_rr(W(XD), W(XS))                                              \
         shrdx_ld(W(XD), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrdn_ri(XG, IS)                                                    \
@@ -1319,7 +1319,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         stack_ld(Recx)                                                      \
         movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define svldx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1359,7 +1359,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         stack_ld(Recx)                                                      \
         movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define svrdx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1399,7 +1399,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         stack_ld(Recx)                                                      \
         movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define svrdn_rr(XG, XS)     /* variable shift with per-elem count */       \

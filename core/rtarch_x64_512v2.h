@@ -146,7 +146,7 @@
 
 #if (RT_512 < 2)
 
-/* and (G = G & S), (D = S & T) if (D != S) */
+/* and (G = G & S), (D = S & T) if (#D != #S) */
 
 #define andqx_rr(XG, XS)                                                    \
         andqx3rr(W(XG), W(XG), W(XS))
@@ -163,7 +163,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
 
 #define annqx_rr(XG, XS)                                                    \
         annqx3rr(W(XG), W(XG), W(XS))
@@ -180,7 +180,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* orr (G = G | S), (D = S | T) if (D != S) */
+/* orr (G = G | S), (D = S | T) if (#D != #S) */
 
 #define orrqx_rr(XG, XS)                                                    \
         orrqx3rr(W(XG), W(XG), W(XS))
@@ -197,7 +197,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
 
 #define ornqx_rr(XG, XS)                                                    \
         notqx_rx(W(XG))                                                     \
@@ -215,7 +215,7 @@
         notqx_rr(W(XD), W(XS))                                              \
         orrqx_ld(W(XD), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
 
 #define xorqx_rr(XG, XS)                                                    \
         xorqx3rr(W(XG), W(XG), W(XS))
@@ -234,7 +234,7 @@
 
 #else /* RT_512 >= 2 */
 
-/* and (G = G & S), (D = S & T) if (D != S) */
+/* and (G = G & S), (D = S & T) if (#D != #S) */
 
 #define andqx_rr(XG, XS)                                                    \
         andqx3rr(W(XG), W(XG), W(XS))
@@ -251,7 +251,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
 
 #define annqx_rr(XG, XS)                                                    \
         annqx3rr(W(XG), W(XG), W(XS))
@@ -268,7 +268,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* orr (G = G | S), (D = S | T) if (D != S) */
+/* orr (G = G | S), (D = S | T) if (#D != #S) */
 
 #define orrqx_rr(XG, XS)                                                    \
         orrqx3rr(W(XG), W(XG), W(XS))
@@ -285,7 +285,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
 
 #define ornqx_rr(XG, XS)                                                    \
         notqx_rx(W(XG))                                                     \
@@ -303,7 +303,7 @@
         notqx_rr(W(XD), W(XS))                                              \
         orrqx_ld(W(XD), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
 
 #define xorqx_rr(XG, XS)                                                    \
         xorqx3rr(W(XG), W(XG), W(XS))
@@ -340,7 +340,7 @@
 #define negqs_rr(XD, XS)                                                    \
         xorqx3ld(W(XD), W(XS), Mebp, inf_GPC06_64)
 
-/* add (G = G + S), (D = S + T) if (D != S) */
+/* add (G = G + S), (D = S + T) if (#D != #S) */
 
 #define addqs_rr(XG, XS)                                                    \
         addqs3rr(W(XG), W(XG), W(XS))
@@ -357,7 +357,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* sub (G = G - S), (D = S - T) if (D != S) */
+/* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subqs_rr(XG, XS)                                                    \
         subqs3rr(W(XG), W(XG), W(XS))
@@ -374,7 +374,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* mul (G = G * S), (D = S * T) if (D != S) */
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
 
 #define mulqs_rr(XG, XS)                                                    \
         mulqs3rr(W(XG), W(XG), W(XS))
@@ -391,7 +391,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* div (G = G / S), (D = S / T) if (D != S) */
+/* div (G = G / S), (D = S / T) if (#D != #S) */
 
 #define divqs_rr(XG, XS)                                                    \
         divqs3rr(W(XG), W(XG), W(XS))
@@ -517,7 +517,7 @@
 
 /*************   packed double-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
 #define minqs_rr(XG, XS)                                                    \
         minqs3rr(W(XG), W(XG), W(XS))
@@ -534,7 +534,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxqs_rr(XG, XS)                                                    \
         maxqs3rr(W(XG), W(XG), W(XS))
@@ -551,7 +551,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
 #define ceqqs_rr(XG, XS)                                                    \
         ceqqs3rr(W(XG), W(XG), W(XS))
@@ -571,7 +571,7 @@
         AUX(SIB(MT), CMD(DT), EMITB(0x00))                                  \
         mz1qx_ld(W(XD), Mebp, inf_GPC07)
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
 
 #define cneqs_rr(XG, XS)                                                    \
         cneqs3rr(W(XG), W(XG), W(XS))
@@ -591,7 +591,7 @@
         AUX(SIB(MT), CMD(DT), EMITB(0x04))                                  \
         mz1qx_ld(W(XD), Mebp, inf_GPC07)
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
 
 #define cltqs_rr(XG, XS)                                                    \
         cltqs3rr(W(XG), W(XG), W(XS))
@@ -611,7 +611,7 @@
         AUX(SIB(MT), CMD(DT), EMITB(0x01))                                  \
         mz1qx_ld(W(XD), Mebp, inf_GPC07)
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
 
 #define cleqs_rr(XG, XS)                                                    \
         cleqs3rr(W(XG), W(XG), W(XS))
@@ -631,7 +631,7 @@
         AUX(SIB(MT), CMD(DT), EMITB(0x02))                                  \
         mz1qx_ld(W(XD), Mebp, inf_GPC07)
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
 
 #define cgtqs_rr(XG, XS)                                                    \
         cgtqs3rr(W(XG), W(XG), W(XS))
@@ -651,7 +651,7 @@
         AUX(SIB(MT), CMD(DT), EMITB(0x06))                                  \
         mz1qx_ld(W(XD), Mebp, inf_GPC07)
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
 
 #define cgeqs_rr(XG, XS)                                                    \
         cgeqs3rr(W(XG), W(XG), W(XS))
@@ -1017,7 +1017,7 @@
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S), (D = S + T) if (D != S) */
+/* add (G = G + S), (D = S + T) if (#D != #S) */
 
 #define addqx_rr(XG, XS)                                                    \
         addqx3rr(W(XG), W(XG), W(XS))
@@ -1034,7 +1034,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* sub (G = G - S), (D = S - T) if (D != S) */
+/* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subqx_rr(XG, XS)                                                    \
         subqx3rr(W(XG), W(XG), W(XS))
@@ -1051,7 +1051,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlqx_ri(XG, IS)                                                    \
@@ -1070,7 +1070,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrqx_ri(XG, IS)                                                    \
@@ -1089,7 +1089,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrqn_ri(XG, IS)                                                    \
@@ -1108,7 +1108,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define svlqx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1126,7 +1126,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define svrqx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1144,7 +1144,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define svrqn_rr(XG, XS)     /* variable shift with per-elem count */       \

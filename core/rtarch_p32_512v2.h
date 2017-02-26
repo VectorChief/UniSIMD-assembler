@@ -208,7 +208,7 @@
         EMITW(0x7C000719 | MXM(TmmM,    Teax & (MOD(MG) == TPxx), TPxx))    \
                                                        /* ^ == -1 if true */
 
-/* and (G = G & S), (D = S & T) if (D != S) */
+/* and (G = G & S), (D = S & T) if (#D != #S) */
 
 #define andox_rr(XG, XS)                                                    \
         andox3rr(W(XG), W(XG), W(XS))
@@ -240,7 +240,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF0000412 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* ann (G = ~G & S), (D = ~S & T) if (D != S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
 
 #define annox_rr(XG, XS)                                                    \
         annox3rr(W(XG), W(XG), W(XS))
@@ -272,7 +272,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF0000454 | MXM(RYG(XD), TmmM,    RYG(XS)))
 
-/* orr (G = G | S), (D = S | T) if (D != S) */
+/* orr (G = G | S), (D = S | T) if (#D != #S) */
 
 #define orrox_rr(XG, XS)                                                    \
         orrox3rr(W(XG), W(XG), W(XS))
@@ -304,7 +304,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF0000492 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* orn (G = ~G | S), (D = ~S | T) if (D != S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
 
 #if (RT_512 < 2)
 
@@ -358,7 +358,7 @@
 
 #endif /* RT_512 >= 2 */
 
-/* xor (G = G ^ S), (D = S ^ T) if (D != S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
 
 #define xorox_rr(XG, XS)                                                    \
         xorox3rr(W(XG), W(XG), W(XS))
@@ -414,7 +414,7 @@
         EMITW(0xF00006E4 | MXM(REG(XD), 0x00,    REG(XS)))                  \
         EMITW(0xF00006E4 | MXM(RYG(XD), 0x00,    RYG(XS)))
 
-/* add (G = G + S), (D = S + T) if (D != S) */
+/* add (G = G + S), (D = S + T) if (#D != #S) */
 
 #define addos_rr(XG, XS)                                                    \
         addos3rr(W(XG), W(XG), W(XS))
@@ -446,7 +446,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF0000202 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* sub (G = G - S), (D = S - T) if (D != S) */
+/* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subos_rr(XG, XS)                                                    \
         subos3rr(W(XG), W(XG), W(XS))
@@ -478,7 +478,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF0000242 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* mul (G = G * S), (D = S * T) if (D != S) */
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
 
 #define mulos_rr(XG, XS)                                                    \
         mulos3rr(W(XG), W(XG), W(XS))
@@ -510,7 +510,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF0000282 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* div (G = G / S), (D = S / T) if (D != S) */
+/* div (G = G / S), (D = S / T) if (#D != #S) */
 
 #define divos_rr(XG, XS)                                                    \
         divos3rr(W(XG), W(XG), W(XS))
@@ -699,7 +699,7 @@
 
 /*************   packed single-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (D != S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
 #define minos_rr(XG, XS)                                                    \
         minos3rr(W(XG), W(XG), W(XS))
@@ -731,7 +731,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF0000642 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (D != S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxos_rr(XG, XS)                                                    \
         maxos3rr(W(XG), W(XG), W(XS))
@@ -763,7 +763,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF0000602 | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (D != S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
 #define ceqos_rr(XG, XS)                                                    \
         ceqos3rr(W(XG), W(XG), W(XS))
@@ -795,7 +795,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000021A | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (D != S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
 
 #define cneos_rr(XG, XS)                                                    \
         cneos3rr(W(XG), W(XG), W(XS))
@@ -835,7 +835,7 @@
         EMITW(0xF000021A | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */\
         EMITW(0xF0000510 | MXM(RYG(XD), RYG(XD), RYG(XD)))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (D != S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
 
 #define cltos_rr(XG, XS)                                                    \
         cltos3rr(W(XG), W(XG), W(XS))
@@ -867,7 +867,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000025C | MXM(RYG(XD), TmmM,    RYG(XS)))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (D != S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
 
 #define cleos_rr(XG, XS)                                                    \
         cleos3rr(W(XG), W(XG), W(XS))
@@ -899,7 +899,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000029C | MXM(RYG(XD), TmmM,    RYG(XS)))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (D != S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
 
 #define cgtos_rr(XG, XS)                                                    \
         cgtos3rr(W(XG), W(XG), W(XS))
@@ -931,7 +931,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000025A | MXM(RYG(XD), RYG(XS), TmmM))/* ^ == -1 if true */
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (D != S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
 
 #define cgeos_rr(XG, XS)                                                    \
         cgeos3rr(W(XG), W(XG), W(XS))
@@ -1261,7 +1261,7 @@
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S), (D = S + T) if (D != S) */
+/* add (G = G + S), (D = S + T) if (#D != #S) */
 
 #define addox_rr(XG, XS)                                                    \
         addox3rr(W(XG), W(XG), W(XS))
@@ -1303,7 +1303,7 @@
         EMITW(0x10000080 | MXM(TmmQ,    TmmQ,    TmmM))/* ^ == -1 if true */\
         EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
 
-/* sub (G = G - S), (D = S - T) if (D != S) */
+/* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subox_rr(XG, XS)                                                    \
         subox3rr(W(XG), W(XG), W(XS))
@@ -1345,7 +1345,7 @@
         EMITW(0x10000480 | MXM(TmmQ,    TmmQ,    TmmM))/* ^ == -1 if true */\
         EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
 
-/* shl (G = G << S), (D = S << T) if (D != S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shlox_ri(XG, IS)                                                    \
@@ -1399,7 +1399,7 @@
 
 #endif /* RT_ENDIAN == 1 */
 
-/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shrox_ri(XG, IS)                                                    \
@@ -1453,7 +1453,7 @@
 
 #endif /* RT_ENDIAN == 1 */
 
-/* shr (G = G >> S), (D = S >> T) if (D != S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define shron_ri(XG, IS)                                                    \
@@ -1507,7 +1507,7 @@
 
 #endif /* RT_ENDIAN == 1 */
 
-/* svl (G = G << S), (D = S << T) if (D != S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1550,7 +1550,7 @@
         EMITW(0x10000184 | MXM(TmmQ,    TmmQ,    TmmM))/* ^ == -1 if true */\
         EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
 
-/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1593,7 +1593,7 @@
         EMITW(0x10000284 | MXM(TmmQ,    TmmQ,    TmmM))/* ^ == -1 if true */\
         EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
 
-/* svr (G = G >> S), (D = S >> T) if (D != S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
 #define svron_rr(XG, XS)     /* variable shift with per-elem count */       \
