@@ -747,7 +747,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -767,7 +767,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -1002,7 +1002,7 @@ struct rt_SIMD_REGS
 #define rssos_rr(XG, XS) /* destroys XS */                                  \
         rsscs_rr(W(XG), W(XS))
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -1012,7 +1012,7 @@ struct rt_SIMD_REGS
 #define fmaos_ld(XG, XS, MT, DT)                                            \
         fmacs_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -1482,7 +1482,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -1502,7 +1502,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -1737,7 +1737,7 @@ struct rt_SIMD_REGS
 #define rssos_rr(XG, XS) /* destroys XS */                                  \
         rssis_rr(W(XG), W(XS))
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -1747,7 +1747,7 @@ struct rt_SIMD_REGS
 #define fmaos_ld(XG, XS, MT, DT)                                            \
         fmais_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -2217,7 +2217,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -2237,7 +2237,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -2313,7 +2313,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -2333,7 +2333,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -2460,7 +2460,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -2480,7 +2480,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -2715,7 +2715,7 @@ struct rt_SIMD_REGS
 #define rssqs_rr(XG, XS) /* destroys XS */                                  \
         rssds_rr(W(XG), W(XS))
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -2725,7 +2725,7 @@ struct rt_SIMD_REGS
 #define fmaqs_ld(XG, XS, MT, DT)                                            \
         fmads_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -3195,7 +3195,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -3215,7 +3215,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -3450,7 +3450,7 @@ struct rt_SIMD_REGS
 #define rssqs_rr(XG, XS) /* destroys XS */                                  \
         rssjs_rr(W(XG), W(XS))
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -3460,7 +3460,7 @@ struct rt_SIMD_REGS
 #define fmaqs_ld(XG, XS, MT, DT)                                            \
         fmajs_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -3930,7 +3930,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -3950,7 +3950,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -4026,7 +4026,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -4046,7 +4046,7 @@ struct rt_SIMD_REGS
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -4281,7 +4281,7 @@ struct rt_SIMD_REGS
 #define rssps_rr(XG, XS) /* destroys XS */                                  \
         rssos_rr(W(XG), W(XS))
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -4291,7 +4291,7 @@ struct rt_SIMD_REGS
 #define fmaps_ld(XG, XS, MT, DT)                                            \
         fmaos_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -4873,7 +4873,7 @@ struct rt_SIMD_REGS
 #define rssfs_rr(XG, XS) /* destroys XS */                                  \
         rsscs_rr(W(XG), W(XS))
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -4883,7 +4883,7 @@ struct rt_SIMD_REGS
 #define fmafs_ld(XG, XS, MT, DT)                                            \
         fmacs_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -5465,7 +5465,7 @@ struct rt_SIMD_REGS
 #define rssls_rr(XG, XS) /* destroys XS */                                  \
         rssis_rr(W(XG), W(XS))
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -5475,7 +5475,7 @@ struct rt_SIMD_REGS
 #define fmals_ld(XG, XS, MT, DT)                                            \
         fmais_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -5951,7 +5951,7 @@ struct rt_SIMD_REGS
 #define rssss_rr(XG, XS) /* destroys XS */                                  \
         rssrs_rr(W(XG), W(XS))
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -5961,7 +5961,7 @@ struct rt_SIMD_REGS
 #define fmass_ld(XG, XS, MT, DT)                                            \
         fmars_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -6300,7 +6300,7 @@ struct rt_SIMD_REGS
 #define rssps_rr(XG, XS) /* destroys XS */                                  \
         rssqs_rr(W(XG), W(XS))
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -6310,7 +6310,7 @@ struct rt_SIMD_REGS
 #define fmaps_ld(XG, XS, MT, DT)                                            \
         fmaqs_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -6892,7 +6892,7 @@ struct rt_SIMD_REGS
 #define rssfs_rr(XG, XS) /* destroys XS */                                  \
         rssds_rr(W(XG), W(XS))
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -6902,7 +6902,7 @@ struct rt_SIMD_REGS
 #define fmafs_ld(XG, XS, MT, DT)                                            \
         fmads_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -7484,7 +7484,7 @@ struct rt_SIMD_REGS
 #define rssls_rr(XG, XS) /* destroys XS */                                  \
         rssjs_rr(W(XG), W(XS))
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -7494,7 +7494,7 @@ struct rt_SIMD_REGS
 #define fmals_ld(XG, XS, MT, DT)                                            \
         fmajs_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -7970,7 +7970,7 @@ struct rt_SIMD_REGS
 #define rssss_rr(XG, XS) /* destroys XS */                                  \
         rssts_rr(W(XG), W(XS))
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -7980,7 +7980,7 @@ struct rt_SIMD_REGS
 #define fmass_ld(XG, XS, MT, DT)                                            \
         fmats_ld(W(XG), W(XS), W(MT), W(DT))
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 

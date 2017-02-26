@@ -437,7 +437,7 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -453,7 +453,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -1088,7 +1088,7 @@
 /* pre-r6 */
 #if (defined (RT_M32) && RT_M32 < 6) || (defined (RT_M64) && RT_M64 < 6)
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -1104,7 +1104,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
@@ -1122,7 +1122,7 @@
 
 #else  /* r6 */
 
-/* fma (G = G + S * T)
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
@@ -1138,7 +1138,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
-/* fms (G = G - S * T)
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all Power systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
