@@ -2275,12 +2275,12 @@ struct rt_SIMD_REGS
 #elif RT_SIMD_COMPAT_RCP == 1
 
 #define rcprs_rr(XD, XS) /* destroys XS */                                  \
-        movrx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        movrs_ld(W(XD), Mebp, inf_GPC01_32)                                 \
         divrs_rr(W(XD), W(XS))
 
 #define rcers_rr(XD, XS)                                                    \
-        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        movrs_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movrs_ld(W(XD), Mebp, inf_GPC01_32)                                 \
         divrs_ld(W(XD), Mebp, inf_SCR02(0))
 
 #define rcsrs_rr(XG, XS) /* destroys XS */
@@ -2300,13 +2300,13 @@ struct rt_SIMD_REGS
 
 #define rsqrs_rr(XD, XS) /* destroys XS */                                  \
         sqrrs_rr(W(XS), W(XS))                                              \
-        movrx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        movrs_ld(W(XD), Mebp, inf_GPC01_32)                                 \
         divrs_rr(W(XD), W(XS))
 
 #define rsers_rr(XD, XS)                                                    \
         sqrrs_rr(W(XD), W(XS))                                              \
-        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        movrs_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movrs_ld(W(XD), Mebp, inf_GPC01_32)                                 \
         divrs_ld(W(XD), Mebp, inf_SCR02(0))
 
 #define rssrs_rr(XG, XS) /* destroys XS */
@@ -2320,16 +2320,16 @@ struct rt_SIMD_REGS
 #if RT_SIMD_COMPAT_FMA == 2
 
 #define fmars_rr(XG, XS, XT)                                                \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
         mulrs_rr(W(XS), W(XT))                                              \
         addrs_rr(W(XG), W(XS))                                              \
-        movrx_ld(W(XS), Mebp, inf_SCR01(0))
+        movrs_ld(W(XS), Mebp, inf_SCR01(0))
 
 #define fmars_ld(XG, XS, MT, DT)                                            \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
         mulrs_ld(W(XS), W(MT), W(DT))                                       \
         addrs_rr(W(XG), W(XS))                                              \
-        movrx_ld(W(XS), Mebp, inf_SCR01(0))
+        movrs_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
@@ -2340,16 +2340,16 @@ struct rt_SIMD_REGS
 #if RT_SIMD_COMPAT_FMS == 2
 
 #define fmsrs_rr(XG, XS, XT)                                                \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
         mulrs_rr(W(XS), W(XT))                                              \
         subrs_rr(W(XG), W(XS))                                              \
-        movrx_ld(W(XS), Mebp, inf_SCR01(0))
+        movrs_ld(W(XS), Mebp, inf_SCR01(0))
 
 #define fmsrs_ld(XG, XS, MT, DT)                                            \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
         mulrs_ld(W(XS), W(MT), W(DT))                                       \
         subrs_rr(W(XG), W(XS))                                              \
-        movrx_ld(W(XS), Mebp, inf_SCR01(0))
+        movrs_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
@@ -3988,12 +3988,12 @@ struct rt_SIMD_REGS
 #elif RT_SIMD_COMPAT_RCP == 1
 
 #define rcpts_rr(XD, XS) /* destroys XS */                                  \
-        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        movts_ld(W(XD), Mebp, inf_GPC01_64)                                 \
         divts_rr(W(XD), W(XS))
 
 #define rcets_rr(XD, XS)                                                    \
-        movtx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        movts_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movts_ld(W(XD), Mebp, inf_GPC01_64)                                 \
         divts_ld(W(XD), Mebp, inf_SCR02(0))
 
 #define rcsts_rr(XG, XS) /* destroys XS */
@@ -4013,13 +4013,13 @@ struct rt_SIMD_REGS
 
 #define rsqts_rr(XD, XS) /* destroys XS */                                  \
         sqrts_rr(W(XS), W(XS))                                              \
-        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        movts_ld(W(XD), Mebp, inf_GPC01_64)                                 \
         divts_rr(W(XD), W(XS))
 
 #define rsets_rr(XD, XS)                                                    \
         sqrts_rr(W(XD), W(XS))                                              \
-        movtx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        movts_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movts_ld(W(XD), Mebp, inf_GPC01_64)                                 \
         divts_ld(W(XD), Mebp, inf_SCR02(0))
 
 #define rssts_rr(XG, XS) /* destroys XS */
@@ -4033,16 +4033,16 @@ struct rt_SIMD_REGS
 #if RT_SIMD_COMPAT_FMA == 2
 
 #define fmats_rr(XG, XS, XT)                                                \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
         mults_rr(W(XS), W(XT))                                              \
         addts_rr(W(XG), W(XS))                                              \
-        movtx_ld(W(XS), Mebp, inf_SCR01(0))
+        movts_ld(W(XS), Mebp, inf_SCR01(0))
 
 #define fmats_ld(XG, XS, MT, DT)                                            \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
         mults_ld(W(XS), W(MT), W(DT))                                       \
         addts_rr(W(XG), W(XS))                                              \
-        movtx_ld(W(XS), Mebp, inf_SCR01(0))
+        movts_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
@@ -4053,16 +4053,16 @@ struct rt_SIMD_REGS
 #if RT_SIMD_COMPAT_FMS == 2
 
 #define fmsts_rr(XG, XS, XT)                                                \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
         mults_rr(W(XS), W(XT))                                              \
         subts_rr(W(XG), W(XS))                                              \
-        movtx_ld(W(XS), Mebp, inf_SCR01(0))
+        movts_ld(W(XS), Mebp, inf_SCR01(0))
 
 #define fmsts_ld(XG, XS, MT, DT)                                            \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
         mults_ld(W(XS), W(MT), W(DT))                                       \
         subts_rr(W(XG), W(XS))                                              \
-        movtx_ld(W(XS), Mebp, inf_SCR01(0))
+        movts_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
@@ -5848,20 +5848,18 @@ struct rt_SIMD_REGS
 /**** scalar ***** SIMD instructions with configurable-element **** 32-bit ****/
 /******************************************************************************/
 
-/***************   scalar single-precision floating-point move   **************/
+/*********   scalar single-precision floating-point move/arithmetic   *********/
 
 /* mov (D = S) */
 
-#define movsx_rr(XD, XS)                                                    \
-        movrx_rr(W(XD), W(XS))
+#define movss_rr(XD, XS)                                                    \
+        movrs_rr(W(XD), W(XS))
 
-#define movsx_ld(XD, MS, DS)                                                \
-        movrx_ld(W(XD), W(MS), W(DS))
+#define movss_ld(XD, MS, DS)                                                \
+        movrs_ld(W(XD), W(MS), W(DS))
 
-#define movsx_st(XS, MD, DD)                                                \
-        movrx_st(W(XS), W(MD), W(DD))
-
-/************   scalar single-precision floating-point arithmetic   ***********/
+#define movss_st(XS, MD, DD)                                                \
+        movrs_st(W(XS), W(MD), W(DD))
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -7867,20 +7865,18 @@ struct rt_SIMD_REGS
 /**** scalar ***** SIMD instructions with configurable-element **** 64-bit ****/
 /******************************************************************************/
 
-/***************   scalar double-precision floating-point move   **************/
+/*********   scalar double-precision floating-point move/arithmetic   *********/
 
 /* mov (D = S) */
 
-#define movsx_rr(XD, XS)                                                    \
-        movtx_rr(W(XD), W(XS))
+#define movss_rr(XD, XS)                                                    \
+        movts_rr(W(XD), W(XS))
 
-#define movsx_ld(XD, MS, DS)                                                \
-        movtx_ld(W(XD), W(MS), W(DS))
+#define movss_ld(XD, MS, DS)                                                \
+        movts_ld(W(XD), W(MS), W(DS))
 
-#define movsx_st(XS, MD, DD)                                                \
-        movtx_st(W(XS), W(MD), W(DD))
-
-/************   scalar double-precision floating-point arithmetic   ***********/
+#define movss_st(XS, MD, DD)                                                \
+        movts_st(W(XS), W(MD), W(DD))
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 

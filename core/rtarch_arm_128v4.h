@@ -1396,24 +1396,22 @@
 
 #endif /* RT_SIMD_FAST_FCTRL */
 
-/***************   scalar single-precision floating-point move   **************/
+/*********   scalar single-precision floating-point move/arithmetic   *********/
 
 /* mov (D = S) */
 
-#define movrx_rr(XD, XS)                                                    \
+#define movrs_rr(XD, XS)                                                    \
         EMITW(0xEEB00A40 | MXM(REG(XD), 0x00,    REG(XS)))
 
-#define movrx_ld(XD, MS, DS)                                                \
+#define movrs_ld(XD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
         EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0xF4A0083F | MXM(REG(XD), TPxx,    0x00))
 
-#define movrx_st(XS, MD, DD)                                                \
+#define movrs_st(XS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
         EMITW(0xE0800000 | MPM(TPxx,    MOD(MD), VAL(DD), B2(DD), P2(DD)))  \
         EMITW(0xF480083F | MXM(REG(XS), TPxx,    0x00))
-
-/************   scalar single-precision floating-point arithmetic   ***********/
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1489,7 +1487,7 @@
         EMITW(0xEEB10AC0 | MXM(REG(XD), 0x00, REG(XS)))
 
 #define sqrrs_ld(XD, MS, DS)                                                \
-        movrx_ld(W(XD), W(MS), W(DS))                                       \
+        movrs_ld(W(XD), W(MS), W(DS))                                       \
         sqrrs_rr(W(XD), W(XD))
 
 /* rcp (D = 1.0 / S)
@@ -1498,8 +1496,8 @@
 #if RT_SIMD_COMPAT_RCP != 1
 
 #define rcers_rr(XD, XS)                                                    \
-        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        movrs_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movrs_ld(W(XD), Mebp, inf_GPC01_32)                                 \
         divrs_ld(W(XD), Mebp, inf_SCR02(0))
 
 #define rcsrs_rr(XG, XS) /* destroys XS */
@@ -1516,8 +1514,8 @@
 
 #define rsers_rr(XD, XS)                                                    \
         sqrrs_rr(W(XD), W(XS))                                              \
-        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        movrs_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movrs_ld(W(XD), Mebp, inf_GPC01_32)                                 \
         divrs_ld(W(XD), Mebp, inf_SCR02(0))
 
 #define rssrs_rr(XG, XS) /* destroys XS */
@@ -1560,14 +1558,14 @@
 
 #define fmars_ld(XG, XS, MT, DT)                                            \
         EMITW(0xEEB70AC0 | MXM(TmmC+0,  0x00,    REG(XS)+0))                \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XS), W(MT), W(DT))                                       \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_ld(W(XS), W(MT), W(DT))                                       \
         EMITW(0xEEB70AC0 | MXM(TmmC+1,  0x00,    REG(XS)+0))                \
         EMITW(0xEE200B00 | MXM(TmmC+0,  TmmC+0,  TmmC+1))                   \
         EMITW(0xEEB70AC0 | MXM(TmmC+1,  0x00,    REG(XG)+0))                \
         EMITW(0xEE300B00 | MXM(TmmC+1,  TmmC+1,  TmmC+0))                   \
         EMITW(0xEEB70BC0 | MXM(REG(XG)+0, 0x00,  TmmC+1))                   \
-        movrx_ld(W(XS), Mebp, inf_SCR01(0))
+        movrs_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
@@ -1602,14 +1600,14 @@
 
 #define fmsrs_ld(XG, XS, MT, DT)                                            \
         EMITW(0xEEB70AC0 | MXM(TmmC+0,  0x00,    REG(XS)+0))                \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XS), W(MT), W(DT))                                       \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_ld(W(XS), W(MT), W(DT))                                       \
         EMITW(0xEEB70AC0 | MXM(TmmC+1,  0x00,    REG(XS)+0))                \
         EMITW(0xEE200B00 | MXM(TmmC+0,  TmmC+0,  TmmC+1))                   \
         EMITW(0xEEB70AC0 | MXM(TmmC+1,  0x00,    REG(XG)+0))                \
         EMITW(0xEE300B40 | MXM(TmmC+1,  TmmC+1,  TmmC+0))                   \
         EMITW(0xEEB70BC0 | MXM(REG(XG)+0, 0x00,  TmmC+1))                   \
-        movrx_ld(W(XS), Mebp, inf_SCR01(0))
+        movrs_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMS */
 

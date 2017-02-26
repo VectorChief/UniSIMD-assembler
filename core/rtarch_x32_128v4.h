@@ -1705,25 +1705,23 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
 
 #endif /* RT_SIMD_FAST_FCTRL */
 
-/***************   scalar single-precision floating-point move   **************/
+/*********   scalar single-precision floating-point move/arithmetic   *********/
 
 /* mov (D = S) */
 
-#define movrx_rr(XD, XS)                                                    \
+#define movrs_rr(XD, XS)                                                    \
     xF3 REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x10)                       \
         MRM(REG(XD), MOD(XS), REG(XS))
 
-#define movrx_ld(XD, MS, DS)                                                \
+#define movrs_ld(XD, MS, DS)                                                \
 ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x10)                       \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define movrx_st(XS, MD, DD)                                                \
+#define movrs_st(XS, MD, DD)                                                \
 ADR xF3 REX(RXB(XS), RXB(MD)) EMITB(0x0F) EMITB(0x11)                       \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
-
-/************   scalar single-precision floating-point arithmetic   ***********/
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1737,11 +1735,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x58)                       \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define addrs3rr(XD, XS, XT)                                                \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         addrs_rr(W(XD), W(XT))
 
 #define addrs3ld(XD, XS, MT, DT)                                            \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         addrs_ld(W(XD), W(MT), W(DT))
 
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
@@ -1756,11 +1754,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5C)                       \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define subrs3rr(XD, XS, XT)                                                \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         subrs_rr(W(XD), W(XT))
 
 #define subrs3ld(XD, XS, MT, DT)                                            \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         subrs_ld(W(XD), W(MT), W(DT))
 
 /* mul (G = G * S), (D = S * T) if (#D != #S) */
@@ -1775,11 +1773,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define mulrs3rr(XD, XS, XT)                                                \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         mulrs_rr(W(XD), W(XT))
 
 #define mulrs3ld(XD, XS, MT, DT)                                            \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         mulrs_ld(W(XD), W(MT), W(DT))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
@@ -1794,11 +1792,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5E)                       \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define divrs3rr(XD, XS, XT)                                                \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         divrs_rr(W(XD), W(XT))
 
 #define divrs3ld(XD, XS, MT, DT)                                            \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         divrs_ld(W(XD), W(MT), W(DT))
 
 /* sqr (D = sqrt S) */
@@ -1860,16 +1858,16 @@ ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
 #define fmars_rr(XG, XS, XT)                                                \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
         mulrs_rr(W(XS), W(XT))                                              \
         addrs_rr(W(XG), W(XS))                                              \
-        movrx_ld(W(XS), Mebp, inf_SCR01(0))
+        movrs_ld(W(XS), Mebp, inf_SCR01(0))
 
 #define fmars_ld(XG, XS, MT, DT)                                            \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
         mulrs_ld(W(XS), W(MT), W(DT))                                       \
         addrs_rr(W(XG), W(XS))                                              \
-        movrx_ld(W(XS), Mebp, inf_SCR01(0))
+        movrs_ld(W(XS), Mebp, inf_SCR01(0))
 
 #elif RT_SIMD_COMPAT_FMA == 1
 
@@ -1880,15 +1878,15 @@ ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 #if RT_SIMD_COMPAT_FMR == 0
 
 #define fmars_rr(XG, XS, XT)                                                \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XT), Mebp, inf_SCR02(0))                                 \
         fmars_rx(W(XG))
 
 #define fmars_ld(XG, XS, MT, DT)                                            \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XS), W(MT), W(DT))                                       \
-        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movrx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_ld(W(XS), W(MT), W(DT))                                       \
+        movrs_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movrs_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         fmars_rx(W(XG))
 
 #elif RT_SIMD_COMPAT_FMR == 1
@@ -1899,8 +1897,8 @@ ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
         andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
         orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XT), Mebp, inf_SCR02(0))                                 \
         fmars_rx(W(XG))                                                     \
         movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))
@@ -1911,10 +1909,10 @@ ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
         andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
         orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XS), W(MT), W(DT))                                       \
-        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movrx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_ld(W(XS), W(MT), W(DT))                                       \
+        movrs_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movrs_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         fmars_rx(W(XG))                                                     \
         movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))
@@ -1924,10 +1922,10 @@ ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 #define fmars_rx(XG) /* not portable, do not use outside */                 \
         fpuws_ld(Mebp,  inf_SCR01(0x00))                                    \
         mulws_ld(Mebp,  inf_SCR02(0x00))                                    \
-        movrx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XG), Mebp, inf_SCR02(0))                                 \
         addws_ld(Mebp,  inf_SCR02(0x00))                                    \
         fpuws_st(Mebp,  inf_SCR02(0x00))                                    \
-        movrx_ld(W(XG), Mebp, inf_SCR02(0))
+        movrs_ld(W(XG), Mebp, inf_SCR02(0))
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
@@ -1938,16 +1936,16 @@ ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsrs_rr(XG, XS, XT)                                                \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
         mulrs_rr(W(XS), W(XT))                                              \
         subrs_rr(W(XG), W(XS))                                              \
-        movrx_ld(W(XS), Mebp, inf_SCR01(0))
+        movrs_ld(W(XS), Mebp, inf_SCR01(0))
 
 #define fmsrs_ld(XG, XS, MT, DT)                                            \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
         mulrs_ld(W(XS), W(MT), W(DT))                                       \
         subrs_rr(W(XG), W(XS))                                              \
-        movrx_ld(W(XS), Mebp, inf_SCR01(0))
+        movrs_ld(W(XS), Mebp, inf_SCR01(0))
 
 #elif RT_SIMD_COMPAT_FMS == 1
 
@@ -1958,15 +1956,15 @@ ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 #if RT_SIMD_COMPAT_FMR == 0
 
 #define fmsrs_rr(XG, XS, XT)                                                \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XT), Mebp, inf_SCR02(0))                                 \
         fmsrs_rx(W(XG))
 
 #define fmsrs_ld(XG, XS, MT, DT)                                            \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XS), W(MT), W(DT))                                       \
-        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movrx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_ld(W(XS), W(MT), W(DT))                                       \
+        movrs_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movrs_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         fmsrs_rx(W(XG))
 
 #elif RT_SIMD_COMPAT_FMR == 1
@@ -1977,8 +1975,8 @@ ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
         andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
         orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XT), Mebp, inf_SCR02(0))                                 \
         fmsrs_rx(W(XG))                                                     \
         movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))
@@ -1989,10 +1987,10 @@ ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
         andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
         orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XS), W(MT), W(DT))                                       \
-        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movrx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_ld(W(XS), W(MT), W(DT))                                       \
+        movrs_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movrs_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         fmsrs_rx(W(XG))                                                     \
         movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))
@@ -2002,10 +2000,10 @@ ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 #define fmsrs_rx(XG) /* not portable, do not use outside */                 \
         fpuws_ld(Mebp,  inf_SCR01(0x00))                                    \
         mulws_ld(Mebp,  inf_SCR02(0x00))                                    \
-        movrx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XG), Mebp, inf_SCR02(0))                                 \
         sbrws_ld(Mebp,  inf_SCR02(0x00))                                    \
         fpuws_st(Mebp,  inf_SCR02(0x00))                                    \
-        movrx_ld(W(XG), Mebp, inf_SCR02(0))
+        movrs_ld(W(XG), Mebp, inf_SCR02(0))
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
@@ -2023,11 +2021,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5D)                       \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define minrs3rr(XD, XS, XT)                                                \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         minrs_rr(W(XD), W(XT))
 
 #define minrs3ld(XD, XS, MT, DT)                                            \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         minrs_ld(W(XD), W(MT), W(DT))
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
@@ -2042,11 +2040,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5F)                       \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define maxrs3rr(XD, XS, XT)                                                \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         maxrs_rr(W(XD), W(XT))
 
 #define maxrs3ld(XD, XS, MT, DT)                                            \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         maxrs_ld(W(XD), W(MT), W(DT))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
@@ -2062,11 +2060,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         AUX(SIB(MS), CMD(DS), EMITB(0x00))
 
 #define ceqrs3rr(XD, XS, XT)                                                \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         ceqrs_rr(W(XD), W(XT))
 
 #define ceqrs3ld(XD, XS, MT, DT)                                            \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         ceqrs_ld(W(XD), W(MT), W(DT))
 
 /* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
@@ -2082,11 +2080,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         AUX(SIB(MS), CMD(DS), EMITB(0x04))
 
 #define cners3rr(XD, XS, XT)                                                \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         cners_rr(W(XD), W(XT))
 
 #define cners3ld(XD, XS, MT, DT)                                            \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         cners_ld(W(XD), W(MT), W(DT))
 
 /* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
@@ -2102,11 +2100,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         AUX(SIB(MS), CMD(DS), EMITB(0x01))
 
 #define cltrs3rr(XD, XS, XT)                                                \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         cltrs_rr(W(XD), W(XT))
 
 #define cltrs3ld(XD, XS, MT, DT)                                            \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         cltrs_ld(W(XD), W(MT), W(DT))
 
 /* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
@@ -2122,11 +2120,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         AUX(SIB(MS), CMD(DS), EMITB(0x02))
 
 #define clers3rr(XD, XS, XT)                                                \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         clers_rr(W(XD), W(XT))
 
 #define clers3ld(XD, XS, MT, DT)                                            \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         clers_ld(W(XD), W(MT), W(DT))
 
 /* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
@@ -2142,11 +2140,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         AUX(SIB(MS), CMD(DS), EMITB(0x06))
 
 #define cgtrs3rr(XD, XS, XT)                                                \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         cgtrs_rr(W(XD), W(XT))
 
 #define cgtrs3ld(XD, XS, MT, DT)                                            \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         cgtrs_ld(W(XD), W(MT), W(DT))
 
 /* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
@@ -2162,11 +2160,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         AUX(SIB(MS), CMD(DS), EMITB(0x05))
 
 #define cgers3rr(XD, XS, XT)                                                \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         cgers_rr(W(XD), W(XT))
 
 #define cgers3ld(XD, XS, MT, DT)                                            \
-        movrx_rr(W(XD), W(XS))                                              \
+        movrs_rr(W(XD), W(XS))                                              \
         cgers_ld(W(XD), W(MT), W(DT))
 
 /**************************   extended float (x87)   **************************/

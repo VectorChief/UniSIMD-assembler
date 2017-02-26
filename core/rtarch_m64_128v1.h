@@ -821,22 +821,20 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x78E0000D | MXM(REG(XD), REG(XS), TmmM))
 
-/***************   scalar double-precision floating-point move   **************/
+/*********   scalar double-precision floating-point move/arithmetic   *********/
 
 /* mov (D = S) */
 
-#define movtx_rr(XD, XS)                                                    \
+#define movts_rr(XD, XS)                                                    \
         EMITW(0x46200006 | MXM(REG(XD), REG(XS), 0x00))
 
-#define movtx_ld(XD, MS, DS)                                                \
+#define movts_ld(XD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0xD4000000 | MDM(REG(XD), MOD(MS), VAL(DS), B1(DS), P1(DS)))
 
-#define movtx_st(XS, MD, DD)                                                \
+#define movts_st(XS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0xF4000000 | MDM(REG(XS), MOD(MD), VAL(DD), B1(DD), P1(DD)))
-
-/************   scalar double-precision floating-point arithmetic   ***********/
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 

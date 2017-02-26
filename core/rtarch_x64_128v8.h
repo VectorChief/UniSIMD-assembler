@@ -1130,25 +1130,23 @@
         stack_ld(Recx)                                                      \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/***************   scalar double-precision floating-point move   **************/
+/*********   scalar double-precision floating-point move/arithmetic   *********/
 
 /* mov (D = S) */
 
-#define movtx_rr(XD, XS)                                                    \
+#define movts_rr(XD, XS)                                                    \
         VEX(RXB(XD), RXB(XS), REN(XD), 0, 3, 1) EMITB(0x10)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
-#define movtx_ld(XD, MS, DS)                                                \
+#define movts_ld(XD, MS, DS)                                                \
     ADR VEX(RXB(XD), RXB(MS),    0x00, 0, 3, 1) EMITB(0x10)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define movtx_st(XS, MD, DD)                                                \
+#define movts_st(XS, MD, DD)                                                \
     ADR VEX(RXB(XS), RXB(MD),    0x00, 0, 3, 1) EMITB(0x11)                 \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
-
-/************   scalar double-precision floating-point arithmetic   ***********/
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1235,8 +1233,8 @@
 #if RT_SIMD_COMPAT_RCP != 1
 
 #define rcets_rr(XD, XS)                                                    \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_ld(W(XD), Mebp, inf_GPC01_64)                                 \
         divts_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define rcsts_rr(XG, XS) /* destroys XS */
@@ -1253,8 +1251,8 @@
 
 #define rsets_rr(XD, XS)                                                    \
         sqrts_rr(W(XD), W(XS))                                              \
-        movtx_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        movts_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movts_ld(W(XD), Mebp, inf_GPC01_64)                                 \
         divts_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define rssts_rr(XG, XS) /* destroys XS */
@@ -1273,16 +1271,16 @@
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
 #define fmats_rr(XG, XS, XT)                                                \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
         mults_rr(W(XS), W(XT))                                              \
         addts_rr(W(XG), W(XS))                                              \
-        movtx_ld(W(XS), Mebp, inf_SCR01(0))
+        movts_ld(W(XS), Mebp, inf_SCR01(0))
 
 #define fmats_ld(XG, XS, MT, DT)                                            \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
         mults_ld(W(XS), W(MT), W(DT))                                       \
         addts_rr(W(XG), W(XS))                                              \
-        movtx_ld(W(XS), Mebp, inf_SCR01(0))
+        movts_ld(W(XS), Mebp, inf_SCR01(0))
 
 #elif RT_SIMD_COMPAT_FMA == 1
 
@@ -1293,15 +1291,15 @@
 #if RT_SIMD_COMPAT_FMR == 0
 
 #define fmats_rr(XG, XS, XT)                                                \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movtx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_st(W(XT), Mebp, inf_SCR02(0))                                 \
         fmats_rx(W(XG))
 
 #define fmats_ld(XG, XS, MT, DT)                                            \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movtx_ld(W(XS), W(MT), W(DT))                                       \
-        movtx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movtx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_ld(W(XS), W(MT), W(DT))                                       \
+        movts_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movts_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         fmats_rx(W(XG))
 
 #elif RT_SIMD_COMPAT_FMR == 1
@@ -1312,8 +1310,8 @@
         andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
         orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movtx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_st(W(XT), Mebp, inf_SCR02(0))                                 \
         fmats_rx(W(XG))                                                     \
         movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))
@@ -1324,10 +1322,10 @@
         andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
         orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movtx_ld(W(XS), W(MT), W(DT))                                       \
-        movtx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movtx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_ld(W(XS), W(MT), W(DT))                                       \
+        movts_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movts_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         fmats_rx(W(XG))                                                     \
         movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))
@@ -1337,10 +1335,10 @@
 #define fmats_rx(XG) /* not portable, do not use outside */                 \
         fpuzs_ld(Mebp,  inf_SCR01(0x00))                                    \
         mulzs_ld(Mebp,  inf_SCR02(0x00))                                    \
-        movtx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        movts_st(W(XG), Mebp, inf_SCR02(0))                                 \
         addzs_ld(Mebp,  inf_SCR02(0x00))                                    \
         fpuzs_st(Mebp,  inf_SCR02(0x00))                                    \
-        movtx_ld(W(XG), Mebp, inf_SCR02(0))
+        movts_ld(W(XG), Mebp, inf_SCR02(0))
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
@@ -1351,16 +1349,16 @@
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsts_rr(XG, XS, XT)                                                \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
         mults_rr(W(XS), W(XT))                                              \
         subts_rr(W(XG), W(XS))                                              \
-        movtx_ld(W(XS), Mebp, inf_SCR01(0))
+        movts_ld(W(XS), Mebp, inf_SCR01(0))
 
 #define fmsts_ld(XG, XS, MT, DT)                                            \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
         mults_ld(W(XS), W(MT), W(DT))                                       \
         subts_rr(W(XG), W(XS))                                              \
-        movtx_ld(W(XS), Mebp, inf_SCR01(0))
+        movts_ld(W(XS), Mebp, inf_SCR01(0))
 
 #elif RT_SIMD_COMPAT_FMS == 1
 
@@ -1371,15 +1369,15 @@
 #if RT_SIMD_COMPAT_FMR == 0
 
 #define fmsts_rr(XG, XS, XT)                                                \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movtx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_st(W(XT), Mebp, inf_SCR02(0))                                 \
         fmsts_rx(W(XG))
 
 #define fmsts_ld(XG, XS, MT, DT)                                            \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movtx_ld(W(XS), W(MT), W(DT))                                       \
-        movtx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movtx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_ld(W(XS), W(MT), W(DT))                                       \
+        movts_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movts_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         fmsts_rx(W(XG))
 
 #elif RT_SIMD_COMPAT_FMR == 1
@@ -1390,8 +1388,8 @@
         andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
         orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movtx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_st(W(XT), Mebp, inf_SCR02(0))                                 \
         fmsts_rx(W(XG))                                                     \
         movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))
@@ -1402,10 +1400,10 @@
         andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
         orrwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))                                       \
-        movtx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movtx_ld(W(XS), W(MT), W(DT))                                       \
-        movtx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movtx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movts_ld(W(XS), W(MT), W(DT))                                       \
+        movts_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movts_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         fmsts_rx(W(XG))                                                     \
         movwx_mi(Mebp,  inf_SCR02(0), IH(0x037F))                           \
         fpucw_ld(Mebp,  inf_SCR02(0))
@@ -1415,10 +1413,10 @@
 #define fmsts_rx(XG) /* not portable, do not use outside */                 \
         fpuzs_ld(Mebp,  inf_SCR01(0x00))                                    \
         mulzs_ld(Mebp,  inf_SCR02(0x00))                                    \
-        movtx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        movts_st(W(XG), Mebp, inf_SCR02(0))                                 \
         sbrzs_ld(Mebp,  inf_SCR02(0x00))                                    \
         fpuzs_st(Mebp,  inf_SCR02(0x00))                                    \
-        movtx_ld(W(XG), Mebp, inf_SCR02(0))
+        movts_ld(W(XG), Mebp, inf_SCR02(0))
 
 #endif /* RT_SIMD_COMPAT_FMS */
 

@@ -964,22 +964,20 @@
 
 #endif /* RT_SIMD_FAST_FCTRL */
 
-/***************   scalar single-precision floating-point move   **************/
+/*********   scalar single-precision floating-point move/arithmetic   *********/
 
 /* mov (D = S) */
 
-#define movrx_rr(XD, XS)                                                    \
+#define movrs_rr(XD, XS)                                                    \
         EMITW(0x46000006 | MXM(REG(XD), REG(XS), 0x00))
 
-#define movrx_ld(XD, MS, DS)                                                \
+#define movrs_ld(XD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0xC4000000 | MDM(REG(XD), MOD(MS), VAL(DS), B1(DS), P1(DS)))
 
-#define movrx_st(XS, MD, DD)                                                \
+#define movrs_st(XS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0xE4000000 | MDM(REG(XS), MOD(MD), VAL(DD), B1(DD), P1(DD)))
-
-/************   scalar single-precision floating-point arithmetic   ***********/
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 

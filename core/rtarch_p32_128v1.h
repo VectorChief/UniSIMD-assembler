@@ -1176,22 +1176,20 @@
 #define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
         F0(RT_SIMD_MODE_ROUNDN)
 
-/***************   scalar single-precision floating-point move   **************/
+/*********   scalar single-precision floating-point move/arithmetic   *********/
 
 /* mov (D = S) */
 
-#define movrx_rr(XD, XS)                                                    \
+#define movrs_rr(XD, XS)                                                    \
         EMITW(0xFC000090 | MXM(REG(XD), 0x00,    REG(XS)))
 
-#define movrx_ld(XD, MS, DS)                                                \
+#define movrs_ld(XD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0xC0000000 | MDM(REG(XD), MOD(MS), VAL(DS), B1(DS), P1(DS)))
 
-#define movrx_st(XS, MD, DD)                                                \
+#define movrs_st(XS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0xD0000000 | MDM(REG(XS), MOD(MD), VAL(DD), B1(DD), P1(DD)))
-
-/************   scalar single-precision floating-point arithmetic   ***********/
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1273,8 +1271,8 @@
 #if RT_SIMD_COMPAT_RCP != 1
 
 #define rcers_rr(XD, XS)                                                    \
-        movrx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        movrs_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movrs_ld(W(XD), Mebp, inf_GPC01_32)                                 \
         divrs_ld(W(XD), Mebp, inf_SCR02(0))
 
 #define rcsrs_rr(XG, XS) /* destroys XS */
@@ -1291,8 +1289,8 @@
 
 #define rsers_rr(XD, XS)                                                    \
         sqrrs_rr(W(XD), W(XS))                                              \
-        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_GPC01_32)                                 \
+        movrs_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movrs_ld(W(XD), Mebp, inf_GPC01_32)                                 \
         divrs_ld(W(XD), Mebp, inf_SCR02(0))
 
 #define rssrs_rr(XG, XS) /* destroys XS */
@@ -1345,21 +1343,21 @@
         minrs3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define minrs3rr(XD, XS, XT)                                                \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XT), Mebp, inf_SCR02(0))                                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         minis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define minrs3ld(XD, XS, MT, DT)                                            \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), W(MT), W(DT))                                       \
-        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_ld(W(XD), W(MT), W(DT))                                       \
+        movrs_st(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         minis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
@@ -1370,21 +1368,21 @@
         maxrs3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define maxrs3rr(XD, XS, XT)                                                \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XT), Mebp, inf_SCR02(0))                                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         maxis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define maxrs3ld(XD, XS, MT, DT)                                            \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), W(MT), W(DT))                                       \
-        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_ld(W(XD), W(MT), W(DT))                                       \
+        movrs_st(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         maxis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
@@ -1395,21 +1393,21 @@
         ceqrs3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define ceqrs3rr(XD, XS, XT)                                                \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XT), Mebp, inf_SCR02(0))                                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         ceqis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define ceqrs3ld(XD, XS, MT, DT)                                            \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), W(MT), W(DT))                                       \
-        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_ld(W(XD), W(MT), W(DT))                                       \
+        movrs_st(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         ceqis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
 
@@ -1420,21 +1418,21 @@
         cners3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cners3rr(XD, XS, XT)                                                \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XT), Mebp, inf_SCR02(0))                                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         cneis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define cners3ld(XD, XS, MT, DT)                                            \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), W(MT), W(DT))                                       \
-        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_ld(W(XD), W(MT), W(DT))                                       \
+        movrs_st(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         cneis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
 
@@ -1445,21 +1443,21 @@
         cltrs3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cltrs3rr(XD, XS, XT)                                                \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XT), Mebp, inf_SCR02(0))                                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         cltis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define cltrs3ld(XD, XS, MT, DT)                                            \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), W(MT), W(DT))                                       \
-        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_ld(W(XD), W(MT), W(DT))                                       \
+        movrs_st(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         cltis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
 
@@ -1470,21 +1468,21 @@
         clers3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define clers3rr(XD, XS, XT)                                                \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XT), Mebp, inf_SCR02(0))                                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         cleis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define clers3ld(XD, XS, MT, DT)                                            \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), W(MT), W(DT))                                       \
-        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_ld(W(XD), W(MT), W(DT))                                       \
+        movrs_st(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         cleis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
 
@@ -1495,21 +1493,21 @@
         cgtrs3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cgtrs3rr(XD, XS, XT)                                                \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XT), Mebp, inf_SCR02(0))                                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         cgtis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define cgtrs3ld(XD, XS, MT, DT)                                            \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), W(MT), W(DT))                                       \
-        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_ld(W(XD), W(MT), W(DT))                                       \
+        movrs_st(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         cgtis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
 
@@ -1520,31 +1518,31 @@
         cgers3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cgers3rr(XD, XS, XT)                                                \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_st(W(XT), Mebp, inf_SCR02(0))                                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         cgeis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define cgers3ld(XD, XS, MT, DT)                                            \
-        movrx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), W(MT), W(DT))                                       \
-        movrx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movrs_ld(W(XD), W(MT), W(DT))                                       \
+        movrs_st(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         cgeis_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        movrx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
-#define movtx_ld(XD, MS, DS)                                                \
+#define movts_ld(XD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0xC8000000 | MDM(REG(XD), MOD(MS), VAL(DS), B1(DS), P1(DS)))
 
-#define movtx_st(XS, MD, DD)                                                \
+#define movts_st(XS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0xD8000000 | MDM(REG(XS), MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
@@ -1606,33 +1604,33 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITP(0x7C000718 | MXM(TmmM,    0x00,    Teax))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_st(Xmm0, Oeax, PLAIN)                                         \
+        movts_st(Xmm0, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_st(Xmm1, Oeax, PLAIN)                                         \
+        movts_st(Xmm1, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_st(Xmm2, Oeax, PLAIN)                                         \
+        movts_st(Xmm2, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_st(Xmm3, Oeax, PLAIN)                                         \
+        movts_st(Xmm3, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_st(Xmm4, Oeax, PLAIN)                                         \
+        movts_st(Xmm4, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_st(Xmm5, Oeax, PLAIN)                                         \
+        movts_st(Xmm5, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_st(Xmm6, Oeax, PLAIN)                                         \
+        movts_st(Xmm6, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_st(Xmm7, Oeax, PLAIN)                                         \
+        movts_st(Xmm7, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_st(Xmm8, Oeax, PLAIN)                                         \
+        movts_st(Xmm8, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_st(Xmm9, Oeax, PLAIN)                                         \
+        movts_st(Xmm9, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_st(XmmA, Oeax, PLAIN)                                         \
+        movts_st(XmmA, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_st(XmmB, Oeax, PLAIN)                                         \
+        movts_st(XmmB, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_st(XmmC, Oeax, PLAIN)                                         \
+        movts_st(XmmC, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_st(XmmD, Oeax, PLAIN)                                         \
+        movts_st(XmmD, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITW(0xD8000000 | MXM(TmmE,    Teax,    0x00))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
@@ -1694,33 +1692,33 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITP(0x7C000618 | MXM(TmmM,    0x00,    Teax))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_ld(Xmm0, Oeax, PLAIN)                                         \
+        movts_ld(Xmm0, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_ld(Xmm1, Oeax, PLAIN)                                         \
+        movts_ld(Xmm1, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_ld(Xmm2, Oeax, PLAIN)                                         \
+        movts_ld(Xmm2, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_ld(Xmm3, Oeax, PLAIN)                                         \
+        movts_ld(Xmm3, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_ld(Xmm4, Oeax, PLAIN)                                         \
+        movts_ld(Xmm4, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_ld(Xmm5, Oeax, PLAIN)                                         \
+        movts_ld(Xmm5, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_ld(Xmm6, Oeax, PLAIN)                                         \
+        movts_ld(Xmm6, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_ld(Xmm7, Oeax, PLAIN)                                         \
+        movts_ld(Xmm7, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_ld(Xmm8, Oeax, PLAIN)                                         \
+        movts_ld(Xmm8, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_ld(Xmm9, Oeax, PLAIN)                                         \
+        movts_ld(Xmm9, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_ld(XmmA, Oeax, PLAIN)                                         \
+        movts_ld(XmmA, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_ld(XmmB, Oeax, PLAIN)                                         \
+        movts_ld(XmmB, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_ld(XmmC, Oeax, PLAIN)                                         \
+        movts_ld(XmmC, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movtx_ld(XmmD, Oeax, PLAIN)                                         \
+        movts_ld(XmmD, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITW(0xC8000000 | MXM(TmmE,    Teax,    0x00))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \

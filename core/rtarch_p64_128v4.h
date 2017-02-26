@@ -1112,47 +1112,22 @@
 
 #endif /* RT_128 >= 4 */
 
-/***************   scalar double-precision floating-point move   **************/
+/*********   scalar double-precision floating-point move/arithmetic   *********/
 
 #if (RT_128 < 4)
 
 /* mov (D = S) */
 
-#define movtx_rr(XD, XS)                                                    \
+#define movts_rr(XD, XS)                                                    \
         EMITW(0xFC000090 | MXM(REG(XD), 0x00,    REG(XS)))
 
-#define movtx_ld(XD, MS, DS)                                                \
+#define movts_ld(XD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0xC8000000 | MDM(REG(XD), MOD(MS), VAL(DS), B1(DS), P1(DS)))
 
-#define movtx_st(XS, MD, DD)                                                \
+#define movts_st(XS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0xD8000000 | MDM(REG(XS), MOD(MD), VAL(DD), B1(DD), P1(DD)))
-
-#else /* RT_128 >= 4 */
-
-/* mov (D = S) */
-
-#define movtx_rr(XD, XS)                                                    \
-        EMITW(0xF0000497 | MXM(REG(XD), REG(XS), REG(XS)))
-
-#define movtx_ld(XD, MS, DS)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000499 | MXM(REG(XD), Teax & (MOD(MS) == TPxx), TPxx))    \
-                                                       /* ^ == -1 if true */
-
-#define movtx_st(XS, MD, DD)                                                \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MD), VAL(DD), B2(DD), P2(DD)))  \
-        EMITW(0x7C000599 | MXM(REG(XS), Teax & (MOD(MD) == TPxx), TPxx))    \
-                                                       /* ^ == -1 if true */
-
-#endif /* RT_128 >= 4 */
-
-/************   scalar double-precision floating-point arithmetic   ***********/
-
-#if (RT_128 < 4)
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1234,8 +1209,8 @@
 #if RT_SIMD_COMPAT_RCP != 1
 
 #define rcets_rr(XD, XS)                                                    \
-        movtx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        movts_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movts_ld(W(XD), Mebp, inf_GPC01_64)                                 \
         divts_ld(W(XD), Mebp, inf_SCR02(0))
 
 #define rcsts_rr(XG, XS) /* destroys XS */
@@ -1252,8 +1227,8 @@
 
 #define rsets_rr(XD, XS)                                                    \
         sqrts_rr(W(XD), W(XS))                                              \
-        movtx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        movts_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movts_ld(W(XD), Mebp, inf_GPC01_64)                                 \
         divts_ld(W(XD), Mebp, inf_SCR02(0))
 
 #define rssts_rr(XG, XS) /* destroys XS */
@@ -1296,6 +1271,23 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 #else /* RT_128 >= 4 */
+
+/* mov (D = S) */
+
+#define movts_rr(XD, XS)                                                    \
+        EMITW(0xF0000497 | MXM(REG(XD), REG(XS), REG(XS)))
+
+#define movts_ld(XD, MS, DS)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000499 | MXM(REG(XD), Teax & (MOD(MS) == TPxx), TPxx))    \
+                                                       /* ^ == -1 if true */
+
+#define movts_st(XS, MD, DD)                                                \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MD), VAL(DD), B2(DD), P2(DD)))  \
+        EMITW(0x7C000599 | MXM(REG(XS), Teax & (MOD(MD) == TPxx), TPxx))    \
+                                                       /* ^ == -1 if true */
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1382,8 +1374,8 @@
 #if RT_SIMD_COMPAT_RCP != 1
 
 #define rcets_rr(XD, XS)                                                    \
-        movtx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        movts_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movts_ld(W(XD), Mebp, inf_GPC01_64)                                 \
         divts_ld(W(XD), Mebp, inf_SCR02(0))
 
 #define rcsts_rr(XG, XS) /* destroys XS */
@@ -1400,8 +1392,8 @@
 
 #define rsets_rr(XD, XS)                                                    \
         sqrts_rr(W(XD), W(XS))                                              \
-        movtx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        movtx_ld(W(XD), Mebp, inf_GPC01_64)                                 \
+        movts_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movts_ld(W(XD), Mebp, inf_GPC01_64)                                 \
         divts_ld(W(XD), Mebp, inf_SCR02(0))
 
 #define rssts_rr(XG, XS) /* destroys XS */
