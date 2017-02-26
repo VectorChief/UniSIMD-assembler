@@ -456,56 +456,49 @@
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
 #define fmacs_rr(XG, XS, XT)                                                \
-        movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        cvycs_rr(W(XG), W(XT))                     /* 1st-pass -> */        \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        cvycs_rr(W(XG), W(XS))                                              \
-        mulds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        cvycs_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
-        addds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvycs_rr(W(XG), W(XS))                     /* 1st-pass -> */        \
+        cvycs_rr(W(XS), W(XT))                                              \
+        mulds_rr(W(XS), W(XG))                                              \
+        cvycs_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
+        addds_rr(W(XG), W(XS))                                              \
         cvxds_rr(W(XG), W(XG))                                              \
-        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        prmcx_rr(W(XS), W(XS), IB(1))                                       \
+        movix_st(W(XG), Mebp, inf_SCR02(0x00))                              \
+        movcx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         prmcx_rr(W(XT), W(XT), IB(1))              /* 1st-pass <- */        \
-        cvycs_rr(W(XG), W(XT))                     /* 2nd-pass -> */        \
-        movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        cvycs_rr(W(XG), W(XS))                                              \
-        mulds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        cvycs_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        addds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvycs_ld(W(XG), Mebp, inf_SCR01(0x10))     /* 2nd-pass -> */        \
+        cvycs_rr(W(XS), W(XT))                                              \
+        mulds_rr(W(XS), W(XG))                                              \
+        cvycs_ld(W(XG), Mebp, inf_SCR02(0x10))                              \
+        addds_rr(W(XG), W(XS))                                              \
         cvxds_rr(W(XG), W(XG))                                              \
-        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
-        prmcx_rr(W(XS), W(XS), IB(1))                                       \
+        movix_st(W(XG), Mebp, inf_SCR02(0x10))                              \
         prmcx_rr(W(XT), W(XT), IB(1))              /* 2nd-pass <- */        \
-        movcx_ld(W(XG), Mebp, inf_SCR01(0))
+        movcx_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movcx_ld(W(XS), Mebp, inf_SCR01(0))
 
 #define fmacs_ld(XG, XS, MT, DT)                                            \
-        movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        cvycs_ld(W(XG), W(MT), W(DT))              /* 1st-pass -> */        \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        cvycs_rr(W(XG), W(XS))                                              \
-        mulds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        cvycs_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
-        addds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvycs_rr(W(XG), W(XS))                     /* 1st-pass -> */        \
+        cvycs_ld(W(XS), W(MT), W(DT))                                       \
+        mulds_rr(W(XS), W(XG))                                              \
+        cvycs_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
+        addds_rr(W(XG), W(XS))                                              \
         cvxds_rr(W(XG), W(XG))                                              \
-        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        prmcx_rr(W(XS), W(XS), IB(1))                                       \
-        addwm_ri(W(MT), IC(0x10))                  /* 1st-pass <- */        \
-        cvycs_ld(W(XG), W(MT), W(DT))              /* 2st-pass -> */        \
-        movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        cvycs_rr(W(XG), W(XS))                                              \
-        mulds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        cvycs_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        addds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XG), Mebp, inf_SCR02(0x00))                              \
+        addzm_ri(W(MT), IC(0x10))                  /* 1st-pass <- */        \
+        cvycs_ld(W(XG), Mebp, inf_SCR01(0x10))     /* 2nd-pass -> */        \
+        cvycs_ld(W(XS), W(MT), W(DT))                                       \
+        mulds_rr(W(XS), W(XG))                                              \
+        cvycs_ld(W(XG), Mebp, inf_SCR02(0x10))                              \
+        addds_rr(W(XG), W(XS))                                              \
         cvxds_rr(W(XG), W(XG))                                              \
-        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
-        prmcx_rr(W(XS), W(XS), IB(1))                                       \
-        subwm_ri(W(MT), IC(0x10))                  /* 2st-pass <- */        \
-        movcx_ld(W(XG), Mebp, inf_SCR01(0))
+        movix_st(W(XG), Mebp, inf_SCR02(0x10))                              \
+        subzm_ri(W(MT), IC(0x10))                  /* 2nd-pass <- */        \
+        movcx_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movcx_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
@@ -534,56 +527,49 @@
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmscs_rr(XG, XS, XT)                                                \
-        movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        cvycs_rr(W(XG), W(XT))                     /* 1st-pass -> */        \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        cvycs_rr(W(XG), W(XS))                                              \
-        mulds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        cvycs_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
-        subds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvycs_rr(W(XG), W(XS))                     /* 1st-pass -> */        \
+        cvycs_rr(W(XS), W(XT))                                              \
+        mulds_rr(W(XS), W(XG))                                              \
+        cvycs_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
+        subds_rr(W(XG), W(XS))                                              \
         cvxds_rr(W(XG), W(XG))                                              \
-        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        prmcx_rr(W(XS), W(XS), IB(1))                                       \
+        movix_st(W(XG), Mebp, inf_SCR02(0x00))                              \
+        movcx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         prmcx_rr(W(XT), W(XT), IB(1))              /* 1st-pass <- */        \
-        cvycs_rr(W(XG), W(XT))                     /* 2nd-pass -> */        \
-        movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        cvycs_rr(W(XG), W(XS))                                              \
-        mulds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        cvycs_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        subds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvycs_ld(W(XG), Mebp, inf_SCR01(0x10))     /* 2nd-pass -> */        \
+        cvycs_rr(W(XS), W(XT))                                              \
+        mulds_rr(W(XS), W(XG))                                              \
+        cvycs_ld(W(XG), Mebp, inf_SCR02(0x10))                              \
+        subds_rr(W(XG), W(XS))                                              \
         cvxds_rr(W(XG), W(XG))                                              \
-        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
-        prmcx_rr(W(XS), W(XS), IB(1))                                       \
+        movix_st(W(XG), Mebp, inf_SCR02(0x10))                              \
         prmcx_rr(W(XT), W(XT), IB(1))              /* 2nd-pass <- */        \
-        movcx_ld(W(XG), Mebp, inf_SCR01(0))
+        movcx_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movcx_ld(W(XS), Mebp, inf_SCR01(0))
 
 #define fmscs_ld(XG, XS, MT, DT)                                            \
-        movcx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        cvycs_ld(W(XG), W(MT), W(DT))              /* 1st-pass -> */        \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        cvycs_rr(W(XG), W(XS))                                              \
-        mulds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        cvycs_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
-        subds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        cvycs_rr(W(XG), W(XS))                     /* 1st-pass -> */        \
+        cvycs_ld(W(XS), W(MT), W(DT))                                       \
+        mulds_rr(W(XS), W(XG))                                              \
+        cvycs_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
+        subds_rr(W(XG), W(XS))                                              \
         cvxds_rr(W(XG), W(XG))                                              \
-        movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        prmcx_rr(W(XS), W(XS), IB(1))                                       \
-        addwm_ri(W(MT), IC(0x10))                  /* 1st-pass <- */        \
-        cvycs_ld(W(XG), W(MT), W(DT))              /* 2st-pass -> */        \
-        movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        cvycs_rr(W(XG), W(XS))                                              \
-        mulds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
-        movcx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        cvycs_ld(W(XG), Mebp, inf_SCR01(0x10))                              \
-        subds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movix_st(W(XG), Mebp, inf_SCR02(0x00))                              \
+        addzm_ri(W(MT), IC(0x10))                  /* 1st-pass <- */        \
+        cvycs_ld(W(XG), Mebp, inf_SCR01(0x10))     /* 2nd-pass -> */        \
+        cvycs_ld(W(XS), W(MT), W(DT))                                       \
+        mulds_rr(W(XS), W(XG))                                              \
+        cvycs_ld(W(XG), Mebp, inf_SCR02(0x10))                              \
+        subds_rr(W(XG), W(XS))                                              \
         cvxds_rr(W(XG), W(XG))                                              \
-        movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
-        prmcx_rr(W(XS), W(XS), IB(1))                                       \
-        subwm_ri(W(MT), IC(0x10))                  /* 2st-pass <- */        \
-        movcx_ld(W(XG), Mebp, inf_SCR01(0))
+        movix_st(W(XG), Mebp, inf_SCR02(0x10))                              \
+        subzm_ri(W(MT), IC(0x10))                  /* 2nd-pass <- */        \
+        movcx_ld(W(XG), Mebp, inf_SCR02(0))                                 \
+        movcx_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
