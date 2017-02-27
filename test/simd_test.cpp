@@ -46,8 +46,8 @@
 /***************************   VARS, FUNCS, TYPES   ***************************/
 /******************************************************************************/
 
-static rt_si32 t_diff = 2;
-static rt_bool v_mode = RT_FALSE;
+rt_bool     v_mode      = RT_FALSE; /* verbose mode from command-line */
+rt_si32     t_diff      = 2;      /* diff-threshold from command-line */
 
 /*
  * Get system time in milliseconds.
@@ -3708,7 +3708,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
         RT_LOGI("---------------------------------------------------------\n");
         RT_LOGI("Usage options are given below:\n");
         RT_LOGI(" -d n, override diff threshold, where n is new diff 0..9\n");
-        RT_LOGI(" -v, enable verbose mode\n");
+        RT_LOGI(" -v, enable verbose mode, always print values from tests\n");
         RT_LOGI("options -d, -v can be combined\n");
         RT_LOGI("---------------------------------------------------------\n");
     }
@@ -3966,7 +3966,6 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 
 #endif /* RT_ADDRESS */
 
-static
 rt_byte *s_ptr = RT_ADDRESS_MIN;
 
 #endif /* RT_POINTER */
@@ -3988,10 +3987,8 @@ rt_time get_time()
     return (rt_time)(tm.QuadPart * 1000 / fr.QuadPart);
 }
 
-static
 DWORD s_step = 0;
 
-static
 SYSTEM_INFO s_sys = {0};
 
 /*
