@@ -3715,7 +3715,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 
     for (k = 1; k < argc; k++)
     {
-        if (strcmp(argv[k], "-d") == 0 && ++k < argc)
+        if (k < argc && strcmp(argv[k], "-d") == 0 && ++k < argc)
         {
             t_diff = argv[k][0] - '0';
             if (strlen(argv[k]) == 1 && t_diff >= 0 && t_diff <= 9)
@@ -3728,7 +3728,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
                 return 0;
             }
         }
-        if (strcmp(argv[k], "-v") == 0 && !v_mode)
+        if (k < argc && strcmp(argv[k], "-v") == 0 && !v_mode)
         {
             v_mode = RT_TRUE;
             RT_LOGI("Verbose mode enabled\n");
