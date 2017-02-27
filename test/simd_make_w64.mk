@@ -17,7 +17,7 @@ strip:
 	strip simd_test_w64*.exe
 
 clean:
-	rm simd_test_w64*.exe
+	del simd_test_w64*.exe
 
 
 simd_test_w64_32:
