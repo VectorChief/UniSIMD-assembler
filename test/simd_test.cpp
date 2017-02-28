@@ -3707,7 +3707,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     {
         RT_LOGI("---------------------------------------------------------\n");
         RT_LOGI("Usage options are given below:\n");
-        RT_LOGI(" -d n, override diff threshold, where n is new diff 0..9\n");
+        RT_LOGI(" -d n, override diff-threshold, where n is new diff 0..9\n");
         RT_LOGI(" -v, enable verbose mode, always print values from tests\n");
         RT_LOGI("options -d, -v can be combined\n");
         RT_LOGI("---------------------------------------------------------\n");
@@ -3720,11 +3720,11 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
             t_diff = argv[k][0] - '0';
             if (strlen(argv[k]) == 1 && t_diff >= 0 && t_diff <= 9)
             {
-                RT_LOGI("Diff threshold overridden: %d\n", t_diff);
+                RT_LOGI("Diff-threshold overridden: %d\n", t_diff);
             }
             else
             {
-                RT_LOGI("Diff threshold value out of range\n");
+                RT_LOGI("Diff-threshold value out of range\n");
                 return 0;
             }
         }
