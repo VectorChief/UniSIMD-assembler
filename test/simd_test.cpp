@@ -46,8 +46,10 @@
 /***************************   VARS, FUNCS, TYPES   ***************************/
 /******************************************************************************/
 
-rt_bool     v_mode      = RT_FALSE; /* verbose mode from command-line */
-rt_si32     t_diff      = 2;      /* diff-threshold from command-line */
+rt_bool     v_mode      = RT_FALSE;     /* verbose mode from command-line */
+rt_si32     t_diff      = 2;          /* diff-threshold from command-line */
+rt_si32     n_init      = 0;            /* subtest-init from command-line */
+rt_si32     n_done      = RUN_LEVEL-1;  /* subtest-done from command-line */
 
 /*
  * Get system time in milliseconds.
@@ -3701,26 +3703,66 @@ rt_time get_time();
  */
 rt_si32 main(rt_si32 argc, rt_char *argv[])
 {
-    rt_si32 k;
+    rt_si32 k, l, r, t;
 
     if (argc >= 2)
     {
         RT_LOGI("---------------------------------------------------------\n");
         RT_LOGI("Usage options are given below:\n");
-        RT_LOGI(" -d n, override diff-threshold, where n is new diff 0..9\n");
+        RT_LOGI(" -b n, specify subtest-num at which testing begins, n>=1\n");
+        RT_LOGI(" -e n, specify subtest-num at which testing ends, n<=max\n");
+        RT_LOGI(" -d n, override diff-threshold used for acceptance, n>=0\n");
         RT_LOGI(" -v, enable verbose mode, always print values from tests\n");
-        RT_LOGI("options -d, -v can be combined\n");
+        RT_LOGI("all options can be used together\n");
         RT_LOGI("---------------------------------------------------------\n");
     }
 
     for (k = 1; k < argc; k++)
     {
+        if (k < argc && strcmp(argv[k], "-b") == 0 && ++k < argc)
+        {
+            for (l = strlen(argv[k]), r = 1, t = 0; l > 0; l--, r *= 10)
+            {
+                t += (argv[k][l-1] - '0') * r;
+            }
+            if (t >= 1 && t <= RUN_LEVEL)
+            {
+                RT_LOGI("Subtest-index-init overridden: %d\n", t);
+                n_init = t-1;
+            }
+            else
+            {
+                RT_LOGI("Subtest-index-init out of range\n");
+                return 0;
+            }
+        }
+        if (k < argc && strcmp(argv[k], "-e") == 0 && ++k < argc)
+        {
+            for (l = strlen(argv[k]), r = 1, t = 0; l > 0; l--, r *= 10)
+            {
+                t += (argv[k][l-1] - '0') * r;
+            }
+            if (t >= 1 && t <= RUN_LEVEL)
+            {
+                RT_LOGI("Subtest-index-done overridden: %d\n", t);
+                n_done = t-1;
+            }
+            else
+            {
+                RT_LOGI("Subtest-index-done value out of range\n");
+                return 0;
+            }
+        }
         if (k < argc && strcmp(argv[k], "-d") == 0 && ++k < argc)
         {
-            t_diff = argv[k][0] - '0';
-            if (strlen(argv[k]) == 1 && t_diff >= 0 && t_diff <= 9)
+            for (l = strlen(argv[k]), r = 1, t = 0; l > 0; l--, r *= 10)
             {
-                RT_LOGI("Diff-threshold overridden: %d\n", t_diff);
+                t += (argv[k][l-1] - '0') * r;
+            }
+            if (t >= 0)
+            {
+                RT_LOGI("Diff-threshold overridden: %d\n", t);
+                t_diff = t;
             }
             else
             {
@@ -3841,7 +3883,6 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     inf0->size = ARR_SIZE;
     inf0->tail = (rt_pntr)0xABCDEF01;
 
-    rt_si32 run_level = RUN_LEVEL;
     rt_si32 simd = 0;
 
     ASM_ENTER(inf0)
@@ -3852,7 +3893,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     if ((inf0->ver & (RT_2K8 << 0x1C)) == 0)
     {
         RT_LOGI("Chosen SIMD target is not supported, check build flags\n");
-        run_level = 0;
+        n_done = -1;
     }
     simd = simd == 0 ? (RT_2K8 << 8) | 0x40 : simd;
 #endif /* RT_2K8 */
@@ -3861,7 +3902,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     if ((inf0->ver & (RT_1K4 << 0x18)) == 0)
     {
         RT_LOGI("Chosen SIMD target is not supported, check build flags\n");
-        run_level = 0;
+        n_done = -1;
     }
     simd = simd == 0 ? (RT_1K4 << 8) | 0x20 : simd;
 #endif /* RT_1K4 */
@@ -3870,7 +3911,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     if ((inf0->ver & (RT_512 << 0x10)) == 0)
     {
         RT_LOGI("Chosen SIMD target is not supported, check build flags\n");
-        run_level = 0;
+        n_done = -1;
     }
     simd = simd == 0 ? (RT_512 << 8) | 0x10 : simd;
 #endif /* RT_512 */
@@ -3879,7 +3920,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     if ((inf0->ver & (RT_256 << 0x08)) == 0)
     {
         RT_LOGI("Chosen SIMD target is not supported, check build flags\n");
-        run_level = 0;
+        n_done = -1;
     }
     simd = simd == 0 ? (RT_256 << 8) | 0x08 : simd;
 #endif /* RT_256 */
@@ -3888,7 +3929,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     if ((inf0->ver & (RT_128 << 0x00)) == 0)
     {
         RT_LOGI("Chosen SIMD target is not supported, check build flags\n");
-        run_level = 0;
+        n_done = -1;
     }
     simd = simd == 0 ? (RT_128 << 8) | 0x04 : simd;
 #endif /* RT_128 */
@@ -3900,7 +3941,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 
     rt_si32 i;
 
-    for (i = 0; i < run_level; i++)
+    for (i = n_init; i <= n_done; i++)
     {
         RT_LOGI("-----------------  RUN LEVEL = %2d  -----------------\n", i+1);
 
