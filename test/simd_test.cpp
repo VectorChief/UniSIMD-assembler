@@ -3707,14 +3707,14 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 
     if (argc >= 2)
     {
-        RT_LOGI("---------------------------------------------------------\n");
+        RT_LOGI("--------------------------------------------------------\n");
         RT_LOGI("Usage options are given below:\n");
         RT_LOGI(" -b n, specify subtest-num at which testing begins, n>=1\n");
         RT_LOGI(" -e n, specify subtest-num at which testing ends, n<=max\n");
         RT_LOGI(" -d n, override diff-threshold used for acceptance, n>=0\n");
         RT_LOGI(" -v, enable verbose mode, always print values from tests\n");
         RT_LOGI("all options can be used together\n");
-        RT_LOGI("---------------------------------------------------------\n");
+        RT_LOGI("--------------------------------------------------------\n");
     }
 
     for (k = 1; k < argc; k++)
@@ -3943,7 +3943,8 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 
     for (i = n_init; i <= n_done; i++)
     {
-        RT_LOGI("-----------------  RUN LEVEL = %2d  -----------------\n", i+1);
+        RT_LOGI("-------------------  RUN LEVEL = %2d  -------------------\n",
+                                                                          i+1);
 
         time1 = get_time();
 
@@ -3967,7 +3968,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 
         p_test[i](inf0);
 
-        RT_LOGI("---------------------------------- simd = %4dv%d ---\n",
+        RT_LOGI("-------------------------------------- simd = %4dv%d ---\n",
                                                 (simd & 0xFF) * 32, simd >> 8);
     }
 
