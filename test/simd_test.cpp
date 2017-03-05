@@ -3732,7 +3732,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
             }
             else
             {
-                RT_LOGI("Subtest-index-init out of range\n");
+                RT_LOGI("Subtest-index-init value out of range\n");
                 return 0;
             }
         }
