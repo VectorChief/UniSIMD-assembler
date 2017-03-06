@@ -46,10 +46,10 @@
 /***************************   VARS, FUNCS, TYPES   ***************************/
 /******************************************************************************/
 
-rt_bool     v_mode      = RT_FALSE;     /* verbose mode (from command-line) */
-rt_si32     t_diff      = 2;          /* diff-threshold (from command-line) */
 rt_si32     n_init      = 0;            /* subtest-init (from command-line) */
 rt_si32     n_done      = RUN_LEVEL-1;  /* subtest-done (from command-line) */
+rt_si32     t_diff      = 2;          /* diff-threshold (from command-line) */
+rt_bool     v_mode      = RT_FALSE;     /* verbose mode (from command-line) */
 
 /*
  * Get system time in milliseconds.
