@@ -4,8 +4,8 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_X32_256V8_H
-#define RT_RTARCH_X32_256V8_H
+#ifndef RT_RTARCH_X32_128X2V4_H
+#define RT_RTARCH_X32_128X2V4_H
 
 #include "rtarch_x64.h"
 
@@ -21,7 +21,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x32_256v8.h: Implementation of x86_64 fp32 SSE2/4 instruction pairs.
+ * rtarch_x32_128x2v4.h: Implementation of x86_64 fp32 SSE2/4 instruction pairs.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -100,11 +100,11 @@
 
 #if defined (RT_256) && (RT_256 >= 8)
 
-#ifndef RT_RTARCH_X64_128V4_H
+#ifndef RT_RTARCH_X64_128X1V4_H
 #undef  RT_128
 #define RT_128  (RT_SIMD_COMPAT_256)
-#include "rtarch_x64_128v4.h"
-#endif /* RT_RTARCH_X64_128V4_H */
+#include "rtarch_x64_128x1v4.h"
+#endif /* RT_RTARCH_X64_128X1V4_H */
 
 #undef  sregs_sa
 #undef  sregs_la
@@ -1767,7 +1767,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
 
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_RTARCH_X32_256V8_H */
+#endif /* RT_RTARCH_X32_128X2V4_H */
 
 /******************************************************************************/
 /******************************************************************************/

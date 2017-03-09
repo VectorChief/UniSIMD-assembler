@@ -4,17 +4,17 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_P64_256V2_H
-#define RT_RTARCH_P64_256V2_H
+#ifndef RT_RTARCH_P64_128X2V4_H
+#define RT_RTARCH_P64_128X2V4_H
 
-#include "rtarch_p32_256v2.h"
+#include "rtarch_p32_128x2v4.h"
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
 
 /*
- * rtarch_p64_256v2.h: Implementation of Power fp64 VSX1/2 instructions (pairs).
+ * rtarch_p64_128x2v4.h: Implementation of Power fp64 VSX1/2 instruction pairs.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -1359,7 +1359,7 @@
 
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_RTARCH_P64_256V2_H */
+#endif /* RT_RTARCH_P64_128X2V4_H */
 
 /******************************************************************************/
 /******************************************************************************/

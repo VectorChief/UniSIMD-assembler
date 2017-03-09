@@ -4,8 +4,8 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_X32_2K8V8_H
-#define RT_RTARCH_X32_2K8V8_H
+#ifndef RT_RTARCH_X32_512X4V2_H
+#define RT_RTARCH_X32_512X4V2_H
 
 #include "rtarch_x64.h"
 
@@ -31,7 +31,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x32_2K8v8.h: Implementation of x86_64 fp32 AVX-512 instruction quads.
+ * rtarch_x32_512x4v2.h: Implementation of x86_64 fp32 AVX3 instruction quads.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -110,11 +110,11 @@
 
 #if defined (RT_2K8) && (RT_2K8 >= 8)
 
-#ifndef RT_RTARCH_X64_256V2_H
+#ifndef RT_RTARCH_X64_256X1V2_H
 #undef  RT_256
 #define RT_256  2
-#include "rtarch_x64_256v2.h"
-#endif /* RT_RTARCH_X64_256V2_H */
+#include "rtarch_x64_256x1v2.h"
+#endif /* RT_RTARCH_X64_256X1V2_H */
 
 #undef  sregs_sa
 #undef  sregs_la
@@ -1861,7 +1861,7 @@
 
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_RTARCH_X32_2K8V8_H */
+#endif /* RT_RTARCH_X32_512X4V2_H */
 
 /******************************************************************************/
 /******************************************************************************/

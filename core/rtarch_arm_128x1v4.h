@@ -4,8 +4,8 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_ARM_128V4_H
-#define RT_RTARCH_ARM_128V4_H
+#ifndef RT_RTARCH_ARM_128X1V4_H
+#define RT_RTARCH_ARM_128X1V4_H
 
 #include "rtarch_arm.h"
 
@@ -21,7 +21,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_arm_128v4.h: Implementation of ARMv7/8:AArch32 fp32 NEON instructions.
+ * rtarch_arm_128x1v4.h: Implementation of ARMv7/AArch32 fp32 NEON instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -1855,7 +1855,7 @@
 
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_RTARCH_ARM_128V4_H */
+#endif /* RT_RTARCH_ARM_128X1V4_H */
 
 /******************************************************************************/
 /******************************************************************************/

@@ -4,8 +4,8 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_X86_128V4_H
-#define RT_RTARCH_X86_128V4_H
+#ifndef RT_RTARCH_X86_128X1V4_H
+#define RT_RTARCH_X86_128X1V4_H
 
 #include "rtarch_x86.h"
 
@@ -21,7 +21,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x86_128v4.h: Implementation of x86:i386 fp32 SSE1/2/4 instructions.
+ * rtarch_x86_128x1v4.h: Implementation of x86:i386 fp32 SSE1/2/4 instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -2410,7 +2410,7 @@
 
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_RTARCH_X86_128V4_H */
+#endif /* RT_RTARCH_X86_128X1V4_H */
 
 /******************************************************************************/
 /******************************************************************************/

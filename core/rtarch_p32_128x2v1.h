@@ -4,8 +4,8 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_P32_256V8_H
-#define RT_RTARCH_P32_256V8_H
+#ifndef RT_RTARCH_P32_128X2V1_H
+#define RT_RTARCH_P32_128X2V1_H
 
 #include "rtarch_p64.h"
 
@@ -21,7 +21,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_p32_256v8.h: Implementation of Power fp32 VMX instruction pairs.
+ * rtarch_p32_128x2v1.h: Implementation of Power fp32 VMX instruction pairs.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -100,11 +100,11 @@
 
 #if defined (RT_256) && (RT_256 >= 8) && (RT_SIMD_COMPAT_XMM > 0)
 
-#ifndef RT_RTARCH_P32_128V1_H
+#ifndef RT_RTARCH_P32_128X1V1_H
 #undef  RT_128
 #define RT_128  1
-#include "rtarch_p32_128v1.h"
-#endif /* RT_RTARCH_P32_128V1_H */
+#include "rtarch_p32_128x1v1.h"
+#endif /* RT_RTARCH_P32_128X1V1_H */
 
 #undef  sregs_sa
 #undef  sregs_la
@@ -1465,7 +1465,7 @@
 
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_RTARCH_P32_256V8_H */
+#endif /* RT_RTARCH_P32_128X2V1_H */
 
 /******************************************************************************/
 /******************************************************************************/

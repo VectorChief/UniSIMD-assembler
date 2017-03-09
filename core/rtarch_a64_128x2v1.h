@@ -4,17 +4,17 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_A64_256V1_H
-#define RT_RTARCH_A64_256V1_H
+#ifndef RT_RTARCH_A64_128X2V1_H
+#define RT_RTARCH_A64_128X2V1_H
 
-#include "rtarch_a32_256v1.h"
+#include "rtarch_a32_128x2v1.h"
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
 
 /*
- * rtarch_a64_256v1.h: Implementation of AArch64 fp64 NEON instructions (pairs).
+ * rtarch_a64_128x2v1.h: Implementation of AArch64 fp64 NEON instruction pairs.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -1007,7 +1007,7 @@
 
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_RTARCH_A64_256V1_H */
+#endif /* RT_RTARCH_A64_128X2V1_H */
 
 /******************************************************************************/
 /******************************************************************************/

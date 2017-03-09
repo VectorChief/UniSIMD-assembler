@@ -4,8 +4,8 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_P32_512V2_H
-#define RT_RTARCH_P32_512V2_H
+#ifndef RT_RTARCH_P32_128X4V4_H
+#define RT_RTARCH_P32_128X4V4_H
 
 #include "rtarch_p64.h"
 
@@ -22,7 +22,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_p32_512v2.h: Implementation of Power fp32 VSX1/2 instructions (quads).
+ * rtarch_p32_128x4v4.h: Implementation of Power fp32 VSX1/2 instruction quads.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -101,11 +101,11 @@
 
 #if defined (RT_512) && (RT_512 != 0) && (RT_SIMD_COMPAT_XMM > 0)
 
-#ifndef RT_RTARCH_P64_256V2_H
+#ifndef RT_RTARCH_P64_128X2V4_H
 #undef  RT_256
 #define RT_256  (RT_512)
-#include "rtarch_p64_256v2.h"
-#endif /* RT_RTARCH_P64_256V2_H */
+#include "rtarch_p64_128x2v4.h"
+#endif /* RT_RTARCH_P64_128X2V4_H */
 
 #undef  sregs_sa
 #undef  sregs_la
@@ -1738,7 +1738,7 @@
 
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_RTARCH_P32_512V2_H */
+#endif /* RT_RTARCH_P32_128X4V4_H */
 
 /******************************************************************************/
 /******************************************************************************/

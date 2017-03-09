@@ -4,8 +4,8 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_X32_256V2_H
-#define RT_RTARCH_X32_256V2_H
+#ifndef RT_RTARCH_X32_256X1V2_H
+#define RT_RTARCH_X32_256X1V2_H
 
 #include "rtarch_x64.h"
 
@@ -21,7 +21,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x32_256v2.h: Implementation of x86_64 fp32 AVX1/2 instructions.
+ * rtarch_x32_256x1v2.h: Implementation of x86_64 fp32 AVX1/2 instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -100,13 +100,13 @@
 
 #if defined (RT_256) && (RT_256 >= 1 && RT_256 < 8)
 
-#ifndef RT_RTARCH_X64_128V8_H
+#ifndef RT_RTARCH_X64_128X1V8_H
 #undef  RT_128
 #define RT_128  8
 #undef  RT_SIMD_COMPAT_128
 #define RT_SIMD_COMPAT_128  (RT_256)
-#include "rtarch_x64_128v8.h"
-#endif /* RT_RTARCH_X64_128V8_H */
+#include "rtarch_x64_128x1v8.h"
+#endif /* RT_RTARCH_X64_128X1V8_H */
 
 #undef  sregs_sa
 #undef  sregs_la
@@ -1478,7 +1478,7 @@
 
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_RTARCH_X32_256V2_H */
+#endif /* RT_RTARCH_X32_256X1V2_H */
 
 /******************************************************************************/
 /******************************************************************************/
