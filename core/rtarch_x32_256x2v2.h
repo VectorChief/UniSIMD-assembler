@@ -99,11 +99,11 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if defined (RT_512) && (RT_512 >= 8)
+#if (RT_256X2 >= 1 && RT_256X2 <= 2)
 
 #ifndef RT_RTARCH_X64_256X1V2_H
-#undef  RT_256
-#define RT_256  (RT_SIMD_COMPAT_512)
+#undef  RT_256X1
+#define RT_256X1  RT_256X2
 #include "rtarch_x64_256x1v2.h"
 #endif /* RT_RTARCH_X64_256X1V2_H */
 
@@ -449,7 +449,7 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (RT_SIMD_COMPAT_512 < 2)
+#if (RT_256X2 < 2)
 
 #define prmox_rr(XD, XS, IT) /* not portable, do not use outside */         \
         VEX(0,             0, REG(XD), 1, 1, 3) EMITB(0x06)                 \
@@ -640,7 +640,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* RT_SIMD_COMPAT_512 >= 2 */ /* FMA comes with AVX2 */
+#else /* RT_256X2 >= 2 */ /* FMA comes with AVX2 */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -686,7 +686,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* RT_SIMD_COMPAT_512 >= 2 */
+#endif /* RT_256X2 >= 2 */
 
 /*************   packed single-precision floating-point compare   *************/
 
@@ -1102,7 +1102,7 @@
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-#if (RT_SIMD_COMPAT_512 < 2)
+#if (RT_256X2 < 2)
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1571,7 +1571,7 @@
         stack_ld(Recx)                                                      \
         movox_ld(W(XD), Mebp, inf_SCR01(0))
 
-#else /* RT_SIMD_COMPAT_512 >= 2 */
+#else /* RT_256X2 >= 2 */
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1761,7 +1761,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-#endif /* RT_SIMD_COMPAT_512 >= 2 */
+#endif /* RT_256X2 >= 2 */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
@@ -1805,7 +1805,7 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         movox_ld(Xmm7, Oeax, PLAIN)
 
-#endif /* RT_512 */
+#endif /* RT_256X2 */
 
 #endif /* RT_SIMD_CODE */
 

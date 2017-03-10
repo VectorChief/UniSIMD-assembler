@@ -98,11 +98,11 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if defined (RT_256) && (RT_256 != 0) && (RT_SIMD_COMPAT_XMM > 0)
+#if (RT_128X2 == 1) && (RT_SIMD_COMPAT_XMM > 0)
 
 #ifndef RT_RTARCH_A64_128X1V1_H
-#undef  RT_128
-#define RT_128  (RT_256)
+#undef  RT_128X1
+#define RT_128X1  RT_128X2
 #include "rtarch_a64_128x1v1.h"
 #endif /* RT_RTARCH_A64_128X1V1_H */
 
@@ -1097,7 +1097,7 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
         EMITW(0x3DC00000 | MXM(TmmM,    Teax,    0x00))
 
-#endif /* RT_256 */
+#endif /* RT_128X2 */
 
 #endif /* RT_SIMD_CODE */
 

@@ -98,7 +98,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if defined (RT_128) && (RT_128 >= 2)
+#if (RT_128X1 >= 2 && RT_128X1 <= 4)
 
 #undef  sregs_sa
 #undef  sregs_la
@@ -278,7 +278,7 @@
 
 /* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
 
-#if (RT_128 < 4)
+#if (RT_128X1 < 4)
 
 #define ornix_rr(XG, XS)                                                    \
         notix_rx(W(XG))                                                     \
@@ -296,7 +296,7 @@
         notix_rr(W(XD), W(XS))                                              \
         orrix_ld(W(XD), W(MT), W(DT))
 
-#else /* RT_128 >= 4 */
+#else /* RT_128X1 >= 4 */
 
 #define ornix_rr(XG, XS)                                                    \
         ornix3rr(W(XG), W(XG), W(XS))
@@ -313,7 +313,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF0000557 | MXM(REG(XD), TmmM,    REG(XS)))/* ^ == -1 if true */
 
-#endif /* RT_128 >= 4 */
+#endif /* RT_128X1 >= 4 */
 
 /* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
 
@@ -1047,7 +1047,7 @@
 
 /*********   scalar single-precision floating-point move/arithmetic   *********/
 
-#if (RT_128 < 4)
+#if (RT_128X1 < 4)
 
 /* mov (D = S) */
 
@@ -1203,7 +1203,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* RT_128 >= 4 */
+#else /* RT_128X1 >= 4 */
 
 /* mov (D = S) */
 
@@ -1370,11 +1370,11 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* RT_128 >= 4 */
+#endif /* RT_128X1 >= 4 */
 
 /*************   scalar single-precision floating-point compare   *************/
 
-#if (RT_128 < 4)
+#if (RT_128X1 < 4)
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
@@ -1506,7 +1506,7 @@
         EMITW(0xC0000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
         EMITW(0xF0000398 | MXM(REG(XD), REG(XS), TmmM))
 
-#else /* RT_128 >= 4 */
+#else /* RT_128X1 >= 4 */
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
@@ -1646,7 +1646,7 @@
         EMITW(0x7C000419 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF000039F | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-#endif /* RT_128 >= 4 */
+#endif /* RT_128X1 >= 4 */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
@@ -1739,12 +1739,12 @@
         EMITP(0x7C000618 | MXM(TmmM,    0x00,    Teax))
 
 #ifndef RT_RTARCH_P64_128X2V4_H
-#undef  RT_256
-#define RT_256 ((RT_128)/2)
+#undef  RT_128X2
+#define RT_128X2  RT_128X1
 #include "rtarch_p64_128x2v4.h"
 #endif /* RT_RTARCH_P64_128X2V4_H */
 
-#endif /* RT_128 */
+#endif /* RT_128X1 */
 
 #endif /* RT_SIMD_CODE */
 

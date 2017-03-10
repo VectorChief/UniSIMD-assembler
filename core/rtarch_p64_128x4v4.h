@@ -91,7 +91,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if defined (RT_512) && (RT_512 != 0) && (RT_SIMD_COMPAT_XMM > 0)
+#if (RT_128X4 >= 2 && RT_128X4 <= 4) && (RT_SIMD_COMPAT_XMM > 0)
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -289,7 +289,7 @@
 
 /* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
 
-#if (RT_512 < 2)
+#if (RT_128X4 < 4)
 
 #define ornqx_rr(XG, XS)                                                    \
         notqx_rx(W(XG))                                                     \
@@ -307,7 +307,7 @@
         notqx_rr(W(XD), W(XS))                                              \
         orrqx_ld(W(XD), W(MT), W(DT))
 
-#else /* RT_512 >= 2 */
+#else /* RT_128X4 >= 4 */
 
 #define ornqx_rr(XG, XS)                                                    \
         ornqx3rr(W(XG), W(XG), W(XS))
@@ -339,7 +339,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & (MOD(MT) == TPxx), TPxx))    \
         EMITW(0xF0000554 | MXM(RYG(XD), TmmM,    RYG(XS)))
 
-#endif /* RT_512 >= 2 */
+#endif /* RT_128X4 >= 4 */
 
 /* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
 
@@ -1208,7 +1208,7 @@
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-#if (RT_512 < 2)
+#if (RT_128X4 < 4)
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1596,7 +1596,7 @@
         stack_ld(Recx)                                                      \
         movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
-#else /* RT_512 >= 2 */
+#else /* RT_128X4 >= 4 */
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1889,13 +1889,13 @@
         EMITW(0x100003C4 | MXM(TmmQ,    TmmQ,    TmmM))/* ^ == -1 if true */\
         EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
 
-#endif /* RT_512 >= 2 */
+#endif /* RT_128X4 >= 4 */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
-#endif /* RT_512 */
+#endif /* RT_128X4 */
 
 #endif /* RT_SIMD_CODE */
 

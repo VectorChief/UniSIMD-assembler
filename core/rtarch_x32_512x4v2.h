@@ -108,11 +108,11 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if defined (RT_2K8) && (RT_2K8 >= 8)
+#if (RT_512X4 >= 1 && RT_512X4 <= 2)
 
 #ifndef RT_RTARCH_X64_256X1V2_H
-#undef  RT_256
-#define RT_256  2
+#undef  RT_256X1
+#define RT_256X1  2
 #include "rtarch_x64_256x1v2.h"
 #endif /* RT_RTARCH_X64_256X1V2_H */
 
@@ -228,7 +228,7 @@
         MRM(REG(XS),    0x02, REG(MG))                                      \
         AUX(SIB(MG), EMITW(VTL(DG)), EMPTY)
 
-#if (RT_SIMD_COMPAT_2K8 < 2)
+#if (RT_512X4 < 2)
 
 /* and (G = G & S), (D = S & T) if (#D != #S) */
 
@@ -376,7 +376,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
 
-#else /* RT_SIMD_COMPAT_2K8 >= 2 */
+#else /* RT_512X4 >= 2 */
 
 /* and (G = G & S), (D = S & T) if (#D != #S) */
 
@@ -524,7 +524,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
 
-#endif /* RT_SIMD_COMPAT_2K8 >= 2 */
+#endif /* RT_512X4 >= 2 */
 
 /* not (G = ~G), (D = ~S) */
 
@@ -1857,7 +1857,7 @@
         addxx_ri(Reax, IM(RT_SIMD_WIDTH32*4))                               \
         movox_ld(Xmm7, Oeax, PLAIN)
 
-#endif /* RT_2K8 */
+#endif /* RT_512X4 */
 
 #endif /* RT_SIMD_CODE */
 

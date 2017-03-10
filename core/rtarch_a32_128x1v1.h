@@ -98,7 +98,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if defined (RT_128) && (RT_128 != 0)
+#if (RT_128X1 == 1)
 
 #undef  sregs_sa
 #undef  sregs_la
@@ -1337,12 +1337,12 @@
         EMITW(0x3DC00000 | MXM(TmmM,    Teax,    0x00))
 
 #ifndef RT_RTARCH_A64_128X2V1_H
-#undef  RT_256
-#define RT_256  (RT_128)
+#undef  RT_128X2
+#define RT_128X2  RT_128X1
 #include "rtarch_a64_128x2v1.h"
 #endif /* RT_RTARCH_A64_128X2V1_H */
 
-#endif /* RT_128 */
+#endif /* RT_128X1 */
 
 #endif /* RT_SIMD_CODE */
 

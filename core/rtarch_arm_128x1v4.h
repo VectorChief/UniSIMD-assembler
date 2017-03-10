@@ -98,7 +98,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if defined (RT_128) && (RT_128 != 0)
+#if (RT_128X1 >= 1 && RT_128X1 <= 4)
 
 #undef  sregs_sa
 #undef  sregs_la
@@ -401,7 +401,7 @@
 #define divis_ld(XG, MS, DS)                                                \
         divis3ld(W(XG), W(XG), W(MS), W(DS))
 
-#if (RT_128 < 2)
+#if (RT_128X1 < 2)
 
 #define divis3rr(XD, XS, XT)                                                \
         EMITW(0xF3BB0540 | MXM(TmmM,    0x00,    REG(XT))) /* estimate */   \
@@ -432,7 +432,7 @@
         EMITW(0xF2000D50 | MXM(TmmC,    REG(XD), TmmM))    /* correction */ \
         EMITW(0xF2200150 | MXM(REG(XD), TmmC,    TmmC))
 
-#else /* RT_128 >= 2 */ /* NOTE: FMA is available in processors with ASIMDv2 */
+#else /* RT_128X1 >= 2 */ /* NOTE: FMA is in processors with ASIMDv2 */
 
 #define divis3rr(XD, XS, XT)                                                \
         EMITW(0xF3BB0540 | MXM(TmmM,    0x00,    REG(XT))) /* estimate */   \
@@ -455,7 +455,7 @@
         EMITW(0xF2000C50 | MXM(TmmC,    REG(XD), TmmM))    /* correction */ \
         EMITW(0xF2200150 | MXM(REG(XD), TmmC,    TmmC))
 
-#endif /* RT_128 >= 2 */
+#endif /* RT_128X1 >= 2 */
 
 #endif /* RT_SIMD_COMPAT_DIV */
 
@@ -540,7 +540,7 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (RT_128 < 2) /* NOTE: only VFP fpu fallback is available for fp32 FMA */
+#if (RT_128X1 < 2) /* NOTE: only VFP fallback is available for fp32 FMA */
 
 #if RT_SIMD_COMPAT_FMA == 0
 
@@ -698,7 +698,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* RT_128 >= 2 */ /* NOTE: FMA is available in processors with ASIMDv2 */
+#else /* RT_128X1 >= 2 */ /* NOTE: FMA is in processors with ASIMDv2 */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -734,7 +734,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* RT_128 >= 2 */
+#endif /* RT_128X1 >= 2 */
 
 /*************   packed single-precision floating-point compare   *************/
 
@@ -890,7 +890,7 @@
 
 /*************   packed single-precision floating-point convert   *************/
 
-#if (RT_128 < 4) /* ASIMDv4 is used here for ARMv8:AArch32 processors */
+#if (RT_128X1 < 4) /* ASIMDv4 is used here for ARMv8:AArch32 processors */
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -979,7 +979,7 @@
 #define cvnis_ld(XD, MS, DS) /* round towards near */                       \
         cvtis_ld(W(XD), W(MS), W(DS))
 
-#else /* RT_128 >= 4 */
+#else /* RT_128X1 >= 4 */
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
@@ -1073,7 +1073,7 @@
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3BB0140 | MXM(REG(XD), 0x00,    TmmM))
 
-#endif /* RT_128 >= 4 */
+#endif /* RT_128X1 >= 4 */
 
 /* cvn (D = signed-int-to-fp S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
@@ -1093,7 +1093,7 @@
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
-#if (RT_128 < 4) /* ASIMDv4 is used here for ARMv8:AArch32 processors */
+#if (RT_128X1 < 4) /* ASIMDv4 is used here for ARMv8:AArch32 processors */
 
 #define rndis_rr(XD, XS)                                                    \
         cvtis_rr(W(XD), W(XS))                                              \
@@ -1103,7 +1103,7 @@
         cvtis_ld(W(XD), W(MS), W(DS))                                       \
         cvnin_rr(W(XD), W(XD))
 
-#else /* RT_128 >= 4 */
+#else /* RT_128X1 >= 4 */
 
 #define rndis_rr(XD, XS)     /* fallback to VFP for float-to-integer rnd */ \
         EMITW(0xEEB60A40 | MXM(REG(XD)+0, 0x00,  REG(XS)+0)) /* due to */   \
@@ -1120,7 +1120,7 @@
         EMITW(0xEEB60A40 | MXM(REG(XD)+1, 0x00,  REG(XD)+1)) /* rounding */ \
         EMITW(0xEEF60A60 | MXM(REG(XD)+1, 0x00,  REG(XD)+1)) /* modes */
 
-#endif /* RT_128 >= 4 */
+#endif /* RT_128X1 >= 4 */
 
 #define cvtis_rr(XD, XS)     /* fallback to VFP for float-to-integer cvt */ \
         EMITW(0xEEBD0A40 | MXM(REG(XD)+0, 0x00,  REG(XS)+0)) /* due to */   \
@@ -1163,7 +1163,7 @@
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
-#if (RT_128 < 4) /* ASIMDv4 is used here for ARMv8:AArch32 processors */
+#if (RT_128X1 < 4) /* ASIMDv4 is used here for ARMv8:AArch32 processors */
 
 #define rnris_rr(XD, XS, mode)                                              \
         cvris_rr(W(XD), W(XS), mode)                                        \
@@ -1174,7 +1174,7 @@
         cvtis_rr(W(XD), W(XS))                                              \
         FCTRL_LEAVE(mode)
 
-#else /* RT_128 >= 4 */
+#else /* RT_128X1 >= 4 */
 
 #define rnris_rr(XD, XS, mode)                                              \
         cvris_rr(W(XD), W(XS), mode)                                        \
@@ -1184,7 +1184,7 @@
         EMITW(0xF3BB0040 | MXM(REG(XD), 0x00,    REG(XS)) |                 \
         ((RT_SIMD_MODE_##mode&3)+1 + 3*(((RT_SIMD_MODE_##mode&3)+1) >> 2)) << 8)
 
-#endif /* RT_128 >= 4 */
+#endif /* RT_128X1 >= 4 */
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
@@ -1525,7 +1525,7 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (RT_128 < 2) /* NOTE: only VFP fpu fallback is available for fp32 FMA */
+#if (RT_128X1 < 2) /* NOTE: only VFP fallback is available for fp32 FMA */
 
 #if RT_SIMD_COMPAT_FMA == 0
 
@@ -1611,7 +1611,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* RT_128 >= 2 */ /* NOTE: FMA is available in processors with ASIMDv2 */
+#else /* RT_128X1 >= 2 */ /* NOTE: FMA is in processors with ASIMDv2 */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -1647,7 +1647,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* RT_128 >= 2 */
+#endif /* RT_128X1 >= 2 */
 
 /*************   scalar single-precision floating-point compare   *************/
 
@@ -1851,7 +1851,7 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITW(0xF4200AAF | MXM(TmmF,    Teax,    0x00))
 
-#endif /* RT_128 */
+#endif /* RT_128X1 */
 
 #endif /* RT_SIMD_CODE */
 

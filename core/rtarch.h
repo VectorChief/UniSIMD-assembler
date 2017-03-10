@@ -487,12 +487,16 @@
 #endif /* RT_SIMD_COMPAT_FMR */
 
 #if   (RT_SIMD == 512) && (RT_512 != 0)
+#define RT_512X1  RT_512
 #include "rtarch_x86_512x1v2.h"
 #elif (RT_SIMD == 256) && (RT_256 != 0)
+#define RT_256X1  RT_256
 #include "rtarch_x86_256x1v2.h"
 #elif (RT_SIMD == 128) && (RT_128 >= 8)
+#define RT_128X1  RT_128
 #include "rtarch_x86_128x1v8.h"
 #elif (RT_SIMD == 128) && (RT_128 >= 1)
+#define RT_128X1  RT_128
 #include "rtarch_x86_128x1v4.h"
 #endif /* RT_512, RT_256, RT_128 */
 
@@ -716,12 +720,16 @@
 #endif /* RT_SIMD_COMPAT_FMR */
 
 #if   (RT_SIMD == 512) && (RT_512 != 0)
+#define RT_512X1  RT_512
 #include "rtarch_x86_512x1v2.h"
 #elif (RT_SIMD == 256) && (RT_256 != 0)
+#define RT_256X1  RT_256
 #include "rtarch_x86_256x1v2.h"
 #elif (RT_SIMD == 128) && (RT_128 >= 8)
+#define RT_128X1  RT_128
 #include "rtarch_x86_128x1v8.h"
 #elif (RT_SIMD == 128) && (RT_128 >= 1)
+#define RT_128X1  RT_128
 #include "rtarch_x86_128x1v4.h"
 #endif /* RT_512, RT_256, RT_128 */
 
@@ -990,20 +998,28 @@
 #endif /* RT_SIMD_COMPAT_FMR */
 
 #if   (RT_SIMD == 2048) && (RT_2K8 >= 8)
+#define RT_512X4  RT_SIMD_COMPAT_2K8
 #include "rtarch_x64_512x4v2.h"
 #elif (RT_SIMD == 1024) && (RT_1K4 >= 1)
+#define RT_512X2  RT_1K4
 #include "rtarch_x64_512x2v2.h"
 #elif (RT_SIMD == 512) && (RT_512 >= 8)
+#define RT_256X2  RT_SIMD_COMPAT_512
 #include "rtarch_x64_256x2v2.h"
 #elif (RT_SIMD == 512) && (RT_512 >= 1)
+#define RT_512X1  RT_512
 #include "rtarch_x64_512x1v2.h"
 #elif (RT_SIMD == 256) && (RT_256 >= 8)
+#define RT_128X2  RT_SIMD_COMPAT_256
 #include "rtarch_x64_128x2v4.h"
 #elif (RT_SIMD == 256) && (RT_256 >= 1)
+#define RT_256X1  RT_256
 #include "rtarch_x64_256x1v2.h"
 #elif (RT_SIMD == 128) && (RT_128 >= 8)
+#define RT_128X1  RT_128
 #include "rtarch_x64_128x1v8.h"
 #elif (RT_SIMD == 128) && (RT_128 >= 1)
+#define RT_128X1  RT_128
 #include "rtarch_x64_128x1v4.h"
 #endif /* RT_2K8, RT_1K4, RT_512, RT_256, RT_128 */
 
@@ -1237,6 +1253,7 @@
 #elif (RT_SIMD == 256) && (RT_256 != 0)
 #error "AArch32 doesn't support SIMD wider than 128-bit, check build flags"
 #elif (RT_SIMD == 128) && (RT_128 != 0)
+#define RT_128X1  RT_128
 #include "rtarch_arm_128x1v4.h"
 #endif /* RT_512, RT_256, RT_128 */
 
@@ -1472,8 +1489,10 @@
 #if   (RT_SIMD == 512) && (RT_512 != 0)
 #error "AArch64 doesn't support SIMD wider than 256-bit, check build flags"
 #elif (RT_SIMD == 256) && (RT_256 != 0)
+#define RT_128X2  RT_256
 #include "rtarch_a64_128x2v1.h"
 #elif (RT_SIMD == 128) && (RT_128 != 0)
+#define RT_128X1  RT_128
 #include "rtarch_a64_128x1v1.h"
 #endif /* RT_512, RT_256, RT_128 */
 
@@ -1711,8 +1730,10 @@
 #if   (RT_SIMD == 512) && (RT_512 != 0)
 #error "mipsMSA doesn't support SIMD wider than 256-bit, check build flags"
 #elif (RT_SIMD == 256) && (RT_256 != 0)
+#define RT_128X2  RT_256
 #include "rtarch_m64_128x2v1.h"
 #elif (RT_SIMD == 128) && (RT_128 != 0)
+#define RT_128X1  RT_128
 #include "rtarch_m64_128x1v1.h"
 #endif /* RT_512, RT_256, RT_128 */
 
@@ -1982,14 +2003,19 @@
 #endif /* RT_BASE_COMPAT_ZFL */
 
 #if   (RT_SIMD == 512) && (RT_512 != 0)
+#define RT_128X4  (RT_512*2)
 #include "rtarch_p64_128x4v4.h"
 #elif (RT_SIMD == 256) && (RT_256 >= 8)
+#define RT_128X2  1
 #include "rtarch_p32_128x2v1.h"
 #elif (RT_SIMD == 256) && (RT_256 >= 1)
+#define RT_128X2  (RT_256*2)
 #include "rtarch_p64_128x2v4.h"
 #elif (RT_SIMD == 128) && (RT_128 >= 2)
+#define RT_128X1  RT_128
 #include "rtarch_p64_128x1v4.h"
 #elif (RT_SIMD == 128) && (RT_128 == 1)
+#define RT_128X1  RT_128
 #include "rtarch_p32_128x1v1.h"
 #endif /* RT_512, RT_256, RT_128 */
 

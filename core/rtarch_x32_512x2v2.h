@@ -102,11 +102,11 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if defined (RT_1K4) && (RT_1K4 != 0)
+#if (RT_512X2 >= 1 && RT_512X2 <= 2)
 
 #ifndef RT_RTARCH_X64_256X1V2_H
-#undef  RT_256
-#define RT_256  2
+#undef  RT_256X1
+#define RT_256X1  2
 #include "rtarch_x64_256x1v2.h"
 #endif /* RT_RTARCH_X64_256X1V2_H */
 
@@ -183,7 +183,7 @@
         MRM(REG(XS),    0x02, REG(MG))                                      \
         AUX(SIB(MG), EMITW(VZL(DG)), EMPTY)
 
-#if (RT_1K4 < 2)
+#if (RT_512X2 < 2)
 
 /* and (G = G & S), (D = S & T) if (#D != #S) */
 
@@ -291,7 +291,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
-#else /* RT_1K4 >= 2 */
+#else /* RT_512X2 >= 2 */
 
 /* and (G = G & S), (D = S & T) if (#D != #S) */
 
@@ -399,7 +399,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
-#endif /* RT_1K4 >= 2 */
+#endif /* RT_512X2 >= 2 */
 
 /* not (G = ~G), (D = ~S) */
 
@@ -1374,7 +1374,7 @@
     ADR EVX(3,             0,    0x00, K, 0, 1) EMITB(0x28)                 \
         MRM(0x07,       0x00,    0x00)
 
-#endif /* RT_1K4 */
+#endif /* RT_512X2 */
 
 #endif /* RT_SIMD_CODE */
 

@@ -91,7 +91,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if defined (RT_512) && (RT_512 >= 8)
+#if (RT_256X2 >= 1 && RT_256X2 <= 2)
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -422,7 +422,7 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (RT_SIMD_COMPAT_512 < 2)
+#if (RT_256X2 < 2)
 
 #if RT_SIMD_COMPAT_FMA == 0
 
@@ -636,7 +636,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* RT_SIMD_COMPAT_512 >= 2 */ /* FMA comes with AVX2 */
+#else /* RT_256X2 >= 2 */ /* FMA comes with AVX2 */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -682,7 +682,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* RT_SIMD_COMPAT_512 >= 2 */
+#endif /* RT_256X2 >= 2 */
 
 /*************   packed double-precision floating-point compare   *************/
 
@@ -1138,7 +1138,7 @@
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-#if (RT_SIMD_COMPAT_512 < 2)
+#if (RT_256X2 < 2)
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1416,7 +1416,7 @@
         stack_ld(Recx)                                                      \
         movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
-#else /* RT_SIMD_COMPAT_512 >= 2 */
+#else /* RT_256X2 >= 2 */
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1558,7 +1558,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-#endif /* RT_SIMD_COMPAT_512 >= 2 */
+#endif /* RT_256X2 >= 2 */
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -1656,7 +1656,7 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
-#endif /* RT_512 */
+#endif /* RT_256X2 */
 
 #endif /* RT_SIMD_CODE */
 

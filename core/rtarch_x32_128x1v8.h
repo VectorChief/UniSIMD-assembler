@@ -98,7 +98,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if defined (RT_128) && (RT_128 >= 8)
+#if (RT_128X1 >= 8 && RT_128X1 <= 8)
 
 #undef  sregs_sa
 #undef  sregs_la
@@ -1957,12 +1957,12 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
         MRM(0x07,       0x00,    0x00)
 
 #ifndef RT_RTARCH_X64_256X1V2_H
-#undef  RT_256
-#define RT_256  (RT_SIMD_COMPAT_128)
+#undef  RT_256X1
+#define RT_256X1  RT_SIMD_COMPAT_128
 #include "rtarch_x64_256x1v2.h"
 #endif /* RT_RTARCH_X64_256X1V2_H */
 
-#endif /* RT_128 */
+#endif /* RT_128X1 */
 
 #endif /* RT_SIMD_CODE */
 

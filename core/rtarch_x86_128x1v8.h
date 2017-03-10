@@ -98,7 +98,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if defined (RT_128) && (RT_128 >= 8)
+#if (RT_128X1 >= 8 && RT_128X1 <= 8)
 
 #undef  sregs_sa
 #undef  sregs_la
@@ -1912,12 +1912,12 @@
         movix_ld(Xmm7, Oeax, PLAIN)
 
 #ifndef RT_RTARCH_X86_256X1V2_H
-#undef  RT_256
-#define RT_256  (RT_SIMD_COMPAT_128)
+#undef  RT_256X1
+#define RT_256X1  RT_SIMD_COMPAT_128
 #include "rtarch_x86_256x1v2.h"
 #endif /* RT_RTARCH_X86_256X1V2_H */
 
-#endif /* RT_128 */
+#endif /* RT_128X1 */
 
 #endif /* RT_SIMD_CODE */
 
