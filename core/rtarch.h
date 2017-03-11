@@ -106,10 +106,10 @@
  *  - rtarch_p64_128x2v*.h - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 30
  *  - rtarch_r32.h         - RISC-V 32-bit ISA, 32 BASE regs, 14 + temps used
  *  - rtarch_r64.h         - RISC-V 64-bit ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_r32_128x1v*.h - 32-bit elements, 32 SIMD regs, SIMD 128-bit, 16+
- *  - rtarch_r64_128x1v*.h - 64-bit elements, 32 SIMD regs, SIMD 128-bit, 16+
- *  - rtarch_r32_128x1v*.h - 32-bit elements, 32 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_r64_128x1v*.h - 64-bit elements, 32 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_r32_128x1v*.h - 32-bit elements, 32 SIMD regs, SIMD 128-bit, 30
+ *  - rtarch_r64_128x1v*.h - 64-bit elements, 32 SIMD regs, SIMD 128-bit, 30
+ *  - rtarch_r32_128x2v*.h - 32-bit elements, 32 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_r64_128x2v*.h - 64-bit elements, 32 SIMD regs, pairs of 128-bit, 15
  *  - rtarch_x32_512x1v*.h - 32-bit elements, 32 SIMD regs, AVX 512-bit, 30 used
  *  - rtarch_x64_512x1v*.h - 64-bit elements, 32 SIMD regs, AVX 512-bit, 30 used
  *
@@ -299,9 +299,6 @@
 #define RT_SIMD_COMPAT_DIV_MASTER       1 /* for full-precision divps_** */
 #define RT_SIMD_COMPAT_SQR_MASTER       1 /* for full-precision sqrps_** */
 #define RT_SIMD_COMPAT_128_MASTER       1 /* for 128-bit AVX(1,2) - 1,2 (x86) */
-#define RT_SIMD_COMPAT_256_MASTER       2 /* for 256-bit SSE(2,4) - 2,4 (x86) */
-#define RT_SIMD_COMPAT_512_MASTER       1 /* for 512-bit AVX(1,2) - 1,2 (x86) */
-#define RT_SIMD_COMPAT_2K8_MASTER       1 /* for 2K8-bit AVX3.1/2 - 1,2 (x86) */
 #define RT_SIMD_COMPAT_FMR_MASTER       0 /* for fm*ps_** rounding mode (x86) */
 #define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and Power */
 
@@ -312,46 +309,46 @@
  */
 #if   defined (RT_SIMD)
 /* RT_SIMD is already defined outside */
-#elif defined (RT_2K8) && (RT_2K8 != 0)
+#elif (RT_512X4 != 0)
 #define RT_SIMD 2048
-#elif defined (RT_1K4) && (RT_1K4 != 0)
+#elif (RT_512X2 != 0)
 #define RT_SIMD 1024
-#elif defined (RT_512) && (RT_512 != 0)
+#elif (RT_256X2 != 0 || RT_512X1 != 0)
 #define RT_SIMD 512
-#elif defined (RT_256) && (RT_256 != 0)
+#elif (RT_128X2 != 0 || RT_256X1 != 0)
 #define RT_SIMD 256
-#elif defined (RT_128) && (RT_128 != 0)
+#elif (RT_128X1 != 0)
 #define RT_SIMD 128
-#endif /* RT_2K8, RT_1K4, RT_512, RT_256, RT_128 */
+#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
 /*
  * Determine SIMD quad-factor for backend structs (maximal for a given build).
  */
-#if   defined (RT_2K8) && (RT_2K8 != 0)
+#if   (RT_512X4 != 0)
 #define Q 16
-#elif defined (RT_1K4) && (RT_1K4 != 0)
+#elif (RT_512X2 != 0)
 #define Q 8
-#elif defined (RT_512) && (RT_512 != 0)
+#elif (RT_256X2 != 0 || RT_512X1 != 0)
 #define Q 4
-#elif defined (RT_256) && (RT_256 != 0)
+#elif (RT_128X2 != 0 || RT_256X1 != 0)
 #define Q 2
-#elif defined (RT_128) && (RT_128 != 0)
+#elif (RT_128X1 != 0)
 #define Q 1
-#endif /* RT_2K8, RT_1K4, RT_512, RT_256, RT_128 */
+#endif /* Q: 16, 8, 4, 2, 1 */
 
 /*
  * Determine SIMD properties for a given SIMD target (vector-length-agnostic).
  */
-#if   (RT_SIMD >= 512) && (RT_512 != 0 || RT_1K4 != 0 || RT_2K8 != 0)
-/* RT_SIMD_* definitions come directly from 512/1K4/2K8-bit rtarch headers */
-#elif (RT_SIMD == 256) && (RT_256 != 0)
+#if   (RT_SIMD >= 512)
+/* RT_SIMD_* definitions come directly from >= 512-bit rtarch headers */
+#elif (RT_SIMD == 256)
 #define RT_SIMD_REGS            RT_SIMD_REGS_256
 #define RT_SIMD_ALIGN           RT_SIMD_ALIGN_256
 #define RT_SIMD_WIDTH64         RT_SIMD_WIDTH64_256
 #define RT_SIMD_SET64(s, v)     RT_SIMD_SET64_256(s, v)
 #define RT_SIMD_WIDTH32         RT_SIMD_WIDTH32_256
 #define RT_SIMD_SET32(s, v)     RT_SIMD_SET32_256(s, v)
-#elif (RT_SIMD == 128) && (RT_128 != 0)
+#elif (RT_SIMD == 128)
 #define RT_SIMD_REGS            RT_SIMD_REGS_128
 #define RT_SIMD_ALIGN           RT_SIMD_ALIGN_128
 #define RT_SIMD_WIDTH64         RT_SIMD_WIDTH64_128
@@ -475,7 +472,7 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1 & AVX2
- * when RT_128=8 SIMD backend is present among build targets */
+ * if RT_128X1=8 SIMD backend is present among build targets */
 #ifndef RT_SIMD_COMPAT_128
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
 #endif /* RT_SIMD_COMPAT_128 */
@@ -486,19 +483,25 @@
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 #endif /* RT_SIMD_COMPAT_FMR */
 
-#if   (RT_SIMD == 512) && (RT_512 != 0)
-#define RT_512X1  RT_512
+#if   (RT_512X4 != 0) && (RT_SIMD == 2048)
+#error "x86:386 doesn't support quaded SIMD backends, check build flags"
+#elif (RT_512X2 != 0) && (RT_SIMD == 1024)
+#error "x86:386 doesn't support paired SIMD backends, check build flags"
+#elif (RT_256X2 != 0) && (RT_SIMD == 512)
+#error "x86:386 doesn't support paired SIMD backends, check build flags"
+#elif (RT_128X4 != 0) && (RT_SIMD == 512)
+#error "x86:386 doesn't support quaded SIMD backends, check build flags"
+#elif (RT_128X2 != 0) && (RT_SIMD == 256)
+#error "x86:386 doesn't support paired SIMD backends, check build flags"
+#elif (RT_512X1 != 0) && (RT_SIMD == 512)
 #include "rtarch_x86_512x1v2.h"
-#elif (RT_SIMD == 256) && (RT_256 != 0)
-#define RT_256X1  RT_256
+#elif (RT_256X1 != 0) && (RT_SIMD == 256)
 #include "rtarch_x86_256x1v2.h"
-#elif (RT_SIMD == 128) && (RT_128 >= 8)
-#define RT_128X1  RT_128
+#elif (RT_128X1 >= 8) && (RT_SIMD == 128)
 #include "rtarch_x86_128x1v8.h"
-#elif (RT_SIMD == 128) && (RT_128 >= 1)
-#define RT_128X1  RT_128
+#elif (RT_128X1 >= 1) && (RT_SIMD == 128)
 #include "rtarch_x86_128x1v4.h"
-#endif /* RT_512, RT_256, RT_128 */
+#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -708,7 +711,7 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1 & AVX2
- * when RT_128=8 SIMD backend is present among build targets */
+ * if RT_128X1=8 SIMD backend is present among build targets */
 #ifndef RT_SIMD_COMPAT_128
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
 #endif /* RT_SIMD_COMPAT_128 */
@@ -719,19 +722,25 @@
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 #endif /* RT_SIMD_COMPAT_FMR */
 
-#if   (RT_SIMD == 512) && (RT_512 != 0)
-#define RT_512X1  RT_512
+#if   (RT_512X4 != 0) && (RT_SIMD == 2048)
+#error "x86:386 doesn't support quaded SIMD backends, check build flags"
+#elif (RT_512X2 != 0) && (RT_SIMD == 1024)
+#error "x86:386 doesn't support paired SIMD backends, check build flags"
+#elif (RT_256X2 != 0) && (RT_SIMD == 512)
+#error "x86:386 doesn't support paired SIMD backends, check build flags"
+#elif (RT_128X4 != 0) && (RT_SIMD == 512)
+#error "x86:386 doesn't support quaded SIMD backends, check build flags"
+#elif (RT_128X2 != 0) && (RT_SIMD == 256)
+#error "x86:386 doesn't support paired SIMD backends, check build flags"
+#elif (RT_512X1 != 0) && (RT_SIMD == 512)
 #include "rtarch_x86_512x1v2.h"
-#elif (RT_SIMD == 256) && (RT_256 != 0)
-#define RT_256X1  RT_256
+#elif (RT_256X1 != 0) && (RT_SIMD == 256)
 #include "rtarch_x86_256x1v2.h"
-#elif (RT_SIMD == 128) && (RT_128 >= 8)
-#define RT_128X1  RT_128
+#elif (RT_128X1 >= 8) && (RT_SIMD == 128)
 #include "rtarch_x86_128x1v8.h"
-#elif (RT_SIMD == 128) && (RT_128 >= 1)
-#define RT_128X1  RT_128
+#elif (RT_128X1 >= 1) && (RT_SIMD == 128)
 #include "rtarch_x86_128x1v4.h"
-#endif /* RT_512, RT_256, RT_128 */
+#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -968,28 +977,10 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1 & AVX2
- * when RT_128=8 SIMD backend is present among build targets */
+ * if RT_128X1=8 SIMD backend is present among build targets */
 #ifndef RT_SIMD_COMPAT_128
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
 #endif /* RT_SIMD_COMPAT_128 */
-
-/* RT_SIMD_COMPAT_256 distinguishes between 256-bit SSE2 & SSE4
- * when RT_256=8 SIMD backend is present among build targets */
-#ifndef RT_SIMD_COMPAT_256
-#define RT_SIMD_COMPAT_256      RT_SIMD_COMPAT_256_MASTER
-#endif /* RT_SIMD_COMPAT_256 */
-
-/* RT_SIMD_COMPAT_512 distinguishes between 512-bit AVX1 & AVX2
- * when RT_512=8 SIMD backend is present among build targets */
-#ifndef RT_SIMD_COMPAT_512
-#define RT_SIMD_COMPAT_512      RT_SIMD_COMPAT_512_MASTER
-#endif /* RT_SIMD_COMPAT_512 */
-
-/* RT_SIMD_COMPAT_2K8 distinguishes between 2K8-bit AVX3.1 & .2
- * when RT_2K8=8 SIMD backend is present among build targets */
-#ifndef RT_SIMD_COMPAT_2K8
-#define RT_SIMD_COMPAT_2K8      RT_SIMD_COMPAT_2K8_MASTER
-#endif /* RT_SIMD_COMPAT_2K8 */
 
 /* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
  * of fm*ps_** instruction fallbacks to honour rounding mode */
@@ -997,31 +988,25 @@
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 #endif /* RT_SIMD_COMPAT_FMR */
 
-#if   (RT_SIMD == 2048) && (RT_2K8 >= 8)
-#define RT_512X4  RT_SIMD_COMPAT_2K8
+#if   (RT_512X4 != 0) && (RT_SIMD == 2048)
 #include "rtarch_x64_512x4v2.h"
-#elif (RT_SIMD == 1024) && (RT_1K4 >= 1)
-#define RT_512X2  RT_1K4
+#elif (RT_512X2 != 0) && (RT_SIMD == 1024)
 #include "rtarch_x64_512x2v2.h"
-#elif (RT_SIMD == 512) && (RT_512 >= 8)
-#define RT_256X2  RT_SIMD_COMPAT_512
-#include "rtarch_x64_256x2v2.h"
-#elif (RT_SIMD == 512) && (RT_512 >= 1)
-#define RT_512X1  RT_512
+#elif (RT_512X1 != 0) && (RT_SIMD == 512)
 #include "rtarch_x64_512x1v2.h"
-#elif (RT_SIMD == 256) && (RT_256 >= 8)
-#define RT_128X2  RT_SIMD_COMPAT_256
-#include "rtarch_x64_128x2v4.h"
-#elif (RT_SIMD == 256) && (RT_256 >= 1)
-#define RT_256X1  RT_256
+#elif (RT_256X2 != 0) && (RT_SIMD == 512)
+#include "rtarch_x64_256x2v2.h"
+#elif (RT_128X4 != 0) && (RT_SIMD == 512)
+#error "x64:686 doesn't support quaded SSEx backends, check build flags"
+#elif (RT_256X1 != 0) && (RT_SIMD == 256)
 #include "rtarch_x64_256x1v2.h"
-#elif (RT_SIMD == 128) && (RT_128 >= 8)
-#define RT_128X1  RT_128
+#elif (RT_128X2 != 0) && (RT_SIMD == 256)
+#include "rtarch_x64_128x2v4.h"
+#elif (RT_128X1 >= 8) && (RT_SIMD == 128)
 #include "rtarch_x64_128x1v8.h"
-#elif (RT_SIMD == 128) && (RT_128 >= 1)
-#define RT_128X1  RT_128
+#elif (RT_128X1 >= 1) && (RT_SIMD == 128)
 #include "rtarch_x64_128x1v4.h"
-#endif /* RT_2K8, RT_1K4, RT_512, RT_256, RT_128 */
+#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -1248,14 +1233,23 @@
 #define RT_SIMD_COMPAT_SQR      RT_SIMD_COMPAT_SQR_MASTER
 #endif /* RT_SIMD_COMPAT_SQR */
 
-#if   (RT_SIMD == 512) && (RT_512 != 0)
+#if   (RT_512X4 != 0) && (RT_SIMD == 2048)
 #error "AArch32 doesn't support SIMD wider than 128-bit, check build flags"
-#elif (RT_SIMD == 256) && (RT_256 != 0)
+#elif (RT_512X2 != 0) && (RT_SIMD == 1024)
 #error "AArch32 doesn't support SIMD wider than 128-bit, check build flags"
-#elif (RT_SIMD == 128) && (RT_128 != 0)
-#define RT_128X1  RT_128
+#elif (RT_512X1 != 0) && (RT_SIMD == 512)
+#error "AArch32 doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_256X2 != 0) && (RT_SIMD == 512)
+#error "AArch32 doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_128X4 != 0) && (RT_SIMD == 512)
+#error "AArch32 doesn't support quaded SIMD backends, check build flags"
+#elif (RT_256X1 != 0) && (RT_SIMD == 256)
+#error "AArch32 doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_128X2 != 0) && (RT_SIMD == 256)
+#error "AArch32 doesn't support paired SIMD backends, check build flags"
+#elif (RT_128X1 != 0) && (RT_SIMD == 128)
 #include "rtarch_arm_128x1v4.h"
-#endif /* RT_512, RT_256, RT_128 */
+#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -1486,15 +1480,23 @@
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#if   (RT_SIMD == 512) && (RT_512 != 0)
-#error "AArch64 doesn't support SIMD wider than 256-bit, check build flags"
-#elif (RT_SIMD == 256) && (RT_256 != 0)
-#define RT_128X2  RT_256
+#if   (RT_512X4 != 0) && (RT_SIMD == 2048)
+#error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_512X2 != 0) && (RT_SIMD == 1024)
+#error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_512X1 != 0) && (RT_SIMD == 512)
+#error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_256X2 != 0) && (RT_SIMD == 512)
+#error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_128X4 != 0) && (RT_SIMD == 512)
+#error "AArch64 doesn't support quaded SIMD backends, check build flags"
+#elif (RT_256X1 != 0) && (RT_SIMD == 256)
+#error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_128X2 != 0) && (RT_SIMD == 256)
 #include "rtarch_a64_128x2v1.h"
-#elif (RT_SIMD == 128) && (RT_128 != 0)
-#define RT_128X1  RT_128
+#elif (RT_128X1 != 0) && (RT_SIMD == 128)
 #include "rtarch_a64_128x1v1.h"
-#endif /* RT_512, RT_256, RT_128 */
+#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -1727,15 +1729,23 @@
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#if   (RT_SIMD == 512) && (RT_512 != 0)
-#error "mipsMSA doesn't support SIMD wider than 256-bit, check build flags"
-#elif (RT_SIMD == 256) && (RT_256 != 0)
-#define RT_128X2  RT_256
+#if   (RT_512X4 != 0) && (RT_SIMD == 2048)
+#error "mipsMSA doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_512X2 != 0) && (RT_SIMD == 1024)
+#error "mipsMSA doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_512X1 != 0) && (RT_SIMD == 512)
+#error "mipsMSA doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_256X2 != 0) && (RT_SIMD == 512)
+#error "mipsMSA doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_128X4 != 0) && (RT_SIMD == 512)
+#error "mipsMSA doesn't support quaded SIMD backends, check build flags"
+#elif (RT_256X1 != 0) && (RT_SIMD == 256)
+#error "mipsMSA doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_128X2 != 0) && (RT_SIMD == 256)
 #include "rtarch_m64_128x2v1.h"
-#elif (RT_SIMD == 128) && (RT_128 != 0)
-#define RT_128X1  RT_128
+#elif (RT_128X1 != 0) && (RT_SIMD == 128)
 #include "rtarch_m64_128x1v1.h"
-#endif /* RT_512, RT_256, RT_128 */
+#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -2002,22 +2012,27 @@
 #define RT_BASE_COMPAT_ZFL      1 /* only necessary on Power */
 #endif /* RT_BASE_COMPAT_ZFL */
 
-#if   (RT_SIMD == 512) && (RT_512 != 0)
-#define RT_128X4  (RT_512*2)
+#if   (RT_512X4 != 0) && (RT_SIMD == 2048)
+#error "PowerPC doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_512X2 != 0) && (RT_SIMD == 1024)
+#error "PowerPC doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_512X1 != 0) && (RT_SIMD == 512)
+#error "PowerPC doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_256X2 != 0) && (RT_SIMD == 512)
+#error "PowerPC doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_256X1 != 0) && (RT_SIMD == 256)
+#error "PowerPC doesn't support SIMD wider than 128-bit, check build flags"
+#elif (RT_128X4 != 0) && (RT_SIMD == 512)
 #include "rtarch_p64_128x4v4.h"
-#elif (RT_SIMD == 256) && (RT_256 >= 8)
-#define RT_128X2  1
-#include "rtarch_p32_128x2v1.h"
-#elif (RT_SIMD == 256) && (RT_256 >= 1)
-#define RT_128X2  (RT_256*2)
+#elif (RT_128X2 >= 2) && (RT_SIMD == 256)
 #include "rtarch_p64_128x2v4.h"
-#elif (RT_SIMD == 128) && (RT_128 >= 2)
-#define RT_128X1  RT_128
+#elif (RT_128X2 == 1) && (RT_SIMD == 256)
+#include "rtarch_p32_128x2v1.h"
+#elif (RT_128X1 >= 2) && (RT_SIMD == 128)
 #include "rtarch_p64_128x1v4.h"
-#elif (RT_SIMD == 128) && (RT_128 == 1)
-#define RT_128X1  RT_128
+#elif (RT_128X1 == 1) && (RT_SIMD == 128)
 #include "rtarch_p32_128x1v1.h"
-#endif /* RT_512, RT_256, RT_128 */
+#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
 /*
  * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
@@ -2138,11 +2153,11 @@
 #define EMITS(w) /* EMPTY */
 #define EMITM(w) /* EMPTY */
 #define EMITP(w) /* EMPTY */
-#elif (RT_128 >= 2) || (RT_256 != 0 && RT_256 < 8) || (RT_512 != 0)
+#elif (RT_128X1 >= 2 || RT_128X2 >= 2 || RT_128X4 >= 2)
 #define EMITS(w)    EMITW(w)
 #define EMITM(w) /* EMPTY */
 #define EMITP(w)    EMITW(w)
-#else  /* RT_128 < 2, RT_256 >= 8 */
+#else /* RT_128X1 == 1, RT_128X2 == 1 */
 #define EMITS(w)    EMITW(w)
 #define EMITM(w)    EMITW(w)
 #define EMITP(w) /* EMPTY */
