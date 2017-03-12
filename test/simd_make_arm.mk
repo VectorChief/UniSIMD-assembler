@@ -88,6 +88,8 @@ simd_test_arm_rpi3:
 # qemu-arm -cpu cortex-a8  simd_test.arm_v1
 # qemu-arm -cpu cortex-a15 simd_test.arm_v2
 
+# For interpretation of SIMD build flags check compatibility layer in rtzero.h
+
 # 0) Build flags above are intended for default "vanilla" ARMv7 target, while
 # settings suitable for specific hardware platforms are given below (replace).
 # 1) Nokia N900, Maemo 5 scratchbox: "vanilla"

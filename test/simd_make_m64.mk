@@ -100,7 +100,9 @@ simd_test_m64f64Br6:
 # make -f simd_make_m64.mk
 # qemu-mips64el -cpu I6400 simd_test.m64f32Lr6
 
-# For 256-bit SIMD build use (replace): RT_256=1 (uses pairs of regs/ops)
+# For interpretation of SIMD build flags check compatibility layer in rtzero.h
+
+# For 256-bit SIMD build use (replace): RT_256=1    (uses pairs of regs/ops)
 
 # For big-endian MIPS64 target use (replace): -EB -DRT_ENDIAN=1
 # qemu-mips64 -cpu I6400 simd_test.m64f32Br6

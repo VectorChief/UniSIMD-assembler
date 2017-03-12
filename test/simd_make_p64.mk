@@ -92,11 +92,13 @@ simd_test_p64f64Bp7:
 # make -f simd_make_p64.mk
 # qemu-ppc64le -cpu POWER8 simd_test.p64f32Lp8
 
-# For 256-bit VSX1 build use (replace): RT_256=1 (uses pairs of regs/ops)
-# For 256-bit VSX2 build use (replace): RT_256=2 (uses pairs of regs/ops)
+# For interpretation of SIMD build flags check compatibility layer in rtzero.h
 
-# For 512-bit VSX1 build use (replace): RT_512=1 (uses quads of regs/ops)
-# For 512-bit VSX2 build use (replace): RT_512=2 (uses quads of regs/ops)
+# For 256-bit VSX1 build use (replace): RT_256=1    (uses pairs of regs/ops)
+# For 256-bit VSX2 build use (replace): RT_256=2    (uses pairs of regs/ops)
+
+# For 512-bit VSX1 build use (replace): RT_512=1    (uses quads of regs/ops)
+# For 512-bit VSX2 build use (replace): RT_512=2    (uses quads of regs/ops)
 
 # For 128-bit VSX1 POWER(7,7+,8) big-endian target use (replace):
 # powerpc64-linux-gnu-g++ -DRT_128=2 -DRT_ENDIAN=1

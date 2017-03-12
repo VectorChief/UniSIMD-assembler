@@ -8986,8 +8986,9 @@ struct rt_SIMD_REGS
 
 /* ver (Mebp/inf_VER = SIMD-version)
  * set-flags: no
- * 0th byte - 128-bit version, 1st byte - 256-bit version,
- * 2nd byte - 512-bit version, 3rd byte - upper, reserved */
+ * For interpretation of SIMD build flags check compatibility layer in rtzero.h
+ * 0th byte - 128-bit version, 1st byte - 256-bit version, | plus _R8/_RX slots
+ * 2nd byte - 512-bit version, 3rd byte - 1K4-bit version, | in upper halves */
 
      /* verxx_xx() in 32-bit rtarch_***.h files, destroys Reax, ... , Redi */
 
@@ -9747,8 +9748,9 @@ struct rt_SIMD_REGS
 
 /* ver (Mebp/inf_VER = SIMD-version)
  * set-flags: no
- * 0th byte - 128-bit version, 1st byte - 256-bit version,
- * 2nd byte - 512-bit version, 3rd byte - upper, reserved */
+ * For interpretation of SIMD build flags check compatibility layer in rtzero.h
+ * 0th byte - 128-bit version, 1st byte - 256-bit version, | plus _R8/_RX slots
+ * 2nd byte - 512-bit version, 3rd byte - 1K4-bit version, | in upper halves */
 
      /* verxx_xx() in 32-bit rtarch_***.h files, destroys Reax, ... , Redi */
 

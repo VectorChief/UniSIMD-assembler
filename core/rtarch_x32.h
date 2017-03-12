@@ -1477,8 +1477,9 @@
 
 /* ver (Mebp/inf_VER = SIMD-version)
  * set-flags: no
- * 0th byte - 128-bit version, 1st byte - 256-bit version,
- * 2nd byte - 512-bit version, 3rd byte - upper, reserved */
+ * For interpretation of SIMD build flags check compatibility layer in rtzero.h
+ * 0th byte - 128-bit version, 1st byte - 256-bit version, | plus _R8/_RX slots
+ * 2nd byte - 512-bit version, 3rd byte - 1K4-bit version, | in upper halves */
 
 #define cpuid_xx() /* destroys Reax, Recx, Rebx, Redx, reads Reax, Recx */  \
         EMITB(0x0F) EMITB(0xA2)     /* not portable, do not use outside */
@@ -1521,20 +1522,20 @@
         andwx_ri(Recx, IV(0x00000008))  /* <- AVX1,2 to bit3 */             \
         orrwx_rr(Resi, Recx)                                                \
         movwx_rr(Recx, Resi)                                                \
-        shlwx_ri(Recx, IB(11 - RT_SIMD_COMPAT_256/2))                       \
-        andwx_ri(Recx, IV(0x00000800))  /* <- SSE2,4 to bit11 */            \
+        shlwx_ri(Recx, IB(4))                                               \
+        andwx_ri(Recx, IV(0x00000060))  /* <- SSE2,4 to bit5, bit6 */       \
         orrwx_rr(Resi, Recx)                                                \
         movwx_rr(Recx, Resi)                                                \
-        shlwx_ri(Recx, IB(12 - RT_SIMD_COMPAT_512))                         \
-        andwx_ri(Recx, IV(0x00080000))  /* <- AVX1,2 to bit19 */            \
+        shlwx_ri(Recx, IB(4))                                               \
+        andwx_ri(Recx, IV(0x00003000))  /* <- AVX1,2 to bit12, bit13 */     \
+        orrwx_rr(Resi, Recx)                                                \
+        movwx_rr(Recx, Resi)                                                \
+        shlwx_ri(Recx, IB(4))                                               \
+        andwx_ri(Recx, IV(0x00300000))  /* <- AVX3.x to bit20, bit21 */     \
         orrwx_rr(Resi, Recx)                                                \
         movwx_rr(Recx, Resi)                                                \
         shlwx_ri(Recx, IB(8))                                               \
         andwx_ri(Recx, IV(0x03000000))  /* <- AVX3.x to bit24, bit25 */     \
-        orrwx_rr(Resi, Recx)                                                \
-        movwx_rr(Recx, Resi)                                                \
-        shlwx_ri(Recx, IB(16 - RT_SIMD_COMPAT_2K8))                         \
-        andwx_ri(Recx, IW(0x80000000))  /* <- AVX3.x to bit31 */            \
         orrwx_rr(Resi, Recx)                                                \
         movwx_st(Resi, Mebp, inf_VER)
 
