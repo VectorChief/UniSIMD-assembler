@@ -3930,7 +3930,6 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 #elif (RT_128X1)  && (RT_SIMD == 128)
     simd = (1 << 16) | (RT_128X1 << 8) | 1;
 #endif /* RT_128 */
-    simd = (1 << 31) | simd;
 
     rt_time time1 = 0;
     rt_time time2 = 0;

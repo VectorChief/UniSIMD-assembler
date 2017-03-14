@@ -168,9 +168,9 @@
 /* Interpretation of a 32-bit SIMD-version field (ver) in SIMD-info structure:
  *
  *  RT_128  256_R8  RT_256  512_R8  RT_512  1K4_R8  RT_1K4  2K8_R8
- * |               |               |               |               |
  *  1 2 4 8 1 2 4 0 1 2 4 - 1 2 4 0 1 2 4 - 1 2 4 0 1 2 4 - 1 2 4 0
  * |               |               |               |               |
+ * |0              |               |               |             31|
  * |-o-o-o-i-o-o-p-|-o-o-o-i-o-o-p-|-o-o-o-i-o-o-p-|-o-o-o-i-o-o-p-|
  *         16?    ^               ^               ^               ^
  *             128_RX          256_RX          512_RX          1K4_RX

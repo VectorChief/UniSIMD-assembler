@@ -305,34 +305,52 @@
 #include "rtzero.h"
 
 /*
+ * Determine maximum of available SIMD registers for applications' code-bases.
+ */
+#if   defined (RT_ARM) || defined (RT_X86) /* <- original legacy targets */
+#undef  RT_REGS
+#define RT_REGS 8
+#endif /* RT_REGS: 8 */
+
+#if   defined (RT_REGS)
+/* RT_REGS is already defined outside */
+#elif (RT_256_R8 || RT_512_R8 || RT_1K4_R8 || RT_2K8_R8)
+#define RT_REGS 8       /* <- 8 on 128/256-paired/512-quaded x64 targets */
+#elif (RT_128 || RT_256 || RT_512 || RT_1K4)
+#define RT_REGS 16      /* <- 15 on 128-paired/quaded RISC/POWER targets */
+#elif (RT_128_RX || RT_256_RX || RT_512_RX || RT_1K4_RX)
+#define RT_REGS 32      /* <- 30 on all modern 128-bit SIMD RISC targets */
+#endif /* RT_REGS: 8, 16, 32 */
+
+/*
  * Determine mapping of vector-length-agnostic SIMD subsets: cmdo, cmdp, cmdq.
  */
 #if   defined (RT_SIMD)
 /* RT_SIMD is already defined outside */
-#elif (RT_512X4 != 0)
+#elif           (RT_2K8_R8)
 #define RT_SIMD 2048
-#elif (RT_512X2 != 0)
+#elif (RT_1K4 || RT_1K4_R8)
 #define RT_SIMD 1024
-#elif (RT_256X2 != 0 || RT_512X1 != 0)
+#elif (RT_512 || RT_512_R8)
 #define RT_SIMD 512
-#elif (RT_128X2 != 0 || RT_256X1 != 0)
+#elif (RT_256 || RT_256_R8)
 #define RT_SIMD 256
-#elif (RT_128X1 != 0)
+#elif (RT_128)
 #define RT_SIMD 128
 #endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
 /*
- * Determine SIMD quad-factor for backend structs (maximal for a given build).
+ * Determine SIMD total-quads for backend structs (maximal for a given build).
  */
-#if   (RT_512X4 != 0)
+#if             (RT_2K8_R8)
 #define Q 16
-#elif (RT_512X2 != 0)
+#elif (RT_1K4 || RT_1K4_R8)
 #define Q 8
-#elif (RT_256X2 != 0 || RT_512X1 != 0)
+#elif (RT_512 || RT_512_R8)
 #define Q 4
-#elif (RT_128X2 != 0 || RT_256X1 != 0)
+#elif (RT_256 || RT_256_R8)
 #define Q 2
-#elif (RT_128X1 != 0)
+#elif (RT_128)
 #define Q 1
 #endif /* Q: 16, 8, 4, 2, 1 */
 
@@ -358,8 +376,8 @@
 #endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
 /*
- * SIMD quad-factor (number of 128-bit chunks) for chosen SIMD target.
- * Short name Q represents maximal quad-factor for given build config.
+ * SIMD total-quads (number of 128-bit chunks) for chosen SIMD target.
+ * Short name Q represents maximal total-quads for given build config.
  * RT_SIMD_QUADS and Q may differ for builds with runtime SIMD target
  * selection in backend's ASM code sections, Q is used in SIMD structs.
  */
@@ -992,15 +1010,15 @@
 #include "rtarch_x64_512x4v2.h"
 #elif (RT_512X2 != 0) && (RT_SIMD == 1024)
 #include "rtarch_x64_512x2v2.h"
-#elif (RT_512X1 != 0) && (RT_SIMD == 512)
+#elif (RT_512X1 != 0) && (RT_SIMD == 512) && (RT_REGS == 16)
 #include "rtarch_x64_512x1v2.h"
-#elif (RT_256X2 != 0) && (RT_SIMD == 512)
+#elif (RT_256X2 != 0) && (RT_SIMD == 512) && (RT_REGS == 8)
 #include "rtarch_x64_256x2v2.h"
 #elif (RT_128X4 != 0) && (RT_SIMD == 512)
 #error "x64:686 doesn't support quaded SSEx backends, check build flags"
-#elif (RT_256X1 != 0) && (RT_SIMD == 256)
+#elif (RT_256X1 != 0) && (RT_SIMD == 256) && (RT_REGS == 16)
 #include "rtarch_x64_256x1v2.h"
-#elif (RT_128X2 != 0) && (RT_SIMD == 256)
+#elif (RT_128X2 != 0) && (RT_SIMD == 256) && (RT_REGS == 8)
 #include "rtarch_x64_128x2v4.h"
 #elif (RT_128X1 >= 8) && (RT_SIMD == 128)
 #include "rtarch_x64_128x1v8.h"
