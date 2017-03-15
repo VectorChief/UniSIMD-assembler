@@ -570,11 +570,11 @@ rt_si32 mask_init(rt_si32 simd)
     rt_si32 k_size = (simd >> 16) & 0xFF;
 
     rt_si32 mask = 0;
-    rt_si32 n = n_simd, k = k_size;
+    rt_si32 n = n_simd, k = k_size, t = 0;
 
     s_type = s_type == 0 ? 0xF : s_type;
-    n_simd = n_simd == 0 ? 4 : n_simd;
-    k_size = k_size == 0 ? 4 : k_size;
+    n_simd = n_simd == 0 ? 4 : n_simd;  /* <- 4 is the maximal native-size */
+    k_size = k_size == 0 ? 2 : k_size;  /* <- 2 is the optimal size-factor */
 
     for (; n_simd >= n && n_simd > 0; n_simd /= 2)
     {
@@ -586,31 +586,53 @@ rt_si32 mask_init(rt_si32 simd)
                 mask |= s_type << (8*(n_simd/2));
             }
 #elif defined (RT_X32) || defined (RT_X64)
+            if (n_simd >= 4 && n != 0)
+            {
+                if (k != 0)
+                {
+                    k_size = k = k * n_simd / 4;
+                }
+                n_simd = n = 4;
+            }
             if (k_size >= 2 && n_simd == 4)
             {
                 mask |= s_type << (20 + k_size*2);
             }
-            else
             if (k_size <= 2 && n_simd <= 4)
             {
                 mask |= s_type << (8*(n_simd/2) + 4*(k_size/2));
             }
-#elif defined (RT_P32) || defined (RT_P64)
-            if (k_size <= 4 && n_simd == 1)
+#else /* RISC targets */
+            t = 0;
+#if defined (RT_P32) || defined (RT_P64)
+            t = 1;
+            if (n_simd >= 2 && n != 0)
             {
-                mask |= s_type << (8*(k_size/2) - 4*(k_size>1));
-                mask |= s_type << (8*(k_size/2) - 1*(k_size>1));
+                s_type <<= 1;
             }
-#else /* other RISC targets */
-            if (k_size <= 2 && n_simd == 1)
+            if (n_simd == 4 && n != 0)
+            {
+                k_size = k = 4;
+                n_simd = n = 1;
+            }
+#endif /* Power targets */
+            if (n_simd <= 2 && n != 0)
+            {
+                if (k != 0)
+                {
+                    k_size = k = k * n_simd;
+                }
+                n_simd = n = 1;
+            }
+            if (k_size <= (2 + 2*t) && n_simd == 1)
             {
                 mask |= s_type << (8*(k_size/2) - 4*(k_size>1));
-                mask |= s_type << (8*(k_size/2));
+                mask |= s_type << (8*(k_size/2) - t*(k_size>1));
             }
 #endif /* all targets */
         }
 
-        k_size = k == 0 ? 4 : k;
+        k_size = k == 0 ? 2 : k;        /* <- 2 is the optimal size-factor */
     }
 
     return mask;
@@ -641,13 +663,13 @@ rt_si32 from_mask(rt_si32 mask)
         k_size = k_size * 2;
         n_simd = 4;
     }
-#else /* other RISC targets */
+#else /* RISC targets */
 #if defined (RT_P32) || defined (RT_P64)
     if (n_simd >= 2 && k_size == 1)
     {
         s_type = s_type << 1;
     }
-#endif /* other RISC targets */
+#endif /* Power targets */
     if (n_simd >= 2)
     {
         k_size = k_size * n_simd;

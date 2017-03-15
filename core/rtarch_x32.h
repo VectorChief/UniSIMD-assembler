@@ -1537,6 +1537,10 @@
         shlwx_ri(Recx, IB(8))                                               \
         andwx_ri(Recx, IV(0x03000000))  /* <- AVX3.x to bit24, bit25 */     \
         orrwx_rr(Resi, Recx)                                                \
+        movwx_rr(Recx, Resi)                                                \
+        shlwx_ri(Recx, IB(8))                                               \
+        andwx_ri(Recx, IV(0x30000000))  /* <- AVX3.x to bit28, bit29 */     \
+        orrwx_rr(Resi, Recx)                                                \
         movwx_st(Resi, Mebp, inf_VER)
 
 /************************* address-sized instructions *************************/
