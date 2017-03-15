@@ -555,6 +555,110 @@ struct rt_SIMD_REGS
 
 #define ASM_DONE(__Info__)
 
+/*
+ * Initialize SIMD target mask (rt_SIMD_INFO->ver) from "simd" parameters:
+ * SIMD native-size (1, 2, 4) in 0th (lowest) byte
+ * SIMD type (1, 2, 4, 8) in 1st (higher) byte and
+ * SIMD size-factor (1, 2, 4) in 2nd (higher) byte
+ * For interpretation of SIMD target mask check compatibility layer in rtzero.h
+ */
+static
+rt_si32 mask_init(rt_si32 simd)
+{
+    rt_si32 n_simd = (simd >> 0) & 0xFF;
+    rt_si32 s_type = (simd >> 8) & 0xFF;
+    rt_si32 k_size = (simd >> 16) & 0xFF;
+
+    rt_si32 mask = 0;
+    rt_si32 n = n_simd, k = k_size;
+
+    s_type = s_type == 0 ? 0xF : s_type;
+    n_simd = n_simd == 0 ? 4 : n_simd;
+    k_size = k_size == 0 ? 4 : k_size;
+
+    for (; n_simd >= n && n_simd > 0; n_simd /= 2)
+    {
+        for (; k_size >= k && k_size > 0; k_size /= 2)
+        {
+#if   defined (RT_X86)
+            if (k_size == 1 && n_simd <= 4)
+            {
+                mask |= s_type << (8*(n_simd/2));
+            }
+#elif defined (RT_X32) || defined (RT_X64)
+            if (k_size >= 2 && n_simd == 4)
+            {
+                mask |= s_type << (20 + k_size*2);
+            }
+            else
+            if (k_size <= 2 && n_simd <= 4)
+            {
+                mask |= s_type << (8*(n_simd/2) + 4*(k_size/2));
+            }
+#elif defined (RT_P32) || defined (RT_P64)
+            if (k_size <= 4 && n_simd == 1)
+            {
+                mask |= s_type << (8*(k_size/2) - 4*(k_size>1));
+                mask |= s_type << (8*(k_size/2) - 1*(k_size>1));
+            }
+#else /* other RISC targets */
+            if (k_size <= 2 && n_simd == 1)
+            {
+                mask |= s_type << (8*(k_size/2) - 4*(k_size>1));
+                mask |= s_type << (8*(k_size/2));
+            }
+#endif /* all targets */
+        }
+
+        k_size = k == 0 ? 4 : k;
+    }
+
+    return mask;
+}
+
+/*
+ * Initialize SIMD return parameters from target mask (rt_SIMD_INFO->ver).
+ * SIMD native-size (1, 2, 4) in 0th (lowest) byte
+ * SIMD type (1, 2, 4, 8) in 1st (higher) byte and
+ * SIMD size-factor (1, 2, 4) in 2nd (higher) byte
+ * For interpretation of SIMD target mask check compatibility layer in rtzero.h
+ */
+static
+rt_si32 from_mask(rt_si32 mask)
+{
+    rt_si32 n_simd, s_type, k_size;
+
+    n_simd = mask >= 0x01000000 ? 6 : mask >= 0x00010000 ? 4 :
+             mask >= 0x00000100 ? 2 : mask >= 0x00000001 ? 1 : 0;
+
+    s_type = mask >> (8*(n_simd/2));
+    k_size = s_type >= 0x10 ? 2 : 1;
+    s_type = s_type >> 4*(k_size-1);
+
+#if   defined (RT_X32) || defined (RT_X64) || defined (RT_X86)
+    if (n_simd == 6)
+    {
+        k_size = k_size * 2;
+        n_simd = 4;
+    }
+#else /* other RISC targets */
+#if defined (RT_P32) || defined (RT_P64)
+    if (n_simd >= 2 && k_size == 1)
+    {
+        s_type = s_type << 1;
+    }
+#endif /* other RISC targets */
+    if (n_simd >= 2)
+    {
+        k_size = k_size * n_simd;
+        n_simd = 1;
+    }
+#endif /* all targets */
+
+    /* ------ k_size ------- s_type ------- n_simd ------ */
+    return (k_size << 16) | (s_type << 8) | (n_simd);
+}
+
 /******************************************************************************/
 /************************   COMMON SIMD INSTRUCTIONS   ************************/
 /******************************************************************************/

@@ -186,7 +186,7 @@
  *
  * Some targets may have less registers than category-defined maximum (8,16,32).
  * The common minimum in each category is then defined with RT_SIMD_COMPAT_XMM:
- * 0 - 8, 16, 32; 1 - 8, 15, 30; 2 - 7, 14, 28 and determines a set of targets.
+ * 0 - (8,16,32); 1 - (8,15,30); 2 - (7,14,28) and determines a set of targets.
  */
 
 #if   !(defined RT_2K8_R8)
