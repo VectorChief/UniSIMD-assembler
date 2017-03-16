@@ -556,10 +556,11 @@ struct rt_SIMD_REGS
 #define ASM_DONE(__Info__)
 
 /*
- * Initialize SIMD target mask (rt_SIMD_INFO->ver) from "simd" parameters:
+ * Return SIMD target mask (in rt_SIMD_INFO->ver format) from "simd" parameters:
  * SIMD native-size (1, 2, 4) in 0th (lowest) byte
- * SIMD type (1, 2, 4, 8) in 1st (higher) byte and
+ * SIMD type (1, 2, 4, 8) in 1st (higher) byte      <- in format for given size
  * SIMD size-factor (1, 2, 4) in 2nd (higher) byte
+ * SIMD regs (8, 16, 32) in 3rd (highest) byte      <- logical vector registers
  * For interpretation of SIMD target mask check compatibility layer in rtzero.h
  */
 static
@@ -568,11 +569,12 @@ rt_si32 mask_init(rt_si32 simd)
     rt_si32 n_simd = (simd >> 0) & 0xFF;
     rt_si32 s_type = (simd >> 8) & 0xFF;
     rt_si32 k_size = (simd >> 16) & 0xFF;
+    rt_si32 v_regs = (simd >> 24) & 0xFF;
 
     rt_si32 mask = 0;
-    rt_si32 n = n_simd, k = k_size, t = 0;
+    rt_si32 n = n_simd, k = k_size, t = 0, m = 0, s = 0;
 
-    s_type = s_type == 0 ? 0xF : s_type;
+    s_type = s_type == 0 ? 0xF : s_type & 0xF;
     n_simd = n_simd == 0 ? 4 : n_simd;  /* <- 4 is the maximal native-size */
     k_size = k_size == 0 ? 2 : k_size;  /* <- 2 is the optimal size-factor */
 
@@ -581,7 +583,7 @@ rt_si32 mask_init(rt_si32 simd)
         for (; k_size >= k && k_size > 0; k_size /= 2)
         {
 #if   defined (RT_X86)
-            if (k_size == 1 && n_simd <= 4)
+            if (k_size == 1 && n_simd <= 4 && v_regs <= 8)
             {
                 mask |= s_type << (8*(n_simd/2));
             }
@@ -594,18 +596,35 @@ rt_si32 mask_init(rt_si32 simd)
                 }
                 n_simd = n = 4;
             }
-            if (k_size >= 2 && n_simd == 4)
+            if (k_size == 4 && n_simd == 4 && v_regs <= 8)
             {
-                mask |= s_type << (20 + k_size*2);
+                mask |= s_type << 28;
             }
-            if (k_size <= 2 && n_simd <= 4)
+            if (k_size == 2 && n_simd == 4 && v_regs <= 16)
             {
-                mask |= s_type << (8*(n_simd/2) + 4*(k_size/2));
+                mask |= s_type << 24;
             }
-#else /* RISC targets */
-            t = 0;
-#if defined (RT_P32) || defined (RT_P64)
-            t = 1;
+            if (k_size == 1 && n_simd == 4 && v_regs == 32)
+            {
+                mask |= s_type << 16;
+            }
+            if (k_size == 2 && n_simd <= 4 && v_regs <= 8)
+            {
+                mask |= s_type << (8*(n_simd/2) + 4);
+            }
+            if (k_size == 1 && n_simd <= 4 && v_regs <= 16)
+            {
+                mask |= s_type << (8*(n_simd/2));
+            }
+#elif defined (RT_ARM)
+            if (k_size == 1 && n_simd == 1 && v_regs <= 8)
+            {
+                mask |= s_type;
+            }
+#else /* modern RISC targets */
+            t = 0; m = 2; s = 1;
+#if   defined (RT_P32) || defined (RT_P64)
+            t = 1; m = 4; s = 2;
             if (n_simd >= 2 && n != 0)
             {
                 s_type <<= 1;
@@ -624,9 +643,16 @@ rt_si32 mask_init(rt_si32 simd)
                 }
                 n_simd = n = 1;
             }
-            if (k_size <= (2 + 2*t) && n_simd == 1)
+            if (k_size <= m && n_simd == 1 && v_regs <= 8)
             {
                 mask |= s_type << (8*(k_size/2) - 4*(k_size>1));
+            }
+            if (k_size <= m && n_simd == 1 && v_regs <= 16)
+            {
+                mask |= s_type << (8*(k_size/2) - t*(k_size>1));
+            }
+            if (k_size <= s && n_simd == 1 && v_regs == 32 && s_type >= s)
+            {
                 mask |= s_type << (8*(k_size/2) - t*(k_size>1));
             }
 #endif /* all targets */
@@ -639,16 +665,17 @@ rt_si32 mask_init(rt_si32 simd)
 }
 
 /*
- * Initialize SIMD return parameters from target mask (rt_SIMD_INFO->ver).
+ * Pack/return SIMD parameters from target "mask" (in rt_SIMD_INFO->ver format).
  * SIMD native-size (1, 2, 4) in 0th (lowest) byte
- * SIMD type (1, 2, 4, 8) in 1st (higher) byte and
+ * SIMD type (1, 2, 4, 8) in 1st (higher) byte      <- in format for given size
  * SIMD size-factor (1, 2, 4) in 2nd (higher) byte
+ * SIMD regs (8, 16, 32) in 3rd (highest) byte      <- logical vector registers
  * For interpretation of SIMD target mask check compatibility layer in rtzero.h
  */
 static
 rt_si32 from_mask(rt_si32 mask)
 {
-    rt_si32 n_simd, s_type, k_size;
+    rt_si32 n_simd, s_type, k_size, v_regs;
 
     n_simd = mask >= 0x01000000 ? 6 : mask >= 0x00010000 ? 4 :
              mask >= 0x00000100 ? 2 : mask >= 0x00000001 ? 1 : 0;
@@ -656,18 +683,45 @@ rt_si32 from_mask(rt_si32 mask)
     s_type = mask >> (8*(n_simd/2));
     k_size = s_type >= 0x10 ? 2 : 1;
     s_type = s_type >> 4*(k_size-1);
+    v_regs = 16 / k_size;
 
-#if   defined (RT_X32) || defined (RT_X64) || defined (RT_X86)
+#if   defined (RT_X86)
+    if (n_simd >= 6 || k_size >= 2)
+    {
+        n_simd = s_type = k_size = v_regs = 0;
+    }
+    else
+    {
+        v_regs = 8;
+    }
+#elif defined (RT_X32) || defined (RT_X64)
     if (n_simd == 6)
     {
         k_size = k_size * 2;
         n_simd = 4;
     }
-#else /* RISC targets */
+    if (n_simd == 4 && k_size == 1)
+    {
+        v_regs = 32;
+    }
+#elif defined (RT_ARM)
+    if (n_simd != 1 || k_size >= 2)
+    {
+        n_simd = s_type = k_size = v_regs = 0;
+    }
+    else
+    {
+        v_regs = 8;
+    }
+#else /* modern RISC targets */
 #if defined (RT_P32) || defined (RT_P64)
     if (n_simd >= 2 && k_size == 1)
     {
         s_type = s_type << 1;
+    }
+    if (n_simd == 2 && k_size == 1)
+    {
+        v_regs = 32;
     }
 #endif /* Power targets */
     if (n_simd >= 2)
@@ -675,10 +729,19 @@ rt_si32 from_mask(rt_si32 mask)
         k_size = k_size * n_simd;
         n_simd = 1;
     }
+    if (n_simd == 1 && k_size == 1)
+    {
+        v_regs = 32;
+    }
 #endif /* all targets */
 
-    /* ------ k_size ------- s_type ------- n_simd ------ */
-    return (k_size << 16) | (s_type << 8) | (n_simd);
+    if (n_simd == 0 || mask == 0)
+    {
+        n_simd = s_type = k_size = v_regs = 0;
+    }
+
+    /* ------- v_regs ------- k_size ------- s_type ------- n_simd ------- */
+    return (v_regs << 24) | (k_size << 16) | (s_type << 8) | (n_simd);
 }
 
 /******************************************************************************/
