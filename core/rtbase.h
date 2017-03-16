@@ -604,7 +604,7 @@ rt_si32 mask_init(rt_si32 simd)
             {
                 mask |= s_type << 24;
             }
-            if (k_size == 1 && n_simd == 4 && v_regs == 32)
+            if (k_size == 1 && n_simd == 4 && v_regs <= 32)
             {
                 mask |= s_type << 16;
             }
@@ -647,11 +647,11 @@ rt_si32 mask_init(rt_si32 simd)
             {
                 mask |= s_type << (8*(k_size/2) - 4*(k_size>1));
             }
-            if (k_size <= m && n_simd == 1 && v_regs <= 16)
+            if (k_size <= m && n_simd == 1 && v_regs <= 15)
             {
                 mask |= s_type << (8*(k_size/2) - t*(k_size>1));
             }
-            if (k_size <= s && n_simd == 1 && v_regs == 32 && s_type >= s)
+            if (k_size <= s && n_simd == 1 && v_regs <= 30 && s_type >= s)
             {
                 mask |= s_type << (8*(k_size/2) - t*(k_size>1));
             }
@@ -714,6 +714,7 @@ rt_si32 from_mask(rt_si32 mask)
         v_regs = 8;
     }
 #else /* modern RISC targets */
+    v_regs = v_regs == 16 ? 15 : 8;
 #if defined (RT_P32) || defined (RT_P64)
     if (n_simd >= 2 && k_size == 1)
     {
@@ -721,7 +722,7 @@ rt_si32 from_mask(rt_si32 mask)
     }
     if (n_simd == 2 && k_size == 1)
     {
-        v_regs = 32;
+        v_regs = 30;
     }
 #endif /* Power targets */
     if (n_simd >= 2)
@@ -731,7 +732,7 @@ rt_si32 from_mask(rt_si32 mask)
     }
     if (n_simd == 1 && k_size == 1)
     {
-        v_regs = 32;
+        v_regs = 30;
     }
 #endif /* all targets */
 
