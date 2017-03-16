@@ -651,7 +651,8 @@ rt_si32 mask_init(rt_si32 simd)
             {
                 mask |= s_type << (8*(k_size/2) - t*(k_size>1));
             }
-            if (k_size <= s && n_simd == 1 && v_regs <= 30 && s_type >= s)
+            /* should be "s" when 30-regs x 256-bit is supported on Power */
+            if (k_size <= 1 && n_simd == 1 && v_regs <= 30 && s_type >= s)
             {
                 mask |= s_type << (8*(k_size/2) - t*(k_size>1));
             }
@@ -720,7 +721,8 @@ rt_si32 from_mask(rt_si32 mask)
     {
         s_type = s_type << 1;
     }
-    if (n_simd == 2 && k_size == 1)
+    /* should be "2" when 30-regs x 256-bit is supported on Power */
+    if (n_simd == 1 && k_size == 1)
     {
         v_regs = 30;
     }

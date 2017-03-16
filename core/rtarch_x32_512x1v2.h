@@ -1055,6 +1055,40 @@
         MRM(0x06,       0x00,    0x00)                                      \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
     ADR EVX(1,             0,    0x00, K, 0, 1) EMITB(0x29)                 \
+        MRM(0x07,       0x00,    0x00)                                      \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        movox_st(XmmG, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmH, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmI, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmJ, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmK, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmL, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmM, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmN, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmO, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmP, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmQ, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmR, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmS, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_st(XmmT, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+    ADR EVX(3,             0,    0x00, K, 0, 1) EMITB(0x29)                 \
+        MRM(0x06,       0x00,    0x00)                                      \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+    ADR EVX(3,             0,    0x00, K, 0, 1) EMITB(0x29)                 \
         MRM(0x07,       0x00,    0x00)
 
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
@@ -1091,6 +1125,40 @@
         MRM(0x06,       0x00,    0x00)                                      \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
     ADR EVX(1,             0,    0x00, K, 0, 1) EMITB(0x28)                 \
+        MRM(0x07,       0x00,    0x00)                                      \
+        movxx_ld(Reax, Mebp, inf_REGS)                                      \
+        movox_ld(XmmG, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmH, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmI, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmJ, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmK, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmL, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmM, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmN, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmO, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmP, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmQ, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmR, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmS, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        movox_ld(XmmT, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+    ADR EVX(3,             0,    0x00, K, 0, 1) EMITB(0x28)                 \
+        MRM(0x06,       0x00,    0x00)                                      \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+    ADR EVX(3,             0,    0x00, K, 0, 1) EMITB(0x28)                 \
         MRM(0x07,       0x00,    0x00)
 
 #endif /* RT_512X1 */

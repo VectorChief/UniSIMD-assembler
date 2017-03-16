@@ -134,6 +134,29 @@
 #endif/*RT_SIMD_COMPAT_XMM < 1*/
 #endif/*RT_SIMD_COMPAT_XMM < 2*/
 
+/* only for 512-bit instructions (native AVX-512) */
+
+#define XmmG    0x10, 0x03, EMPTY
+#define XmmH    0x11, 0x03, EMPTY
+#define XmmI    0x12, 0x03, EMPTY
+#define XmmJ    0x13, 0x03, EMPTY
+#define XmmK    0x14, 0x03, EMPTY
+#define XmmL    0x15, 0x03, EMPTY
+#define XmmM    0x16, 0x03, EMPTY
+#define XmmN    0x17, 0x03, EMPTY
+#define XmmO    0x18, 0x03, EMPTY
+#define XmmP    0x19, 0x03, EMPTY
+#define XmmQ    0x1A, 0x03, EMPTY
+#define XmmR    0x1B, 0x03, EMPTY
+#define XmmS    0x1C, 0x03, EMPTY
+#define XmmT    0x1D, 0x03, EMPTY
+#if     RT_SIMD_COMPAT_XMM < 2
+#define XmmU    0x1E, 0x03, EMPTY            /* may be reserved in some cases */
+#if     RT_SIMD_COMPAT_XMM < 1
+#define XmmV    0x1F, 0x03, EMPTY            /* may be reserved in some cases */
+#endif/*RT_SIMD_COMPAT_XMM < 1*/
+#endif/*RT_SIMD_COMPAT_XMM < 2*/
+
 /* The last two SIMD registers can be reserved by the assembler when building
  * RISC targets with SIMD wider than natively supported 128-bit, in which case
  * they will be occupied by temporary data. Two hidden registers may also come

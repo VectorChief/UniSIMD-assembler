@@ -170,6 +170,29 @@
 #endif/*RT_SIMD_COMPAT_XMM < 1*/
 #endif/*RT_SIMD_COMPAT_XMM < 2*/
 
+/* only for 128-bit instructions (save/restore in 256-bit header) */
+
+#define XmmG    0x10, $w16, EMPTY       /* w16 */
+#define XmmH    0x11, $w17, EMPTY       /* w17 */
+#define XmmI    0x12, $w18, EMPTY       /* w18 */
+#define XmmJ    0x13, $w19, EMPTY       /* w19 */
+#define XmmK    0x14, $w20, EMPTY       /* w20 */
+#define XmmL    0x15, $w21, EMPTY       /* w21 */
+#define XmmM    0x16, $w22, EMPTY       /* w22 */
+#define XmmN    0x17, $w23, EMPTY       /* w23 */
+#define XmmO    0x18, $w24, EMPTY       /* w24 */
+#define XmmP    0x19, $w25, EMPTY       /* w25 */
+#define XmmQ    0x1A, $w26, EMPTY       /* w26 */
+#define XmmR    0x1B, $w27, EMPTY       /* w27 */
+#define XmmS    0x1C, $w28, EMPTY       /* w28 */
+#define XmmT    0x1D, $w29, EMPTY       /* w29 */
+#if     RT_SIMD_COMPAT_XMM < 2
+#define XmmU    0x1E, $w30, EMPTY       /* w30, may be reserved in some cases */
+#if     RT_SIMD_COMPAT_XMM < 1
+#define XmmV    0x1F, $w31, EMPTY       /* w31, may be reserved in some cases */
+#endif/*RT_SIMD_COMPAT_XMM < 1*/
+#endif/*RT_SIMD_COMPAT_XMM < 2*/
+
 /* The last two SIMD registers can be reserved by the assembler when building
  * RISC targets with SIMD wider than natively supported 128-bit, in which case
  * they will be occupied by temporary data. Two hidden registers may also come
