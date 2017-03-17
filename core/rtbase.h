@@ -571,7 +571,7 @@ rt_si32 mask_init(rt_si32 simd)
     rt_si32 k_size = (simd >> 16) & 0xFF;
     rt_si32 v_regs = (simd >> 24) & 0xFF;
 
-    rt_si32 mask = 0;
+    rt_si32 mask = 0, tmpl = 0x7F7F7F7F;   /* <- turn off _RX bits for now */
     rt_si32 n = n_simd, k = k_size, t = 0, m = 0, s = 0;
 
     s_type = s_type == 0 ? 0xF : s_type & 0xF;
@@ -661,6 +661,8 @@ rt_si32 mask_init(rt_si32 simd)
 
         k_size = k == 0 ? 2 : k;        /* <- 2 is the optimal size-factor */
     }
+
+    mask &= tmpl; /* fix type spills on Power <- turn off _RX bits for now */
 
     return mask;
 }

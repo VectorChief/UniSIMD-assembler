@@ -1672,13 +1672,7 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         movox_st(XmmD, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        EMITW(0x7C000719 | MXM(TmmE,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        EMITW(0x7C000719 | MXM(TmmE+16, 0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        EMITW(0x7C000718 | MXM(TmmE,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        EMITW(0x7C000718 | MXM(TmmE+16, 0x00,    Teax))                     \
+        movox_st(XmmE, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         EMITW(0x7C000719 | MXM(TmmQ,    0x00,    Teax))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
@@ -1718,13 +1712,7 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         movox_ld(XmmD, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        EMITW(0x7C000619 | MXM(TmmE,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        EMITW(0x7C000619 | MXM(TmmE+16, 0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        EMITW(0x7C000618 | MXM(TmmE,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        EMITW(0x7C000618 | MXM(TmmE+16, 0x00,    Teax))                     \
+        movox_ld(XmmE, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         EMITW(0x7C000619 | MXM(TmmQ,    0x00,    Teax))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \

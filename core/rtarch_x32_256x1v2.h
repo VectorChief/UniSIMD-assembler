@@ -1432,11 +1432,9 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
         muvcx_st(XmmD, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-    ADR VEX(1,             0,    0x00, 1, 0, 1) EMITB(0x11)                 \
-        MRM(0x06,       0x00,    0x00)                                      \
+        muvcx_st(XmmE, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-    ADR VEX(1,             0,    0x00, 1, 0, 1) EMITB(0x11)                 \
-        MRM(0x07,       0x00,    0x00)
+        muvcx_st(XmmF, Oeax, PLAIN)
 
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
@@ -1468,11 +1466,9 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
         muvcx_ld(XmmD, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-    ADR VEX(1,             0,    0x00, 1, 0, 1) EMITB(0x10)                 \
-        MRM(0x06,       0x00,    0x00)                                      \
+        muvcx_ld(XmmE, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-    ADR VEX(1,             0,    0x00, 1, 0, 1) EMITB(0x10)                 \
-        MRM(0x07,       0x00,    0x00)
+        muvcx_ld(XmmF, Oeax, PLAIN)
 
 #endif /* RT_256X1 */
 

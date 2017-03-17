@@ -100,9 +100,6 @@
 
 #if (RT_128X1 >= 8 && RT_128X1 <= 8)
 
-#undef  sregs_sa
-#undef  sregs_la
-
 /* fwait instruction for legacy processors (fix for fstcw) */
 #define FWT                                                                 \
         EMITB(0x9B)
@@ -127,14 +124,11 @@
 #define XmmB    0x0B, 0x03, EMPTY
 #define XmmC    0x0C, 0x03, EMPTY
 #define XmmD    0x0D, 0x03, EMPTY
-#if     RT_SIMD_COMPAT_XMM < 2
-#define XmmE    0x0E, 0x03, EMPTY            /* may be reserved in some cases */
-#if     RT_SIMD_COMPAT_XMM < 1
-#define XmmF    0x0F, 0x03, EMPTY            /* may be reserved in some cases */
-#endif/*RT_SIMD_COMPAT_XMM < 1*/
-#endif/*RT_SIMD_COMPAT_XMM < 2*/
+#define XmmE    0x0E, 0x03, EMPTY
+#define XmmF    0x0F, 0x03, EMPTY  /* reserved in >= 256-bit subsets on RISCs */
 
-/* only for 512-bit instructions (native AVX-512) */
+/* only for 512-bit instructions (save/restore in 512-bit header)
+ * provided as an extension to common baseline of 15 registers */
 
 #define XmmG    0x10, 0x03, EMPTY
 #define XmmH    0x11, 0x03, EMPTY
@@ -150,21 +144,6 @@
 #define XmmR    0x1B, 0x03, EMPTY
 #define XmmS    0x1C, 0x03, EMPTY
 #define XmmT    0x1D, 0x03, EMPTY
-#if     RT_SIMD_COMPAT_XMM < 2
-#define XmmU    0x1E, 0x03, EMPTY            /* may be reserved in some cases */
-#if     RT_SIMD_COMPAT_XMM < 1
-#define XmmV    0x1F, 0x03, EMPTY            /* may be reserved in some cases */
-#endif/*RT_SIMD_COMPAT_XMM < 1*/
-#endif/*RT_SIMD_COMPAT_XMM < 2*/
-
-/* The last two SIMD registers can be reserved by the assembler when building
- * RISC targets with SIMD wider than natively supported 128-bit, in which case
- * they will be occupied by temporary data. Two hidden registers may also come
- * in handy when implementing elaborate register-spill techniques in the future
- * for current targets with less native registers than architecturally exposed.
- *
- * It should be possible to reserve only 1 SIMD register (XmmF) to achieve the
- * goals above (totalling 15 regs) at the cost of extra loads in certain ops. */
 
 /******************************************************************************/
 /**********************************   AVX   ***********************************/
@@ -1904,80 +1883,6 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
-
-/* sregs */
-
-#define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
-        movxx_ld(Reax, Mebp, inf_REGS)                                      \
-        movix_st(Xmm0, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm1, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm2, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm3, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm4, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm5, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm6, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm7, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm8, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm9, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(XmmA, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(XmmB, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(XmmC, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(XmmD, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-    ADR VEX(1,             0,    0x00, 0, 0, 1) EMITB(0x29)                 \
-        MRM(0x06,       0x00,    0x00)                                      \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-    ADR VEX(1,             0,    0x00, 0, 0, 1) EMITB(0x29)                 \
-        MRM(0x07,       0x00,    0x00)
-
-#define sregs_la() /* load all SIMD regs, destroys Reax */                  \
-        movxx_ld(Reax, Mebp, inf_REGS)                                      \
-        movix_ld(Xmm0, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm1, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm2, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm3, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm4, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm5, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm6, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm7, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm8, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm9, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(XmmA, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(XmmB, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(XmmC, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(XmmD, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-    ADR VEX(1,             0,    0x00, 0, 0, 1) EMITB(0x28)                 \
-        MRM(0x06,       0x00,    0x00)                                      \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-    ADR VEX(1,             0,    0x00, 0, 0, 1) EMITB(0x28)                 \
-        MRM(0x07,       0x00,    0x00)
 
 #ifndef RT_RTARCH_X64_256X1V2_H
 #undef  RT_256X1

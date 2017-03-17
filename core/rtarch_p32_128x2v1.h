@@ -1319,6 +1319,14 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
+#define movts_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0xC8000000 | MDM(REG(XD), MOD(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define movts_st(XS, MD, DD)                                                \
+        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
+        EMITW(0xD8000000 | MDM(REG(XS), MOD(MD), VAL(DD), B1(DD), P1(DD)))
+
 /* sregs */
 
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
@@ -1351,12 +1359,10 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
         movcx_st(XmmD, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        EMITW(0x7C0001CE | MXM(TmmE,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        EMITW(0x7C0001CE | MXM(TmmE+16, 0x00,    Teax))                     \
+        movcx_st(XmmE, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
         EMITW(0x7C0001CE | MXM(TmmQ,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITW(0x7C0001CE | MXM(TmmM,    0x00,    Teax))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movts_st(Xmm0, Oeax, PLAIN)                                         \
@@ -1387,9 +1393,9 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movts_st(XmmD, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        EMITW(0xD8000000 | MXM(TmmE,    Teax,    0x00))                     \
+        movts_st(XmmE, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        EMITW(0xD8000000 | MXM(TmmF,    Teax,    0x00))
+        movts_st(XmmF, Oeax, PLAIN)
 
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
@@ -1421,12 +1427,10 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
         movcx_ld(XmmD, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        EMITW(0x7C0000CE | MXM(TmmE,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
-        EMITW(0x7C0000CE | MXM(TmmE+16, 0x00,    Teax))                     \
+        movcx_ld(XmmE, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
         EMITW(0x7C0000CE | MXM(TmmQ,    0x00,    Teax))                     \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITW(0x7C0000CE | MXM(TmmM,    0x00,    Teax))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movts_ld(Xmm0, Oeax, PLAIN)                                         \
@@ -1457,9 +1461,9 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movts_ld(XmmD, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        EMITW(0xC8000000 | MXM(TmmE,    Teax,    0x00))                     \
+        movts_ld(XmmE, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        EMITW(0xC8000000 | MXM(TmmF,    Teax,    0x00))
+        movts_ld(XmmF, Oeax, PLAIN)
 
 #endif /* RT_128X2 */
 
