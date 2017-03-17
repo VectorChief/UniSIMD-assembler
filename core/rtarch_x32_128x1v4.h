@@ -98,10 +98,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if (RT_128X1 >= 1 && RT_128X1 <= 4)
-
-#undef  sregs_sa
-#undef  sregs_la
+#if (RT_128X1 >= 2 && RT_128X1 <= 4)
 
 /* mandatory escape prefix for some opcodes (must preceed rex) */
 #define ESC                                                                 \
@@ -807,133 +804,6 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
 
 /*************   packed single-precision floating-point convert   *************/
 
-#if (RT_128X1 < 2)
-
-/* cvz (D = fp-to-signed-int S)
- * rounding mode is encoded directly (can be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
-
-#define rnzis_rr(XD, XS)     /* round towards zero */                       \
-        cvzis_rr(W(XD), W(XS))                                              \
-        cvnin_rr(W(XD), W(XD))
-
-#define rnzis_ld(XD, MS, DS) /* round towards zero */                       \
-        cvzis_ld(W(XD), W(MS), W(DS))                                       \
-        cvnin_rr(W(XD), W(XD))
-
-#define cvzis_rr(XD, XS)     /* round towards zero */                       \
-        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        fpuws_ld(Mebp,  inf_SCR01(0x00))                                    \
-        fpuwt_st(Mebp,  inf_SCR01(0x00))                                    \
-        fpuws_ld(Mebp,  inf_SCR01(0x04))                                    \
-        fpuwt_st(Mebp,  inf_SCR01(0x04))                                    \
-        fpuws_ld(Mebp,  inf_SCR01(0x08))                                    \
-        fpuwt_st(Mebp,  inf_SCR01(0x08))                                    \
-        fpuws_ld(Mebp,  inf_SCR01(0x0C))                                    \
-        fpuwt_st(Mebp,  inf_SCR01(0x0C))                                    \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define cvzis_ld(XD, MS, DS) /* round towards zero */                       \
-        movix_ld(W(XD), W(MS), W(DS))                                       \
-        cvzis_rr(W(XD), W(XD))
-
-/* cvp (D = fp-to-signed-int S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
-
-#define rnpis_rr(XD, XS)     /* round towards +inf */                       \
-        cvpis_rr(W(XD), W(XS))                                              \
-        cvnin_rr(W(XD), W(XD))
-
-#define rnpis_ld(XD, MS, DS) /* round towards +inf */                       \
-        cvpis_ld(W(XD), W(MS), W(DS))                                       \
-        cvnin_rr(W(XD), W(XD))
-
-#define cvpis_rr(XD, XS)     /* round towards +inf */                       \
-        fpurp_xx()                                                          \
-        cvnis_rr(W(XD), W(XS))                                              \
-        fpurn_xx()
-
-#define cvpis_ld(XD, MS, DS) /* round towards +inf */                       \
-        fpurp_xx()                                                          \
-        cvnis_ld(W(XD), W(MS), W(DS))                                       \
-        fpurn_xx()
-
-/* cvm (D = fp-to-signed-int S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
-
-#define rnmis_rr(XD, XS)     /* round towards -inf */                       \
-        cvmis_rr(W(XD), W(XS))                                              \
-        cvnin_rr(W(XD), W(XD))
-
-#define rnmis_ld(XD, MS, DS) /* round towards -inf */                       \
-        cvmis_ld(W(XD), W(MS), W(DS))                                       \
-        cvnin_rr(W(XD), W(XD))
-
-#define cvmis_rr(XD, XS)     /* round towards -inf */                       \
-        fpurm_xx()                                                          \
-        cvnis_rr(W(XD), W(XS))                                              \
-        fpurn_xx()
-
-#define cvmis_ld(XD, MS, DS) /* round towards -inf */                       \
-        fpurm_xx()                                                          \
-        cvnis_ld(W(XD), W(MS), W(DS))                                       \
-        fpurn_xx()
-
-/* cvn (D = fp-to-signed-int S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
-
-#define rnnis_rr(XD, XS)     /* round towards near */                       \
-        cvnis_rr(W(XD), W(XS))                                              \
-        cvnin_rr(W(XD), W(XD))
-
-#define rnnis_ld(XD, MS, DS) /* round towards near */                       \
-        cvnis_ld(W(XD), W(MS), W(DS))                                       \
-        cvnin_rr(W(XD), W(XD))
-
-#define cvnis_rr(XD, XS)     /* round towards near */                       \
-        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        fpuws_ld(Mebp,  inf_SCR01(0x00))                                    \
-        fpuwn_st(Mebp,  inf_SCR01(0x00))                                    \
-        fpuws_ld(Mebp,  inf_SCR01(0x04))                                    \
-        fpuwn_st(Mebp,  inf_SCR01(0x04))                                    \
-        fpuws_ld(Mebp,  inf_SCR01(0x08))                                    \
-        fpuwn_st(Mebp,  inf_SCR01(0x08))                                    \
-        fpuws_ld(Mebp,  inf_SCR01(0x0C))                                    \
-        fpuwn_st(Mebp,  inf_SCR01(0x0C))                                    \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define cvnis_ld(XD, MS, DS) /* round towards near */                       \
-        movix_ld(W(XD), W(MS), W(DS))                                       \
-        cvnis_rr(W(XD), W(XD))
-
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnin_rr(XD, XS)     /* round towards near */                       \
-        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        fpuwn_ld(Mebp,  inf_SCR01(0x00))                                    \
-        fpuws_st(Mebp,  inf_SCR01(0x00))                                    \
-        fpuwn_ld(Mebp,  inf_SCR01(0x04))                                    \
-        fpuws_st(Mebp,  inf_SCR01(0x04))                                    \
-        fpuwn_ld(Mebp,  inf_SCR01(0x08))                                    \
-        fpuws_st(Mebp,  inf_SCR01(0x08))                                    \
-        fpuwn_ld(Mebp,  inf_SCR01(0x0C))                                    \
-        fpuws_st(Mebp,  inf_SCR01(0x0C))                                    \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define cvnin_ld(XD, MS, DS) /* round towards near */                       \
-        movix_ld(W(XD), W(MS), W(DS))                                       \
-        cvnin_rr(W(XD), W(XD))
-
-#else /* RT_128X1 >= 2 */
-
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
@@ -1110,58 +980,6 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
 #define cvnin_ld(XD, MS, DS) /* round towards near */                       \
         cvtin_ld(W(XD), W(MS), W(DS))
 
-#endif /* RT_128X1 >= 2 */
-
-#if (RT_128X1 < 2)
-
-/* cvt (D = fp-to-signed-int S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
-
-#define rndis_rr(XD, XS)                                                    \
-        cvtis_rr(W(XD), W(XS))                                              \
-        cvnin_rr(W(XD), W(XD))
-
-#define rndis_ld(XD, MS, DS)                                                \
-        cvtis_ld(W(XD), W(MS), W(DS))                                       \
-        cvnin_rr(W(XD), W(XD))
-
-#define cvtis_rr(XD, XS)                                                    \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
-        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
-        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
-        orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
-        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
-        cvnis_rr(W(XD), W(XS))                                              \
-        fpucw_ld(Mebp,  inf_SCR02(4))
-
-#define cvtis_ld(XD, MS, DS)                                                \
-        movix_ld(W(XD), W(MS), W(DS))                                       \
-        cvtis_rr(W(XD), W(XD))
-
-/* cvt (D = signed-int-to-fp S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
-
-#define cvtin_rr(XD, XS)                                                    \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
-        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
-        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
-        orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
-        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
-        cvnin_rr(W(XD), W(XS))                                              \
-        fpucw_ld(Mebp,  inf_SCR02(4))
-
-#define cvtin_ld(XD, MS, DS)                                                \
-        movix_ld(W(XD), W(MS), W(DS))                                       \
-        cvtin_rr(W(XD), W(XD))
-
-#else /* RT_128X1 >= 2 */
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
@@ -1214,8 +1032,6 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#endif /* RT_128X1 >= 2 */
-
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
@@ -1248,172 +1064,6 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
 #endif /* RT_128X1 >= 4 */
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
-
-#if (RT_128X1 < 2)
-
-/* add (G = G + S), (D = S + T) if (#D != #S) */
-
-#define addix_rr(XG, XS)                                                    \
-        addix3rr(W(XG), W(XG), W(XS))
-
-#define addix_ld(XG, MS, DS)                                                \
-        addix3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define addix3rr(XD, XS, XT)                                                \
-        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Reax)                                                      \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
-        addwx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x04))                              \
-        addwx_st(Reax,  Mebp, inf_SCR01(0x04))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
-        addwx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x0C))                              \
-        addwx_st(Reax,  Mebp, inf_SCR01(0x0C))                              \
-        stack_ld(Reax)                                                      \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define addix3ld(XD, XS, MT, DT)                                            \
-        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movix_ld(W(XD), W(MT), W(DT))                                       \
-        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        stack_st(Reax)                                                      \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
-        addwx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x04))                              \
-        addwx_st(Reax,  Mebp, inf_SCR01(0x04))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
-        addwx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x0C))                              \
-        addwx_st(Reax,  Mebp, inf_SCR01(0x0C))                              \
-        stack_ld(Reax)                                                      \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
-
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
-
-#define subix_rr(XG, XS)                                                    \
-        subix3rr(W(XG), W(XG), W(XS))
-
-#define subix_ld(XG, MS, DS)                                                \
-        subix3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define subix3rr(XD, XS, XT)                                                \
-        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Reax)                                                      \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
-        subwx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x04))                              \
-        subwx_st(Reax,  Mebp, inf_SCR01(0x04))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
-        subwx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x0C))                              \
-        subwx_st(Reax,  Mebp, inf_SCR01(0x0C))                              \
-        stack_ld(Reax)                                                      \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define subix3ld(XD, XS, MT, DT)                                            \
-        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movix_ld(W(XD), W(MT), W(DT))                                       \
-        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        stack_st(Reax)                                                      \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
-        subwx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x04))                              \
-        subwx_st(Reax,  Mebp, inf_SCR01(0x04))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
-        subwx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
-        movwx_ld(Reax,  Mebp, inf_SCR02(0x0C))                              \
-        subwx_st(Reax,  Mebp, inf_SCR01(0x0C))                              \
-        stack_ld(Reax)                                                      \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
-
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
-
-#define shlix_ri(XG, IS)                                                    \
-        shlix3ri(W(XG), W(XG), W(IS))
-
-#define shlix_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-        shlix3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define shlix3ri(XD, XS, IT)                                                \
-        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        shlwx_mi(Mebp,  inf_SCR01(0x00), W(IT))                             \
-        shlwx_mi(Mebp,  inf_SCR01(0x04), W(IT))                             \
-        shlwx_mi(Mebp,  inf_SCR01(0x08), W(IT))                             \
-        shlwx_mi(Mebp,  inf_SCR01(0x0C), W(IT))                             \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define shlix3ld(XD, XS, MT, DT)                                            \
-        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        stack_st(Recx)                                                      \
-        movwx_ld(Recx,  W(MT), W(DT))                                       \
-        shlwx_mx(Mebp,  inf_SCR01(0x00))                                    \
-        shlwx_mx(Mebp,  inf_SCR01(0x04))                                    \
-        shlwx_mx(Mebp,  inf_SCR01(0x08))                                    \
-        shlwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
-        stack_ld(Recx)                                                      \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
-
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
-
-#define shrix_ri(XG, IS)                                                    \
-        shrix3ri(W(XG), W(XG), W(IS))
-
-#define shrix_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-        shrix3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define shrix3ri(XD, XS, IT)                                                \
-        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        shrwx_mi(Mebp,  inf_SCR01(0x00), W(IT))                             \
-        shrwx_mi(Mebp,  inf_SCR01(0x04), W(IT))                             \
-        shrwx_mi(Mebp,  inf_SCR01(0x08), W(IT))                             \
-        shrwx_mi(Mebp,  inf_SCR01(0x0C), W(IT))                             \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define shrix3ld(XD, XS, MT, DT)                                            \
-        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        stack_st(Recx)                                                      \
-        movwx_ld(Recx,  W(MT), W(DT))                                       \
-        shrwx_mx(Mebp,  inf_SCR01(0x00))                                    \
-        shrwx_mx(Mebp,  inf_SCR01(0x04))                                    \
-        shrwx_mx(Mebp,  inf_SCR01(0x08))                                    \
-        shrwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
-        stack_ld(Recx)                                                      \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
-
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
- * for maximum compatibility, shift count mustn't exceed elem-size */
-
-#define shrin_ri(XG, IS)                                                    \
-        shrin3ri(W(XG), W(XG), W(IS))
-
-#define shrin_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
-        shrin3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define shrin3ri(XD, XS, IT)                                                \
-        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        shrwn_mi(Mebp,  inf_SCR01(0x00), W(IT))                             \
-        shrwn_mi(Mebp,  inf_SCR01(0x04), W(IT))                             \
-        shrwn_mi(Mebp,  inf_SCR01(0x08), W(IT))                             \
-        shrwn_mi(Mebp,  inf_SCR01(0x0C), W(IT))                             \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define shrin3ld(XD, XS, MT, DT)                                            \
-        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        stack_st(Recx)                                                      \
-        movwx_ld(Recx,  W(MT), W(DT))                                       \
-        shrwn_mx(Mebp,  inf_SCR01(0x00))                                    \
-        shrwn_mx(Mebp,  inf_SCR01(0x04))                                    \
-        shrwn_mx(Mebp,  inf_SCR01(0x08))                                    \
-        shrwn_mx(Mebp,  inf_SCR01(0x0C))                                    \
-        stack_ld(Recx)                                                      \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
-
-#else /* RT_128X1 >= 2 */
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1515,8 +1165,6 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
 #define shrin3ld(XD, XS, MT, DT)                                            \
         movix_rr(W(XD), W(XS))                                              \
         shrin_ld(W(XD), W(MT), W(DT))
-
-#endif /* RT_128X1 >= 2 */
 
 /* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -2379,74 +2027,6 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
-
-#define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
-        movxx_ld(Reax, Mebp, inf_REGS)                                      \
-        movix_st(Xmm0, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm1, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm2, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm3, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm4, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm5, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm6, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm7, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm8, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(Xmm9, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(XmmA, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(XmmB, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(XmmC, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(XmmD, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(XmmE, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_st(XmmF, Oeax, PLAIN)
-
-#define sregs_la() /* load all SIMD regs, destroys Reax */                  \
-        movxx_ld(Reax, Mebp, inf_REGS)                                      \
-        movix_ld(Xmm0, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm1, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm2, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm3, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm4, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm5, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm6, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm7, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm8, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(Xmm9, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(XmmA, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(XmmB, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(XmmC, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(XmmD, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(XmmE, Oeax, PLAIN)                                         \
-        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movix_ld(XmmF, Oeax, PLAIN)
 
 #ifndef RT_RTARCH_X64_128X2V4_H
 #undef  RT_128X2
