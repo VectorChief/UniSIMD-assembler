@@ -1,3 +1,29 @@
+v0.9.1: Unified SIMD Assembler, 3-operand + basic scalar SIMD, extra backends
+  - expose 128/256-bit SIMD subsets (cmd[i/j/l]*, cmd[c/d/f]*) simultaneously
+  - add 3-operand SIMD instructions to all targets, emulate where not present
+  - implement basic scalar SIMD support (arithmetic + compare-to-mask-elem)
+  - implement additional paired/quaded 8-register SIMD backends on x86_64
+  - add 8-register makefile flags RT_256_R8, RT_512_R8, RT_1K4_R8, RT_2K8_R8
+  - original 15-register makefile flags RT_128, RT_256, RT_512 remain
+  - add new makefile flag RT_1K4 for 15-register code-bases on paired AVX-512
+  - expose 30 registers as an extension to common baseline of 15 where present
+  - each major architecture has at least one SIMD target with 30 registers
+  - add new RT_SIMD selector flag to remap vector-length-agnostic subsets
+  - add new RT_REGS selector flag to choose targets within given RT_SIMD width
+  - rename SIMD target headers to reflect size-factor/sub-variant, move legacy
+  - add new internal flags RT_128X*, RT_256X*, RT_512X* to match SIMD headers
+  - new internal flags keep SIMD sub-variant value in format for native width
+  - implement SIMD flags compatibility layer in rtzero to map makefile flags
+  - rtarch main header selects appropriate BASE/SIMD target from flags above
+  - implement SIMD target format converters in rtbase for runtime selection
+  - change SIMD target reporting to native-size x size-factor v version format
+  - reserve _RX slots in SIMD target mask for predicated backends (30+8 regs)
+  - clean up (drop) legacy SSE(1) support from x32 headers/makefiles
+  - fix SIMD registers save/restore for 128-bit AVX targets (backported down)
+  - fix buffer allocation in SIMD tests (for 64-bit elems)
+  - allow external override (from makefiles) for SIMD compatibility modes
+  - minor fixes in rtarch, accelerate release builds on multi-core machines
+
 v0.9.0: Unified SIMD Assembler, 256-bit SIMD on RISCs, basic AVX-512 support
   - adjust root rt_SIMD_INFO struct to contain both 32-bit and 64-bit constants
   - add new sign-mask and full-mask general purpose constants to rt_SIMD_INFO
