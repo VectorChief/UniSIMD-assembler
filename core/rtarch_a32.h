@@ -1509,10 +1509,10 @@
  * adjust stack pointer with 8-byte (64-bit) steps on all current targets */
 
 #define stack_st(RS)                                                        \
-        EMITW(0xF81F8C00 | MRM(REG(RS), SPxx,    0x00))
+        EMITW(0xA9BF0000 | MRM(REG(RS), SPxx,    0x00) | TZxx << 10)
 
 #define stack_ld(RD)                                                        \
-        EMITW(0xF8408400 | MRM(REG(RD), SPxx,    0x00))
+        EMITW(0xA8C10000 | MRM(REG(RD), SPxx,    0x00) | TZxx << 10)
 
 #define stack_sa()   /* save all, [Reax - RegE] + 7 temps, 21 regs total */ \
         EMITW(0xA9BF0000 | MRM(Teax,    SPxx,    0x00) | Tecx << 10)        \
@@ -1525,10 +1525,10 @@
         EMITW(0xA9BF0000 | MRM(TMxx,    SPxx,    0x00) | TIxx << 10)        \
         EMITW(0xA9BF0000 | MRM(TPxx,    SPxx,    0x00) | TNxx << 10)        \
         EMITW(0xA9BF0000 | MRM(TNxx+1,  SPxx,    0x00) |(TNxx+2) << 10)     \
-        EMITW(0xF81F8C00 | MRM(TNxx+3,  SPxx,    0x00))
+        EMITW(0xA9BF0000 | MRM(TNxx+3,  SPxx,    0x00) | TZxx << 10)
 
 #define stack_la()   /* load all, 7 temps + [RegE - Reax], 21 regs total */ \
-        EMITW(0xF8408400 | MRM(TNxx+3,  SPxx,    0x00))                     \
+        EMITW(0xA8C10000 | MRM(TNxx+3,  SPxx,    0x00) | TZxx << 10)        \
         EMITW(0xA8C10000 | MRM(TNxx+1,  SPxx,    0x00) |(TNxx+2) << 10)     \
         EMITW(0xA8C10000 | MRM(TPxx,    SPxx,    0x00) | TNxx << 10)        \
         EMITW(0xA8C10000 | MRM(TMxx,    SPxx,    0x00) | TIxx << 10)        \
