@@ -300,10 +300,10 @@
         label_ld(lb)
 
 #define stack_st(RM)                                                        \
-        EMITW(0xF81F8C00 | MRM(REG(RM), SPxx,    0x00))
+        EMITW(0xA9BF0000 | MRM(REG(RM), SPxx,    0x00) | TZxx << 10)
 
 #define stack_ld(RM)                                                        \
-        EMITW(0xF8408400 | MRM(REG(RM), SPxx,    0x00))
+        EMITW(0xA8C10000 | MRM(REG(RM), SPxx,    0x00) | TZxx << 10)
 
 #if RT_SIMD_FAST_FCTRL == 0
 
@@ -342,10 +342,10 @@
         EMITW(0xA9BF0000 | MRM(TMxx,    SPxx,    0x00) | TIxx << 10)        \
         EMITW(0xA9BF0000 | MRM(TPxx,    SPxx,    0x00) | TNxx << 10)        \
         EMITW(0xA9BF0000 | MRM(TNxx+1,  SPxx,    0x00) |(TNxx+2) << 10)     \
-        EMITW(0xF81F8C00 | MRM(TNxx+3,  SPxx,    0x00))
+        EMITW(0xA9BF0000 | MRM(TNxx+3,  SPxx,    0x00) | TZxx << 10)
 
 #define stack_la()   /* load all, 7 temps + [RegE - Reax], 21 regs total */ \
-        EMITW(0xF8408400 | MRM(TNxx+3,  SPxx,    0x00))                     \
+        EMITW(0xA8C10000 | MRM(TNxx+3,  SPxx,    0x00) | TZxx << 10)        \
         EMITW(0xA8C10000 | MRM(TNxx+1,  SPxx,    0x00) |(TNxx+2) << 10)     \
         EMITW(0xA8C10000 | MRM(TPxx,    SPxx,    0x00) | TNxx << 10)        \
         EMITW(0xA8C10000 | MRM(TMxx,    SPxx,    0x00) | TIxx << 10)        \
