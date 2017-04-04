@@ -53,7 +53,3 @@ simd_test_x86:
 # For 256-bit AVX2 build use (replace): RT_256=2
 # For 512-bit AVX3.1 build use (replace): RT_512=1
 # For 512-bit AVX3.2 build use (replace): RT_512=2
-
-# For generic BASE X86 build keep: RT_X86 (default)
-# For 3-op-VEX BASE X86 build use (replace): RT_X86=1 (reserved)
-# For BMI1+BMI2 BASE X86 build use (replace): RT_X86=2

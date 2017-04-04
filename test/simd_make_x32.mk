@@ -61,7 +61,3 @@ simd_test_x32:
 # For 1024-bit AVX3.2 build use (replace): RT_1K4=2
 # For 2048-bit AVX3.1 build use (replace): RT_2K8_R8=1    (8 SIMD reg-quads)
 # For 2048-bit AVX3.2 build use (replace): RT_2K8_R8=2    (8 SIMD reg-quads)
-
-# For generic BASE X32 build keep: RT_X32 (default)
-# For 3-op-VEX BASE X32 build use (replace): RT_X32=1 (reserved)
-# For BMI1+BMI2 BASE X32 build use (replace): RT_X32=2
