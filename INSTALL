@@ -94,6 +94,8 @@ startx
 openSUSE image is RPM based (boots directly to XFCE, credentials above):
 zypper in make gcc-c++
 
+Adjust UniSIMD's makefiles to use g++ instead of triplet name, remove -static
+
 Both images may require setting frequency scaling governor for best performance:
 echo "ondemand" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 Current frequency (600Mhz idle, 1200Mhz load) can be monitored using:
