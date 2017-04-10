@@ -36,6 +36,10 @@ Task title: "implement basic run-time generation for existing ASM code-bases"
 
 ================================================================================
 
+Task title: "add support for trigonometric & randomizer SIMD meta-instructions"
+
+================================================================================
+
 Task title: "implement fp32/fp64 converters consistently across targets"
 
 ================================================================================
@@ -44,10 +48,10 @@ Task title: "implement fp16 backends for Xeon Phi Knights Mill and ARMv8.2"
 
 ================================================================================
 
-Task title: "consider SoftFP library integration for fp16/fp128 support"
+Task title: "implement predicated AVX-512/ARM-SVE backends (in *_RX slots)"
 
 ================================================================================
 
-Task title: "implement predicated AVX-512/ARM-SVE backends (in *_RX slots)"
+Task title: "consider SoftFP library integration for full fp16/fp128 support"
 
 ================================================================================
