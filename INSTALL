@@ -65,3 +65,38 @@ In terminal window use "Emulate Everything Mode":
 for AVX3.1 (Knights Landing) and AVX3.2 (Skylake Xeon) respectively.
 
 ================================================================================
+
+To experiment with Linux in AArch64 mode on Raspberry Pi 3 consider:
+
+1) Devuan Jessie 1.0.0 beta2 12-Oct-2016 (arm64 raspi3 image):
+https://files.devuan.org/devuan_jessie_beta/embedded/
+image boot credentials:
+login: root
+password: toor
+
+2) openSUSE Leap42.2 or Tumbleweed 01-Feb-2017 (XFCE images):
+https://en.opensuse.org/HCL:Raspberry_Pi3
+image boot credentials:
+login: root
+password: linux
+
+Flashing images above to an SD card is similar to a Raspbian installation:
+http://www.raspberrypi.org/documentation/installation/installing-images/linux.md
+
+Devuan image requires additional partition resizing steps after flashing:
+http://elinux.org/RPi_Resize_Flash_Partitions (performed on host machine)
+as well as installing XFCE once the image is booted (credentials above):
+apt-get update
+apt-get install xfce4
+apt-get install make g++
+startx
+
+openSUSE image is RPM based (boots directly to XFCE, credentials above):
+zypper in make gcc-c++
+
+Both images may require setting frequency scaling governor for best performance:
+echo "ondemand" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+Current frequency (600Mhz idle, 1200Mhz load) can be monitored using:
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
+
+================================================================================
