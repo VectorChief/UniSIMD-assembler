@@ -19,8 +19,12 @@ v0.9.1: Unified SIMD Assembler, 3-operand + basic scalar SIMD, extra backends
   - change SIMD target reporting to native-size x size-factor v version format
   - reserve _RX slots in SIMD target mask for predicated backends (30+8 regs)
   - clean up (drop) legacy SSE(1) support from x32 headers/makefiles
+  - move BASE sub-target selection to rtarch main header (ARM, x86)
+  - add notes for AArch64 Linux on Raspberry Pi 3 to INSTALL file
+  - add new TASKS file with description for future tasks
   - fix SIMD registers save/restore for 128-bit AVX targets (backported down)
   - fix buffer allocation in SIMD tests (for 64-bit elems)
+  - fix stack alignment (now 16 bytes) on ARMv8/AArch64 (hardware) targets
   - allow external override (from makefiles) for SIMD compatibility modes
   - minor fixes in rtarch, accelerate release builds on multi-core machines
 
