@@ -1,0 +1,53 @@
+================================================================================
+
+Task title: "add 30 SIMD registers support for 256-bit Power7/8 target"
+1) Take quaded 512-bit target as a base and reduce it to paired 256-bit
+2) Find place in SIMD target mask (RT_256=4/8), keep 16 regs backend (=1/2)
+3) No support for (128-bit) 60 SIMD registers is planned, not portable
+
+================================================================================
+
+Task title: "add 30 SIMD registers support for 128/256-bit AVX-512 target"
+1) Take current 512-bit target as a base and reduce it to 128/256-bit (VL bits)
+2) Find place in SIMD target mask (RT_128=1, RT_256=8), drop old SSE1 support
+3) Reserve RT_128=16 and RT_256=4 for AVX1+FMA3 128/256-bit backends (no AVX2)
+4) When primary target is 30 regs, secondary is 16 regs AVX1/2 (see ARM-SVE)
+   (primary is defined with RT_SIMD, secondary is from 128/256-bit set or both)
+
+================================================================================
+
+Task title: "implement basic ARM-SVE backends with 30 registers (no predicates)"
+1) Implement new SVE instructions for 128/256/512/1K4-bit targets (2K8 optional)
+2) Find place in SIMD target mask (RT_128/256=2, RT_512/1K4=1)
+3) When primary target is SVE, secondary is AArch64 NEON (no per-op switching)
+   (primary is defined with RT_SIMD, secondary is from 128/256-bit set or both)
+
+================================================================================
+
+Task title: "implement basic run-time generation for existing ASM code-bases"
+1) Rewrite ASM_ENTER macro to allocate temporary buffer with code-exec rights
+2) Rewrite EMITB / EMITW emitters to write into a memory buffer at cur++ offset
+3) Adjust arithmetic selectors in some instructions to customize condition sign
+   +(A == B) produces -1 in assembler evaluation, but +1 in C/C++ expressions
+   #define M (+/-) depending on static/dynamic generation, then use: M(A == B)
+4) Rewrite j** to encode jump-label distances into a binary form, track labels
+5) Rewrite ASM_LEAVE to type-cast the buffer to a function-pointer, then call it
+6) Implement proper buffer management for more advanced versions later
+
+================================================================================
+
+Task title: "implement fp32/fp64 converters consistently across targets"
+
+================================================================================
+
+Task title: "implement fp16 backends for Xeon Phi Knights Mill and ARMv8.2"
+
+================================================================================
+
+Task title: "consider SoftFP library integration for fp16/fp128 support"
+
+================================================================================
+
+Task title: "implement predicated AVX-512/ARM-SVE backends (in *_RX slots)"
+
+================================================================================
