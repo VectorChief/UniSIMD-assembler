@@ -30,17 +30,25 @@ Task title: "implement basic run-time generation for existing ASM code-bases"
 3) Adjust arithmetic selectors in some instructions to customize condition sign
    +(A == B) produces -1 in assembler evaluation, but +1 in C/C++ expressions
    #define M (+/-) depending on static/dynamic generation, then use: M(A == B)
-4) Rewrite j** to encode jump-label distances into a binary form, track labels
+4) Rewrite j** to encode jump-label distances into binary form, track labels
 5) Rewrite ASM_LEAVE to type-cast the buffer to a function-pointer, then call it
 6) Implement proper buffer management for more advanced versions later
 
 ================================================================================
 
-Task title: "add support for trigonometric & randomizer SIMD meta-instructions"
+Task title: "implement SIMD fp32/fp64 converters consistently across targets"
 
 ================================================================================
 
-Task title: "implement fp32/fp64 converters consistently across targets"
+Task title: "implement scalar fp compare to flags, fp/fp & fp/int converters"
+
+================================================================================
+
+Task title: "implement integer SIMD compare to mask across all targets"
+
+================================================================================
+
+Task title: "add support for trigonometric & randomizer SIMD meta-instructions"
 
 ================================================================================
 
