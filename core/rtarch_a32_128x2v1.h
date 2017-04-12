@@ -905,10 +905,10 @@
 
 #define shrcx3ri(XD, XS, IT)                                                \
         EMITW(0x4F200400 | MXM(REG(XD), REG(XS), 0x00) |                    \
-        (+(VAL(IT) == 0) & 0x00005000) | (+(VAL(IT) != 0) & 0x20000000) |   \
+        (M(VAL(IT) == 0) & 0x00005000) | (M(VAL(IT) != 0) & 0x20000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)    \
         EMITW(0x4F200400 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
-        (+(VAL(IT) == 0) & 0x00005000) | (+(VAL(IT) != 0) & 0x20000000) |   \
+        (M(VAL(IT) == 0) & 0x00005000) | (M(VAL(IT) != 0) & 0x20000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)
 
 #define shrcx3ld(XD, XS, MT, DT)                                            \
@@ -930,10 +930,10 @@
 
 #define shrcn3ri(XD, XS, IT)                                                \
         EMITW(0x4F200400 | MXM(REG(XD), REG(XS), 0x00) |                    \
-        (+(VAL(IT) == 0) & 0x00005000) | (+(VAL(IT) != 0) & 0x00000000) |   \
+        (M(VAL(IT) == 0) & 0x00005000) | (M(VAL(IT) != 0) & 0x00000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)    \
         EMITW(0x4F200400 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
-        (+(VAL(IT) == 0) & 0x00005000) | (+(VAL(IT) != 0) & 0x00000000) |   \
+        (M(VAL(IT) == 0) & 0x00005000) | (M(VAL(IT) != 0) & 0x00000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)
 
 #define shrcn3ld(XD, XS, MT, DT)                                            \
