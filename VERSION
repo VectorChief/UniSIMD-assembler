@@ -22,6 +22,8 @@ v0.9.1: Unified SIMD Assembler, 3-operand + basic scalar SIMD, extra backends
   - move BASE sub-target selection to rtarch main header (ARM, x86)
   - add notes for AArch64 Linux on Raspberry Pi 3 to INSTALL file
   - add new TASKS file with description for future tasks
+  - enforce full ARMv7 instruction set (32-bit words) in makefiles
+  - fix LLVM's condition evaluation sign on all targets, define M -/+
   - fix SIMD registers save/restore for 128-bit AVX targets (backported down)
   - fix buffer allocation in SIMD tests (for 64-bit elems)
   - fix stack alignment (now 16 bytes) on ARMv8/AArch64 (hardware) targets
