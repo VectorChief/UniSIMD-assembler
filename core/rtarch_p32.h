@@ -200,7 +200,7 @@
 #define T30(tr, sr) ((tr) << 16 | (sr) << 21)
 #define M30(im) (0x00000000 | (im))
 #define G30(rg, im) EMITW(0x60000000 | ((rg)&0x1F) << 16 |                  \
-                         ((((rg)&0x1F) << 21) & (((rg)&0x20) != 0)) |       \
+                         ((((rg)&0x1F) << 21) & M(((rg)&0x20) != 0)) |      \
                                                     (0xFFFF & (im)))
 
 #define T11(tr, sr) ((tr) << 21 | (sr) << 11)
@@ -218,7 +218,7 @@
 #define T32(tr, sr) ((tr) << 16 | (sr) << 21)
 #define M32(im) (0x00000000 | TIxx << 11)
 #define G32(rg, im) EMITW(0x64000000 | ((rg)&0x1F) << 16 |                  \
-                         ((((rg)&0x1F) << 21) & (((rg)&0x20) != 0)) |       \
+                         ((((rg)&0x1F) << 21) & M(((rg)&0x20) != 0)) |      \
                                                     (0xFFFF & (im) >> 16))  \
                     EMITW(0x60000000 | ((rg)&0x1F) << 16 |                  \
                            ((rg)&0x1F) << 21  |     (0xFFFF & (im)))
@@ -389,14 +389,14 @@
 #define andwx_ri(RG, IS)                                                    \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IS))   \
         EMITW(0x00000000 | MIM(REG(RG), REG(RG), VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x70000000) | (+(TP2(IS) != 0) & 0x7C000038))    \
+        (M(TP2(IS) == 0) & 0x70000000) | (M(TP2(IS) != 0) & 0x7C000038))    \
         /* if true ^ equals to -1 (not 1) */
 
 #define andwx_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  VAL(IS), TIxx,    MOD(MG), VAL(DG), C1(DG), G2(IS))   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x70000000) | (+(TP2(IS) != 0) & 0x7C000038))    \
+        (M(TP2(IS) == 0) & 0x70000000) | (M(TP2(IS) != 0) & 0x7C000038))    \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define andwx_rr(RG, RS)                                                    \
@@ -422,14 +422,14 @@
 #define andwz_ri(RG, IS)                                                    \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IS))   \
         EMITW(0x00000000 | MIM(REG(RG), REG(RG), VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x70000000) | (+(TP2(IS) != 0) & 0x7C000039))    \
+        (M(TP2(IS) == 0) & 0x70000000) | (M(TP2(IS) != 0) & 0x7C000039))    \
         /* if true ^ equals to -1 (not 1) */
 
 #define andwz_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  VAL(IS), TIxx,    MOD(MG), VAL(DG), C1(DG), G2(IS))   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x70000000) | (+(TP2(IS) != 0) & 0x7C000039))    \
+        (M(TP2(IS) == 0) & 0x70000000) | (M(TP2(IS) != 0) & 0x7C000039))    \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define andwz_rr(RG, RS)                                                    \
@@ -451,7 +451,7 @@
 #define andwz_ri(RG, IS)                                                    \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IS))   \
         EMITW(0x00000000 | MIM(REG(RG), REG(RG), VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x70000000) | (+(TP2(IS) != 0) & 0x7C000038))    \
+        (M(TP2(IS) == 0) & 0x70000000) | (M(TP2(IS) != 0) & 0x7C000038))    \
         /* if true ^ equals to -1 (not 1) */                                \
         EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
 
@@ -459,7 +459,7 @@
         AUW(SIB(MG),  VAL(IS), TIxx,    MOD(MG), VAL(DG), C1(DG), G2(IS))   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x70000000) | (+(TP2(IS) != 0) & 0x7C000038))    \
+        (M(TP2(IS) == 0) & 0x70000000) | (M(TP2(IS) != 0) & 0x7C000038))    \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
 
@@ -497,7 +497,7 @@
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x7C0000F8 | MSM(TMxx,    TMxx,    TMxx))                     \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x70000000) | (+(TP2(IS) != 0) & 0x7C000038))    \
+        (M(TP2(IS) == 0) & 0x70000000) | (M(TP2(IS) != 0) & 0x7C000038))    \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define annwx_rr(RG, RS)                                                    \
@@ -529,7 +529,7 @@
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x7C0000F8 | MSM(TMxx,    TMxx,    TMxx))                     \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x70000000) | (+(TP2(IS) != 0) & 0x7C000039))    \
+        (M(TP2(IS) == 0) & 0x70000000) | (M(TP2(IS) != 0) & 0x7C000039))    \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define annwz_rr(RG, RS)                                                    \
@@ -553,7 +553,7 @@
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x7C0000F8 | MSM(TMxx,    TMxx,    TMxx))                     \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x70000000) | (+(TP2(IS) != 0) & 0x7C000038))    \
+        (M(TP2(IS) == 0) & 0x70000000) | (M(TP2(IS) != 0) & 0x7C000038))    \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
 
@@ -750,14 +750,14 @@
 #define xorwx_ri(RG, IS)                                                    \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IS))   \
         EMITW(0x00000000 | MIM(REG(RG), REG(RG), VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x68000000) | (+(TP2(IS) != 0) & 0x7C000278))    \
+        (M(TP2(IS) == 0) & 0x68000000) | (M(TP2(IS) != 0) & 0x7C000278))    \
         /* if true ^ equals to -1 (not 1) */
 
 #define xorwx_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  VAL(IS), TIxx,    MOD(MG), VAL(DG), C1(DG), G2(IS))   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x68000000) | (+(TP2(IS) != 0) & 0x7C000278))    \
+        (M(TP2(IS) == 0) & 0x68000000) | (M(TP2(IS) != 0) & 0x7C000278))    \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define xorwx_rr(RG, RS)                                                    \
@@ -781,7 +781,7 @@
 #define xorwz_ri(RG, IS)                                                    \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IS))   \
         EMITW(0x00000000 | MIM(REG(RG), REG(RG), VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x68000000) | (+(TP2(IS) != 0) & 0x7C000278))    \
+        (M(TP2(IS) == 0) & 0x68000000) | (M(TP2(IS) != 0) & 0x7C000278))    \
         /* if true ^ equals to -1 (not 1) */                                \
         EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
 
@@ -789,7 +789,7 @@
         AUW(SIB(MG),  VAL(IS), TIxx,    MOD(MG), VAL(DG), C1(DG), G2(IS))   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x68000000) | (+(TP2(IS) != 0) & 0x7C000278))    \
+        (M(TP2(IS) == 0) & 0x68000000) | (M(TP2(IS) != 0) & 0x7C000278))    \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
 
@@ -890,14 +890,14 @@
 #define addwx_ri(RG, IS)                                                    \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
         EMITW(0x00000000 | MIM(REG(RG), REG(RG), VAL(IS), T1(IS), M1(IS)) | \
-        (+(TP1(IS) == 0) & 0x38000000) | (+(TP1(IS) != 0) & 0x7C000214))    \
+        (M(TP1(IS) == 0) & 0x38000000) | (M(TP1(IS) != 0) & 0x7C000214))    \
         /* if true ^ equals to -1 (not 1) */
 
 #define addwx_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  VAL(IS), TIxx,    MOD(MG), VAL(DG), C1(DG), G1(IS))   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IS), T1(IS), M1(IS)) | \
-        (+(TP1(IS) == 0) & 0x38000000) | (+(TP1(IS) != 0) & 0x7C000214))    \
+        (M(TP1(IS) == 0) & 0x38000000) | (M(TP1(IS) != 0) & 0x7C000214))    \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define addwx_rr(RG, RS)                                                    \
@@ -923,14 +923,14 @@
 #define addwz_ri(RG, IS)                                                    \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
         EMITW(0x00000000 | MIM(REG(RG), REG(RG), VAL(IS), T1(IS), M1(IS)) | \
-        (+(TP1(IS) == 0) & 0x34000000) | (+(TP1(IS) != 0) & 0x7C000215))    \
+        (M(TP1(IS) == 0) & 0x34000000) | (M(TP1(IS) != 0) & 0x7C000215))    \
         /* if true ^ equals to -1 (not 1) */
 
 #define addwz_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  VAL(IS), TIxx,    MOD(MG), VAL(DG), C1(DG), G1(IS))   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IS), T1(IS), M1(IS)) | \
-        (+(TP1(IS) == 0) & 0x34000000) | (+(TP1(IS) != 0) & 0x7C000215))    \
+        (M(TP1(IS) == 0) & 0x34000000) | (M(TP1(IS) != 0) & 0x7C000215))    \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define addwz_rr(RG, RS)                                                    \
@@ -952,7 +952,7 @@
 #define addwz_ri(RG, IS)                                                    \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
         EMITW(0x00000000 | MIM(REG(RG), REG(RG), VAL(IS), T1(IS), M1(IS)) | \
-        (+(TP1(IS) == 0) & 0x38000000) | (+(TP1(IS) != 0) & 0x7C000214))    \
+        (M(TP1(IS) == 0) & 0x38000000) | (M(TP1(IS) != 0) & 0x7C000214))    \
         /* if true ^ equals to -1 (not 1) */                                \
         EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
 
@@ -960,7 +960,7 @@
         AUW(SIB(MG),  VAL(IS), TIxx,    MOD(MG), VAL(DG), C1(DG), G1(IS))   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IS), T1(IS), M1(IS)) | \
-        (+(TP1(IS) == 0) & 0x38000000) | (+(TP1(IS) != 0) & 0x7C000214))    \
+        (M(TP1(IS) == 0) & 0x38000000) | (M(TP1(IS) != 0) & 0x7C000214))    \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
 
@@ -992,16 +992,16 @@
 #define subwx_ri(RG, IS)                                                    \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
         EMITW(0x00000000 | MIM(REG(RG), REG(RG), 0x00,    T1(IS), EMPTY1) | \
-        (+(TP1(IS) == 0) & (0x38000000 | (0xFFFF & -VAL(IS)))) |            \
-        (+(TP1(IS) != 0) & (0x7C000050 | TIxx << 16)))                      \
+        (M(TP1(IS) == 0) & (0x38000000 | (0xFFFF & -VAL(IS)))) |            \
+        (M(TP1(IS) != 0) & (0x7C000050 | TIxx << 16)))                      \
         /* if true ^ equals to -1 (not 1) */
 
 #define subwx_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  VAL(IS), TIxx,    MOD(MG), VAL(DG), C1(DG), G1(IS))   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    0x00,    T1(IS), EMPTY1) | \
-        (+(TP1(IS) == 0) & (0x38000000 | (0xFFFF & -VAL(IS)))) |            \
-        (+(TP1(IS) != 0) & (0x7C000050 | TIxx << 16)))                      \
+        (M(TP1(IS) == 0) & (0x38000000 | (0xFFFF & -VAL(IS)))) |            \
+        (M(TP1(IS) != 0) & (0x7C000050 | TIxx << 16)))                      \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define subwx_rr(RG, RS)                                                    \
@@ -1027,16 +1027,16 @@
 #define subwz_ri(RG, IS)                                                    \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
         EMITW(0x00000000 | MIM(REG(RG), REG(RG), 0x00,    T1(IS), EMPTY1) | \
-        (+(TP1(IS) == 0) & (0x34000000 | (0xFFFF & -VAL(IS)))) |            \
-        (+(TP1(IS) != 0) & (0x7C000051 | TIxx << 16)))                      \
+        (M(TP1(IS) == 0) & (0x34000000 | (0xFFFF & -VAL(IS)))) |            \
+        (M(TP1(IS) != 0) & (0x7C000051 | TIxx << 16)))                      \
         /* if true ^ equals to -1 (not 1) */
 
 #define subwz_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  VAL(IS), TIxx,    MOD(MG), VAL(DG), C1(DG), G1(IS))   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    0x00,    T1(IS), EMPTY1) | \
-        (+(TP1(IS) == 0) & (0x34000000 | (0xFFFF & -VAL(IS)))) |            \
-        (+(TP1(IS) != 0) & (0x7C000051 | TIxx << 16)))                      \
+        (M(TP1(IS) == 0) & (0x34000000 | (0xFFFF & -VAL(IS)))) |            \
+        (M(TP1(IS) != 0) & (0x7C000051 | TIxx << 16)))                      \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define subwz_rr(RG, RS)                                                    \
@@ -1058,8 +1058,8 @@
 #define subwz_ri(RG, IS)                                                    \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
         EMITW(0x00000000 | MIM(REG(RG), REG(RG), 0x00,    T1(IS), EMPTY1) | \
-        (+(TP1(IS) == 0) & (0x38000000 | (0xFFFF & -VAL(IS)))) |            \
-        (+(TP1(IS) != 0) & (0x7C000050 | TIxx << 16)))                      \
+        (M(TP1(IS) == 0) & (0x38000000 | (0xFFFF & -VAL(IS)))) |            \
+        (M(TP1(IS) != 0) & (0x7C000050 | TIxx << 16)))                      \
         /* if true ^ equals to -1 (not 1) */                                \
         EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
 
@@ -1067,8 +1067,8 @@
         AUW(SIB(MG),  VAL(IS), TIxx,    MOD(MG), VAL(DG), C1(DG), G1(IS))   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    0x00,    T1(IS), EMPTY1) | \
-        (+(TP1(IS) == 0) & (0x38000000 | (0xFFFF & -VAL(IS)))) |            \
-        (+(TP1(IS) != 0) & (0x7C000050 | TIxx << 16)))                      \
+        (M(TP1(IS) == 0) & (0x38000000 | (0xFFFF & -VAL(IS)))) |            \
+        (M(TP1(IS) != 0) & (0x7C000050 | TIxx << 16)))                      \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(0x28000000 | TMxx << 16)                 /* <- set flags (Z) */
 
@@ -1866,61 +1866,61 @@
 #define IWJ0(r1, p1, IS, lb)                                                \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IS))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x28000000) | (+(TP2(IS) != 0) & 0x7C000040))    \
+        (M(TP2(IS) == 0) & 0x28000000) | (M(TP2(IS) != 0) & 0x7C000040))    \
         ASM_BEG ASM_OP1(beq,   lb) ASM_END
 
 #define IWJ1(r1, p1, IS, lb)                                                \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IS))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x28000000) | (+(TP2(IS) != 0) & 0x7C000040))    \
+        (M(TP2(IS) == 0) & 0x28000000) | (M(TP2(IS) != 0) & 0x7C000040))    \
         ASM_BEG ASM_OP1(bne,   lb) ASM_END
 
 #define IWJ2(r1, p1, IS, lb)                                                \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IS))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x28000000) | (+(TP2(IS) != 0) & 0x7C000040))    \
+        (M(TP2(IS) == 0) & 0x28000000) | (M(TP2(IS) != 0) & 0x7C000040))    \
         ASM_BEG ASM_OP1(blt,   lb) ASM_END
 
 #define IWJ3(r1, p1, IS, lb)                                                \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IS))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x28000000) | (+(TP2(IS) != 0) & 0x7C000040))    \
+        (M(TP2(IS) == 0) & 0x28000000) | (M(TP2(IS) != 0) & 0x7C000040))    \
         ASM_BEG ASM_OP1(ble,   lb) ASM_END
 
 #define IWJ4(r1, p1, IS, lb)                                                \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IS))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x28000000) | (+(TP2(IS) != 0) & 0x7C000040))    \
+        (M(TP2(IS) == 0) & 0x28000000) | (M(TP2(IS) != 0) & 0x7C000040))    \
         ASM_BEG ASM_OP1(bgt,   lb) ASM_END
 
 #define IWJ5(r1, p1, IS, lb)                                                \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IS))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IS), T2(IS), M2(IS)) | \
-        (+(TP2(IS) == 0) & 0x28000000) | (+(TP2(IS) != 0) & 0x7C000040))    \
+        (M(TP2(IS) == 0) & 0x28000000) | (M(TP2(IS) != 0) & 0x7C000040))    \
         ASM_BEG ASM_OP1(bge,   lb) ASM_END
 
 #define IWJ6(r1, p1, IS, lb)                                                \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IS), T3(IS), M3(IS)) | \
-        (+(TP2(IS) == 0) & 0x2C000000) | (+(TP2(IS) != 0) & 0x7C000000))    \
+        (M(TP2(IS) == 0) & 0x2C000000) | (M(TP2(IS) != 0) & 0x7C000000))    \
         ASM_BEG ASM_OP1(blt,   lb) ASM_END
 
 #define IWJ7(r1, p1, IS, lb)                                                \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IS), T3(IS), M3(IS)) | \
-        (+(TP2(IS) == 0) & 0x2C000000) | (+(TP2(IS) != 0) & 0x7C000000))    \
+        (M(TP2(IS) == 0) & 0x2C000000) | (M(TP2(IS) != 0) & 0x7C000000))    \
         ASM_BEG ASM_OP1(ble,   lb) ASM_END
 
 #define IWJ8(r1, p1, IS, lb)                                                \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IS), T3(IS), M3(IS)) | \
-        (+(TP2(IS) == 0) & 0x2C000000) | (+(TP2(IS) != 0) & 0x7C000000))    \
+        (M(TP2(IS) == 0) & 0x2C000000) | (M(TP2(IS) != 0) & 0x7C000000))    \
         ASM_BEG ASM_OP1(bgt,   lb) ASM_END
 
 #define IWJ9(r1, p1, IS, lb)                                                \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IS), T3(IS), M3(IS)) | \
-        (+(TP2(IS) == 0) & 0x2C000000) | (+(TP2(IS) != 0) & 0x7C000000))    \
+        (M(TP2(IS) == 0) & 0x2C000000) | (M(TP2(IS) != 0) & 0x7C000000))    \
         ASM_BEG ASM_OP1(bge,   lb) ASM_END
 
 #define CWI(cc, r1, p1, IS, lb)                                             \
