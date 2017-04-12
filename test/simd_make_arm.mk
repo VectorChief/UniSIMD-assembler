@@ -88,6 +88,10 @@ simd_test_arm_rpi3:
 # qemu-arm -cpu cortex-a8  simd_test.arm_v1
 # qemu-arm -cpu cortex-a15 simd_test.arm_v2
 
+# Clang compilation works too (takes much longer prior to 3.8), use (replace):
+# clang++ (in place of ...-g++)
+# sudo apt-get install clang
+
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 
 # 0) Build flags above are intended for default "vanilla" ARMv7 target, while

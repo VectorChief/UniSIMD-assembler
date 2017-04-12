@@ -61,6 +61,10 @@ simd_test_a64f64:
 # make -f simd_make_a64.mk
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64f32
 
+# Clang compilation works too (takes much longer prior to 3.8), use (replace):
+# clang++ (in place of ...-g++)
+# sudo apt-get install clang
+
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 
 # For 256-bit NEON build use (replace): RT_256=1    (uses pairs of regs/ops)
