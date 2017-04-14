@@ -1,3 +1,5 @@
+  - renewed directory structure, move BASE/SIMD header files to core/config
+
 v0.9.1: Unified SIMD Assembler, 3-operand + basic scalar SIMD, extra backends
   - expose 128/256-bit SIMD subsets (cmd[i/j/l]*, cmd[c/d/f]*) simultaneously
   - add 3-operand SIMD instructions to all targets, emulate where not present
