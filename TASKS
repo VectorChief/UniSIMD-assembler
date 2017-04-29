@@ -1,6 +1,6 @@
 ================================================================================
 
-Task title: "add 30 SIMD registers support for 256-bit Power7/8 target"
+Task title: "add 30 SIMD registers support for 256-bit POWER7/8 target"
 1) Take quaded 512-bit target as a base and reduce it to paired 256-bit
 2) Find place in SIMD target mask (RT_256=4/8), keep 16 regs backend (=1/2)
 3) No support for (128-bit) 60 SIMD registers is planned, not portable
@@ -24,6 +24,14 @@ Task title: "implement basic ARM-SVE backends with 30 registers (no predicates)"
 
 ================================================================================
 
+Task title: "add 8 SIMD registers full-IEEE support for ARMv7 using VFP"
+1) Implement 128-bit SIMD registers/instructions as 4x32-bit VFP (full-IEEE)
+2) Emulate currently exposed NEON instructions using VFP variants
+3) Use register-offloading to upper bank for 1 mem-arg in load-op instructions
+4) Find place in SIMD target mask (RT_128=8)
+
+================================================================================
+
 Task title: "implement basic run-time generation for existing ASM code-bases"
 1) Rewrite ASM_ENTER macro to allocate temporary buffer with code-exec rights
 2) Rewrite EMITB / EMITW emitters to write into a memory buffer at cur++ offset
@@ -40,7 +48,7 @@ Task title: "use 3-operand SIMD instructions in packed/scalar SIMD tests"
 
 ================================================================================
 
-Task title: "improve SIMD test coverage, add SIMD mask-move (mmv) sub-test"
+Task title: "improve SIMD test coverage, add test for SIMD mask-move (mmv)"
 
 ================================================================================
 
