@@ -36,15 +36,23 @@ Task title: "implement basic run-time generation for existing ASM code-bases"
 
 ================================================================================
 
+Task title: "use 3-operand SIMD instructions in packed/scalar SIMD tests"
+
+================================================================================
+
+Task title: "improve SIMD test coverage, add SIMD mask-move (mmv) sub-test"
+
+================================================================================
+
 Task title: "implement SIMD fp32/fp64 converters consistently across targets"
 
 ================================================================================
 
-Task title: "implement scalar fp compare to flags, fp/fp & fp/int converters"
+Task title: "implement scalar fp compare-to-flags, fp/fp & fp/int converters"
 
 ================================================================================
 
-Task title: "implement integer SIMD compare to mask across all targets"
+Task title: "implement integer SIMD compare-to-mask across all targets"
 
 ================================================================================
 
@@ -61,5 +69,13 @@ Task title: "implement predicated AVX-512/ARM-SVE backends (in *_RX slots)"
 ================================================================================
 
 Task title: "consider SoftFP library integration for full fp16/fp128 support"
+
+================================================================================
+
+Task title: "add support for fp128 arithmetic on POWER9/ISA3.0"
+
+================================================================================
+
+Task title: "add support for RISC-V architecture"
 
 ================================================================================
