@@ -32,6 +32,12 @@ E) Task title: "add 8 SIMD registers full-IEEE support for ARMv7 using VFP"
 
 ================================================================================
 
+K) Task title: "use configuration utils (autotools, CMake, etc) for building"
+1) Use single build script for all host CPU architectures on Linux
+2) Keep cross-compilation on x86-64 Linux hosts (targeting QEMU linux-user mode)
+
+================================================================================
+
 R) Task title: "implement basic run-time generation for existing ASM code-bases"
 1) Rewrite ASM_ENTER macro to allocate temporary buffer with code-exec rights
 2) Rewrite EMITB / EMITW emitters to write into a memory buffer at cur++ offset
