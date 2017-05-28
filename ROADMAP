@@ -1,5 +1,16 @@
 ================================================================================
 
+P) Task title: "consider moving legacy PowerPC VMX target to its own PPC arch"
+1) Create new arch makefile flag RT_PPC for legacy 32-bit PowerPC target
+2) Rename current 128/256-bit VMX headers to rtarch_ppc_128x*v1.h
+3) Keep RT_128=1/RT_256_R8=1 SIMD targets within RT_PPC 32-bit arch
+4) Shift RT_128=2+4 within RT_P32/P64 arch to RT_128=1+2 for VSX1/2 in POWER7/8
+5) Compatibility break with current 0.x.x versions in SIMD flags (=> 1.0.0)
+6) Shift internal RT_128X1/X2/X4 values to 1+2/1+2(+4+8)/1+2 respectively
+7) Adjust mask_init/from_mask converters in rtbase & SIMD layer in rtzero
+
+================================================================================
+
 A) Task title: "add 30 SIMD registers support for 128/256-bit AVX-512 target"
 1) Take current 512-bit target as a base and reduce it to 128/256-bit (VL bits)
 2) Find place in SIMD target mask (RT_128=1, RT_256=8), drop old SSE1 support
