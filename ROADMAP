@@ -1,12 +1,5 @@
 ================================================================================
 
-P) Task title: "add 30 SIMD registers support for 256-bit POWER7/8 target"
-1) Take quaded 512-bit target as a base and reduce it to paired 256-bit
-2) Find place in SIMD target mask (RT_256=4/8), keep 16 regs backend (=1/2)
-3) No support for (128-bit) 60 SIMD registers is planned, not portable
-
-================================================================================
-
 A) Task title: "add 30 SIMD registers support for 128/256-bit AVX-512 target"
 1) Take current 512-bit target as a base and reduce it to 128/256-bit (VL bits)
 2) Find place in SIMD target mask (RT_128=1, RT_256=8), drop old SSE1 support
