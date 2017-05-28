@@ -2129,6 +2129,8 @@
 #error "PowerPC doesn't support SIMD wider than 128-bit, check build flags"
 #elif (RT_128X4 != 0) && (RT_SIMD == 512)
 #include "rtarch_p64_128x4v4.h"
+#elif (RT_128X2 >= 8) && (RT_SIMD == 256)
+#include "rtarch_p64_128x2v8.h"
 #elif (RT_128X2 >= 2) && (RT_SIMD == 256)
 #include "rtarch_p64_128x2v4.h"
 #elif (RT_128X2 == 1) && (RT_SIMD == 256)

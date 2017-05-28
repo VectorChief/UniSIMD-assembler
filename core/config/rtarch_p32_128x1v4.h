@@ -1652,11 +1652,11 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
-#ifndef RT_RTARCH_P64_128X2V4_H
+#if !(defined RT_RTARCH_P64_128X2V4_H) && !(defined RT_RTARCH_P64_128X2V8_H)
 #undef  RT_128X2
 #define RT_128X2  RT_128X1
 #include "rtarch_p64_128x2v4.h"
-#endif /* RT_RTARCH_P64_128X2V4_H */
+#endif /* RT_RTARCH_P64_128X2V4_H, RT_RTARCH_P64_128X2V8_H */
 
 #endif /* RT_128X1 */
 

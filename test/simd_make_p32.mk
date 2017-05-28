@@ -54,6 +54,8 @@ simd_test_p32Bp7:
 # For 256-bit VMX  build use (replace): RT_256_R8=1  (uses 8 SIMD reg-pairs)
 # For 256-bit VSX1 build use (replace): RT_256=1    (uses pairs of regs/ops)
 # For 256-bit VSX2 build use (replace): RT_256=2    (uses pairs of regs/ops)
+# For 256-bit VSX1 build use (replace): RT_256=4    (uses 30 SIMD reg-pairs)
+# For 256-bit VSX2 build use (replace): RT_256=8    (uses 30 SIMD reg-pairs)
 
 # For 512-bit VSX1 build use (replace): RT_512=1    (uses quads of regs/ops)
 # For 512-bit VSX2 build use (replace): RT_512=2    (uses quads of regs/ops)
