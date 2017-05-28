@@ -1,5 +1,6 @@
   - renewed directory structure, move BASE/SIMD header files to core/config
   - add new fp-compatibility and feature tasks, rename TASKS file to ROADMAP
+  - add support for 30 SIMD register pairs (2x128) backend on POWER7/8
 
 v0.9.1: Unified SIMD Assembler, 3-operand + basic scalar SIMD, extra backends
   - expose 128/256-bit SIMD subsets (cmd[i/j/l]*, cmd[c/d/f]*) simultaneously
