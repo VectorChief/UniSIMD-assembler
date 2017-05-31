@@ -1083,6 +1083,16 @@
 #include "rtarch_x64_256x2v2.h"
 #elif (RT_128X4 != 0) && (RT_SIMD == 512)
 #error "x64:686 doesn't support quaded SSEx backends, check build flags"
+#elif (RT_256X1 == 8) && (RT_SIMD == 256) && (RT_REGS == 16)
+#if   defined (RT_SIMD_CODE) && defined (RT_X32)
+#undef    RT_X32
+#define   RT_X32 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
+#endif /* RT_X32 */
+#if   defined (RT_SIMD_CODE) && defined (RT_X64)
+#undef    RT_X64
+#define   RT_X64 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
+#endif /* RT_X64 */
+#include "rtarch_x64_256x1v8.h"
 #elif (RT_256X1 != 0) && (RT_SIMD == 256) && (RT_REGS == 16)
 #if   (RT_256X1 & 2) && defined (RT_SIMD_CODE) && defined (RT_X32)
 #undef    RT_X32
@@ -1105,8 +1115,18 @@
 #define   RT_X64 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
 #endif /* RT_X64 */
 #include "rtarch_x64_128x1v8.h"
-#elif (RT_128X1 >= 1) && (RT_SIMD == 128)
+#elif (RT_128X1 >= 2) && (RT_SIMD == 128)
 #include "rtarch_x64_128x1v4.h"
+#elif (RT_128X1 == 1) && (RT_SIMD == 128)
+#if   defined (RT_SIMD_CODE) && defined (RT_X32)
+#undef    RT_X32
+#define   RT_X32 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
+#endif /* RT_X32 */
+#if   defined (RT_SIMD_CODE) && defined (RT_X64)
+#undef    RT_X64
+#define   RT_X64 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
+#endif /* RT_X64 */
+#include "rtarch_x64_128x1v1.h"
 #endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
 /*
