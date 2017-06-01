@@ -159,6 +159,11 @@
         MRM(REG(XS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
+#define ck1ox_rm(XS, MT, DT) /* not portable, do not use outside */         \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 1, 1) EMITB(0x76)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 #if (RT_512X1 < 2)
 
 /* and (G = G & S), (D = S & T) if (#D != #S) */
@@ -700,11 +705,6 @@
 #define mk1wx_rx(RD)         /* not portable, do not use outside */         \
         VEX(RXB(RD),       0,    0x00, 0, 0, 1) EMITB(0x93)                 \
         MRM(REG(RD),    0x03,    0x01)
-
-#define ck1ox_rm(XS, MT, DT) /* not portable, do not use outside */         \
-    ADR EVX(0,       RXB(MT), REN(XS), K, 1, 1) EMITB(0x76)                 \
-        MRM(0x01,    MOD(MT), REG(MT))                                      \
-        AUX(SIB(MT), CMD(DT), EMPTY)
 
 #define mkjox_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         ck1ox_rm(W(XS), Mebp, inf_GPC07)                                    \

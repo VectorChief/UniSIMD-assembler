@@ -174,11 +174,6 @@
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
-#define ck1ix_rm(XS, MT, DT) /* not portable, do not use outside */         \
-    ADR EVX(0,       RXB(MT), REN(XS), 0, 1, 1) EMITB(0x76)                 \
-        MRM(0x01,    MOD(MT), REG(MT))                                      \
-        AUX(SIB(MT), CMD(DT), EMPTY)
-
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
@@ -198,6 +193,11 @@
     ADR EKX(RXB(XS), RXB(MG),    0x00, 0, 0, 1) EMITB(0x29)                 \
         MRM(REG(XS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
+
+#define ck1ix_rm(XS, MT, DT) /* not portable, do not use outside */         \
+    ADR EVX(0,       RXB(MT), REN(XS), 0, 1, 1) EMITB(0x76)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* and (G = G & S), (D = S & T) if (#D != #S) */
 
