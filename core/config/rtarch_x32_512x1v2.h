@@ -9,7 +9,7 @@
 
 #include "rtarch_x64.h"
 
-#define RT_SIMD_REGS        16
+#define RT_SIMD_REGS        32
 #define RT_SIMD_ALIGN       64
 #define RT_SIMD_WIDTH64     8
 #define RT_SIMD_SET64(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=v

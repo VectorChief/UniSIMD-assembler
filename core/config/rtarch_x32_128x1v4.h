@@ -137,7 +137,7 @@
 #define XmmC    0x0C, 0x03, EMPTY
 #define XmmD    0x0D, 0x03, EMPTY
 #define XmmE    0x0E, 0x03, EMPTY
-#define XmmF    0x0F, 0x03, EMPTY
+#define XmmF    0x0F, 0x03, EMPTY  /* reserved in >= 256-bit subsets on RISCs */
 
 /******************************************************************************/
 /**********************************   SSE   ***********************************/
