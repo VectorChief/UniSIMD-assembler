@@ -17,7 +17,7 @@ The project comes with a test framework for Linux/GCC, Windows/VC++/TDM64-GCC.
 Instructions for resolving dependencies and building the binaries
 for supported platforms can be found in the accompanying INSTALL file.
 
-UniSIMD asm features are as follows:
+UniSIMD core features:
  - Unified, Universal, Portable, Compatible code
  - Explicit register-allocation, predictable performance
  - Three register-categories for code: 8, 16, 32 (8, 15, 30)
