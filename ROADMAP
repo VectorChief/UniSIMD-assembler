@@ -1,5 +1,12 @@
 ================================================================================
 
+A) Task title: "add support for AVX1+FMA3 targets for AMD processors (no AVX2)"
+1) Reserve RT_128=16 and RT_256=4 for AVX1+FMA3 128/256-bit backends (no AVX2)
+2) Improve mask-jump (mkj) instructions for 64-bit SIMD elements (optional)
+3) Make all scalar compare-to-mask non-destructive on AArch64 (optional)
+
+================================================================================
+
 P) Task title: "consider moving legacy PowerPC VMX target to its own PPC arch"
 1) Create new arch makefile flag RT_PPC for legacy 32-bit PowerPC target
 2) Rename current 128/256-bit VMX headers to rtarch_ppc_128x*v1.h
@@ -8,12 +15,14 @@ P) Task title: "consider moving legacy PowerPC VMX target to its own PPC arch"
 5) Compatibility break with current 0.x.x versions in SIMD flags (=> 1.0.0)
 6) Shift internal RT_128X1/X2/X4 values to 1+2/1+2(+4+8)/1+2 respectively
 7) Adjust mask_init/from_mask converters in rtbase & SIMD layer in rtzero
+8) Alternatively, consider new arch RT_L64(?) for little-endian POWER8/9++
+9) In which case, RT_128=1 is POWER8 VSX-2, RT_256=8 is POWER8 or POWER9 VSX-3
 
 ================================================================================
 
 S) Task title: "implement ARM-SVE backends with 30 registers (no predicates)"
-1) Implement new SVE instructions for 128/256/512/1K4-bit targets (2K8 optional)
-2) Find place in SIMD target mask (RT_128/256=2, RT_512/1K4=1)
+1) Implement new SVE instructions for 256/512/1K4/2K8-bit targets (2K8 optional)
+2) Find place in SIMD target mask (RT_256=8, RT_512=2, RT_1K4=4) like AVX-512++
 3) When primary target is SVE, secondary is AArch64 NEON (no per-op switching)
    (primary is defined with RT_SIMD, secondary is from 128/256-bit set or both)
 
