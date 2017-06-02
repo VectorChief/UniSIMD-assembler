@@ -13,20 +13,31 @@ wider SIMD vectors with zeroing/merging predicates in 3/4-operand instructions,
 larger register files and other architectures are planned as future extensions
 to current 2-operand (destination-as-1st-source) SPMD-driven vertical SIMD ISA.
 
-Heap-address, SIMD-element sizes are 32/64-bit configurable on 64-bit targets.
-All targets support FMA3 either natively or via higher-precision fpu-emulation.
-All legacy targets support 128-bit SIMD with 8 registers (32-bit elements only).
-All modern targets support 128-bit SIMD with 15 registers (x86, 1x128 on RISCs).
-All modern targets support 256-bit SIMD with 15 registers (x86, 2x128 on RISCs).
-Select few targets support 512-bit SIMD with 15 registers (x86, 4x128 on Power).
-
-In addition to simultaneously exposed fixed-data-size 128/256-bit SIMD subsets
-common SIMD ISA remains vector-length-agnostic and is best suited for SPMD.
-C/C++ backend structures passed to the assembler need to be instrumented with
-offsets/factors in order for configurable instruction subsets to work properly.
-Application-specific backend structures also need to be SIMD-aligned, which can
-be achieved by using custom-heap linear allocator with SIMD-width granularity.
-
 The project comes with a test framework for Linux/GCC, Windows/VC++/TDM64-GCC.
 Instructions for resolving dependencies and building the binaries
 for supported platforms can be found in the accompanying INSTALL file.
+
+UniSIMD asm features are as follows:
+ - Unified, Universal, Portable, Compatible code
+ - Explicit register-allocation, predictable performance
+ - Three register-categories for code: 8, 16, 32 (8, 15, 30)
+ - High-level SIMD registers/ops as singles, pairs or quads
+ - SIMD-aligned backend structures with offsets/factors
+ - Vector-length agnostic vertical SIMD ISA, configurable
+ - Simultaneous scalar+128/256-bit+configurable SIMD
+ - ISA reservation for fp16/fp128 (half/quad) SIMD ops
+ - C/C++, Compute, SPMD on 4 major archs
+ - Intel SSE/SSE2/SSE4 and AVX/AVX2/AVX-512
+ - ARM NEON, ARMv8 AArch32, AArch64 NEON
+ - MIPS r5/r6 MSA (Warrior P5600, I6400/P6600)
+ - Power VMX/VSX (PowerPC G4, POWER7/8)
+ - CISC, RISC, CISC on RISC, little/big-endian ISA
+ - FMA3 support (native or higher-precision emulation)
+ - 32/64-bit hybrid mode for native 64-bit ABI
+ - 32/64-bit addressing for BASE and SIMD ops
+ - 32/64-bit configurable SIMD elements (fp+int)
+ - Simultaneous 32/64-bit BASE (with rules) and SIMD
+ - ISA reservation for int8/int16 (byte/half) BASE ops
+ - Full code-control, compiler steps out of the way
+ - Potential for bit-exact fp-compute across targets
+ - Used in QuadRay engine
