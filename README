@@ -10,7 +10,7 @@ ARMv7 NEON/NEONv2, ARMv8:AArch32 NEON and AArch64 NEON (32/64-bit ARM ISAs),
 MIPS 32/64-bit r5/r6 MSA and Power 32/64-bit VMX/VSX (little/big-endian ISAs)
 are mostly implemented, although scalar improvements, horizontal reductions,
 wider SIMD vectors with zeroing/merging predicates in 3/4-operand instructions,
-fp-cross-precision converters as well as sub-word (byte/half) integer SIMD ops
+cross-precision fp-converters as well as sub-word (byte/half) integer SIMD ops
 are planned as extensions to current 2/3-operand SPMD-driven vertical SIMD ISA.
 
 The project comes with a test framework for Linux/GCC, Windows/VC++/TDM64-GCC.
