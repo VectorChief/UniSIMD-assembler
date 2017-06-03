@@ -7,25 +7,28 @@ A) Task title: "add support for AVX1+FMA3 targets for AMD processors (no AVX2)"
 
 ================================================================================
 
-P) Task title: "consider moving legacy PowerPC VMX target to its own PPC arch"
-1) Create new arch makefile flag RT_PPC for legacy 32-bit PowerPC target
-2) Rename current 128/256-bit VMX headers to rtarch_ppc_128x*v1.h
-3) Keep RT_128=1/RT_256_R8=1 SIMD targets within RT_PPC 32-bit arch
-4) Shift RT_128=2+4 within RT_P32/P64 arch to RT_128=1+2 for VSX1/2 in POWER7/8
-5) Compatibility break with current 0.x.x versions in SIMD flags (=> 1.0.0)
-6) Shift internal RT_128X1/X2/X4 values to 1+2/1+2(+4+8)/1+2 respectively
-7) Adjust mask_init/from_mask converters in rtbase & SIMD layer in rtzero
-8) Alternatively, consider new arch RT_N64(?) for little-endian POWER8 and newer
-9) In which case, RT_128=1/RT_256=8 is POWER8 VSX2 (1x128/2x128) with 30 regs
+P) Task title: "swap legacy 128-bit PowerPC VMX target with POWER7/8 VSX1/2"
+1) Keep legacy PowerPC VMX target in RT_P32/P64 arch (32-bit G4, 64-bit POWER6)
+2) Rename current 128/256-bit VMX headers to rtarch_p**_128x*v4.h
+3) Shift legacy RT_128=1/RT_256_R8=1 SIMD-flag values to RT_128=4/RT_256_R8=4
+4) Shift RT_128=2+4 values to RT_128=1+2 for VSX1/2 in POWER7/8, rename headers
+5) Shift internal RT_128X1/X2/X4 values to 1+2/1+2+4+8/1+2 respectively
+6) Adjust mask_init/from_mask converters in rtbase & SIMD layer in rtzero
+7) New RT_128=4 for VMX would correspond to RT_128X1=4 (1+2 occupied by VSX1/2)
+8) New RT_256_R8=4 for VMX would correspond to RT_128X2=16 (1+2+4+8 occupied)
+9) Compatibility break with current 0.x.x versions in SIMD flags (=> 1.0.0)
 
 ================================================================================
 
 S) Task title: "implement ARM-SVE backends with 30 registers (no predicates)"
 1) Implement new SVE instructions for 256/512/1K4/2K8-bit targets (2K8 optional)
-2) Find place in SIMD target mask (RT_256=8, RT_512=2, RT_1K4=4) like AVX-512++
-3) Consider shifting RT_512=1,2/RT_1K4=4 to RT_512=4,8/RT_1K4=8 for 30 regs only
-4) In which case, POWER7/8 would still occupy RT_512=1,2 for 15 regs quaded VSX
-5) When primary target is SVE, secondary is AArch64 NEON (no per-op switching)
+2) Find place in SIMD target mask (RT_256=8, RT_512=8, RT_1K4=8) like AVX-512++
+3) Expose current and future AVX-512/1K4 30-regs targets in RT_512=4+8/RT_1K4=8
+4) In which case, POWER7/8 would still occupy RT_512=1+2 for 15-regs quaded VSX
+5) In the new scheme: RT_128=4+8, RT_256=1+2, RT_512=1+2, RT_1K4=1+2 are 15-regs
+6) In the new scheme: RT_128=1+2, RT_256=4+8, RT_512=4+8, RT_1K4=4+8 are 30-regs
+7) Unallocated slots above can be occupied by legacy targets (SSE2, AVX1+FMA3)
+8) When primary target is SVE, secondary is AArch64 NEON (no per-op switching)
    (primary is defined with RT_SIMD, secondary is from 128/256-bit set or both)
 
 ================================================================================
@@ -34,7 +37,7 @@ E) Task title: "add 8 SIMD registers full-IEEE support for ARMv7 using VFP"
 1) Implement 128-bit SIMD registers/instructions as 4x32-bit VFP (full-IEEE)
 2) Emulate currently exposed NEON instructions using VFP variants/fallbacks
 3) Use register-offloading to upper bank for 1 mem-arg in load-op instructions
-4) Find place in SIMD target mask (RT_128=8)
+4) Find place in SIMD target mask (RT_128=8) <- like legacy x86, ARMv7 is 8-regs
 
 ================================================================================
 
