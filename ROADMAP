@@ -15,15 +15,17 @@ P) Task title: "consider moving legacy PowerPC VMX target to its own PPC arch"
 5) Compatibility break with current 0.x.x versions in SIMD flags (=> 1.0.0)
 6) Shift internal RT_128X1/X2/X4 values to 1+2/1+2(+4+8)/1+2 respectively
 7) Adjust mask_init/from_mask converters in rtbase & SIMD layer in rtzero
-8) Alternatively, consider new arch RT_L64(?) for little-endian POWER8/9++
-9) In which case, RT_128=1 is POWER8 VSX-2, RT_256=8 is POWER8 or POWER9 VSX-3
+8) Alternatively, consider new arch RT_N64(?) for little-endian POWER8 and newer
+9) In which case, RT_128=1/RT_256=8 is POWER8 VSX2 (1x128/2x128) with 30 regs
 
 ================================================================================
 
 S) Task title: "implement ARM-SVE backends with 30 registers (no predicates)"
 1) Implement new SVE instructions for 256/512/1K4/2K8-bit targets (2K8 optional)
 2) Find place in SIMD target mask (RT_256=8, RT_512=2, RT_1K4=4) like AVX-512++
-3) When primary target is SVE, secondary is AArch64 NEON (no per-op switching)
+3) Consider shifting RT_512=1,2/RT_1K4=4 to RT_512=4,8/RT_1K4=8 for 30 regs only
+4) In which case, POWER7/8 would still occupy RT_512=1,2 for 15 regs quaded VSX
+5) When primary target is SVE, secondary is AArch64 NEON (no per-op switching)
    (primary is defined with RT_SIMD, secondary is from 128/256-bit set or both)
 
 ================================================================================
