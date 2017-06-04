@@ -6,7 +6,7 @@ The assembler itself isn't a separate tool, but rather a collection of C/C++
 header files, which applications need to include directly in order to use.
 
 At present, Intel SSE/SSE2/SSE4 and AVX/AVX2/AVX-512 (32/64-bit x86 ISAs),
-ARMv7 NEON/NEONv2, ARMv8:AArch32 NEON and AArch64 NEON (32/64-bit ARM ISAs),
+ARMv7 NEON/NEONv2, ARMv8 AArch32 NEON and AArch64 NEON (32/64-bit ARM ISAs),
 MIPS 32/64-bit r5/r6 MSA and Power 32/64-bit VMX/VSX (little/big-endian ISAs)
 are mostly implemented, although scalar improvements, horizontal reductions,
 wider SIMD vectors with zeroing/merging predicates in 3/4-operand instructions,
@@ -24,20 +24,21 @@ UniSIMD core features:
  - High-level SIMD registers/ops as singles, pairs or quads
  - SIMD-aligned backend structures with offsets/factors
  - Vector-length agnostic vertical SIMD ISA, configurable
- - Simultaneous scalar+128/256-bit+configurable SIMD
+ - Simultaneous scalar+128/256-bit+configurable SIMD ops
  - ISA reservation for fp16/fp128 (half/quad) SIMD ops
  - C/C++, Compute, SPMD on 4 major archs
  - Intel SSE/SSE2/SSE4 and AVX/AVX2/AVX-512
- - ARM NEON, ARMv8 AArch32, AArch64 NEON
+ - ARMv7 NEON/NEONv2, ARMv8 AArch32/AArch64 NEON
  - MIPS r5/r6 MSA (Warrior P5600, I6400/P6600)
- - Power VMX/VSX (PowerPC G4, POWER7/8)
+ - Power VMX/VSX (PowerPC G4/G5, POWER6/7/8)
  - CISC, RISC, CISC on RISC, little/big-endian ISA
+ - Support for reg-reg, load/store, load-op instructions
  - FMA3 support (native or higher-precision emulation)
  - 32/64-bit hybrid mode for native 64-bit ABI
  - 32/64-bit addressing for BASE and SIMD ops
  - 32/64-bit configurable SIMD elements (fp+int)
- - Simultaneous 32/64-bit BASE (with rules) and SIMD
+ - Simultaneous 32/64-bit BASE (with rules) and SIMD ops
  - ISA reservation for int8/int16 (byte/half) BASE ops
- - Full code-control, compiler steps out of the way
- - Potential for bit-exact fp-compute across targets
+ - Full control over code, compiler steps out of the way
+ - Potential for bit-exact fp-compute across modern targets
  - Used in QuadRay engine
