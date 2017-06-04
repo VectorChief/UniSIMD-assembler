@@ -1330,15 +1330,24 @@
         movwx_ri(Reax, IB(1))                                               \
         cpuid_xx()                                                          \
         shrwx_ri(Redx, IB(25))                                              \
-        andwx_ri(Redx, IV(0x00000003))  /* <- SSE1,2 to bit0, bit1 */       \
+        andwx_ri(Redx, IV(0x00000003))  /* <- SSE1/2 to bit0, bit1 */       \
         movwx_rr(Resi, Redx)                                                \
         movwx_rr(Redx, Recx)                                                \
         shrwx_ri(Redx, IB(17))                                              \
-        andwx_ri(Redx, IV(0x00000004))  /* <- SSE4 to bit2 */               \
-        shrwx_ri(Recx, IB(20))                                              \
-        andwx_ri(Recx, IV(0x00000100))  /* <- AVX1 to bit8 */               \
+        andwx_ri(Redx, IV(0x00000004))  /* <- SSE4.1 to bit2 */             \
         orrwx_rr(Resi, Redx)                                                \
-        orrwx_rr(Resi, Recx)                                                \
+        movwx_rr(Redx, Recx)                                                \
+        shrwx_ri(Redx, IB(20))                                              \
+        andwx_ri(Redx, IV(0x00000100))  /* <- AVX1 to bit8 */               \
+        orrwx_rr(Resi, Redx)                                                \
+        movwx_rr(Redx, Recx)                                                \
+        shrwx_ri(Redx, IB(8))                                               \
+        andwx_ri(Redx, IV(0x00000010))  /* <- FMA3 to bit4 */               \
+        orrwx_rr(Resi, Redx)                                                \
+        movwx_rr(Redx, Recx)                                                \
+        shrwx_ri(Redx, IB(2))                                               \
+        andwx_ri(Redx, IV(0x00000400))  /* <- FMA3 to bit10 */              \
+        orrwx_rr(Resi, Redx)                                                \
         /* request cpuid:eax=0 to test input value eax=7 */                 \
         movwx_ri(Reax, IB(0))                                               \
         cpuid_xx()                                                          \
@@ -1360,7 +1369,7 @@
         orrwx_rr(Resi, Rebx)                                                \
         movwx_rr(Recx, Resi)                                                \
         shrwx_ri(Recx, IB(4 + RT_SIMD_COMPAT_128))                          \
-        andwx_ri(Recx, IV(0x00000008))  /* <- AVX1,2 to bit3 */             \
+        andwx_ri(Recx, IV(0x00000008))  /* <- AVX1/2/FMA3 to bit3 */        \
         orrwx_rr(Resi, Recx)                                                \
         movwx_st(Resi, Mebp, inf_VER)
 
