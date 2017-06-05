@@ -57,7 +57,7 @@ simd_test_w64f64:
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 
-# For 128-bit SSE1 build use (replace): RT_128=1 (32-bit SIMD elements only)
+# For 128-bit AVX3.2 build use (replace): RT_128=1 (Skylake X and newer CPUs)
 # For 128-bit SSE2 build use (replace): RT_128=2
 # For 128-bit SSE4 build use (replace): RT_128=4
 # For 128-bit AVX1 build use (replace): RT_128=8
@@ -67,6 +67,7 @@ simd_test_w64f64:
 # For 256-bit SSE4 build use (replace): RT_256_R8=4       (8 SIMD-reg pairs)
 # For 256-bit AVX1 build use (replace): RT_256=1
 # For 256-bit AVX2 build use (replace): RT_256=2
+# For 256-bit AVX3.2 build use (replace): RT_256=8 (Skylake X and newer CPUs)
 
 # For 512-bit AVX1 build use (replace): RT_512_R8=1       (8 SIMD-reg pairs)
 # For 512-bit AVX2 build use (replace): RT_512_R8=2       (8 SIMD-reg pairs)
