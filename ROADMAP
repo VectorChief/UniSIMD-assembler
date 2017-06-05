@@ -38,7 +38,7 @@ E) Task title: "add 8 SIMD registers full-IEEE support for ARMv7 using VFP"
 2) Emulate currently exposed NEON instructions using VFP variants/fallbacks
 3) Use register-offloading to upper bank for 1 mem-arg in load-op instructions
 4) Find place in SIMD target mask (RT_128=8) <- like legacy x86, ARMv7 is 8-regs
-5) Consider moving legacy 8-regs targets to RT_128_R8 (+ 256_R8/512_R8 for x86)
+5) RT_128_R8 doesn't have enough free slots for legacy x86/ARMv7 8-regs targets
 
 ================================================================================
 
