@@ -98,7 +98,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if (RT_128X1 >= 8 && RT_128X1 <= 8)
+#if (RT_128X1 >= 8 && RT_128X1 <= 16)
 
 /* fwait instruction for legacy processors (fix for fstcw) */
 #define FWT                                                                 \
@@ -421,7 +421,7 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (RT_SIMD_COMPAT_128 == 1)
+#if (RT_128X1 < 16) && (RT_SIMD_COMPAT_128 == 1)
 
 #if RT_SIMD_COMPAT_FMA == 0
 
@@ -519,7 +519,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* (RT_SIMD_COMPAT_128 == 2) */ /* FMA comes with AVX2 */
+#else /* RT_128X1 == 16 || RT_SIMD_COMPAT_128 == 2, FMA/FMS in FMA3 or AVX2 */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -555,7 +555,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* (RT_SIMD_COMPAT_128 == 2) */
+#endif /* RT_128X1 == 16 || RT_SIMD_COMPAT_128 == 2, FMA/FMS in FMA3 or AVX2 */
 
 /*************   packed single-precision floating-point compare   *************/
 
@@ -970,7 +970,7 @@
 #define svlix_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svlix3ld(W(XG), W(XG), W(MS), W(DS))
 
-#if (RT_SIMD_COMPAT_128 == 1)
+#if (RT_SIMD_COMPAT_128 != 2)
 
 #define svlix3rr(XD, XS, XT)                                                \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -1025,7 +1025,7 @@
 #define svrix_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrix3ld(W(XG), W(XG), W(MS), W(DS))
 
-#if (RT_SIMD_COMPAT_128 == 1)
+#if (RT_SIMD_COMPAT_128 != 2)
 
 #define svrix3rr(XD, XS, XT)                                                \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -1080,7 +1080,7 @@
 #define svrin_ld(XG, MS, DS) /* variable shift with per-elem count */       \
         svrin3ld(W(XG), W(XG), W(MS), W(DS))
 
-#if (RT_SIMD_COMPAT_128 == 1)
+#if (RT_SIMD_COMPAT_128 != 2)
 
 #define svrin3rr(XD, XS, XT)                                                \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -1322,7 +1322,7 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (RT_SIMD_COMPAT_128 == 1)
+#if (RT_128X1 < 16) && (RT_SIMD_COMPAT_128 == 1)
 
 #if RT_SIMD_COMPAT_FMA == 0
 
@@ -1480,7 +1480,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* (RT_SIMD_COMPAT_128 == 2) */ /* FMA comes with AVX2 */
+#else /* RT_128X1 == 16 || RT_SIMD_COMPAT_128 == 2, FMA/FMS in FMA3 or AVX2 */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -1516,7 +1516,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* (RT_SIMD_COMPAT_128 == 2) */
+#endif /* RT_128X1 == 16 || RT_SIMD_COMPAT_128 == 2, FMA/FMS in FMA3 or AVX2 */
 
 /*************   scalar single-precision floating-point compare   *************/
 
@@ -1886,7 +1886,7 @@ FWT ADR REX(0,       RXB(MD)) EMITB(0xD9)                                   \
 
 #ifndef RT_RTARCH_X64_256X1V2_H
 #undef  RT_256X1
-#define RT_256X1  RT_SIMD_COMPAT_128
+#define RT_256X1  (RT_128X1/4 - (RT_128X1 == 8 && RT_SIMD_COMPAT_128 == 1))
 #include "rtarch_x64_256x1v2.h"
 #endif /* RT_RTARCH_X64_256X1V2_H */
 

@@ -98,13 +98,13 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if (RT_256X1 >= 1 && RT_256X1 <= 2)
+#if (RT_256X1 >= 1 && RT_256X1 <= 4)
 
 #ifndef RT_RTARCH_X64_128X1V8_H
 #undef  RT_128X1
-#define RT_128X1  8
+#define RT_128X1  (8 + (RT_256X1 == 4)*8)
 #undef  RT_SIMD_COMPAT_128
-#define RT_SIMD_COMPAT_128  RT_256X1
+#define RT_SIMD_COMPAT_128  (1 + (RT_256X1 == 2))
 #include "rtarch_x64_128x1v8.h"
 #endif /* RT_RTARCH_X64_128X1V8_H */
 
@@ -557,7 +557,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* RT_256X1 >= 2 */ /* FMA comes with AVX2 */
+#else /* RT_256X1 >= 2, FMA/FMS in AVX2 or FMA3 */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -593,7 +593,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* RT_256X1 >= 2 */
+#endif /* RT_256X1 >= 2, FMA/FMS in AVX2 or FMA3 */
 
 /*************   packed single-precision floating-point compare   *************/
 
@@ -908,7 +908,7 @@
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-#if (RT_256X1 < 2)
+#if (RT_256X1 != 2)
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1221,7 +1221,7 @@
         stack_ld(Recx)                                                      \
         movcx_ld(W(XD), Mebp, inf_SCR01(0))
 
-#else /* RT_256X1 >= 2 */
+#else /* RT_256X1 == 2 */
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1368,7 +1368,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-#endif /* RT_256X1 >= 2 */
+#endif /* RT_256X1 == 2 */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

@@ -91,7 +91,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if (RT_256X2 >= 1 && RT_256X2 <= 2)
+#if (RT_256X2 >= 1 && RT_256X2 <= 4)
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -636,7 +636,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* RT_256X2 >= 2 */ /* FMA comes with AVX2 */
+#else /* RT_256X2 >= 2, FMA/FMS in AVX2 or FMA3 */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -682,7 +682,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* RT_256X2 >= 2 */
+#endif /* RT_256X2 >= 2, FMA/FMS in AVX2 or FMA3 */
 
 /*************   packed double-precision floating-point compare   *************/
 
@@ -1138,7 +1138,7 @@
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-#if (RT_256X2 < 2)
+#if (RT_256X2 != 2)
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1416,7 +1416,7 @@
         stack_ld(Recx)                                                      \
         movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
-#else /* RT_256X2 >= 2 */
+#else /* RT_256X2 == 2 */
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1558,7 +1558,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-#endif /* RT_256X2 >= 2 */
+#endif /* RT_256X2 == 2 */
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
  * for maximum compatibility, shift count mustn't exceed elem-size */
