@@ -59,7 +59,6 @@ simd_test_x64f64:
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 
-# For 128-bit SSE1 build use (replace): RT_128=1 (32-bit SIMD elements only)
 # For 128-bit SSE2 build use (replace): RT_128=2
 # For 128-bit SSE4 build use (replace): RT_128=4
 # For 128-bit AVX1 build use (replace): RT_128=8
