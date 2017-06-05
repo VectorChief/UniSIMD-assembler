@@ -299,6 +299,17 @@
 #define L   (RT_ELEMENT/32)         /* short name for RT_ELEMENT/32 */
 
 /*
+ * Short name for true-condition sign in assembler evaluation of (A == B).
+ * The result of the condition evaluation is used as a mask for selection:
+ * ((A == B) & C) | ((A != B) & D), therefore it needs to be (-1) if true.
+ */
+#if __llvm__
+#define M   -
+#else /* GAS */
+#define M   +
+#endif /* M */
+
+/*
  * Offset corrections for endianness (used in backend's structs and BASE ISA).
  */
 #define B   (RT_ENDIAN*(2-1)*4)     /* for cmdw*_** working on 64-bit field */

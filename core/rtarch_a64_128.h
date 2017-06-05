@@ -516,7 +516,7 @@
 
 #define shrqx_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
         EMITW(0x4F400400 | MXM(REG(XG), REG(XG), 0x00) |                    \
-        (+(VAL(IS) == 0) & 0x00005000) | (+(VAL(IS) != 0) & 0x20000000) |   \
+        (M(VAL(IS) == 0) & 0x00005000) | (M(VAL(IS) != 0) & 0x20000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x3F &-VAL(IS)) << 16)
 
 #define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
@@ -539,7 +539,7 @@
 
 #define shrqn_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
         EMITW(0x4F400400 | MXM(REG(XG), REG(XG), 0x00) |                    \
-        (+(VAL(IS) == 0) & 0x00005000) | (+(VAL(IS) != 0) & 0x00000000) |   \
+        (M(VAL(IS) == 0) & 0x00005000) | (M(VAL(IS) != 0) & 0x00000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x3F &-VAL(IS)) << 16)
 
 #define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \

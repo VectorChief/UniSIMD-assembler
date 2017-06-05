@@ -63,6 +63,8 @@
 #undef A /* short name for RT_ADDRESS/32 */
 #undef L /* short name for RT_ELEMENT/32 */
 
+#undef M /* true-condition sign llvm/gas */
+
 #undef B /* short name for RT_ENDIAN*(2-1)*4 */
 #undef C /* short name for RT_ENDIAN*(2-A)*4 */
 #undef D /* short name for RT_ENDIAN*(P-1)*4 */

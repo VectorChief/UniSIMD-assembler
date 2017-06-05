@@ -979,7 +979,7 @@
 
 #define shrox_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
         EMITW(0xF2A00050 | MXM(REG(XG), 0x00,    REG(XG)) |                 \
-        (+(VAL(IS) == 0) & 0x00000500) | (+(VAL(IS) != 0) & 0x01000000) |   \
+        (M(VAL(IS) == 0) & 0x00000500) | (M(VAL(IS) != 0) & 0x01000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IS)) << 16)
 
 #define shrox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
@@ -1003,7 +1003,7 @@
 
 #define shron_ri(XG, IS) /* emits shift-left for zero-immediate args */     \
         EMITW(0xF2A00050 | MXM(REG(XG), 0x00,    REG(XG)) |                 \
-        (+(VAL(IS) == 0) & 0x00000500) | (+(VAL(IS) != 0) & 0x00000000) |   \
+        (M(VAL(IS) == 0) & 0x00000500) | (M(VAL(IS) != 0) & 0x00000000) |   \
         /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IS)) << 16)
 
 #define shron_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
