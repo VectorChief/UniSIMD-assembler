@@ -558,9 +558,9 @@ struct rt_SIMD_REGS
 /*
  * Return SIMD target mask (in rt_SIMD_INFO->ver format) from "simd" parameters:
  * SIMD native-size (1, 2, 4) in 0th (lowest) byte
- * SIMD type (1, 2, 4, 8) in 1st (higher) byte      <- in format for given size
+ * SIMD type (1, 2, 4, 8, 16) in 1st (higher) byte  <- in format for given size
  * SIMD size-factor (1, 2, 4) in 2nd (higher) byte
- * SIMD regs (8, 16, 32) in 3rd (highest) byte      <- logical vector registers
+ * SIMD regs (8,15,16,30,32) in 3rd (highest) byte  <- logical vector registers
  * For interpretation of SIMD target mask check compatibility layer in rtzero.h
  */
 static
@@ -573,6 +573,10 @@ rt_si32 mask_init(rt_si32 simd)
 
     rt_si32 mask = 0;
     rt_si32 n = n_simd, k = k_size, t = 0, m = 0, s = 0;
+
+#if   defined (RT_X32) || defined (RT_X64) || defined (RT_X86)
+    rt_si32 s_fma3 = s_type == 0 ? 0x10 : s_type & 0x10;
+#endif /* x86 targets */
 
     s_type = s_type == 0 ? 0xF : s_type & 0xF;
     n_simd = n_simd == 0 ? 4 : n_simd;  /* <- 4 is the maximal native-size */
@@ -592,7 +596,7 @@ rt_si32 mask_init(rt_si32 simd)
 #if   defined (RT_X86)
             if (k_size == 1 && n_simd <= 4 && v_regs <= 8)
             {
-                mask |= s_type << (8*(n_simd/2));
+                mask |= s_type << (8*(n_simd/2)) | (n_simd == 1 ? s_fma3 : 0);
             }
 #elif defined (RT_X32) || defined (RT_X64)
             if (n_simd >= 4 && n != 0)
@@ -621,7 +625,7 @@ rt_si32 mask_init(rt_si32 simd)
             }
             if (k_size == 1 && n_simd <= 4 && v_regs <= 16)
             {
-                mask |= s_type << (8*(n_simd/2));
+                mask |= s_type << (8*(n_simd/2)) | (n_simd == 1 ? s_fma3 : 0);
             }
 #elif defined (RT_ARM)
             if (k_size == 1 && n_simd == 1 && v_regs <= 8)
@@ -670,9 +674,9 @@ rt_si32 mask_init(rt_si32 simd)
 /*
  * Pack/return SIMD parameters from target "mask" (in rt_SIMD_INFO->ver format).
  * SIMD native-size (1, 2, 4) in 0th (lowest) byte
- * SIMD type (1, 2, 4, 8) in 1st (higher) byte      <- in format for given size
+ * SIMD type (1, 2, 4, 8, 16) in 1st (higher) byte  <- in format for given size
  * SIMD size-factor (1, 2, 4) in 2nd (higher) byte
- * SIMD regs (8, 16, 32) in 3rd (highest) byte      <- logical vector registers
+ * SIMD regs (8,15,16,30,32) in 3rd (highest) byte  <- logical vector registers
  * For interpretation of SIMD target mask check compatibility layer in rtzero.h
  */
 static
@@ -689,6 +693,11 @@ rt_si32 from_mask(rt_si32 mask)
     v_regs = 16 / k_size;
 
 #if   defined (RT_X86)
+    if (n_simd == 1 && k_size == 2 && s_type == 1)
+    {
+        k_size = 1;
+        s_type = 0x10; /* <- fma3 */
+    }
     if (n_simd >= 6 || k_size >= 2)
     {
         n_simd = s_type = k_size = v_regs = 0;
@@ -698,6 +707,11 @@ rt_si32 from_mask(rt_si32 mask)
         v_regs = 8;
     }
 #elif defined (RT_X32) || defined (RT_X64)
+    if (n_simd == 1 && k_size == 2 && s_type == 1)
+    {
+        k_size = 1;
+        s_type = 0x10; /* <- fma3 */
+    }
     if (n_simd == 6)
     {
         k_size = k_size * 2;
