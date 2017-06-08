@@ -384,7 +384,7 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (RT_256X1 < 2)
+#if (RT_256X1 < 2) && !(RT_SIMD == 128 && RT_SIMD_COMPAT_128 == 3)
 
 #define prmcx_rr(XD, XS, IT) /* not portable, do not use outside */         \
         VEX(REG(XD), 1, 1, 3) EMITB(0x06)                                   \

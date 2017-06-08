@@ -360,7 +360,7 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (RT_256X1 < 2)
+#if (RT_256X1 < 2) && !(RT_SIMD == 128 && RT_SIMD_COMPAT_128 == 3)
 
 #if RT_SIMD_COMPAT_FMA == 0
 

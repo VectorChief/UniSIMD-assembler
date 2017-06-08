@@ -298,7 +298,7 @@
 #define RT_SIMD_COMPAT_FMS_MASTER       1 /* for full-precision fmsps_** */
 #define RT_SIMD_COMPAT_DIV_MASTER       1 /* for full-precision divps_** */
 #define RT_SIMD_COMPAT_SQR_MASTER       1 /* for full-precision sqrps_** */
-#define RT_SIMD_COMPAT_128_MASTER       1 /* for 128-bit AVX(1,2) - 1,2 (x86) */
+#define RT_SIMD_COMPAT_128_MASTER       1 /* for AVX1,AVX2,FMA3 - 1,2,3 (x86) */
 #define RT_SIMD_COMPAT_FMR_MASTER       0 /* for fm*ps_** rounding mode (x86) */
 #define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and Power */
 
@@ -500,7 +500,7 @@
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1 & AVX2
+/* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1/2/FMA3
  * if RT_128X1=8 SIMD backend is present among build targets */
 #ifndef RT_SIMD_COMPAT_128
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
@@ -751,7 +751,7 @@
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1 & AVX2
+/* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1/2/FMA3
  * if RT_128X1=8 SIMD backend is present among build targets */
 #ifndef RT_SIMD_COMPAT_128
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
@@ -1029,7 +1029,7 @@
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1 & AVX2
+/* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1/2/FMA3
  * if RT_128X1=8 SIMD backend is present among build targets */
 #ifndef RT_SIMD_COMPAT_128
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
@@ -1107,11 +1107,11 @@
 #include "rtarch_x64_128x2v4.h"
 #elif (RT_128X1 >= 8) && (RT_SIMD == 128)
 #if   (RT_128X1 & 8) && (RT_SIMD_COMPAT_128 == 2) && defined (RT_SIMD_CODE)
-#ifdef   (RT_X32)
+#ifdef    RT_X32
 #undef    RT_X32
 #define   RT_X32 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
 #endif /* RT_X32 */
-#ifdef   (RT_X64)
+#ifdef    RT_X64
 #undef    RT_X64
 #define   RT_X64 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
 #endif /* RT_X64 */

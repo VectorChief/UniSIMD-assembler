@@ -505,7 +505,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* RT_128X1 == 16 || RT_SIMD_COMPAT_128 == 2, FMA/FMS in FMA3 or AVX2 */
+#else /* RT_128X1 == 16 || RT_SIMD_COMPAT_128 >= 2, FMA/FMS in FMA3 or AVX2 */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -541,7 +541,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* RT_128X1 == 16 || RT_SIMD_COMPAT_128 == 2, FMA/FMS in FMA3 or AVX2 */
+#endif /* RT_128X1 == 16 || RT_SIMD_COMPAT_128 >= 2, FMA/FMS in FMA3 or AVX2 */
 
 /*************   packed single-precision floating-point compare   *************/
 
@@ -1466,7 +1466,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* RT_128X1 == 16 || RT_SIMD_COMPAT_128 == 2, FMA/FMS in FMA3 or AVX2 */
+#else /* RT_128X1 == 16 || RT_SIMD_COMPAT_128 >= 2, FMA/FMS in FMA3 or AVX2 */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -1502,7 +1502,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* RT_128X1 == 16 || RT_SIMD_COMPAT_128 == 2, FMA/FMS in FMA3 or AVX2 */
+#endif /* RT_128X1 == 16 || RT_SIMD_COMPAT_128 >= 2, FMA/FMS in FMA3 or AVX2 */
 
 /*************   scalar single-precision floating-point compare   *************/
 
@@ -1872,7 +1872,7 @@
 
 #ifndef RT_RTARCH_X86_256X1V2_H
 #undef  RT_256X1
-#define RT_256X1  (RT_128X1/4 - (RT_128X1 == 8 && RT_SIMD_COMPAT_128 == 1))
+#define RT_256X1  (RT_128X1/4 - (RT_128X1 == 8 && RT_SIMD_COMPAT_128 != 2))
 #include "rtarch_x86_256x1v2.h"
 #endif /* RT_RTARCH_X86_256X1V2_H */
 
