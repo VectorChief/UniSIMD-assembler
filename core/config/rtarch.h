@@ -501,7 +501,7 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1/2/FMA3
- * if RT_128X1=8 SIMD backend is present among build targets */
+ * if RT_128 = 8 SIMD backend is present among build targets */
 #ifndef RT_SIMD_COMPAT_128
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
 #endif /* RT_SIMD_COMPAT_128 */
@@ -752,7 +752,7 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1/2/FMA3
- * if RT_128X1=8 SIMD backend is present among build targets */
+ * if RT_128 = 8 SIMD backend is present among build targets */
 #ifndef RT_SIMD_COMPAT_128
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
 #endif /* RT_SIMD_COMPAT_128 */
@@ -1030,7 +1030,7 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1/2/FMA3
- * if RT_128X1=8 SIMD backend is present among build targets */
+ * if RT_128 = 8 SIMD backend is present among build targets */
 #ifndef RT_SIMD_COMPAT_128
 #define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
 #endif /* RT_SIMD_COMPAT_128 */
