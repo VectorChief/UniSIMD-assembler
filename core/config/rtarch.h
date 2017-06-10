@@ -2282,14 +2282,14 @@
 #define EMITS(w) /* EMPTY */
 #define EMITM(w) /* EMPTY */
 #define EMITP(w) /* EMPTY */
-#elif (RT_128X1 >= 2 || RT_128X2 >= 2 || RT_128X4 >= 2)
-#define EMITS(w)    EMITW(w)
-#define EMITM(w) /* EMPTY */
-#define EMITP(w)    EMITW(w)
-#else /* RT_128X1 == 1, RT_128X2 == 1 */
+#elif (RT_128X1 == 4 || RT_128X2 == 16)
 #define EMITS(w)    EMITW(w)
 #define EMITM(w)    EMITW(w)
 #define EMITP(w) /* EMPTY */
+#else /* RT_128X1 <= 2 || RT_128X2 <= 8 || RT_128X4 <= 2 */
+#define EMITS(w)    EMITW(w)
+#define EMITM(w) /* EMPTY */
+#define EMITP(w)    EMITW(w)
 #endif /* RT_SIMD_CODE */
 
 #endif /* RT_X86, RT_X32/X64, RT_ARM, RT_A32/A64, RT_M32/M64, RT_P32/P64 */
