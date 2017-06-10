@@ -684,7 +684,7 @@ rt_si32 mask_init(rt_si32 simd)
  * SIMD native-size (1, 2, 4) in 0th (lowest) byte
  * SIMD type (1, 2, 4, 8, 16) in 1st (higher) byte  <- in format for given size
  * SIMD size-factor (1, 2, 4) in 2nd (higher) byte
- * SIMD regs (8,15,16,30,32) in 3rd (highest) byte  <- logical vector registers
+ * SIMD regs (8, 15, 16, 30) in 3rd (highest) byte  <- logical vector registers
  * For interpretation of SIMD target mask check compatibility layer in rtzero.h
  */
 static
@@ -704,7 +704,7 @@ rt_si32 from_mask(rt_si32 mask)
     if (n_simd == 1 && k_size == 2 && s_type == 1)
     {
         k_size = 1;
-        s_type = 0x10; /* <- fma3 */
+        s_type = 0x10; /* <- avx+fma3 */
     }
     if (n_simd >= 6 || k_size >= 2)
     {
@@ -718,7 +718,7 @@ rt_si32 from_mask(rt_si32 mask)
     if (n_simd == 1 && k_size == 2 && s_type == 1)
     {
         k_size = 1;
-        s_type = 0x10; /* <- fma3 */
+        s_type = 0x10; /* <- avx+fma3 */
     }
     if (n_simd == 6)
     {
@@ -727,7 +727,15 @@ rt_si32 from_mask(rt_si32 mask)
     }
     if (n_simd == 4 && k_size == 1)
     {
-        v_regs = 32;
+        v_regs = 30;
+    }
+    if (n_simd == 2 && k_size == 1 && s_type == 8)
+    {
+        v_regs = 30;
+    }
+    if (n_simd == 1 && k_size == 1 && s_type == 1)
+    {
+        v_regs = 30;
     }
 #elif defined (RT_ARM)
     if (n_simd != 1 || k_size >= 2)
@@ -741,13 +749,14 @@ rt_si32 from_mask(rt_si32 mask)
 #else /* modern RISC targets */
     v_regs = v_regs == 16 ? 15 : 8;
 #if defined (RT_P32) || defined (RT_P64)
-    if (n_simd >= 2 && k_size == 1)
-    {
-        s_type <<= 1;
-    }
-    if (n_simd == 2 && k_size == 1)
+    if (n_simd == 2 && k_size == 1 && s_type >= 4)
     {
         v_regs = 30;
+    }
+    if (n_simd == 1 && k_size == 2 && s_type == 4)
+    {
+        s_type = 0x10; /* <- vmx-x2r8 */
+        v_regs = 8;
     }
 #endif /* Power targets */
     if (n_simd >= 2)
@@ -755,7 +764,7 @@ rt_si32 from_mask(rt_si32 mask)
         k_size = k_size * n_simd;
         n_simd = 1;
     }
-    if (n_simd == 1 && k_size == 1)
+    if (n_simd == 1 && k_size == 1 && s_type <= 2)
     {
         v_regs = 30;
     }
