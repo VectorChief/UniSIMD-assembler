@@ -351,10 +351,10 @@
 #error "PowerPC doesn't support SIMD wider than 128-bit, check build flags"
 #endif
 #if   !(defined RT_128X4) && (RT_512 || RT_512_R8)
-#define         RT_128X4  (2*(RT_512)|  RT_512_R8)
+#define         RT_128X4     (RT_512 |  RT_512_R8)
 #endif
 #if   !(defined RT_128X2) && (RT_256 || RT_256_R8)
-#define         RT_128X2  (2*(RT_256)|  RT_256_R8)
+#define         RT_128X2     (RT_256 | (RT_256_R8 + ((RT_256_R8)/4)*12))
 #endif
 #if   !(defined RT_128X1) && (RT_128)
 #define         RT_128X1     (RT_128)

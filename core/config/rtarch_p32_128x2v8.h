@@ -98,13 +98,13 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if (RT_128X2 >= 8 && RT_128X2 <= 16) && (RT_SIMD_COMPAT_XMM > 0)
+#if (RT_128X2 >= 4 && RT_128X2 <= 8) && (RT_SIMD_COMPAT_XMM > 0)
 
-#ifndef RT_RTARCH_P64_128X1V4_H
+#ifndef RT_RTARCH_P64_128X1V2_H
 #undef  RT_128X1
 #define RT_128X1 (RT_128X2/4)
-#include "rtarch_p64_128x1v4.h"
-#endif /* RT_RTARCH_P64_128X1V4_H */
+#include "rtarch_p64_128x1v2.h"
+#endif /* RT_RTARCH_P64_128X1V2_H */
 
 #undef  sregs_sa
 #undef  sregs_la
@@ -241,7 +241,7 @@
 
 /* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
 
-#if (RT_128X2 < 16)
+#if (RT_128X2 < 8)
 
 #define orncx_rr(XG, XS)                                                    \
         notcx_rx(W(XG))                                                     \
@@ -259,7 +259,7 @@
         notcx_rr(W(XD), W(XS))                                              \
         orrcx_ld(W(XD), W(MT), W(DT))
 
-#else /* RT_128X2 >= 16 */
+#else /* RT_128X2 >= 8 */
 
 #define orncx_rr(XG, XS)                                                    \
         orncx3rr(W(XG), W(XG), W(XS))
@@ -281,7 +281,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000554 | MXM(REG(XD), TmmM,    REG(XS)))
 
-#endif /* RT_128X2 >= 16 */
+#endif /* RT_128X2 >= 8 */
 
 /* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
 

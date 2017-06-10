@@ -91,7 +91,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if (RT_128X2 >= 8 && RT_128X2 <= 16) && (RT_SIMD_COMPAT_XMM > 0)
+#if (RT_128X2 >= 4 && RT_128X2 <= 8) && (RT_SIMD_COMPAT_XMM > 0)
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -225,7 +225,7 @@
 
 /* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
 
-#if (RT_128X2 < 16)
+#if (RT_128X2 < 8)
 
 #define orndx_rr(XG, XS)                                                    \
         notdx_rx(W(XG))                                                     \
@@ -243,7 +243,7 @@
         notdx_rr(W(XD), W(XS))                                              \
         orrdx_ld(W(XD), W(MT), W(DT))
 
-#else /* RT_128X2 >= 16 */
+#else /* RT_128X2 >= 8 */
 
 #define orndx_rr(XG, XS)                                                    \
         orndx3rr(W(XG), W(XG), W(XS))
@@ -265,7 +265,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000554 | MXM(REG(XD), TmmM,    REG(XS)))
 
-#endif /* RT_128X2 >= 16 */
+#endif /* RT_128X2 >= 8 */
 
 /* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
 
@@ -892,7 +892,7 @@
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-#if (RT_128X2 < 16)
+#if (RT_128X2 < 8)
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1176,7 +1176,7 @@
         stack_ld(Recx)                                                      \
         movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
-#else /* RT_128X2 >= 16 */
+#else /* RT_128X2 >= 8 */
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1382,7 +1382,7 @@
         EMITW(0x100003C4 | MXM(TmmQ,    TmmQ,    TmmM))/* ^ == -1 if true */\
         EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))
 
-#endif /* RT_128X2 >= 16 */
+#endif /* RT_128X2 >= 8 */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

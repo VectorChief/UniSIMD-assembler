@@ -4,17 +4,17 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_P64_128X1V4_H
-#define RT_RTARCH_P64_128X1V4_H
+#ifndef RT_RTARCH_P64_128X1V2_H
+#define RT_RTARCH_P64_128X1V2_H
 
-#include "rtarch_p32_128x1v4.h"
+#include "rtarch_p32_128x1v2.h"
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
 
 /*
- * rtarch_p64_128x1v4.h: Implementation of Power fp64 VSX1/2 instructions.
+ * rtarch_p64_128x1v2.h: Implementation of Power fp64 VSX1/2 instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -91,7 +91,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if (RT_128X1 >= 2 && RT_128X1 <= 4)
+#if (RT_128X1 >= 1 && RT_128X1 <= 2)
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -193,7 +193,7 @@
 
 /* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
 
-#if (RT_128X1 < 4)
+#if (RT_128X1 < 2)
 
 #define ornjx_rr(XG, XS)                                                    \
         notjx_rx(W(XG))                                                     \
@@ -211,7 +211,7 @@
         notjx_rr(W(XD), W(XS))                                              \
         orrjx_ld(W(XD), W(MT), W(DT))
 
-#else /* RT_128X1 >= 4 */
+#else /* RT_128X1 >= 2 */
 
 #define ornjx_rr(XG, XS)                                                    \
         ornjx3rr(W(XG), W(XG), W(XS))
@@ -228,7 +228,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000557 | MXM(REG(XD), TmmM,    REG(XS)))/* ^ == -1 if true */
 
-#endif /* RT_128X1 >= 4 */
+#endif /* RT_128X1 >= 2 */
 
 /* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
 
@@ -731,7 +731,7 @@
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-#if (RT_128X1 < 4)
+#if (RT_128X1 < 2)
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -963,7 +963,7 @@
         stack_ld(Recx)                                                      \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
-#else /* RT_128X1 >= 4 */
+#else /* RT_128X1 >= 2 */
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1110,11 +1110,11 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x100003C4 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-#endif /* RT_128X1 >= 4 */
+#endif /* RT_128X1 >= 2 */
 
 /*********   scalar double-precision floating-point move/arithmetic   *********/
 
-#if (RT_128X1 < 4)
+#if (RT_128X1 < 2)
 
 /* mov (D = S) */
 
@@ -1270,7 +1270,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* RT_128X1 >= 4 */
+#else /* RT_128X1 >= 2 */
 
 /* mov (D = S) */
 
@@ -1437,11 +1437,11 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* RT_128X1 >= 4 */
+#endif /* RT_128X1 >= 2 */
 
 /*************   scalar double-precision floating-point compare   *************/
 
-#if (RT_128X1 < 4)
+#if (RT_128X1 < 2)
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
@@ -1573,7 +1573,7 @@
         EMITW(0xC8000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
         EMITW(0xF0000398 | MXM(REG(XD), REG(XS), TmmM))
 
-#else /* RT_128X1 >= 4 */
+#else /* RT_128X1 >= 2 */
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
@@ -1713,7 +1713,7 @@
         EMITW(0x7C000499 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF000039F | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-#endif /* RT_128X1 >= 4 */
+#endif /* RT_128X1 >= 2 */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
@@ -1723,7 +1723,7 @@
 
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_RTARCH_P64_128X1V4_H */
+#endif /* RT_RTARCH_P64_128X1V2_H */
 
 /******************************************************************************/
 /******************************************************************************/

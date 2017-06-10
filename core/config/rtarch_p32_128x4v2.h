@@ -4,8 +4,8 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_P32_128X4V4_H
-#define RT_RTARCH_P32_128X4V4_H
+#ifndef RT_RTARCH_P32_128X4V2_H
+#define RT_RTARCH_P32_128X4V2_H
 
 #include "rtarch_p64.h"
 
@@ -22,7 +22,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_p32_128x4v4.h: Implementation of Power fp32 VSX1/2 instruction quads.
+ * rtarch_p32_128x4v2.h: Implementation of Power fp32 VSX1/2 instruction quads.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -99,13 +99,13 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if (RT_128X4 >= 2 && RT_128X4 <= 4) && (RT_SIMD_COMPAT_XMM > 0)
+#if (RT_128X4 >= 1 && RT_128X4 <= 2) && (RT_SIMD_COMPAT_XMM > 0)
 
-#ifndef RT_RTARCH_P64_128X2V4_H
+#ifndef RT_RTARCH_P64_128X2V2_H
 #undef  RT_128X2
 #define RT_128X2  RT_128X4
-#include "rtarch_p64_128x2v4.h"
-#endif /* RT_RTARCH_P64_128X2V4_H */
+#include "rtarch_p64_128x2v2.h"
+#endif /* RT_RTARCH_P64_128X2V2_H */
 
 #undef  sregs_sa
 #undef  sregs_la
@@ -306,7 +306,7 @@
 
 /* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
 
-#if (RT_128X4 < 4)
+#if (RT_128X4 < 2)
 
 #define ornox_rr(XG, XS)                                                    \
         notox_rx(W(XG))                                                     \
@@ -324,7 +324,7 @@
         notox_rr(W(XD), W(XS))                                              \
         orrox_ld(W(XD), W(MT), W(DT))
 
-#else /* RT_128X4 >= 4 */
+#else /* RT_128X4 >= 2 */
 
 #define ornox_rr(XG, XS)                                                    \
         ornox3rr(W(XG), W(XG), W(XS))
@@ -356,7 +356,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000554 | MXM(RYG(XD), TmmM,    RYG(XS)))
 
-#endif /* RT_128X4 >= 4 */
+#endif /* RT_128X4 >= 2 */
 
 /* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
 
@@ -1726,7 +1726,7 @@
 
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_RTARCH_P32_128X4V4_H */
+#endif /* RT_RTARCH_P32_128X4V2_H */
 
 /******************************************************************************/
 /******************************************************************************/
