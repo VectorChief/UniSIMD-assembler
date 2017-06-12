@@ -1543,6 +1543,10 @@
         andwx_ri(Recx, IV(0x00003000))  /* <- AVX1/2 to bit12, bit13 */     \
         orrwx_rr(Resi, Recx)                                                \
         movwx_rr(Recx, Resi)                                                \
+        shlwx_ri(Recx, IB(2))                                               \
+        andwx_ri(Recx, IV(0x000C0000))  /* <- AVX3.x to bit18, bit19 */     \
+        orrwx_rr(Resi, Recx)                                                \
+        movwx_rr(Recx, Resi)                                                \
         shlwx_ri(Recx, IB(4))                                               \
         andwx_ri(Recx, IV(0x00300000))  /* <- AVX3.x to bit20, bit21 */     \
         orrwx_rr(Resi, Recx)                                                \
