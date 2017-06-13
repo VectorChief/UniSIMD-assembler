@@ -99,7 +99,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if (RT_512X1 >= 1 && RT_512X1 <= 2)
+#if (RT_512X1 >= 4 && RT_512X1 <= 8)
 
 #ifndef RT_RTARCH_X64_256X1V2_H
 #undef  RT_256X1
@@ -164,7 +164,7 @@
         MRM(0x01,    MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-#if (RT_512X1 < 2)
+#if (RT_512X1 < 8)
 
 /* and (G = G & S), (D = S & T) if (#D != #S) */
 
@@ -252,7 +252,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-#else /* RT_512X1 >= 2 */
+#else /* RT_512X1 >= 8 */
 
 /* and (G = G & S), (D = S & T) if (#D != #S) */
 
@@ -340,7 +340,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-#endif /* RT_512X1 >= 2 */
+#endif /* RT_512X1 >= 8 */
 
 /* not (G = ~G), (D = ~S) */
 

@@ -253,7 +253,7 @@
 #define         RT_512X2     (RT_1K4 |  RT_1K4_R8)
 #endif
 #if   !(defined RT_512X1) && (RT_512)
-#define         RT_512X1     (RT_512)
+#define         RT_512X1    ((RT_512 | (RT_512)*4) & 0xC)
 #endif
 #if   !(defined RT_256X2) && (RT_512_R8)
 #define         RT_256X2     (RT_512_R8)
