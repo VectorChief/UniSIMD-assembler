@@ -98,7 +98,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if (RT_128X1 == 1)
+#if (RT_128X1 != 0)
 
 /* structural */
 
