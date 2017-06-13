@@ -1070,7 +1070,7 @@
 #undef    RT_X64
 #define   RT_X64 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
 #endif /* RT_X64 */
-#include "rtarch_x64_512x1v2.h"
+#include "rtarch_x64_512x1v8.h"
 #elif (RT_256X2 != 0) && (RT_SIMD == 512) && (RT_REGS == 8)
 #if   (RT_256X2 & 2) && defined (RT_SIMD_CODE) && defined (RT_X32)
 #undef    RT_X32
