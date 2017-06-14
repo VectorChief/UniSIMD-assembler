@@ -1,23 +1,15 @@
 ================================================================================
 
-A) Task title: "add support for AVX1+FMA3 targets for AMD processors (no AVX2)"
-1) Reserve RT_128=16 and RT_256=4 for AVX1+FMA3 128/256-bit backends (no AVX2)
-2) RT_128=32 can be used for AVX2 once SSE2 is deprecated on x64 (after 1.0.0)
-3) Improve mask-jump (mkj) instructions for 64-bit SIMD elements (optional)
-4) Make all scalar compare-to-mask non-destructive on AArch64 (optional)
-
-================================================================================
-
-P) Task title: "swap legacy 128-bit PowerPC VMX target with POWER7/8 VSX1/2"
-1) Keep legacy PowerPC VMX target in RT_P32/P64 arch (32-bit G4, 64-bit POWER6)
-2) Rename current 128/256-bit VMX headers to rtarch_p**_128x*v4.h (like Nehalem)
-3) Shift legacy RT_128=1/RT_256_R8=1 SIMD-flag values to RT_128=4/RT_256_R8=4
-4) Shift RT_128=2+4 values to RT_128=1+2 for VSX1/2 in POWER7/8, rename headers
-5) Shift internal RT_128X1/X2/X4 values to 1+2/1+2+4+8/1+2 respectively (rtzero)
-6) Adjust mask_init/from_mask converters in rtbase & SIMD flags layer in rtzero
-7) New RT_128=4 for VMX would correspond to RT_128X1=4 (1+2 occupied by VSX1/2)
-8) New RT_256_R8=4 for VMX would correspond to RT_128X2=16 (1+2+4+8 occupied)
-9) Compatibility break with current 0.x.x versions in SIMD flags (=> 1.0.0)
+A) Task title: "add support for new AVX targets (AVX1+FMA3 and 128/256 AVX-512)"
+1) Make RT_128=8 to be AVX1+FMA3 by default (RT_SIMD_COMPAT_128=3) to fit AMD
+2) Reserve RT_128=16+32 for 128-bit AVX1/AVX2, may not be necessary after all
+3) Drop support for 256-bit AVX1+FMA3 in RT_256=4, use 128-bit target RT_128=8
+4) Deprecate standalone SSE2 target in RT_128=2 and RT_256_R8=2, reuse SSE4 slot
+5) Add new SIMD compatiblity flag RT_SIMD_COMPAT_SSE=2/4 to select SSE2/4 for v4
+6) Move RT_128=1 (for 128-bit 30-regs AVX-512) to RT_128=2, fits AVX3.2, POWER8
+7) Keep RT_258=8 (for 256-bit 30-regs AVX-512) in position, fits AVX3.2, POWER8
+8) Reserve RT_128=1/RT_256=4 for 30-regs on top of current AVX (with reg-spills)
+9) Improve mask-jump (mkj) instructions for 64-bit SIMD elements (optional)
 
 ================================================================================
 
@@ -28,9 +20,9 @@ S) Task title: "implement ARM-SVE backends with 30 registers (no predicates)"
 4) In which case, POWER7/8 would still occupy RT_512=1+2 for 15-regs quaded VSX
 5) In the new scheme: RT_128=4+8, RT_256=1+2, RT_512=1+2, RT_1K4=1+2 are 15-regs
 6) In the new scheme: RT_128=1+2, RT_256=4+8, RT_512=4+8, RT_1K4=4+8 are 30-regs
-7) Unallocated slots above can be occupied by legacy targets (SSE2, AVX1+FMA3)
-8) When primary target is SVE, secondary is AArch64 NEON (no per-op switching)
-9) Primary is defined with RT_SIMD (secondary is from 128/256-bit set or both)
+7) When primary target is SVE, secondary is AArch64 NEON (no per-op switching)
+8) Primary is defined with RT_SIMD (secondary is from 128/256-bit set or both)
+9) Make all scalar compare-to-mask non-destructive on AArch64 (optional)
 
 ================================================================================
 
@@ -38,8 +30,7 @@ E) Task title: "add 8 SIMD registers full-IEEE support for ARMv7 using VFP"
 1) Implement 128-bit SIMD registers/instructions as 4x32-bit VFP (full-IEEE)
 2) Emulate currently exposed NEON instructions using VFP variants/fallbacks
 3) Use register-offloading to upper bank for 1 mem-arg in load-op instructions
-4) Find place in SIMD target mask (RT_128=8) <- like x86, ARMv7 is always 8-regs
-5) RT_128_R8 doesn't have enough free slots for legacy x86/ARMv7 8-regs targets
+4) Find place in SIMD target mask (RT_128=8), like legacy x86, ARMv7 is 8-regs
 
 ================================================================================
 
