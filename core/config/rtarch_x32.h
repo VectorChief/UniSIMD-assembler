@@ -1537,7 +1537,7 @@
         orrwx_rr(Resi, Recx)                                                \
         movwx_rr(Recx, Resi)                                                \
         shlwx_ri(Recx, IB(4))                                               \
-        andwx_ri(Recx, IV(0x00000060))  /* <- SSE2/4.1 to bit5, bit6 */     \
+        andwx_ri(Recx, IV(0x00000040))  /* <- SSE2/4.1 to bit6 */           \
         orrwx_rr(Resi, Recx)                                                \
         movwx_rr(Recx, Resi)                                                \
         shlwx_ri(Recx, IB(4))                                               \

@@ -1124,7 +1124,7 @@
 #endif /* RT_X64 */
 #endif /* (RT_128X1 & 8) && RT_SIMD_COMPAT_128 == 2 && defined RT_SIMD_CODE */
 #include "rtarch_x64_128x1v8.h"
-#elif (RT_128X1 >= 2) && (RT_SIMD == 128)
+#elif (RT_128X1 == 4) && (RT_SIMD == 128)
 #include "rtarch_x64_128x1v4.h"
 #elif (RT_128X1 == 1) && (RT_SIMD == 128)
 #if   defined (RT_SIMD_CODE) && defined (RT_X32)
