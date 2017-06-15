@@ -42,7 +42,7 @@ simd_test_x32:
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 
-# For 128-bit AVX3.2 build use (replace): RT_128=1 (Skylake X and AVX-512++)
+# For 128-bit AVX3.2 build use (replace): RT_128=2 (Skylake X and AVX-512++)
 # For 128-bit SSE2 build use (replace): RT_128=4 RT_SIMD_COMPAT_SSE=2
 # For 128-bit SSE4 build use (replace): RT_128=4
 # For 128-bit AVX1 build use (replace): RT_128=8

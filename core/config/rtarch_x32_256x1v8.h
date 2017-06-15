@@ -100,11 +100,11 @@
 
 #if (RT_256X1 == 8)
 
-#ifndef RT_RTARCH_X64_128X1V1_H
+#ifndef RT_RTARCH_X64_128X1V2_H
 #undef  RT_128X1
-#define RT_128X1  1
-#include "rtarch_x64_128x1v1.h"
-#endif /* RT_RTARCH_X64_128X1V1_H */
+#define RT_128X1  2
+#include "rtarch_x64_128x1v2.h"
+#endif /* RT_RTARCH_X64_128X1V2_H */
 
 #undef  sregs_sa
 #undef  sregs_la
