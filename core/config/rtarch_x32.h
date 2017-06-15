@@ -1488,8 +1488,9 @@
         /* request cpuid:eax=1 */                                           \
         movwx_ri(Reax, IB(1))                                               \
         cpuid_xx()                                                          \
-        shrwx_ri(Redx, IB(25))                                              \
-        andwx_ri(Redx, IV(0x00000002))  /* <- SSE2 to bit1 */               \
+        shrwx_ri(Redx, IB(24))                                              \
+        andwx_ri(Redx, IV(0x00000004))  /* <- SSE2 to bit2 */               \
+        andwx_ri(Redx, IB(1 << RT_SIMD_COMPAT_SSE))                         \
         movwx_rr(Resi, Redx)                                                \
         movwx_rr(Redx, Recx)                                                \
         shrwx_ri(Redx, IB(17))                                              \

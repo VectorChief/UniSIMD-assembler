@@ -98,7 +98,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if (RT_128X2 >= 2 && RT_128X2 <= 4)
+#if (RT_128X2 == 4)
 
 #ifndef RT_RTARCH_X64_128X1V4_H
 #undef  RT_128X1
@@ -915,7 +915,7 @@
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
-#if (RT_128X2 < 4)
+#if (RT_SIMD_COMPAT_SSE < 4)
 
 #define rnzcs_rr(XD, XS)     /* round towards zero */                       \
         cvzcs_rr(W(XD), W(XS))                                              \
@@ -925,7 +925,7 @@
         cvzcs_ld(W(XD), W(MS), W(DS))                                       \
         cvncn_rr(W(XD), W(XD))
 
-#else /* RT_128X2 >= 4 */
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
 
 #define rnzcs_rr(XD, XS)     /* round towards zero */                       \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
@@ -943,7 +943,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMITB(0x03))
 
-#endif /* RT_128X2 >= 4 */
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
 
 #define cvzcs_rr(XD, XS)     /* round towards zero */                       \
     xF3 REX(0,             0) EMITB(0x0F) EMITB(0x5B)                       \
@@ -964,7 +964,7 @@ ADR xF3 REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
-#if (RT_128X2 < 4)
+#if (RT_SIMD_COMPAT_SSE < 4)
 
 #define rnpcs_rr(XD, XS)     /* round towards +inf */                       \
         cvpcs_rr(W(XD), W(XS))                                              \
@@ -984,7 +984,7 @@ ADR xF3 REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
         cvtcs_ld(W(XD), W(MS), W(DS))                                       \
         FCTRL_LEAVE(ROUNDP)
 
-#else /* RT_128X2 >= 4 */
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
 
 #define rnpcs_rr(XD, XS)     /* round towards +inf */                       \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
@@ -1010,14 +1010,14 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
         rnpcs_ld(W(XD), W(MS), W(DS))                                       \
         cvzcs_rr(W(XD), W(XD))
 
-#endif /* RT_128X2 >= 4 */
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
-#if (RT_128X2 < 4)
+#if (RT_SIMD_COMPAT_SSE < 4)
 
 #define rnmcs_rr(XD, XS)     /* round towards -inf */                       \
         cvmcs_rr(W(XD), W(XS))                                              \
@@ -1037,7 +1037,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
         cvtcs_ld(W(XD), W(MS), W(DS))                                       \
         FCTRL_LEAVE(ROUNDM)
 
-#else /* RT_128X2 >= 4 */
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
 
 #define rnmcs_rr(XD, XS)     /* round towards -inf */                       \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
@@ -1063,14 +1063,14 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
         rnmcs_ld(W(XD), W(MS), W(DS))                                       \
         cvzcs_rr(W(XD), W(XD))
 
-#endif /* RT_128X2 >= 4 */
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
-#if (RT_128X2 < 4)
+#if (RT_SIMD_COMPAT_SSE < 4)
 
 #define rnncs_rr(XD, XS)     /* round towards near */                       \
         cvncs_rr(W(XD), W(XS))                                              \
@@ -1080,7 +1080,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
         cvncs_ld(W(XD), W(MS), W(DS))                                       \
         cvncn_rr(W(XD), W(XD))
 
-#else /* RT_128X2 >= 4 */
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
 
 #define rnncs_rr(XD, XS)     /* round towards near */                       \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
@@ -1098,7 +1098,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMITB(0x00))
 
-#endif /* RT_128X2 >= 4 */
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
 
 #define cvncs_rr(XD, XS)     /* round towards near */                       \
         cvtcs_rr(W(XD), W(XS))
@@ -1121,7 +1121,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
-#if (RT_128X2 < 4)
+#if (RT_SIMD_COMPAT_SSE < 4)
 
 #define rndcs_rr(XD, XS)                                                    \
         cvtcs_rr(W(XD), W(XS))                                              \
@@ -1131,7 +1131,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
         cvtcs_ld(W(XD), W(MS), W(DS))                                       \
         cvncn_rr(W(XD), W(XD))
 
-#else /* RT_128X2 >= 4 */
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
 
 #define rndcs_rr(XD, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
@@ -1149,7 +1149,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMITB(0x04))
 
-#endif /* RT_128X2 >= 4 */
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
 
 #define cvtcs_rr(XD, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x5B)                       \
@@ -1190,7 +1190,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
  * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
-#if (RT_128X2 < 4)
+#if (RT_SIMD_COMPAT_SSE < 4)
 
 #define rnrcs_rr(XD, XS, mode)                                              \
         cvrcs_rr(W(XD), W(XS), mode)                                        \
@@ -1201,7 +1201,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
         cvtcs_rr(W(XD), W(XS))                                              \
         FCTRL_LEAVE(mode)
 
-#else /* RT_128X2 >= 4 */
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
 
 #define rnrcs_rr(XD, XS, mode)                                              \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
@@ -1215,7 +1215,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
         rnrcs_rr(W(XD), W(XS), mode)                                        \
         cvzcs_rr(W(XD), W(XD))
 
-#endif /* RT_128X2 >= 4 */
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 

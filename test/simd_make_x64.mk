@@ -22,25 +22,25 @@ clean:
 
 simd_test_x64_32:
 	x86_64-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_X64 -DRT_256_R8=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_X64 -DRT_256_R8=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_32
 
 simd_test_x64_64:
 	x86_64-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_X64 -DRT_256_R8=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_X64 -DRT_256_R8=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_64
 
 simd_test_x64f32:
 	x86_64-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_X64 -DRT_256_R8=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_X64 -DRT_256_R8=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f32
 
 simd_test_x64f64:
 	x86_64-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_X64 -DRT_256_R8=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_X64 -DRT_256_R8=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f64
 
@@ -60,14 +60,14 @@ simd_test_x64f64:
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 
 # For 128-bit AVX3.2 build use (replace): RT_128=1 (Skylake X and AVX-512++)
-# For 128-bit SSE2 build use (replace): RT_128=2
+# For 128-bit SSE2 build use (replace): RT_128=4 RT_SIMD_COMPAT_SSE=2
 # For 128-bit SSE4 build use (replace): RT_128=4
 # For 128-bit AVX1 build use (replace): RT_128=8
 # For 128-bit AVX2 build use (replace): RT_128=8 RT_SIMD_COMPAT_128=2 (FMA3)
 # For 128-bit FMA3 build use (replace): RT_128=8 RT_SIMD_COMPAT_128=3 (FMA3)
 # For 128-bit FMA3 build use (replace): RT_128=16       (as above AVX1+FMA3)
 
-# For 256-bit SSE2 build use (replace): RT_256_R8=2       (8 SIMD-reg pairs)
+# For 256-bit SSE2 build use (replace): RT_256_R8=4 RT_SIMD_COMPAT_SSE=2
 # For 256-bit SSE4 build use (replace): RT_256_R8=4       (8 SIMD-reg pairs)
 # For 256-bit AVX1 build use (replace): RT_256=1
 # For 256-bit AVX2 build use (replace): RT_256=2                      (FMA3)
