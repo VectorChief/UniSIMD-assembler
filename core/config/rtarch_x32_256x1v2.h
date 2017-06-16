@@ -98,13 +98,11 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if (RT_256X1 >= 1 && RT_256X1 <= 4)
+#if (RT_256X1 >= 1 && RT_256X1 <= 2)
 
 #ifndef RT_RTARCH_X64_128X1V8_H
 #undef  RT_128X1
-#define RT_128X1  (8 + (RT_256X1 == 4)*8)
-#undef  RT_SIMD_COMPAT_128
-#define RT_SIMD_COMPAT_128  (1 + (RT_256X1 == 2))
+#define RT_128X1  (8 + (RT_256X1 == 2)*24)
 #include "rtarch_x64_128x1v8.h"
 #endif /* RT_RTARCH_X64_128X1V8_H */
 
@@ -384,7 +382,7 @@
         /* rsq defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (RT_256X1 < 2) && !(RT_SIMD == 128 && RT_SIMD_COMPAT_128 == 3)
+#if (RT_256X1 < 2) && !(RT_SIMD == 128 && RT_128X1 == 16)
 
 #define prmcx_rr(XD, XS, IT) /* not portable, do not use outside */         \
         VEX(RXB(XD), RXB(XS), REN(XD), 1, 1, 3) EMITB(0x06)                 \
@@ -557,7 +555,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* RT_256X1 >= 2, FMA/FMS in AVX2 or FMA3 */
+#else /* RT_256X1 >= 2 || RT_SIMD == 128 && RT_128X1 == 16, AVX2 or FMA3 */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -593,7 +591,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* RT_256X1 >= 2, FMA/FMS in AVX2 or FMA3 */
+#endif /* RT_256X1 >= 2 || RT_SIMD == 128 && RT_128X1 == 16, AVX2 or FMA3 */
 
 /*************   packed single-precision floating-point compare   *************/
 
@@ -908,7 +906,7 @@
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-#if (RT_256X1 != 2)
+#if (RT_256X1 < 2)
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1221,7 +1219,7 @@
         stack_ld(Recx)                                                      \
         movcx_ld(W(XD), Mebp, inf_SCR01(0))
 
-#else /* RT_256X1 == 2 */
+#else /* RT_256X1 >= 2, AVX2 */
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1368,7 +1366,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-#endif /* RT_256X1 == 2 */
+#endif /* RT_256X1 >= 2, AVX2 */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

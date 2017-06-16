@@ -298,8 +298,7 @@
 #define RT_SIMD_COMPAT_FMS_MASTER       1 /* for full-precision fmsps_** */
 #define RT_SIMD_COMPAT_DIV_MASTER       1 /* for full-precision divps_** */
 #define RT_SIMD_COMPAT_SQR_MASTER       1 /* for full-precision sqrps_** */
-#define RT_SIMD_COMPAT_SSE_MASTER       4 /* for  v4  SSE2,SSE4 -   2,4 (x86) */
-#define RT_SIMD_COMPAT_128_MASTER       1 /* for AVX1,AVX2,FMA3 - 1,2,3 (x86) */
+#define RT_SIMD_COMPAT_SSE_MASTER       4 /* for v4 slot SSE2/4.1 - 2,4 (x64) */
 #define RT_SIMD_COMPAT_FMR_MASTER       0 /* for fm*ps_** rounding mode (x86) */
 #define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and Power */
 
@@ -501,12 +500,6 @@
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1/2/FMA3
- * if RT_128 = 8 SIMD backend is present among build targets */
-#ifndef RT_SIMD_COMPAT_128
-#define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
-#endif /* RT_SIMD_COMPAT_128 */
-
 /* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
  * of fm*ps_** instruction fallbacks to honour rounding mode */
 #ifndef RT_SIMD_COMPAT_FMR
@@ -536,7 +529,7 @@
 #endif /* RT_X86 */
 #include "rtarch_x86_256x1v2.h"
 #elif (RT_128X1 >= 8) && (RT_SIMD == 128)
-#if   (RT_128X1 & 8) && (RT_SIMD_COMPAT_128 == 2) && defined (RT_SIMD_CODE)
+#if   (RT_128X1 & 32) && defined (RT_SIMD_CODE)
 #undef    RT_X86
 #define   RT_X86 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
 #endif /* RT_X86 */
@@ -752,12 +745,6 @@
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
 #endif /* RT_SIMD_COMPAT_FMS */
 
-/* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1/2/FMA3
- * if RT_128 = 8 SIMD backend is present among build targets */
-#ifndef RT_SIMD_COMPAT_128
-#define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
-#endif /* RT_SIMD_COMPAT_128 */
-
 /* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
  * of fm*ps_** instruction fallbacks to honour rounding mode */
 #ifndef RT_SIMD_COMPAT_FMR
@@ -787,7 +774,7 @@
 #endif /* RT_X86 */
 #include "rtarch_x86_256x1v2.h"
 #elif (RT_128X1 >= 8) && (RT_SIMD == 128)
-#if   (RT_128X1 & 8) && (RT_SIMD_COMPAT_128 == 2) && defined (RT_SIMD_CODE)
+#if   (RT_128X1 & 32) && defined (RT_SIMD_CODE)
 #undef    RT_X86
 #define   RT_X86 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
 #endif /* RT_X86 */
@@ -1036,12 +1023,6 @@
 #define RT_SIMD_COMPAT_SSE      RT_SIMD_COMPAT_SSE_MASTER
 #endif /* RT_SIMD_COMPAT_SSE */
 
-/* RT_SIMD_COMPAT_128 distinguishes between 128-bit AVX1/2/FMA3
- * if RT_128 = 8 SIMD backend is present among build targets */
-#ifndef RT_SIMD_COMPAT_128
-#define RT_SIMD_COMPAT_128      RT_SIMD_COMPAT_128_MASTER
-#endif /* RT_SIMD_COMPAT_128 */
-
 /* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
  * of fm*ps_** instruction fallbacks to honour rounding mode */
 #ifndef RT_SIMD_COMPAT_FMR
@@ -1113,7 +1094,7 @@
 #elif (RT_128X2 != 0) && (RT_SIMD == 256) && (RT_REGS == 8)
 #include "rtarch_x64_128x2v4.h"
 #elif (RT_128X1 >= 8) && (RT_SIMD == 128)
-#if   (RT_128X1 & 8) && (RT_SIMD_COMPAT_128 == 2) && defined (RT_SIMD_CODE)
+#if   (RT_128X1 & 32) && defined (RT_SIMD_CODE)
 #ifdef    RT_X32
 #undef    RT_X32
 #define   RT_X32 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
@@ -1122,7 +1103,7 @@
 #undef    RT_X64
 #define   RT_X64 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
 #endif /* RT_X64 */
-#endif /* (RT_128X1 & 8) && RT_SIMD_COMPAT_128 == 2 && defined RT_SIMD_CODE */
+#endif /* (RT_128X1 & 32) && defined RT_SIMD_CODE */
 #include "rtarch_x64_128x1v8.h"
 #elif (RT_128X1 == 4) && (RT_SIMD == 128)
 #include "rtarch_x64_128x1v4.h"
