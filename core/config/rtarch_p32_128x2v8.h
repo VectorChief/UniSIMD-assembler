@@ -98,7 +98,7 @@
 
 #if defined (RT_SIMD_CODE)
 
-#if (RT_128X2 >= 4 && RT_128X2 <= 8) && (RT_SIMD_COMPAT_XMM > 0)
+#if (RT_128X2 >= 4 && RT_128X2 <= 8)
 
 #ifndef RT_RTARCH_P64_128X1V2_H
 #undef  RT_128X1
