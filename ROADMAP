@@ -1,9 +1,9 @@
 ================================================================================
 
-A) Task title: "add support for new AVX targets (AVX1+FMA3 and 128/256 AVX-512)"
-1) Make RT_128=8 to be AVX1+FMA3 by default (RT_SIMD_COMPAT_128=3) to fit AMD
-2) Reserve RT_128=16+32 for 128-bit AVX1/AVX2, may not be necessary after all
-3) Drop support for 256-bit AVX1+FMA3 in RT_256=4, use 128-bit target RT_128=8
+A) Task title: "add new 128-bit AVX1/FMA3/AVX2 and 128/256-bit AVX-512 targets"
+1) Keep RT_128=8  as AVX1-only target (RT_SIMD_COMPAT_128=1) for early AMD CPUs
+2) Keep RT_128=16 as AVX1+FMA3, add new RT_128=32 as AVX2 to fit later AMD CPUs
+3) Deprecate 256-bit AVX1+FMA3 in RT_256=4, use RT_128=16 to fit later AMD CPUs
 4) Deprecate standalone SSE2 target in RT_128=2 and RT_256_R8=2, reuse SSE4 slot
 5) Add new SIMD compatiblity flag RT_SIMD_COMPAT_SSE=2/4 to select SSE2/4 for v4
 6) Move RT_128=1 (for 128-bit 30-regs AVX-512) to RT_128=2, fits AVX3.2, POWER8
@@ -37,6 +37,13 @@ E) Task title: "add 8 SIMD registers full-IEEE support for ARMv7 using VFP"
 K) Task title: "use configuration utils (autotools, CMake, etc) for building"
 1) Use single build script for all host CPU architectures on Linux
 2) Keep cross-compilation on x86-64 Linux hosts (targeting QEMU linux-user mode)
+
+================================================================================
+
+N) Task title: "implement new 128/256-bit 30-regs targets on top of current AVX"
+1) Implement register-offloading to memory (SIMD structs) on top of current AVX
+2) Add new SIMD compatiblity flag RT_SIMD_COMPAT_AVX=1/2 for 30-regs with AVX1/2
+3) Find place in SIMD target mask (RT_128=1/RT_256=4) for custom 30-regs support
 
 ================================================================================
 
