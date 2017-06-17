@@ -1,18 +1,5 @@
 ================================================================================
 
-A) Task title: "add new 128-bit AVX1/FMA3/AVX2 and 128/256-bit AVX-512 targets"
-1) Keep RT_128=8  as AVX1-only target (RT_SIMD_COMPAT_128=1) for early AMD CPUs
-2) Keep RT_128=16 as AVX1+FMA3, add new RT_128=32 as AVX2 to fit later AMD CPUs
-3) Deprecate 256-bit AVX1+FMA3 in RT_256=4, use RT_128=16 to fit later AMD CPUs
-4) Deprecate standalone SSE2 target in RT_128=2 and RT_256_R8=2, reuse SSE4 slot
-5) Add new SIMD compatiblity flag RT_SIMD_COMPAT_SSE=2/4 to select SSE2/4 for v4
-6) Move RT_128=1 (for 128-bit 30-regs AVX-512) to RT_128=2, fits AVX3.2, POWER8
-7) Keep RT_258=8 (for 256-bit 30-regs AVX-512) in position, fits AVX3.2, POWER8
-8) Reserve RT_128=1/RT_256=4 for 30-regs on top of current AVX (with reg-spills)
-9) Improve mask-jump (mkj) instructions for 64-bit SIMD elements (optional)
-
-================================================================================
-
 S) Task title: "implement ARM-SVE backends with 30 registers (no predicates)"
 1) Implement new SVE instructions for 256/512/1K4/2K8-bit targets (2K8 optional)
 2) Find place in SIMD target mask (RT_256=8, RT_512=8, RT_1K4=8) like AVX-512++
@@ -22,7 +9,7 @@ S) Task title: "implement ARM-SVE backends with 30 registers (no predicates)"
 6) In the new scheme: RT_128=1+2, RT_256=4+8, RT_512=4+8, RT_1K4=4+8 are 30-regs
 7) When primary target is SVE, secondary is AArch64 NEON (no per-op switching)
 8) Primary is defined with RT_SIMD (secondary is from 128/256-bit set or both)
-9) Make all scalar compare-to-mask non-destructive on AArch64 (optional)
+9) Make all scalar compare-to-mask-elem non-destructive on AArch64 (optional)
 
 ================================================================================
 
@@ -31,12 +18,7 @@ E) Task title: "add 8 SIMD registers full-IEEE support for ARMv7 using VFP"
 2) Emulate currently exposed NEON instructions using VFP variants/fallbacks
 3) Use register-offloading to upper bank for 1 mem-arg in load-op instructions
 4) Find place in SIMD target mask (RT_128=8), like legacy x86, ARMv7 is 8-regs
-
-================================================================================
-
-K) Task title: "use configuration utils (autotools, CMake, etc) for building"
-1) Use single build script for all host CPU architectures on Linux
-2) Keep cross-compilation on x86-64 Linux hosts (targeting QEMU linux-user mode)
+5) Expose 16x128+8x256 on PowerPC VMX (v4) instead of 15x128+8x256 (optional)
 
 ================================================================================
 
@@ -44,6 +26,13 @@ N) Task title: "implement new 128/256-bit 30-regs targets on top of current AVX"
 1) Implement register-offloading to memory (SIMD structs) on top of current AVX
 2) Add new SIMD compatiblity flag RT_SIMD_COMPAT_AVX=1/2 for 30-regs with AVX1/2
 3) Find place in SIMD target mask (RT_128=1/RT_256=4) for custom 30-regs support
+4) Improve mask-jump (mkj*x) instructions for 64-bit SIMD elements (optional)
+
+================================================================================
+
+K) Task title: "use configuration utils (autotools, CMake, etc) for building"
+1) Use single build script for all host CPU architectures on Linux
+2) Keep cross-compilation on x86-64 Linux hosts (targeting QEMU linux-user mode)
 
 ================================================================================
 
