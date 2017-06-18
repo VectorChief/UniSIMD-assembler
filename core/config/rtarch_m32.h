@@ -1153,8 +1153,7 @@
 #define rorwz_mr(MG, DG, RS)                                                \
         rorwz_st(W(RS), W(MG), W(DG))
 
-/* pre-r6 */
-#if (defined (RT_M32) && RT_M32 < 6) || (defined (RT_M64) && RT_M64 < 6)
+#if (RT_BASE_COMPAT_REV < 6) /* pre-r6 */
 
 /* mul (G = G * S)
  * set-flags: undefined */
@@ -1330,7 +1329,7 @@
 #define remwn_xm(MS, DS)    /* to be placed immediately after divwn_xm */   \
         EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))   /* Redx<-rem */
 
-#else  /* r6 */
+#else /* RT_BASE_COMPAT_REV >= 6, r6 */
 
 /* mul (G = G * S)
  * set-flags: undefined */
@@ -1486,7 +1485,7 @@
 #define remwn_xm(MS, DS)    /* to be placed immediately after divwn_xm */   \
         EMITW(0x000000DA | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
 
-#endif /* r6 */
+#endif /* RT_BASE_COMPAT_REV >= 6, r6 */
 
 /* arj (G = G op S, if cc G then jump lb)
  * set-flags: undefined
@@ -1649,8 +1648,7 @@
 
      /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
 
-/* pre-r6 */
-#if (defined (RT_M32) && RT_M32 < 6) || (defined (RT_M64) && RT_M64 < 6)
+#if (RT_BASE_COMPAT_REV < 6) /* pre-r6 */
 
 /* jmp (if unconditional jump S/lb, else if cc flags then jump lb)
  * set-flags: no
@@ -1731,7 +1729,7 @@
 #define LBL(lb)                                          /* code label */   \
         ASM_BEG ASM_OP0(lb:) ASM_END
 
-#else  /* r6 */
+#else /* RT_BASE_COMPAT_REV >= 6, r6 */
 
 /* jmp (if unconditional jump S/lb, else if cc flags then jump lb)
  * set-flags: no
@@ -1804,7 +1802,7 @@
 #define LBL(lb)                                          /* code label */   \
         ASM_BEG ASM_OP0(lb:) ASM_END
 
-#endif /* r6 */
+#endif /* RT_BASE_COMPAT_REV >= 6, r6 */
 
 /************************* register-size instructions *************************/
 
@@ -1878,8 +1876,7 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
-/* pre-r6 */
-#if (defined (RT_M32) && RT_M32 < 6) || (defined (RT_M64) && RT_M64 < 6)
+#if (RT_BASE_COMPAT_REV < 6) /* pre-r6 */
 
 /* internal definitions for combined-compare-jump (cmj) */
 
@@ -2014,7 +2011,7 @@
 #define CMR(cc, r1, r2, lb)                                                 \
         R##cc(r1, r2, lb)
 
-#else  /* r6 */
+#else /* RT_BASE_COMPAT_REV >= 6, r6 */
 
 /* internal definitions for combined-compare-jump (cmj) */
 
@@ -2129,7 +2126,7 @@
 #define CMR(cc, r1, r2, lb)                                                 \
         R##cc(r1, r2, lb)
 
-#endif /* r6 */
+#endif /* RT_BASE_COMPAT_REV >= 6, r6 */
 
 #endif /* RT_RTARCH_M32_H */
 

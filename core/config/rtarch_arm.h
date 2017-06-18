@@ -150,6 +150,11 @@
 #define AUW(sib, vim, reg, brm, vdp, cdp, cim)                              \
             sib  cdp(brm, vdp)  cim(reg, vim)
 
+#ifdef RT_BASE_COMPAT_DIV
+#undef  RT_ARM
+#define RT_ARM RT_BASE_COMPAT_DIV /* 0/1 - int-div emul, 2 - hardware int-div */
+#endif /* RT_BASE_COMPAT_DIV */
+
 #define EMPTY1(em1) em1
 #define EMPTY2(em1, em2) em1 em2
 
@@ -1101,7 +1106,7 @@
 /* div (G = G / S)
  * set-flags: undefined */
 
-#if (RT_ARM < 2) /* hw int-div is available in processors with ASIMDv2 */
+#if (RT_BASE_COMPAT_DIV < 2) /* no int-div for Cortex-A8/A9 + NEONv1, fp-emul */
 
 #define divwx_ri(RG, IS)       /* Reax cannot be used as first operand */   \
         movpx_st(Xmm0, Mebp, inf_SCR01(0))          /* fallback to VFP */   \
@@ -1240,7 +1245,7 @@
         EMITW(0xF3BB0700 | MRM(Tmm0+0,  0x00,    Tmm0+1))/* Xmm0<-junk */   \
         EMITW(0xEE100B10 | MRM(Teax,    Tmm0+0,  0x00)) /* fallback to VFP */
 
-#else /* RT_ARM >= 2 */
+#else /* RT_BASE_COMPAT_DIV >= 2, hw int-div for Cortex-A7/A15 + NEONv2 */
 
 #define divwx_ri(RG, IS)       /* Reax cannot be used as first operand */   \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IS))   \
@@ -1301,7 +1306,7 @@
         divwn_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
                                      /* 24-bit int (fp32 div in ARMv7) */
 
-#endif /* RT_ARM >= 2 */
+#endif /* RT_BASE_COMPAT_DIV >= 2, hw int-div for Cortex-A7/A15 + NEONv2 */
 
 /* rem (G = G % S)
  * set-flags: undefined */

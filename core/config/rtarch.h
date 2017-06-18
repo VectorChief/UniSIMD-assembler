@@ -506,6 +506,20 @@
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 #endif /* RT_SIMD_COMPAT_FMR */
 
+/* RT_BASE_COMPAT_BMI when enabled changes the default behavior
+ * of some bit-manipulation instructions to use BMI variants */
+#ifdef  RT_SIMD_CODE
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 2 /* enable BMI1+BMI2 when SIMD target is chosen */
+#if   (RT_256X1 == 1) && (RT_SIMD == 256)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#elif (RT_128X1 < 32) && (RT_SIMD == 128)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#endif /* RT_SIMD: 256, 128 */
+#endif /* RT_SIMD_CODE */
+
 #if   (RT_512X4 != 0) && (RT_SIMD == 2048)
 #error "x86:386 doesn't support quaded SIMD backends, check build flags"
 #elif (RT_512X2 != 0) && (RT_SIMD == 1024)
@@ -517,22 +531,10 @@
 #elif (RT_128X2 != 0) && (RT_SIMD == 256)
 #error "x86:386 doesn't support paired SIMD backends, check build flags"
 #elif (RT_512X1 != 0) && (RT_SIMD == 512)
-#if   defined (RT_SIMD_CODE)
-#undef    RT_X86
-#define   RT_X86 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X86 */
 #include "rtarch_x86_512x1v2.h"
 #elif (RT_256X1 != 0) && (RT_SIMD == 256)
-#if   (RT_256X1 & 2) && defined (RT_SIMD_CODE)
-#undef    RT_X86
-#define   RT_X86 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X86 */
 #include "rtarch_x86_256x1v2.h"
 #elif (RT_128X1 >= 8) && (RT_SIMD == 128)
-#if   (RT_128X1 & 32) && defined (RT_SIMD_CODE)
-#undef    RT_X86
-#define   RT_X86 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X86 */
 #include "rtarch_x86_128x1v8.h"
 #elif (RT_128X1 >= 1) && (RT_SIMD == 128)
 #include "rtarch_x86_128x1v4.h"
@@ -751,6 +753,20 @@
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 #endif /* RT_SIMD_COMPAT_FMR */
 
+/* RT_BASE_COMPAT_BMI when enabled changes the default behavior
+ * of some bit-manipulation instructions to use BMI variants */
+#ifdef  RT_SIMD_CODE
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 2 /* enable BMI1+BMI2 when SIMD target is chosen */
+#if   (RT_256X1 == 1) && (RT_SIMD == 256)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#elif (RT_128X1 < 32) && (RT_SIMD == 128)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#endif /* RT_SIMD: 256, 128 */
+#endif /* RT_SIMD_CODE */
+
 #if   (RT_512X4 != 0) && (RT_SIMD == 2048)
 #error "x86:386 doesn't support quaded SIMD backends, check build flags"
 #elif (RT_512X2 != 0) && (RT_SIMD == 1024)
@@ -762,22 +778,10 @@
 #elif (RT_128X2 != 0) && (RT_SIMD == 256)
 #error "x86:386 doesn't support paired SIMD backends, check build flags"
 #elif (RT_512X1 != 0) && (RT_SIMD == 512)
-#if   defined (RT_SIMD_CODE)
-#undef    RT_X86
-#define   RT_X86 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X86 */
 #include "rtarch_x86_512x1v2.h"
 #elif (RT_256X1 != 0) && (RT_SIMD == 256)
-#if   (RT_256X1 & 2) && defined (RT_SIMD_CODE)
-#undef    RT_X86
-#define   RT_X86 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X86 */
 #include "rtarch_x86_256x1v2.h"
 #elif (RT_128X1 >= 8) && (RT_SIMD == 128)
-#if   (RT_128X1 & 32) && defined (RT_SIMD_CODE)
-#undef    RT_X86
-#define   RT_X86 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X86 */
 #include "rtarch_x86_128x1v8.h"
 #elif (RT_128X1 >= 1) && (RT_SIMD == 128)
 #include "rtarch_x86_128x1v4.h"
@@ -1029,93 +1033,51 @@
 #define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
 #endif /* RT_SIMD_COMPAT_FMR */
 
+/* RT_BASE_COMPAT_BMI when enabled changes the default behavior
+ * of some bit-manipulation instructions to use BMI variants */
+#ifdef  RT_SIMD_CODE
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 2 /* enable BMI1+BMI2 when SIMD target is chosen */
+#if   (RT_256X2 == 1) && (RT_SIMD == 512)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#elif (RT_256X1 == 1) && (RT_SIMD == 256)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#elif (RT_256X1 == 4) && (RT_SIMD == 256)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#elif (RT_128X2 == 4) && (RT_SIMD == 256)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#elif (RT_128X1 == 2) && (RT_SIMD == 128)
+#elif (RT_128X1 < 32) && (RT_SIMD == 128)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#endif /* RT_SIMD: 512, 256, 128 */
+#endif /* RT_SIMD_CODE */
+
 #if   (RT_512X4 != 0) && (RT_SIMD == 2048)
-#if   defined (RT_SIMD_CODE) && defined (RT_X32)
-#undef    RT_X32
-#define   RT_X32 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X32 */
-#if   defined (RT_SIMD_CODE) && defined (RT_X64)
-#undef    RT_X64
-#define   RT_X64 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X64 */
 #include "rtarch_x64_512x4v2.h"
 #elif (RT_512X2 != 0) && (RT_SIMD == 1024)
-#if   defined (RT_SIMD_CODE) && defined (RT_X32)
-#undef    RT_X32
-#define   RT_X32 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X32 */
-#if   defined (RT_SIMD_CODE) && defined (RT_X64)
-#undef    RT_X64
-#define   RT_X64 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X64 */
 #include "rtarch_x64_512x2v2.h"
 #elif (RT_512X1 != 0) && (RT_SIMD == 512) && (RT_REGS == 16)
-#if   defined (RT_SIMD_CODE) && defined (RT_X32)
-#undef    RT_X32
-#define   RT_X32 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X32 */
-#if   defined (RT_SIMD_CODE) && defined (RT_X64)
-#undef    RT_X64
-#define   RT_X64 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X64 */
 #include "rtarch_x64_512x1v8.h"
 #elif (RT_256X2 != 0) && (RT_SIMD == 512) && (RT_REGS == 8)
-#if   (RT_256X2 & 2) && defined (RT_SIMD_CODE) && defined (RT_X32)
-#undef    RT_X32
-#define   RT_X32 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X32 */
-#if   (RT_256X2 & 2) && defined (RT_SIMD_CODE) && defined (RT_X64)
-#undef    RT_X64
-#define   RT_X64 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X64 */
 #include "rtarch_x64_256x2v2.h"
 #elif (RT_128X4 != 0) && (RT_SIMD == 512)
 #error "x64:686 doesn't support quaded SSEx backends, check build flags"
 #elif (RT_256X1 == 8) && (RT_SIMD == 256) && (RT_REGS == 16)
-#if   defined (RT_SIMD_CODE) && defined (RT_X32)
-#undef    RT_X32
-#define   RT_X32 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X32 */
-#if   defined (RT_SIMD_CODE) && defined (RT_X64)
-#undef    RT_X64
-#define   RT_X64 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X64 */
 #include "rtarch_x64_256x1v8.h"
 #elif (RT_256X1 != 0) && (RT_SIMD == 256) && (RT_REGS == 16)
-#if   (RT_256X1 & 2) && defined (RT_SIMD_CODE) && defined (RT_X32)
-#undef    RT_X32
-#define   RT_X32 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X32 */
-#if   (RT_256X1 & 2) && defined (RT_SIMD_CODE) && defined (RT_X64)
-#undef    RT_X64
-#define   RT_X64 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X64 */
 #include "rtarch_x64_256x1v2.h"
 #elif (RT_128X2 != 0) && (RT_SIMD == 256) && (RT_REGS == 8)
 #include "rtarch_x64_128x2v4.h"
 #elif (RT_128X1 >= 8) && (RT_SIMD == 128)
-#if   (RT_128X1 & 32) && defined (RT_SIMD_CODE)
-#ifdef    RT_X32
-#undef    RT_X32
-#define   RT_X32 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X32 */
-#ifdef    RT_X64
-#undef    RT_X64
-#define   RT_X64 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X64 */
-#endif /* (RT_128X1 & 32) && defined RT_SIMD_CODE */
 #include "rtarch_x64_128x1v8.h"
 #elif (RT_128X1 == 4) && (RT_SIMD == 128)
 #include "rtarch_x64_128x1v4.h"
 #elif (RT_128X1 == 2) && (RT_SIMD == 128)
-#if   defined (RT_SIMD_CODE) && defined (RT_X32)
-#undef    RT_X32
-#define   RT_X32 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X32 */
-#if   defined (RT_SIMD_CODE) && defined (RT_X64)
-#undef    RT_X64
-#define   RT_X64 2 /* enable BMI1+BMI2 for >= AVX2 target on x86 */
-#endif /* RT_X64 */
 #include "rtarch_x64_128x1v2.h"
 #endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
@@ -1344,6 +1306,17 @@
 #define RT_SIMD_COMPAT_SQR      RT_SIMD_COMPAT_SQR_MASTER
 #endif /* RT_SIMD_COMPAT_SQR */
 
+/* RT_BASE_COMPAT_DIV when enabled changes the default behavior
+ * of divide instructions to their native int implementation */
+#ifdef  RT_SIMD_CODE
+#undef  RT_BASE_COMPAT_DIV
+#define RT_BASE_COMPAT_DIV 2 /* enable int-div when SIMD target is chosen */
+#if   (RT_128X1 == 1) && (RT_SIMD == 128)
+#undef  RT_BASE_COMPAT_DIV
+#define RT_BASE_COMPAT_DIV 0 /* no int-div for Cortex-A8/A9, ARMv7+NEONv1 */
+#endif /* RT_SIMD: 128 */
+#endif /* RT_SIMD_CODE */
+
 #if   (RT_512X4 != 0) && (RT_SIMD == 2048)
 #error "AArch32 doesn't support SIMD wider than 128-bit, check build flags"
 #elif (RT_512X2 != 0) && (RT_SIMD == 1024)
@@ -1359,10 +1332,6 @@
 #elif (RT_128X2 != 0) && (RT_SIMD == 256)
 #error "AArch32 doesn't support paired SIMD backends, check build flags"
 #elif (RT_128X1 != 0) && (RT_SIMD == 128)
-#if   (RT_128X1 & 6) && defined (RT_SIMD_CODE)
-#undef    RT_ARM
-#define   RT_ARM 2 /* enable int-div for ASIMDv2 target on ARM */
-#endif /* RT_ARM */
 #include "rtarch_arm_128x1v4.h"
 #endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
@@ -1843,6 +1812,11 @@
 #ifndef RT_SIMD_COMPAT_FMS
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
 #endif /* RT_SIMD_COMPAT_FMS */
+
+/* RT_BASE_COMPAT_REV when enabled changes the default behavior
+ * of integer instructions to their MIPS Revision 6 variants */
+#undef  RT_BASE_COMPAT_REV
+#define RT_BASE_COMPAT_REV RT_M32 | RT_M64 /* enable MIPS Revision 6 */
 
 #if   (RT_512X4 != 0) && (RT_SIMD == 2048)
 #error "mipsMSA doesn't support SIMD wider than 128-bit, check build flags"

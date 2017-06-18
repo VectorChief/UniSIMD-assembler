@@ -995,8 +995,7 @@
 #define rorzz_mr(MG, DG, RS)                                                \
         rorzz_st(W(RS), W(MG), W(DG))
 
-/* pre-r6 */
-#if defined (RT_M64) && RT_M64 < 6
+#if (RT_BASE_COMPAT_REV < 6) /* pre-r6 */
 
 /* mul (G = G * S)
  * set-flags: undefined */
@@ -1174,7 +1173,7 @@
 #define remzn_xm(MS, DS)    /* to be placed immediately after divzn_xm */   \
         EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))   /* Redx<-rem */
 
-#else  /* r6 */
+#else /* RT_BASE_COMPAT_REV >= 6, r6 */
 
 /* mul (G = G * S)
  * set-flags: undefined */
@@ -1330,7 +1329,7 @@
 #define remzn_xm(MS, DS)    /* to be placed immediately after divzn_xm */   \
         EMITW(0x000000DE | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
 
-#endif /* r6 */
+#endif /* RT_BASE_COMPAT_REV >= 6, r6 */
 
 /* arj (G = G op S, if cc G then jump lb)
  * set-flags: undefined
