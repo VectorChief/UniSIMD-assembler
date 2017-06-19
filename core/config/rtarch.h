@@ -316,10 +316,12 @@
 /* RT_REGS is already defined outside */
 #elif (RT_256_R8 || RT_512_R8 || RT_1K4_R8 || RT_2K8_R8)
 #define RT_REGS 8       /* <- 8 on 128/256-paired/512-quaded x64 targets */
-#elif (RT_128 || RT_256 || RT_512 || RT_1K4)
+#elif ((RT_128) & 0x3C || (RT_256) & 0x03 || (RT_512) & 0x03 || (RT_1K4) & 0x03)
 #define RT_REGS 16      /* <- 15 on 128-paired/quaded RISC/POWER targets */
-#elif (RT_128_RX || RT_256_RX || RT_512_RX || RT_1K4_RX)
+#elif ((RT_128) & 0x03 || (RT_256) & 0x0C || (RT_512) & 0x0C || (RT_1K4) & 0x0C)
 #define RT_REGS 32      /* <- 30 on all modern 128-bit SIMD RISC targets */
+#elif (RT_128_RX || RT_256_RX || RT_512_RX || RT_1K4_RX)
+#define RT_REGS 32      /* <- 30 on predicated x64 AVX-512/1K4 & ARM-SVE */
 #endif /* RT_REGS: 8, 16, 32 */
 
 /*
@@ -1061,23 +1063,23 @@
 #include "rtarch_x64_512x4v2.h"
 #elif (RT_512X2 != 0) && (RT_SIMD == 1024)
 #include "rtarch_x64_512x2v2.h"
-#elif (RT_512X1 != 0) && (RT_SIMD == 512) && (RT_REGS == 16)
+#elif (RT_512X1 != 0) && (RT_SIMD == 512) && (RT_REGS >= 16)
 #include "rtarch_x64_512x1v8.h"
 #elif (RT_256X2 != 0) && (RT_SIMD == 512) && (RT_REGS == 8)
 #include "rtarch_x64_256x2v2.h"
 #elif (RT_128X4 != 0) && (RT_SIMD == 512)
 #error "x64:686 doesn't support quaded SSEx backends, check build flags"
-#elif (RT_256X1 == 8) && (RT_SIMD == 256) && (RT_REGS == 16)
+#elif (RT_256X1 == 8) && (RT_SIMD == 256) && (RT_REGS == 32)
 #include "rtarch_x64_256x1v8.h"
 #elif (RT_256X1 != 0) && (RT_SIMD == 256) && (RT_REGS == 16)
 #include "rtarch_x64_256x1v2.h"
 #elif (RT_128X2 != 0) && (RT_SIMD == 256) && (RT_REGS == 8)
 #include "rtarch_x64_128x2v4.h"
-#elif (RT_128X1 >= 8) && (RT_SIMD == 128)
+#elif (RT_128X1 >= 8) && (RT_SIMD == 128) && (RT_REGS == 16)
 #include "rtarch_x64_128x1v8.h"
-#elif (RT_128X1 == 4) && (RT_SIMD == 128)
+#elif (RT_128X1 == 4) && (RT_SIMD == 128) && (RT_REGS == 16)
 #include "rtarch_x64_128x1v4.h"
-#elif (RT_128X1 == 2) && (RT_SIMD == 128)
+#elif (RT_128X1 == 2) && (RT_SIMD == 128) && (RT_REGS == 32)
 #include "rtarch_x64_128x1v2.h"
 #endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
