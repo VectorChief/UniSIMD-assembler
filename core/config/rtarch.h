@@ -28,18 +28,18 @@
  * Note that AArch32 mode of ARMv8 ISA is a part of legacy ARM target as it
  * only brings SIMD fp-convert with round parameter and other minor tweaks,
  * while IEEE-compatible SIMD fp-arithmetic with full square root and divide
- * is exposed via (ILP32 ABI of) AArch64:ARMv8 ISA in (A32 and) A64 target(s).
+ * is exposed in AArch64 mode of ARMv8 ISA via A32 and A64 targets (fp32/fp64).
  *
- * Preliminary naming scheme for legacy, current and potential future targets.
+ * Current naming scheme for legacy, modern and potential future targets.
  *
  * Legacy 32/64-bit BASE
  *    and 32/64-bit SIMD targets:
  *
  *  - rtarch_arm.h         - AArch32:ARMv7 ISA, 16 BASE regs, 8 + temps used
- *  - rtarch_arm_128x1v4.h - 32-bit elements, 16 SIMD regs, 8 + temps used
+ *  - rtarch_arm_128x1v4.h - 32-bit elements, 16 SIMD regs, MPE 128-bit NEON, 8+
  *  - rtarch_p32.h         - Power 32-bit ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_p32_128x1v1.h - 32-bit elements, 32 SIMD regs, VMX 128-bit, 16+9
- *  - rtarch_p32_128x2v1.h - 32-bit elements, 32 SIMD regs, VMX 128-bit pairs, 8
+ *  - rtarch_p32_128x1v4.h - 32-bit elements, 32 SIMD regs, VMX 128-bit, 16(15/8)
+ *  - rtarch_p32_128x2v4.h - 32-bit elements, 32 SIMD regs, VMX 128-bit pairs, 8
  *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 14 + temps used
  *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 14 + temps used
  *  - rtarch_x32_128x1v4.h - 32-bit elements, 16 SIMD regs, SSE 128-bit, 16 used
@@ -60,30 +60,36 @@
  *
  *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 BASE regs, 14 + temps used
  *  - rtarch_a64.h         - AArch64:ARMv8 ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_a32_128x1v1.h - 32-bit elements, 32 SIMD regs, NEON 128-bit, 16+1
- *  - rtarch_a64_128x1v1.h - 64-bit elements, 32 SIMD regs, NEON 128-bit, 16+1
+ *  - rtarch_a32_128x1v1.h - 32-bit elements, 32 SIMD regs, MPE 128-bit NEON, 30
+ *  - rtarch_a64_128x1v1.h - 64-bit elements, 32 SIMD regs, MPE 128-bit NEON, 30
  *  - rtarch_a32_128x2v1.h - 32-bit elements, 32 SIMD regs, pairs of 128-bit, 15
  *  - rtarch_a64_128x2v1.h - 64-bit elements, 32 SIMD regs, pairs of 128-bit, 15
  *  - rtarch_m32.h         - MIPS32 r5/r6 ISA, 32 BASE regs, 14 + temps used
  *  - rtarch_m64.h         - MIPS64 r5/r6 ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_m32_128x1v1.h - 32-bit elements, 32 SIMD regs, MSA 128-bit, 16+4(2)
- *  - rtarch_m64_128x1v1.h - 64-bit elements, 32 SIMD regs, MSA 128-bit, 16+4(2)
+ *  - rtarch_m32_128x1v1.h - 32-bit elements, 32 SIMD regs, MSA 128-bit, 30 used
+ *  - rtarch_m64_128x1v1.h - 64-bit elements, 32 SIMD regs, MSA 128-bit, 30 used
  *  - rtarch_m32_128x2v1.h - 32-bit elements, 32 SIMD regs, pairs of 128-bit, 15
  *  - rtarch_m64_128x2v1.h - 64-bit elements, 32 SIMD regs, pairs of 128-bit, 15
  *  - rtarch_p32.h         - Power 32-bit ISA, 32 BASE regs, 14 + temps used
  *  - rtarch_p64.h         - Power 64-bit ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_p32_128x1v4.h - 32-bit elements, 64 SIMD regs, VSX 128-bit, 16+
- *  - rtarch_p64_128x1v4.h - 64-bit elements, 64 SIMD regs, VSX 128-bit, 16+
- *  - rtarch_p32_128x2v4.h - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_p64_128x2v4.h - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_p32_128x4v4.h - 32-bit elements, 64 SIMD regs, quads of 128-bit, 15
- *  - rtarch_p64_128x4v4.h - 64-bit elements, 64 SIMD regs, quads of 128-bit, 15
+ *  - rtarch_p32_128x1v2.h - 32-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
+ *  - rtarch_p64_128x1v2.h - 64-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
+ *  - rtarch_p32_128x2v2.h - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_p64_128x2v2.h - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_p32_128x2v8.h - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 30
+ *  - rtarch_p64_128x2v8.h - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 30
+ *  - rtarch_p32_128x4v2.h - 32-bit elements, 64 SIMD regs, quads of 128-bit, 15
+ *  - rtarch_p64_128x4v2.h - 64-bit elements, 64 SIMD regs, quads of 128-bit, 15
  *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 14 + temps used
  *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 14 + temps used
+ *  - rtarch_x32_128x1v2.h - 32-bit elements, 32 SIMD regs, AVX-512+ 128-bit, 30
+ *  - rtarch_x64_128x1v2.h - 64-bit elements, 32 SIMD regs, AVX-512+ 128-bit, 30
  *  - rtarch_x32_128x1v8.h - 32-bit elements, 16 SIMD regs, AVX 128-bit, 16 used
  *  - rtarch_x64_128x1v8.h - 64-bit elements, 16 SIMD regs, AVX 128-bit, 16 used
  *  - rtarch_x32_256x1v2.h - 32-bit elements, 16 SIMD regs, AVX 256-bit, 16 used
  *  - rtarch_x64_256x1v2.h - 64-bit elements, 16 SIMD regs, AVX 256-bit, 16 used
+ *  - rtarch_x32_256x1v8.h - 32-bit elements, 32 SIMD regs, AVX-512+ 256-bit, 30
+ *  - rtarch_x64_256x1v8.h - 64-bit elements, 32 SIMD regs, AVX-512+ 256-bit, 30
  *  - rtarch_x32_512x1v2.h - 32-bit elements, 32 SIMD regs, AVX 512-bit, 16 used
  *  - rtarch_x64_512x1v2.h - 64-bit elements, 32 SIMD regs, AVX 512-bit, 16 used
  *  - rtarch_x32_512x2v2.h - 32-bit elements, 32 SIMD regs, AVX 512-bit pairs*16
@@ -92,33 +98,23 @@
  * Future 32/64-bit BASE
  *    and 32/64-bit SIMD targets:
  *
- *  - rtarch_a32_128x1v*.h - 32-bit elements, 32 SIMD regs, NEON 128-bit, 30
- *  - rtarch_a64_128x1v*.h - 64-bit elements, 32 SIMD regs, NEON 128-bit, 30
  *  - rtarch_a32_256x1v*.h - 32-bit elements, 32 SIMD regs, SVE 256-bit, 30 used
  *  - rtarch_a64_256x1v*.h - 64-bit elements, 32 SIMD regs, SVE 256-bit, 30 used
  *  - rtarch_a32_512x1v*.h - 32-bit elements, 32 SIMD regs, SVE 512-bit, 30 used
  *  - rtarch_a64_512x1v*.h - 64-bit elements, 32 SIMD regs, SVE 512-bit, 30 used
- *  - rtarch_m32_128x1v*.h - 32-bit elements, 32 SIMD regs, MSA 128-bit, 30 used
- *  - rtarch_m64_128x1v*.h - 64-bit elements, 32 SIMD regs, MSA 128-bit, 30 used
- *  - rtarch_p32_128x1v*.h - 32-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
- *  - rtarch_p64_128x1v*.h - 64-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
- *  - rtarch_p32_128x2v*.h - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 30
- *  - rtarch_p64_128x2v*.h - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 30
  *  - rtarch_r32.h         - RISC-V 32-bit ISA, 32 BASE regs, 14 + temps used
  *  - rtarch_r64.h         - RISC-V 64-bit ISA, 32 BASE regs, 14 + temps used
  *  - rtarch_r32_128x1v*.h - 32-bit elements, 32 SIMD regs, SIMD 128-bit, 30
  *  - rtarch_r64_128x1v*.h - 64-bit elements, 32 SIMD regs, SIMD 128-bit, 30
  *  - rtarch_r32_128x2v*.h - 32-bit elements, 32 SIMD regs, pairs of 128-bit, 15
  *  - rtarch_r64_128x2v*.h - 64-bit elements, 32 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_x32_512x1v*.h - 32-bit elements, 32 SIMD regs, AVX 512-bit, 30 used
- *  - rtarch_x64_512x1v*.h - 64-bit elements, 32 SIMD regs, AVX 512-bit, 30 used
  *
  * not all registers in target descriptions are always exposed for apps to use
  * flags RT_BASE_REGS and RT_SIMD_REGS are available for rough differentiation
- * between register-file sizes with current values: legacy 8, 16, 32 (planned)
+ * between register-file sizes with current values: legacy 8, 16 and 32 (SIMD)
  * while top registers reservation is controlled via RT_SIMD_COMPAT_XMM option
  *
- * Preliminary naming scheme for extended BASE and SIMD register-files.
+ * Current naming scheme for extended BASE and SIMD register-files.
  *
  * Legacy 8 BASE and 8 SIMD registers:
  *  - Reax, Rebx, Recx, Redx, Resp, Rebp, Resi, Redi
@@ -133,7 +129,7 @@
  *  - Xmm0, ... , Xmm7, Xmm8, Xmm9, XmmA, ... , XmmV
  *
  * Although register names are fixed, register sizes are not and depend
- * on the chosen target (32/64-bit BASE and 128/256/512-bit SIMD are supported).
+ * on the chosen target (32/64-bit BASE and 128/256/512/1K4/2K8-bit SIMD).
  * Base registers can be 32/64-bit wide, while their SIMD counterparts
  * depend on the architecture and SIMD version chosen for the target.
  * On 64-bit systems SIMD can be configured to work with 32/64-bit elements.
@@ -144,7 +140,7 @@
 /******************************************************************************/
 
 /*
- * The following BASE instruction namespaces are defined for current use.
+ *** The following BASE instruction namespaces are defined for current use.
  *
  * cmdw*_** - word-size args, BASE ISA (data-element is always fixed at 32-bit)
  * cmdx*_** - addr-size args, BASE ISA (32/64-bit configurable with RT_ADDRESS)
@@ -153,7 +149,15 @@
  *
  * cmd*z_** - usage for setting-flags is implemented orthogonal to data-size
  *
- * The following SIMD instruction namespaces are defined for current use.
+ *** The following SIMD instruction namespaces are defined for current use.
+ *
+ * cmdr*_** - SIMD-elem args, SIMD ISA (data-element is 32-bit, scalar)
+ * cmds*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, scalar)
+ * cmdt*_** - SIMD-elem args, SIMD ISA (data-element is 64-bit, scalar)
+ *
+ * cmde*_** - extd-size args, extd ISA (for 80-bit extended double, x87)
+ *
+ *** The following SIMD instruction namespaces are defined for current use.
  *
  * cmdo*_** - SIMD-data args, SIMD ISA (data-element is 32-bit, packed-var-len)
  * cmdp*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed-var-len)
@@ -168,12 +172,6 @@
  * cmdc*_** - SIMD-data args, SIMD ISA (data-element is 32-bit, packed-256-bit)
  * cmdd*_** - SIMD-data args, SIMD ISA (data-element is 64-bit, packed-256-bit)
  * cmdf*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed-256-bit)
- *
- * The following SIMD instruction namespaces are reserved for future use.
- *
- * cmdr*_** - SIMD-elem args, SIMD ISA (data-element is 32-bit, scalar)
- * cmds*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, scalar)
- * cmdt*_** - SIMD-elem args, SIMD ISA (data-element is 64-bit, scalar)
  *
  * fixed 256-bit ops can be done as pairs with 2*15 128-bit regs on modern RISCs
  * fixed 256-bit ops can be done as pairs with 2*30 128-bit regs on modern Power
@@ -193,15 +191,14 @@
  * cv***F**, c***sF** can reuse fp<->int names for .?-sized fixed-point, ? = F*8
  * when fp<->int sizes don't match extended fpu ISA can be used with other archs
  *
- * The following BASE instruction namespaces are planned for potential future.
+ *** The following BASE instruction namespaces are reserved for the future.
  *
  * cmdb*_** - byte-size args, BASE ISA (displacement/alignment may differ)
  * cmdh*_** - half-size args, BASE ISA (displacement/alignment may differ)
  *
- * cmde*_** - extd-size args, extd ISA (for 80-bit extended double, x87)
  * cmdk*_** - king-kong args, BASE ISA (for 128-bit BASE subset, RISC-V)
  *
- * The following SIMD instruction namespaces are planned for potential future.
+ *** The following SIMD instruction namespaces are reserved for the future.
  *
  * cmdm*_** - SIMD-data args, SIMD ISA (packed fp16/int subset, half-precision)
  * cmdn*_** - SIMD-elem args, SIMD ISA (scalar fp16/int subset, half-precision)
@@ -275,9 +272,9 @@
  * However, as current major ISAs lack the ability to do sub-word fp-compute,
  * these corresponding subsets cannot be viewed as valid targets for SPMD.
  *
- * Scalar SIMD subset, horizontal SIMD reductions, constructive 3/4-op syntax
- * (potentially with zeroing/merging predicates) are being considered as future
- * extensions to current 2-op (dest-as-1st-src) SPMD-driven vertical SIMD ISA.
+ * Scalar SIMD improvements, horizontal SIMD reductions, wider SIMD vectors
+ * with zeroing/merging predicates in 3/4-operand instructions are planned as
+ * future extensions to current 2/3-operand SPMD-driven vertical SIMD ISA.
  */
 
 /******************************************************************************/
@@ -1069,17 +1066,17 @@
 #include "rtarch_x64_256x2v2.h"
 #elif (RT_128X4 != 0) && (RT_SIMD == 512)
 #error "x64:686 doesn't support quaded SSEx backends, check build flags"
-#elif (RT_256X1 == 8) && (RT_SIMD == 256) && (RT_REGS == 32)
+#elif (RT_256X1 >= 8) && (RT_SIMD == 256) && (RT_REGS == 32)
 #include "rtarch_x64_256x1v8.h"
 #elif (RT_256X1 != 0) && (RT_SIMD == 256) && (RT_REGS == 16)
 #include "rtarch_x64_256x1v2.h"
-#elif (RT_128X2 != 0) && (RT_SIMD == 256) && (RT_REGS == 8)
+#elif (RT_128X2 == 4) && (RT_SIMD == 256) && (RT_REGS == 8)
 #include "rtarch_x64_128x2v4.h"
 #elif (RT_128X1 >= 8) && (RT_SIMD == 128) && (RT_REGS == 16)
 #include "rtarch_x64_128x1v8.h"
-#elif (RT_128X1 == 4) && (RT_SIMD == 128) && (RT_REGS == 16)
+#elif (RT_128X1 >= 4) && (RT_SIMD == 128) && (RT_REGS == 16)
 #include "rtarch_x64_128x1v4.h"
-#elif (RT_128X1 == 2) && (RT_SIMD == 128) && (RT_REGS == 32)
+#elif (RT_128X1 >= 2) && (RT_SIMD == 128) && (RT_REGS == 32)
 #include "rtarch_x64_128x1v2.h"
 #endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
@@ -2113,18 +2110,18 @@
 #error "PowerPC doesn't support SIMD wider than 128-bit, check build flags"
 #elif (RT_256X1 != 0) && (RT_SIMD == 256)
 #error "PowerPC doesn't support SIMD wider than 128-bit, check build flags"
-#elif (RT_128X4 != 0) && (RT_SIMD == 512)
+#elif (RT_128X4 != 0) && (RT_SIMD == 512) && (RT_REGS == 16)
 #include "rtarch_p64_128x4v2.h"
-#elif (RT_128X2 <= 2) && (RT_SIMD == 256)
-#include "rtarch_p64_128x2v2.h"
-#elif (RT_128X2 <= 8) && (RT_SIMD == 256)
-#include "rtarch_p64_128x2v8.h"
-#elif (RT_128X2 == 16) && (RT_SIMD == 256)
+#elif (RT_128X2 & 16) && (RT_SIMD == 256) && (RT_REGS == 8)
 #include "rtarch_p32_128x2v4.h"
-#elif (RT_128X1 <= 2) && (RT_SIMD == 128)
-#include "rtarch_p64_128x1v2.h"
-#elif (RT_128X1 == 4) && (RT_SIMD == 128)
+#elif (RT_128X2 >= 4) && (RT_SIMD == 256) && (RT_REGS == 32)
+#include "rtarch_p64_128x2v8.h"
+#elif (RT_128X2 >= 1) && (RT_SIMD == 256) && (RT_REGS == 16)
+#include "rtarch_p64_128x2v2.h"
+#elif (RT_128X1 == 4) && (RT_SIMD == 128) && (RT_REGS == 16)
 #include "rtarch_p32_128x1v4.h"
+#elif (RT_128X1 >= 1) && (RT_SIMD == 128) && (RT_REGS == 32)
+#include "rtarch_p64_128x1v2.h"
 #endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
 /*
