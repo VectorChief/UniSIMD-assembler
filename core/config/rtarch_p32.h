@@ -1646,7 +1646,7 @@
         EMITW(0x80000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         CWR(cc, %%r24,   MOD(RT), lb)
 
-#if   defined (RT_P32)
+#if   (defined RT_P32)
 
 /* cmp (flags = S ? T)
  * set-flags: yes */
@@ -1673,7 +1673,7 @@
         EMITW(0x80000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0x7C000378 | MSM(TRxx,    REG(RT), REG(RT)))
 
-#endif /* defined (RT_P32) */
+#endif /* (defined RT_P32) */
 
 /* ver (Mebp/inf_VER = SIMD-version)
  * set-flags: no
@@ -1704,7 +1704,7 @@
 
      /* label_st(lb, MD, DD) is defined in rtarch.h file, destroys Reax */
 
-#if   defined (RT_P32)
+#if   (defined RT_P32)
 
 /* jmp (if unconditional jump S/lb, else if cc flags then jump lb)
  * set-flags: no
@@ -1841,7 +1841,7 @@
         EMITW(0xC8000000 | MTM(Tff1,    SPxx,    0x00) | (+0x00 & 0xFFFF))  \
         EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x68 & 0xFFFF))
 
-#endif /* defined (RT_P32) */
+#endif /* (defined RT_P32) */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

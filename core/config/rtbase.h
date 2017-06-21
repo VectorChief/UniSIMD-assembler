@@ -124,7 +124,7 @@ typedef int                 rt_si32;
 typedef unsigned int        rt_ui32;
 
 /* fixed 64-bit integer types */
-#if   defined (RT_WIN32) /* Win32, MSVC -------- for older versions --------- */
+#if   (defined RT_WIN32) /* Win32, MSVC -------- for older versions --------- */
 
 typedef __int64             rt_si64;
 #define    PR_Z /*printf*/  "I64"
@@ -207,7 +207,7 @@ typedef rt_ui64             rt_uadr;
 #endif /* RT_ADDRESS */
 
 /* pointer-size integer types */
-#if   defined (RT_WIN64) /* Win64, GCC -------------------------------------- */
+#if   (defined RT_WIN64) /* Win64, GCC -------------------------------------- */
 
 typedef rt_si64             rt_cell;
 typedef rt_si64             rt_size;
@@ -574,10 +574,10 @@ rt_si32 mask_init(rt_si32 simd)
     rt_si32 mask = 0, s_fma3 = 0, s_x2r8 = 0;
     rt_si32 n = n_simd, k = k_size, m = 0, s = 0;
 
-#if   defined (RT_X32) || defined (RT_X64) || defined (RT_X86)
+#if   (defined RT_X32) || (defined RT_X64) || (defined RT_X86)
     s_fma3 = (s_type == 0 ? 0x30 : s_type & 0x30); /* <- 128-bit fma3/avx2 */
 #endif /* x86 targets */
-#if   defined (RT_P32) || defined (RT_P64)
+#if   (defined RT_P32) || (defined RT_P64)
     s_x2r8 = (s_type == 0 ? 0x10 : s_type & 0x10) >> 2; /* <- 128-x2r8 vmx */
 #endif /* Power targets */
 
@@ -589,12 +589,12 @@ rt_si32 mask_init(rt_si32 simd)
     {
         for (; k_size >= k && k_size > 0; k_size /= 2)
         {
-#if   defined (RT_X86)
+#if   (defined RT_X86)
             if (k_size == 1 && n_simd <= 4 && v_regs <= 8)
             {
                 mask |= s_type << (8*(n_simd/2)) | (n_simd == 1 ? s_fma3 : 0);
             }
-#elif defined (RT_X32) || defined (RT_X64)
+#elif (defined RT_X32) || (defined RT_X64)
             if (n_simd >= 4 && n != 0)
             {
                 if (k != 0)
@@ -631,14 +631,14 @@ rt_si32 mask_init(rt_si32 simd)
             {
                 mask |= s_type << (8*(n_simd/2));
             }
-#elif defined (RT_ARM)
+#elif (defined RT_ARM)
             if (k_size == 1 && n_simd == 1 && v_regs <= 8)
             {
                 mask |= s_type;
             }
 #else /* modern RISC targets */
             m = 2; s = 1;
-#if   defined (RT_P32) || defined (RT_P64)
+#if   (defined RT_P32) || (defined RT_P64)
             m = 4; s = 2;
             if (n_simd == 4 && n != 0)
             {
@@ -700,7 +700,7 @@ rt_si32 from_mask(rt_si32 mask)
     s_type = s_type >> 4*(k_size-1);
     v_regs = 16 / k_size;
 
-#if   defined (RT_X86)
+#if   (defined RT_X86)
     if (n_simd == 1 && k_size == 2 && s_type <= 3)
     {
         k_size = 1;
@@ -714,7 +714,7 @@ rt_si32 from_mask(rt_si32 mask)
     {
         v_regs = 8;
     }
-#elif defined (RT_X32) || defined (RT_X64)
+#elif (defined RT_X32) || (defined RT_X64)
     if (n_simd == 1 && k_size == 2 && s_type <= 3)
     {
         k_size = 1;
@@ -737,7 +737,7 @@ rt_si32 from_mask(rt_si32 mask)
     {
         v_regs = 30;
     }
-#elif defined (RT_ARM)
+#elif (defined RT_ARM)
     if (n_simd != 1 || k_size >= 2)
     {
         n_simd = s_type = k_size = v_regs = 0;
@@ -748,7 +748,7 @@ rt_si32 from_mask(rt_si32 mask)
     }
 #else /* modern RISC targets */
     v_regs = v_regs == 16 ? 15 : 8;
-#if defined (RT_P32) || defined (RT_P64)
+#if (defined RT_P32) || (defined RT_P64)
     if (n_simd == 2 && k_size == 1 && s_type >= 4)
     {
         v_regs = 30;
@@ -849,7 +849,7 @@ rt_si32 from_mask(rt_si32 mask)
  * IT - immediate value (is used as a third or second source)
  */
 
-#if defined (RT_SIMD_CODE)
+#if (defined RT_SIMD_CODE)
 
 /****************** original CHECK_MASK macro (configurable) ******************/
 

@@ -1446,14 +1446,14 @@
 #define jmpxx_xr(RS)           /* register-targeted unconditional jump */   \
         EMITW(0xD61F0000 | MRM(0x00,    REG(RS), 0x00))
 
-#if   defined (RT_A32)
+#if   (defined RT_A32)
 
 #define jmpxx_xm(MS, DS)         /* memory-targeted unconditional jump */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0xB9400000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0xD61F0000 | MRM(0x00,    TMxx,    0x00))
 
-#elif defined (RT_A64)
+#elif (defined RT_A64)
 
 #define jmpxx_xm(MS, DS)         /* memory-targeted unconditional jump */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \

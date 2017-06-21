@@ -149,7 +149,7 @@
 
 #define AUX(sib, cdp, cim)  sib  cdp  cim
 
-#if   defined RT_X32
+#if   (defined RT_X32)
 
 #ifdef RT_BASE_COMPAT_BMI
 #undef  RT_X32
@@ -159,7 +159,7 @@
 #define ADR                                                                 \
         EMITB(0x67)
 
-#elif defined RT_X64
+#elif (defined RT_X64)
 
 #ifdef RT_BASE_COMPAT_BMI
 #undef  RT_X64
@@ -168,7 +168,7 @@
 
 #define ADR
 
-#endif /* defined RT_X32, RT_X64 */
+#endif /* defined (RT_X32, RT_X64) */
 
 /* 3-byte VEX prefix with full customization (W0) */
 #define VEX(rxg, rxm, ren, len, pfx, aux)                                   \
@@ -1599,7 +1599,7 @@
         REX(0,       RXB(RS)) EMITB(0xFF)   /* <- jump to address in reg */ \
         MRM(0x04,    MOD(RS), REG(RS))
 
-#if   defined (RT_X32)
+#if   (defined RT_X32)
 
 #define jmpxx_xm(MS, DS)         /* memory-targeted unconditional jump */   \
     ADR REX(1,       RXB(MS)) EMITB(0x8B)   /* <- load r15d from MS/DS */   \
@@ -1608,7 +1608,7 @@
         REX(0,             1) EMITB(0xFF)   /* <- jump to address in r15 */ \
         MRM(0x04,       0x03, 0x07)
 
-#elif defined (RT_X64)
+#elif (defined RT_X64)
 
 #define jmpxx_xm(MS, DS)         /* memory-targeted unconditional jump */   \
     ADR REX(0,       RXB(MS)) EMITB(0xFF)   /* <- jump to address in mem */ \

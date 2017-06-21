@@ -304,12 +304,12 @@
 /*
  * Determine maximum of available SIMD registers for applications' code-bases.
  */
-#if   defined (RT_ARM) || defined (RT_X86) /* <- original legacy targets */
+#if   (defined RT_ARM) || (defined RT_X86) /* <- original legacy targets */
 #undef  RT_REGS
 #define RT_REGS 8
 #endif /* RT_REGS: 8 */
 
-#if   defined (RT_REGS)
+#if   (defined RT_REGS)
 /* RT_REGS is already defined outside */
 #elif (RT_256_R8 || RT_512_R8 || RT_1K4_R8 || RT_2K8_R8)
 #define RT_REGS 8       /* <- 8 on 128/256-paired/512-quaded x64 targets */
@@ -324,7 +324,7 @@
 /*
  * Determine mapping of vector-length-agnostic SIMD subsets: cmdo, cmdp, cmdq.
  */
-#if   defined (RT_SIMD)
+#if   (defined RT_SIMD)
 /* RT_SIMD is already defined outside */
 #elif           (RT_2K8_R8)
 #define RT_SIMD 2048
@@ -429,11 +429,11 @@
 
 /*******************************   WIN32, MSVC   ******************************/
 
-#if   defined (RT_WIN32)
+#if   (defined RT_WIN32)
 
 /* ---------------------------------   X86   -------------------------------- */
 
-#if   defined (RT_X86)
+#if   (defined RT_X86)
 
 #define ASM_OP0(op)             op
 #define ASM_OP1(op, p1)         op  p1
@@ -679,11 +679,11 @@
 
 /*******************************   LINUX, GCC   *******************************/
 
-#elif defined (RT_LINUX) || defined (RT_WIN64)
+#elif (defined RT_LINUX) || (defined RT_WIN64)
 
 /* ---------------------------------   X86   -------------------------------- */
 
-#if   defined (RT_X86)
+#if   (defined RT_X86)
 
 #define ASM_OP0(op)             #op
 #define ASM_OP1(op, p1)         #op"  "#p1
@@ -936,7 +936,7 @@
 
 /* ------------------------------   X32, X64   ------------------------------ */
 
-#elif defined (RT_X32) || defined (RT_X64)
+#elif (defined RT_X32) || (defined RT_X64)
 
 #define ASM_OP0(op)             #op
 #define ASM_OP1(op, p1)         #op"  "#p1
@@ -953,7 +953,7 @@
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movq, %%rax, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movq, lb, %%rax) ASM_END
 
-#if   defined (RT_X32)
+#if   (defined RT_X32)
 
 #define label_ld(lb)/*Reax*/                                                \
         ASM_BEG ASM_OP2(leaq, %%rax, lb) ASM_END
@@ -964,7 +964,7 @@
         MRM(0x00,    MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
-#elif defined (RT_X64)
+#elif (defined RT_X64)
 
 #define label_ld(lb)/*Reax*/                                                \
         ASM_BEG ASM_OP2(leaq, %%rax, lb) ASM_END
@@ -1230,7 +1230,7 @@
 
 /* ---------------------------------   ARM   -------------------------------- */
 
-#elif defined (RT_ARM)
+#elif (defined RT_ARM)
 
 #define ASM_OP0(op)             #op
 #define ASM_OP1(op, p1)         #op"  "#p1
@@ -1483,7 +1483,7 @@
 
 /* ------------------------------   A32, A64   ------------------------------ */
 
-#elif defined (RT_A32) || defined (RT_A64)
+#elif (defined RT_A32) || (defined RT_A64)
 
 #define ASM_OP0(op)             #op
 #define ASM_OP1(op, p1)         #op"  "#p1
@@ -1504,14 +1504,14 @@
         ASM_BEG ASM_OP2(adrp, x0, lb) ASM_END                               \
         ASM_BEG ASM_OP3(add,  x0, x0, :lo12:lb) ASM_END
 
-#if   defined (RT_A32)
+#if   (defined RT_A32)
 
 #define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0xB9000000 | MDM(Teax,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
-#elif defined (RT_A64)
+#elif (defined RT_A64)
 
 #define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
@@ -1730,7 +1730,7 @@
 
 /* ------------------------------   M32, M64   ------------------------------ */
 
-#elif defined (RT_M32) || defined (RT_M64)
+#elif (defined RT_M32) || (defined RT_M64)
 
 #define ASM_OP0(op)             #op
 #define ASM_OP1(op, p1)         #op"  "#p1
@@ -1747,7 +1747,7 @@
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(move, $a0, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(move, lb, $a0) ASM_END
 
-#if   defined (RT_M32)
+#if   (defined RT_M32)
 
 #define label_ld(lb)/*Reax*/                                                \
         ASM_BEG ASM_OP2(la, $a0, lb) ASM_END
@@ -1757,7 +1757,7 @@
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0xAC000000 | MDM(Teax,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
-#elif defined (RT_M64)
+#elif (defined RT_M64)
 
 #define label_ld(lb)/*Reax*/                                                \
         ASM_BEG ASM_OP2(dla, $a0, lb) ASM_END
@@ -1995,7 +1995,7 @@
 
 /* ------------------------------   P32, P64   ------------------------------ */
 
-#elif defined (RT_P32) || defined (RT_P64)
+#elif (defined RT_P32) || (defined RT_P64)
 
 #define ASM_OP0(op)             #op
 #define ASM_OP1(op, p1)         #op"  "#p1
@@ -2012,7 +2012,7 @@
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mr, %%r4, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mr, lb, %%r4) ASM_END
 
-#if   defined (RT_P32)
+#if   (defined RT_P32)
 
 #define label_ld(lb)/*Reax*/                                                \
         ASM_BEG ASM_OP2(lis, %%r4, lb@h) ASM_END                            \
@@ -2023,7 +2023,7 @@
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0x90000000 | MDM(Teax,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
-#elif defined (RT_P64)
+#elif (defined RT_P64)
 
 #define label_ld(lb)/*Reax*/                                                \
         ASM_BEG ASM_OP2(lis, %%r4, lb@highest) ASM_END                      \

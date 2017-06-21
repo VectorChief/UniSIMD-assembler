@@ -1661,7 +1661,7 @@
         EMITW(0x00000008 | MRM(0x00,    REG(RS), 0x00))                     \
         EMITW(0x00000025 | MRM(TPxx,    TPxx,    TZxx)) /* <- branch delay */
 
-#if   defined (RT_M32)
+#if   (defined RT_M32)
 
 #define jmpxx_xm(MS, DS)         /* memory-targeted unconditional jump */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
@@ -1669,7 +1669,7 @@
         EMITW(0x00000008 | MRM(0x00,    TMxx,    0x00))                     \
         EMITW(0x00000025 | MRM(TPxx,    TPxx,    TZxx)) /* <- branch delay */
 
-#elif defined (RT_M64)
+#elif (defined RT_M64)
 
 #define jmpxx_xm(MS, DS)         /* memory-targeted unconditional jump */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
@@ -1742,7 +1742,7 @@
         EMITW(0x00000009 | MRM(0x00,    REG(RS), 0x00))                     \
         EMITW(0x00000025 | MRM(TPxx,    TPxx,    TZxx)) /* <- branch delay */
 
-#if   defined (RT_M32)
+#if   (defined RT_M32)
 
 #define jmpxx_xm(MS, DS)         /* memory-targeted unconditional jump */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
@@ -1750,7 +1750,7 @@
         EMITW(0x00000009 | MRM(0x00,    TMxx,    0x00))                     \
         EMITW(0x00000025 | MRM(TPxx,    TPxx,    TZxx)) /* <- branch delay */
 
-#elif defined (RT_M64)
+#elif (defined RT_M64)
 
 #define jmpxx_xm(MS, DS)         /* memory-targeted unconditional jump */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
@@ -1806,7 +1806,7 @@
 
 /************************* register-size instructions *************************/
 
-#if   defined (RT_M32)
+#if   (defined RT_M32)
 
 /* stack (push stack = S, D = pop stack)
  * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & Power)
@@ -1870,7 +1870,7 @@
         EMITW(0x8C000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
         EMITW(0x24000000 | MRM(0x00,    SPxx,    SPxx) | (+0x58 & 0xFFFF))
 
-#endif /* defined (RT_M32) */
+#endif /* (defined RT_M32) */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

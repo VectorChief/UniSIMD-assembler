@@ -3975,7 +3975,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     sys_free(info, sizeof(rt_SIMD_INFOX) + MASK);
     sys_free(marr, 10 * ARR_SIZE * sizeof(rt_ui32) + MASK);
 
-#if defined (RT_WIN32) || defined (RT_WIN64) /* Win32, MSVC -- Win64, GCC --- */
+#if (defined RT_WIN32) || (defined RT_WIN64) /* Win32, MSVC -- Win64, GCC --- */
 
     RT_LOGI("Type any letter and press ENTER to exit:");
     rt_char str[80];
@@ -4010,7 +4010,7 @@ rt_byte *s_ptr = RT_ADDRESS_MIN;
 #endif /* RT_POINTER */
 
 
-#if defined (RT_WIN32) || defined (RT_WIN64) /* Win32, MSVC -- Win64, GCC --- */
+#if (defined RT_WIN32) || (defined RT_WIN64) /* Win32, MSVC -- Win64, GCC --- */
 
 #include <windows.h>
 
@@ -4109,7 +4109,7 @@ rt_void sys_free(rt_pntr ptr, rt_size size)
 #endif /* RT_DEBUG */
 }
 
-#elif defined (RT_LINUX) /* Linux, GCC -------------------------------------- */
+#elif (defined RT_LINUX) /* Linux, GCC -------------------------------------- */
 
 #include <sys/time.h>
 

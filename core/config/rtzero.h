@@ -274,7 +274,7 @@
 
 /* ---------------------------------   X86   -------------------------------- */
 
-#if   defined (RT_X86)
+#if   (defined RT_X86)
 
 #if   !(defined RT_512X4) && (RT_2K8_R8)
 #error "x86:386 doesn't support quaded SIMD backends, check build flags"
@@ -300,7 +300,7 @@
 
 /* ------------------------------   X32, X64   ------------------------------ */
 
-#elif defined (RT_X32) || defined (RT_X64)
+#elif (defined RT_X32) || (defined RT_X64)
 
 #if   !(defined RT_512X4) && (RT_2K8_R8)
 #define         RT_512X4     (RT_2K8_R8)
@@ -326,7 +326,7 @@
 
 /* ---------------------------------   ARM   -------------------------------- */
 
-#elif defined (RT_ARM)
+#elif (defined RT_ARM)
 
 #if   !(defined RT_512X4) && (RT_2K8_R8)
 #error "AArch32 doesn't support SIMD wider than 128-bit, check build flags"
@@ -352,7 +352,7 @@
 
 /* ------------------------------   A32, A64   ------------------------------ */
 
-#elif defined (RT_A32) || defined (RT_A64)
+#elif (defined RT_A32) || (defined RT_A64)
 
 #if   !(defined RT_512X4) && (RT_2K8_R8)
 #error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
@@ -375,7 +375,7 @@
 
 /* ------------------------------   M32, M64   ------------------------------ */
 
-#elif defined (RT_M32) || defined (RT_M64)
+#elif (defined RT_M32) || (defined RT_M64)
 
 #if   !(defined RT_512X4) && (RT_2K8_R8)
 #error "mipsMSA doesn't support SIMD wider than 128-bit, check build flags"
@@ -398,7 +398,7 @@
 
 /* ------------------------------   P32, P64   ------------------------------ */
 
-#elif defined (RT_P32) || defined (RT_P64)
+#elif (defined RT_P32) || (defined RT_P64)
 
 #if   !(defined RT_512X4) && (RT_2K8_R8)
 #error "PowerPC doesn't support SIMD wider than 128-bit, check build flags"
