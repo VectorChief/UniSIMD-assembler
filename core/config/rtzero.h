@@ -108,9 +108,9 @@
  * However, as current major ISAs lack the ability to do sub-word fp-compute,
  * these corresponding subsets cannot be viewed as valid targets for SPMD.
  *
- * Scalar SIMD subset, horizontal SIMD reductions, constructive 3/4-op syntax
- * (potentially with zeroing/merging predicates) are being considered as future
- * extensions to current 2-op (dest-as-1st-src) SPMD-driven vertical SIMD ISA.
+ * Scalar SIMD improvements, horizontal SIMD reductions, wider SIMD vectors
+ * with zeroing/merging predicates in 3/4-operand instructions are planned as
+ * future extensions to current 2/3-operand SPMD-driven vertical SIMD ISA.
  */
 
 #undef Q /* short name for SIMD-quads in structs (number of 128-bit chunks) */
@@ -137,6 +137,51 @@
 #undef H /* short name for RT_ENDIAN*(L-1)*4 */
 #undef I /* short name for RT_ENDIAN*(2-L)*4 */
 
+#undef Oeax /* external name for BASE-plain addressing */
+
+#undef Mebx /* external name for BASE+displ addressing */
+#undef Mecx /* external name for BASE+displ addressing */
+#undef Medx /* external name for BASE+displ addressing */
+#undef Mebp /* external name for BASE+displ addressing */
+#undef Mesi /* external name for BASE+displ addressing */
+#undef Medi /* external name for BASE+displ addressing */
+#undef Meg8 /* external name for BASE+displ addressing */
+#undef Meg9 /* external name for BASE+displ addressing */
+#undef MegA /* external name for BASE+displ addressing */
+#undef MegB /* external name for BASE+displ addressing */
+#undef MegC /* external name for BASE+displ addressing */
+#undef MegD /* external name for BASE+displ addressing */
+#undef MegE /* external name for BASE+displ addressing */
+
+#undef Iebx /* external name for BASE+index addressing */
+#undef Iecx /* external name for BASE+index addressing */
+#undef Iedx /* external name for BASE+index addressing */
+#undef Iebp /* external name for BASE+index addressing */
+#undef Iesi /* external name for BASE+index addressing */
+#undef Iedi /* external name for BASE+index addressing */
+#undef Ieg8 /* external name for BASE+index addressing */
+#undef Ieg9 /* external name for BASE+index addressing */
+#undef IegA /* external name for BASE+index addressing */
+#undef IegB /* external name for BASE+index addressing */
+#undef IegC /* external name for BASE+index addressing */
+#undef IegD /* external name for BASE+index addressing */
+#undef IegE /* external name for BASE+index addressing */
+
+#undef Reax /* external name for BASE register */
+#undef Rebx /* external name for BASE register */
+#undef Recx /* external name for BASE register */
+#undef Redx /* external name for BASE register */
+#undef Rebp /* external name for BASE register, may be reserved in most cases */
+#undef Resi /* external name for BASE register */
+#undef Redi /* external name for BASE register */
+#undef Reg8 /* external name for BASE register */
+#undef Reg9 /* external name for BASE register */
+#undef RegA /* external name for BASE register */
+#undef RegB /* external name for BASE register */
+#undef RegC /* external name for BASE register */
+#undef RegD /* external name for BASE register */
+#undef RegE /* external name for BASE register */
+
 #undef Xmm0 /* external name for SIMD register */
 #undef Xmm1 /* external name for SIMD register */
 #undef Xmm2 /* external name for SIMD register */
@@ -151,17 +196,25 @@
 #undef XmmB /* external name for SIMD register */
 #undef XmmC /* external name for SIMD register */
 #undef XmmD /* external name for SIMD register */
-#undef XmmE /* external name for SIMD register, may be reserved in some cases */
+#undef XmmE /* external name for SIMD register */
 #undef XmmF /* external name for SIMD register, may be reserved in some cases */
 
-/* The last two SIMD registers can be reserved by the assembler when building
- * RISC targets with SIMD wider than natively supported 128-bit, in which case
- * they will be occupied by temporary data. Two hidden registers may also come
- * in handy when implementing elaborate register-spill techniques in the future
- * for current targets with less native registers than architecturally exposed.
- *
- * It should be possible to reserve only 1 SIMD register (XmmF) to achieve the
- * goals above (totalling 15 regs) at the cost of extra loads in certain ops. */
+#undef XmmG /* external name for SIMD register */
+#undef XmmH /* external name for SIMD register */
+#undef XmmI /* external name for SIMD register */
+#undef XmmJ /* external name for SIMD register */
+#undef XmmK /* external name for SIMD register */
+#undef XmmL /* external name for SIMD register */
+#undef XmmM /* external name for SIMD register */
+#undef XmmN /* external name for SIMD register */
+#undef XmmO /* external name for SIMD register */
+#undef XmmP /* external name for SIMD register */
+#undef XmmQ /* external name for SIMD register */
+#undef XmmR /* external name for SIMD register */
+#undef XmmS /* external name for SIMD register */
+#undef XmmT /* external name for SIMD register */
+#undef XmmU /* external name for SIMD register, may be reserved in most cases */
+#undef XmmV /* external name for SIMD register, may be reserved in most cases */
 
 /******************************************************************************/
 /*****************   SIMD FLAGS EXTENDED COMPATIBILITY LAYER   ****************/
@@ -169,15 +222,18 @@
 
 /* Interpretation of a 32-bit SIMD-version field (ver) in SIMD-info structure:
  *
- *  RT_128  256_R8  RT_256  512_R8  RT_512  1K4_R8  RT_1K4  2K8_R8
- *  1 2 4 8 1 2 4 0 1 2 4 - 1 2 4 0 1 2 4 - 1 2 4 0 1 2 4 - 1 2 4 0
- * |               |               |               |               |
- * |0              |               |               |             31|
- * |-o-o-o-i-o-o-p-|-o-o-o-i-o-o-p-|-o-o-o-i-o-o-p-|-o-o-o-i-o-o-p-|
- *         16?    ^               ^               ^               ^
+ * |RT_128 |256_R8 |RT_256 |512_R8 |RT_512 |1K4_R8 |RT_1K4 |2K8_R8 | - SIMD-flag
+ * |1 2 4 8|- - 4|*|1 2 4 8|1 2 -|*|1 2 4 8|1 2 -|*|1 2 - -|1 2 -|*| - cur-value
+ * |       16 32   |       |       |       |       |       |       | - ext-value
+ * |0              |               |               |             31| - bit-order
+ * |-o-o-o-i-o-o-p-|-o-o-o-i-o-o-p-|-o-o-o-i-o-o-p-|-o-o-o-i-o-o-p-| - SIMD-mask
+ *                ^               ^               ^               ^
  *             128_RX          256_RX          512_RX          1K4_RX
  *
- * Original RT_128, RT_256, RT_512, RT_1K4 flags represent 16-register targets.
+ * In the new scheme: RT_128=4+8, RT_256=1+2, RT_512=1+2, RT_1K4=1+2 are 15-reg.
+ * In the new scheme: RT_128=1+2, RT_256=4+8, RT_512=4+8, RT_1K4=4+8 are 30-reg.
+ *
+ * Original RT_128, RT_256, RT_512, RT_1K4 flags expose 15/30-register targets.
  * New RT_256_R8, RT_512_R8, RT_1K4_R8, RT_2K8_R8 flags are 8-register targets.
  * New RT_128_RX, RT_256_RX, RT_512_RX, RT_1K4_RX flags are predicated targets.
  *
