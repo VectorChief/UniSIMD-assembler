@@ -71,7 +71,7 @@ simd_test_arm_rpi3:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.arm_rpi3
 
 
-# On Ubuntu 16.04 Live CD add "universe multiverse" to "main restricted"
+# On Ubuntu 16.04 Live DVD add "universe multiverse" to "main restricted"
 # in /etc/apt/sources.list (sudo gedit /etc/apt/sources.list) then run:
 # sudo apt-get update (ignoring the old database errors in the end)
 #
@@ -94,8 +94,6 @@ simd_test_arm_rpi3:
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 
-# 0) Build flags above are intended for default "vanilla" ARMv7 target, while
-# settings suitable for specific hardware platforms are given below (replace).
-# 1) Nokia N900, Maemo 5 scratchbox: "vanilla"
+# 1) Nokia N900, Maemo 5 scratchbox: "vanilla" (-DRT_128=1)
 # 2) Raspberry Pi 2, Raspbian: arm-linux-gnueabihf-g++ -DRT_128=2
 # 3) Raspberry Pi 3, Raspbian: arm-linux-gnueabihf-g++ -DRT_128=4

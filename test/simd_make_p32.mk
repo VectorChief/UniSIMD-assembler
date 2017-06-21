@@ -33,7 +33,7 @@ simd_test_p32Bp7:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p32Bp7
 
 
-# On Ubuntu 16.04 Live CD add "universe multiverse" to "main restricted"
+# On Ubuntu 16.04 Live DVD add "universe multiverse" to "main restricted"
 # in /etc/apt/sources.list (sudo gedit /etc/apt/sources.list) then run:
 # sudo apt-get update (ignoring the old database errors in the end)
 #
@@ -56,11 +56,11 @@ simd_test_p32Bp7:
 # For 128-bit VSX2 build use (replace): RT_128=2    (uses 30 SIMD registers)
 # For 128-bit VMX  build use (replace): RT_128=4    (uses 15 SIMD registers)
 
-# For 256-bit VMX  build use (replace): RT_256_R8=4  (uses 8 SIMD reg-pairs)
-# For 256-bit VSX1 build use (replace): RT_256=1    (uses pairs of regs/ops)
-# For 256-bit VSX2 build use (replace): RT_256=2    (uses pairs of regs/ops)
+# For 256-bit VMX  build use (replace): RT_256_R8=4 (uses  8 SIMD reg-pairs)
+# For 256-bit VSX1 build use (replace): RT_256=1    (uses 15 SIMD reg-pairs)
+# For 256-bit VSX2 build use (replace): RT_256=2    (uses 15 SIMD reg-pairs)
 # For 256-bit VSX1 build use (replace): RT_256=4    (uses 30 SIMD reg-pairs)
 # For 256-bit VSX2 build use (replace): RT_256=8    (uses 30 SIMD reg-pairs)
 
-# For 512-bit VSX1 build use (replace): RT_512=1    (uses quads of regs/ops)
-# For 512-bit VSX2 build use (replace): RT_512=2    (uses quads of regs/ops)
+# For 512-bit VSX1 build use (replace): RT_512=1    (uses 15 SIMD reg-quads)
+# For 512-bit VSX2 build use (replace): RT_512=2    (uses 15 SIMD reg-quads)

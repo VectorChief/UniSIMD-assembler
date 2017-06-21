@@ -77,7 +77,7 @@ simd_test_m64f64Br6:
 # The up-to-date MIPS toolchain (g++ & QEMU) can be found here:
 # https://community.imgtec.com/developers/mips/tools/codescape-mips-sdk/
 
-# On Ubuntu 16.04 Live CD add "universe multiverse" to "main restricted"
+# On Ubuntu 16.04 Live DVD add "universe multiverse" to "main restricted"
 # in /etc/apt/sources.list (sudo gedit /etc/apt/sources.list) then run:
 # sudo apt-get update (ignoring the old database errors in the end)
 #
@@ -99,13 +99,12 @@ simd_test_m64f64Br6:
 # Building/running SIMD test:
 # make -f simd_make_m64.mk
 # qemu-mips64el -cpu I6400 simd_test.m64f32Lr6
+# qemu-mips64 -cpu I6400 simd_test.m64f32Br6
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 
-# For 256-bit SIMD build use (replace): RT_256=1    (uses pairs of regs/ops)
-
-# For big-endian MIPS64 target use (replace): -EB -DRT_ENDIAN=1
-# qemu-mips64 -cpu I6400 simd_test.m64f32Br6
+# For 128-bit SIMD build use (replace): RT_128=1    (uses 30 SIMD registers)
+# For 256-bit SIMD build use (replace): RT_256=1    (uses 15 SIMD reg-pairs)
 
 # 64/32-bit (ptr/adr) hybrid mode is compatible with native 64-bit ABI,
 # use (replace): RT_ADDRESS=32, rename the binary to simd_test.m64_**

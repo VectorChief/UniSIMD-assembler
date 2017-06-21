@@ -49,7 +49,7 @@ simd_test_m32Br6:
 # The up-to-date MIPS toolchain (g++ & QEMU) can be found here:
 # https://community.imgtec.com/developers/mips/tools/codescape-mips-sdk/
 
-# On Ubuntu 16.04 Live CD add "universe multiverse" to "main restricted"
+# On Ubuntu 16.04 Live DVD add "universe multiverse" to "main restricted"
 # in /etc/apt/sources.list (sudo gedit /etc/apt/sources.list) then run:
 # sudo apt-get update (ignoring the old database errors in the end)
 #
@@ -70,16 +70,12 @@ simd_test_m32Br6:
 # Building/running SIMD test:
 # make -f simd_make_m32.mk
 # qemu-mipsel -cpu P5600 simd_test.m32Lr5
+# qemu-mips -cpu P5600 simd_test.m32Br5
+# For MIPS32 Release 6 emulation use QEMU 2.5.0.2.0 from imgtec.com:
+# qemu-mipsel -cpu mips32r6-generic simd_test.m32Lr6
+# qemu-mips -cpu mips32r6-generic simd_test.m32Br6
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 
-# For 256-bit SIMD build use (replace): RT_256=1    (uses pairs of regs/ops)
-
-# For MIPS32 Release 6 target use the following options (replace):
-# mips-img-linux-gnu-g++ -mips32r6 -DRT_M32=6
-# For MIPS32 Release 6 emulation use QEMU 2.5.0.2.0 from imgtec.com:
-# qemu-mipsel -cpu mips32r6-generic simd_test.m32Lr6
-
-# For big-endian MIPS32 (r5 and r6) use (replace): -EB -DRT_ENDIAN=1
-# qemu-mips -cpu *** simd_test.m32Br*
-# where *** is P5600 for r5 build and mips32r6-generic for r6 build.
+# For 128-bit SIMD build use (replace): RT_128=1    (uses 30 SIMD registers)
+# For 256-bit SIMD build use (replace): RT_256=1    (uses 15 SIMD reg-pairs)
