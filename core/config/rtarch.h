@@ -28,7 +28,7 @@
  * Note that AArch32 mode of ARMv8 ISA is a part of legacy ARM target as it
  * only brings SIMD fp-convert with round parameter and other minor tweaks,
  * while IEEE-compatible SIMD fp-arithmetic with full square root and divide
- * is exposed in AArch64 mode of ARMv8 ISA via A32 and A64 targets (fp32/fp64).
+ * is exposed in AArch64 mode of ARMv8 ISA via A32 and A64 targets (fp32+fp64).
  *
  * Current naming scheme for legacy, modern and potential future targets.
  *
@@ -38,7 +38,7 @@
  *  - rtarch_arm.h         - AArch32:ARMv7 ISA, 16 BASE regs, 8 + temps used
  *  - rtarch_arm_128x1v4.h - 32-bit elements, 16 SIMD regs, MPE 128-bit NEON, 8+
  *  - rtarch_p32.h         - Power 32-bit ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_p32_128x1v4.h - 32-bit elements, 32 SIMD regs, VMX 128-bit, 16(15/8)
+ *  - rtarch_p32_128x1v4.h - 32-bit elements, 32 SIMD regs, VMX 128-bit, 16,15/8
  *  - rtarch_p32_128x2v4.h - 32-bit elements, 32 SIMD regs, VMX 128-bit pairs, 8
  *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 14 + temps used
  *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 14 + temps used
@@ -427,810 +427,13 @@
 /***************************   OS, COMPILER, ARCH   ***************************/
 /******************************************************************************/
 
-/*******************************   WIN32, MSVC   ******************************/
+/****************************   LINUX/WIN64, GCC   ****************************/
 
-#if   (defined RT_WIN32)
-
-/* ---------------------------------   X86   -------------------------------- */
-
-#if   (defined RT_X86)
-
-#define ASM_OP0(op)             op
-#define ASM_OP1(op, p1)         op  p1
-#define ASM_OP2(op, p1, p2)     op  p1, p2
-#define ASM_OP3(op, p1, p2, p3) op  p1, p2, p3
-
-#define ASM_BEG /*internal*/    __asm {
-#define ASM_END /*internal*/    }
-
-#define EMPTY                   ASM_BEG ASM_END /* endian-little */
-#define EMITB(b)                ASM_BEG ASM_OP1(_emit, b) ASM_END
-#define EMITW(w)                EMITB((w) >> 0x00 & 0xFF)                   \
-                                EMITB((w) >> 0x08 & 0xFF)                   \
-                                EMITB((w) >> 0x10 & 0xFF)                   \
-                                EMITB((w) >> 0x18 & 0xFF)
-
-#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, eax, lb) ASM_END
-#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, eax) ASM_END
-
-#define label_ld(lb)/*Reax*/                                                \
-        ASM_BEG ASM_OP2(lea, eax, lb) ASM_END
-
-#define label_st(lb, MD, DD)                                                \
-        label_ld(lb)/*Reax*/                                                \
-        EMITB(0x89)                                                         \
-        MRM(0x00,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-/* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
- * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
- * with (_F) and without (_F) are not intermixed in the code */
-#ifndef RT_SIMD_FAST_FCTRL
-#define RT_SIMD_FAST_FCTRL      1*(Q/2) /* only if AVX is among build targets */
-#endif /* RT_SIMD_FAST_FCTRL */
-
-/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
- * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
-#ifndef RT_SIMD_FLUSH_ZERO
-#define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
-#endif /* RT_SIMD_FLUSH_ZERO */
-
-/* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
- * of rcpps_** instructions to their full-precision fallback */
-#ifndef RT_SIMD_COMPAT_RCP
-#define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
-#endif /* RT_SIMD_COMPAT_RCP */
-
-/* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
- * of rsqps_** instructions to their full-precision fallback */
-#ifndef RT_SIMD_COMPAT_RSQ
-#define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
-#endif /* RT_SIMD_COMPAT_RSQ */
-
-/* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
- * of fmaps_** instructions to their full-precision fallback */
-#ifndef RT_SIMD_COMPAT_FMA
-#define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
-#endif /* RT_SIMD_COMPAT_FMA */
-
-/* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
- * of fmsps_** instructions to their full-precision fallback */
-#ifndef RT_SIMD_COMPAT_FMS
-#define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
-#endif /* RT_SIMD_COMPAT_FMS */
-
-/* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
- * of fm*ps_** instruction fallbacks to honour rounding mode */
-#ifndef RT_SIMD_COMPAT_FMR
-#define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
-#endif /* RT_SIMD_COMPAT_FMR */
-
-/* RT_BASE_COMPAT_BMI when enabled changes the default behavior
- * of some bit-manipulation instructions to use BMI variants */
-#ifdef  RT_SIMD_CODE
-#undef  RT_BASE_COMPAT_BMI
-#define RT_BASE_COMPAT_BMI 2 /* enable BMI1+BMI2 when SIMD target is chosen */
-#if   (RT_256X1 == 1) && (RT_SIMD == 256)
-#undef  RT_BASE_COMPAT_BMI
-#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
-#elif (RT_128X1 < 32) && (RT_SIMD == 128)
-#undef  RT_BASE_COMPAT_BMI
-#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
-#endif /* RT_SIMD: 256, 128 */
-#endif /* RT_SIMD_CODE */
-
-#if   (RT_512X4 != 0) && (RT_SIMD == 2048)
-#error "x86:386 doesn't support quaded SIMD backends, check build flags"
-#elif (RT_512X2 != 0) && (RT_SIMD == 1024)
-#error "x86:386 doesn't support paired SIMD backends, check build flags"
-#elif (RT_256X2 != 0) && (RT_SIMD == 512)
-#error "x86:386 doesn't support paired SIMD backends, check build flags"
-#elif (RT_128X4 != 0) && (RT_SIMD == 512)
-#error "x86:386 doesn't support quaded SIMD backends, check build flags"
-#elif (RT_128X2 != 0) && (RT_SIMD == 256)
-#error "x86:386 doesn't support paired SIMD backends, check build flags"
-#elif (RT_512X1 != 0) && (RT_SIMD == 512)
-#include "rtarch_x86_512x1v2.h"
-#elif (RT_256X1 != 0) && (RT_SIMD == 256)
-#include "rtarch_x86_256x1v2.h"
-#elif (RT_128X1 >= 8) && (RT_SIMD == 128)
-#include "rtarch_x86_128x1v8.h"
-#elif (RT_128X1 >= 1) && (RT_SIMD == 128)
-#include "rtarch_x86_128x1v4.h"
-#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
-
-/*
- * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
- * the stack, they are considered heavy and therefore best suited for compute
- * intensive parts of the program, in which case the ASM overhead is minimized.
- * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
- */
-
-#if RT_SIMD_FLUSH_ZERO == 0
-#if RT_SIMD_FAST_FCTRL == 0
-
-/* use 1 local to fix optimized builds, where locals are referenced via SP,
- * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__)                                                 \
-{                                                                           \
-    rt_word __Reax__;                                                       \
-    __asm                                                                   \
-    {                                                                       \
-        movlb_st(__Reax__)                                                  \
-        movlb_ld(__Info__)                                                  \
-        stack_sa()                                                          \
-        movxx_rr(Rebp, Reax)                                                \
-        sregs_sa()                                                          \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
-
-#define ASM_LEAVE(__Info__)                                                 \
-        sregs_la()                                                          \
-        stack_la()                                                          \
-        movlb_ld(__Reax__)                                                  \
-    }                                                                       \
-}
-
-#else /* RT_SIMD_FAST_FCTRL */
-
-/* use 1 local to fix optimized builds, where locals are referenced via SP,
- * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__)                                                 \
-{                                                                           \
-    rt_word __Reax__;                                                       \
-    __asm                                                                   \
-    {                                                                       \
-        movlb_st(__Reax__)                                                  \
-        movlb_ld(__Info__)                                                  \
-        stack_sa()                                                          \
-        movxx_rr(Rebp, Reax)                                                \
-        sregs_sa()                                                          \
-        movwx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))                          \
-        movwx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))                          \
-        movwx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))                          \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
-
-#define ASM_LEAVE(__Info__)                                                 \
-        sregs_la()                                                          \
-        stack_la()                                                          \
-        movlb_ld(__Reax__)                                                  \
-    }                                                                       \
-}
-
-#endif /* RT_SIMD_FAST_FCTRL */
-#else /* RT_SIMD_FLUSH_ZERO */
-
-#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
-
-#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
-
-#endif /* RT_SIMD_FLUSH_ZERO */
-
-/*
- * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
- * except that they put the SIMD unit into slightly faster non-IEEE mode,
- * where denormal results from floating point operations are flushed to zero.
- * This mode is closely compatible with ARMv7, which lacks full IEEE support.
- */
-
-#if RT_SIMD_FAST_FCTRL == 0
-
-/* use 1 local to fix optimized builds, where locals are referenced via SP,
- * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__)                                               \
-{                                                                           \
-    rt_word __Reax__;                                                       \
-    __asm                                                                   \
-    {                                                                       \
-        movlb_st(__Reax__)                                                  \
-        movlb_ld(__Info__)                                                  \
-        stack_sa()                                                          \
-        movxx_rr(Rebp, Reax)                                                \
-        sregs_sa()                                                          \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
-        mxcsr_ld(Mebp, inf_FCTRL(0*4))
-
-#define ASM_LEAVE_F(__Info__)                                               \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
-        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
-        sregs_la()                                                          \
-        stack_la()                                                          \
-        movlb_ld(__Reax__)                                                  \
-    }                                                                       \
-}
-
-#else /* RT_SIMD_FAST_FCTRL */
-
-/* use 1 local to fix optimized builds, where locals are referenced via SP,
- * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__)                                               \
-{                                                                           \
-    rt_word __Reax__;                                                       \
-    __asm                                                                   \
-    {                                                                       \
-        movlb_st(__Reax__)                                                  \
-        movlb_ld(__Info__)                                                  \
-        stack_sa()                                                          \
-        movxx_rr(Rebp, Reax)                                                \
-        sregs_sa()                                                          \
-        movwx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))                          \
-        movwx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))                          \
-        movwx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))                          \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
-        mxcsr_ld(Mebp, inf_FCTRL(0*4))
-
-#define ASM_LEAVE_F(__Info__)                                               \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
-        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
-        sregs_la()                                                          \
-        stack_la()                                                          \
-        movlb_ld(__Reax__)                                                  \
-    }                                                                       \
-}
-
-#endif /* RT_SIMD_FAST_FCTRL */
-
-#ifndef RT_SIMD_CODE
-#define sregs_sa()
-#define sregs_la()
-#define mxcsr_ld(MS, DS)
-#endif /* RT_SIMD_CODE */
-
-#endif /* RT_X86 */
-
-/*******************************   LINUX, GCC   *******************************/
-
-#elif (defined RT_LINUX) || (defined RT_WIN64)
-
-/* ---------------------------------   X86   -------------------------------- */
-
-#if   (defined RT_X86)
-
-#define ASM_OP0(op)             #op
-#define ASM_OP1(op, p1)         #op"  "#p1
-#define ASM_OP2(op, p1, p2)     #op"  "#p2", "#p1
-#define ASM_OP3(op, p1, p2, p3) #op"  "#p3", "#p2", "#p1
-
-#define ASM_BEG /*internal*/    ""
-#define ASM_END /*internal*/    "\n"
-
-#define EMPTY                   ASM_BEG ASM_END /* endian-agnostic */
-#define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
-#define EMITW(w)                ASM_BEG ASM_OP1(.long, w) ASM_END
-
-#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, %%eax, lb) ASM_END
-#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, lb, %%eax) ASM_END
-
-#define label_ld(lb)/*Reax*/                                                \
-        ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
-
-#define label_st(lb, MD, DD)                                                \
-        label_ld(lb)/*Reax*/                                                \
-        EMITB(0x89)                                                         \
-        MRM(0x00,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-/* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
- * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
- * with (_F) and without (_F) are not intermixed in the code */
-#ifndef RT_SIMD_FAST_FCTRL
-#define RT_SIMD_FAST_FCTRL      1*(Q/2) /* only if AVX is among build targets */
-#endif /* RT_SIMD_FAST_FCTRL */
-
-/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
- * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
-#ifndef RT_SIMD_FLUSH_ZERO
-#define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
-#endif /* RT_SIMD_FLUSH_ZERO */
-
-/* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
- * of rcpps_** instructions to their full-precision fallback */
-#ifndef RT_SIMD_COMPAT_RCP
-#define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
-#endif /* RT_SIMD_COMPAT_RCP */
-
-/* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
- * of rsqps_** instructions to their full-precision fallback */
-#ifndef RT_SIMD_COMPAT_RSQ
-#define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
-#endif /* RT_SIMD_COMPAT_RSQ */
-
-/* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
- * of fmaps_** instructions to their full-precision fallback */
-#ifndef RT_SIMD_COMPAT_FMA
-#define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
-#endif /* RT_SIMD_COMPAT_FMA */
-
-/* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
- * of fmsps_** instructions to their full-precision fallback */
-#ifndef RT_SIMD_COMPAT_FMS
-#define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
-#endif /* RT_SIMD_COMPAT_FMS */
-
-/* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
- * of fm*ps_** instruction fallbacks to honour rounding mode */
-#ifndef RT_SIMD_COMPAT_FMR
-#define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
-#endif /* RT_SIMD_COMPAT_FMR */
-
-/* RT_BASE_COMPAT_BMI when enabled changes the default behavior
- * of some bit-manipulation instructions to use BMI variants */
-#ifdef  RT_SIMD_CODE
-#undef  RT_BASE_COMPAT_BMI
-#define RT_BASE_COMPAT_BMI 2 /* enable BMI1+BMI2 when SIMD target is chosen */
-#if   (RT_256X1 == 1) && (RT_SIMD == 256)
-#undef  RT_BASE_COMPAT_BMI
-#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
-#elif (RT_128X1 < 32) && (RT_SIMD == 128)
-#undef  RT_BASE_COMPAT_BMI
-#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
-#endif /* RT_SIMD: 256, 128 */
-#endif /* RT_SIMD_CODE */
-
-#if   (RT_512X4 != 0) && (RT_SIMD == 2048)
-#error "x86:386 doesn't support quaded SIMD backends, check build flags"
-#elif (RT_512X2 != 0) && (RT_SIMD == 1024)
-#error "x86:386 doesn't support paired SIMD backends, check build flags"
-#elif (RT_256X2 != 0) && (RT_SIMD == 512)
-#error "x86:386 doesn't support paired SIMD backends, check build flags"
-#elif (RT_128X4 != 0) && (RT_SIMD == 512)
-#error "x86:386 doesn't support quaded SIMD backends, check build flags"
-#elif (RT_128X2 != 0) && (RT_SIMD == 256)
-#error "x86:386 doesn't support paired SIMD backends, check build flags"
-#elif (RT_512X1 != 0) && (RT_SIMD == 512)
-#include "rtarch_x86_512x1v2.h"
-#elif (RT_256X1 != 0) && (RT_SIMD == 256)
-#include "rtarch_x86_256x1v2.h"
-#elif (RT_128X1 >= 8) && (RT_SIMD == 128)
-#include "rtarch_x86_128x1v8.h"
-#elif (RT_128X1 >= 1) && (RT_SIMD == 128)
-#include "rtarch_x86_128x1v4.h"
-#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
-
-/*
- * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
- * the stack, they are considered heavy and therefore best suited for compute
- * intensive parts of the program, in which case the ASM overhead is minimized.
- * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
- */
-
-#if RT_SIMD_FLUSH_ZERO == 0
-#if RT_SIMD_FAST_FCTRL == 0
-
-/* use 1 local to fix optimized builds, where locals are referenced via SP,
- * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__)                                                 \
-{                                                                           \
-    rt_word __Reax__;                                                       \
-    asm volatile                                                            \
-    (                                                                       \
-        movlb_st(%[Reax_])                                                  \
-        movlb_ld(%[Info_])                                                  \
-        stack_sa()                                                          \
-        movxx_rr(Rebp, Reax)                                                \
-        sregs_sa()                                                          \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
-
-#define ASM_LEAVE(__Info__)                                                 \
-        sregs_la()                                                          \
-        stack_la()                                                          \
-        movlb_ld(%[Reax_])                                                  \
-        : [Reax_] "+r" (__Reax__)                                           \
-        : [Info_]  "r" ((rt_word)__Info__)                                  \
-        : "cc",  "memory"                                                   \
-    );                                                                      \
-}
-
-#else /* RT_SIMD_FAST_FCTRL */
-
-/* use 1 local to fix optimized builds, where locals are referenced via SP,
- * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__)                                                 \
-{                                                                           \
-    rt_word __Reax__;                                                       \
-    asm volatile                                                            \
-    (                                                                       \
-        movlb_st(%[Reax_])                                                  \
-        movlb_ld(%[Info_])                                                  \
-        stack_sa()                                                          \
-        movxx_rr(Rebp, Reax)                                                \
-        sregs_sa()                                                          \
-        movwx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))                          \
-        movwx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))                          \
-        movwx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))                          \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
-
-#define ASM_LEAVE(__Info__)                                                 \
-        sregs_la()                                                          \
-        stack_la()                                                          \
-        movlb_ld(%[Reax_])                                                  \
-        : [Reax_] "+r" (__Reax__)                                           \
-        : [Info_]  "r" ((rt_word)__Info__)                                  \
-        : "cc",  "memory"                                                   \
-    );                                                                      \
-}
-
-#endif /* RT_SIMD_FAST_FCTRL */
-#else /* RT_SIMD_FLUSH_ZERO */
-
-#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
-
-#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
-
-#endif /* RT_SIMD_FLUSH_ZERO */
-
-/*
- * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
- * except that they put the SIMD unit into slightly faster non-IEEE mode,
- * where denormal results from floating point operations are flushed to zero.
- * This mode is closely compatible with ARMv7, which lacks full IEEE support.
- */
-
-#if RT_SIMD_FAST_FCTRL == 0
-
-/* use 1 local to fix optimized builds, where locals are referenced via SP,
- * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__)                                               \
-{                                                                           \
-    rt_word __Reax__;                                                       \
-    asm volatile                                                            \
-    (                                                                       \
-        movlb_st(%[Reax_])                                                  \
-        movlb_ld(%[Info_])                                                  \
-        stack_sa()                                                          \
-        movxx_rr(Rebp, Reax)                                                \
-        sregs_sa()                                                          \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
-        mxcsr_ld(Mebp, inf_FCTRL(0*4))
-
-#define ASM_LEAVE_F(__Info__)                                               \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
-        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
-        sregs_la()                                                          \
-        stack_la()                                                          \
-        movlb_ld(%[Reax_])                                                  \
-        : [Reax_] "+r" (__Reax__)                                           \
-        : [Info_]  "r" ((rt_word)__Info__)                                  \
-        : "cc",  "memory"                                                   \
-    );                                                                      \
-}
-
-#else /* RT_SIMD_FAST_FCTRL */
-
-/* use 1 local to fix optimized builds, where locals are referenced via SP,
- * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__)                                               \
-{                                                                           \
-    rt_word __Reax__;                                                       \
-    asm volatile                                                            \
-    (                                                                       \
-        movlb_st(%[Reax_])                                                  \
-        movlb_ld(%[Info_])                                                  \
-        stack_sa()                                                          \
-        movxx_rr(Rebp, Reax)                                                \
-        sregs_sa()                                                          \
-        movwx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))                          \
-        movwx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))                          \
-        movwx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))                          \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
-        mxcsr_ld(Mebp, inf_FCTRL(0*4))
-
-#define ASM_LEAVE_F(__Info__)                                               \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
-        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
-        sregs_la()                                                          \
-        stack_la()                                                          \
-        movlb_ld(%[Reax_])                                                  \
-        : [Reax_] "+r" (__Reax__)                                           \
-        : [Info_]  "r" ((rt_word)__Info__)                                  \
-        : "cc",  "memory"                                                   \
-    );                                                                      \
-}
-
-#endif /* RT_SIMD_FAST_FCTRL */
-
-#ifndef RT_SIMD_CODE
-#define sregs_sa()
-#define sregs_la()
-#define mxcsr_ld(MS, DS)
-#endif /* RT_SIMD_CODE */
-
-/* ------------------------------   X32, X64   ------------------------------ */
-
-#elif (defined RT_X32) || (defined RT_X64)
-
-#define ASM_OP0(op)             #op
-#define ASM_OP1(op, p1)         #op"  "#p1
-#define ASM_OP2(op, p1, p2)     #op"  "#p2", "#p1
-#define ASM_OP3(op, p1, p2, p3) #op"  "#p3", "#p2", "#p1
-
-#define ASM_BEG /*internal*/    ""
-#define ASM_END /*internal*/    "\n"
-
-#define EMPTY                   ASM_BEG ASM_END /* endian-agnostic */
-#define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
-#define EMITW(w)                ASM_BEG ASM_OP1(.long, w) ASM_END
-
-#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movq, %%rax, lb) ASM_END
-#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movq, lb, %%rax) ASM_END
-
-#if   (defined RT_X32)
-
-#define label_ld(lb)/*Reax*/                                                \
-        ASM_BEG ASM_OP2(leaq, %%rax, lb) ASM_END
-
-#define label_st(lb, MD, DD)                                                \
-        label_ld(lb)/*Reax*/                                                \
-    ADR REX(0,       RXB(MD)) EMITB(0x89)                                   \
-        MRM(0x00,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-#elif (defined RT_X64)
-
-#define label_ld(lb)/*Reax*/                                                \
-        ASM_BEG ASM_OP2(leaq, %%rax, lb) ASM_END
-
-#define label_st(lb, MD, DD)                                                \
-        label_ld(lb)/*Reax*/                                                \
-    ADR REW(0,       RXB(MD)) EMITB(0x89)                                   \
-        MRM(0x00,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-#endif /* defined (RT_X32, RT_X64) */
-
-/* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
- * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
- * with (_F) and without (_F) are not intermixed in the code */
-#ifndef RT_SIMD_FAST_FCTRL
-#define RT_SIMD_FAST_FCTRL      1*(Q/2) /* only if AVX is among build targets */
-#endif /* RT_SIMD_FAST_FCTRL */
-
-/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
- * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
-#ifndef RT_SIMD_FLUSH_ZERO
-#define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
-#endif /* RT_SIMD_FLUSH_ZERO */
-
-/* RT_SIMD_COMPAT_XMM distinguishes between SIMD reg-file sizes
- * with current top values: 0 - 16, 1 - 15, 2 - 14 SIMD regs */
-#ifndef RT_SIMD_COMPAT_XMM
-#define RT_SIMD_COMPAT_XMM      RT_SIMD_COMPAT_XMM_MASTER
-#endif /* RT_SIMD_COMPAT_XMM */
-
-/* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
- * of rcpps_** instructions to their full-precision fallback */
-#ifndef RT_SIMD_COMPAT_RCP
-#define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
-#endif /* RT_SIMD_COMPAT_RCP */
-
-/* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
- * of rsqps_** instructions to their full-precision fallback */
-#ifndef RT_SIMD_COMPAT_RSQ
-#define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
-#endif /* RT_SIMD_COMPAT_RSQ */
-
-/* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
- * of fmaps_** instructions to their full-precision fallback */
-#ifndef RT_SIMD_COMPAT_FMA
-#define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
-#endif /* RT_SIMD_COMPAT_FMA */
-
-/* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
- * of fmsps_** instructions to their full-precision fallback */
-#ifndef RT_SIMD_COMPAT_FMS
-#define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
-#endif /* RT_SIMD_COMPAT_FMS */
-
-/* RT_SIMD_COMPAT_SSE distinguishes between 128-bit SSE2 & SSE4
- * if RT_128 = 4 SIMD backend is present among build targets */
-#ifndef RT_SIMD_COMPAT_SSE
-#define RT_SIMD_COMPAT_SSE      RT_SIMD_COMPAT_SSE_MASTER
-#endif /* RT_SIMD_COMPAT_SSE */
-
-/* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
- * of fm*ps_** instruction fallbacks to honour rounding mode */
-#ifndef RT_SIMD_COMPAT_FMR
-#define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
-#endif /* RT_SIMD_COMPAT_FMR */
-
-/* RT_BASE_COMPAT_BMI when enabled changes the default behavior
- * of some bit-manipulation instructions to use BMI variants */
-#ifdef  RT_SIMD_CODE
-#undef  RT_BASE_COMPAT_BMI
-#define RT_BASE_COMPAT_BMI 2 /* enable BMI1+BMI2 when SIMD target is chosen */
-#if   (RT_256X2 == 1) && (RT_SIMD == 512)
-#undef  RT_BASE_COMPAT_BMI
-#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
-#elif (RT_256X1 == 1) && (RT_SIMD == 256)
-#undef  RT_BASE_COMPAT_BMI
-#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
-#elif (RT_256X1 == 4) && (RT_SIMD == 256)
-#undef  RT_BASE_COMPAT_BMI
-#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
-#elif (RT_128X2 == 4) && (RT_SIMD == 256)
-#undef  RT_BASE_COMPAT_BMI
-#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
-#elif (RT_128X1 == 2) && (RT_SIMD == 128)
-#elif (RT_128X1 < 32) && (RT_SIMD == 128)
-#undef  RT_BASE_COMPAT_BMI
-#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
-#endif /* RT_SIMD: 512, 256, 128 */
-#endif /* RT_SIMD_CODE */
-
-#if   (RT_512X4 != 0) && (RT_SIMD == 2048)
-#include "rtarch_x64_512x4v2.h"
-#elif (RT_512X2 != 0) && (RT_SIMD == 1024)
-#include "rtarch_x64_512x2v2.h"
-#elif (RT_512X1 != 0) && (RT_SIMD == 512) && (RT_REGS >= 16)
-#include "rtarch_x64_512x1v8.h"
-#elif (RT_256X2 != 0) && (RT_SIMD == 512) && (RT_REGS == 8)
-#include "rtarch_x64_256x2v2.h"
-#elif (RT_128X4 != 0) && (RT_SIMD == 512)
-#error "x64:686 doesn't support quaded SSEx backends, check build flags"
-#elif (RT_256X1 >= 8) && (RT_SIMD == 256) && (RT_REGS == 32)
-#include "rtarch_x64_256x1v8.h"
-#elif (RT_256X1 != 0) && (RT_SIMD == 256) && (RT_REGS == 16)
-#include "rtarch_x64_256x1v2.h"
-#elif (RT_128X2 == 4) && (RT_SIMD == 256) && (RT_REGS == 8)
-#include "rtarch_x64_128x2v4.h"
-#elif (RT_128X1 >= 8) && (RT_SIMD == 128) && (RT_REGS == 16)
-#include "rtarch_x64_128x1v8.h"
-#elif (RT_128X1 >= 4) && (RT_SIMD == 128) && (RT_REGS == 16)
-#include "rtarch_x64_128x1v4.h"
-#elif (RT_128X1 >= 2) && (RT_SIMD == 128) && (RT_REGS == 32)
-#include "rtarch_x64_128x1v2.h"
-#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
-
-/*
- * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
- * the stack, they are considered heavy and therefore best suited for compute
- * intensive parts of the program, in which case the ASM overhead is minimized.
- * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
- */
-
-#if RT_SIMD_FLUSH_ZERO == 0
-#if RT_SIMD_FAST_FCTRL == 0
-
-/* use 1 local to fix optimized builds, where locals are referenced via SP,
- * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__)                                                 \
-{                                                                           \
-    rt_full __Reax__;                                                       \
-    asm volatile                                                            \
-    (                                                                       \
-        movlb_st(%[Reax_])                                                  \
-        movlb_ld(%[Info_])                                                  \
-        stack_sa()                                                          \
-        movxx_rr(Rebp, Reax)                                                \
-        sregs_sa()                                                          \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
-
-#define ASM_LEAVE(__Info__)                                                 \
-        sregs_la()                                                          \
-        stack_la()                                                          \
-        movlb_ld(%[Reax_])                                                  \
-        : [Reax_] "+r" (__Reax__)                                           \
-        : [Info_]  "r" ((rt_full)__Info__)                                  \
-        : "cc",  "memory"                                                   \
-    );                                                                      \
-}
-
-#else /* RT_SIMD_FAST_FCTRL */
-
-/* use 1 local to fix optimized builds, where locals are referenced via SP,
- * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER(__Info__)                                                 \
-{                                                                           \
-    rt_full __Reax__;                                                       \
-    asm volatile                                                            \
-    (                                                                       \
-        movlb_st(%[Reax_])                                                  \
-        movlb_ld(%[Info_])                                                  \
-        stack_sa()                                                          \
-        movxx_rr(Rebp, Reax)                                                \
-        sregs_sa()                                                          \
-        movwx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))                          \
-        movwx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))                          \
-        movwx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))                          \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
-
-#define ASM_LEAVE(__Info__)                                                 \
-        sregs_la()                                                          \
-        stack_la()                                                          \
-        movlb_ld(%[Reax_])                                                  \
-        : [Reax_] "+r" (__Reax__)                                           \
-        : [Info_]  "r" ((rt_full)__Info__)                                  \
-        : "cc",  "memory"                                                   \
-    );                                                                      \
-}
-
-#endif /* RT_SIMD_FAST_FCTRL */
-#else /* RT_SIMD_FLUSH_ZERO */
-
-#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
-
-#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
-
-#endif /* RT_SIMD_FLUSH_ZERO */
-
-/*
- * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
- * except that they put the SIMD unit into slightly faster non-IEEE mode,
- * where denormal results from floating point operations are flushed to zero.
- * This mode is closely compatible with ARMv7, which lacks full IEEE support.
- */
-
-#if RT_SIMD_FAST_FCTRL == 0
-
-/* use 1 local to fix optimized builds, where locals are referenced via SP,
- * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__)                                               \
-{                                                                           \
-    rt_full __Reax__;                                                       \
-    asm volatile                                                            \
-    (                                                                       \
-        movlb_st(%[Reax_])                                                  \
-        movlb_ld(%[Info_])                                                  \
-        stack_sa()                                                          \
-        movxx_rr(Rebp, Reax)                                                \
-        sregs_sa()                                                          \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
-        mxcsr_ld(Mebp, inf_FCTRL(0*4))
-
-#define ASM_LEAVE_F(__Info__)                                               \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
-        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
-        sregs_la()                                                          \
-        stack_la()                                                          \
-        movlb_ld(%[Reax_])                                                  \
-        : [Reax_] "+r" (__Reax__)                                           \
-        : [Info_]  "r" ((rt_full)__Info__)                                  \
-        : "cc",  "memory"                                                   \
-    );                                                                      \
-}
-
-#else /* RT_SIMD_FAST_FCTRL */
-
-/* use 1 local to fix optimized builds, where locals are referenced via SP,
- * while stack ops from within the asm block aren't counted into offsets */
-#define ASM_ENTER_F(__Info__)                                               \
-{                                                                           \
-    rt_full __Reax__;                                                       \
-    asm volatile                                                            \
-    (                                                                       \
-        movlb_st(%[Reax_])                                                  \
-        movlb_ld(%[Info_])                                                  \
-        stack_sa()                                                          \
-        movxx_rr(Rebp, Reax)                                                \
-        sregs_sa()                                                          \
-        movwx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))                          \
-        movwx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))                          \
-        movwx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))                          \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
-        mxcsr_ld(Mebp, inf_FCTRL(0*4))
-
-#define ASM_LEAVE_F(__Info__)                                               \
-        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
-        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
-        sregs_la()                                                          \
-        stack_la()                                                          \
-        movlb_ld(%[Reax_])                                                  \
-        : [Reax_] "+r" (__Reax__)                                           \
-        : [Info_]  "r" ((rt_full)__Info__)                                  \
-        : "cc",  "memory"                                                   \
-    );                                                                      \
-}
-
-#endif /* RT_SIMD_FAST_FCTRL */
-
-#ifndef RT_SIMD_CODE
-#define sregs_sa()
-#define sregs_la()
-#define mxcsr_ld(MS, DS)
-#endif /* RT_SIMD_CODE */
+#if   (defined RT_LINUX) || (defined RT_WIN64) /* <- only for x64 (TDM64-GCC) */
 
 /* ---------------------------------   ARM   -------------------------------- */
 
-#elif (defined RT_ARM)
+#if   (defined RT_ARM) /* original legacy target, supports only 8 registers */
 
 #define ASM_OP0(op)             #op
 #define ASM_OP1(op, p1)         #op"  "#p1
@@ -2253,7 +1456,804 @@
 #define EMITP(w)    EMITW(w)
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_X86, RT_X32/X64, RT_ARM, RT_A32/A64, RT_M32/M64, RT_P32/P64 */
+/* ------------------------------   X32, X64   ------------------------------ */
+
+#elif (defined RT_X32) || (defined RT_X64)
+
+#define ASM_OP0(op)             #op
+#define ASM_OP1(op, p1)         #op"  "#p1
+#define ASM_OP2(op, p1, p2)     #op"  "#p2", "#p1
+#define ASM_OP3(op, p1, p2, p3) #op"  "#p3", "#p2", "#p1
+
+#define ASM_BEG /*internal*/    ""
+#define ASM_END /*internal*/    "\n"
+
+#define EMPTY                   ASM_BEG ASM_END /* endian-agnostic */
+#define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
+#define EMITW(w)                ASM_BEG ASM_OP1(.long, w) ASM_END
+
+#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movq, %%rax, lb) ASM_END
+#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movq, lb, %%rax) ASM_END
+
+#if   (defined RT_X32)
+
+#define label_ld(lb)/*Reax*/                                                \
+        ASM_BEG ASM_OP2(leaq, %%rax, lb) ASM_END
+
+#define label_st(lb, MD, DD)                                                \
+        label_ld(lb)/*Reax*/                                                \
+    ADR REX(0,       RXB(MD)) EMITB(0x89)                                   \
+        MRM(0x00,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+#elif (defined RT_X64)
+
+#define label_ld(lb)/*Reax*/                                                \
+        ASM_BEG ASM_OP2(leaq, %%rax, lb) ASM_END
+
+#define label_st(lb, MD, DD)                                                \
+        label_ld(lb)/*Reax*/                                                \
+    ADR REW(0,       RXB(MD)) EMITB(0x89)                                   \
+        MRM(0x00,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+#endif /* defined (RT_X32, RT_X64) */
+
+/* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
+ * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
+ * with (_F) and without (_F) are not intermixed in the code */
+#ifndef RT_SIMD_FAST_FCTRL
+#define RT_SIMD_FAST_FCTRL      1*(Q/2) /* only if AVX is among build targets */
+#endif /* RT_SIMD_FAST_FCTRL */
+
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#ifndef RT_SIMD_FLUSH_ZERO
+#define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+/* RT_SIMD_COMPAT_XMM distinguishes between SIMD reg-file sizes
+ * with current top values: 0 - 16, 1 - 15, 2 - 14 SIMD regs */
+#ifndef RT_SIMD_COMPAT_XMM
+#define RT_SIMD_COMPAT_XMM      RT_SIMD_COMPAT_XMM_MASTER
+#endif /* RT_SIMD_COMPAT_XMM */
+
+/* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
+ * of rcpps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RCP
+#define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
+#endif /* RT_SIMD_COMPAT_RCP */
+
+/* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
+ * of rsqps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RSQ
+#define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+/* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
+ * of fmaps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMA
+#define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
+ * of fmsps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMS
+#define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/* RT_SIMD_COMPAT_SSE distinguishes between 128-bit SSE2 & SSE4
+ * if RT_128 = 4 SIMD backend is present among build targets */
+#ifndef RT_SIMD_COMPAT_SSE
+#define RT_SIMD_COMPAT_SSE      RT_SIMD_COMPAT_SSE_MASTER
+#endif /* RT_SIMD_COMPAT_SSE */
+
+/* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
+ * of fm*ps_** instruction fallbacks to honour rounding mode */
+#ifndef RT_SIMD_COMPAT_FMR
+#define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
+#endif /* RT_SIMD_COMPAT_FMR */
+
+/* RT_BASE_COMPAT_BMI when enabled changes the default behavior
+ * of some bit-manipulation instructions to use BMI variants */
+#ifdef  RT_SIMD_CODE
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 2 /* enable BMI1+BMI2 when SIMD target is chosen */
+#if   (RT_256X2 == 1) && (RT_SIMD == 512)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#elif (RT_256X1 == 1) && (RT_SIMD == 256)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#elif (RT_256X1 == 4) && (RT_SIMD == 256)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#elif (RT_128X2 == 4) && (RT_SIMD == 256)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#elif (RT_128X1 == 2) && (RT_SIMD == 128)
+#elif (RT_128X1 < 32) && (RT_SIMD == 128)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#endif /* RT_SIMD: 512, 256, 128 */
+#endif /* RT_SIMD_CODE */
+
+#if   (RT_512X4 != 0) && (RT_SIMD == 2048)
+#include "rtarch_x64_512x4v2.h"
+#elif (RT_512X2 != 0) && (RT_SIMD == 1024)
+#include "rtarch_x64_512x2v2.h"
+#elif (RT_512X1 != 0) && (RT_SIMD == 512) && (RT_REGS >= 16)
+#include "rtarch_x64_512x1v8.h"
+#elif (RT_256X2 != 0) && (RT_SIMD == 512) && (RT_REGS == 8)
+#include "rtarch_x64_256x2v2.h"
+#elif (RT_128X4 != 0) && (RT_SIMD == 512)
+#error "x64:686 doesn't support quaded SSEx backends, check build flags"
+#elif (RT_256X1 >= 8) && (RT_SIMD == 256) && (RT_REGS == 32)
+#include "rtarch_x64_256x1v8.h"
+#elif (RT_256X1 != 0) && (RT_SIMD == 256) && (RT_REGS == 16)
+#include "rtarch_x64_256x1v2.h"
+#elif (RT_128X2 == 4) && (RT_SIMD == 256) && (RT_REGS == 8)
+#include "rtarch_x64_128x2v4.h"
+#elif (RT_128X1 >= 8) && (RT_SIMD == 128) && (RT_REGS == 16)
+#include "rtarch_x64_128x1v8.h"
+#elif (RT_128X1 >= 4) && (RT_SIMD == 128) && (RT_REGS == 16)
+#include "rtarch_x64_128x1v4.h"
+#elif (RT_128X1 >= 2) && (RT_SIMD == 128) && (RT_REGS == 32)
+#include "rtarch_x64_128x1v2.h"
+#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
+ */
+
+#if RT_SIMD_FLUSH_ZERO == 0
+#if RT_SIMD_FAST_FCTRL == 0
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_full __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        sregs_sa()                                                          \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
+
+#define ASM_LEAVE(__Info__)                                                 \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_full)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_full __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        sregs_sa()                                                          \
+        movwx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))                          \
+        movwx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))                          \
+        movwx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))                          \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
+
+#define ASM_LEAVE(__Info__)                                                 \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_full)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
+
+#endif /* RT_SIMD_FAST_FCTRL */
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
+
+#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
+
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+/*
+ * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
+ * except that they put the SIMD unit into slightly faster non-IEEE mode,
+ * where denormal results from floating point operations are flushed to zero.
+ * This mode is closely compatible with ARMv7, which lacks full IEEE support.
+ */
+
+#if RT_SIMD_FAST_FCTRL == 0
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_full __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        sregs_sa()                                                          \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))
+
+#define ASM_LEAVE_F(__Info__)                                               \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_full)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_full __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        sregs_sa()                                                          \
+        movwx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))                          \
+        movwx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))                          \
+        movwx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))                          \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))
+
+#define ASM_LEAVE_F(__Info__)                                               \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_full)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
+
+#endif /* RT_SIMD_FAST_FCTRL */
+
+#ifndef RT_SIMD_CODE
+#define sregs_sa()
+#define sregs_la()
+#define mxcsr_ld(MS, DS)
+#endif /* RT_SIMD_CODE */
+
+/* ---------------------------------   X86   -------------------------------- */
+
+#elif (defined RT_X86) /* original legacy target, supports only 8 registers */
+
+#define ASM_OP0(op)             #op
+#define ASM_OP1(op, p1)         #op"  "#p1
+#define ASM_OP2(op, p1, p2)     #op"  "#p2", "#p1
+#define ASM_OP3(op, p1, p2, p3) #op"  "#p3", "#p2", "#p1
+
+#define ASM_BEG /*internal*/    ""
+#define ASM_END /*internal*/    "\n"
+
+#define EMPTY                   ASM_BEG ASM_END /* endian-agnostic */
+#define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
+#define EMITW(w)                ASM_BEG ASM_OP1(.long, w) ASM_END
+
+#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, %%eax, lb) ASM_END
+#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, lb, %%eax) ASM_END
+
+#define label_ld(lb)/*Reax*/                                                \
+        ASM_BEG ASM_OP2(leal, %%eax, lb) ASM_END
+
+#define label_st(lb, MD, DD)                                                \
+        label_ld(lb)/*Reax*/                                                \
+        EMITB(0x89)                                                         \
+        MRM(0x00,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+/* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
+ * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
+ * with (_F) and without (_F) are not intermixed in the code */
+#ifndef RT_SIMD_FAST_FCTRL
+#define RT_SIMD_FAST_FCTRL      1*(Q/2) /* only if AVX is among build targets */
+#endif /* RT_SIMD_FAST_FCTRL */
+
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#ifndef RT_SIMD_FLUSH_ZERO
+#define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+/* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
+ * of rcpps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RCP
+#define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
+#endif /* RT_SIMD_COMPAT_RCP */
+
+/* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
+ * of rsqps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RSQ
+#define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+/* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
+ * of fmaps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMA
+#define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
+ * of fmsps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMS
+#define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
+ * of fm*ps_** instruction fallbacks to honour rounding mode */
+#ifndef RT_SIMD_COMPAT_FMR
+#define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
+#endif /* RT_SIMD_COMPAT_FMR */
+
+/* RT_BASE_COMPAT_BMI when enabled changes the default behavior
+ * of some bit-manipulation instructions to use BMI variants */
+#ifdef  RT_SIMD_CODE
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 2 /* enable BMI1+BMI2 when SIMD target is chosen */
+#if   (RT_256X1 == 1) && (RT_SIMD == 256)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#elif (RT_128X1 < 32) && (RT_SIMD == 128)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#endif /* RT_SIMD: 256, 128 */
+#endif /* RT_SIMD_CODE */
+
+#if   (RT_512X4 != 0) && (RT_SIMD == 2048)
+#error "x86:386 doesn't support quaded SIMD backends, check build flags"
+#elif (RT_512X2 != 0) && (RT_SIMD == 1024)
+#error "x86:386 doesn't support paired SIMD backends, check build flags"
+#elif (RT_256X2 != 0) && (RT_SIMD == 512)
+#error "x86:386 doesn't support paired SIMD backends, check build flags"
+#elif (RT_128X4 != 0) && (RT_SIMD == 512)
+#error "x86:386 doesn't support quaded SIMD backends, check build flags"
+#elif (RT_128X2 != 0) && (RT_SIMD == 256)
+#error "x86:386 doesn't support paired SIMD backends, check build flags"
+#elif (RT_512X1 != 0) && (RT_SIMD == 512)
+#include "rtarch_x86_512x1v2.h"
+#elif (RT_256X1 != 0) && (RT_SIMD == 256)
+#include "rtarch_x86_256x1v2.h"
+#elif (RT_128X1 >= 8) && (RT_SIMD == 128)
+#include "rtarch_x86_128x1v8.h"
+#elif (RT_128X1 >= 1) && (RT_SIMD == 128)
+#include "rtarch_x86_128x1v4.h"
+#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
+ */
+
+#if RT_SIMD_FLUSH_ZERO == 0
+#if RT_SIMD_FAST_FCTRL == 0
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        sregs_sa()                                                          \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
+
+#define ASM_LEAVE(__Info__)                                                 \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        sregs_sa()                                                          \
+        movwx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))                          \
+        movwx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))                          \
+        movwx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))                          \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
+
+#define ASM_LEAVE(__Info__)                                                 \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
+
+#endif /* RT_SIMD_FAST_FCTRL */
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
+
+#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
+
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+/*
+ * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
+ * except that they put the SIMD unit into slightly faster non-IEEE mode,
+ * where denormal results from floating point operations are flushed to zero.
+ * This mode is closely compatible with ARMv7, which lacks full IEEE support.
+ */
+
+#if RT_SIMD_FAST_FCTRL == 0
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        sregs_sa()                                                          \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))
+
+#define ASM_LEAVE_F(__Info__)                                               \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    asm volatile                                                            \
+    (                                                                       \
+        movlb_st(%[Reax_])                                                  \
+        movlb_ld(%[Info_])                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        sregs_sa()                                                          \
+        movwx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))                          \
+        movwx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))                          \
+        movwx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))                          \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))
+
+#define ASM_LEAVE_F(__Info__)                                               \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(%[Reax_])                                                  \
+        : [Reax_] "+r" (__Reax__)                                           \
+        : [Info_]  "r" ((rt_word)__Info__)                                  \
+        : "cc",  "memory"                                                   \
+    );                                                                      \
+}
+
+#endif /* RT_SIMD_FAST_FCTRL */
+
+#ifndef RT_SIMD_CODE
+#define sregs_sa()
+#define sregs_la()
+#define mxcsr_ld(MS, DS)
+#endif /* RT_SIMD_CODE */
+
+#endif /* RT_ARM, RT_A32/A64, RT_M32/M64, RT_P32/P64, RT_X32/X64, RT_X86 */
+
+/*******************************   WIN32, MSVC   ******************************/
+
+#elif (defined RT_WIN32)
+
+/* ---------------------------------   X86   -------------------------------- */
+
+#if   (defined RT_X86) /* original legacy target, supports only 8 registers */
+
+#define ASM_OP0(op)             op
+#define ASM_OP1(op, p1)         op  p1
+#define ASM_OP2(op, p1, p2)     op  p1, p2
+#define ASM_OP3(op, p1, p2, p3) op  p1, p2, p3
+
+#define ASM_BEG /*internal*/    __asm {
+#define ASM_END /*internal*/    }
+
+#define EMPTY                   ASM_BEG ASM_END /* endian-little */
+#define EMITB(b)                ASM_BEG ASM_OP1(_emit, b) ASM_END
+#define EMITW(w)                EMITB((w) >> 0x00 & 0xFF)                   \
+                                EMITB((w) >> 0x08 & 0xFF)                   \
+                                EMITB((w) >> 0x10 & 0xFF)                   \
+                                EMITB((w) >> 0x18 & 0xFF)
+
+#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, eax, lb) ASM_END
+#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, eax) ASM_END
+
+#define label_ld(lb)/*Reax*/                                                \
+        ASM_BEG ASM_OP2(lea, eax, lb) ASM_END
+
+#define label_st(lb, MD, DD)                                                \
+        label_ld(lb)/*Reax*/                                                \
+        EMITB(0x89)                                                         \
+        MRM(0x00,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+/* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
+ * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
+ * with (_F) and without (_F) are not intermixed in the code */
+#ifndef RT_SIMD_FAST_FCTRL
+#define RT_SIMD_FAST_FCTRL      1*(Q/2) /* only if AVX is among build targets */
+#endif /* RT_SIMD_FAST_FCTRL */
+
+/* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
+ * of ASM_ENTER/ASM_LEAVE/ROUND* to corresponding _F version */
+#ifndef RT_SIMD_FLUSH_ZERO
+#define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+/* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
+ * of rcpps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RCP
+#define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
+#endif /* RT_SIMD_COMPAT_RCP */
+
+/* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
+ * of rsqps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RSQ
+#define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+/* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
+ * of fmaps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMA
+#define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
+ * of fmsps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMS
+#define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/* RT_SIMD_COMPAT_FMR when enabled changes the default behavior
+ * of fm*ps_** instruction fallbacks to honour rounding mode */
+#ifndef RT_SIMD_COMPAT_FMR
+#define RT_SIMD_COMPAT_FMR      RT_SIMD_COMPAT_FMR_MASTER
+#endif /* RT_SIMD_COMPAT_FMR */
+
+/* RT_BASE_COMPAT_BMI when enabled changes the default behavior
+ * of some bit-manipulation instructions to use BMI variants */
+#ifdef  RT_SIMD_CODE
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 2 /* enable BMI1+BMI2 when SIMD target is chosen */
+#if   (RT_256X1 == 1) && (RT_SIMD == 256)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#elif (RT_128X1 < 32) && (RT_SIMD == 128)
+#undef  RT_BASE_COMPAT_BMI
+#define RT_BASE_COMPAT_BMI 0 /* no BMI1+BMI2 for SIMD targets prior to AVX2 */
+#endif /* RT_SIMD: 256, 128 */
+#endif /* RT_SIMD_CODE */
+
+#if   (RT_512X4 != 0) && (RT_SIMD == 2048)
+#error "x86:386 doesn't support quaded SIMD backends, check build flags"
+#elif (RT_512X2 != 0) && (RT_SIMD == 1024)
+#error "x86:386 doesn't support paired SIMD backends, check build flags"
+#elif (RT_256X2 != 0) && (RT_SIMD == 512)
+#error "x86:386 doesn't support paired SIMD backends, check build flags"
+#elif (RT_128X4 != 0) && (RT_SIMD == 512)
+#error "x86:386 doesn't support quaded SIMD backends, check build flags"
+#elif (RT_128X2 != 0) && (RT_SIMD == 256)
+#error "x86:386 doesn't support paired SIMD backends, check build flags"
+#elif (RT_512X1 != 0) && (RT_SIMD == 512)
+#include "rtarch_x86_512x1v2.h"
+#elif (RT_256X1 != 0) && (RT_SIMD == 256)
+#include "rtarch_x86_256x1v2.h"
+#elif (RT_128X1 >= 8) && (RT_SIMD == 128)
+#include "rtarch_x86_128x1v8.h"
+#elif (RT_128X1 >= 1) && (RT_SIMD == 128)
+#include "rtarch_x86_128x1v4.h"
+#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The SIMD unit is set to operate in its default mode (non-IEEE on ARMv7).
+ */
+
+#if RT_SIMD_FLUSH_ZERO == 0
+#if RT_SIMD_FAST_FCTRL == 0
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    __asm                                                                   \
+    {                                                                       \
+        movlb_st(__Reax__)                                                  \
+        movlb_ld(__Info__)                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        sregs_sa()                                                          \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
+
+#define ASM_LEAVE(__Info__)                                                 \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(__Reax__)                                                  \
+    }                                                                       \
+}
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER(__Info__)                                                 \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    __asm                                                                   \
+    {                                                                       \
+        movlb_st(__Reax__)                                                  \
+        movlb_ld(__Info__)                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        sregs_sa()                                                          \
+        movwx_mi(Mebp, inf_FCTRL(3*4), IH(0x7F80))                          \
+        movwx_mi(Mebp, inf_FCTRL(2*4), IH(0x5F80))                          \
+        movwx_mi(Mebp, inf_FCTRL(1*4), IH(0x3F80))                          \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))
+
+#define ASM_LEAVE(__Info__)                                                 \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(__Reax__)                                                  \
+    }                                                                       \
+}
+
+#endif /* RT_SIMD_FAST_FCTRL */
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define ASM_ENTER(__Info__) ASM_ENTER_F(__Info__)
+
+#define ASM_LEAVE(__Info__) ASM_LEAVE_F(__Info__)
+
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+/*
+ * The ASM_ENTER_F/ASM_LEAVE_F versions share the traits of the original ones,
+ * except that they put the SIMD unit into slightly faster non-IEEE mode,
+ * where denormal results from floating point operations are flushed to zero.
+ * This mode is closely compatible with ARMv7, which lacks full IEEE support.
+ */
+
+#if RT_SIMD_FAST_FCTRL == 0
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    __asm                                                                   \
+    {                                                                       \
+        movlb_st(__Reax__)                                                  \
+        movlb_ld(__Info__)                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        sregs_sa()                                                          \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))
+
+#define ASM_LEAVE_F(__Info__)                                               \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(__Reax__)                                                  \
+    }                                                                       \
+}
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+/* use 1 local to fix optimized builds, where locals are referenced via SP,
+ * while stack ops from within the asm block aren't counted into offsets */
+#define ASM_ENTER_F(__Info__)                                               \
+{                                                                           \
+    rt_word __Reax__;                                                       \
+    __asm                                                                   \
+    {                                                                       \
+        movlb_st(__Reax__)                                                  \
+        movlb_ld(__Info__)                                                  \
+        stack_sa()                                                          \
+        movxx_rr(Rebp, Reax)                                                \
+        sregs_sa()                                                          \
+        movwx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))                          \
+        movwx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))                          \
+        movwx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))                          \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))
+
+#define ASM_LEAVE_F(__Info__)                                               \
+        movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x1F80))                          \
+        mxcsr_ld(Mebp, inf_FCTRL(0*4))                                      \
+        sregs_la()                                                          \
+        stack_la()                                                          \
+        movlb_ld(__Reax__)                                                  \
+    }                                                                       \
+}
+
+#endif /* RT_SIMD_FAST_FCTRL */
+
+#ifndef RT_SIMD_CODE
+#define sregs_sa()
+#define sregs_la()
+#define mxcsr_ld(MS, DS)
+#endif /* RT_SIMD_CODE */
+
+#endif /* RT_X86 */
 
 #endif /* OS, COMPILER, ARCH */
 

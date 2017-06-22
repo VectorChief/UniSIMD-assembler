@@ -240,7 +240,7 @@
  * The original RT_*** targets have only 8 registers on legacy CPUs (x86/ARMv7).
  * The original RT_*** targets can be either native (x64) or composite (RISCs).
  * The *_R8 targets are always composed of register/instruction pairs or quads.
- * The *_RX targets have 32 registers + 8 masks (AVX-512/1K4 and ARM-SVE only).
+ * The *_RX targets have 30 registers + 8 masks (AVX-512/1K4 and ARM-SVE only).
  *
  * Some targets may have less registers than category-defined maximum (8,16,32).
  * The common minimum in each category is then defined with RT_SIMD_COMPAT_XMM:
@@ -272,61 +272,9 @@
 #define         RT_128      0
 #endif
 
-/* ---------------------------------   X86   -------------------------------- */
-
-#if   (defined RT_X86)
-
-#if   !(defined RT_512X4) && (RT_2K8_R8)
-#error "x86:386 doesn't support quaded SIMD backends, check build flags"
-#endif
-#if   !(defined RT_512X2) && (RT_1K4 || RT_1K4_R8)
-#error "x86:386 doesn't support paired SIMD backends, check build flags"
-#endif
-#if   !(defined RT_512X1) && (RT_512)
-#define         RT_512X1     (RT_512)
-#endif
-#if   !(defined RT_256X2) && (RT_512_R8)
-#error "x86:386 doesn't support paired SIMD backends, check build flags"
-#endif
-#if   !(defined RT_256X1) && (RT_256)
-#define         RT_256X1     (RT_256)
-#endif
-#if   !(defined RT_128X2) && (RT_256_R8)
-#error "x86:386 doesn't support paired SIMD backends, check build flags"
-#endif
-#if   !(defined RT_128X1) && (RT_128)
-#define         RT_128X1     (RT_128)
-#endif /* RT_2K8_R8, RT_1K4/_R8, RT_512/_R8, RT_256/_R8, RT_128 */
-
-/* ------------------------------   X32, X64   ------------------------------ */
-
-#elif (defined RT_X32) || (defined RT_X64)
-
-#if   !(defined RT_512X4) && (RT_2K8_R8)
-#define         RT_512X4     (RT_2K8_R8)
-#endif
-#if   !(defined RT_512X2) && (RT_1K4 || RT_1K4_R8)
-#define         RT_512X2     (RT_1K4 |  RT_1K4_R8)
-#endif
-#if   !(defined RT_512X1) && (RT_512)
-#define         RT_512X1    ((RT_512 | (RT_512)*4) & 0xC)
-#endif
-#if   !(defined RT_256X2) && (RT_512_R8)
-#define         RT_256X2     (RT_512_R8)
-#endif
-#if   !(defined RT_256X1) && (RT_256)
-#define         RT_256X1     (RT_256)
-#endif
-#if   !(defined RT_128X2) && (RT_256_R8)
-#define         RT_128X2     (RT_256_R8)
-#endif
-#if   !(defined RT_128X1) && (RT_128)
-#define         RT_128X1     (RT_128)
-#endif /* RT_2K8_R8, RT_1K4/_R8, RT_512/_R8, RT_256/_R8, RT_128 */
-
 /* ---------------------------------   ARM   -------------------------------- */
 
-#elif (defined RT_ARM)
+#if   (defined RT_ARM) /* original legacy target, supports only 8 registers */
 
 #if   !(defined RT_512X4) && (RT_2K8_R8)
 #error "AArch32 doesn't support SIMD wider than 128-bit, check build flags"
@@ -410,13 +358,65 @@
 #define         RT_128X4     (RT_512 |  RT_512_R8)
 #endif
 #if   !(defined RT_128X2) && (RT_256 || RT_256_R8)
-#define         RT_128X2     (RT_256 | (RT_256_R8 + ((RT_256_R8)/4)*12))
+#define         RT_128X2     (RT_256 | (RT_256_R8)*4)
 #endif
 #if   !(defined RT_128X1) && (RT_128)
 #define         RT_128X1     (RT_128)
 #endif /* RT_2K8_R8, RT_1K4/_R8, RT_512/_R8, RT_256/_R8, RT_128 */
 
-#endif /* RT_X86, RT_X32/X64, RT_ARM, RT_A32/A64, RT_M32/M64, RT_P32/P64 */
+/* ------------------------------   X32, X64   ------------------------------ */
+
+#elif (defined RT_X32) || (defined RT_X64)
+
+#if   !(defined RT_512X4) && (RT_2K8_R8)
+#define         RT_512X4     (RT_2K8_R8)
+#endif
+#if   !(defined RT_512X2) && (RT_1K4 || RT_1K4_R8)
+#define         RT_512X2     (RT_1K4 |  RT_1K4_R8)
+#endif
+#if   !(defined RT_512X1) && (RT_512)
+#define         RT_512X1    ((RT_512 | (RT_512)*4) & 0xC)
+#endif
+#if   !(defined RT_256X2) && (RT_512_R8)
+#define         RT_256X2     (RT_512_R8)
+#endif
+#if   !(defined RT_256X1) && (RT_256)
+#define         RT_256X1     (RT_256)
+#endif
+#if   !(defined RT_128X2) && (RT_256_R8)
+#define         RT_128X2     (RT_256_R8)
+#endif
+#if   !(defined RT_128X1) && (RT_128)
+#define         RT_128X1     (RT_128)
+#endif /* RT_2K8_R8, RT_1K4/_R8, RT_512/_R8, RT_256/_R8, RT_128 */
+
+/* ---------------------------------   X86   -------------------------------- */
+
+#elif (defined RT_X86) /* original legacy target, supports only 8 registers */
+
+#if   !(defined RT_512X4) && (RT_2K8_R8)
+#error "x86:386 doesn't support quaded SIMD backends, check build flags"
+#endif
+#if   !(defined RT_512X2) && (RT_1K4 || RT_1K4_R8)
+#error "x86:386 doesn't support paired SIMD backends, check build flags"
+#endif
+#if   !(defined RT_512X1) && (RT_512)
+#define         RT_512X1     (RT_512)
+#endif
+#if   !(defined RT_256X2) && (RT_512_R8)
+#error "x86:386 doesn't support paired SIMD backends, check build flags"
+#endif
+#if   !(defined RT_256X1) && (RT_256)
+#define         RT_256X1     (RT_256)
+#endif
+#if   !(defined RT_128X2) && (RT_256_R8)
+#error "x86:386 doesn't support paired SIMD backends, check build flags"
+#endif
+#if   !(defined RT_128X1) && (RT_128)
+#define         RT_128X1     (RT_128)
+#endif /* RT_2K8_R8, RT_1K4/_R8, RT_512/_R8, RT_256/_R8, RT_128 */
+
+#endif /* RT_ARM, RT_A32/A64, RT_M32/M64, RT_P32/P64, RT_X32/X64, RT_X86 */
 
 /******************************************************************************/
 /******************************************************************************/
