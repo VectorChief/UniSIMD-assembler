@@ -49,5 +49,5 @@ simd_test_a32:
 # For 128-bit NEON build use (replace): RT_128=1    (uses 30 SIMD registers)
 # For 256-bit NEON build use (replace): RT_256=1    (uses 15 SIMD reg-pairs)
 
-# 32-bit ABI hasn't been fully tested yet due to a lack of available libs,
+# 32-bit ABI hasn't been fully tested yet due to lack of available libs,
 # check out 64/32-bit (ptr/adr) hybrid mode for 64-bit ABI in simd_make_a64.mk
