@@ -18,7 +18,7 @@ E) Task title: "add 8 SIMD registers full-IEEE support for ARMv7 using VFP"
 2) Emulate currently exposed NEON instructions using VFP variants/fallbacks
 3) Use register-offloading to upper bank for 1 mem-arg in load-op instructions
 4) Find place in SIMD target mask (RT_128=8), like legacy x86, ARMv7 is 8-regs
-5) Expose 16x128+8x256 on PowerPC VMX (v4) instead of 15x128+8x256 (optional)
+5) Expose 16x128/8x256 on PowerPC VMX (v4) instead of 15x128/8x256 (optional)
 
 ================================================================================
 
@@ -34,7 +34,7 @@ K) Task title: "use configuration utils (autotools, CMake, etc) for building"
 1) Use single build script for all host CPU architectures on Linux
 2) Keep cross-compilation on x86-64 Linux hosts (targeting QEMU linux-user mode)
 
-================================================================================
+=== >>> === tasks above are planned for the upcoming 1.0.0 milestone === <<< ===
 
 R) Task title: "implement basic run-time generation for existing ASM code-bases"
 1) Rewrite ASM_ENTER macro to allocate temporary buffer with code-exec rights
