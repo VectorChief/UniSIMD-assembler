@@ -75,9 +75,9 @@ image boot credentials:
     login: root
     password: toor
 
-2) openSUSE Leap42.2 or Tumbleweed (XFCE images) 10-May-2017:
+2) openSUSE Leap42.2 XFCE (arm64 raspi3 image) 23-Jun-2017:
     https://en.opensuse.org/HCL:Raspberry_Pi3
-    http://download.opensuse.org/ports/aarch64/tumbleweed/images/
+    http://download.opensuse.org/ports/aarch64/distribution/leap/42.2/appliances
 image boot credentials:
     login: root
     password: linux
@@ -86,21 +86,36 @@ Flashing images above to an SD card is similar to a Raspbian installation:
 http://www.raspberrypi.org/documentation/installation/installing-images/linux.md
 
 Devuan image requires additional partition resizing steps after flashing:
-    http://elinux.org/RPi_Resize_Flash_Partitions (performed on host machine)
+    http://elinux.org/RPi_Resize_Flash_Partitions (performed on RPi using fdisk)
 as well as installing XFCE once the image is booted (credentials above):
     apt-get update
-    apt-get install xfce4
+    apt-get install xfce4 (choose keyboard layout)
     apt-get install make g++
-    startx
+    startx (choose "default config" on first start)
+    (launch terminal window in XFCE)
+    apt-get install firefox-esr unzip
 
 openSUSE image is RPM based (boots directly to XFCE, credentials above):
     zypper in make gcc-c++
 
-Adjust UniSIMD's makefiles to use g++ instead of triplet name, remove -static
+Download the archive from github.com and unpack it (in terminal window):
+    cd Downloads
+    unzip UniSIMD-assembler-master.zip
+    cd UniSIMD-assembler-master/test
+    make -f simd_make_a64.mk -j4
+    ./simd_test.a64f32
 
-Both images may require setting frequency scaling governor for best performance:
-echo "ondemand" | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+Adjust UniSIMD's makefiles to use g++ instead of triplet name, remove -static
+    nano simd_make_a64.mk (edit file, Ctrl-O, Enter, Ctrl-X)
+
 Current frequency (600Mhz idle, 1200Mhz load) can be monitored using:
-cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq   (tested with Devuan)
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq   (tested both images)
+
+Devuan image has support for USB flash drives, but offers 16-bit display output,
+it also requires setting frequency scaling governor for maximum performance:
+echo "performance" | tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+
+openSUSE image has newer clang, 32-bit display output, but no USB flash drives,
+although it offers high performance immediately, it lacks CPU scaling_governor
 
 ================================================================================
