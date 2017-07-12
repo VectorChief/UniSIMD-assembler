@@ -88,8 +88,13 @@ Q) Task title: "implement fp128 backend on POWER9/ISA3.0 (+ RISC-V fp128 fpu?)"
 
 V) Task title: "add support for various new and existing architectures"
 1) Add support for RISC-V architecture with "vector extension proposal"
-2) Add support for Loongson 2E/2F with LoongSIMD extensions as well as MIPS III
-3) Add support for SPARC64 VIIIfx HPC-ACE SIMD extensions as well as BASE ops
+   (search the Web for "RISC-V vector extension proposal")
+2) Add support for Sunway SW26010 with custom Chinese BASE/SIMD ISAs (64-bit)
+   (https://en.wikipedia.org/wiki/SW26010)
+3) Add support for Loongson 3 (GS464E) with LoongSIMD ops as well as MIPS64r3
+   (https://en.wikipedia.org/wiki/Loongson)
+   (https://www.imgtec.com/blog/loongson-mips64-processors-performance-barrier/)
+4) Add support for SPARC64 VIIIfx HPC-ACE SIMD extensions as well as BASE ops
    (http://www.fujitsu.com/downloads/TC/sparc64viiifx-extensions.pdf)
 
 ================================================================================
