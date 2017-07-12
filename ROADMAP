@@ -70,10 +70,6 @@ M) Task title: "add support for trigonometric/randomizer SIMD meta-instructions"
 
 ================================================================================
 
-H) Task title: "implement fp16 backends for Xeon Phi Knights Mill and ARMv8.2"
-
-================================================================================
-
 X) Task title: "implement predicated AVX-512/ARM-SVE backends (in *_RX slots)"
 
 ================================================================================
@@ -82,10 +78,18 @@ L) Task title: "consider SoftFP library integration for full fp16/fp128 support"
 
 ================================================================================
 
-Q) Task title: "add support for fp128 backend on POWER9/ISA3.0"
+H) Task title: "implement fp16 backend on ARMv8.2 (+ Xeon Phi Knights Mill?)"
 
 ================================================================================
 
-V) Task title: "add support for RISC-V architecture"
+Q) Task title: "implement fp128 backend on POWER9/ISA3.0 (+ RISC-V fp128 fpu?)"
+
+================================================================================
+
+V) Task title: "add support for various new and existing architectures"
+1) Add support for RISC-V architecture with "vector extension proposal"
+2) Add support for Loongson 2E/2F with LoongSIMD extensions as well as MIPS III
+3) Add support for SPARC64 VIIIfx HPC-ACE SIMD extensions as well as BASE ops
+   (http://www.fujitsu.com/downloads/TC/sparc64viiifx-extensions.pdf)
 
 ================================================================================
