@@ -5604,6 +5604,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define addls3ld(XD, XS, MT, DT)                                            \
         addis3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adpls_rr(XG, XS) /* horizontal pairwise add, with 128-bit steps */  \
+        adpis_rr(W(XG), W(XS))
+
+#define adpls_ld(XG, MS, DS)                                                \
+        adpis_ld(W(XG), W(MS), W(DS))
+
+#define adpls3rr(XD, XS, XT)                                                \
+        adpis3rr(W(XD), W(XS), W(XT))
+
+#define adpls3ld(XD, XS, MT, DT)                                            \
+        adpis3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subls_rr(XG, XS)                                                    \
@@ -7620,6 +7632,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define addls3ld(XD, XS, MT, DT)                                            \
         addjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define adpls_rr(XG, XS) /* horizontal pairwise add, with 128-bit steps */  \
+        adpjs_rr(W(XG), W(XS))
+
+#define adpls_ld(XG, MS, DS)                                                \
+        adpjs_ld(W(XG), W(MS), W(DS))
+
+#define adpls3rr(XD, XS, XT)                                                \
+        adpjs3rr(W(XD), W(XS), W(XT))
+
+#define adpls3ld(XD, XS, MT, DT)                                            \
+        adpjs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 

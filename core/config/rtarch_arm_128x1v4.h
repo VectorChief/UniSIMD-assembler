@@ -333,6 +333,23 @@
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF2000D40 | MXM(REG(XD), REG(XS), TmmM))
 
+#define adpis_rr(XG, XS) /* horizontal pairwise add, with 128-bit steps */  \
+        adpis3rr(W(XG), W(XG), W(XS))
+
+#define adpis_ld(XG, MS, DS)                                                \
+        adpis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adpis3rr(XD, XS, XT)                                                \
+        EMITW(0xF3000D00 | MXM(REG(XD)+0, REG(XS)+0, REG(XS)+1))            \
+        EMITW(0xF3000D00 | MXM(REG(XD)+1, REG(XT)+0, REG(XT)+1))
+
+#define adpis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3000D00 | MXM(REG(XD)+0, REG(XS)+0, REG(XS)+1))            \
+        EMITW(0xF3000D00 | MXM(REG(XD)+1,    TmmM+0,    TmmM+1))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subis_rr(XG, XS)                                                    \

@@ -313,6 +313,21 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+#define adpis_rr(XG, XS) /* horizontal pairwise add, with 128-bit steps */  \
+        adpis3rr(W(XG), W(XG), W(XS))
+
+#define adpis_ld(XG, MS, DS)                                                \
+        adpis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adpis3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 3, 1) EMITB(0x7C)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define adpis3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 3, 1) EMITB(0x7C)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subis_rr(XG, XS)                                                    \

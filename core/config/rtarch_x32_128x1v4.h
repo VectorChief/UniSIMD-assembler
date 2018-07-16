@@ -105,6 +105,10 @@
         EMITB(0x66)
 
 /* mandatory escape prefix for some opcodes (must preceed rex) */
+#define xF2                                                                 \
+        EMITB(0xF2)
+
+/* mandatory escape prefix for some opcodes (must preceed rex) */
 #define xF3                                                                 \
         EMITB(0xF3)
 
@@ -336,6 +340,55 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
 #define addis3ld(XD, XS, MT, DT)                                            \
         movix_rr(W(XD), W(XS))                                              \
         addis_ld(W(XD), W(MT), W(DT))
+
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+#define adpis_rr(XG, XS) /* horizontal pairwise add, with 128-bit steps */  \
+        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        adpis_rx(W(XG))
+
+#define adpis_ld(XG, MS, DS)                                                \
+        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XG), W(MS), W(DS))                                       \
+        movix_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        adpis_rx(W(XG))
+
+#define adpis_rx(XG) /* not portable, do not use outside */                 \
+        movrs_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
+        addrs_ld(W(XG), Mebp, inf_SCR01(0x04))                              \
+        movrs_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        movrs_ld(W(XG), Mebp, inf_SCR01(0x08))                              \
+        addrs_ld(W(XG), Mebp, inf_SCR01(0x0C))                              \
+        movrs_st(W(XG), Mebp, inf_SCR01(0x04))                              \
+        movrs_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
+        addrs_ld(W(XG), Mebp, inf_SCR02(0x04))                              \
+        movrs_st(W(XG), Mebp, inf_SCR01(0x08))                              \
+        movrs_ld(W(XG), Mebp, inf_SCR02(0x08))                              \
+        addrs_ld(W(XG), Mebp, inf_SCR02(0x0C))                              \
+        movrs_st(W(XG), Mebp, inf_SCR01(0x0C))                              \
+        movix_ld(W(XG), Mebp, inf_SCR01(0))
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define adpis_rr(XG, XS) /* horizontal pairwise add, with 128-bit steps */  \
+    xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x7C)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define adpis_ld(XG, MS, DS)                                                \
+ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x7C)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define adpis3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        adpis_rr(W(XD), W(XT))
+
+#define adpis3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        adpis_ld(W(XD), W(MT), W(DT))
 
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 

@@ -247,6 +247,20 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4E60D400 | MXM(REG(XD), REG(XS), TmmM))
 
+#define adpjs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpjs3rr(W(XG), W(XG), W(XS))
+
+#define adpjs_ld(XG, MS, DS)                                                \
+        adpjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adpjs3rr(XD, XS, XT)                                                \
+        EMITW(0x6E60D400 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define adpjs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x6E60D400 | MXM(REG(XD), REG(XS), TmmM))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subjs_rr(XG, XS)                                                    \

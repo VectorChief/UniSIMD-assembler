@@ -292,6 +292,49 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x58)                       \
         movjx_rr(W(XD), W(XS))                                              \
         addjs_ld(W(XD), W(MT), W(DT))
 
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+#define adpjs_rr(XG, XS) /* horizontal pairwise add, with 128-bit steps */  \
+        movjx_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        adpjs_rx(W(XG))
+
+#define adpjs_ld(XG, MS, DS)                                                \
+        movjx_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XG), W(MS), W(DS))                                       \
+        movjx_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        adpjs_rx(W(XG))
+
+#define adpjs_rx(XG) /* not portable, do not use outside */                 \
+        movts_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
+        addts_ld(W(XG), Mebp, inf_SCR01(0x08))                              \
+        movts_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        movts_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
+        addts_ld(W(XG), Mebp, inf_SCR02(0x08))                              \
+        movts_st(W(XG), Mebp, inf_SCR01(0x08))                              \
+        movjx_ld(W(XG), Mebp, inf_SCR01(0))
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define adpjs_rr(XG, XS) /* horizontal pairwise add, with 128-bit steps */  \
+    ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x7C)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define adpjs_ld(XG, MS, DS)                                                \
+ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x7C)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define adpjs3rr(XD, XS, XT)                                                \
+        movjx_rr(W(XD), W(XS))                                              \
+        adpjs_rr(W(XD), W(XT))
+
+#define adpjs3ld(XD, XS, MT, DT)                                            \
+        movjx_rr(W(XD), W(XS))                                              \
+        adpjs_ld(W(XD), W(MT), W(DT))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subjs_rr(XG, XS)                                                    \

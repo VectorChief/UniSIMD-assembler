@@ -331,6 +331,20 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4E20D400 | MXM(REG(XD), REG(XS), TmmM))
 
+#define adpis_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpis3rr(W(XG), W(XG), W(XS))
+
+#define adpis_ld(XG, MS, DS)                                                \
+        adpis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adpis3rr(XD, XS, XT)                                                \
+        EMITW(0x6E20D400 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define adpis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x6E20D400 | MXM(REG(XD), REG(XS), TmmM))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subis_rr(XG, XS)                                                    \

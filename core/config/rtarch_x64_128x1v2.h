@@ -265,6 +265,21 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+#define adpjs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpjs3rr(W(XG), W(XG), W(XS))
+
+#define adpjs_ld(XG, MS, DS)                                                \
+        adpjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adpjs3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 1, 1) EMITB(0x7C)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define adpjs3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 1, 1) EMITB(0x7C)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subjs_rr(XG, XS)                                                    \

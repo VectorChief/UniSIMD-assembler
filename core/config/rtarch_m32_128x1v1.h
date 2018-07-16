@@ -344,6 +344,40 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x7800001B | MXM(REG(XD), REG(XS), TmmM))
 
+#define adpis_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        adpis_rx(W(XG))
+
+#define adpis_ld(XG, MS, DS)                                                \
+        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XG), W(MS), W(DS))                                       \
+        movix_st(W(XG), Mebp, inf_SCR02(0))                                 \
+        adpis_rx(W(XG))
+
+#define adpis_rx(XG) /* not portable, do not use outside */                 \
+        movrs_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
+        addrs_ld(W(XG), Mebp, inf_SCR01(0x04))                              \
+        movrs_st(W(XG), Mebp, inf_SCR01(0x00))                              \
+        movrs_ld(W(XG), Mebp, inf_SCR01(0x08))                              \
+        addrs_ld(W(XG), Mebp, inf_SCR01(0x0C))                              \
+        movrs_st(W(XG), Mebp, inf_SCR01(0x04))                              \
+        movrs_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
+        addrs_ld(W(XG), Mebp, inf_SCR02(0x04))                              \
+        movrs_st(W(XG), Mebp, inf_SCR01(0x08))                              \
+        movrs_ld(W(XG), Mebp, inf_SCR02(0x08))                              \
+        addrs_ld(W(XG), Mebp, inf_SCR02(0x0C))                              \
+        movrs_st(W(XG), Mebp, inf_SCR01(0x0C))                              \
+        movix_ld(W(XG), Mebp, inf_SCR01(0))
+
+#define adpis3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        adpis_rr(W(XD), W(XT))
+
+#define adpis3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        adpis_ld(W(XD), W(MT), W(DT))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subis_rr(XG, XS)                                                    \
