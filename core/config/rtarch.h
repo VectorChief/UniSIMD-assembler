@@ -1018,7 +1018,7 @@
 /* RT_BASE_COMPAT_REV when enabled changes the default behavior
  * of integer instructions to their MIPS Revision 6 variants */
 #undef  RT_BASE_COMPAT_REV
-#define RT_BASE_COMPAT_REV RT_M32 | RT_M64 /* enable MIPS Revision 6 */
+#define RT_BASE_COMPAT_REV (RT_M32 | RT_M64) /* enable MIPS Revision 6 */
 
 #if   (RT_512X4 != 0) && (RT_SIMD == 2048)
 #error "mipsMSA doesn't support SIMD wider than 128-bit, check build flags"
