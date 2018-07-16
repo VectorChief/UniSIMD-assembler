@@ -114,21 +114,21 @@
 #define  P2(val, tp1, tp2)  P2##tp2
 #define  C2(val, tp1, tp2)  C2##tp2
 
-/* displacement encoding SIMD(TP2) */
+/* displacement encoding SIMD(TP2), ELEM(TP2) */
 
 #define B20(br) (br)
-#define P20(dp) (0x00000000 | ((dp) & 0x7FF0))
+#define P20(dp) (0x00000000 | ((dp) & 0x7FFC))
 #define C20(br, dp) EMPTY
 
 #define B21(br) (br)
 #define P21(dp) (0x44000214 | TDxx << 11)
-#define C21(br, dp) EMITW(0x60000000 | TDxx << 16 | (0xFFF0 & (dp)))
+#define C21(br, dp) EMITW(0x60000000 | TDxx << 16 | (0xFFFC & (dp)))
 
 #define B22(br) (br)
 #define P22(dp) (0x44000214 | TDxx << 11)
 #define C22(br, dp) EMITW(0x64000000 | TDxx << 16 | (0x7FFF & (dp) >> 16))  \
                     EMITW(0x60000000 | TDxx << 16 | TDxx << 21 |            \
-                                                    (0xFFF0 & (dp)))
+                                                    (0xFFFC & (dp)))
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
