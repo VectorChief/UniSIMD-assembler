@@ -116,11 +116,16 @@
 /* selectors  */
 
 #define REH(reg, mod, sib)  (reg+1)
+
 #define  B2(val, tp1, tp2)  B2##tp2
 #define  P2(val, tp1, tp2)  P2##tp2
 #define  C2(val, tp1, tp2)  C2##tp2
 
-/* displacement encoding SIMD(TP2) */
+#define  B4(val, tp1, tp2)  B4##tp2
+#define  P4(val, tp1, tp2)  P4##tp2
+#define  C4(val, tp1, tp2)  C4##tp2
+
+/* displacement encoding SIMD(TP2), ELEM(TP4) */
 
 #define B20(br) (br)
 #define P20(dp) (0x02000E00 | ((dp) >> 4 & 0xFF))
@@ -129,14 +134,26 @@
 #define B21(br) (br)
 #define P21(dp) (0x00000000 | TDxx)
 #define C21(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
-                            (0xF0000 & (dp) <<  4) | (0xFF0 & (dp)))
+                            (0xF0000 & (dp) <<  4) | (0xFFC & (dp)))
 
 #define B22(br) (br)
 #define P22(dp) (0x00000000 | TDxx)
 #define C22(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
-                            (0xF0000 & (dp) <<  4) | (0xFF0 & (dp)))        \
+                            (0xF0000 & (dp) <<  4) | (0xFFC & (dp)))        \
                     EMITW(0xE3400000 | MRM(TDxx,    0x00,    0x00) |        \
                             (0x70000 & (dp) >> 12) | (0xFFF & (dp) >> 16))
+
+#define B40(br) B21(br)
+#define P40(dp) P21(dp)
+#define C40(br, dp) C21(br, dp)
+
+#define B41(br) B21(br)
+#define P41(dp) P21(dp)
+#define C41(br, dp) C21(br, dp)
+
+#define B42(br) B22(br)
+#define P42(dp) P22(dp)
+#define C42(br, dp) C22(br, dp)
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
@@ -1404,13 +1421,13 @@
         EMITW(0xEEB00A40 | MXM(REG(XD), 0x00,    REG(XS)))
 
 #define movrs_ld(XD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C4(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B4(DS), P4(DS)))  \
         EMITW(0xF4A0083F | MXM(REG(XD), TPxx,    0x00))
 
 #define movrs_st(XS, MD, DD)                                                \
-        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MD), VAL(DD), B2(DD), P2(DD)))  \
+        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C4(DD), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MD), VAL(DD), B4(DD), P4(DD)))  \
         EMITW(0xF480083F | MXM(REG(XS), TPxx,    0x00))
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
@@ -1425,8 +1442,8 @@
         EMITW(0xEE300A00 | MXM(REG(XD), REG(XS), REG(XT)))
 
 #define addrs3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C4(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B4(DT), P4(DT)))  \
         EMITW(0xF4A0083F | MXM(REH(XD), TPxx,    0x00))                     \
         EMITW(0xEE300A00 | MXM(REG(XD), REG(XS), REH(XD)))
 
@@ -1442,8 +1459,8 @@
         EMITW(0xEE300A40 | MXM(REG(XD), REG(XS), REG(XT)))
 
 #define subrs3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C4(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B4(DT), P4(DT)))  \
         EMITW(0xF4A0083F | MXM(REH(XD), TPxx,    0x00))                     \
         EMITW(0xEE300A40 | MXM(REG(XD), REG(XS), REH(XD)))
 
@@ -1459,8 +1476,8 @@
         EMITW(0xEE200A00 | MXM(REG(XD), REG(XS), REG(XT)))
 
 #define mulrs3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C4(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B4(DT), P4(DT)))  \
         EMITW(0xF4A0083F | MXM(REH(XD), TPxx,    0x00))                     \
         EMITW(0xEE200A00 | MXM(REG(XD), REG(XS), REH(XD)))
 
@@ -1476,8 +1493,8 @@
         EMITW(0xEE800A00 | MXM(REG(XD), REG(XS), REG(XT)))
 
 #define divrs3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C4(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B4(DT), P4(DT)))  \
         EMITW(0xF4A0083F | MXM(REH(XD), TPxx,    0x00))                     \
         EMITW(0xEE800A00 | MXM(REG(XD), REG(XS), REH(XD)))
 
@@ -1537,8 +1554,8 @@
         EMITW(0xEE000A00 | MXM(REG(XG), REG(XS), REG(XT)))
 
 #define fmars_ld(XG, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C4(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B4(DT), P4(DT)))  \
         EMITW(0xF4A0083F | MXM(REH(XG), TPxx,    0x00))                     \
         EMITW(0xEE000A00 | MXM(REG(XG), REG(XS), REH(XG)))
 
@@ -1579,8 +1596,8 @@
         EMITW(0xEE000A40 | MXM(REG(XG), REG(XS), REG(XT)))
 
 #define fmsrs_ld(XG, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C4(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B4(DT), P4(DT)))  \
         EMITW(0xF4A0083F | MXM(REH(XG), TPxx,    0x00))                     \
         EMITW(0xEE000A40 | MXM(REG(XG), REG(XS), REH(XG)))
 
@@ -1623,8 +1640,8 @@
         EMITW(0xEEA00A00 | MXM(REG(XG), REG(XS), REG(XT)))
 
 #define fmars_ld(XG, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C4(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B4(DT), P4(DT)))  \
         EMITW(0xF4A0083F | MXM(REH(XG), TPxx,    0x00))                     \
         EMITW(0xEEA00A00 | MXM(REG(XG), REG(XS), REH(XG)))
 
@@ -1640,8 +1657,8 @@
         EMITW(0xEEA00A40 | MXM(REG(XG), REG(XS), REG(XT)))
 
 #define fmsrs_ld(XG, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C4(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B4(DT), P4(DT)))  \
         EMITW(0xF4A0083F | MXM(REH(XG), TPxx,    0x00))                     \
         EMITW(0xEEA00A40 | MXM(REG(XG), REG(XS), REH(XG)))
 
@@ -1663,8 +1680,8 @@
         EMITW(0xF2200F00 | MXM(REG(XD), REG(XS), REG(XT)))
 
 #define minrs3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C4(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B4(DT), P4(DT)))  \
         EMITW(0xF4A0083F | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF2200F00 | MXM(REG(XD), REG(XS), TmmM))
 
@@ -1680,8 +1697,8 @@
         EMITW(0xF2000F00 | MXM(REG(XD), REG(XS), REG(XT)))
 
 #define maxrs3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C4(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B4(DT), P4(DT)))  \
         EMITW(0xF4A0083F | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF2000F00 | MXM(REG(XD), REG(XS), TmmM))
 
@@ -1697,8 +1714,8 @@
         EMITW(0xF2000E00 | MXM(REG(XD), REG(XS), REG(XT)))
 
 #define ceqrs3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C4(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B4(DT), P4(DT)))  \
         EMITW(0xF4A0083F | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF2000E00 | MXM(REG(XD), REG(XS), TmmM))
 
@@ -1715,8 +1732,8 @@
         EMITW(0xF3B005C0 | MXM(REG(XD), 0x00,    REG(XS)))
 
 #define cners3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C4(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B4(DT), P4(DT)))  \
         EMITW(0xF4A0083F | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF2000E00 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0xF3B005C0 | MXM(REG(XD), 0x00,    REG(XS)))
@@ -1733,8 +1750,8 @@
         EMITW(0xF3200E00 | MXM(REG(XD), REG(XT), REG(XS)))
 
 #define cltrs3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C4(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B4(DT), P4(DT)))  \
         EMITW(0xF4A0083F | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3200E00 | MXM(REG(XD), TmmM,    REG(XS)))
 
@@ -1750,8 +1767,8 @@
         EMITW(0xF3000E00 | MXM(REG(XD), REG(XT), REG(XS)))
 
 #define clers3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C4(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B4(DT), P4(DT)))  \
         EMITW(0xF4A0083F | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3000E00 | MXM(REG(XD), TmmM,    REG(XS)))
 
@@ -1767,8 +1784,8 @@
         EMITW(0xF3200E00 | MXM(REG(XD), REG(XS), REG(XT)))
 
 #define cgtrs3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C4(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B4(DT), P4(DT)))  \
         EMITW(0xF4A0083F | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3200E00 | MXM(REG(XD), REG(XS), TmmM))
 
@@ -1784,8 +1801,8 @@
         EMITW(0xF3000E00 | MXM(REG(XD), REG(XS), REG(XT)))
 
 #define cgers3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C4(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B4(DT), P4(DT)))  \
         EMITW(0xF4A0083F | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3000E00 | MXM(REG(XD), REG(XS), TmmM))
 
