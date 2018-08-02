@@ -1297,6 +1297,12 @@
 #define RT_SIMD_COMPAT_SQR      RT_SIMD_COMPAT_SQR_MASTER
 #endif /* RT_SIMD_COMPAT_SQR */
 
+/* RT_ELEM_COMPAT_VMX when enabled makes scalar SIMD (ELEM) ops
+ * compatible with VMX, only when BASE regs are SIMD-aligned */
+#ifndef RT_ELEM_COMPAT_VMX
+#define RT_ELEM_COMPAT_VMX      0 /* applicable to older PPC */
+#endif /* RT_ELEM_COMPAT_VMX */
+
 /* RT_BASE_COMPAT_ZFL when enabled makes setting-flags BASE ops
  * compatible with 64-bit processors running 32-bit ISA mode */
 #ifndef RT_BASE_COMPAT_ZFL
