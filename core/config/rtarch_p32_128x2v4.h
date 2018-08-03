@@ -1152,27 +1152,13 @@
         EMITW(0x10000184 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x10000184 | MXM(RYG(XD), RYG(XS), TmmM))
 
-#if RT_ENDIAN == 0
-
 #define shlcx3ld(XD, XS, MT, DT)                                            \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x7C00008E | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
-        EMITW(0x1003028C | MXM(TmmM,    0x00,    TmmM))/* ^ == -1 if true */\
+        EMITW(0x1000028C | MXM(TmmM,    SPLT,    TmmM))/* ^ == -1 if true */\
         EMITW(0x10000184 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x10000184 | MXM(RYG(XD), RYG(XS), TmmM))
-
-#else /* RT_ENDIAN == 1 */
-
-#define shlcx3ld(XD, XS, MT, DT)                                            \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMITW(0x7C00008E | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
-        EMITW(0x1000028C | MXM(TmmM,    0x00,    TmmM))/* ^ == -1 if true */\
-        EMITW(0x10000184 | MXM(REG(XD), REG(XS), TmmM))                     \
-        EMITW(0x10000184 | MXM(RYG(XD), RYG(XS), TmmM))
-
-#endif /* RT_ENDIAN == 1 */
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -1188,27 +1174,13 @@
         EMITW(0x10000284 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x10000284 | MXM(RYG(XD), RYG(XS), TmmM))
 
-#if RT_ENDIAN == 0
-
 #define shrcx3ld(XD, XS, MT, DT)                                            \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x7C00008E | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
-        EMITW(0x1003028C | MXM(TmmM,    0x00,    TmmM))/* ^ == -1 if true */\
+        EMITW(0x1000028C | MXM(TmmM,    SPLT,    TmmM))/* ^ == -1 if true */\
         EMITW(0x10000284 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x10000284 | MXM(RYG(XD), RYG(XS), TmmM))
-
-#else /* RT_ENDIAN == 1 */
-
-#define shrcx3ld(XD, XS, MT, DT)                                            \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMITW(0x7C00008E | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
-        EMITW(0x1000028C | MXM(TmmM,    0x00,    TmmM))/* ^ == -1 if true */\
-        EMITW(0x10000284 | MXM(REG(XD), REG(XS), TmmM))                     \
-        EMITW(0x10000284 | MXM(RYG(XD), RYG(XS), TmmM))
-
-#endif /* RT_ENDIAN == 1 */
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
  * for maximum compatibility, shift count mustn't exceed elem-size */
@@ -1224,27 +1196,13 @@
         EMITW(0x10000384 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x10000384 | MXM(RYG(XD), RYG(XS), TmmM))
 
-#if RT_ENDIAN == 0
-
 #define shrcn3ld(XD, XS, MT, DT)                                            \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x7C00008E | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
-        EMITW(0x1003028C | MXM(TmmM,    0x00,    TmmM))/* ^ == -1 if true */\
+        EMITW(0x1000028C | MXM(TmmM,    SPLT,    TmmM))/* ^ == -1 if true */\
         EMITW(0x10000384 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x10000384 | MXM(RYG(XD), RYG(XS), TmmM))
-
-#else /* RT_ENDIAN == 1 */
-
-#define shrcn3ld(XD, XS, MT, DT)                                            \
-        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMITW(0x7C00008E | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
-        EMITW(0x1000028C | MXM(TmmM,    0x00,    TmmM))/* ^ == -1 if true */\
-        EMITW(0x10000384 | MXM(REG(XD), REG(XS), TmmM))                     \
-        EMITW(0x10000384 | MXM(RYG(XD), RYG(XS), TmmM))
-
-#endif /* RT_ENDIAN == 1 */
 
 /* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */

@@ -1142,7 +1142,7 @@
 
 /*********   scalar double-precision floating-point move/arithmetic   *********/
 
-#if (RT_128X1 < 2)
+#if (RT_128X1 < 2) && RT_ELEM_COMPAT_VMX == 0
 
 /* mov (D = S) */
 
@@ -1469,7 +1469,7 @@
 
 /*************   scalar double-precision floating-point compare   *************/
 
-#if (RT_128X1 < 2)
+#if (RT_128X1 < 2) && RT_ELEM_COMPAT_VMX == 0
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
