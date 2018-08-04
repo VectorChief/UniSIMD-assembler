@@ -1298,7 +1298,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* RT_128X1 >= 2 */
+#else /* RT_128X1 >= 2, RT_ELEM_COMPAT_VMX == 1 */
 
 /* mov (D = S) */
 
@@ -1465,7 +1465,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* RT_128X1 >= 2 */
+#endif /* RT_128X1 >= 2, RT_ELEM_COMPAT_VMX == 1 */
 
 /*************   scalar double-precision floating-point compare   *************/
 
@@ -1601,7 +1601,7 @@
         EMITW(0xC8000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
         EMITW(0xF0000398 | MXM(REG(XD), REG(XS), TmmM))
 
-#else /* RT_128X1 >= 2 */
+#else /* RT_128X1 >= 2, RT_ELEM_COMPAT_VMX == 1 */
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
@@ -1741,7 +1741,7 @@
         EMITW(0x7C000499 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF000039F | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-#endif /* RT_128X1 >= 2 */
+#endif /* RT_128X1 >= 2, RT_ELEM_COMPAT_VMX == 1 */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

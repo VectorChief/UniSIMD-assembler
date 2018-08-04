@@ -1318,7 +1318,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else  /* RT_ELEM_COMPAT_VMX == 1, -- only when BASE regs are SIMD-aligned -- */
+#else  /* RT_ELEM_COMPAT_VMX == 1, -- only if BASE regs are 128bit-aligned -- */
 
 /* mov (D = S) */
 
@@ -1773,7 +1773,7 @@
         movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
         movrs_ld(W(XD), Mebp, inf_SCR01(0))
 
-#else  /* RT_ELEM_COMPAT_VMX == 1, -- only when BASE regs are SIMD-aligned -- */
+#else  /* RT_ELEM_COMPAT_VMX == 1, -- only if BASE regs are 128bit-aligned -- */
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 

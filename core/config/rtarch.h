@@ -1298,7 +1298,7 @@
 #endif /* RT_SIMD_COMPAT_SQR */
 
 /* RT_ELEM_COMPAT_VMX when enabled makes scalar SIMD (ELEM) ops
- * compatible with VMX, only when BASE regs are SIMD-aligned */
+ * compatible with VMX, only if BASE regs are 128bit-aligned */
 #ifndef RT_ELEM_COMPAT_VMX
 #define RT_ELEM_COMPAT_VMX      0 /* applicable to older PPC */
 #endif /* RT_ELEM_COMPAT_VMX */
