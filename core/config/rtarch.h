@@ -1015,6 +1015,12 @@
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
 #endif /* RT_SIMD_COMPAT_FMS */
 
+/* RT_ELEM_COMPAT_MSA when enabled makes scalar SIMD (ELEM) ops
+ * compatible with MSA, applicable to big-endian vector fp32 */
+#ifndef RT_ELEM_COMPAT_MSA
+#define RT_ELEM_COMPAT_MSA      0 /* applicable to MIPS fp32 */
+#endif /* RT_ELEM_COMPAT_MSA */
+
 /* RT_BASE_COMPAT_REV when enabled changes the default behavior
  * of integer instructions to their MIPS Revision 6 variants */
 #undef  RT_BASE_COMPAT_REV
