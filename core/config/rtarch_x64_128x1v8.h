@@ -258,7 +258,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-#define adpjs_rr(XG, XS) /* horizontal pairwise add, with 128-bit steps */  \
+#define adpjs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
         adpjs3rr(W(XG), W(XG), W(XS))
 
 #define adpjs_ld(XG, MS, DS)                                                \

@@ -350,7 +350,7 @@
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF2000D40 | MXM(REG(XD), REG(XS), TmmM))
 
-#define adpis_rr(XG, XS) /* horizontal pairwise add, with 128-bit steps */  \
+#define adpis_rr(XG, XS) /* horizontal pairwise add */                      \
         adpis3rr(W(XG), W(XG), W(XS))
 
 #define adpis_ld(XG, MS, DS)                                                \

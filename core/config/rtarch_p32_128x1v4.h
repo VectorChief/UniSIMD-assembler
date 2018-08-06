@@ -343,39 +343,37 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x1000000A | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-#define adpis_rr(XG, XS) /* horizontal pairwise add, with 128-bit steps */  \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movix_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        adpis_rx(W(XG))
+#define adpis_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpis3rr(W(XG), W(XG), W(XS))
 
 #define adpis_ld(XG, MS, DS)                                                \
-        movix_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movix_ld(W(XG), W(MS), W(DS))                                       \
-        movix_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        adpis_rx(W(XG))
-
-#define adpis_rx(XG) /* not portable, do not use outside */                 \
-        movrs_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
-        addrs_ld(W(XG), Mebp, inf_SCR01(0x04))                              \
-        movrs_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movrs_ld(W(XG), Mebp, inf_SCR01(0x08))                              \
-        addrs_ld(W(XG), Mebp, inf_SCR01(0x0C))                              \
-        movrs_st(W(XG), Mebp, inf_SCR01(0x04))                              \
-        movrs_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
-        addrs_ld(W(XG), Mebp, inf_SCR02(0x04))                              \
-        movrs_st(W(XG), Mebp, inf_SCR01(0x08))                              \
-        movrs_ld(W(XG), Mebp, inf_SCR02(0x08))                              \
-        addrs_ld(W(XG), Mebp, inf_SCR02(0x0C))                              \
-        movrs_st(W(XG), Mebp, inf_SCR01(0x0C))                              \
-        movix_ld(W(XG), Mebp, inf_SCR01(0))
+        adpis3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define adpis3rr(XD, XS, XT)                                                \
-        movix_rr(W(XD), W(XS))                                              \
-        adpis_rr(W(XD), W(XT))
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        adpis_rx(W(XD))
 
 #define adpis3ld(XD, XS, MT, DT)                                            \
-        movix_rr(W(XD), W(XS))                                              \
-        adpis_ld(W(XD), W(MT), W(DT))
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XD), W(MT), W(DT))                                       \
+        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        adpis_rx(W(XD))
+
+#define adpis_rx(XD) /* not portable, do not use outside */                 \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        addrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        addrs_ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        addrs_ld(W(XD), Mebp, inf_SCR02(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        addrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 

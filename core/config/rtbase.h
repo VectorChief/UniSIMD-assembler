@@ -5604,7 +5604,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define addls3ld(XD, XS, MT, DT)                                            \
         addis3ld(W(XD), W(XS), W(MT), W(DT))
 
-#define adpls_rr(XG, XS) /* horizontal pairwise add, with 128-bit steps */  \
+#define adpls_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
         adpis_rr(W(XG), W(XS))
 
 #define adpls_ld(XG, MS, DS)                                                \
@@ -7633,7 +7633,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define addls3ld(XD, XS, MT, DT)                                            \
         addjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-#define adpls_rr(XG, XS) /* horizontal pairwise add, with 128-bit steps */  \
+#define adpls_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
         adpjs_rr(W(XG), W(XS))
 
 #define adpls_ld(XG, MS, DS)                                                \

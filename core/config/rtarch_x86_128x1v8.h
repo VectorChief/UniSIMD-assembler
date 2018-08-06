@@ -287,7 +287,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-#define adpis_rr(XG, XS) /* horizontal pairwise add, with 128-bit steps */  \
+#define adpis_rr(XG, XS) /* horizontal pairwise add */                      \
         adpis3rr(W(XG), W(XG), W(XS))
 
 #define adpis_ld(XG, MS, DS)                                                \

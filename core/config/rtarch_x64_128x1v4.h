@@ -294,29 +294,35 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x58)                       \
 
 #if (RT_SIMD_COMPAT_SSE < 4)
 
-#define adpjs_rr(XG, XS) /* horizontal pairwise add, with 128-bit steps */  \
-        movjx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movjx_st(W(XS), Mebp, inf_SCR02(0))                                 \
-        adpjs_rx(W(XG))
+#define adpjs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpjs3rr(W(XG), W(XG), W(XS))
 
 #define adpjs_ld(XG, MS, DS)                                                \
-        movjx_st(W(XG), Mebp, inf_SCR01(0))                                 \
-        movjx_ld(W(XG), W(MS), W(DS))                                       \
-        movjx_st(W(XG), Mebp, inf_SCR02(0))                                 \
-        adpjs_rx(W(XG))
+        adpjs3ld(W(XG), W(XG), W(MS), W(DS))
 
-#define adpjs_rx(XG) /* not portable, do not use outside */                 \
-        movts_ld(W(XG), Mebp, inf_SCR01(0x00))                              \
-        addts_ld(W(XG), Mebp, inf_SCR01(0x08))                              \
-        movts_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        movts_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
-        addts_ld(W(XG), Mebp, inf_SCR02(0x08))                              \
-        movts_st(W(XG), Mebp, inf_SCR01(0x08))                              \
-        movjx_ld(W(XG), Mebp, inf_SCR01(0))
+#define adpjs3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        adpjs_rx(W(XD))
+
+#define adpjs3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        adpjs_rx(W(XD))
+
+#define adpjs_rx(XD) /* not portable, do not use outside */                 \
+        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        addts_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        addts_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #else /* RT_SIMD_COMPAT_SSE >= 4 */
 
-#define adpjs_rr(XG, XS) /* horizontal pairwise add, with 128-bit steps */  \
+#define adpjs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
     ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x7C)                       \
         MRM(REG(XG), MOD(XS), REG(XS))
 
@@ -325,8 +331,6 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x7C)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#endif /* RT_SIMD_COMPAT_SSE >= 4 */
-
 #define adpjs3rr(XD, XS, XT)                                                \
         movjx_rr(W(XD), W(XS))                                              \
         adpjs_rr(W(XD), W(XT))
@@ -334,6 +338,8 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x7C)                       \
 #define adpjs3ld(XD, XS, MT, DT)                                            \
         movjx_rr(W(XD), W(XS))                                              \
         adpjs_ld(W(XD), W(MT), W(DT))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
 
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
