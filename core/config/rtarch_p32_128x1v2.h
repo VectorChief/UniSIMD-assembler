@@ -436,6 +436,9 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000287 | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
+        /* mlp horizontal pairwise mul defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
 #define divis_rr(XG, XS)                                                    \

@@ -314,6 +314,9 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x78A0001B | MXM(REG(XD), REG(XS), TmmM))
 
+        /* mlp horizontal pairwise mul defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
 #define divjs_rr(XG, XS)                                                    \

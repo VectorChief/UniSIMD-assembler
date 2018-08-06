@@ -430,6 +430,9 @@
     SHF(EMITW(0x7AB10002 | MXM(TmmM,    TmmM,    0x00)))                    \
         EMITW(0x7880001B | MXM(REG(XD), REG(XS), TmmM))
 
+        /* mlp horizontal pairwise mul defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
 #define divis_rr(XG, XS)                                                    \

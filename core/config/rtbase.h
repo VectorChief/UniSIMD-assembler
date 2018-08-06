@@ -868,6 +868,40 @@ rt_si32 from_mask(rt_si32 mask)
 /**** 128-bit **** SIMD instructions with fixed-32-bit-element ****************/
 /******************************************************************************/
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mlpis_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpis3rr(W(XG), W(XG), W(XS))
+
+#define mlpis_ld(XG, MS, DS)                                                \
+        mlpis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mlpis3rr(XD, XS, XT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mlpis_rx(W(XD))
+
+#define mlpis3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XD), W(MT), W(DT))                                       \
+        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mlpis_rx(W(XD))
+
+#define mlpis_rx(XD) /* not portable, do not use outside */                 \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
 /* cbr (D = cbrt S) */
 
 /*
@@ -2580,6 +2614,34 @@ rt_si32 from_mask(rt_si32 mask)
 /******************************************************************************/
 /**** 128-bit **** SIMD instructions with fixed-64-bit-element ****************/
 /******************************************************************************/
+
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mlpjs_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpjs3rr(W(XG), W(XG), W(XS))
+
+#define mlpjs_ld(XG, MS, DS)                                                \
+        mlpjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mlpjs3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mlpjs_rx(W(XD))
+
+#define mlpjs3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mlpjs_rx(W(XD))
+
+#define mlpjs_rx(XD) /* not portable, do not use outside */                 \
+        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        mults_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        mults_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* cbr (D = cbrt S) */
 
@@ -5644,6 +5706,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define mulls3ld(XD, XS, MT, DT)                                            \
         mulis3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mlpls_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpis_rr(W(XG), W(XS))
+
+#define mlpls_ld(XG, MS, DS)                                                \
+        mlpis_ld(W(XG), W(MS), W(DS))
+
+#define mlpls3rr(XD, XS, XT)                                                \
+        mlpis3rr(W(XD), W(XS), W(XT))
+
+#define mlpls3ld(XD, XS, MT, DT)                                            \
+        mlpis3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
 #define divls_rr(XG, XS)                                                    \
@@ -7672,6 +7746,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mulls3ld(XD, XS, MT, DT)                                            \
         muljs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlpls_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpjs_rr(W(XG), W(XS))
+
+#define mlpls_ld(XG, MS, DS)                                                \
+        mlpjs_ld(W(XG), W(MS), W(DS))
+
+#define mlpls3rr(XD, XS, XT)                                                \
+        mlpjs3rr(W(XD), W(XS), W(XT))
+
+#define mlpls3ld(XD, XS, MT, DT)                                            \
+        mlpjs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 

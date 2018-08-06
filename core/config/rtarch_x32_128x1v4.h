@@ -434,6 +434,9 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x7C)                       \
         movix_rr(W(XD), W(XS))                                              \
         mulis_ld(W(XD), W(MT), W(DT))
 
+        /* mlp horizontal pairwise mul defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
 #define divis_rr(XG, XS)                                                    \

@@ -379,6 +379,9 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
         movjx_rr(W(XD), W(XS))                                              \
         muljs_ld(W(XD), W(MT), W(DT))
 
+        /* mlp horizontal pairwise mul defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
 #define divjs_rr(XG, XS)                                                    \

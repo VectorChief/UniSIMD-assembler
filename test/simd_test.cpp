@@ -3387,6 +3387,7 @@ rt_void c_test25(rt_SIMD_INFOX *info)
         while (j-->0)
         {
             fco1[j] = j < n / (2*Q) ? far0[j*2+0] + far0[j*2+1] : 0.0f;
+            fco2[j] = j < n / (2*Q) ? far0[j*2+0] * far0[j*2+1] : 0.0f;
         }
     }
 }
@@ -3409,20 +3410,30 @@ rt_void s_test25(rt_SIMD_INFOX *info)
 
         movxx_ld(Recx, Mebp, inf_FAR0)
         movxx_ld(Redx, Mebp, inf_FSO1)
+        movxx_ld(Rebx, Mebp, inf_FSO2)
 
         movlx_ld(Xmm0, Mecx, AJ0)
+        movlx_rr(Xmm2, Xmm0)
         addxx_ri(Recx, IB(16))
         adpls_ld(Xmm0, Mecx, AJ0)
+        mlpls_ld(Xmm2, Mecx, AJ0)
         addxx_ri(Recx, IB(16))
         movlx_st(Xmm0, Medx, AJ0)
+        movlx_st(Xmm2, Mebx, AJ0)
         addxx_ri(Redx, IB(16))
+        addxx_ri(Rebx, IB(16))
 
         xorlx_rr(Xmm1, Xmm1)
         movlx_ld(Xmm0, Mecx, AJ0)
+        movlx_rr(Xmm2, Xmm0)
         adpls_rr(Xmm0, Xmm1)
+        mlpls_rr(Xmm2, Xmm1)
         movlx_st(Xmm0, Medx, AJ0)
+        movlx_st(Xmm2, Mebx, AJ0)
         addxx_ri(Redx, IB(16))
+        addxx_ri(Rebx, IB(16))
         movlx_st(Xmm1, Medx, AJ0)
+        movlx_st(Xmm1, Mebx, AJ0)
 
         ASM_LEAVE(info)
     }
@@ -3434,12 +3445,14 @@ rt_void p_test25(rt_SIMD_INFOX *info)
 
     rt_real *far0 = info->far0;
     rt_real *fco1 = info->fco1;
+    rt_real *fco2 = info->fco2;
     rt_real *fso1 = info->fso1;
+    rt_real *fso2 = info->fso2;
 
     j = n / Q;
     while (j-->0)
     {
-        if (FEQ(fco1[j], fso1[j]) && !v_mode)
+        if (FEQ(fco1[j], fso1[j]) && FEQ(fco2[j], fso2[j]) && !v_mode)
         {
             continue;
         }
@@ -3448,11 +3461,11 @@ rt_void p_test25(rt_SIMD_INFOX *info)
                 2*j+0, 2*j+0 < n / Q ? far0[2*j+0] : 0.0f,
                 2*j+1, 2*j+1 < n / Q ? far0[2*j+1] : 0.0f);
 
-        RT_LOGI("C farr[%d]+farr[%d] = %e\n",
-                2*j+0, 2*j+1, fco1[j]);
+        RT_LOGI("C farr[%d]+farr[%d] = %e, farr[%d]*farr[%d] = %e\n",
+                2*j+0, 2*j+1, fco1[j], 2*j+0, 2*j+1, fco2[j]);
 
-        RT_LOGI("S farr[%d]+farr[%d] = %e\n",
-                2*j+0, 2*j+1, fso1[j]);
+        RT_LOGI("S farr[%d]+farr[%d] = %e, farr[%d]*farr[%d] = %e\n",
+                2*j+0, 2*j+1, fso1[j], 2*j+0, 2*j+1, fso2[j]);
     }
 }
 
