@@ -362,8 +362,37 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-        /* mlp horizontal pairwise mul defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
+#define mlpis_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpis3rr(W(XG), W(XG), W(XS))
+
+#define mlpis_ld(XG, MS, DS)                                                \
+        mlpis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mlpis3rr(XD, XS, XT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mlpis_rx(W(XD))
+
+#define mlpis3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XD), W(MT), W(DT))                                       \
+        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mlpis_rx(W(XD))
+
+#define mlpis_rx(XD) /* not portable, do not use outside */                 \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 

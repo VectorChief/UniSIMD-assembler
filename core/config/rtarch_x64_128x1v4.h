@@ -379,8 +379,31 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
         movjx_rr(W(XD), W(XS))                                              \
         muljs_ld(W(XD), W(MT), W(DT))
 
-        /* mlp horizontal pairwise mul defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
+#define mlpjs_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpjs3rr(W(XG), W(XG), W(XS))
+
+#define mlpjs_ld(XG, MS, DS)                                                \
+        mlpjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mlpjs3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mlpjs_rx(W(XD))
+
+#define mlpjs3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mlpjs_rx(W(XD))
+
+#define mlpjs_rx(XD) /* not portable, do not use outside */                 \
+        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        mults_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        mults_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
