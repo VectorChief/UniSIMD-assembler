@@ -734,6 +734,38 @@
         movix_rr(W(XD), W(XS))                                              \
         minis_ld(W(XD), W(MT), W(DT))
 
+#define mnpis_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpis3rr(W(XG), W(XG), W(XS))
+
+#define mnpis_ld(XG, MS, DS)                                                \
+        mnpis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mnpis3rr(XD, XS, XT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mnpis_rx(W(XD))
+
+#define mnpis3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XD), W(MT), W(DT))                                       \
+        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mnpis_rx(W(XD))
+
+#define mnpis_rx(XD) /* not portable, do not use outside */                 \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxis_rr(XG, XS)                                                    \
@@ -752,6 +784,38 @@
 #define maxis3ld(XD, XS, MT, DT)                                            \
         movix_rr(W(XD), W(XS))                                              \
         maxis_ld(W(XD), W(MT), W(DT))
+
+#define mxpis_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpis3rr(W(XG), W(XG), W(XS))
+
+#define mxpis_ld(XG, MS, DS)                                                \
+        mxpis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mxpis3rr(XD, XS, XT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mxpis_rx(W(XD))
+
+#define mxpis3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XD), W(MT), W(DT))                                       \
+        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mxpis_rx(W(XD))
+
+#define mxpis_rx(XD) /* not portable, do not use outside */                 \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 

@@ -435,6 +435,32 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4EE0F400 | MXM(REG(XD), REG(XS), TmmM))
 
+#define mnpjs_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpjs3rr(W(XG), W(XG), W(XS))
+
+#define mnpjs_ld(XG, MS, DS)                                                \
+        mnpjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mnpjs3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mnpjs_rx(W(XD))
+
+#define mnpjs3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mnpjs_rx(W(XD))
+
+#define mnpjs_rx(XD) /* not portable, do not use outside */                 \
+        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        mints_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        mints_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxjs_rr(XG, XS)                                                    \
@@ -450,6 +476,32 @@
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4E60F400 | MXM(REG(XD), REG(XS), TmmM))
+
+#define mxpjs_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpjs3rr(W(XG), W(XG), W(XS))
+
+#define mxpjs_ld(XG, MS, DS)                                                \
+        mxpjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mxpjs3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mxpjs_rx(W(XD))
+
+#define mxpjs3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mxpjs_rx(W(XD))
+
+#define mxpjs_rx(XD) /* not portable, do not use outside */                 \
+        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        maxts_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        maxts_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 

@@ -5749,6 +5749,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define minls3ld(XD, XS, MT, DT)                                            \
         minis3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnpls_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpis_rr(W(XG), W(XS))
+
+#define mnpls_ld(XG, MS, DS)                                                \
+        mnpis_ld(W(XG), W(MS), W(DS))
+
+#define mnpls3rr(XD, XS, XT)                                                \
+        mnpis3rr(W(XD), W(XS), W(XT))
+
+#define mnpls3ld(XD, XS, MT, DT)                                            \
+        mnpis3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxls_rr(XG, XS)                                                    \
@@ -5762,6 +5774,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define maxls3ld(XD, XS, MT, DT)                                            \
         maxis3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxpls_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpis_rr(W(XG), W(XS))
+
+#define mxpls_ld(XG, MS, DS)                                                \
+        mxpis_ld(W(XG), W(MS), W(DS))
+
+#define mxpls3rr(XD, XS, XT)                                                \
+        mxpis3rr(W(XD), W(XS), W(XT))
+
+#define mxpls3ld(XD, XS, MT, DT)                                            \
+        mxpis3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
@@ -7790,6 +7814,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define minls3ld(XD, XS, MT, DT)                                            \
         minjs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnpls_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpjs_rr(W(XG), W(XS))
+
+#define mnpls_ld(XG, MS, DS)                                                \
+        mnpjs_ld(W(XG), W(MS), W(DS))
+
+#define mnpls3rr(XD, XS, XT)                                                \
+        mnpjs3rr(W(XD), W(XS), W(XT))
+
+#define mnpls3ld(XD, XS, MT, DT)                                            \
+        mnpjs3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxls_rr(XG, XS)                                                    \
@@ -7803,6 +7839,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define maxls3ld(XD, XS, MT, DT)                                            \
         maxjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxpls_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpjs_rr(W(XG), W(XS))
+
+#define mxpls_ld(XG, MS, DS)                                                \
+        mxpjs_ld(W(XG), W(MS), W(DS))
+
+#define mxpls3rr(XD, XS, XT)                                                \
+        mxpjs3rr(W(XD), W(XS), W(XT))
+
+#define mxpls3ld(XD, XS, MT, DT)                                            \
+        mxpjs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 

@@ -695,6 +695,51 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x1000044A | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
+#define mnpis_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpis3rr(W(XG), W(XG), W(XS))
+
+#define mnpis_ld(XG, MS, DS)                                                \
+        mnpis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mnpis3rr(XD, XS, XT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mnpis_rx(W(XD))
+
+#define mnpis3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XD), W(MT), W(DT))                                       \
+        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mnpis_rx(W(XD))
+
+#define mnpis_rx(XD) /* not portable, do not use outside */                 \
+        movrs2ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        minrs2ld(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs2st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movrs2ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        minrs2ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movrs2st(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs2ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        minrs2ld(W(XD), Mebp, inf_SCR02(0x04))                              \
+        movrs2st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movrs2ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        minrs2ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
+        movrs2st(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define movrs2ld(XD, MS, DS) /* not portable, do not use outside */         \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C00008E | MXM(REG(XD), Teax & M(MOD(MS) == TPxx), TPxx))   \
+        EMITW(0x1000028C | MXM(REG(XD), SPL(W(DS)), REG(XD)))
+
+#define minrs2ld(XG, MS, DS) /* not portable, do not use outside */         \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C00008E | MXM(TmmM,    Teax & M(MOD(MS) == TPxx), TPxx))   \
+        EMITW(0x1000028C | MXM(TmmM, SPL(W(DS)), TmmM))/* ^ == -1 if true */\
+        EMITW(0x1000044A | MXM(REG(XG), REG(XG), TmmM))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxis_rr(XG, XS)                                                    \
@@ -711,6 +756,51 @@
         EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x1000040A | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
+
+#define mxpis_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpis3rr(W(XG), W(XG), W(XS))
+
+#define mxpis_ld(XG, MS, DS)                                                \
+        mxpis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mxpis3rr(XD, XS, XT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mxpis_rx(W(XD))
+
+#define mxpis3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XD), W(MT), W(DT))                                       \
+        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mxpis_rx(W(XD))
+
+#define mxpis_rx(XD) /* not portable, do not use outside */                 \
+        movrs2ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        maxrs2ld(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs2st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movrs2ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        maxrs2ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movrs2st(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs2ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        maxrs2ld(W(XD), Mebp, inf_SCR02(0x04))                              \
+        movrs2st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movrs2ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        maxrs2ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
+        movrs2st(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define movrs2st(XS, MD, DD) /* not portable, do not use outside */         \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MD), VAL(DD), B2(DD), P2(DD)))  \
+        EMITW(0x1000028C | MXM(TmmM,    SPLT,    REG(XS)))                  \
+        EMITW(0x7C00018E | MXM(TmmM,    Teax & M(MOD(MD) == TPxx), TPxx))   \
+
+#define maxrs2ld(XG, MS, DS) /* not portable, do not use outside */         \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C00008E | MXM(TmmM,    Teax & M(MOD(MS) == TPxx), TPxx))   \
+        EMITW(0x1000028C | MXM(TmmM, SPL(W(DS)), TmmM))/* ^ == -1 if true */\
+        EMITW(0x1000040A | MXM(REG(XG), REG(XG), TmmM))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
