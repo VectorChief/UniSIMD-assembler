@@ -910,7 +910,7 @@
 #define shlox_ri(XG, IS)                                                    \
         shlox3ri(W(XG), W(XG), W(IS))
 
-#define shlox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shlox_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shlox3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shlox3ri(XD, XS, IT)                                                \
@@ -929,7 +929,7 @@
 #define shrox_ri(XG, IS)                                                    \
         shrox3ri(W(XG), W(XG), W(IS))
 
-#define shrox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrox_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrox3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrox3ri(XD, XS, IT)                                                \
@@ -948,7 +948,7 @@
 #define shron_ri(XG, IS)                                                    \
         shron3ri(W(XG), W(XG), W(IS))
 
-#define shron_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shron_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shron3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shron3ri(XD, XS, IT)                                                \

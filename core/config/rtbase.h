@@ -1803,7 +1803,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shlox_ri(XG, IS)                                                    \
         shlcx_ri(W(XG), W(IS))
 
-#define shlox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shlox_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shlcx_ld(W(XG), W(MS), W(DS))
 
 #define shlox3ri(XD, XS, IT)                                                \
@@ -1818,7 +1818,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrox_ri(XG, IS)                                                    \
         shrcx_ri(W(XG), W(IS))
 
-#define shrox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrox_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrcx_ld(W(XG), W(MS), W(DS))
 
 #define shrox3ri(XD, XS, IT)                                                \
@@ -1833,7 +1833,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shron_ri(XG, IS)                                                    \
         shrcn_ri(W(XG), W(IS))
 
-#define shron_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shron_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrcn_ld(W(XG), W(MS), W(DS))
 
 #define shron3ri(XD, XS, IT)                                                \
@@ -2397,7 +2397,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shlox_ri(XG, IS)                                                    \
         shlix_ri(W(XG), W(IS))
 
-#define shlox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shlox_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shlix_ld(W(XG), W(MS), W(DS))
 
 #define shlox3ri(XD, XS, IT)                                                \
@@ -2412,7 +2412,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrox_ri(XG, IS)                                                    \
         shrix_ri(W(XG), W(IS))
 
-#define shrox_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrox_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrix_ld(W(XG), W(MS), W(DS))
 
 #define shrox3ri(XD, XS, IT)                                                \
@@ -2427,7 +2427,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shron_ri(XG, IS)                                                    \
         shrin_ri(W(XG), W(IS))
 
-#define shron_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shron_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrin_ld(W(XG), W(MS), W(DS))
 
 #define shron3ri(XD, XS, IT)                                                \
@@ -3516,7 +3516,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shlqx_ri(XG, IS)                                                    \
         shldx_ri(W(XG), W(IS))
 
-#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shldx_ld(W(XG), W(MS), W(DS))
 
 #define shlqx3ri(XD, XS, IT)                                                \
@@ -3531,7 +3531,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrqx_ri(XG, IS)                                                    \
         shrdx_ri(W(XG), W(IS))
 
-#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrdx_ld(W(XG), W(MS), W(DS))
 
 #define shrqx3ri(XD, XS, IT)                                                \
@@ -3546,7 +3546,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrqn_ri(XG, IS)                                                    \
         shrdn_ri(W(XG), W(IS))
 
-#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrdn_ld(W(XG), W(MS), W(DS))
 
 #define shrqn3ri(XD, XS, IT)                                                \
@@ -4110,7 +4110,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shlqx_ri(XG, IS)                                                    \
         shljx_ri(W(XG), W(IS))
 
-#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shljx_ld(W(XG), W(MS), W(DS))
 
 #define shlqx3ri(XD, XS, IT)                                                \
@@ -4125,7 +4125,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrqx_ri(XG, IS)                                                    \
         shrjx_ri(W(XG), W(IS))
 
-#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrjx_ld(W(XG), W(MS), W(DS))
 
 #define shrqx3ri(XD, XS, IT)                                                \
@@ -4140,7 +4140,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrqn_ri(XG, IS)                                                    \
         shrjn_ri(W(XG), W(IS))
 
-#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrjn_ld(W(XG), W(MS), W(DS))
 
 #define shrqn3ri(XD, XS, IT)                                                \
@@ -4800,7 +4800,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shlpx_ri(XG, IS)                                                    \
         shlox_ri(W(XG), W(IS))
 
-#define shlpx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shlpx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shlox_ld(W(XG), W(MS), W(DS))
 
 #define shlpx3ri(XD, XS, IT)                                                \
@@ -4815,7 +4815,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrpx_ri(XG, IS)                                                    \
         shrox_ri(W(XG), W(IS))
 
-#define shrpx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrpx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrox_ld(W(XG), W(MS), W(DS))
 
 #define shrpx3ri(XD, XS, IT)                                                \
@@ -4830,7 +4830,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrpn_ri(XG, IS)                                                    \
         shron_ri(W(XG), W(IS))
 
-#define shrpn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrpn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shron_ld(W(XG), W(MS), W(DS))
 
 #define shrpn3ri(XD, XS, IT)                                                \
@@ -5392,7 +5392,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shlfx_ri(XG, IS)                                                    \
         shlcx_ri(W(XG), W(IS))
 
-#define shlfx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shlfx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shlcx_ld(W(XG), W(MS), W(DS))
 
 #define shlfx3ri(XD, XS, IT)                                                \
@@ -5407,7 +5407,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrfx_ri(XG, IS)                                                    \
         shrcx_ri(W(XG), W(IS))
 
-#define shrfx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrfx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrcx_ld(W(XG), W(MS), W(DS))
 
 #define shrfx3ri(XD, XS, IT)                                                \
@@ -5422,7 +5422,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrfn_ri(XG, IS)                                                    \
         shrcn_ri(W(XG), W(IS))
 
-#define shrfn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrfn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrcn_ld(W(XG), W(MS), W(DS))
 
 #define shrfn3ri(XD, XS, IT)                                                \
@@ -6008,7 +6008,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shllx_ri(XG, IS)                                                    \
         shlix_ri(W(XG), W(IS))
 
-#define shllx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shllx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shlix_ld(W(XG), W(MS), W(DS))
 
 #define shllx3ri(XD, XS, IT)                                                \
@@ -6023,7 +6023,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrlx_ri(XG, IS)                                                    \
         shrix_ri(W(XG), W(IS))
 
-#define shrlx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrlx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrix_ld(W(XG), W(MS), W(DS))
 
 #define shrlx3ri(XD, XS, IT)                                                \
@@ -6038,7 +6038,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrln_ri(XG, IS)                                                    \
         shrin_ri(W(XG), W(IS))
 
-#define shrln_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrln_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrin_ld(W(XG), W(MS), W(DS))
 
 #define shrln3ri(XD, XS, IT)                                                \
@@ -6841,7 +6841,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shlpx_ri(XG, IS)                                                    \
         shlqx_ri(W(XG), W(IS))
 
-#define shlpx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shlpx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shlqx_ld(W(XG), W(MS), W(DS))
 
 #define shlpx3ri(XD, XS, IT)                                                \
@@ -6856,7 +6856,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrpx_ri(XG, IS)                                                    \
         shrqx_ri(W(XG), W(IS))
 
-#define shrpx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrpx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrqx_ld(W(XG), W(MS), W(DS))
 
 #define shrpx3ri(XD, XS, IT)                                                \
@@ -6871,7 +6871,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrpn_ri(XG, IS)                                                    \
         shrqn_ri(W(XG), W(IS))
 
-#define shrpn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrpn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrqn_ld(W(XG), W(MS), W(DS))
 
 #define shrpn3ri(XD, XS, IT)                                                \
@@ -7433,7 +7433,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shlfx_ri(XG, IS)                                                    \
         shldx_ri(W(XG), W(IS))
 
-#define shlfx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shlfx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shldx_ld(W(XG), W(MS), W(DS))
 
 #define shlfx3ri(XD, XS, IT)                                                \
@@ -7448,7 +7448,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrfx_ri(XG, IS)                                                    \
         shrdx_ri(W(XG), W(IS))
 
-#define shrfx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrfx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrdx_ld(W(XG), W(MS), W(DS))
 
 #define shrfx3ri(XD, XS, IT)                                                \
@@ -7463,7 +7463,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrfn_ri(XG, IS)                                                    \
         shrdn_ri(W(XG), W(IS))
 
-#define shrfn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrfn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrdn_ld(W(XG), W(MS), W(DS))
 
 #define shrfn3ri(XD, XS, IT)                                                \
@@ -8049,7 +8049,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shllx_ri(XG, IS)                                                    \
         shljx_ri(W(XG), W(IS))
 
-#define shllx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shllx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shljx_ld(W(XG), W(MS), W(DS))
 
 #define shllx3ri(XD, XS, IT)                                                \
@@ -8064,7 +8064,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrlx_ri(XG, IS)                                                    \
         shrjx_ri(W(XG), W(IS))
 
-#define shrlx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrlx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrjx_ld(W(XG), W(MS), W(DS))
 
 #define shrlx3ri(XD, XS, IT)                                                \
@@ -8079,7 +8079,7 @@ rt_si32 from_mask(rt_si32 mask)
 #define shrln_ri(XG, IS)                                                    \
         shrjn_ri(W(XG), W(IS))
 
-#define shrln_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrln_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrjn_ld(W(XG), W(MS), W(DS))
 
 #define shrln3ri(XD, XS, IT)                                                \

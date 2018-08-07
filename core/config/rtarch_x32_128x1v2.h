@@ -900,7 +900,7 @@
 #define shlix_ri(XG, IS)                                                    \
         shlix3ri(W(XG), W(XG), W(IS))
 
-#define shlix_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shlix_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shlix3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shlix3ri(XD, XS, IT)                                                \
@@ -919,7 +919,7 @@
 #define shrix_ri(XG, IS)                                                    \
         shrix3ri(W(XG), W(XG), W(IS))
 
-#define shrix_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrix_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrix3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrix3ri(XD, XS, IT)                                                \
@@ -938,7 +938,7 @@
 #define shrin_ri(XG, IS)                                                    \
         shrin3ri(W(XG), W(XG), W(IS))
 
-#define shrin_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrin_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrin3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrin3ri(XD, XS, IT)                                                \

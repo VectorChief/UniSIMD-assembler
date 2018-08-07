@@ -978,7 +978,7 @@
 #define shldx_ri(XG, IS)                                                    \
         shldx3ri(W(XG), W(XG), W(IS))
 
-#define shldx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shldx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shldx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shldx3ri(XD, XS, IT)                                                \
@@ -1006,7 +1006,7 @@
 #define shrdx_ri(XG, IS)                                                    \
         shrdx3ri(W(XG), W(XG), W(IS))
 
-#define shrdx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrdx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrdx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrdx3ri(XD, XS, IT)                                                \
@@ -1034,7 +1034,7 @@
 #define shrdn_ri(XG, IS)                                                    \
         shrdn3ri(W(XG), W(XG), W(IS))
 
-#define shrdn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrdn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrdn3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrdn3ri(XD, XS, IT)                                                \
@@ -1238,7 +1238,7 @@
 #define shldx_ri(XG, IS)                                                    \
         shldx3ri(W(XG), W(XG), W(IS))
 
-#define shldx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shldx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shldx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shldx3ri(XD, XS, IT)                                                \
@@ -1260,7 +1260,7 @@
 #define shrdx_ri(XG, IS)                                                    \
         shrdx3ri(W(XG), W(XG), W(IS))
 
-#define shrdx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrdx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrdx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrdx3ri(XD, XS, IT)                                                \
@@ -1282,7 +1282,7 @@
 #define shrdn_ri(XG, IS)                                                    \
         shrdn3ri(W(XG), W(XG), W(IS))
 
-#define shrdn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrdn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrdn3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrdn3ri(XD, XS, IT)                                                \

@@ -1158,7 +1158,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xFB)                       \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
 
-#define shljx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shljx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
 ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xF3)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
@@ -1179,7 +1179,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xF3)                       \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
 
-#define shrjx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrjx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
 ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
@@ -1198,7 +1198,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
 #define shrjn_ri(XG, IS)                                                    \
         shrjn3ri(W(XG), W(XG), W(IS))
 
-#define shrjn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrjn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrjn3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrjn3ri(XD, XS, IT)                                                \

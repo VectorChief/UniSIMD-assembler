@@ -1232,7 +1232,7 @@
 #define shlqx_ri(XG, IS)                                                    \
         shlqx3ri(W(XG), W(XG), W(IS))
 
-#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shlqx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shlqx3ri(XD, XS, IT)                                                \
@@ -1271,7 +1271,7 @@
 #define shrqx_ri(XG, IS)                                                    \
         shrqx3ri(W(XG), W(XG), W(IS))
 
-#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrqx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrqx3ri(XD, XS, IT)                                                \
@@ -1468,7 +1468,7 @@
 #define shlqx_ri(XG, IS)                                                    \
         shlqx3ri(W(XG), W(XG), W(IS))
 
-#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shlqx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shlqx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shlqx3ri(XD, XS, IT)                                                \
@@ -1493,7 +1493,7 @@
 #define shrqx_ri(XG, IS)                                                    \
         shrqx3ri(W(XG), W(XG), W(IS))
 
-#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrqx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrqx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrqx3ri(XD, XS, IT)                                                \
@@ -1566,7 +1566,7 @@
 #define shrqn_ri(XG, IS)                                                    \
         shrqn3ri(W(XG), W(XG), W(IS))
 
-#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrqn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrqn3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrqn3ri(XD, XS, IT)                                                \

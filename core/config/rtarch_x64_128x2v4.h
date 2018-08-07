@@ -1248,7 +1248,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xFB)                       \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
 
-#define shldx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shldx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
 ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0xF3)                       \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
@@ -1275,7 +1275,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xF3)                       \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
 
-#define shrdx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrdx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
 ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         MRM(REG(XG),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
@@ -1297,7 +1297,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
 #define shrdn_ri(XG, IS)                                                    \
         shrdn3ri(W(XG), W(XG), W(IS))
 
-#define shrdn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrdn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrdn3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrdn3ri(XD, XS, IT)                                                \
