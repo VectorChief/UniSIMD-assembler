@@ -882,8 +882,9 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define shrwx_ri(RG, IS)                                                    \
-        EMITW(0xE1A00020 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
-                                                 (0x1F & VAL(IS)) << 7)
+        EMITW(0xE1A00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000020) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F & VAL(IS)) << 7)
 
 #define shrwx_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
@@ -920,8 +921,9 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define shrwz_ri(RG, IS)                                                    \
-        EMITW(0xE1B00020 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
-                                                 (0x1F & VAL(IS)) << 7)
+        EMITW(0xE1B00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000020) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F & VAL(IS)) << 7)
 
 #define shrwz_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
@@ -958,8 +960,9 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define shrwn_ri(RG, IS)                                                    \
-        EMITW(0xE1A00040 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
-                                                 (0x1F & VAL(IS)) << 7)
+        EMITW(0xE1A00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000040) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F & VAL(IS)) << 7)
 
 #define shrwn_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
