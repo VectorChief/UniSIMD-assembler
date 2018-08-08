@@ -851,6 +851,11 @@ rt_si32 from_mask(rt_si32 mask)
 
 #if (defined RT_SIMD_CODE)
 
+/****************** original adrpx instruction, SIMD-aligned ******************/
+
+#define adrpx_ld(RD, MS, DS)                                                \
+        adrxx_ld(W(RD), W(MS), W(DS))
+
 /****************** original CHECK_MASK macro (configurable) ******************/
 
 #define CHECK_MASK(lb, mask, XS) /* destroys Reax, jump lb if mask == S */  \
@@ -9319,8 +9324,6 @@ rt_si32 from_mask(rt_si32 mask)
 
      /* adrxx_ld(RD, MS, DS) is defined in 32-bit rtarch_***.h files */
 
-     /* adrpx_ld(RD, MS, DS) in 32-bit rtarch_***_***.h files, SIMD-aligned */
-
 /************************* pointer-sized instructions *************************/
 
 /* label (D = Reax = adr lb)
@@ -10080,8 +10083,6 @@ rt_si32 from_mask(rt_si32 mask)
  * set-flags: no */
 
      /* adrxx_ld(RD, MS, DS) is defined in 32-bit rtarch_***.h files */
-
-     /* adrpx_ld(RD, MS, DS) in 32-bit rtarch_***_***.h files, SIMD-aligned */
 
 /************************* pointer-sized instructions *************************/
 

@@ -183,12 +183,6 @@
 /**********************************   VSX   ***********************************/
 /******************************************************************************/
 
-/* adr (D = adr S) */
-
-#define adrpx_ld(RD, MS, DS) /* RD is a BASE reg, MS/DS is SIMD-aligned */  \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(REG(RD), MOD(MS), VAL(DS), B2(DS), P2(DS)))
-
 /***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */

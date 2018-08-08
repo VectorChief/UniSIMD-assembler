@@ -1267,8 +1267,6 @@
 
      /* adrxx_ld(RD, MS, DS) is defined in 32-bit rtarch_***.h files */
 
-     /* adrpx_ld(RD, MS, DS) in 32-bit rtarch_***_***.h files, SIMD-aligned */
-
 /************************* pointer-sized instructions *************************/
 
 /* label (D = Reax = adr lb)

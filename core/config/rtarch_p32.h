@@ -1693,8 +1693,6 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C3(DS), EMPTY2)   \
         EMITW(0x7C000214 | MRM(REG(RD), MOD(MS), TDxx))
 
-     /* adrpx_ld(RD, MS, DS) in 32-bit rtarch_***_***.h files, SIMD-aligned */
-
 /************************* pointer-sized instructions *************************/
 
 /* label (D = Reax = adr lb)

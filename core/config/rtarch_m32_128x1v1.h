@@ -191,12 +191,6 @@
 /**********************************   MSA   ***********************************/
 /******************************************************************************/
 
-/* adr (D = adr S) */
-
-#define adrpx_ld(RD, MS, DS) /* RD is a BASE reg, MS/DS is SIMD-aligned */  \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C3(DS), EMPTY2)   \
-        EMITW(0x00000021 | MRM(REG(RD), MOD(MS), TDxx) | ADR)
-
 /***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */

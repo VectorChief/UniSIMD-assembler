@@ -1577,8 +1577,6 @@
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-     /* adrpx_ld(RD, MS, DS) in 32-bit rtarch_***_***.h files, SIMD-aligned */
-
 /************************* pointer-sized instructions *************************/
 
 /* label (D = Reax = adr lb)

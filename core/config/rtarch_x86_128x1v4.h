@@ -138,13 +138,6 @@
 /**********************************   SSE   ***********************************/
 /******************************************************************************/
 
-/* adr (D = adr S) */
-
-#define adrpx_ld(RD, MS, DS) /* RD is a BASE reg, MS/DS is SIMD-aligned */  \
-        EMITB(0x8D)                                                         \
-        MRM(REG(RD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
 /***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
