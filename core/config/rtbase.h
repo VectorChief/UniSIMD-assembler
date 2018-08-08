@@ -5485,6 +5485,12 @@ rt_si32 from_mask(rt_si32 mask)
 /**** 128-bit **** SIMD instructions with configurable-element **** 32-bit ****/
 /******************************************************************************/
 
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmlx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        elmix_st(W(XS), W(MD), W(DD))
+
 /***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
@@ -7549,6 +7555,12 @@ rt_si32 from_mask(rt_si32 mask)
 /******************************************************************************/
 /**** 128-bit **** SIMD instructions with configurable-element **** 64-bit ****/
 /******************************************************************************/
+
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmlx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        elmjx_st(W(XS), W(MD), W(DD))
 
 /***************   packed double-precision generic move/logic   ***************/
 

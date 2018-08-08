@@ -146,6 +146,14 @@
 #define SHX(x)  x
 #endif /* RT_ELEM_COMPAT_MSA, RT_ENDIAN */
 
+#if RT_ENDIAN == 1
+#define SBF(x)  x
+#define SBX(x)
+#else  /* RT_ENDIAN */
+#define SBF(x)
+#define SBX(x)  x
+#endif /* RT_ENDIAN */
+
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -190,6 +198,15 @@
 /******************************************************************************/
 /**********************************   MSA   ***********************************/
 /******************************************************************************/
+
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmix_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
+    SBF(EMITW(0x7AB10002 | MXM(TmmM,    REG(XS), 0x00)))                    \
+    SBF(EMITW(0xE4000000 | MDM(TmmM,    MOD(MD), VAL(DD), B1(DD), P1(DD)))) \
+    SBX(EMITW(0xE4000000 | MDM(REG(XS), MOD(MD), VAL(DD), B1(DD), P1(DD))))
 
 /***************   packed single-precision generic move/logic   ***************/
 

@@ -101,6 +101,12 @@
 /**********************************   MPE   ***********************************/
 /******************************************************************************/
 
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmjx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        movts_st(W(XS), W(MD), W(DD))
+
 /***************   packed double-precision generic move/logic   ***************/
 
 /* mov (D = S) */

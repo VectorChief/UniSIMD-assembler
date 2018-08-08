@@ -101,6 +101,15 @@
 /**********************************   VSX   ***********************************/
 /******************************************************************************/
 
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmjx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MD), VAL(DD), B2(DD), P2(DD)))  \
+        EMITW(0x7C000599 | MXM(REG(XS), Teax & M(MOD(MD) == TPxx), TPxx))   \
+                                                       /* ^ == -1 if true */
+
 /***************   packed double-precision generic move/logic   ***************/
 
 /* mov (D = S) */

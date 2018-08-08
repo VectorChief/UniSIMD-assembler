@@ -138,6 +138,12 @@
 /**********************************   SSE   ***********************************/
 /******************************************************************************/
 
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmix_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        movrs_st(W(XS), W(MD), W(DD))
+
 /***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
