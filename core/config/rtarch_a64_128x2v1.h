@@ -101,6 +101,12 @@
 /**********************************   MPE   ***********************************/
 /******************************************************************************/
 
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmdx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        elmjx_st(W(XS), W(MD), W(DD))
+
 /***************   packed double-precision generic move/logic   ***************/
 
 /* mov (D = S) */
@@ -286,6 +292,24 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4E60D400 | MXM(RYG(XD), RYG(XS), TmmM))
 
+#define adpds_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpds3rr(W(XG), W(XG), W(XS))
+
+#define adpds_ld(XG, MS, DS)                                                \
+        adpds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adpds3rr(XD, XS, XT)                                                \
+        EMITW(0x6E60D400 | MXM(REG(XD), REG(XS), RYG(XS)))                  \
+        EMITW(0x6E60D400 | MXM(RYG(XD), REG(XT), RYG(XT)))
+
+#define adpds3ld(XD, XS, MT, DT)                                            \
+        EMITW(0x6E60D400 | MXM(REG(XD), REG(XS), RYG(XS)))                  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(RYG(XD), MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x6E60D400 | MXM(RYG(XD), RYG(XD), TmmM))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subds_rr(XG, XS)                                                    \
@@ -325,6 +349,38 @@
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x6E60DC00 | MXM(RYG(XD), RYG(XS), TmmM))
+
+#define mlpds_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpds3rr(W(XG), W(XG), W(XS))
+
+#define mlpds_ld(XG, MS, DS)                                                \
+        mlpds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mlpds3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mlpds_rx(W(XD))
+
+#define mlpds3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mlpds_rx(W(XD))
+
+#define mlpds_rx(XD) /* not portable, do not use outside */                 \
+        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        mults_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movts_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        mults_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        mults_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movts_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        mults_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x18))                              \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -469,6 +525,38 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4EE0F400 | MXM(RYG(XD), RYG(XS), TmmM))
 
+#define mnpds_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpds3rr(W(XG), W(XG), W(XS))
+
+#define mnpds_ld(XG, MS, DS)                                                \
+        mnpds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mnpds3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mnpds_rx(W(XD))
+
+#define mnpds3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mnpds_rx(W(XD))
+
+#define mnpds_rx(XD) /* not portable, do not use outside */                 \
+        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        mints_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movts_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        mints_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        mints_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movts_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        mints_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x18))                              \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxds_rr(XG, XS)                                                    \
@@ -488,6 +576,38 @@
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4E60F400 | MXM(RYG(XD), RYG(XS), TmmM))
+
+#define mxpds_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpds3rr(W(XG), W(XG), W(XS))
+
+#define mxpds_ld(XG, MS, DS)                                                \
+        mxpds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mxpds3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mxpds_rx(W(XD))
+
+#define mxpds3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mxpds_rx(W(XD))
+
+#define mxpds_rx(XD) /* not portable, do not use outside */                 \
+        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        maxts_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movts_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        maxts_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        maxts_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movts_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        maxts_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x18))                              \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 

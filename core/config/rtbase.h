@@ -4893,6 +4893,12 @@ rt_si32 from_mask(rt_si32 mask)
 /**** 256-bit **** SIMD instructions with configurable-element **** 32-bit ****/
 /******************************************************************************/
 
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmfx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        elmcx_st(W(XS), W(MD), W(DD))
+
 /***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
@@ -5017,6 +5023,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define addfs3ld(XD, XS, MT, DT)                                            \
         addcs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adpfs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpcs_rr(W(XG), W(XS))
+
+#define adpfs_ld(XG, MS, DS)                                                \
+        adpcs_ld(W(XG), W(MS), W(DS))
+
+#define adpfs3rr(XD, XS, XT)                                                \
+        adpcs3rr(W(XD), W(XS), W(XT))
+
+#define adpfs3ld(XD, XS, MT, DT)                                            \
+        adpcs3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subfs_rr(XG, XS)                                                    \
@@ -5044,6 +5062,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mulfs3ld(XD, XS, MT, DT)                                            \
         mulcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlpfs_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpcs_rr(W(XG), W(XS))
+
+#define mlpfs_ld(XG, MS, DS)                                                \
+        mlpcs_ld(W(XG), W(MS), W(DS))
+
+#define mlpfs3rr(XD, XS, XT)                                                \
+        mlpcs3rr(W(XD), W(XS), W(XT))
+
+#define mlpfs3ld(XD, XS, MT, DT)                                            \
+        mlpcs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -5138,6 +5168,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define minfs3ld(XD, XS, MT, DT)                                            \
         mincs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnpfs_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpcs_rr(W(XG), W(XS))
+
+#define mnpfs_ld(XG, MS, DS)                                                \
+        mnpcs_ld(W(XG), W(MS), W(DS))
+
+#define mnpfs3rr(XD, XS, XT)                                                \
+        mnpcs3rr(W(XD), W(XS), W(XT))
+
+#define mnpfs3ld(XD, XS, MT, DT)                                            \
+        mnpcs3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxfs_rr(XG, XS)                                                    \
@@ -5151,6 +5193,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define maxfs3ld(XD, XS, MT, DT)                                            \
         maxcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxpfs_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpcs_rr(W(XG), W(XS))
+
+#define mxpfs_ld(XG, MS, DS)                                                \
+        mxpcs_ld(W(XG), W(MS), W(DS))
+
+#define mxpfs3rr(XD, XS, XT)                                                \
+        mxpcs3rr(W(XD), W(XS), W(XT))
+
+#define mxpfs3ld(XD, XS, MT, DT)                                            \
+        mxpcs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
@@ -6964,6 +7018,12 @@ rt_si32 from_mask(rt_si32 mask)
 /**** 256-bit **** SIMD instructions with configurable-element **** 64-bit ****/
 /******************************************************************************/
 
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmfx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        elmdx_st(W(XS), W(MD), W(DD))
+
 /***************   packed double-precision generic move/logic   ***************/
 
 /* mov (D = S) */
@@ -7088,6 +7148,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define addfs3ld(XD, XS, MT, DT)                                            \
         addds3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adpfs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpds_rr(W(XG), W(XS))
+
+#define adpfs_ld(XG, MS, DS)                                                \
+        adpds_ld(W(XG), W(MS), W(DS))
+
+#define adpfs3rr(XD, XS, XT)                                                \
+        adpds3rr(W(XD), W(XS), W(XT))
+
+#define adpfs3ld(XD, XS, MT, DT)                                            \
+        adpds3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subfs_rr(XG, XS)                                                    \
@@ -7115,6 +7187,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mulfs3ld(XD, XS, MT, DT)                                            \
         mulds3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlpfs_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpds_rr(W(XG), W(XS))
+
+#define mlpfs_ld(XG, MS, DS)                                                \
+        mlpds_ld(W(XG), W(MS), W(DS))
+
+#define mlpfs3rr(XD, XS, XT)                                                \
+        mlpds3rr(W(XD), W(XS), W(XT))
+
+#define mlpfs3ld(XD, XS, MT, DT)                                            \
+        mlpds3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -7209,6 +7293,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define minfs3ld(XD, XS, MT, DT)                                            \
         minds3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnpfs_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpds_rr(W(XG), W(XS))
+
+#define mnpfs_ld(XG, MS, DS)                                                \
+        mnpds_ld(W(XG), W(MS), W(DS))
+
+#define mnpfs3rr(XD, XS, XT)                                                \
+        mnpds3rr(W(XD), W(XS), W(XT))
+
+#define mnpfs3ld(XD, XS, MT, DT)                                            \
+        mnpds3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxfs_rr(XG, XS)                                                    \
@@ -7222,6 +7318,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define maxfs3ld(XD, XS, MT, DT)                                            \
         maxds3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxpfs_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpds_rr(W(XG), W(XS))
+
+#define mxpfs_ld(XG, MS, DS)                                                \
+        mxpds_ld(W(XG), W(MS), W(DS))
+
+#define mxpfs3rr(XD, XS, XT)                                                \
+        mxpds3rr(W(XD), W(XS), W(XT))
+
+#define mxpfs3ld(XD, XS, MT, DT)                                            \
+        mxpds3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
