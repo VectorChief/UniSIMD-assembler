@@ -126,6 +126,12 @@
 /**********************************   AVX   ***********************************/
 /******************************************************************************/
 
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmox_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        elmix_st(W(XS), W(MD), W(DD))
+
 /***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
@@ -446,6 +452,50 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
+#define adpos_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpos3rr(W(XG), W(XG), W(XS))
+
+#define adpos_ld(XG, MS, DS)                                                \
+        adpos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adpos3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        adpos_rx(W(XD))
+
+#define adpos3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        adpos_rx(W(XD))
+
+#define adpos_rx(XD) /* not portable, do not use outside */                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        adpis_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        adpis_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x40))                              \
+        adpis_ld(W(XD), Mebp, inf_SCR01(0x50))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x60))                              \
+        adpis_ld(W(XD), Mebp, inf_SCR01(0x70))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x30))                              \
+        movix_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        adpis_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x40))                              \
+        movix_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        adpis_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x50))                              \
+        movix_ld(W(XD), Mebp, inf_SCR02(0x40))                              \
+        adpis_ld(W(XD), Mebp, inf_SCR02(0x50))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x60))                              \
+        movix_ld(W(XD), Mebp, inf_SCR02(0x60))                              \
+        adpis_ld(W(XD), Mebp, inf_SCR02(0x70))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x70))                              \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subos_rr(XG, XS)                                                    \
@@ -489,6 +539,122 @@
     ADR EVX(RMB(XD), RXB(MT), REM(XS), K, 0, 1) EMITB(0x59)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
+
+#define mlpos_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpos3rr(W(XG), W(XG), W(XS))
+
+#define mlpos_ld(XG, MS, DS)                                                \
+        mlpos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mlpos3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mlpos_rx(W(XD))
+
+#define mlpos3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mlpos_rx(W(XD))
+
+#define mlpos_rx(XD) /* not portable, do not use outside */                 \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x14))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x1C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x24))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x28))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x2C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x14))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x34))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x18))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x38))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x3C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x40))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x44))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x48))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x4C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x24))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x50))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x54))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x28))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x58))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x5C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x2C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x60))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x64))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x30))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x68))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x6C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x34))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x70))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x74))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x38))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x78))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR01(0x7C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x3C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x40))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x44))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x14))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x48))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x4C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x24))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x50))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x28))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x2C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x54))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x34))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x58))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x3C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x5C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x40))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x44))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x60))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x48))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x4C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x64))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x50))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x54))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x68))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x58))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x5C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x6C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x60))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x64))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x70))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x68))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x6C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x74))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x70))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x74))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x78))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x78))                              \
+        mulrs_ld(W(XD), Mebp, inf_SCR02(0x7C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x7C))                              \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -666,6 +832,122 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
+#define mnpos_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpos3rr(W(XG), W(XG), W(XS))
+
+#define mnpos_ld(XG, MS, DS)                                                \
+        mnpos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mnpos3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mnpos_rx(W(XD))
+
+#define mnpos3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mnpos_rx(W(XD))
+
+#define mnpos_rx(XD) /* not portable, do not use outside */                 \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x14))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x1C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x24))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x28))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x2C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x14))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x34))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x18))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x38))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x3C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x40))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x44))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x48))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x4C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x24))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x50))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x54))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x28))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x58))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x5C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x2C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x60))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x64))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x30))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x68))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x6C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x34))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x70))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x74))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x38))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x78))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR01(0x7C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x3C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x40))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x44))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x14))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x48))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x4C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x24))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x50))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x28))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x2C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x54))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x34))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x58))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x3C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x5C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x40))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x44))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x60))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x48))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x4C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x64))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x50))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x54))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x68))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x58))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x5C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x6C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x60))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x64))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x70))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x68))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x6C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x74))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x70))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x74))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x78))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x78))                              \
+        minrs_ld(W(XD), Mebp, inf_SCR02(0x7C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x7C))                              \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxos_rr(XG, XS)                                                    \
@@ -687,6 +969,122 @@
     ADR EVX(RMB(XD), RXB(MT), REM(XS), K, 0, 1) EMITB(0x5F)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
+
+#define mxpos_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpos3rr(W(XG), W(XG), W(XS))
+
+#define mxpos_ld(XG, MS, DS)                                                \
+        mxpos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mxpos3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mxpos_rx(W(XD))
+
+#define mxpos3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mxpos_rx(W(XD))
+
+#define mxpos_rx(XD) /* not portable, do not use outside */                 \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x14))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x1C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x24))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x28))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x2C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x14))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x34))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x18))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x38))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x3C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x40))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x44))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x48))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x4C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x24))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x50))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x54))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x28))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x58))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x5C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x2C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x60))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x64))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x30))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x68))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x6C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x34))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x70))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x74))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x38))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x78))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR01(0x7C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x3C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x40))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x44))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x14))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x48))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x4C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x24))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x50))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x28))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x2C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x54))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x34))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x58))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x3C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x5C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x40))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x44))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x60))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x48))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x4C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x64))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x50))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x54))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x68))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x58))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x5C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x6C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x60))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x64))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x70))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x68))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x6C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x74))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x70))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x74))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x78))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x78))                              \
+        maxrs_ld(W(XD), Mebp, inf_SCR02(0x7C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x7C))                              \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 

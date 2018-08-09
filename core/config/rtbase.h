@@ -1304,6 +1304,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #elif (RT_SIMD == 256)
 
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmox_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        elmcx_st(W(XS), W(MD), W(DD))
+
 /***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
@@ -1428,6 +1434,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define addos3ld(XD, XS, MT, DT)                                            \
         addcs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adpos_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpcs_rr(W(XG), W(XS))
+
+#define adpos_ld(XG, MS, DS)                                                \
+        adpcs_ld(W(XG), W(MS), W(DS))
+
+#define adpos3rr(XD, XS, XT)                                                \
+        adpcs3rr(W(XD), W(XS), W(XT))
+
+#define adpos3ld(XD, XS, MT, DT)                                            \
+        adpcs3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subos_rr(XG, XS)                                                    \
@@ -1455,6 +1473,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mulos3ld(XD, XS, MT, DT)                                            \
         mulcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlpos_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpcs_rr(W(XG), W(XS))
+
+#define mlpos_ld(XG, MS, DS)                                                \
+        mlpcs_ld(W(XG), W(MS), W(DS))
+
+#define mlpos3rr(XD, XS, XT)                                                \
+        mlpcs3rr(W(XD), W(XS), W(XT))
+
+#define mlpos3ld(XD, XS, MT, DT)                                            \
+        mlpcs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -1549,6 +1579,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define minos3ld(XD, XS, MT, DT)                                            \
         mincs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnpos_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpcs_rr(W(XG), W(XS))
+
+#define mnpos_ld(XG, MS, DS)                                                \
+        mnpcs_ld(W(XG), W(MS), W(DS))
+
+#define mnpos3rr(XD, XS, XT)                                                \
+        mnpcs3rr(W(XD), W(XS), W(XT))
+
+#define mnpos3ld(XD, XS, MT, DT)                                            \
+        mnpcs3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxos_rr(XG, XS)                                                    \
@@ -1562,6 +1604,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define maxos3ld(XD, XS, MT, DT)                                            \
         maxcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxpos_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpcs_rr(W(XG), W(XS))
+
+#define mxpos_ld(XG, MS, DS)                                                \
+        mxpcs_ld(W(XG), W(MS), W(DS))
+
+#define mxpos3rr(XD, XS, XT)                                                \
+        mxpcs3rr(W(XD), W(XS), W(XT))
+
+#define mxpos3ld(XD, XS, MT, DT)                                            \
+        mxpcs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
@@ -1898,6 +1952,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #elif (RT_SIMD == 128)
 
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmox_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        elmix_st(W(XS), W(MD), W(DD))
+
 /***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
@@ -2022,6 +2082,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define addos3ld(XD, XS, MT, DT)                                            \
         addis3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adpos_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpis_rr(W(XG), W(XS))
+
+#define adpos_ld(XG, MS, DS)                                                \
+        adpis_ld(W(XG), W(MS), W(DS))
+
+#define adpos3rr(XD, XS, XT)                                                \
+        adpis3rr(W(XD), W(XS), W(XT))
+
+#define adpos3ld(XD, XS, MT, DT)                                            \
+        adpis3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subos_rr(XG, XS)                                                    \
@@ -2049,6 +2121,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mulos3ld(XD, XS, MT, DT)                                            \
         mulis3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlpos_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpis_rr(W(XG), W(XS))
+
+#define mlpos_ld(XG, MS, DS)                                                \
+        mlpis_ld(W(XG), W(MS), W(DS))
+
+#define mlpos3rr(XD, XS, XT)                                                \
+        mlpis3rr(W(XD), W(XS), W(XT))
+
+#define mlpos3ld(XD, XS, MT, DT)                                            \
+        mlpis3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -2143,6 +2227,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define minos3ld(XD, XS, MT, DT)                                            \
         minis3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnpos_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpis_rr(W(XG), W(XS))
+
+#define mnpos_ld(XG, MS, DS)                                                \
+        mnpis_ld(W(XG), W(MS), W(DS))
+
+#define mnpos3rr(XD, XS, XT)                                                \
+        mnpis3rr(W(XD), W(XS), W(XT))
+
+#define mnpos3ld(XD, XS, MT, DT)                                            \
+        mnpis3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxos_rr(XG, XS)                                                    \
@@ -2156,6 +2252,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define maxos3ld(XD, XS, MT, DT)                                            \
         maxis3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxpos_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpis_rr(W(XG), W(XS))
+
+#define mxpos_ld(XG, MS, DS)                                                \
+        mxpis_ld(W(XG), W(MS), W(DS))
+
+#define mxpos3rr(XD, XS, XT)                                                \
+        mxpis3rr(W(XD), W(XS), W(XT))
+
+#define mxpos3ld(XD, XS, MT, DT)                                            \
+        mxpis3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
@@ -3017,6 +3125,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #elif (RT_SIMD == 256)
 
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmqx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        elmdx_st(W(XS), W(MD), W(DD))
+
 /***************   packed double-precision generic move/logic   ***************/
 
 /* mov (D = S) */
@@ -3141,6 +3255,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define addqs3ld(XD, XS, MT, DT)                                            \
         addds3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adpqs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpds_rr(W(XG), W(XS))
+
+#define adpqs_ld(XG, MS, DS)                                                \
+        adpds_ld(W(XG), W(MS), W(DS))
+
+#define adpqs3rr(XD, XS, XT)                                                \
+        adpds3rr(W(XD), W(XS), W(XT))
+
+#define adpqs3ld(XD, XS, MT, DT)                                            \
+        adpds3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subqs_rr(XG, XS)                                                    \
@@ -3168,6 +3294,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mulqs3ld(XD, XS, MT, DT)                                            \
         mulds3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlpqs_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpds_rr(W(XG), W(XS))
+
+#define mlpqs_ld(XG, MS, DS)                                                \
+        mlpds_ld(W(XG), W(MS), W(DS))
+
+#define mlpqs3rr(XD, XS, XT)                                                \
+        mlpds3rr(W(XD), W(XS), W(XT))
+
+#define mlpqs3ld(XD, XS, MT, DT)                                            \
+        mlpds3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -3262,6 +3400,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define minqs3ld(XD, XS, MT, DT)                                            \
         minds3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnpqs_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpds_rr(W(XG), W(XS))
+
+#define mnpqs_ld(XG, MS, DS)                                                \
+        mnpds_ld(W(XG), W(MS), W(DS))
+
+#define mnpqs3rr(XD, XS, XT)                                                \
+        mnpds3rr(W(XD), W(XS), W(XT))
+
+#define mnpqs3ld(XD, XS, MT, DT)                                            \
+        mnpds3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxqs_rr(XG, XS)                                                    \
@@ -3275,6 +3425,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define maxqs3ld(XD, XS, MT, DT)                                            \
         maxds3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxpqs_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpds_rr(W(XG), W(XS))
+
+#define mxpqs_ld(XG, MS, DS)                                                \
+        mxpds_ld(W(XG), W(MS), W(DS))
+
+#define mxpqs3rr(XD, XS, XT)                                                \
+        mxpds3rr(W(XD), W(XS), W(XT))
+
+#define mxpqs3ld(XD, XS, MT, DT)                                            \
+        mxpds3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
@@ -3611,6 +3773,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #elif (RT_SIMD == 128)
 
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmqx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        elmjx_st(W(XS), W(MD), W(DD))
+
 /***************   packed double-precision generic move/logic   ***************/
 
 /* mov (D = S) */
@@ -3735,6 +3903,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define addqs3ld(XD, XS, MT, DT)                                            \
         addjs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adpqs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpjs_rr(W(XG), W(XS))
+
+#define adpqs_ld(XG, MS, DS)                                                \
+        adpjs_ld(W(XG), W(MS), W(DS))
+
+#define adpqs3rr(XD, XS, XT)                                                \
+        adpjs3rr(W(XD), W(XS), W(XT))
+
+#define adpqs3ld(XD, XS, MT, DT)                                            \
+        adpjs3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subqs_rr(XG, XS)                                                    \
@@ -3762,6 +3942,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mulqs3ld(XD, XS, MT, DT)                                            \
         muljs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlpqs_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpjs_rr(W(XG), W(XS))
+
+#define mlpqs_ld(XG, MS, DS)                                                \
+        mlpjs_ld(W(XG), W(MS), W(DS))
+
+#define mlpqs3rr(XD, XS, XT)                                                \
+        mlpjs3rr(W(XD), W(XS), W(XT))
+
+#define mlpqs3ld(XD, XS, MT, DT)                                            \
+        mlpjs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -3856,6 +4048,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define minqs3ld(XD, XS, MT, DT)                                            \
         minjs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnpqs_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpjs_rr(W(XG), W(XS))
+
+#define mnpqs_ld(XG, MS, DS)                                                \
+        mnpjs_ld(W(XG), W(MS), W(DS))
+
+#define mnpqs3rr(XD, XS, XT)                                                \
+        mnpjs3rr(W(XD), W(XS), W(XT))
+
+#define mnpqs3ld(XD, XS, MT, DT)                                            \
+        mnpjs3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxqs_rr(XG, XS)                                                    \
@@ -3869,6 +4073,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define maxqs3ld(XD, XS, MT, DT)                                            \
         maxjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxpqs_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpjs_rr(W(XG), W(XS))
+
+#define mxpqs_ld(XG, MS, DS)                                                \
+        mxpjs_ld(W(XG), W(MS), W(DS))
+
+#define mxpqs3rr(XD, XS, XT)                                                \
+        mxpjs3rr(W(XD), W(XS), W(XT))
+
+#define mxpqs3ld(XD, XS, MT, DT)                                            \
+        mxpjs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
@@ -4301,6 +4517,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #if   RT_ELEMENT == 32
 
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmpx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        elmox_st(W(XS), W(MD), W(DD))
+
 /***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
@@ -4425,6 +4647,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define addps3ld(XD, XS, MT, DT)                                            \
         addos3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adpps_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpos_rr(W(XG), W(XS))
+
+#define adpps_ld(XG, MS, DS)                                                \
+        adpos_ld(W(XG), W(MS), W(DS))
+
+#define adpps3rr(XD, XS, XT)                                                \
+        adpos3rr(W(XD), W(XS), W(XT))
+
+#define adpps3ld(XD, XS, MT, DT)                                            \
+        adpos3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subps_rr(XG, XS)                                                    \
@@ -4452,6 +4686,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mulps3ld(XD, XS, MT, DT)                                            \
         mulos3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlpps_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpos_rr(W(XG), W(XS))
+
+#define mlpps_ld(XG, MS, DS)                                                \
+        mlpos_ld(W(XG), W(MS), W(DS))
+
+#define mlpps3rr(XD, XS, XT)                                                \
+        mlpos3rr(W(XD), W(XS), W(XT))
+
+#define mlpps3ld(XD, XS, MT, DT)                                            \
+        mlpos3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -4546,6 +4792,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define minps3ld(XD, XS, MT, DT)                                            \
         minos3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnpps_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpos_rr(W(XG), W(XS))
+
+#define mnpps_ld(XG, MS, DS)                                                \
+        mnpos_ld(W(XG), W(MS), W(DS))
+
+#define mnpps3rr(XD, XS, XT)                                                \
+        mnpos3rr(W(XD), W(XS), W(XT))
+
+#define mnpps3ld(XD, XS, MT, DT)                                            \
+        mnpos3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxps_rr(XG, XS)                                                    \
@@ -4559,6 +4817,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define maxps3ld(XD, XS, MT, DT)                                            \
         maxos3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxpps_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpos_rr(W(XG), W(XS))
+
+#define mxpps_ld(XG, MS, DS)                                                \
+        mxpos_ld(W(XG), W(MS), W(DS))
+
+#define mxpps3rr(XD, XS, XT)                                                \
+        mxpos3rr(W(XD), W(XS), W(XT))
+
+#define mxpps3ld(XD, XS, MT, DT)                                            \
+        mxpos3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
@@ -6426,6 +6696,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #elif RT_ELEMENT == 64
 
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmpx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        elmqx_st(W(XS), W(MD), W(DD))
+
 /***************   packed double-precision generic move/logic   ***************/
 
 /* mov (D = S) */
@@ -6550,6 +6826,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define addps3ld(XD, XS, MT, DT)                                            \
         addqs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adpps_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpqs_rr(W(XG), W(XS))
+
+#define adpps_ld(XG, MS, DS)                                                \
+        adpqs_ld(W(XG), W(MS), W(DS))
+
+#define adpps3rr(XD, XS, XT)                                                \
+        adpqs3rr(W(XD), W(XS), W(XT))
+
+#define adpps3ld(XD, XS, MT, DT)                                            \
+        adpqs3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subps_rr(XG, XS)                                                    \
@@ -6577,6 +6865,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mulps3ld(XD, XS, MT, DT)                                            \
         mulqs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlpps_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpqs_rr(W(XG), W(XS))
+
+#define mlpps_ld(XG, MS, DS)                                                \
+        mlpqs_ld(W(XG), W(MS), W(DS))
+
+#define mlpps3rr(XD, XS, XT)                                                \
+        mlpqs3rr(W(XD), W(XS), W(XT))
+
+#define mlpps3ld(XD, XS, MT, DT)                                            \
+        mlpqs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -6671,6 +6971,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define minps3ld(XD, XS, MT, DT)                                            \
         minqs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnpps_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpqs_rr(W(XG), W(XS))
+
+#define mnpps_ld(XG, MS, DS)                                                \
+        mnpqs_ld(W(XG), W(MS), W(DS))
+
+#define mnpps3rr(XD, XS, XT)                                                \
+        mnpqs3rr(W(XD), W(XS), W(XT))
+
+#define mnpps3ld(XD, XS, MT, DT)                                            \
+        mnpqs3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxps_rr(XG, XS)                                                    \
@@ -6684,6 +6996,18 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define maxps3ld(XD, XS, MT, DT)                                            \
         maxqs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxpps_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpqs_rr(W(XG), W(XS))
+
+#define mxpps_ld(XG, MS, DS)                                                \
+        mxpqs_ld(W(XG), W(MS), W(DS))
+
+#define mxpps3rr(XD, XS, XT)                                                \
+        mxpqs3rr(W(XD), W(XS), W(XT))
+
+#define mxpps3ld(XD, XS, MT, DT)                                            \
+        mxpqs3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
