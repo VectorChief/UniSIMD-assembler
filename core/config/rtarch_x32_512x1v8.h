@@ -400,6 +400,16 @@
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
         adpos_rx(W(XD))
 
+#define adhos_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
+        adpos3rr(W(XD), W(XS), W(XS))                                       \
+        adpos3rr(W(XD), W(XD), W(XD))                                       \
+        adpos3rr(W(XD), W(XD), W(XD))                                       \
+        adpos3rr(W(XD), W(XD), W(XD))
+
+#define adhos_ld(XD, MS, DS)                                                \
+        movox_ld(W(XD), W(MS), W(DS))                                       \
+        adhos_rr(W(XD), W(XD))
+
 #define adpos_rx(XD) /* not portable, do not use outside */                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
         adpis_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
@@ -465,6 +475,16 @@
         movox_ld(W(XD), W(MT), W(DT))                                       \
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
         mlpos_rx(W(XD))
+
+#define mlhos_rr(XD, XS) /* horizontal reductive mul */                     \
+        mlpos3rr(W(XD), W(XS), W(XS))                                       \
+        mlpos3rr(W(XD), W(XD), W(XD))                                       \
+        mlpos3rr(W(XD), W(XD), W(XD))                                       \
+        mlpos3rr(W(XD), W(XD), W(XD))
+
+#define mlhos_ld(XD, MS, DS)                                                \
+        movox_ld(W(XD), W(MS), W(DS))                                       \
+        mlhos_rr(W(XD), W(XD))
 
 #define mlpos_rx(XD) /* not portable, do not use outside */                 \
         movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -677,6 +697,16 @@
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
         mnpos_rx(W(XD))
 
+#define mnhos_rr(XD, XS) /* horizontal reductive min */                     \
+        mnpos3rr(W(XD), W(XS), W(XS))                                       \
+        mnpos3rr(W(XD), W(XD), W(XD))                                       \
+        mnpos3rr(W(XD), W(XD), W(XD))                                       \
+        mnpos3rr(W(XD), W(XD), W(XD))
+
+#define mnhos_ld(XD, MS, DS)                                                \
+        movox_ld(W(XD), W(MS), W(DS))                                       \
+        mnhos_rr(W(XD), W(XD))
+
 #define mnpos_rx(XD) /* not portable, do not use outside */                 \
         movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
         minrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
@@ -761,6 +791,16 @@
         movox_ld(W(XD), W(MT), W(DT))                                       \
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
         mxpos_rx(W(XD))
+
+#define mxhos_rr(XD, XS) /* horizontal reductive max */                     \
+        mxpos3rr(W(XD), W(XS), W(XS))                                       \
+        mxpos3rr(W(XD), W(XD), W(XD))                                       \
+        mxpos3rr(W(XD), W(XD), W(XD))                                       \
+        mxpos3rr(W(XD), W(XD), W(XD))
+
+#define mxhos_ld(XD, MS, DS)                                                \
+        movox_ld(W(XD), W(MS), W(DS))                                       \
+        mxhos_rr(W(XD), W(XD))
 
 #define mxpos_rx(XD) /* not portable, do not use outside */                 \
         movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \

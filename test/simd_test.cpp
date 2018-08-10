@@ -3380,7 +3380,7 @@ rt_void c_test25(rt_SIMD_INFOX *info)
     rt_real *fco1 = info->fco1;
     rt_real *fco2 = info->fco2;
 
-    i = info->cyc;
+    i = info->cyc/100;
     while (i-->0)
     {
         j = n;
@@ -3389,6 +3389,32 @@ rt_void c_test25(rt_SIMD_INFOX *info)
             fco1[j] = j < n / 2 ? far0[j*2+0] + far0[j*2+1] : 0.0f;
             fco2[j] = j < n / 2 ? far0[j*2+0] * far0[j*2+1] : 0.0f;
         }
+#ifdef RT_ELEM_TEST
+        j = n/3;
+        fco1[n/2+0] = 0.0f;
+        fco2[n/2+0] = 1.0f;
+        while (j-->0)
+        {
+            fco1[n/2+0] += RT_SQRT(RT_SQRT(RT_SQRT(RT_SQRT(far0[(n/3)*0+j]))));
+            fco2[n/2+0] *= RT_SQRT(RT_SQRT(RT_SQRT(RT_SQRT(far0[(n/3)*0+j]))));
+        }
+        j = n/3;
+        fco1[n/2+1] = 0.0f;
+        fco2[n/2+1] = 1.0f;
+        while (j-->0)
+        {
+            fco1[n/2+1] += RT_SQRT(RT_SQRT(RT_SQRT(RT_SQRT(far0[(n/3)*1+j]))));
+            fco2[n/2+1] *= RT_SQRT(RT_SQRT(RT_SQRT(RT_SQRT(far0[(n/3)*1+j]))));
+        }
+        j = n/3;
+        fco1[n/2+2] = 0.0f;
+        fco2[n/2+2] = 1.0f;
+        while (j-->0)
+        {
+            fco1[n/2+2] += RT_SQRT(RT_SQRT(RT_SQRT(RT_SQRT(far0[(n/3)*2+j]))));
+            fco2[n/2+2] *= RT_SQRT(RT_SQRT(RT_SQRT(RT_SQRT(far0[(n/3)*2+j]))));
+        }
+#endif /* RT_ELEM_TEST */
     }
 }
 
@@ -3403,7 +3429,7 @@ rt_void s_test25(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
 
-    i = info->cyc;
+    i = info->cyc/100;
     while (i-->0)
     {
         ASM_ENTER(info)
@@ -3434,6 +3460,51 @@ rt_void s_test25(rt_SIMD_INFOX *info)
         addxx_ri(Rebx, IM(16*Q))
         movpx_st(Xmm1, Medx, AJ0)
         movpx_st(Xmm1, Mebx, AJ0)
+
+#ifdef RT_ELEM_TEST
+        movxx_ld(Recx, Mebp, inf_FAR0)
+        movxx_ld(Redx, Mebp, inf_FSO1)
+        movxx_ld(Rebx, Mebp, inf_FSO2)
+
+        addxx_ri(Redx, IM(24*Q))
+        addxx_ri(Rebx, IM(24*Q))
+
+        movpx_ld(Xmm0, Mecx, AJ0)
+        sqrps_rr(Xmm0, Xmm0)
+        sqrps_rr(Xmm0, Xmm0)
+        sqrps_rr(Xmm0, Xmm0)
+        sqrps_rr(Xmm0, Xmm0)
+        adhps_rr(Xmm1, Xmm0)
+        elmpx_st(Xmm1, Medx, AJ0)
+        addxx_ri(Redx, IB(4*L))
+        mlhps_rr(Xmm4, Xmm0)
+        elmpx_st(Xmm4, Mebx, AJ0)
+        addxx_ri(Rebx, IB(4*L))
+
+        movpx_ld(Xmm0, Mecx, AJ1)
+        sqrps_rr(Xmm0, Xmm0)
+        sqrps_rr(Xmm0, Xmm0)
+        sqrps_rr(Xmm0, Xmm0)
+        sqrps_rr(Xmm0, Xmm0)
+        adhps_rr(Xmm2, Xmm0)
+        elmpx_st(Xmm2, Medx, AJ0)
+        addxx_ri(Redx, IB(4*L))
+        mlhps_rr(Xmm5, Xmm0)
+        elmpx_st(Xmm5, Mebx, AJ0)
+        addxx_ri(Rebx, IB(4*L))
+
+        movpx_ld(Xmm0, Mecx, AJ2)
+        sqrps_rr(Xmm0, Xmm0)
+        sqrps_rr(Xmm0, Xmm0)
+        sqrps_rr(Xmm0, Xmm0)
+        sqrps_rr(Xmm0, Xmm0)
+        adhps_rr(Xmm3, Xmm0)
+        elmpx_st(Xmm3, Medx, AJ0)
+        addxx_ri(Redx, IB(4*L))
+        mlhps_rr(Xmm6, Xmm0)
+        elmpx_st(Xmm6, Mebx, AJ0)
+        addxx_ri(Rebx, IB(4*L))
+#endif /* RT_ELEM_TEST */
 
         ASM_LEAVE(info)
     }
@@ -3485,7 +3556,7 @@ rt_void c_test26(rt_SIMD_INFOX *info)
     rt_real *fco1 = info->fco1;
     rt_real *fco2 = info->fco2;
 
-    i = info->cyc;
+    i = info->cyc/100;
     while (i-->0)
     {
         j = n;
@@ -3494,6 +3565,32 @@ rt_void c_test26(rt_SIMD_INFOX *info)
             fco1[j] = j < n / 2 ? RT_MIN(far0[j*2+0], far0[j*2+1]) : 0.0f;
             fco2[j] = j < n / 2 ? RT_MAX(far0[j*2+0], far0[j*2+1]) : 0.0f;
         }
+#ifdef RT_ELEM_TEST
+        j = n/3;
+        fco1[n/2+0] = +RT_INF;
+        fco2[n/2+0] = -RT_INF;
+        while (j-->0)
+        {
+            fco1[n/2+0] = RT_MIN(fco1[n/2+0], far0[(n/3)*0+j]);
+            fco2[n/2+0] = RT_MAX(fco2[n/2+0], far0[(n/3)*0+j]);
+        }
+        j = n/3;
+        fco1[n/2+1] = +RT_INF;
+        fco2[n/2+1] = -RT_INF;
+        while (j-->0)
+        {
+            fco1[n/2+1] = RT_MIN(fco1[n/2+1], far0[(n/3)*1+j]);
+            fco2[n/2+1] = RT_MAX(fco2[n/2+1], far0[(n/3)*1+j]);
+        }
+        j = n/3;
+        fco1[n/2+2] = +RT_INF;
+        fco2[n/2+2] = -RT_INF;
+        while (j-->0)
+        {
+            fco1[n/2+2] = RT_MIN(fco1[n/2+2], far0[(n/3)*2+j]);
+            fco2[n/2+2] = RT_MAX(fco2[n/2+2], far0[(n/3)*2+j]);
+        }
+#endif /* RT_ELEM_TEST */
     }
 }
 
@@ -3508,7 +3605,7 @@ rt_void s_test26(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
 
-    i = info->cyc;
+    i = info->cyc/100;
     while (i-->0)
     {
         ASM_ENTER(info)
@@ -3539,6 +3636,38 @@ rt_void s_test26(rt_SIMD_INFOX *info)
         addxx_ri(Rebx, IM(16*Q))
         movpx_st(Xmm1, Medx, AJ0)
         movpx_st(Xmm1, Mebx, AJ0)
+
+#ifdef RT_ELEM_TEST
+        movxx_ld(Recx, Mebp, inf_FAR0)
+        movxx_ld(Redx, Mebp, inf_FSO1)
+        movxx_ld(Rebx, Mebp, inf_FSO2)
+
+        addxx_ri(Redx, IM(24*Q))
+        addxx_ri(Rebx, IM(24*Q))
+
+        movpx_ld(Xmm0, Mecx, AJ0)
+        mnhps_rr(Xmm1, Xmm0)
+        elmpx_st(Xmm1, Medx, AJ0)
+        addxx_ri(Redx, IB(4*L))
+        mxhps_rr(Xmm4, Xmm0)
+        elmpx_st(Xmm4, Mebx, AJ0)
+        addxx_ri(Rebx, IB(4*L))
+
+        mnhps_ld(Xmm2, Mecx, AJ1)
+        elmpx_st(Xmm2, Medx, AJ0)
+        addxx_ri(Redx, IB(4*L))
+        mxhps_ld(Xmm5, Mecx, AJ1)
+        elmpx_st(Xmm5, Mebx, AJ0)
+        addxx_ri(Rebx, IB(4*L))
+
+        movpx_ld(Xmm0, Mecx, AJ2)
+        mnhps_rr(Xmm3, Xmm0)
+        elmpx_st(Xmm3, Medx, AJ0)
+        addxx_ri(Redx, IB(4*L))
+        mxhps_rr(Xmm6, Xmm0)
+        elmpx_st(Xmm6, Mebx, AJ0)
+        addxx_ri(Rebx, IB(4*L))
+#endif /* RT_ELEM_TEST */
 
         ASM_LEAVE(info)
     }

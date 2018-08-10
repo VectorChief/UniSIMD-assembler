@@ -1446,6 +1446,12 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpos3ld(XD, XS, MT, DT)                                            \
         adpcs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adhos_rr(XG, XS) /* horizontal reductive add, first 15-regs only */ \
+        adhcs_rr(W(XG), W(XS))
+
+#define adhos_ld(XG, MS, DS)                                                \
+        adhcs_ld(W(XG), W(MS), W(DS))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subos_rr(XG, XS)                                                    \
@@ -1485,6 +1491,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mlpos3ld(XD, XS, MT, DT)                                            \
         mlpcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlhos_rr(XD, XS) /* horizontal reductive mul */                     \
+        mlhcs_rr(W(XD), W(XS))
+
+#define mlhos_ld(XD, MS, DS)                                                \
+        mlhcs_ld(W(XD), W(MS), W(DS))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -1591,6 +1603,12 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpos3ld(XD, XS, MT, DT)                                            \
         mnpcs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnhos_rr(XD, XS) /* horizontal reductive min */                     \
+        mnhcs_rr(W(XD), W(XS))
+
+#define mnhos_ld(XD, MS, DS)                                                \
+        mnhcs_ld(W(XD), W(MS), W(DS))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxos_rr(XG, XS)                                                    \
@@ -1616,6 +1634,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mxpos3ld(XD, XS, MT, DT)                                            \
         mxpcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxhos_rr(XD, XS) /* horizontal reductive max */                     \
+        mxhcs_rr(W(XD), W(XS))
+
+#define mxhos_ld(XD, MS, DS)                                                \
+        mxhcs_ld(W(XD), W(MS), W(DS))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
@@ -2094,6 +2118,12 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpos3ld(XD, XS, MT, DT)                                            \
         adpis3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adhos_rr(XG, XS) /* horizontal reductive add, first 15-regs only */ \
+        adhis_rr(W(XG), W(XS))
+
+#define adhos_ld(XG, MS, DS)                                                \
+        adhis_ld(W(XG), W(MS), W(DS))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subos_rr(XG, XS)                                                    \
@@ -2133,6 +2163,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mlpos3ld(XD, XS, MT, DT)                                            \
         mlpis3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlhos_rr(XD, XS) /* horizontal reductive mul */                     \
+        mlhis_rr(W(XD), W(XS))
+
+#define mlhos_ld(XD, MS, DS)                                                \
+        mlhis_ld(W(XD), W(MS), W(DS))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -2239,6 +2275,12 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpos3ld(XD, XS, MT, DT)                                            \
         mnpis3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnhos_rr(XD, XS) /* horizontal reductive min */                     \
+        mnhis_rr(W(XD), W(XS))
+
+#define mnhos_ld(XD, MS, DS)                                                \
+        mnhis_ld(W(XD), W(MS), W(DS))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxos_rr(XG, XS)                                                    \
@@ -2264,6 +2306,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mxpos3ld(XD, XS, MT, DT)                                            \
         mxpis3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxhos_rr(XD, XS) /* horizontal reductive max */                     \
+        mxhis_rr(W(XD), W(XS))
+
+#define mxhos_ld(XD, MS, DS)                                                \
+        mxhis_ld(W(XD), W(MS), W(DS))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
@@ -3267,6 +3315,12 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpqs3ld(XD, XS, MT, DT)                                            \
         adpds3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adhqs_rr(XG, XS) /* horizontal reductive add, first 15-regs only */ \
+        adhds_rr(W(XG), W(XS))
+
+#define adhqs_ld(XG, MS, DS)                                                \
+        adhds_ld(W(XG), W(MS), W(DS))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subqs_rr(XG, XS)                                                    \
@@ -3306,6 +3360,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mlpqs3ld(XD, XS, MT, DT)                                            \
         mlpds3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlhqs_rr(XD, XS) /* horizontal reductive mul */                     \
+        mlhds_rr(W(XD), W(XS))
+
+#define mlhqs_ld(XD, MS, DS)                                                \
+        mlhds_ld(W(XD), W(MS), W(DS))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -3412,6 +3472,12 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpqs3ld(XD, XS, MT, DT)                                            \
         mnpds3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnhqs_rr(XD, XS) /* horizontal reductive min */                     \
+        mnhds_rr(W(XD), W(XS))
+
+#define mnhqs_ld(XD, MS, DS)                                                \
+        mnhds_ld(W(XD), W(MS), W(DS))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxqs_rr(XG, XS)                                                    \
@@ -3437,6 +3503,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mxpqs3ld(XD, XS, MT, DT)                                            \
         mxpds3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxhqs_rr(XD, XS) /* horizontal reductive max */                     \
+        mxhds_rr(W(XD), W(XS))
+
+#define mxhqs_ld(XD, MS, DS)                                                \
+        mxhds_ld(W(XD), W(MS), W(DS))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
@@ -3915,6 +3987,12 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpqs3ld(XD, XS, MT, DT)                                            \
         adpjs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adhqs_rr(XG, XS) /* horizontal reductive add, first 15-regs only */ \
+        adhjs_rr(W(XG), W(XS))
+
+#define adhqs_ld(XG, MS, DS)                                                \
+        adhjs_ld(W(XG), W(MS), W(DS))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subqs_rr(XG, XS)                                                    \
@@ -3954,6 +4032,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mlpqs3ld(XD, XS, MT, DT)                                            \
         mlpjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlhqs_rr(XD, XS) /* horizontal reductive mul */                     \
+        mlhjs_rr(W(XD), W(XS))
+
+#define mlhqs_ld(XD, MS, DS)                                                \
+        mlhjs_ld(W(XD), W(MS), W(DS))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -4060,6 +4144,12 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpqs3ld(XD, XS, MT, DT)                                            \
         mnpjs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnhqs_rr(XD, XS) /* horizontal reductive min */                     \
+        mnhjs_rr(W(XD), W(XS))
+
+#define mnhqs_ld(XD, MS, DS)                                                \
+        mnhjs_ld(W(XD), W(MS), W(DS))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxqs_rr(XG, XS)                                                    \
@@ -4085,6 +4175,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mxpqs3ld(XD, XS, MT, DT)                                            \
         mxpjs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxhqs_rr(XD, XS) /* horizontal reductive max */                     \
+        mxhjs_rr(W(XD), W(XS))
+
+#define mxhqs_ld(XD, MS, DS)                                                \
+        mxhjs_ld(W(XD), W(MS), W(DS))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
@@ -4659,6 +4755,12 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpps3ld(XD, XS, MT, DT)                                            \
         adpos3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adhps_rr(XG, XS) /* horizontal reductive add, first 15-regs only */ \
+        adhos_rr(W(XG), W(XS))
+
+#define adhps_ld(XG, MS, DS)                                                \
+        adhos_ld(W(XG), W(MS), W(DS))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subps_rr(XG, XS)                                                    \
@@ -4698,6 +4800,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mlpps3ld(XD, XS, MT, DT)                                            \
         mlpos3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlhps_rr(XD, XS) /* horizontal reductive mul */                     \
+        mlhos_rr(W(XD), W(XS))
+
+#define mlhps_ld(XD, MS, DS)                                                \
+        mlhos_ld(W(XD), W(MS), W(DS))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -4804,6 +4912,12 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpps3ld(XD, XS, MT, DT)                                            \
         mnpos3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnhps_rr(XD, XS) /* horizontal reductive min */                     \
+        mnhos_rr(W(XD), W(XS))
+
+#define mnhps_ld(XD, MS, DS)                                                \
+        mnhos_ld(W(XD), W(MS), W(DS))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxps_rr(XG, XS)                                                    \
@@ -4829,6 +4943,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mxpps3ld(XD, XS, MT, DT)                                            \
         mxpos3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxhps_rr(XD, XS) /* horizontal reductive max */                     \
+        mxhos_rr(W(XD), W(XS))
+
+#define mxhps_ld(XD, MS, DS)                                                \
+        mxhos_ld(W(XD), W(MS), W(DS))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
@@ -6886,6 +7006,12 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpps3ld(XD, XS, MT, DT)                                            \
         adpqs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adhps_rr(XG, XS) /* horizontal reductive add, first 15-regs only */ \
+        adhqs_rr(W(XG), W(XS))
+
+#define adhps_ld(XG, MS, DS)                                                \
+        adhqs_ld(W(XG), W(MS), W(DS))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subps_rr(XG, XS)                                                    \
@@ -6925,6 +7051,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mlpps3ld(XD, XS, MT, DT)                                            \
         mlpqs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlhps_rr(XD, XS) /* horizontal reductive mul */                     \
+        mlhqs_rr(W(XD), W(XS))
+
+#define mlhps_ld(XD, MS, DS)                                                \
+        mlhqs_ld(W(XD), W(MS), W(DS))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -7031,6 +7163,12 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpps3ld(XD, XS, MT, DT)                                            \
         mnpqs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnhps_rr(XD, XS) /* horizontal reductive min */                     \
+        mnhqs_rr(W(XD), W(XS))
+
+#define mnhps_ld(XD, MS, DS)                                                \
+        mnhqs_ld(W(XD), W(MS), W(DS))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxps_rr(XG, XS)                                                    \
@@ -7056,6 +7194,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mxpps3ld(XD, XS, MT, DT)                                            \
         mxpqs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxhps_rr(XD, XS) /* horizontal reductive max */                     \
+        mxhqs_rr(W(XD), W(XS))
+
+#define mxhps_ld(XD, MS, DS)                                                \
+        mxhqs_ld(W(XD), W(MS), W(DS))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 

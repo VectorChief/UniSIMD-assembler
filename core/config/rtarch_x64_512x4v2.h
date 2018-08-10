@@ -572,6 +572,17 @@
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         adpqs_rx(W(XD))
 
+#define adhqs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
+        adpqs3rr(W(XD), W(XS), W(XS))                                       \
+        adpqs3rr(W(XD), W(XD), W(XD))                                       \
+        adpqs3rr(W(XD), W(XD), W(XD))                                       \
+        adpqs3rr(W(XD), W(XD), W(XD))                                       \
+        adpqs3rr(W(XD), W(XD), W(XD))
+
+#define adhqs_ld(XD, MS, DS)                                                \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
+        adhqs_rr(W(XD), W(XD))
+
 #define adpqs_rx(XD) /* not portable, do not use outside */                 \
         movjx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
         adpjs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
@@ -703,6 +714,17 @@
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         mlpqs_rx(W(XD))
+
+#define mlhqs_rr(XD, XS) /* horizontal reductive mul */                     \
+        mlpqs3rr(W(XD), W(XS), W(XS))                                       \
+        mlpqs3rr(W(XD), W(XD), W(XD))                                       \
+        mlpqs3rr(W(XD), W(XD), W(XD))                                       \
+        mlpqs3rr(W(XD), W(XD), W(XD))                                       \
+        mlpqs3rr(W(XD), W(XD), W(XD))
+
+#define mlhqs_ld(XD, MS, DS)                                                \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
+        mlhqs_rr(W(XD), W(XD))
 
 #define mlpqs_rx(XD) /* not portable, do not use outside */                 \
         movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -1062,6 +1084,17 @@
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         mnpqs_rx(W(XD))
 
+#define mnhqs_rr(XD, XS) /* horizontal reductive min */                     \
+        mnpqs3rr(W(XD), W(XS), W(XS))                                       \
+        mnpqs3rr(W(XD), W(XD), W(XD))                                       \
+        mnpqs3rr(W(XD), W(XD), W(XD))                                       \
+        mnpqs3rr(W(XD), W(XD), W(XD))                                       \
+        mnpqs3rr(W(XD), W(XD), W(XD))
+
+#define mnhqs_ld(XD, MS, DS)                                                \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
+        mnhqs_rr(W(XD), W(XD))
+
 #define mnpqs_rx(XD) /* not portable, do not use outside */                 \
         movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
         mints_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
@@ -1209,6 +1242,17 @@
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         mxpqs_rx(W(XD))
+
+#define mxhqs_rr(XD, XS) /* horizontal reductive max */                     \
+        mxpqs3rr(W(XD), W(XS), W(XS))                                       \
+        mxpqs3rr(W(XD), W(XD), W(XD))                                       \
+        mxpqs3rr(W(XD), W(XD), W(XD))                                       \
+        mxpqs3rr(W(XD), W(XD), W(XD))                                       \
+        mxpqs3rr(W(XD), W(XD), W(XD))
+
+#define mxhqs_ld(XD, MS, DS)                                                \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
+        mxhqs_rr(W(XD), W(XD))
 
 #define mxpqs_rx(XD) /* not portable, do not use outside */                 \
         movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
