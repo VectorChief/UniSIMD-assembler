@@ -287,11 +287,11 @@
         AUX(SIB(MT), CMD(DT), EMPTY)
 
 #define adhjs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
-        adpjs_rr(W(XD), W(XS), W(XS))
+        adpjs3rr(W(XD), W(XS), W(XS))
 
 #define adhjs_ld(XD, MS, DS)                                                \
         movjx_ld(W(XD), W(MS), W(DS))                                       \
-        adhjs_rr(W(XD), W(XD), W(XD))
+        adhjs_rr(W(XD), W(XD))
 
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
@@ -345,11 +345,11 @@
         mlpjs_rx(W(XD))
 
 #define mlhjs_rr(XD, XS) /* horizontal reductive mul */                     \
-        mlpjs_rr(W(XD), W(XS), W(XS))
+        mlpjs3rr(W(XD), W(XS), W(XS))
 
 #define mlhjs_ld(XD, MS, DS)                                                \
         movjx_ld(W(XD), W(MS), W(DS))                                       \
-        mlhjs_rr(W(XD), W(XD), W(XD))
+        mlhjs_rr(W(XD), W(XD))
 
 #define mlpjs_rx(XD) /* not portable, do not use outside */                 \
         movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -521,11 +521,11 @@
         mnpjs_rx(W(XD))
 
 #define mnhjs_rr(XD, XS) /* horizontal reductive min */                     \
-        mnpjs_rr(W(XD), W(XS), W(XS))
+        mnpjs3rr(W(XD), W(XS), W(XS))
 
 #define mnhjs_ld(XD, MS, DS)                                                \
         movjx_ld(W(XD), W(MS), W(DS))                                       \
-        mnhjs_rr(W(XD), W(XD), W(XD))
+        mnhjs_rr(W(XD), W(XD))
 
 #define mnpjs_rx(XD) /* not portable, do not use outside */                 \
         movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -571,11 +571,11 @@
         mxpjs_rx(W(XD))
 
 #define mxhjs_rr(XD, XS) /* horizontal reductive max */                     \
-        mxpjs_rr(W(XD), W(XS), W(XS))
+        mxpjs3rr(W(XD), W(XS), W(XS))
 
 #define mxhjs_ld(XD, MS, DS)                                                \
         movjx_ld(W(XD), W(MS), W(DS))                                       \
-        mxhjs_rr(W(XD), W(XD), W(XD))
+        mxhjs_rr(W(XD), W(XD))
 
 #define mxpjs_rx(XD) /* not portable, do not use outside */                 \
         movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \

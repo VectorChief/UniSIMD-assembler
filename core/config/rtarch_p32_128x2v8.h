@@ -371,13 +371,13 @@
         adpcs_rx(W(XD))
 
 #define adhcs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
-        adpcs_rr(W(XD), W(XS), W(XS))                                       \
-        adpcs_rr(W(XD), W(XD), W(XD))                                       \
-        adpcs_rr(W(XD), W(XD), W(XD))
+        adpcs3rr(W(XD), W(XS), W(XS))                                       \
+        adpcs3rr(W(XD), W(XD), W(XD))                                       \
+        adpcs3rr(W(XD), W(XD), W(XD))
 
 #define adhcs_ld(XD, MS, DS)                                                \
         movcx_ld(W(XD), W(MS), W(DS))                                       \
-        adhcs_rr(W(XD), W(XD), W(XD))
+        adhcs_rr(W(XD), W(XD))
 
 #define adpcs_rx(XD) /* not portable, do not use outside */                 \
         movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -468,13 +468,13 @@
         mlpcs_rx(W(XD))
 
 #define mlhcs_rr(XD, XS) /* horizontal reductive mul */                     \
-        mlpcs_rr(W(XD), W(XS), W(XS))                                       \
-        mlpcs_rr(W(XD), W(XD), W(XD))                                       \
-        mlpcs_rr(W(XD), W(XD), W(XD))
+        mlpcs3rr(W(XD), W(XS), W(XS))                                       \
+        mlpcs3rr(W(XD), W(XD), W(XD))                                       \
+        mlpcs3rr(W(XD), W(XD), W(XD))
 
 #define mlhcs_ld(XD, MS, DS)                                                \
         movcx_ld(W(XD), W(MS), W(DS))                                       \
-        mlhcs_rr(W(XD), W(XD), W(XD))
+        mlhcs_rr(W(XD), W(XD))
 
 #define mlpcs_rx(XD) /* not portable, do not use outside */                 \
         movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -676,13 +676,13 @@
         mnpcs_rx(W(XD))
 
 #define mnhcs_rr(XD, XS) /* horizontal reductive min */                     \
-        mnpcs_rr(W(XD), W(XS), W(XS))                                       \
-        mnpcs_rr(W(XD), W(XD), W(XD))                                       \
-        mnpcs_rr(W(XD), W(XD), W(XD))
+        mnpcs3rr(W(XD), W(XS), W(XS))                                       \
+        mnpcs3rr(W(XD), W(XD), W(XD))                                       \
+        mnpcs3rr(W(XD), W(XD), W(XD))
 
 #define mnhcs_ld(XD, MS, DS)                                                \
         movcx_ld(W(XD), W(MS), W(DS))                                       \
-        mnhcs_rr(W(XD), W(XD), W(XD))
+        mnhcs_rr(W(XD), W(XD))
 
 #define mnpcs_rx(XD) /* not portable, do not use outside */                 \
         movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -751,13 +751,13 @@
         mxpcs_rx(W(XD))
 
 #define mxhcs_rr(XD, XS) /* horizontal reductive max */                     \
-        mxpcs_rr(W(XD), W(XS), W(XS))                                       \
-        mxpcs_rr(W(XD), W(XD), W(XD))                                       \
-        mxpcs_rr(W(XD), W(XD), W(XD))
+        mxpcs3rr(W(XD), W(XS), W(XS))                                       \
+        mxpcs3rr(W(XD), W(XD), W(XD))                                       \
+        mxpcs3rr(W(XD), W(XD), W(XD))
 
 #define mxhcs_ld(XD, MS, DS)                                                \
         movcx_ld(W(XD), W(MS), W(DS))                                       \
-        mxhcs_rr(W(XD), W(XD), W(XD))
+        mxhcs_rr(W(XD), W(XD))
 
 #define mxpcs_rx(XD) /* not portable, do not use outside */                 \
         movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
