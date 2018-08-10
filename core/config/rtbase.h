@@ -5305,6 +5305,12 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpfs3ld(XD, XS, MT, DT)                                            \
         adpcs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adhfs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
+        adhcs_rr(W(XD), W(XS))
+
+#define adhfs_ld(XD, MS, DS)                                                \
+        adhcs_ld(W(XD), W(MS), W(DS))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subfs_rr(XG, XS)                                                    \
@@ -5344,6 +5350,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mlpfs3ld(XD, XS, MT, DT)                                            \
         mlpcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlhfs_rr(XD, XS) /* horizontal reductive mul */                     \
+        mlhcs_rr(W(XD), W(XS))
+
+#define mlhfs_ld(XD, MS, DS)                                                \
+        mlhcs_ld(W(XD), W(MS), W(DS))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -5450,6 +5462,12 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpfs3ld(XD, XS, MT, DT)                                            \
         mnpcs3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnhfs_rr(XD, XS) /* horizontal reductive min */                     \
+        mnhcs_rr(W(XD), W(XS))
+
+#define mnhfs_ld(XD, MS, DS)                                                \
+        mnhcs_ld(W(XD), W(MS), W(DS))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxfs_rr(XG, XS)                                                    \
@@ -5475,6 +5493,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mxpfs3ld(XD, XS, MT, DT)                                            \
         mxpcs3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxhfs_rr(XD, XS) /* horizontal reductive max */                     \
+        mxhcs_rr(W(XD), W(XS))
+
+#define mxhfs_ld(XD, MS, DS)                                                \
+        mxhcs_ld(W(XD), W(MS), W(DS))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
@@ -7508,6 +7532,12 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpfs3ld(XD, XS, MT, DT)                                            \
         adpds3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define adhfs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
+        adhds_rr(W(XD), W(XS))
+
+#define adhfs_ld(XD, MS, DS)                                                \
+        adhds_ld(W(XD), W(MS), W(DS))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subfs_rr(XG, XS)                                                    \
@@ -7547,6 +7577,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mlpfs3ld(XD, XS, MT, DT)                                            \
         mlpds3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mlhfs_rr(XD, XS) /* horizontal reductive mul */                     \
+        mlhds_rr(W(XD), W(XS))
+
+#define mlhfs_ld(XD, MS, DS)                                                \
+        mlhds_ld(W(XD), W(MS), W(DS))
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -7653,6 +7689,12 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpfs3ld(XD, XS, MT, DT)                                            \
         mnpds3ld(W(XD), W(XS), W(MT), W(DT))
 
+#define mnhfs_rr(XD, XS) /* horizontal reductive min */                     \
+        mnhds_rr(W(XD), W(XS))
+
+#define mnhfs_ld(XD, MS, DS)                                                \
+        mnhds_ld(W(XD), W(MS), W(DS))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxfs_rr(XG, XS)                                                    \
@@ -7678,6 +7720,12 @@ rt_si32 from_mask(rt_si32 mask)
 
 #define mxpfs3ld(XD, XS, MT, DT)                                            \
         mxpds3ld(W(XD), W(XS), W(MT), W(DT))
+
+#define mxhfs_rr(XD, XS) /* horizontal reductive max */                     \
+        mxhds_rr(W(XD), W(XS))
+
+#define mxhfs_ld(XD, MS, DS)                                                \
+        mxhds_ld(W(XD), W(MS), W(DS))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
