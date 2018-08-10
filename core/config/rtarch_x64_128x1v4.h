@@ -347,6 +347,13 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x7C)                       \
 
 #endif /* RT_SIMD_COMPAT_SSE >= 4 */
 
+#define adhjs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
+        adpjs_rr(W(XD), W(XS), W(XS))
+
+#define adhjs_ld(XD, MS, DS)                                                \
+        movjx_ld(W(XD), W(MS), W(DS))                                       \
+        adhjs_rr(W(XD), W(XD), W(XD))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subjs_rr(XG, XS)                                                    \
@@ -401,6 +408,13 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
         movjx_ld(W(XD), W(MT), W(DT))                                       \
         movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         mlpjs_rx(W(XD))
+
+#define mlhjs_rr(XD, XS) /* horizontal reductive mul */                     \
+        mlpjs_rr(W(XD), W(XS), W(XS))
+
+#define mlhjs_ld(XD, MS, DS)                                                \
+        movjx_ld(W(XD), W(MS), W(DS))                                       \
+        mlhjs_rr(W(XD), W(XD), W(XD))
 
 #define mlpjs_rx(XD) /* not portable, do not use outside */                 \
         movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -683,6 +697,13 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5D)                       \
         movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         mnpjs_rx(W(XD))
 
+#define mnhjs_rr(XD, XS) /* horizontal reductive min */                     \
+        mnpjs_rr(W(XD), W(XS), W(XS))
+
+#define mnhjs_ld(XD, MS, DS)                                                \
+        movjx_ld(W(XD), W(MS), W(DS))                                       \
+        mnhjs_rr(W(XD), W(XD), W(XD))
+
 #define mnpjs_rx(XD) /* not portable, do not use outside */                 \
         movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
         mints_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
@@ -727,6 +748,13 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5F)                       \
         movjx_ld(W(XD), W(MT), W(DT))                                       \
         movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         mxpjs_rx(W(XD))
+
+#define mxhjs_rr(XD, XS) /* horizontal reductive max */                     \
+        mxpjs_rr(W(XD), W(XS), W(XS))
+
+#define mxhjs_ld(XD, MS, DS)                                                \
+        movjx_ld(W(XD), W(MS), W(DS))                                       \
+        mxhjs_rr(W(XD), W(XD), W(XD))
 
 #define mxpjs_rx(XD) /* not portable, do not use outside */                 \
         movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \

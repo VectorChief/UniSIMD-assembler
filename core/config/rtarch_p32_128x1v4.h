@@ -364,6 +364,14 @@
         movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
         adpis_rx(W(XD))
 
+#define adhis_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
+        adpis_rr(W(XD), W(XS), W(XS))                                       \
+        adpis_rr(W(XD), W(XD), W(XD))
+
+#define adhis_ld(XD, MS, DS)                                                \
+        movix_ld(W(XD), W(MS), W(DS))                                       \
+        adhis_rr(W(XD), W(XD), W(XD))
+
 #define adpis_rx(XD) /* not portable, do not use outside */                 \
         movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
         addrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
@@ -429,6 +437,14 @@
         movix_ld(W(XD), W(MT), W(DT))                                       \
         movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
         mlpis_rx(W(XD))
+
+#define mlhis_rr(XD, XS) /* horizontal reductive mul */                     \
+        mlpis_rr(W(XD), W(XS), W(XS))                                       \
+        mlpis_rr(W(XD), W(XD), W(XD))
+
+#define mlhis_ld(XD, MS, DS)                                                \
+        movix_ld(W(XD), W(MS), W(DS))                                       \
+        mlhis_rr(W(XD), W(XD), W(XD))
 
 #define mlpis_rx(XD) /* not portable, do not use outside */                 \
         movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -716,6 +732,14 @@
         movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
         mnpis_rx(W(XD))
 
+#define mnhis_rr(XD, XS) /* horizontal reductive min */                     \
+        mnpis_rr(W(XD), W(XS), W(XS))                                       \
+        mnpis_rr(W(XD), W(XD), W(XD))
+
+#define mnhis_ld(XD, MS, DS)                                                \
+        movix_ld(W(XD), W(MS), W(DS))                                       \
+        mnhis_rr(W(XD), W(XD), W(XD))
+
 #define mnpis_rx(XD) /* not portable, do not use outside */                 \
         movrs2ld(W(XD), Mebp, inf_SCR01(0x00))                              \
         minrs2ld(W(XD), Mebp, inf_SCR01(0x04))                              \
@@ -777,6 +801,14 @@
         movix_ld(W(XD), W(MT), W(DT))                                       \
         movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
         mxpis_rx(W(XD))
+
+#define mxhis_rr(XD, XS) /* horizontal reductive max */                     \
+        mxpis_rr(W(XD), W(XS), W(XS))                                       \
+        mxpis_rr(W(XD), W(XD), W(XD))
+
+#define mxhis_ld(XD, MS, DS)                                                \
+        movix_ld(W(XD), W(MS), W(DS))                                       \
+        mxhis_rr(W(XD), W(XD), W(XD))
 
 #define mxpis_rx(XD) /* not portable, do not use outside */                 \
         movrs2ld(W(XD), Mebp, inf_SCR01(0x00))                              \
