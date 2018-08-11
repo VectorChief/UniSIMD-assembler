@@ -1,24 +1,31 @@
 ================================================================================
 
+P) Task title: "add support for new offsetted vector addressing modes on POWER9"
+1) Implement new offsetted vector addressing instead of indexed loads/stores
+2) Use new load vector with length for an alternative scalar backend over VMX
+3) Compactify current POWER7/8 targets into one (not much difference anyways)
+4) In which case, POWER7+8 would occupy v1/v4, while POWER9 lands on v2/v8 slots
+5) In the new scheme: RT_128=4+8, RT_256=1+2, RT_512=1+2, RT_1K4=1+2 are 15-regs
+6) In the new scheme: RT_128=1+2, RT_256=4+8, RT_512=4+8, RT_1K4=4+8 are 30-regs
+7) Optimize existing POWER7+8 indexed vector addressing for 256/512-bit backends
+8) Use pre-computed indices in BASE regs to save extra address-calculation above
+9) Consider keeping POWER7+8 in v2/v8 slots, while landing POWER9 on v1/v4, huh?
+10) Merge future POWER10 with newly added POWER9, not much difference expected
+11) Think about native 256-bit vectors in POWER11, deprecate POWER7+8 by then?
+12) Or better yet extend SIMD target mask to 64-bit to fit everything there is
+
+================================================================================
+
 S) Task title: "implement ARM-SVE backends with 30 registers (no predicates)"
 1) Implement new SVE instructions for 256/512/1K4/2K8-bit targets (2K8 optional)
 2) Find place in SIMD target mask (RT_256=8, RT_512=8, RT_1K4=8) like AVX-512++
 3) Expose current and future AVX-512/1K4 30-regs targets in RT_512=4+8/RT_1K4=8
-4) In which case, POWER7/8 would still occupy RT_512=1+2 for 15-regs quaded VSX
+4) In which case, POWER8/9 would still occupy RT_512=1+2 for 15-regs quaded VSX
 5) In the new scheme: RT_128=4+8, RT_256=1+2, RT_512=1+2, RT_1K4=1+2 are 15-regs
 6) In the new scheme: RT_128=1+2, RT_256=4+8, RT_512=4+8, RT_1K4=4+8 are 30-regs
 7) When primary target is SVE, secondary is AArch64 NEON (no per-op switching)
 8) Primary is defined with RT_SIMD (secondary is from 128/256-bit set or both)
 9) Make all scalar compare-to-mask-elem non-destructive on AArch64 (optional)
-
-================================================================================
-
-E) Task title: "add 8 SIMD registers full-IEEE support for ARMv7 using VFP"
-1) Implement 128-bit SIMD registers/instructions as 4x32-bit VFP (full-IEEE)
-2) Emulate currently exposed NEON instructions using VFP variants/fallbacks
-3) Use register-offloading to upper bank for 1 mem-arg in load-op instructions
-4) Find place in SIMD target mask (RT_128=8), like legacy x86, ARMv7 is 8-regs
-5) Expose 16x128/8x256 on PowerPC VMX (v4) instead of 15x128/8x256 (optional)
 
 ================================================================================
 
@@ -34,7 +41,27 @@ K) Task title: "use configuration utils (autotools, CMake, etc) for building"
 1) Use single build script for all host CPU architectures on Linux
 2) Keep cross-compilation on x86-64 Linux hosts (targeting QEMU linux-user mode)
 
+================================================================================
 === >>> === tasks above are planned for the upcoming 1.0.0 milestone === <<< ===
+================================================================================
+
+E) Task title: "add 8 SIMD registers full-IEEE support for ARMv7 using VFP"
+1) Implement 128-bit SIMD registers/instructions as 4x32-bit VFP (full-IEEE)
+2) Emulate currently exposed NEON instructions using VFP variants/fallbacks
+3) Use register-offloading to upper bank for 1 mem-arg in load-op instructions
+4) Find place in SIMD target mask (RT_128=8), like legacy x86, ARMv7 is 8-regs
+
+================================================================================
+
+G) Task title: "consider 64-bit SIMD emulation with FPRs on PowerPC G5/POWER6"
+1) Implement 64-bit SIMD registers/instructions as 2x64-bit FPRs (full-IEEE)
+2) Emulate currently exposed SIMD instructions using FPU variants/fallbacks
+3) Emulate 64-bit integer SIMD ops using 64-bit BASE registers where possible
+4) New 64-bit SIMD backend would complement 32-bit targets in existing slots
+5) Expose 16x128/8x256 on PowerPC VMX (v4) instead of 15x128/8x256 for 32-bit
+6) Consider implementing 8x256 mode with register-offloading to mem for 64-bit
+
+================================================================================
 
 R) Task title: "implement basic run-time generation for existing ASM code-bases"
 1) Rewrite ASM_ENTER macro to allocate temporary buffer with code-exec rights
@@ -58,6 +85,10 @@ C) Task title: "implement SIMD fp32/fp64 converters consistently across targets"
 
 ================================================================================
 
+A) Task title: "implement SIMD fp16 converters as tier-1 extension, modern CPUs"
+
+================================================================================
+
 F) Task title: "implement scalar fp compare-to-flags, fp/fp & fp/int converters"
 
 ================================================================================
@@ -67,6 +98,8 @@ I) Task title: "implement integer SIMD compare-to-mask across all targets"
 ================================================================================
 
 M) Task title: "add support for trigonometric/randomizer SIMD meta-instructions"
+   (consider sleef library as an example of elementary math functions with SIMD)
+   (https://github.com/shibatch/sleef)      <- use this code snapshot as a base
 
 ================================================================================
 
@@ -74,15 +107,15 @@ X) Task title: "implement predicated AVX-512/ARM-SVE backends (in *_RX slots)"
 
 ================================================================================
 
+H) Task title: "implement fp16 backend on ARMv8.2 as tier-2 extension (no SPMD)"
+
+================================================================================
+
+Q) Task title: "implement fp128 backend on POWER9 as tier-2 extension (no SPMD)"
+
+================================================================================
+
 L) Task title: "consider SoftFP library integration for full fp16/fp128 support"
-
-================================================================================
-
-H) Task title: "implement fp16 backend on ARMv8.2 (+ Xeon Phi Knights Mill?)"
-
-================================================================================
-
-Q) Task title: "implement fp128 backend on POWER9/ISA3.0 (+ RISC-V fp128 fpu?)"
 
 ================================================================================
 
@@ -96,5 +129,7 @@ V) Task title: "add support for various new and existing architectures"
    (https://www.imgtec.com/blog/loongson-mips64-processors-performance-barrier/)
 4) Add support for SPARC64 VIIIfx HPC-ACE SIMD extensions as well as BASE ops
    (http://www.fujitsu.com/downloads/TC/sparc64viiifx-extensions.pdf)
+5) Add support for ELBRUS architecture, emulate SIMD on top of VLIW, have fun!
+   (https://en.wikipedia.org/wiki/Elbrus_2000)
 
 ================================================================================
