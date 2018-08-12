@@ -5,14 +5,14 @@ P) Task title: "add support for new offsetted vector addressing modes on POWER9"
 2) Use new load vector with length for an alternative scalar backend over VMX
 3) Compactify current POWER7/8 targets into one (not much difference anyways)
 4) In which case, POWER7+8 would occupy v1/v4, while POWER9 lands on v2/v8 slots
-5) In the new scheme: RT_128=4+8, RT_256=1+2, RT_512=1+2, RT_1K4=1+2 are 15-regs
-6) In the new scheme: RT_128=1+2, RT_256=4+8, RT_512=4+8, RT_1K4=4+8 are 30-regs
+5) In current scheme: RT_128=4+8, RT_256=1+2, RT_512=1+2, RT_1K4=1+2 are 15-regs
+6) In current scheme: RT_128=1+2, RT_256=4+8, RT_512=4+8, RT_1K4=4+8 are 30-regs
 7) Optimize existing POWER7+8 indexed vector addressing for 256/512-bit backends
 8) Use pre-computed indices in BASE regs to save extra address-calculation above
-9) Consider keeping POWER7+8 in v2/v8 slots, while landing POWER9 on v1/v4, huh?
+9) Consider keeping POWER7+8 in v2/v8 slots, while landing POWER9 on v1/v4 (no?)
 10) Merge future POWER10 with newly added POWER9, not much difference expected
-11) Think about native 256-bit vectors in POWER11, deprecate POWER7+8 by then?
-12) Or better yet extend SIMD target mask to 64-bit to fit everything there is
+11) Think about native 256-bit vectors in POWER11, find slot in SIMD target mask
+12) Free slots by using RT_REGS=16/32 in makefiles resulting in 4 bits per width
 
 ================================================================================
 
@@ -21,19 +21,21 @@ S) Task title: "implement ARM-SVE backends with 30 registers (no predicates)"
 2) Find place in SIMD target mask (RT_256=8, RT_512=8, RT_1K4=8) like AVX-512++
 3) Expose current and future AVX-512/1K4 30-regs targets in RT_512=4+8/RT_1K4=8
 4) In which case, POWER8/9 would still occupy RT_512=1+2 for 15-regs quaded VSX
-5) In the new scheme: RT_128=4+8, RT_256=1+2, RT_512=1+2, RT_1K4=1+2 are 15-regs
-6) In the new scheme: RT_128=1+2, RT_256=4+8, RT_512=4+8, RT_1K4=4+8 are 30-regs
+5) In current scheme: RT_128=4+8, RT_256=1+2, RT_512=1+2, RT_1K4=1+2 are 15-regs
+6) In current scheme: RT_128=1+2, RT_256=4+8, RT_512=4+8, RT_1K4=4+8 are 30-regs
 7) When primary target is SVE, secondary is AArch64 NEON (no per-op switching)
 8) Primary is defined with RT_SIMD (secondary is from 128/256-bit set or both)
 9) Make all scalar compare-to-mask-elem non-destructive on AArch64 (optional)
+10) Clean up RT_512=1/4, RT_1K4=1 for AVX-512 to match AVX512F profile (Zen3?)
 
 ================================================================================
 
 N) Task title: "implement new 128/256-bit 30-regs targets on top of current AVX"
 1) Implement register-offloading to memory (SIMD structs) on top of current AVX
-2) Add new SIMD compatiblity flag RT_SIMD_COMPAT_AVX=1/2 for 30-regs with AVX1/2
+2) Add new SIMD compatiblity flag RT_SIMD_COMPAT_256=1/2 for 30-regs with AVX1/2
 3) Find place in SIMD target mask (RT_128=1/RT_256=4) for custom 30-regs support
 4) Improve mask-jump (mkj*x) instructions for 64-bit SIMD elements (optional)
+5) Target 128-bit version to SSE, RT_SIMD_COMPAT_128=2/4/8/16/32 for 30-regs
 
 ================================================================================
 

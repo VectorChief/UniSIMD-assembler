@@ -223,15 +223,18 @@
 /* Interpretation of a 32-bit SIMD-version field (ver) in SIMD-info structure:
  *
  * |RT_128 |256_R8 |RT_256 |512_R8 |RT_512 |1K4_R8 |RT_1K4 |2K8_R8 | - SIMD-flag
- * |1 2 4 8|- - 4|*|1 2 4 8|1 2 -|*|1 2 4 8|1 2 -|*|1 2 - -|1 2 -|*| - cur-value
+ * |1 2 4 8|- - 4|*|1 2 4 8|1 2 -|*|1 2 4 8|1 2 -|*|1 2 4 8|1 2 -|*| - cur-value
  * |       16 32   |       |       |       |       |       |       | - ext-value
  * |0              |               |               |             31| - bit-order
  * |-o-o-o-i-o-o-p-|-o-o-o-i-o-o-p-|-o-o-o-i-o-o-p-|-o-o-o-i-o-o-p-| - SIMD-mask
  *                ^               ^               ^               ^
  *             128_RX          256_RX          512_RX          1K4_RX
  *
- * In the new scheme: RT_128=4+8, RT_256=1+2, RT_512=1+2, RT_1K4=1+2 are 15-reg.
- * In the new scheme: RT_128=1+2, RT_256=4+8, RT_512=4+8, RT_1K4=4+8 are 30-reg.
+ * In current scheme: RT_128=4+8, RT_256=1+2, RT_512=1+2, RT_1K4=1+2 are 15-reg.
+ * In current scheme: RT_128=1+2, RT_256=4+8, RT_512=4+8, RT_1K4=4+8 are 30-reg.
+ *
+ * New bits can be freed for future targets by using RT_REGS=16/32 in makefiles
+ * resulting in 4 variants per width in total (both 15/30-regs then start at 1).
  *
  * Original RT_128, RT_256, RT_512, RT_1K4 flags expose 15/30-register targets.
  * New RT_256_R8, RT_512_R8, RT_1K4_R8, RT_2K8_R8 flags are 8-register targets.
@@ -240,7 +243,7 @@
  * The original RT_*** targets have only 8 registers on legacy CPUs (x86/ARMv7).
  * The original RT_*** targets can be either native (x64) or composite (RISCs).
  * The *_R8 targets are always composed of register/instruction pairs or quads.
- * The *_RX targets have 30 registers + 8 masks (AVX-512/1K4 and ARM-SVE only).
+ * The *_RX targets have 30 registers + 7 masks (AVX-512/1K4 and ARM-SVE only).
  *
  * Some targets may have less registers than category-defined maximum (8,16,32).
  * The common minimum in each category is then defined with RT_SIMD_COMPAT_XMM:
