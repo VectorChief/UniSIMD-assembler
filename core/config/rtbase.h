@@ -818,7 +818,17 @@ rt_si32 from_mask(rt_si32 mask)
  * upper 128-bit halves of full 256-bit SIMD registers may end up undefined.
  * On RISC targets they remain unchanged, while on x86-AVX they are zeroed.
  * This happens when registers written in 128-bit subset are then used/read
- * from within 256-bit subset. The same rule applies to mixing of 256/512-bit.
+ * from within 256-bit subset. The same rule applies to mixing with 512-bit
+ * and wider vectors. Use of scalars may leave respective vector registers
+ * undefined, as seen from the perspective of any particular vector subset.
+ *
+ * 256-bit vectors used with wider subsets may not be compatible with regards
+ * to memory loads/stores when mixed in the code. It means that data loaded
+ * with wider vector and stored within 256-bit subset at the same address may
+ * result in changing the initial representation in memory. The same can be
+ * said about mixing vector and scalar subsets. Scalars can be completely
+ * detached on some architectures. Use elm*x_st to store 1st vector element.
+ * 128-bit vectors should be memory-compatible with any wider vector subset.
  *
  * Interpretation of instruction parameters:
  *
