@@ -36,13 +36,13 @@ simd_test_m64_64Lr6:
 
 simd_test_m64f32Lr6:
 	mips-img-linux-gnu-g++ -O3 -g -static -EL -mabi=64 -mmsa \
-        -DRT_LINUX -DRT_M64=6 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_M64=6 -DRT_256=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64f32Lr6
 
 simd_test_m64f64Lr6:
 	mips-img-linux-gnu-g++ -O3 -g -static -EL -mabi=64 -mmsa \
-        -DRT_LINUX -DRT_M64=6 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_M64=6 -DRT_256=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64f64Lr6
 
@@ -63,13 +63,13 @@ simd_test_m64_64Br6:
 
 simd_test_m64f32Br6:
 	mips-img-linux-gnu-g++ -O3 -g -static -EB -mabi=64 -mmsa \
-        -DRT_LINUX -DRT_M64=6 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_M64=6 -DRT_256=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64f32Br6
 
 simd_test_m64f64Br6:
 	mips-img-linux-gnu-g++ -O3 -g -static -EB -mabi=64 -mmsa \
-        -DRT_LINUX -DRT_M64=6 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_M64=6 -DRT_256=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64f64Br6
 

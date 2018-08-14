@@ -37,13 +37,13 @@ simd_test_p64_64Lp8:
 
 simd_test_p64f32Lp8:
 	powerpc64le-linux-gnu-g++ -O2 -g -static \
-        -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_P64 -DRT_256=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f32Lp8
 
 simd_test_p64f64Lp8:
 	powerpc64le-linux-gnu-g++ -O2 -g -static \
-        -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_P64 -DRT_256=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f64Lp8
 
@@ -52,25 +52,25 @@ build_be: simd_test_p64_32Bp7 simd_test_p64_64Bp7 simd_test_p64f32Bp7 simd_test_
 
 simd_test_p64_32Bp7:
 	powerpc64-linux-gnu-g++ -O2 -g -static \
-        -DRT_LINUX -DRT_P64 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_P64 -DRT_256=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64_32Bp7
 
 simd_test_p64_64Bp7:
 	powerpc64-linux-gnu-g++ -O2 -g -static \
-        -DRT_LINUX -DRT_P64 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_P64 -DRT_256=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64_64Bp7
 
 simd_test_p64f32Bp7:
 	powerpc64-linux-gnu-g++ -O2 -g -static \
-        -DRT_LINUX -DRT_P64 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_P64 -DRT_512=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f32Bp7
 
 simd_test_p64f64Bp7:
 	powerpc64-linux-gnu-g++ -O2 -g -static \
-        -DRT_LINUX -DRT_P64 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_P64 -DRT_512=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f64Bp7
 
