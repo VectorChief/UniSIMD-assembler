@@ -1798,7 +1798,7 @@ rt_void c_test13(rt_SIMD_INFOX *info)
     rt_real *fco1 = info->fco1;
     rt_real *fco2 = info->fco2;
 
-    i = info->cyc;
+    i = RT_MAX(1, info->cyc/100); /* <- hack to reduce test time, add option */
     while (i-->0)
     {
         j = n;
@@ -1821,7 +1821,7 @@ rt_void s_test13(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
 
-    i = info->cyc;
+    i = RT_MAX(1, info->cyc/100); /* <- hack to reduce test time, add option */
     while (i-->0)
     {
         ASM_ENTER(info)
@@ -3380,7 +3380,7 @@ rt_void c_test25(rt_SIMD_INFOX *info)
     rt_real *fco1 = info->fco1;
     rt_real *fco2 = info->fco2;
 
-    i = info->cyc/100;
+    i = RT_MAX(1, info->cyc/100); /* <- hack to reduce test time, add option */
     while (i-->0)
     {
         j = n;
@@ -3429,7 +3429,7 @@ rt_void s_test25(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
 
-    i = info->cyc/100;
+    i = RT_MAX(1, info->cyc/100); /* <- hack to reduce test time, add option */
     while (i-->0)
     {
         ASM_ENTER(info)
@@ -3556,7 +3556,7 @@ rt_void c_test26(rt_SIMD_INFOX *info)
     rt_real *fco1 = info->fco1;
     rt_real *fco2 = info->fco2;
 
-    i = info->cyc/100;
+    i = RT_MAX(1, info->cyc/100); /* <- hack to reduce test time, add option */
     while (i-->0)
     {
         j = n;
@@ -3605,7 +3605,7 @@ rt_void s_test26(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
 
-    i = info->cyc/100;
+    i = RT_MAX(1, info->cyc/100); /* <- hack to reduce test time, add option */
     while (i-->0)
     {
         ASM_ENTER(info)
