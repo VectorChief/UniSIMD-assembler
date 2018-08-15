@@ -59,10 +59,14 @@ When building QEMU from source isn't necessary install a full binary package:
 To emulate future x86 targets (AVX-512) on modern x86 Linux hosts use Intel SDE:
     http://software.intel.com/en-us/articles/intel-software-development-emulator
 
-In terminal window use "Emulate Everything Mode":
-    path-to-kit/sde64 -knl -- /bin/bash
-    path-to-kit/sde64 -skx -- /bin/bash
+In terminal window for 32-bit x86 use:
+    path-to-kit/sde   -knl -- ./test/simd_test.x86 -c 1
+    path-to-kit/sde   -skx -- ./test/simd_test.x86 -c 1
+In terminal window for 64-bit x64 use:
+    path-to-kit/sde64 -knl -- ./test/simd_test.x64f32 -c 1
+    path-to-kit/sde64 -skx -- ./test/simd_test.x64f32 -c 1
 for AVX3.1 (Knights Landing) and AVX3.2 (Skylake Xeon) respectively.
+Use "-c 1" option to reduce test time when emulating with Intel SDE.
 
 ================================================================================
 

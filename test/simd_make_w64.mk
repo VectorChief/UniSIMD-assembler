@@ -54,7 +54,7 @@ simd_test_w64f64:
 # run the following from Command Prompt "cmd":
 # mingw32-make -f simd_make_w64.mk
 # simd_test_w64f32.exe
-# Use "-c 1000" option to reduce test time when emulating with Intel SDE
+# Use "-c 1" option to reduce test time when emulating with Intel SDE
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 

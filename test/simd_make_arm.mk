@@ -85,9 +85,9 @@ simd_test_arm_rpi3:
 #
 # Building/running SIMD test:
 # make -f simd_make_arm.mk
-# qemu-arm -cpu cortex-a8  simd_test.arm_v1 -c 1000
-# qemu-arm -cpu cortex-a15 simd_test.arm_v2 -c 1000
-# Use "-c 1000" option to reduce test time when emulating with QEMU
+# qemu-arm -cpu cortex-a8  simd_test.arm_v1 -c 1
+# qemu-arm -cpu cortex-a15 simd_test.arm_v2 -c 1
+# Use "-c 1" option to reduce test time when emulating with QEMU
 
 # Clang compilation works too (takes much longer prior to 3.8), use (replace):
 # clang++ (in place of ...-g++)

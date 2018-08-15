@@ -47,9 +47,9 @@ simd_test_p32Bp7:
 #
 # Building/running SIMD test:
 # make -f simd_make_p32.mk
-# qemu-ppc -cpu G4 simd_test.p32Bg4 -c 1000
-# qemu-ppc64abi32 -cpu POWER7 simd_test.p32Bp7 -c 1000
-# Use "-c 1000" option to reduce test time when emulating with QEMU
+# qemu-ppc        -cpu G4     simd_test.p32Bg4 -c 1
+# qemu-ppc64abi32 -cpu POWER7 simd_test.p32Bp7 -c 1
+# Use "-c 1" option to reduce test time when emulating with QEMU
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 

@@ -69,12 +69,12 @@ simd_test_m32Br6:
 #
 # Building/running SIMD test:
 # make -f simd_make_m32.mk
-# qemu-mipsel -cpu P5600 simd_test.m32Lr5 -c 1000
-# qemu-mips -cpu P5600 simd_test.m32Br5 -c 1000
+# qemu-mipsel -cpu P5600            simd_test.m32Lr5 -c 1
+# qemu-mips   -cpu P5600            simd_test.m32Br5 -c 1
 # For MIPS32 Release 6 emulation use QEMU 2.5.0.2.0 from imgtec.com:
-# qemu-mipsel -cpu mips32r6-generic simd_test.m32Lr6 -c 1000
-# qemu-mips -cpu mips32r6-generic simd_test.m32Br6 -c 1000
-# Use "-c 1000" option to reduce test time when emulating with QEMU
+# qemu-mipsel -cpu mips32r6-generic simd_test.m32Lr6 -c 1
+# qemu-mips   -cpu mips32r6-generic simd_test.m32Br6 -c 1
+# Use "-c 1" option to reduce test time when emulating with QEMU
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 
