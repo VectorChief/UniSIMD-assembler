@@ -98,8 +98,9 @@ simd_test_m64f64Br6:
 #
 # Building/running SIMD test:
 # make -f simd_make_m64.mk
-# qemu-mips64el -cpu I6400 simd_test.m64f32Lr6
-# qemu-mips64 -cpu I6400 simd_test.m64f32Br6
+# qemu-mips64el -cpu I6400 simd_test.m64f32Lr6 -c 1000
+# qemu-mips64 -cpu I6400 simd_test.m64f32Br6 -c 1000
+# Use "-c 1000" option to reduce test time when emulating with QEMU
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 

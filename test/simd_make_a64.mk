@@ -59,7 +59,8 @@ simd_test_a64f64:
 #
 # Building/running SIMD test:
 # make -f simd_make_a64.mk
-# qemu-aarch64 -cpu cortex-a57 simd_test.a64f32
+# qemu-aarch64 -cpu cortex-a57 simd_test.a64f32 -c 1000
+# Use "-c 1000" option to reduce test time when emulating with QEMU
 
 # Clang compilation works too (takes much longer prior to 3.8), use (replace):
 # clang++ (in place of ...-g++)

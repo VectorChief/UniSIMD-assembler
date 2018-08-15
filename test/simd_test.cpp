@@ -49,6 +49,7 @@
 rt_si32     n_init      = 0;            /* subtest-init (from command-line) */
 rt_si32     n_done      = RUN_LEVEL-1;  /* subtest-done (from command-line) */
 rt_si32     t_diff      = 2;          /* diff-threshold (from command-line) */
+rt_si32     r_test      = CYC_SIZE;   /* test-redundant (from command-line) */
 rt_bool     v_mode      = RT_FALSE;     /* verbose mode (from command-line) */
 
 /*
@@ -1798,7 +1799,7 @@ rt_void c_test13(rt_SIMD_INFOX *info)
     rt_real *fco1 = info->fco1;
     rt_real *fco2 = info->fco2;
 
-    i = RT_MAX(1, info->cyc/100); /* <- hack to reduce test time, add option */
+    i = info->cyc;
     while (i-->0)
     {
         j = n;
@@ -1821,7 +1822,7 @@ rt_void s_test13(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
 
-    i = RT_MAX(1, info->cyc/100); /* <- hack to reduce test time, add option */
+    i = info->cyc;
     while (i-->0)
     {
         ASM_ENTER(info)
@@ -3380,7 +3381,7 @@ rt_void c_test25(rt_SIMD_INFOX *info)
     rt_real *fco1 = info->fco1;
     rt_real *fco2 = info->fco2;
 
-    i = RT_MAX(1, info->cyc/100); /* <- hack to reduce test time, add option */
+    i = info->cyc;
     while (i-->0)
     {
         j = n;
@@ -3429,7 +3430,7 @@ rt_void s_test25(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
 
-    i = RT_MAX(1, info->cyc/100); /* <- hack to reduce test time, add option */
+    i = info->cyc;
     while (i-->0)
     {
         ASM_ENTER(info)
@@ -3556,7 +3557,7 @@ rt_void c_test26(rt_SIMD_INFOX *info)
     rt_real *fco1 = info->fco1;
     rt_real *fco2 = info->fco2;
 
-    i = RT_MAX(1, info->cyc/100); /* <- hack to reduce test time, add option */
+    i = info->cyc;
     while (i-->0)
     {
         j = n;
@@ -3605,7 +3606,7 @@ rt_void s_test26(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
 
-    i = RT_MAX(1, info->cyc/100); /* <- hack to reduce test time, add option */
+    i = info->cyc;
     while (i-->0)
     {
         ASM_ENTER(info)
@@ -4178,6 +4179,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
         RT_LOGI(" -b n, specify subtest # at which testing begins, n >= 1\n");
         RT_LOGI(" -e n, specify subtest # at which testing ends, n <= max\n");
         RT_LOGI(" -d n, override diff-threshold for qualification, n >= 0\n");
+        RT_LOGI(" -c n, override counter of redundant test cycles, n >= 1\n");
         RT_LOGI(" -v, enable verbose mode, always print values from tests\n");
         RT_LOGI("all options can be used together\n");
         RT_LOGI("--------------------------------------------------------\n");
@@ -4233,6 +4235,23 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
             else
             {
                 RT_LOGI("Diff-threshold value out of range\n");
+                return 0;
+            }
+        }
+        if (k < argc && strcmp(argv[k], "-c") == 0 && ++k < argc)
+        {
+            for (l = strlen(argv[k]), r = 1, t = 0; l > 0; l--, r *= 10)
+            {
+                t += (argv[k][l-1] - '0') * r;
+            }
+            if (t >= 1)
+            {
+                RT_LOGI("Test-redundant overridden: %d\n", t);
+                r_test = t;
+            }
+            else
+            {
+                RT_LOGI("Test-redundant value out of range\n");
                 return 0;
             }
         }
@@ -4345,7 +4364,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     inf0->iso1 = iso1;
     inf0->iso2 = iso2;
 
-    inf0->cyc  = CYC_SIZE;
+    inf0->cyc  = r_test;
     inf0->size = ARR_SIZE;
     inf0->tail = (rt_pntr)0xABCDEF01;
 

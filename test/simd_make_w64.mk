@@ -22,13 +22,13 @@ clean:
 
 simd_test_w64_32:
 	g++ -O3 -g -static -m64 \
-        -DRT_WIN64 -DRT_X64 -DRT_256_R8=4 -DRT_DEBUG=0 \
+        -DRT_WIN64 -DRT_X64 -DRT_128=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test_w64_32.exe
 
 simd_test_w64_64:
 	g++ -O3 -g -static -m64 \
-        -DRT_WIN64 -DRT_X64 -DRT_256_R8=4 -DRT_DEBUG=0 \
+        -DRT_WIN64 -DRT_X64 -DRT_128=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test_w64_64.exe
 
@@ -54,6 +54,7 @@ simd_test_w64f64:
 # run the following from Command Prompt "cmd":
 # mingw32-make -f simd_make_w64.mk
 # simd_test_w64f32.exe
+# Use "-c 1000" option to reduce test time when emulating with Intel SDE
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 

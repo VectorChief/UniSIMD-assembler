@@ -36,6 +36,7 @@ simd_test_x86:
 # Building/running SIMD test:
 # make -f simd_make_x86.mk
 # ./simd_test.x86
+# Use "-c 1000" option to reduce test time when emulating with Intel SDE
 
 # Clang compilation works too (takes much longer prior to 3.8), use (replace):
 # clang++ (in place of g++)

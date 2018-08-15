@@ -90,8 +90,9 @@ simd_test_p64f64Bp7:
 #
 # Building/running SIMD test:
 # make -f simd_make_p64.mk
-# qemu-ppc64le -cpu POWER8 simd_test.p64f32Lp8
-# qemu-ppc64 -cpu POWER7 simd_test.p64f32Bp7
+# qemu-ppc64le -cpu POWER8 simd_test.p64f32Lp8 -c 1000
+# qemu-ppc64 -cpu POWER7 simd_test.p64f32Bp7 -c 1000
+# Use "-c 1000" option to reduce test time when emulating with QEMU
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 
