@@ -4425,8 +4425,8 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 
     for (i = n_init; i <= n_done; i++)
     {
-        RT_LOGI("-------------------  RUN LEVEL = %2d  -------------------\n",
-                                                                          i+1);
+        RT_LOGI("-------------------  RUN LEVEL = %2d  - ptr/fp = %d%s%d --\n",
+                    i+1, RT_POINTER, RT_ADDRESS == 32 ? "_" : "f", RT_ELEMENT);
 
         time1 = get_time();
 
@@ -4450,7 +4450,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 
         p_test[i](inf0);
 
-        RT_LOGI("------------------------------------ simd = %4dx%dv%d ---\n",
+        RT_LOGI("-------------------------------------- simd = %4dx%dv%d -\n",
                 (simd & 0xFF) * 128, (simd >> 16) & 0xFF, (simd >> 8) & 0xFF);
     }
 
