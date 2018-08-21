@@ -125,7 +125,7 @@
 #define  P2(val, tp1, tp2)  P2##tp2
 #define  C2(val, tp1, tp2)  C2##tp2
 
-/* displacement encoding SIMD(TP2) */
+/* displacement encoding SIMD(TP2), ELEM(TP1) */
 
 #define B20(br) (br)
 #define P20(dp) (0x00000000 | ((dp) & 0xFFF0) << 6)
