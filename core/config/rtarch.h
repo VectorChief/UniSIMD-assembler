@@ -1369,6 +1369,9 @@
         movlb_ld(%[Info_])                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
+        EMITS(0x38000010 | MRM(T1xx, 0x00, 0x00)) /* r21 <- 16 */           \
+        EMITS(0x38000020 | MRM(T2xx, 0x00, 0x00)) /* r22 <- 32 */           \
+        EMITS(0x38000030 | MRM(T3xx, 0x00, 0x00)) /* r23 <- 48 */           \
         sregs_sa()                                                          \
         EMITW(0x7C000278 | MSM(TZxx, TZxx, TZxx)) /* r0  <- 0 (xor) */      \
         EMITW(0x7C000040 | MRM(0x08, TLxx, TLxx)) /* cmplw cr2, r24, r24 */ \
@@ -1425,6 +1428,9 @@
         movlb_ld(%[Info_])                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
+        EMITS(0x38000010 | MRM(T1xx, 0x00, 0x00)) /* r21 <- 16 */           \
+        EMITS(0x38000020 | MRM(T2xx, 0x00, 0x00)) /* r22 <- 32 */           \
+        EMITS(0x38000030 | MRM(T3xx, 0x00, 0x00)) /* r23 <- 48 */           \
         sregs_sa()                                                          \
         EMITW(0x7C000278 | MSM(TZxx, TZxx, TZxx)) /* r0  <- 0 (xor) */      \
         EMITW(0x7C000040 | MRM(0x08, TLxx, TLxx)) /* cmplw cr2, r24, r24 */ \
