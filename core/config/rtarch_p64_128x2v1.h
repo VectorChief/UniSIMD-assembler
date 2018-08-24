@@ -4,17 +4,17 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_P64_128X2V2_H
-#define RT_RTARCH_P64_128X2V2_H
+#ifndef RT_RTARCH_P64_128X2V1_H
+#define RT_RTARCH_P64_128X2V1_H
 
-#include "rtarch_p32_128x2v2.h"
+#include "rtarch_p32_128x2v1.h"
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
 
 /*
- * rtarch_p64_128x2v2.h: Implementation of Power fp64 VSX1/2 instruction pairs.
+ * rtarch_p64_128x2v1.h: Implementation of Power fp64 VSX1/2 instruction pairs.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -101,7 +101,7 @@
 
 #if (defined RT_SIMD_CODE)
 
-#if (RT_128X2 >= 1 && RT_128X2 <= 2) && (RT_SIMD_COMPAT_XMM > 0)
+#if (RT_128X2 == 1) && (RT_SIMD_COMPAT_XMM > 0)
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -224,7 +224,7 @@
 
 /* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
 
-#if (RT_128X2 < 2)
+#if (RT_SIMD_COMPAT_PW8 == 0)
 
 #define orndx_rr(XG, XS)                                                    \
         notdx_rx(W(XG))                                                     \
@@ -242,7 +242,7 @@
         notdx_rr(W(XD), W(XS))                                              \
         orrdx_ld(W(XD), W(MT), W(DT))
 
-#else /* RT_128X2 >= 2 */
+#else /* RT_SIMD_COMPAT_PW8 == 1 */
 
 #define orndx_rr(XG, XS)                                                    \
         orndx3rr(W(XG), W(XG), W(XS))
@@ -262,7 +262,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    T1xx,    TPxx))                     \
         EMITW(0xF0000557 | MXM(RYG(XD), TmmM,    RYG(XS)))
 
-#endif /* RT_128X2 >= 2 */
+#endif /* RT_SIMD_COMPAT_PW8 == 1 */
 
 /* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
 
@@ -1001,7 +1001,7 @@
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-#if (RT_128X2 < 2)
+#if (RT_SIMD_COMPAT_PW8 == 0)
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1285,7 +1285,7 @@
         stack_ld(Recx)                                                      \
         movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
-#else /* RT_128X2 >= 2 */
+#else /* RT_SIMD_COMPAT_PW8 == 1 */
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
@@ -1450,7 +1450,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    T1xx,    TPxx))                     \
         EMITW(0x100003C4 | MXM(RYG(XD), RYG(XS), TmmM))
 
-#endif /* RT_128X2 >= 2 */
+#endif /* RT_SIMD_COMPAT_PW8 == 1 */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
@@ -1460,7 +1460,7 @@
 
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_RTARCH_P64_128X2V2_H */
+#endif /* RT_RTARCH_P64_128X2V1_H */
 
 /******************************************************************************/
 /******************************************************************************/

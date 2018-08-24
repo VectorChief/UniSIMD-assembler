@@ -25,25 +25,25 @@ build_le: simd_test_p64_32Lp8 simd_test_p64_64Lp8 simd_test_p64f32Lp8 simd_test_
 
 simd_test_p64_32Lp8:
 	powerpc64le-linux-gnu-g++ -O2 -g -static \
-        -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_P64 -DRT_128=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64_32Lp8
 
 simd_test_p64_64Lp8:
 	powerpc64le-linux-gnu-g++ -O2 -g -static \
-        -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_P64 -DRT_128=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64_64Lp8
 
 simd_test_p64f32Lp8:
 	powerpc64le-linux-gnu-g++ -O2 -g -static \
-        -DRT_LINUX -DRT_P64 -DRT_256=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_P64 -DRT_256=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f32Lp8
 
 simd_test_p64f64Lp8:
 	powerpc64le-linux-gnu-g++ -O2 -g -static \
-        -DRT_LINUX -DRT_P64 -DRT_256=2 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_P64 -DRT_256=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f64Lp8
 
@@ -103,17 +103,17 @@ simd_test_p64f64Bp7:
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 
 # For 128-bit VSX1 build use (replace): RT_128=1    (uses 30 SIMD registers)
-# For 128-bit VSX2 build use (replace): RT_128=2    (uses 30 SIMD registers)
+# For 128-bit VSX2 build use (replace): RT_128=1 RT_SIMD_COMPAT_PW8=1
 # For 128-bit VMX  build use (replace): RT_128=4    (uses 15 SIMD registers)
 
 # For 256-bit VMX  build use (replace): RT_256_R8=4 (uses  8 SIMD reg-pairs)
 # For 256-bit VSX1 build use (replace): RT_256=1    (uses 15 SIMD reg-pairs)
-# For 256-bit VSX2 build use (replace): RT_256=2    (uses 15 SIMD reg-pairs)
+# For 256-bit VSX2 build use (replace): RT_256=1 RT_SIMD_COMPAT_PW8=1
 # For 256-bit VSX1 build use (replace): RT_256=4    (uses 30 SIMD reg-pairs)
-# For 256-bit VSX2 build use (replace): RT_256=8    (uses 30 SIMD reg-pairs)
+# For 256-bit VSX2 build use (replace): RT_256=4 RT_SIMD_COMPAT_PW8=1
 
 # For 512-bit VSX1 build use (replace): RT_512=1    (uses 15 SIMD reg-quads)
-# For 512-bit VSX2 build use (replace): RT_512=2    (uses 15 SIMD reg-quads)
+# For 512-bit VSX2 build use (replace): RT_512=1 RT_SIMD_COMPAT_PW8=1
 
 # 64/32-bit (ptr/adr) hybrid mode is compatible with native 64-bit ABI,
 # use (replace): RT_ADDRESS=32, rename the binary to simd_test.p64_**

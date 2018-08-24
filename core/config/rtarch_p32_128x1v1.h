@@ -4,8 +4,8 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_P32_128X1V2_H
-#define RT_RTARCH_P32_128X1V2_H
+#ifndef RT_RTARCH_P32_128X1V1_H
+#define RT_RTARCH_P32_128X1V1_H
 
 #include "rtarch_p64.h"
 
@@ -21,7 +21,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_p32_128x1v2.h: Implementation of Power fp32 VSX1/2 instructions.
+ * rtarch_p32_128x1v1.h: Implementation of Power fp32 VSX1/2 instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -108,7 +108,7 @@
 
 #if (defined RT_SIMD_CODE)
 
-#if (RT_128X1 >= 1 && RT_128X1 <= 2)
+#if (RT_128X1 == 1)
 
 /* structural */
 
@@ -295,7 +295,7 @@
 
 /* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
 
-#if (RT_128X1 < 2)
+#if (RT_SIMD_COMPAT_PW8 == 0)
 
 #define ornix_rr(XG, XS)                                                    \
         notix_rx(W(XG))                                                     \
@@ -313,7 +313,7 @@
         notix_rr(W(XD), W(XS))                                              \
         orrix_ld(W(XD), W(MT), W(DT))
 
-#else /* RT_128X1 >= 2 */
+#else /* RT_SIMD_COMPAT_PW8 == 1 */
 
 #define ornix_rr(XG, XS)                                                    \
         ornix3rr(W(XG), W(XG), W(XS))
@@ -330,7 +330,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000557 | MXM(REG(XD), TmmM,    REG(XS)))/* ^ == -1 if true */
 
-#endif /* RT_128X1 >= 2 */
+#endif /* RT_SIMD_COMPAT_PW8 == 1 */
 
 /* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
 
@@ -1187,7 +1187,7 @@
 
 #if RT_ELEM_COMPAT_VMX == 0
 
-#if (RT_128X1 < 2)
+#if (RT_SIMD_COMPAT_PW8 == 0)
 
 /* mov (D = S) */
 
@@ -1343,7 +1343,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* RT_128X1 >= 2 */
+#else /* RT_SIMD_COMPAT_PW8 == 1 */
 
 /* mov (D = S) */
 
@@ -1510,7 +1510,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* RT_128X1 >= 2 */
+#endif /* RT_SIMD_COMPAT_PW8 == 1 */
 
 #else  /* RT_ELEM_COMPAT_VMX == 1, -- only if BASE regs are 128bit-aligned -- */
 
@@ -1695,7 +1695,7 @@
 
 #if RT_ELEM_COMPAT_VMX == 0
 
-#if (RT_128X1 < 2)
+#if (RT_SIMD_COMPAT_PW8 == 0)
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
@@ -1827,7 +1827,7 @@
         EMITW(0xC0000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
         EMITW(0xF0000398 | MXM(REG(XD), REG(XS), TmmM))
 
-#else /* RT_128X1 >= 2 */
+#else /* RT_SIMD_COMPAT_PW8 == 1 */
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
@@ -1967,7 +1967,7 @@
         EMITW(0x7C000419 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF000039F | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-#endif /* RT_128X1 >= 2 */
+#endif /* RT_SIMD_COMPAT_PW8 == 1 */
 
 #else  /* RT_ELEM_COMPAT_VMX == 1, -- only if BASE regs are 128bit-aligned -- */
 
@@ -2123,17 +2123,17 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
-#if !(defined RT_RTARCH_P64_128X2V2_H) && !(defined RT_RTARCH_P64_128X2V8_H)
+#if !(defined RT_RTARCH_P64_128X2V1_H) && !(defined RT_RTARCH_P64_128X2V4_H)
 #undef  RT_128X2
 #define RT_128X2  RT_128X1
-#include "rtarch_p64_128x2v2.h"
-#endif /* RT_RTARCH_P64_128X2V2_H, RT_RTARCH_P64_128X2V8_H */
+#include "rtarch_p64_128x2v1.h"
+#endif /* RT_RTARCH_P64_128X2V1_H, RT_RTARCH_P64_128X2V4_H */
 
 #endif /* RT_128X1 */
 
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_RTARCH_P32_128X1V2_H */
+#endif /* RT_RTARCH_P32_128X1V1_H */
 
 /******************************************************************************/
 /******************************************************************************/
