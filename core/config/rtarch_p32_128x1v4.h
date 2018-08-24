@@ -2094,11 +2094,11 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
-#ifndef RT_RTARCH_P32_128X2V4_H
+#ifndef RT_RTARCH_P32_128X2VG_H
 #undef  RT_128X2
 #define RT_128X2  16
-#include "rtarch_p32_128x2v4.h"
-#endif /* RT_RTARCH_P32_128X2V4_H */
+#include "rtarch_p32_128x2vG.h"
+#endif /* RT_RTARCH_P32_128X2VG_H */
 
 #endif /* RT_128X1 */
 
