@@ -73,13 +73,21 @@
  *  - rtarch_p32.h         - Power 32-bit ISA, 32 BASE regs, 14 + temps used
  *  - rtarch_p64.h         - Power 64-bit ISA, 32 BASE regs, 14 + temps used
  *  - rtarch_p32_128x1v1.h - 32-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
+ *  - rtarch_p32_128x1v2.h - 32-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
  *  - rtarch_p64_128x1v1.h - 64-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
+ *  - rtarch_p64_128x1v2.h - 64-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
  *  - rtarch_p32_128x2v1.h - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_p32_128x2v2.h - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 15
  *  - rtarch_p64_128x2v1.h - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_p64_128x2v2.h - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 15
  *  - rtarch_p32_128x2v4.h - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 30
+ *  - rtarch_p32_128x2v8.h - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 30
  *  - rtarch_p64_128x2v4.h - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 30
+ *  - rtarch_p64_128x2v8.h - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 30
  *  - rtarch_p32_128x4v1.h - 32-bit elements, 64 SIMD regs, quads of 128-bit, 15
+ *  - rtarch_p32_128x4v2.h - 32-bit elements, 64 SIMD regs, quads of 128-bit, 15
  *  - rtarch_p64_128x4v1.h - 64-bit elements, 64 SIMD regs, quads of 128-bit, 15
+ *  - rtarch_p64_128x4v2.h - 64-bit elements, 64 SIMD regs, quads of 128-bit, 15
  *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 14 + temps used
  *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 14 + temps used
  *  - rtarch_x32_128x1v2.h - 32-bit elements, 32 SIMD regs, AVX-512+ 128-bit, 30
@@ -1347,16 +1355,24 @@
 #error "PowerPC doesn't support SIMD wider than 128-bit, check build flags"
 #elif (RT_256X1 != 0) && (RT_SIMD == 256)
 #error "PowerPC doesn't support SIMD wider than 128-bit, check build flags"
-#elif (RT_128X4 != 0) && (RT_SIMD == 512) && (RT_REGS == 16)
+#elif (RT_128X4 >= 2) && (RT_SIMD == 512) && (RT_REGS == 16)
+#include "rtarch_p64_128x4v2.h"
+#elif (RT_128X4 >= 1) && (RT_SIMD == 512) && (RT_REGS == 16)
 #include "rtarch_p64_128x4v1.h"
 #elif (RT_128X2 & 16) && (RT_SIMD == 256) && (RT_REGS == 8)
 #include "rtarch_p32_128x2vG.h"
+#elif (RT_128X2 >= 8) && (RT_SIMD == 256) && (RT_REGS == 32)
+#include "rtarch_p64_128x2v8.h"
 #elif (RT_128X2 >= 4) && (RT_SIMD == 256) && (RT_REGS == 32)
 #include "rtarch_p64_128x2v4.h"
+#elif (RT_128X2 >= 2) && (RT_SIMD == 256) && (RT_REGS == 16)
+#include "rtarch_p64_128x2v2.h"
 #elif (RT_128X2 >= 1) && (RT_SIMD == 256) && (RT_REGS == 16)
 #include "rtarch_p64_128x2v1.h"
 #elif (RT_128X1 == 4) && (RT_SIMD == 128) && (RT_REGS == 16)
 #include "rtarch_p32_128x1v4.h"
+#elif (RT_128X1 >= 2) && (RT_SIMD == 128) && (RT_REGS == 32)
+#include "rtarch_p64_128x1v2.h"
 #elif (RT_128X1 >= 1) && (RT_SIMD == 128) && (RT_REGS == 32)
 #include "rtarch_p64_128x1v1.h"
 #endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
