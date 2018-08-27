@@ -1377,9 +1377,8 @@
         shlqx3ld(W(XD), W(XS), Mebp, inf_SCR01(0))
 
 #define shlqx3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMITW(0x7C000299 | MXM(TmmM,    TZxx,    TPxx))                     \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
+        EMITW(0x7C000299 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), E2(DT)))  \
         EMITW(0x100005C4 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x100005C4 | MXM(RYG(XD), RYG(XS), TmmM))                     \
         EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
@@ -1403,9 +1402,8 @@
         shrqx3ld(W(XD), W(XS), Mebp, inf_SCR01(0))
 
 #define shrqx3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMITW(0x7C000299 | MXM(TmmM,    TZxx,    TPxx))                     \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
+        EMITW(0x7C000299 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), E2(DT)))  \
         EMITW(0x100006C4 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x100006C4 | MXM(RYG(XD), RYG(XS), TmmM))                     \
         EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
@@ -1429,9 +1427,8 @@
         shrqn3ld(W(XD), W(XS), Mebp, inf_SCR01(0))
 
 #define shrqn3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMITW(0x7C000299 | MXM(TmmM,    TZxx,    TPxx))                     \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
+        EMITW(0x7C000299 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), E2(DT)))  \
         EMITW(0x100003C4 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x100003C4 | MXM(RYG(XD), RYG(XS), TmmM))                     \
         EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
