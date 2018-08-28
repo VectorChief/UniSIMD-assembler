@@ -115,7 +115,7 @@
  * allows to decouple scalar subset from SIMD where appropriate */
 
 #define elmjx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
-        EMITW(0xF0000050 | MXM(TmmM,    REG(XS), REG(XS)) | SHFL)           \
+        EMITW(0xF0000057 | MXM(TmmM,    REG(XS), REG(XS)) | SHFL)           \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0xF4000002 | MPM(TmmM,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
