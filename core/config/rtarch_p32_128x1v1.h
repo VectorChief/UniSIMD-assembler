@@ -170,7 +170,7 @@
 #define XmmD    0x0D, 0x00, EMPTY       /* v13 */
 #define XmmE    0x0E, 0x00, EMPTY       /* v14 */
 
-/* only for 128-bit instructions (save/restore in 256-bit header)
+/* for 128/256-bit instructions (save/restore in 256-bit header)
  * provided as an extension to common baseline of 15 registers */
 
 #define XmmF    0x1E, 0x00, EMPTY       /* v30 */
