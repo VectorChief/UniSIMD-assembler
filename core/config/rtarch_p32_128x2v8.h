@@ -1130,7 +1130,8 @@
 
 #define shlcx3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
-        EMITW(0x7C0002D9 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), E2(DT)))  \
+        EMITW(0x7C00008E | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), E2(DT)))  \
+        EMITW(0x1000028C | MXM(TmmM,    SPLT,    TmmM))                     \
         EMITW(0x10000184 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
         EMITW(0x10000184 | MXM(TmmQ,    TmmQ,    TmmM))                     \
@@ -1154,7 +1155,8 @@
 
 #define shrcx3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
-        EMITW(0x7C0002D9 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), E2(DT)))  \
+        EMITW(0x7C00008E | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), E2(DT)))  \
+        EMITW(0x1000028C | MXM(TmmM,    SPLT,    TmmM))                     \
         EMITW(0x10000284 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
         EMITW(0x10000284 | MXM(TmmQ,    TmmQ,    TmmM))                     \
@@ -1178,7 +1180,8 @@
 
 #define shrcn3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
-        EMITW(0x7C0002D9 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), E2(DT)))  \
+        EMITW(0x7C00008E | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), E2(DT)))  \
+        EMITW(0x1000028C | MXM(TmmM,    SPLT,    TmmM))                     \
         EMITW(0x10000384 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
         EMITW(0x10000384 | MXM(TmmQ,    TmmQ,    TmmM))                     \

@@ -1000,7 +1000,8 @@
 
 #define shlix3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
-        EMITW(0x7C0002D9 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), E2(DT)))  \
+        EMITW(0x7C00008E | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), E2(DT)))  \
+        EMITW(0x1000028C | MXM(TmmM,    SPLT,    TmmM))                     \
         EMITW(0x10000184 | MXM(REG(XD), REG(XS), TmmM))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
@@ -1018,7 +1019,8 @@
 
 #define shrix3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
-        EMITW(0x7C0002D9 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), E2(DT)))  \
+        EMITW(0x7C00008E | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), E2(DT)))  \
+        EMITW(0x1000028C | MXM(TmmM,    SPLT,    TmmM))                     \
         EMITW(0x10000284 | MXM(REG(XD), REG(XS), TmmM))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
@@ -1036,7 +1038,8 @@
 
 #define shrin3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
-        EMITW(0x7C0002D9 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), E2(DT)))  \
+        EMITW(0x7C00008E | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), E2(DT)))  \
+        EMITW(0x1000028C | MXM(TmmM,    SPLT,    TmmM))                     \
         EMITW(0x10000384 | MXM(REG(XD), REG(XS), TmmM))
 
 /* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
