@@ -2,14 +2,27 @@
   - add new fp-compatibility and feature tasks, rename TASKS file to ROADMAP
   - add support for 30 SIMD register pairs (2x128) backend on POWER7/8
   - add support for 30 SIMD registers (scalar+128+256) backend on Skylake-X
-  - drop standalone SSE2 target from x64, reuse SSE4 (v4) slot, new compat flag
+  - drop standalone SSE2 target from x64, reuse SSE4 (v4) slot, add compat flag
   - add support for 128-bit AVX1+FMA3 (v16) and AVX2+FMA3 (v32) targets for AMD
-  - swap legacy PowerPC G4/POWER6 VMX (now v4) with POWER7/8 VSX1/2 (now v1/v2)
+  - compactify POWER7/8 targets into one slot, add new RT_SIMD_COMPAT_PW8 flag
+  - swap legacy PowerPC G4/POWER6 VMX (now v4) with POWER7/8 VSX1/2 (now v1)
   - 64-bit POWER6 now matches 64-bit Nehalem target (both v4), 15x128/8x256-bit
-  - move 128-bit 30 SIMD registers Skylake-X target from v1 to v2, match POWER8
+  - add support for POWER9 backend (v2) with immediate vector loads/stores
+  - move 128-bit 30 SIMD registers Skylake-X target from v1 to v2, match POWER9
   - reserve 128-bit v1 and 256-bit v4 for 30 SIMD registers emulation on AVX1/2
   - new scheme: RT_128=4+8, RT_256=1+2, RT_512=1+2, RT_1K4=1+2 are 15 registers
   - new scheme: RT_128=1+2, RT_256=4+8, RT_512=4+8, RT_1K4=4+8 are 30 registers
+  - add elm*x_st instruction to decouple scalar subset from vectors (via mem)
+  - add support for horizontal pairwise/reductive add/mul/min/max instructions
+  - add VMX-compatible scalar SIMD subset on PPC G4 and POWER family of CPUs
+  - add MSA/scalar compatibility on big-endian MIPS, support for fp32 11-bit DP
+  - improve SIMD target reporting in tests, add -c n option to reduce test time
+  - fix BASE shifts with zero immediate arg on legacy ARMv7 (backported down)
+  - fix location for 128/256-bit common SIMD instructions
+  - fix comment for SIMD shifts with count in memory
+  - fix for scalar SIMD alignment on ARMv7, POWER8
+  - fix compilation in C++11 mode with RT_DEBUG=2
+  - add comment for scalar/vector compatibility
 
 v0.9.1: Unified SIMD Assembler, 3-operand + basic scalar SIMD, extra backends
   - expose 128/256-bit SIMD subsets (cmd[i/j/l]*, cmd[c/d/f]*) simultaneously
