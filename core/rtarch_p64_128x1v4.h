@@ -801,7 +801,7 @@
 #define shljx_ri(XG, IS)                                                    \
         shljx3ri(W(XG), W(XG), W(IS))
 
-#define shljx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shljx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shljx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shljx3ri(XD, XS, IT)                                                \
@@ -825,7 +825,7 @@
 #define shrjx_ri(XG, IS)                                                    \
         shrjx3ri(W(XG), W(XG), W(IS))
 
-#define shrjx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrjx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrjx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrjx3ri(XD, XS, IT)                                                \
@@ -849,7 +849,7 @@
 #define shrjn_ri(XG, IS)                                                    \
         shrjn3ri(W(XG), W(XG), W(IS))
 
-#define shrjn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrjn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrjn3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrjn3ri(XD, XS, IT)                                                \
@@ -1005,7 +1005,7 @@
 #define shljx_ri(XG, IS)                                                    \
         shljx3ri(W(XG), W(XG), W(IS))
 
-#define shljx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shljx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shljx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shljx3ri(XD, XS, IT)                                                \
@@ -1024,7 +1024,7 @@
 #define shrjx_ri(XG, IS)                                                    \
         shrjx3ri(W(XG), W(XG), W(IS))
 
-#define shrjx_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrjx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrjx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrjx3ri(XD, XS, IT)                                                \
@@ -1043,7 +1043,7 @@
 #define shrjn_ri(XG, IS)                                                    \
         shrjn3ri(W(XG), W(XG), W(IS))
 
-#define shrjn_ld(XG, MS, DS) /* loads SIMD, uses 64-bit at given address */ \
+#define shrjn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
         shrjn3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrjn3ri(XD, XS, IT)                                                \
