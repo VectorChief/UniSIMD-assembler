@@ -535,12 +535,12 @@ rt_void p_test03(rt_SIMD_INFOX *info)
         RT_LOGI("farr[%d] = %e, farr[%d] = %e\n",
                 j, far0[j], (j + S) % n, far0[(j + S) % n]);
 
-        RT_LOGI("C (farr[%d]>!farr[%d]) = %"PR_L"X, "
-                  "(farr[%d]>=farr[%d]) = %"PR_L"X\n",
+        RT_LOGI("C (farr[%d]>!farr[%d]) = %" PR_L "X, "
+                  "(farr[%d]>=farr[%d]) = %" PR_L "X\n",
                 j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
 
-        RT_LOGI("S (farr[%d]>!farr[%d]) = %"PR_L"X, "
-                  "(farr[%d]>=farr[%d]) = %"PR_L"X\n",
+        RT_LOGI("S (farr[%d]>!farr[%d]) = %" PR_L "X, "
+                  "(farr[%d]>=farr[%d]) = %" PR_L "X\n",
                 j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
     }
 }
@@ -673,12 +673,12 @@ rt_void p_test04(rt_SIMD_INFOX *info)
         RT_LOGI("farr[%d] = %e, farr[%d] = %e\n",
                 j, far0[j], (j + S) % n, far0[(j + S) % n]);
 
-        RT_LOGI("C (farr[%d]<!farr[%d]) = %"PR_L"X, "
-                  "(farr[%d]<=farr[%d]) = %"PR_L"X\n",
+        RT_LOGI("C (farr[%d]<!farr[%d]) = %" PR_L "X, "
+                  "(farr[%d]<=farr[%d]) = %" PR_L "X\n",
                 j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
 
-        RT_LOGI("S (farr[%d]<!farr[%d]) = %"PR_L"X, "
-                  "(farr[%d]<=farr[%d]) = %"PR_L"X\n",
+        RT_LOGI("S (farr[%d]<!farr[%d]) = %" PR_L "X, "
+                  "(farr[%d]<=farr[%d]) = %" PR_L "X\n",
                 j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
     }
 }
@@ -811,12 +811,12 @@ rt_void p_test05(rt_SIMD_INFOX *info)
         RT_LOGI("farr[%d] = %e, farr[%d] = %e\n",
                 j, far0[j], (j + S) % n, far0[(j + S) % n]);
 
-        RT_LOGI("C (farr[%d]==farr[%d]) = %"PR_L"X, "
-                  "(farr[%d]!=farr[%d]) = %"PR_L"X\n",
+        RT_LOGI("C (farr[%d]==farr[%d]) = %" PR_L "X, "
+                  "(farr[%d]!=farr[%d]) = %" PR_L "X\n",
                 j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
 
-        RT_LOGI("S (farr[%d]==farr[%d]) = %"PR_L"X, "
-                  "(farr[%d]!=farr[%d]) = %"PR_L"X\n",
+        RT_LOGI("S (farr[%d]==farr[%d]) = %" PR_L "X, "
+                  "(farr[%d]!=farr[%d]) = %" PR_L "X\n",
                 j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
     }
 }
@@ -913,13 +913,13 @@ rt_void p_test06(rt_SIMD_INFOX *info)
             continue;
         }
 
-        RT_LOGI("farr[%d] = %e, iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("farr[%d] = %e, iarr[%d] = %" PR_L "d\n",
                 j, far0[j], j, iar0[j]);
 
-        RT_LOGI("C (rt_elem)farr[%d] = %"PR_L"d, (rt_real)iarr[%d] = %e\n",
+        RT_LOGI("C (rt_elem)farr[%d] = %" PR_L "d, (rt_real)iarr[%d] = %e\n",
                 j, ico1[j], j, fco2[j]);
 
-        RT_LOGI("S (rt_elem)farr[%d] = %"PR_L"d, (rt_real)iarr[%d] = %e\n",
+        RT_LOGI("S (rt_elem)farr[%d] = %" PR_L "d, (rt_real)iarr[%d] = %e\n",
                 j, iso1[j], j, fso2[j]);
     }
 }
@@ -1196,15 +1196,15 @@ rt_void p_test08(rt_SIMD_INFOX *info)
             continue;
         }
 
-        RT_LOGI("iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("iarr[%d] = %" PR_L "d\n",
                 j, iar0[j]);
 
-        RT_LOGI("C iarr[%d]+((rt_uelm)+iarr[%d]<<1) = %"PR_L"d, "
-                  "iarr[%d]-((rt_uelm)-iarr[%d]>>2) = %"PR_L"d\n",
+        RT_LOGI("C iarr[%d]+((rt_uelm)+iarr[%d]<<1) = %" PR_L "d, "
+                  "iarr[%d]-((rt_uelm)-iarr[%d]>>2) = %" PR_L "d\n",
                 j, j, ico1[j], j, j, ico2[j]);
 
-        RT_LOGI("S iarr[%d]+((rt_uelm)+iarr[%d]<<1) = %"PR_L"d, "
-                  "iarr[%d]-((rt_uelm)-iarr[%d]>>2) = %"PR_L"d\n",
+        RT_LOGI("S iarr[%d]+((rt_uelm)+iarr[%d]<<1) = %" PR_L "d, "
+                  "iarr[%d]-((rt_uelm)-iarr[%d]>>2) = %" PR_L "d\n",
                 j, j, iso1[j], j, j, iso2[j]);
     }
 }
@@ -1328,15 +1328,15 @@ rt_void p_test09(rt_SIMD_INFOX *info)
             continue;
         }
 
-        RT_LOGI("iarr[%d] = %"PR_L"d, iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("iarr[%d] = %" PR_L "d, iarr[%d] = %" PR_L "d\n",
                 j, iar0[j], (j + S) % n, iar0[(j + S) % n]);
 
-        RT_LOGI("C iarr[%d]*iarr[%d] = %"PR_L"d, "
-                  "iarr[%d]/iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("C iarr[%d]*iarr[%d] = %" PR_L "d, "
+                  "iarr[%d]/iarr[%d] = %" PR_L "d\n",
                 j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
 
-        RT_LOGI("S iarr[%d]*iarr[%d] = %"PR_L"d, "
-                  "iarr[%d]/iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("S iarr[%d]*iarr[%d] = %" PR_L "d, "
+                  "iarr[%d]/iarr[%d] = %" PR_L "d\n",
                 j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
     }
 }
@@ -1616,15 +1616,15 @@ rt_void p_test11(rt_SIMD_INFOX *info)
             continue;
         }
 
-        RT_LOGI("iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("iarr[%d] = %" PR_L "d\n",
                 j, iar0[j]);
 
-        RT_LOGI("C iarr[%d]|(iarr[%d]<<7) = %"PR_L"d, "
-                  "iarr[%d]^(iarr[%d]>>3) = %"PR_L"d\n",
+        RT_LOGI("C iarr[%d]|(iarr[%d]<<7) = %" PR_L "d, "
+                  "iarr[%d]^(iarr[%d]>>3) = %" PR_L "d\n",
                 j, j, ico1[j], j, j, ico2[j]);
 
-        RT_LOGI("S iarr[%d]|(iarr[%d]<<7) = %"PR_L"d, "
-                  "iarr[%d]^(iarr[%d]>>3) = %"PR_L"d\n",
+        RT_LOGI("S iarr[%d]|(iarr[%d]<<7) = %" PR_L "d, "
+                  "iarr[%d]^(iarr[%d]>>3) = %" PR_L "d\n",
                 j, j, iso1[j], j, j, iso2[j]);
     }
 }
@@ -1769,15 +1769,15 @@ rt_void p_test12(rt_SIMD_INFOX *info)
             continue;
         }
 
-        RT_LOGI("iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("iarr[%d] = %" PR_L "d\n",
                 j, iar0[j]);
 
-        RT_LOGI("C iarr[%d]&(iarr[%d]<<7) = %"PR_L"d, "
-                 "~iarr[%d]&(iarr[%d]>>3) = %"PR_L"d\n",
+        RT_LOGI("C iarr[%d]&(iarr[%d]<<7) = %" PR_L "d, "
+                 "~iarr[%d]&(iarr[%d]>>3) = %" PR_L "d\n",
                 j, j, ico1[j], j, j, ico2[j]);
 
-        RT_LOGI("S iarr[%d]&(iarr[%d]<<7) = %"PR_L"d, "
-                 "~iarr[%d]&(iarr[%d]>>3) = %"PR_L"d\n",
+        RT_LOGI("S iarr[%d]&(iarr[%d]<<7) = %" PR_L "d, "
+                 "~iarr[%d]&(iarr[%d]>>3) = %" PR_L "d\n",
                 j, j, iso1[j], j, j, iso2[j]);
     }
 }
@@ -2063,8 +2063,8 @@ rt_void p_test14(rt_SIMD_INFOX *info)
         k = S;
         while (k-->0)
         {
-            RT_LOGI("C (farr[%d]==farr[%d]) = %"PR_L"X, "
-                      "(farr[%d]!=farr[%d]) = %"PR_L"X\n",
+            RT_LOGI("C (farr[%d]==farr[%d]) = %" PR_L "X, "
+                      "(farr[%d]!=farr[%d]) = %" PR_L "X\n",
                     j*S + k, ((j+1)*S + k) % n, ico1[j*S + k],
                     j*S + k, ((j+1)*S + k) % n, ico2[j*S + k]);
         }
@@ -2072,8 +2072,8 @@ rt_void p_test14(rt_SIMD_INFOX *info)
         k = S;
         while (k-->0)
         {
-            RT_LOGI("S (farr[%d]==farr[%d]) = %"PR_L"X, "
-                      "(farr[%d]!=farr[%d]) = %"PR_L"X\n",
+            RT_LOGI("S (farr[%d]==farr[%d]) = %" PR_L "X, "
+                      "(farr[%d]!=farr[%d]) = %" PR_L "X\n",
                     j*S + k, ((j+1)*S + k) % n, iso1[j*S + k],
                     j*S + k, ((j+1)*S + k) % n, iso2[j*S + k]);
         }
@@ -2201,13 +2201,13 @@ rt_void p_test15(rt_SIMD_INFOX *info)
             continue;
         }
 
-        RT_LOGI("iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("iarr[%d] = %" PR_L "d\n",
                 j, iar0[j]);
 
-        RT_LOGI("C +iarr[%d]>>3 = %"PR_L"d, -iarr[%d]>>5 = %"PR_L"d\n",
+        RT_LOGI("C +iarr[%d]>>3 = %" PR_L "d, -iarr[%d]>>5 = %" PR_L "d\n",
                 j, ico1[j], j, ico2[j]);
 
-        RT_LOGI("S +iarr[%d]>>3 = %"PR_L"d, -iarr[%d]>>5 = %"PR_L"d\n",
+        RT_LOGI("S +iarr[%d]>>3 = %" PR_L "d, -iarr[%d]>>5 = %" PR_L "d\n",
                 j, iso1[j], j, iso2[j]);
     }
 }
@@ -2348,15 +2348,15 @@ rt_void p_test16(rt_SIMD_INFOX *info)
             continue;
         }
 
-        RT_LOGI("iarr[%d] = %"PR_L"d, iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("iarr[%d] = %" PR_L "d, iarr[%d] = %" PR_L "d\n",
                 j, iar0[j], (j/S)*S, iar0[(j/S)*S]);
 
-        RT_LOGI("C iarr[%d]>>iarr[%d] = %"PR_L"d, "
-                  "iarr[%d]<<iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("C iarr[%d]>>iarr[%d] = %" PR_L "d, "
+                  "iarr[%d]<<iarr[%d] = %" PR_L "d\n",
                 j, (j/S)*S, ico1[j], j, (j/S)*S, ico2[j]);
 
-        RT_LOGI("S iarr[%d]>>iarr[%d] = %"PR_L"d, "
-                  "iarr[%d]<<iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("S iarr[%d]>>iarr[%d] = %" PR_L "d, "
+                  "iarr[%d]<<iarr[%d] = %" PR_L "d\n",
                 j, (j/S)*S, iso1[j], j, (j/S)*S, iso2[j]);
     }
 }
@@ -2582,15 +2582,15 @@ rt_void p_test18(rt_SIMD_INFOX *info)
             continue;
         }
 
-        RT_LOGI("iarr[%d] = %"PR_L"d, iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("iarr[%d] = %" PR_L "d, iarr[%d] = %" PR_L "d\n",
                 j, iar0[j], (j + S) % n, iar0[(j + S) % n]);
 
-        RT_LOGI("C iarr[%d]*iarr[%d] = %"PR_L"d, "
-                  "iarr[%d]%%iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("C iarr[%d]*iarr[%d] = %" PR_L "d, "
+                  "iarr[%d]%%iarr[%d] = %" PR_L "d\n",
                 j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
 
-        RT_LOGI("S iarr[%d]*iarr[%d] = %"PR_L"d, "
-                  "iarr[%d]%%iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("S iarr[%d]*iarr[%d] = %" PR_L "d, "
+                  "iarr[%d]%%iarr[%d] = %" PR_L "d\n",
                 j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
     }
 }
@@ -2724,15 +2724,15 @@ rt_void p_test19(rt_SIMD_INFOX *info)
             continue;
         }
 
-        RT_LOGI("iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("iarr[%d] = %" PR_L "d\n",
                 j, iar0[j]);
 
-        RT_LOGI("C ~iarr[%d]|(iarr[%d]<<7) = %"PR_L"d, "
-                  "~iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("C ~iarr[%d]|(iarr[%d]<<7) = %" PR_L "d, "
+                  "~iarr[%d] = %" PR_L "d\n",
                 j, j, ico1[j], j, ico2[j]);
 
-        RT_LOGI("S ~iarr[%d]|(iarr[%d]<<7) = %"PR_L"d, "
-                  "~iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("S ~iarr[%d]|(iarr[%d]<<7) = %" PR_L "d, "
+                  "~iarr[%d] = %" PR_L "d\n",
                 j, j, iso1[j], j, iso2[j]);
     }
 }
@@ -2991,15 +2991,15 @@ rt_void p_test21(rt_SIMD_INFOX *info)
             continue;
         }
 
-        RT_LOGI("iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("iarr[%d] = %" PR_L "d\n",
                 j, iar0[j]);
 
-        RT_LOGI("C iarr[%d]/117 = %"PR_L"d, "
-                 "-iarr[%d]/289 = %"PR_L"d\n",
+        RT_LOGI("C iarr[%d]/117 = %" PR_L "d, "
+                 "-iarr[%d]/289 = %" PR_L "d\n",
                 j, ico1[j], j, ico2[j]);
 
-        RT_LOGI("S iarr[%d]/117 = %"PR_L"d, "
-                 "-iarr[%d]/289 = %"PR_L"d\n",
+        RT_LOGI("S iarr[%d]/117 = %" PR_L "d, "
+                 "-iarr[%d]/289 = %" PR_L "d\n",
                 j, iso1[j], j, iso2[j]);
     }
 }
@@ -3117,15 +3117,15 @@ rt_void p_test22(rt_SIMD_INFOX *info)
             continue;
         }
 
-        RT_LOGI("iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("iarr[%d] = %" PR_L "d\n",
                 j, iar0[j]);
 
-        RT_LOGI("C iarr[%d]%%117 = %"PR_L"d, "
-                 "-iarr[%d]%%289 = %"PR_L"d\n",
+        RT_LOGI("C iarr[%d]%%117 = %" PR_L "d, "
+                 "-iarr[%d]%%289 = %" PR_L "d\n",
                 j, ico1[j], j, ico2[j]);
 
-        RT_LOGI("S iarr[%d]%%117 = %"PR_L"d, "
-                 "-iarr[%d]%%289 = %"PR_L"d\n",
+        RT_LOGI("S iarr[%d]%%117 = %" PR_L "d, "
+                 "-iarr[%d]%%289 = %" PR_L "d\n",
                 j, iso1[j], j, iso2[j]);
     }
 }
@@ -3237,15 +3237,15 @@ rt_void p_test23(rt_SIMD_INFOX *info)
             continue;
         }
 
-        RT_LOGI("iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("iarr[%d] = %" PR_L "d\n",
                 j, iar0[j]);
 
-        RT_LOGI("C iarr[%d] ror 5 = %"PR_L"d, "
-                 " iarr[%d] ror 31 = %"PR_L"d\n",
+        RT_LOGI("C iarr[%d] ror 5 = %" PR_L "d, "
+                 " iarr[%d] ror 31 = %" PR_L "d\n",
                 j, ico1[j], j, ico2[j]);
 
-        RT_LOGI("S iarr[%d] ror 5 = %"PR_L"d, "
-                 " iarr[%d] ror 31 = %"PR_L"d\n",
+        RT_LOGI("S iarr[%d] ror 5 = %" PR_L "d, "
+                 " iarr[%d] ror 31 = %" PR_L "d\n",
                 j, iso1[j], j, iso2[j]);
     }
 }
@@ -3351,15 +3351,15 @@ rt_void p_test24(rt_SIMD_INFOX *info)
             continue;
         }
 
-        RT_LOGI("iarr[%d] = %"PR_L"d\n",
+        RT_LOGI("iarr[%d] = %" PR_L "d\n",
                 j, iar0[j]);
 
-        RT_LOGI("C iarr[%d]<<(iarr[%d]&((16<<L)-1)) = %"PR_L"d, "
-                  "iarr[%d]>>(iarr[%d]&((16<<L)-1)) = %"PR_L"d\n",
+        RT_LOGI("C iarr[%d]<<(iarr[%d]&((16<<L)-1)) = %" PR_L "d, "
+                  "iarr[%d]>>(iarr[%d]&((16<<L)-1)) = %" PR_L "d\n",
                 j, j, ico1[j], j, j, ico2[j]);
 
-        RT_LOGI("S iarr[%d]<<(iarr[%d]&((16<<L)-1)) = %"PR_L"d, "
-                  "iarr[%d]>>(iarr[%d]&((16<<L)-1)) = %"PR_L"d\n",
+        RT_LOGI("S iarr[%d]<<(iarr[%d]&((16<<L)-1)) = %" PR_L "d, "
+                  "iarr[%d]>>(iarr[%d]&((16<<L)-1)) = %" PR_L "d\n",
                 j, j, iso1[j], j, j, iso2[j]);
     }
 }
@@ -4062,9 +4062,9 @@ rt_pntr sys_alloc(rt_size size)
 
 #endif /* RT_POINTER */
 
-#if RT_DEBUG >= 1
+#if RT_DEBUG >= 2
 
-    RT_LOGI("ALLOC PTR = %016"PR_Z"X, size = %ld\n", (rt_full)ptr, size);
+    RT_LOGI("ALLOC PTR = %016" PR_Z "X, size = %ld\n", (rt_full)ptr, size);
 
 #endif /* RT_DEBUG */
 
@@ -4102,9 +4102,9 @@ rt_void sys_free(rt_pntr ptr, rt_size size)
 
 #endif /* RT_POINTER */
 
-#if RT_DEBUG >= 1
+#if RT_DEBUG >= 2
 
-    RT_LOGI("FREED PTR = %016"PR_Z"X, size = %ld\n", (rt_full)ptr, size);
+    RT_LOGI("FREED PTR = %016" PR_Z "X, size = %ld\n", (rt_full)ptr, size);
 
 #endif /* RT_DEBUG */
 }
@@ -4159,9 +4159,9 @@ rt_pntr sys_alloc(rt_size size)
 
 #endif /* RT_POINTER */
 
-#if RT_DEBUG >= 1
+#if RT_DEBUG >= 2
 
-    RT_LOGI("ALLOC PTR = %016"PR_Z"X, size = %ld\n", (rt_full)ptr, size);
+    RT_LOGI("ALLOC PTR = %016" PR_Z "X, size = %ld\n", (rt_full)ptr, size);
 
 #endif /* RT_DEBUG */
 
@@ -4199,9 +4199,9 @@ rt_void sys_free(rt_pntr ptr, rt_size size)
 
 #endif /* RT_POINTER */
 
-#if RT_DEBUG >= 1
+#if RT_DEBUG >= 2
 
-    RT_LOGI("FREED PTR = %016"PR_Z"X, size = %ld\n", (rt_full)ptr, size);
+    RT_LOGI("FREED PTR = %016" PR_Z "X, size = %ld\n", (rt_full)ptr, size);
 
 #endif /* RT_DEBUG */
 }
