@@ -55,6 +55,7 @@ simd_test_a64f64:
 #
 # Prerequisites for emulation:
 # recent QEMU(-2.5) is installed or built from source and in the PATH variable.
+# SVE target requires QEMU 3.0.0 with sve-max-vq cpu property patch.
 # sudo apt-get install qemu
 #
 # Building/running SIMD test:
@@ -63,6 +64,8 @@ simd_test_a64f64:
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64_64 -c 1
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64f32 -c 1
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64f64 -c 1
+# qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f32 -c 1
+# qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f64 -c 1
 # Use "-c 1" option to reduce test time when emulating with QEMU
 
 # Clang compilation works too (takes much longer prior to 3.8), use (replace):
@@ -73,6 +76,8 @@ simd_test_a64f64:
 
 # For 128-bit NEON build use (replace): RT_128=1    (uses 30 SIMD registers)
 # For 256-bit NEON build use (replace): RT_256=1    (uses 15 SIMD reg-pairs)
+# For 512-bit SVE  build use (replace): RT_512=1    (uses 15 SIMD registers)
+# For 512-bit SVE  build use (replace): RT_512=4    (uses 30 SIMD registers)
 
 # 64/32-bit (ptr/adr) hybrid mode is compatible with native 64-bit ABI,
 # use (replace): RT_ADDRESS=32, rename the binary to simd_test.a64_**

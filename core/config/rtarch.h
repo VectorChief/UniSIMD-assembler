@@ -789,7 +789,7 @@
 #elif (RT_512X2 != 0) && (RT_SIMD == 1024)
 #error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
 #elif (RT_512X1 != 0) && (RT_SIMD == 512)
-#error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
+#include "rtarch_a64_SVEx1v1.h"
 #elif (RT_256X2 != 0) && (RT_SIMD == 512)
 #error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
 #elif (RT_128X4 != 0) && (RT_SIMD == 512)
@@ -824,6 +824,9 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
+        EMITS(0x2518E3E0)                                                   \
+        movpx_ld(XmmF, Mebp, inf_GPC07)                                     \
+        EMITS(0x04603000 | MXM(TmmQ, 0x0F, 0x0F))                           \
         EMITW(0x52A00000 | MRM(TNxx, 0x00, 0x00)) /* w22 <- (0 << 22) */
 
 #define ASM_LEAVE(__Info__)                                                 \
@@ -850,6 +853,9 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
+        EMITS(0x2518E3E0)                                                   \
+        movpx_ld(XmmF, Mebp, inf_GPC07)                                     \
+        EMITS(0x04603000 | MXM(TmmQ, 0x0F, 0x0F))                           \
         EMITW(0x52A01800 | MRM(TExx, 0x00, 0x00)) /* w25 <- (3 << 22) */    \
         EMITW(0x52A01000 | MRM(TCxx, 0x00, 0x00)) /* w24 <- (2 << 22) */    \
         EMITW(0x52A00800 | MRM(TAxx, 0x00, 0x00)) /* w23 <- (1 << 22) */    \
@@ -895,6 +901,9 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
+        EMITS(0x2518E3E0)                                                   \
+        movpx_ld(XmmF, Mebp, inf_GPC07)                                     \
+        EMITS(0x04603000 | MXM(TmmQ, 0x0F, 0x0F))                           \
         EMITW(0x52A02000 | MRM(TNxx, 0x00, 0x00)) /* w22 <- (4 << 22) */    \
         EMITW(0xD51B4400 | MRM(TNxx, 0x00, 0x00)) /* fpcr <- w22 */
 
@@ -924,6 +933,9 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
+        EMITS(0x2518E3E0)                                                   \
+        movpx_ld(XmmF, Mebp, inf_GPC07)                                     \
+        EMITS(0x04603000 | MXM(TmmQ, 0x0F, 0x0F))                           \
         EMITW(0x52A03800 | MRM(TExx, 0x00, 0x00)) /* w25 <- (7 << 22) */    \
         EMITW(0x52A03000 | MRM(TCxx, 0x00, 0x00)) /* w24 <- (6 << 22) */    \
         EMITW(0x52A02800 | MRM(TAxx, 0x00, 0x00)) /* w23 <- (5 << 22) */    \
@@ -947,6 +959,12 @@
 #ifndef RT_SIMD_CODE
 #define sregs_sa()
 #define sregs_la()
+#define movpx_ld(XD, MS, DS)
+#define EMITS(w) /* EMPTY */
+#elif RT_SVEX1 != 0
+#define EMITS(w)    EMITW(w)
+#else
+#define EMITS(w) /* EMPTY */
 #endif /* RT_SIMD_CODE */
 
 /* ------------------------------   M32, M64   ------------------------------ */

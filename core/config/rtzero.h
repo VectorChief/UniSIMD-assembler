@@ -322,7 +322,8 @@
 #error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
 #endif
 #if   !(defined RT_512X1) && (RT_512)
-#error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
+#define         RT_512X1     (RT_512)
+#define         RT_SVEX1     (RT_512)
 #endif
 #if   !(defined RT_256X2) && (RT_512_R8)
 #error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"

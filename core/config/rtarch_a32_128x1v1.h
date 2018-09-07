@@ -142,6 +142,7 @@
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
 #define Tmm0    0x00  /* v0,  internal name for Xmm0 (in mmv) */
+#define TmmQ    0x1E  /* v30, internal name for all-ones */
 #define TmmM    0x1F  /* v31, temp-reg name for mem-args */
 
 /******************************************************************************/

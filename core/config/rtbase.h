@@ -595,6 +595,12 @@ rt_si32 mask_init(rt_si32 simd)
                 mask |= s_type;
             }
 #elif !defined RT_X32  && !defined RT_X64  && !defined RT_X86 /* modern RISCs */
+#if   (defined RT_A32) || (defined RT_A64)
+            if (n_simd == 4)
+            {
+                mask |= s_type << 16;
+            }
+#endif /* SVE targets */
             m = 2; s = 1;
 #if   (defined RT_P32) || (defined RT_P64)
             m = 4; s = 2;
@@ -690,7 +696,7 @@ rt_si32 mask_init(rt_si32 simd)
 static
 rt_si32 from_mask(rt_si32 mask)
 {
-    rt_si32 n_simd, s_type, k_size, v_regs;
+    rt_si32 n_simd, s_type, k_size, v_regs, n_keep = 0;
 
     n_simd = mask >= 0x01000000 ? 6 : mask >= 0x00010000 ? 4 :
              mask >= 0x00000100 ? 2 : mask >= 0x00000001 ? 1 : 0;
@@ -711,6 +717,16 @@ rt_si32 from_mask(rt_si32 mask)
     }
 #elif !defined RT_X32  && !defined RT_X64  && !defined RT_X86 /* modern RISCs */
     v_regs = v_regs == 16 ? 15 : 8;
+#if (defined RT_A32) || (defined RT_A64)
+    if (n_simd == 4 && k_size == 1 && s_type >= 4)
+    {
+        v_regs = 30;
+    }
+    if (n_simd == 4 && k_size == 1)
+    {
+        n_keep = 1;
+    }
+#endif /* SVE targets */
 #if (defined RT_P32) || (defined RT_P64)
     if (n_simd == 2 && k_size == 1 && s_type >= 4)
     {
@@ -722,7 +738,7 @@ rt_si32 from_mask(rt_si32 mask)
         v_regs = 8;
     }
 #endif /* PPC targets */
-    if (n_simd >= 2)
+    if (n_simd >= 2 && n_keep == 0)
     {
         k_size = k_size * n_simd;
         n_simd = 1;
