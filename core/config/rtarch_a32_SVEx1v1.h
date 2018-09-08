@@ -865,13 +865,14 @@
 
 /* mkj (jump to lb) if (S satisfies mask condition) */
 
-#define RT_SIMD_MASK_NONE32_512     0x00    /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL32_512     0x10    /*  all satisfy the condition */
+#define RT_SIMD_MASK_NONE32_SVE     0x00    /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL32_SVE     0x01    /*  all satisfy the condition */
 
 #define mkjox_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        EMITW(0x04812000 | MXM(TmmM,    REG(XS), 0x00))                     \
+        EMITW(0x04982000 | MXM(TmmM,    REG(XS), 0x00)|                     \
+                       RT_SIMD_MASK_##mask##32_SVE<<17)                     \
         EMITW(0x0E043C00 | MXM(Teax,    TmmM,    0x00))                     \
-        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask##32_512))                     \
+        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask##32_SVE))                     \
         jezxx_lb(lb)
 
 /*************   packed single-precision floating-point convert   *************/
