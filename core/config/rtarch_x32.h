@@ -1517,6 +1517,8 @@
         movwx_ri(Reax, IB(7))                                               \
         movwx_ri(Recx, IB(0))                                               \
         cpuid_xx()                                                          \
+        movwx_rr(Reax, Rebx)                                                \
+        shrwn_ri(Reax, IB(31))                                              \
         movwx_rr(Redx, Rebx)                                                \
         andwx_ri(Redx, IV(0x00030000))  /* <- AVX3.x to bit16, bit17 */     \
         andwx_rr(Redx, Redi)                                                \
@@ -1560,10 +1562,12 @@
         movwx_rr(Recx, Resi)                                                \
         shrwx_ri(Recx, IB(16))                                              \
         andwx_ri(Recx, IV(0x00000002))  /* <- AVX3.2 to bit1 */             \
+        andwx_rr(Recx, Reax)                                                \
         orrwx_rr(Resi, Recx)                                                \
         movwx_rr(Recx, Resi)                                                \
         shrwx_ri(Recx, IB(6))                                               \
         andwx_ri(Recx, IV(0x00000800))  /* <- AVX3.2 to bit11 */            \
+        andwx_rr(Recx, Reax)                                                \
         orrwx_rr(Resi, Recx)                                                \
         movwx_st(Resi, Mebp, inf_VER)
 
