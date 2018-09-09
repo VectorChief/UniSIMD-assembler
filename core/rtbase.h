@@ -530,9 +530,9 @@ struct rt_SIMD_INFO
 
 struct rt_SIMD_REGS
 {
-    /* register file */
+    /* register file (maximum of 64 2K8-bit registers) */
 
-    rt_real file[S*64];
+    rt_ui32 file[64*64];
 #define reg_FILE            DP(Q*0x000)
 
 };
