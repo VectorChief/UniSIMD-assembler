@@ -1091,7 +1091,25 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         movox_st(XmmS, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        movox_st(XmmT, Oeax, PLAIN)
+        movox_st(XmmT, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        VEX(0,             0,    0x00, 0, 0, 1) EMITB(0x91)                 \
+        MRM(0x01,       0x00,    0x00)                                      \
+        stack_st(Redx)                                                      \
+        stack_st(Recx)                                                      \
+        stack_st(Rebx)                                                      \
+        stack_st(Reax)                                                      \
+        movwx_ri(Reax, IB(7))                                               \
+        movwx_ri(Recx, IB(0))                                               \
+        cpuid_xx()                                                          \
+        stack_ld(Reax)                                                      \
+        andwz_ri(Rebx, IV(0x40000000))  /* check AVX512BW extension-bit */  \
+        EMITB(0x74) EMITB(0x05)                                             \
+        VEW(0,             0,    0x00, 0, 0, 1) EMITB(0x91)                 \
+        MRM(0x01,       0x00,    0x00)                                      \
+        stack_ld(Rebx)                                                      \
+        stack_ld(Recx)                                                      \
+        stack_ld(Redx)
 
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
@@ -1153,7 +1171,25 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         movox_ld(XmmS, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        movox_ld(XmmT, Oeax, PLAIN)
+        movox_ld(XmmT, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        VEX(0,             0,    0x00, 0, 0, 1) EMITB(0x90)                 \
+        MRM(0x01,       0x00,    0x00)                                      \
+        stack_st(Redx)                                                      \
+        stack_st(Recx)                                                      \
+        stack_st(Rebx)                                                      \
+        stack_st(Reax)                                                      \
+        movwx_ri(Reax, IB(7))                                               \
+        movwx_ri(Recx, IB(0))                                               \
+        cpuid_xx()                                                          \
+        stack_ld(Reax)                                                      \
+        andwz_ri(Rebx, IV(0x40000000))  /* check AVX512BW extension-bit */  \
+        EMITB(0x74) EMITB(0x05)                                             \
+        VEW(0,             0,    0x00, 0, 0, 1) EMITB(0x90)                 \
+        MRM(0x01,       0x00,    0x00)                                      \
+        stack_ld(Rebx)                                                      \
+        stack_ld(Recx)                                                      \
+        stack_ld(Redx)
 
 #endif /* RT_512X1 */
 

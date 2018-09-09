@@ -154,6 +154,12 @@
         EMITB(0xE0 | (aux))                                                 \
         EMITB(0x00 | (len) << 2 | (0x0F - (ren)) << 3 | (pfx))
 
+/* 3-byte VEX prefix with full customization (W1) */
+#define VEW(ren, len, pfx, aux)                                             \
+        EMITB(0xC4)                                                         \
+        EMITB(0xE0 | (aux))                                                 \
+        EMITB(0x80 | (len) << 2 | (0x0F - (ren)) << 3 | (pfx))
+
 /* 4-byte EVEX prefix with full customization (W0, K0, Z0) */
 #define EVX(ren, len, pfx, aux)                                             \
         EMITB(0x62)                                                         \
