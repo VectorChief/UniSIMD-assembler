@@ -397,83 +397,8 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF0000202 | MXM(RYG(XD), RYG(XS), TmmM))
 
-#define adpos_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
-        adpos3rr(W(XG), W(XG), W(XS))
-
-#define adpos_ld(XG, MS, DS)                                                \
-        adpos3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define adpos3rr(XD, XS, XT)                                                \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpos_rx(W(XD))
-
-#define adpos3ld(XD, XS, MT, DT)                                            \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_ld(W(XD), W(MT), W(DT))                                       \
-        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpos_rx(W(XD))
-
-#define adhos_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
-        adpos3rr(W(XD), W(XS), W(XS))                                       \
-        adpos3rr(W(XD), W(XD), W(XD))                                       \
-        adpos3rr(W(XD), W(XD), W(XD))                                       \
-        adpos3rr(W(XD), W(XD), W(XD))
-
-#define adhos_ld(XD, MS, DS)                                                \
-        movox_ld(W(XD), W(MS), W(DS))                                       \
-        adhos_rr(W(XD), W(XD))
-
-#define adpos_rx(XD) /* not portable, do not use outside */                 \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x04))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR01(0x14))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR01(0x24))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x28))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR01(0x2C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x14))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR01(0x34))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x38))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR01(0x3C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR02(0x04))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x20))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x24))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR02(0x14))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x28))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x2C))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR02(0x24))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x30))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x28))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR02(0x2C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x34))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR02(0x34))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x38))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR02(0x3C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x3C))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        /* adp, adh defined in rtbase.h (first 15-regs only)
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 

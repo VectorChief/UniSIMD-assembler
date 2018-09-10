@@ -462,60 +462,8 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
-#define adpos_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
-        adpos3rr(W(XG), W(XG), W(XS))
-
-#define adpos_ld(XG, MS, DS)                                                \
-        adpos3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define adpos3rr(XD, XS, XT)                                                \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpos_rx(W(XD))
-
-#define adpos3ld(XD, XS, MT, DT)                                            \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_ld(W(XD), W(MT), W(DT))                                       \
-        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpos_rx(W(XD))
-
-#define adhos_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
-        adpos3rr(W(XD), W(XS), W(XS))                                       \
-        adpos3rr(W(XD), W(XD), W(XD))                                       \
-        adpos3rr(W(XD), W(XD), W(XD))                                       \
-        adpos3rr(W(XD), W(XD), W(XD))                                       \
-        adpos3rr(W(XD), W(XD), W(XD))
-
-#define adhos_ld(XD, MS, DS)                                                \
-        movox_ld(W(XD), W(MS), W(DS))                                       \
-        adhos_rr(W(XD), W(XD))
-
-#define adpos_rx(XD) /* not portable, do not use outside */                 \
-        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        adpis_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movix_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
-        adpis_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
-        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movix_ld(W(XD), Mebp, inf_SCR01(0x40))                              \
-        adpis_ld(W(XD), Mebp, inf_SCR01(0x50))                              \
-        movix_st(W(XD), Mebp, inf_SCR01(0x20))                              \
-        movix_ld(W(XD), Mebp, inf_SCR01(0x60))                              \
-        adpis_ld(W(XD), Mebp, inf_SCR01(0x70))                              \
-        movix_st(W(XD), Mebp, inf_SCR01(0x30))                              \
-        movix_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        adpis_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        movix_st(W(XD), Mebp, inf_SCR01(0x40))                              \
-        movix_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        adpis_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
-        movix_st(W(XD), Mebp, inf_SCR01(0x50))                              \
-        movix_ld(W(XD), Mebp, inf_SCR02(0x40))                              \
-        adpis_ld(W(XD), Mebp, inf_SCR02(0x50))                              \
-        movix_st(W(XD), Mebp, inf_SCR01(0x60))                              \
-        movix_ld(W(XD), Mebp, inf_SCR02(0x60))                              \
-        adpis_ld(W(XD), Mebp, inf_SCR02(0x70))                              \
-        movix_st(W(XD), Mebp, inf_SCR01(0x70))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        /* adp, adh defined in rtbase.h (first 15-regs only)
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 

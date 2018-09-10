@@ -373,46 +373,8 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-#define adpqs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
-        adpqs3rr(W(XG), W(XG), W(XS))
-
-#define adpqs_ld(XG, MS, DS)                                                \
-        adpqs3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define adpqs3rr(XD, XS, XT)                                                \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpqs_rx(W(XD))
-
-#define adpqs3ld(XD, XS, MT, DT)                                            \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_ld(W(XD), W(MT), W(DT))                                       \
-        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpqs_rx(W(XD))
-
-#define adhqs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
-        adpqs3rr(W(XD), W(XS), W(XS))                                       \
-        adpqs3rr(W(XD), W(XD), W(XD))                                       \
-        adpqs3rr(W(XD), W(XD), W(XD))
-
-#define adhqs_ld(XD, MS, DS)                                                \
-        movqx_ld(W(XD), W(MS), W(DS))                                       \
-        adhqs_rr(W(XD), W(XD))
-
-#define adpqs_rx(XD) /* not portable, do not use outside */                 \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        adpjs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movjx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
-        adpjs_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
-        movjx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movjx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        adpjs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        movjx_st(W(XD), Mebp, inf_SCR01(0x20))                              \
-        movjx_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        adpjs_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
-        movjx_st(W(XD), Mebp, inf_SCR01(0x30))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        /* adp, adh defined in rtbase.h (first 15-regs only)
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
