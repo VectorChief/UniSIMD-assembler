@@ -594,58 +594,8 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-#define mnpqs_rr(XG, XS) /* horizontal pairwise min */                      \
-        mnpqs3rr(W(XG), W(XG), W(XS))
-
-#define mnpqs_ld(XG, MS, DS)                                                \
-        mnpqs3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mnpqs3rr(XD, XS, XT)                                                \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mnpqs_rx(W(XD))
-
-#define mnpqs3ld(XD, XS, MT, DT)                                            \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_ld(W(XD), W(MT), W(DT))                                       \
-        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mnpqs_rx(W(XD))
-
-#define mnhqs_rr(XD, XS) /* horizontal reductive min */                     \
-        mnpqs3rr(W(XD), W(XS), W(XS))                                       \
-        mnpqs3rr(W(XD), W(XD), W(XD))                                       \
-        mnpqs3rr(W(XD), W(XD), W(XD))
-
-#define mnhqs_ld(XD, MS, DS)                                                \
-        movqx_ld(W(XD), W(MS), W(DS))                                       \
-        mnhqs_rr(W(XD), W(XD))
-
-#define mnpqs_rx(XD) /* not portable, do not use outside */                 \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        mints_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        mints_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
-        mints_ld(W(XD), Mebp, inf_SCR01(0x28))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
-        mints_ld(W(XD), Mebp, inf_SCR01(0x38))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        mints_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x20))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        mints_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x28))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        mints_ld(W(XD), Mebp, inf_SCR02(0x28))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x30))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
-        mints_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x38))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        /* mnp, mnh defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
