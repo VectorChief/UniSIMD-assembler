@@ -753,83 +753,8 @@
         EMITW(0x7C000619 | MXM(TmmM,    T3xx,    TPxx))                     \
         EMITW(0xF0000602 | MXM(RYG(XD), RYG(XS), TmmM))
 
-#define mxpos_rr(XG, XS) /* horizontal pairwise max */                      \
-        mxpos3rr(W(XG), W(XG), W(XS))
-
-#define mxpos_ld(XG, MS, DS)                                                \
-        mxpos3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mxpos3rr(XD, XS, XT)                                                \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpos_rx(W(XD))
-
-#define mxpos3ld(XD, XS, MT, DT)                                            \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_ld(W(XD), W(MT), W(DT))                                       \
-        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpos_rx(W(XD))
-
-#define mxhos_rr(XD, XS) /* horizontal reductive max */                     \
-        mxpos3rr(W(XD), W(XS), W(XS))                                       \
-        mxpos3rr(W(XD), W(XD), W(XD))                                       \
-        mxpos3rr(W(XD), W(XD), W(XD))                                       \
-        mxpos3rr(W(XD), W(XD), W(XD))
-
-#define mxhos_ld(XD, MS, DS)                                                \
-        movox_ld(W(XD), W(MS), W(DS))                                       \
-        mxhos_rr(W(XD), W(XD))
-
-#define mxpos_rx(XD) /* not portable, do not use outside */                 \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x04))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR01(0x14))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR01(0x24))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x28))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR01(0x2C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x14))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR01(0x34))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x38))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR01(0x3C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR02(0x04))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x20))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x24))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR02(0x14))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x28))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x2C))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR02(0x24))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x30))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x28))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR02(0x2C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x34))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR02(0x34))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x38))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR02(0x3C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x3C))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        /* mxp, mxh defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 

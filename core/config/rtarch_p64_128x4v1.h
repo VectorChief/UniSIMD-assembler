@@ -685,58 +685,8 @@
         EMITW(0x7C000699 | MXM(TmmM,    T3xx,    TPxx))                     \
         EMITW(0xF0000702 | MXM(RYG(XD), RYG(XS), TmmM))
 
-#define mxpqs_rr(XG, XS) /* horizontal pairwise max */                      \
-        mxpqs3rr(W(XG), W(XG), W(XS))
-
-#define mxpqs_ld(XG, MS, DS)                                                \
-        mxpqs3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mxpqs3rr(XD, XS, XT)                                                \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpqs_rx(W(XD))
-
-#define mxpqs3ld(XD, XS, MT, DT)                                            \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_ld(W(XD), W(MT), W(DT))                                       \
-        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpqs_rx(W(XD))
-
-#define mxhqs_rr(XD, XS) /* horizontal reductive max */                     \
-        mxpqs3rr(W(XD), W(XS), W(XS))                                       \
-        mxpqs3rr(W(XD), W(XD), W(XD))                                       \
-        mxpqs3rr(W(XD), W(XD), W(XD))
-
-#define mxhqs_ld(XD, MS, DS)                                                \
-        movqx_ld(W(XD), W(MS), W(DS))                                       \
-        mxhqs_rr(W(XD), W(XD))
-
-#define mxpqs_rx(XD) /* not portable, do not use outside */                 \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR01(0x28))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR01(0x38))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x20))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x28))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR02(0x28))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x30))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x38))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        /* mxp, mxh defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
