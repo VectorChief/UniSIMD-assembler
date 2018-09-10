@@ -22,7 +22,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x86_512x1v2.h: Implementation of x86:i386 fp32 AVX3.1/.2 instructions.
+ * rtarch_x86_512x1v2.h: Implementation of x86:i386 fp32 AVX512F/DQ ops.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

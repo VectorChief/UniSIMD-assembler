@@ -1518,9 +1518,9 @@
         movwx_ri(Recx, IB(0))                                               \
         cpuid_xx()                                                          \
         movwx_rr(Reax, Rebx)                                                \
-        shrwn_ri(Reax, IB(31))                                              \
+        shrwn_ri(Reax, IB(31)) /* make AVX512VL extension-bit a mask */     \
         movwx_rr(Redx, Rebx)                                                \
-        andwx_ri(Redx, IV(0x00030000))  /* <- AVX3.x to bit16, bit17 */     \
+        andwx_ri(Redx, IV(0x00030000))  /* <- AVX512 to bit16, bit17 */     \
         andwx_rr(Redx, Redi)                                                \
         orrwx_rr(Resi, Redx)                                                \
         shlwx_ri(Rebx, IB(4))                                               \
@@ -1545,28 +1545,28 @@
         orrwx_rr(Resi, Recx)                                                \
         movwx_rr(Recx, Resi)                                                \
         shlwx_ri(Recx, IB(2))                                               \
-        andwx_ri(Recx, IV(0x000C0000))  /* <- AVX3.x to bit18, bit19 */     \
+        andwx_ri(Recx, IV(0x000C0000))  /* <- AVX512 to bit18, bit19 */     \
         orrwx_rr(Resi, Recx)                                                \
         movwx_rr(Recx, Resi)                                                \
         shlwx_ri(Recx, IB(4))                                               \
-        andwx_ri(Recx, IV(0x00300000))  /* <- AVX3.x to bit20, bit21 */     \
+        andwx_ri(Recx, IV(0x00300000))  /* <- AVX512 to bit20, bit21 */     \
         orrwx_rr(Resi, Recx)                                                \
         movwx_rr(Recx, Resi)                                                \
         shlwx_ri(Recx, IB(8))                                               \
-        andwx_ri(Recx, IV(0x03000000))  /* <- AVX3.x to bit24, bit25 */     \
+        andwx_ri(Recx, IV(0x03000000))  /* <- AVX512 to bit24, bit25 */     \
         orrwx_rr(Resi, Recx)                                                \
         movwx_rr(Recx, Resi)                                                \
         shlwx_ri(Recx, IB(8))                                               \
-        andwx_ri(Recx, IV(0x30000000))  /* <- AVX3.x to bit28, bit29 */     \
+        andwx_ri(Recx, IV(0x30000000))  /* <- AVX512 to bit28, bit29 */     \
         orrwx_rr(Resi, Recx)                                                \
         movwx_rr(Recx, Resi)                                                \
         shrwx_ri(Recx, IB(16))                                              \
-        andwx_ri(Recx, IV(0x00000002))  /* <- AVX3.2 to bit1 */             \
+        andwx_ri(Recx, IV(0x00000002))  /* <- AVX512DQ+VL to bit1 */        \
         andwx_rr(Recx, Reax)                                                \
         orrwx_rr(Resi, Recx)                                                \
         movwx_rr(Recx, Resi)                                                \
         shrwx_ri(Recx, IB(6))                                               \
-        andwx_ri(Recx, IV(0x00000800))  /* <- AVX3.2 to bit11 */            \
+        andwx_ri(Recx, IV(0x00000800))  /* <- AVX512DQ+VL to bit11 */       \
         andwx_rr(Recx, Reax)                                                \
         orrwx_rr(Resi, Recx)                                                \
         movwx_st(Resi, Mebp, inf_VER)

@@ -14,7 +14,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x64_512x4v2.h: Implementation of x86_64 fp64 AVX3 instruction quads.
+ * rtarch_x64_512x4v2.h: Implementation of x86_64 fp64 AVX512F/DQ quaded ops.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

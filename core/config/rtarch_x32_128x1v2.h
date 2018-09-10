@@ -21,7 +21,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x32_128x1v2.h: Implementation of x86_64 fp32 AVX3.2 instructions.
+ * rtarch_x32_128x1v2.h: Implementation of x86_64 fp32 AVX512F/VL instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

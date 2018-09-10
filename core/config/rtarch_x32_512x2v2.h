@@ -25,7 +25,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x32_512x2v2.h: Implementation of x86_64 fp32 AVX3 instruction pairs.
+ * rtarch_x32_512x2v2.h: Implementation of x86_64 fp32 AVX512F/DQ paired ops.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

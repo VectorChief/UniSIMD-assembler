@@ -1367,7 +1367,7 @@
         movwx_ri(Recx, IB(0))                                               \
         cpuid_xx()                                                          \
         movwx_rr(Redx, Rebx)                                                \
-        andwx_ri(Redx, IV(0x00030000))  /* <- AVX3.x to bit16, bit17 */     \
+        andwx_ri(Redx, IV(0x00030000))  /* <- AVX512 to bit16, bit17 */     \
         andwx_rr(Redx, Redi)                                                \
         orrwx_rr(Resi, Redx)                                                \
         shlwx_ri(Rebx, IB(4))                                               \
