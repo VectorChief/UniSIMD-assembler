@@ -1002,7 +1002,7 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x7C)                       \
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #if (RT_SIMD_COMPAT_SSE < 4)
@@ -1040,7 +1040,7 @@ ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
 
 /* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #if (RT_SIMD_COMPAT_SSE < 4)
@@ -1087,7 +1087,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #if (RT_SIMD_COMPAT_SSE < 4)
@@ -1134,7 +1134,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #if (RT_SIMD_COMPAT_SSE < 4)
@@ -1179,7 +1179,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #if (RT_SIMD_COMPAT_SSE < 4)
@@ -1232,7 +1232,7 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #if (RT_SIMD_COMPAT_SSE < 4)

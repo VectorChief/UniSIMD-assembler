@@ -1066,7 +1066,7 @@
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnzis_rr(XD, XS)     /* round towards zero */                       \
@@ -1088,7 +1088,7 @@
 
 /* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnpis_rr(XD, XS)     /* round towards +inf */                       \
@@ -1111,7 +1111,7 @@
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnmis_rr(XD, XS)     /* round towards -inf */                       \
@@ -1134,7 +1134,7 @@
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnnis_rr(XD, XS)     /* round towards near */                       \
@@ -1155,7 +1155,7 @@
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnzis_rr(XD, XS)     /* round towards zero */                       \
@@ -1178,7 +1178,7 @@
 
 /* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnpis_rr(XD, XS)     /* round towards +inf */                       \
@@ -1201,7 +1201,7 @@
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnmis_rr(XD, XS)     /* round towards -inf */                       \
@@ -1224,7 +1224,7 @@
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnnis_rr(XD, XS)     /* round towards near */                       \
@@ -1262,7 +1262,7 @@
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #if (RT_128X1 < 4) /* ASIMDv4 is used here for ARMv8:AArch32 processors */
@@ -1332,7 +1332,7 @@
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #if (RT_128X1 < 4) /* ASIMDv4 is used here for ARMv8:AArch32 processors */
