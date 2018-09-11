@@ -65,7 +65,7 @@ In terminal window for 32-bit x86 use:
 In terminal window for 64-bit x64 use:
     path-to-kit/sde64 -knl -- ./test/simd_test.x64f32 -c 1
     path-to-kit/sde64 -skx -- ./test/simd_test.x64f32 -c 1
-for AVX3.1 (Knights Landing) and AVX3.2 (Skylake Xeon) respectively.
+for AVX512F (Knights Landing) and AVX512DQ (Skylake-X) respectively.
 Use "-c 1" option to reduce test time when emulating with Intel SDE.
 
 ================================================================================
