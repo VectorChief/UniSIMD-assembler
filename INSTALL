@@ -44,6 +44,9 @@ and unpack the archive, open terminal window, go to QEMU's root folder,
 make sure necessary tools and libraries are installed:
     sudo apt-get install make g++
     sudo apt-get install libfdt-dev libglib2.0-dev libpixman-1-dev zlib1g-dev
+when building QEMU 3.0.0 for SVE targets apply patch for sve-max-vq cpu property
+from https://patchwork.kernel.org/patch/10541199/  (scroll down and click diff):
+    patch -p1 < ../for-3.0-target-arm-Add-sve-max-vq-cpu-property-to--***.diff
 run configure script:
     ./configure
 run multithreaded make:
@@ -98,9 +101,30 @@ as well as installing XFCE once the image is booted (credentials above):
     startx (choose "default config" on first start)
     (launch terminal window in XFCE)
     apt-get install firefox-esr unzip
+to setup ARM Instruction Emulator for SVE on AArch64 hosts, install modules:
+    apt-get install environment-modules
+    (reboot)
 
 openSUSE image is RPM based (boots directly to XFCE, credentials above):
     zypper in make gcc-c++
+to setup ARM Instruction Emulator for SVE on AArch64 hosts, install modules:
+    zypper in environment-modules
+    (reboot)
+
+Download the ARM IE and install it (Ubuntu16.04 for Devuan, SUSE12 for SUSE):
+https://developer.arm.com/products/software-development-tools/
+                                        /hpc/arm-instruction-emulator/download
+    cd Downloads
+    tar -xzf ARM-Instruction-Emulator_18.2_AArch64_***_aarch64.tar.gz
+    cd ARM-Instruction-Emulator_18.2_AArch64_***_aarch64
+    ./arm-instruction-emulator-18.2_Generic-AArch64_***_aarch64-linux-***.sh
+    (scroll down and type: yes <enter>, when license shows up on the screen)
+    (reboot)
+    module use /opt/arm/modulefiles
+    module avail
+    module load Generic-AArch64/***/arm-instruction-emulator/18.2
+    (armie should now be available in the PATH variable, check vector lengths)
+    armie -mlist-vector-lengths
 
 Download the archive from github.com and unpack it (in terminal window):
     cd Downloads
@@ -108,6 +132,11 @@ Download the archive from github.com and unpack it (in terminal window):
     cd UniSIMD-assembler-master/test
     make -f simd_make_a64.mk -j4
     ./simd_test.a64f32
+to test SVE targets with ARM Instruction Emulator put -DRT_512=1 into makefile:
+    nano simd_make_a64.mk (edit file, Ctrl-O, Enter, Ctrl-X)
+then run:
+    make -f simd_make_a64.mk -j4
+    armie -msve-vector-bits=512 -- ./simd_test.a64f32 -c 1
 
 Adjust UniSIMD's makefiles to use g++ instead of triplet name, remove -static
     nano simd_make_a64.mk (edit file, Ctrl-O, Enter, Ctrl-X)
