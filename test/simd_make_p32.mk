@@ -55,6 +55,7 @@ simd_test_p32Bp9:
 #
 # Prerequisites for emulation:
 # recent QEMU(-2.5) is installed or built from source and in the PATH variable.
+# POWER9 target requires more recent QEMU, tested with 3.0.0.
 # sudo apt-get install qemu
 #
 # Building/running SIMD test:
@@ -67,19 +68,19 @@ simd_test_p32Bp9:
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 
-# For 128-bit VSX1 build use (replace): RT_128=1    (uses 30 SIMD registers)
+# For 128-bit VSX1 build use (replace): RT_128=1            (30 SIMD registers)
 # For 128-bit VSX2 build use (replace): RT_128=1 RT_SIMD_COMPAT_PW8=1
-# For 128-bit VSX3 build use (replace): RT_128=2    (uses 30 SIMD registers)
-# For 128-bit VMX  build use (replace): RT_128=4    (uses 15 SIMD registers)
+# For 128-bit VSX3 build use (replace): RT_128=2            (30 SIMD registers)
+# For 128-bit VMX  build use (replace): RT_128=4            (15 SIMD registers)
 
-# For 256-bit VMX  build use (replace): RT_256_R8=4 (uses  8 SIMD reg-pairs)
-# For 256-bit VSX1 build use (replace): RT_256=1    (uses 15 SIMD reg-pairs)
+# For 256-bit VMX  build use (replace): RT_256_R8=4          (8 SIMD reg-pairs)
+# For 256-bit VSX1 build use (replace): RT_256=1            (15 SIMD reg-pairs)
 # For 256-bit VSX2 build use (replace): RT_256=1 RT_SIMD_COMPAT_PW8=1
-# For 256-bit VSX3 build use (replace): RT_256=2    (uses 15 SIMD reg-pairs)
-# For 256-bit VSX1 build use (replace): RT_256=4    (uses 30 SIMD reg-pairs)
+# For 256-bit VSX3 build use (replace): RT_256=2            (15 SIMD reg-pairs)
+# For 256-bit VSX1 build use (replace): RT_256=4            (30 SIMD reg-pairs)
 # For 256-bit VSX2 build use (replace): RT_256=4 RT_SIMD_COMPAT_PW8=1
-# For 256-bit VSX3 build use (replace): RT_256=8    (uses 30 SIMD reg-pairs)
+# For 256-bit VSX3 build use (replace): RT_256=8            (30 SIMD reg-pairs)
 
-# For 512-bit VSX1 build use (replace): RT_512=1    (uses 15 SIMD reg-quads)
+# For 512-bit VSX1 build use (replace): RT_512=1            (15 SIMD reg-quads)
 # For 512-bit VSX2 build use (replace): RT_512=1 RT_SIMD_COMPAT_PW8=1
-# For 512-bit VSX3 build use (replace): RT_512=2    (uses 15 SIMD reg-quads)
+# For 512-bit VSX3 build use (replace): RT_512=2            (15 SIMD reg-quads)

@@ -74,10 +74,10 @@ simd_test_a64f64:
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
 
-# For 128-bit NEON build use (replace): RT_128=1    (uses 30 SIMD registers)
-# For 256-bit NEON build use (replace): RT_256=1    (uses 15 SIMD reg-pairs)
-# For 512-bit SVE  build use (replace): RT_512=1    (uses 15 SIMD registers)
-# For 512-bit SVE  build use (replace): RT_512=4    (uses 30 SIMD registers)
+# For 128-bit NEON build use (replace): RT_128=1            (30 SIMD registers)
+# For 256-bit NEON build use (replace): RT_256=1            (15 SIMD reg-pairs)
+# For 512-bit SVE  build use (replace): RT_512=1            (15 SIMD registers)
+# For 512-bit SVE  build use (replace): RT_512=4            (30 SIMD registers)
 
 # 64/32-bit (ptr/adr) hybrid mode is compatible with native 64-bit ABI,
 # use (replace): RT_ADDRESS=32, rename the binary to simd_test.a64_**
