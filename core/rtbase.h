@@ -1631,8 +1631,8 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnzos_rr(XD, XS)     /* round towards zero */                       \
         rnzcs_rr(W(XD), W(XS))
@@ -1648,8 +1648,8 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnpos_rr(XD, XS)     /* round towards +inf */                       \
         rnpcs_rr(W(XD), W(XS))
@@ -1665,8 +1665,8 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnmos_rr(XD, XS)     /* round towards -inf */                       \
         rnmcs_rr(W(XD), W(XS))
@@ -1682,8 +1682,8 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnnos_rr(XD, XS)     /* round towards near */                       \
         rnncs_rr(W(XD), W(XS))
@@ -1709,8 +1709,8 @@ rt_si32 from_mask(rt_si32 mask)
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rndos_rr(XD, XS)                                                    \
         rndcs_rr(W(XD), W(XS))
@@ -1738,8 +1738,8 @@ rt_si32 from_mask(rt_si32 mask)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnros_rr(XD, XS, mode)                                              \
         rnrcs_rr(W(XD), W(XS), mode)
@@ -2225,8 +2225,8 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnzos_rr(XD, XS)     /* round towards zero */                       \
         rnzis_rr(W(XD), W(XS))
@@ -2242,8 +2242,8 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnpos_rr(XD, XS)     /* round towards +inf */                       \
         rnpis_rr(W(XD), W(XS))
@@ -2259,8 +2259,8 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnmos_rr(XD, XS)     /* round towards -inf */                       \
         rnmis_rr(W(XD), W(XS))
@@ -2276,8 +2276,8 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnnos_rr(XD, XS)     /* round towards near */                       \
         rnnis_rr(W(XD), W(XS))
@@ -2303,8 +2303,8 @@ rt_si32 from_mask(rt_si32 mask)
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rndos_rr(XD, XS)                                                    \
         rndis_rr(W(XD), W(XS))
@@ -2332,8 +2332,8 @@ rt_si32 from_mask(rt_si32 mask)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
 
 #define rnros_rr(XD, XS, mode)                                              \
         rnris_rr(W(XD), W(XS), mode)
@@ -3344,7 +3344,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnzqs_rr(XD, XS)     /* round towards zero */                       \
@@ -3361,7 +3361,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnpqs_rr(XD, XS)     /* round towards +inf */                       \
@@ -3378,7 +3378,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnmqs_rr(XD, XS)     /* round towards -inf */                       \
@@ -3395,7 +3395,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnnqs_rr(XD, XS)     /* round towards near */                       \
@@ -3422,7 +3422,7 @@ rt_si32 from_mask(rt_si32 mask)
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rndqs_rr(XD, XS)                                                    \
@@ -3451,7 +3451,7 @@ rt_si32 from_mask(rt_si32 mask)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnrqs_rr(XD, XS, mode)                                              \
@@ -3938,7 +3938,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnzqs_rr(XD, XS)     /* round towards zero */                       \
@@ -3955,7 +3955,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnpqs_rr(XD, XS)     /* round towards +inf */                       \
@@ -3972,7 +3972,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnmqs_rr(XD, XS)     /* round towards -inf */                       \
@@ -3989,7 +3989,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnnqs_rr(XD, XS)     /* round towards near */                       \
@@ -4016,7 +4016,7 @@ rt_si32 from_mask(rt_si32 mask)
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rndqs_rr(XD, XS)                                                    \
@@ -4045,7 +4045,7 @@ rt_si32 from_mask(rt_si32 mask)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnrqs_rr(XD, XS, mode)                                              \
@@ -4628,7 +4628,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnzps_rr(XD, XS)     /* round towards zero */                       \
@@ -4645,7 +4645,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnpps_rr(XD, XS)     /* round towards +inf */                       \
@@ -4662,7 +4662,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnmps_rr(XD, XS)     /* round towards -inf */                       \
@@ -4679,7 +4679,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnnps_rr(XD, XS)     /* round towards near */                       \
@@ -4706,7 +4706,7 @@ rt_si32 from_mask(rt_si32 mask)
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rndps_rr(XD, XS)                                                    \
@@ -4735,7 +4735,7 @@ rt_si32 from_mask(rt_si32 mask)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnrps_rr(XD, XS, mode)                                              \
@@ -5220,7 +5220,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnzfs_rr(XD, XS)     /* round towards zero */                       \
@@ -5237,7 +5237,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnpfs_rr(XD, XS)     /* round towards +inf */                       \
@@ -5254,7 +5254,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnmfs_rr(XD, XS)     /* round towards -inf */                       \
@@ -5271,7 +5271,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnnfs_rr(XD, XS)     /* round towards near */                       \
@@ -5298,7 +5298,7 @@ rt_si32 from_mask(rt_si32 mask)
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rndfs_rr(XD, XS)                                                    \
@@ -5327,7 +5327,7 @@ rt_si32 from_mask(rt_si32 mask)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnrfs_rr(XD, XS, mode)                                              \
@@ -5812,7 +5812,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnzls_rr(XD, XS)     /* round towards zero */                       \
@@ -5829,7 +5829,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnpls_rr(XD, XS)     /* round towards +inf */                       \
@@ -5846,7 +5846,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnmls_rr(XD, XS)     /* round towards -inf */                       \
@@ -5863,7 +5863,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnnls_rr(XD, XS)     /* round towards near */                       \
@@ -5890,7 +5890,7 @@ rt_si32 from_mask(rt_si32 mask)
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rndls_rr(XD, XS)                                                    \
@@ -5919,7 +5919,7 @@ rt_si32 from_mask(rt_si32 mask)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
 #define rnrls_rr(XD, XS, mode)                                              \
@@ -6645,7 +6645,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnzps_rr(XD, XS)     /* round towards zero */                       \
@@ -6662,7 +6662,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnpps_rr(XD, XS)     /* round towards +inf */                       \
@@ -6679,7 +6679,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnmps_rr(XD, XS)     /* round towards -inf */                       \
@@ -6696,7 +6696,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnnps_rr(XD, XS)     /* round towards near */                       \
@@ -6723,7 +6723,7 @@ rt_si32 from_mask(rt_si32 mask)
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rndps_rr(XD, XS)                                                    \
@@ -6752,7 +6752,7 @@ rt_si32 from_mask(rt_si32 mask)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnrps_rr(XD, XS, mode)                                              \
@@ -7237,7 +7237,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnzfs_rr(XD, XS)     /* round towards zero */                       \
@@ -7254,7 +7254,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnpfs_rr(XD, XS)     /* round towards +inf */                       \
@@ -7271,7 +7271,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnmfs_rr(XD, XS)     /* round towards -inf */                       \
@@ -7288,7 +7288,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnnfs_rr(XD, XS)     /* round towards near */                       \
@@ -7315,7 +7315,7 @@ rt_si32 from_mask(rt_si32 mask)
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rndfs_rr(XD, XS)                                                    \
@@ -7344,7 +7344,7 @@ rt_si32 from_mask(rt_si32 mask)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnrfs_rr(XD, XS, mode)                                              \
@@ -7829,7 +7829,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnzls_rr(XD, XS)     /* round towards zero */                       \
@@ -7846,7 +7846,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnpls_rr(XD, XS)     /* round towards +inf */                       \
@@ -7863,7 +7863,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnmls_rr(XD, XS)     /* round towards -inf */                       \
@@ -7880,7 +7880,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnnls_rr(XD, XS)     /* round towards near */                       \
@@ -7907,7 +7907,7 @@ rt_si32 from_mask(rt_si32 mask)
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rndls_rr(XD, XS)                                                    \
@@ -7936,7 +7936,7 @@ rt_si32 from_mask(rt_si32 mask)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, SIMD fp-to-int
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
 #define rnrls_rr(XD, XS, mode)                                              \
