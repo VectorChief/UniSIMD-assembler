@@ -126,6 +126,10 @@ SOURCE=..\core\config\rtbase.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\core\config\rtconf.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\core\config\rtzero.h
 # End Source File
 # End Group

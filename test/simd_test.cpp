@@ -12,7 +12,6 @@
 #define RT_BASE_TEST /* enable BASE instruction sub-tests */
 #define RT_ELEM_TEST /* enable scalar SIMD instruction sub-tests */
 
-#include "rtarch.h"
 #include "rtbase.h"
 
 /******************************************************************************/
