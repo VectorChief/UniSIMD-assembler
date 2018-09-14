@@ -317,8 +317,6 @@
 #define RT_SIMD_COMPAT_FMR_MASTER       0 /* for fm*ps_** rounding mode (x86) */
 #define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and Power */
 
-#include "rtzero.h"
-
 /*
  * Determine maximum of available SIMD registers for applications' code-bases.
  */
@@ -340,85 +338,6 @@
 #endif /* RT_REGS: 8, 16, 32 */
 
 /*
- * Determine mapping of vector-length-agnostic SIMD subsets: cmdo, cmdp, cmdq.
- */
-#if   (defined RT_SIMD)
-/* RT_SIMD is already defined outside */
-#elif           (RT_2K8_R8)
-#define RT_SIMD 2048
-#elif (RT_1K4 || RT_1K4_R8)
-#define RT_SIMD 1024
-#elif (RT_512 || RT_512_R8)
-#define RT_SIMD 512
-#elif (RT_256 || RT_256_R8)
-#define RT_SIMD 256
-#elif (RT_128)
-#define RT_SIMD 128
-#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
-
-/*
- * Determine SIMD total-quads for backend structs (maximal for a given build).
- */
-#if             (RT_2K8_R8)
-#define Q 16
-#elif (RT_1K4 || RT_1K4_R8)
-#define Q 8
-#elif (RT_512 || RT_512_R8)
-#define Q 4
-#elif (RT_256 || RT_256_R8)
-#define Q 2
-#elif (RT_128)
-#define Q 1
-#endif /* Q: 16, 8, 4, 2, 1 */
-
-/*
- * Determine SIMD properties for a given SIMD target (vector-length-agnostic).
- */
-#if   (RT_SIMD >= 512)
-/* RT_SIMD_* definitions come directly from >= 512-bit rtarch headers */
-#elif (RT_SIMD == 256)
-#define RT_SIMD_REGS            RT_SIMD_REGS_256
-#define RT_SIMD_ALIGN           RT_SIMD_ALIGN_256
-#define RT_SIMD_WIDTH64         RT_SIMD_WIDTH64_256
-#define RT_SIMD_SET64(s, v)     RT_SIMD_SET64_256(s, v)
-#define RT_SIMD_WIDTH32         RT_SIMD_WIDTH32_256
-#define RT_SIMD_SET32(s, v)     RT_SIMD_SET32_256(s, v)
-#elif (RT_SIMD == 128)
-#define RT_SIMD_REGS            RT_SIMD_REGS_128
-#define RT_SIMD_ALIGN           RT_SIMD_ALIGN_128
-#define RT_SIMD_WIDTH64         RT_SIMD_WIDTH64_128
-#define RT_SIMD_SET64(s, v)     RT_SIMD_SET64_128(s, v)
-#define RT_SIMD_WIDTH32         RT_SIMD_WIDTH32_128
-#define RT_SIMD_SET32(s, v)     RT_SIMD_SET32_128(s, v)
-#endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
-
-/*
- * SIMD total-quads (number of 128-bit chunks) for chosen SIMD target.
- * Short name Q represents maximal total-quads for given build config.
- * RT_SIMD_QUADS and Q may differ for builds with runtime SIMD target
- * selection in backend's ASM code sections, Q is used in SIMD structs.
- */
-#define RT_SIMD_QUADS       (RT_SIMD_WIDTH32/4)
-
-/*
- * SIMD width (number of scalar elements) for given SIMD element size.
- * Short names R, S, T represent maximal width for given build config.
- * RT_SIMD_WIDTH and S may differ for builds with runtime SIMD target
- * selection in backend's ASM code sections, S is used in SIMD structs.
- */
-#define N   (Q*8)       /* for cmdm*_** SIMD-subset, rt_fp16 SIMD-fields */
-#define R   (Q*4)       /* for cmdo*_** SIMD-subset, rt_fp32 SIMD-fields */
-#define S   (Q*4/L)     /* for cmdp*_** SIMD-subset, rt_real SIMD-fields */
-#define T   (Q*2)       /* for cmdq*_** SIMD-subset, rt_fp64 SIMD-fields */
-
-/*
- * Short names for pointer, address and SIMD element sizes (in 32-bit chunks).
- */
-#define P   (RT_POINTER/32)         /* short name for RT_POINTER/32 */
-#define A   (RT_ADDRESS/32)         /* short name for RT_ADDRESS/32 */
-#define L   (RT_ELEMENT/32)         /* short name for RT_ELEMENT/32 */
-
-/*
  * Short name for true-condition sign in assembler evaluation of (A == B).
  * The result of the condition evaluation is used as a mask for selection:
  * ((A == B) & C) | ((A != B) & D), therefore it needs to be (-1) if true.
@@ -428,18 +347,6 @@
 #else /* GAS */
 #define M   +
 #endif /* M */
-
-/*
- * Offset corrections for endianness (used in backend's structs and BASE ISA).
- */
-#define B   (RT_ENDIAN*(2-1)*4)     /* for cmdw*_** working on 64-bit field */
-#define C   (RT_ENDIAN*(2-A)*4)     /* for cmdx*_** working on 64-bit field */
-#define D   (RT_ENDIAN*(P-1)*4)     /* for cmdw*_** working on P-size field */
-#define E   (RT_ENDIAN*(P-A)*4)     /* for cmdx*_** working on P-size field */
-#define F   (RT_ENDIAN*(A-1)*4)     /* for cmdw*_** working on A-size field */
-#define G   (RT_ENDIAN*(2-P)*4)     /* for jmpxx_xm working on 64-bit field */
-#define H   (RT_ENDIAN*(L-1)*4)     /* for cmdw*_** working on L-size field */
-#define I   (RT_ENDIAN*(2-L)*4)     /* for cmdy*_** working on 64-bit field */
 
 /******************************************************************************/
 /***************************   OS, COMPILER, ARCH   ***************************/
