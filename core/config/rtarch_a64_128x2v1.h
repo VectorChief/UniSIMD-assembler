@@ -302,16 +302,15 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4E60D400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-#define adpds_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
-        adpds3rr(W(XG), W(XG), W(XS))
+        /* adp, adh defined in rtbase.h (first 15-regs only)
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
-#define adpds_ld(XG, MS, DS)                                                \
-        adpds3ld(W(XG), W(XG), W(MS), W(DS))
-
+#undef  adpds3rr
 #define adpds3rr(XD, XS, XT)                                                \
         EMITW(0x6E60D400 | MXM(REG(XD), REG(XS), RYG(XS)))                  \
         EMITW(0x6E60D400 | MXM(RYG(XD), REG(XT), RYG(XT)))
 
+#undef  adpds3ld
 #define adpds3ld(XD, XS, MT, DT)                                            \
         EMITW(0x6E60D400 | MXM(REG(XD), REG(XS), RYG(XS)))                  \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
@@ -319,14 +318,6 @@
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VYL(DT), C2(DT), EMPTY2)   \
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x6E60D400 | MXM(RYG(XD), RYG(XD), TmmM))
-
-#define adhds_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
-        adpds3rr(W(XD), W(XS), W(XS))                                       \
-        adpds3rr(W(XD), W(XD), W(XD))
-
-#define adhds_ld(XD, MS, DS)                                                \
-        movdx_ld(W(XD), W(MS), W(DS))                                       \
-        adhds_rr(W(XD), W(XD))
 
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
@@ -368,45 +359,8 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x6E60DC00 | MXM(RYG(XD), RYG(XS), TmmM))
 
-#define mlpds_rr(XG, XS) /* horizontal pairwise mul */                      \
-        mlpds3rr(W(XG), W(XG), W(XS))
-
-#define mlpds_ld(XG, MS, DS)                                                \
-        mlpds3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mlpds3rr(XD, XS, XT)                                                \
-        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mlpds_rx(W(XD))
-
-#define mlpds3ld(XD, XS, MT, DT)                                            \
-        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movdx_ld(W(XD), W(MT), W(DT))                                       \
-        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mlpds_rx(W(XD))
-
-#define mlhds_rr(XD, XS) /* horizontal reductive mul */                     \
-        mlpds3rr(W(XD), W(XS), W(XS))                                       \
-        mlpds3rr(W(XD), W(XD), W(XD))
-
-#define mlhds_ld(XD, MS, DS)                                                \
-        movdx_ld(W(XD), W(MS), W(DS))                                       \
-        mlhds_rr(W(XD), W(XD))
-
-#define mlpds_rx(XD) /* not portable, do not use outside */                 \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        mults_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        mults_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        mults_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        mults_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+        /* mlp, mlh defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -551,45 +505,8 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4EE0F400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-#define mnpds_rr(XG, XS) /* horizontal pairwise min */                      \
-        mnpds3rr(W(XG), W(XG), W(XS))
-
-#define mnpds_ld(XG, MS, DS)                                                \
-        mnpds3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mnpds3rr(XD, XS, XT)                                                \
-        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mnpds_rx(W(XD))
-
-#define mnpds3ld(XD, XS, MT, DT)                                            \
-        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movdx_ld(W(XD), W(MT), W(DT))                                       \
-        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mnpds_rx(W(XD))
-
-#define mnhds_rr(XD, XS) /* horizontal reductive min */                     \
-        mnpds3rr(W(XD), W(XS), W(XS))                                       \
-        mnpds3rr(W(XD), W(XD), W(XD))
-
-#define mnhds_ld(XD, MS, DS)                                                \
-        movdx_ld(W(XD), W(MS), W(DS))                                       \
-        mnhds_rr(W(XD), W(XD))
-
-#define mnpds_rx(XD) /* not portable, do not use outside */                 \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        mints_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        mints_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        mints_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        mints_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+        /* mnp, mnh defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
@@ -611,45 +528,8 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4E60F400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-#define mxpds_rr(XG, XS) /* horizontal pairwise max */                      \
-        mxpds3rr(W(XG), W(XG), W(XS))
-
-#define mxpds_ld(XG, MS, DS)                                                \
-        mxpds3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mxpds3rr(XD, XS, XT)                                                \
-        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpds_rx(W(XD))
-
-#define mxpds3ld(XD, XS, MT, DT)                                            \
-        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movdx_ld(W(XD), W(MT), W(DT))                                       \
-        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpds_rx(W(XD))
-
-#define mxhds_rr(XD, XS) /* horizontal reductive max */                     \
-        mxpds3rr(W(XD), W(XS), W(XS))                                       \
-        mxpds3rr(W(XD), W(XD), W(XD))
-
-#define mxhds_ld(XD, MS, DS)                                                \
-        movdx_ld(W(XD), W(MS), W(DS))                                       \
-        mxhds_rr(W(XD), W(XD))
-
-#define mxpds_rx(XD) /* not portable, do not use outside */                 \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+        /* mxp, mxh defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 

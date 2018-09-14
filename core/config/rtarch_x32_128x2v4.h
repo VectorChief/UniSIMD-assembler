@@ -350,63 +350,12 @@
         movcx_rr(W(XD), W(XS))                                              \
         addcs_ld(W(XD), W(MT), W(DT))
 
-#define adpcs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
-        adpcs3rr(W(XG), W(XG), W(XS))
+        /* adp, adh defined in rtbase.h (first 15-regs only)
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
-#define adpcs_ld(XG, MS, DS)                                                \
-        adpcs3ld(W(XG), W(XG), W(MS), W(DS))
+#if (RT_SIMD_COMPAT_SSE >= 4)
 
-#define adpcs3rr(XD, XS, XT)                                                \
-        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpcs_rx(W(XD))
-
-#define adpcs3ld(XD, XS, MT, DT)                                            \
-        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movcx_ld(W(XD), W(MT), W(DT))                                       \
-        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpcs_rx(W(XD))
-
-#define adhcs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
-        adpcs3rr(W(XD), W(XS), W(XS))                                       \
-        adpcs3rr(W(XD), W(XD), W(XD))                                       \
-        adpcs3rr(W(XD), W(XD), W(XD))
-
-#define adhcs_ld(XD, MS, DS)                                                \
-        movcx_ld(W(XD), W(MS), W(DS))                                       \
-        adhcs_rr(W(XD), W(XD))
-
-#if (RT_SIMD_COMPAT_SSE < 4)
-
-#define adpcs_rx(XD) /* not portable, do not use outside */                 \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x04))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR01(0x14))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR02(0x04))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x14))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR02(0x14))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        addrs_ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movcx_ld(W(XD), Mebp, inf_SCR01(0))
-
-#else /* RT_SIMD_COMPAT_SSE >= 4 */
-
+#undef  adpcs_rx
 #define adpcs_rx(XD) /* not portable, do not use outside */                 \
         movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
         adpis_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
@@ -466,58 +415,8 @@
         movcx_rr(W(XD), W(XS))                                              \
         mulcs_ld(W(XD), W(MT), W(DT))
 
-#define mlpcs_rr(XG, XS) /* horizontal pairwise mul */                      \
-        mlpcs3rr(W(XG), W(XG), W(XS))
-
-#define mlpcs_ld(XG, MS, DS)                                                \
-        mlpcs3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mlpcs3rr(XD, XS, XT)                                                \
-        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mlpcs_rx(W(XD))
-
-#define mlpcs3ld(XD, XS, MT, DT)                                            \
-        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movcx_ld(W(XD), W(MT), W(DT))                                       \
-        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mlpcs_rx(W(XD))
-
-#define mlhcs_rr(XD, XS) /* horizontal reductive mul */                     \
-        mlpcs3rr(W(XD), W(XS), W(XS))                                       \
-        mlpcs3rr(W(XD), W(XD), W(XD))                                       \
-        mlpcs3rr(W(XD), W(XD), W(XD))
-
-#define mlhcs_ld(XD, MS, DS)                                                \
-        movcx_ld(W(XD), W(MS), W(DS))                                       \
-        mlhcs_rr(W(XD), W(XD))
-
-#define mlpcs_rx(XD) /* not portable, do not use outside */                 \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        mulrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
-        mulrs_ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x04))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        mulrs_ld(W(XD), Mebp, inf_SCR01(0x14))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
-        mulrs_ld(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        mulrs_ld(W(XD), Mebp, inf_SCR02(0x04))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        mulrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x14))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        mulrs_ld(W(XD), Mebp, inf_SCR02(0x14))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        mulrs_ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+        /* mlp, mlh defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -847,58 +746,8 @@
         movcx_rr(W(XD), W(XS))                                              \
         mincs_ld(W(XD), W(MT), W(DT))
 
-#define mnpcs_rr(XG, XS) /* horizontal pairwise min */                      \
-        mnpcs3rr(W(XG), W(XG), W(XS))
-
-#define mnpcs_ld(XG, MS, DS)                                                \
-        mnpcs3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mnpcs3rr(XD, XS, XT)                                                \
-        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mnpcs_rx(W(XD))
-
-#define mnpcs3ld(XD, XS, MT, DT)                                            \
-        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movcx_ld(W(XD), W(MT), W(DT))                                       \
-        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mnpcs_rx(W(XD))
-
-#define mnhcs_rr(XD, XS) /* horizontal reductive min */                     \
-        mnpcs3rr(W(XD), W(XS), W(XS))                                       \
-        mnpcs3rr(W(XD), W(XD), W(XD))                                       \
-        mnpcs3rr(W(XD), W(XD), W(XD))
-
-#define mnhcs_ld(XD, MS, DS)                                                \
-        movcx_ld(W(XD), W(MS), W(DS))                                       \
-        mnhcs_rr(W(XD), W(XD))
-
-#define mnpcs_rx(XD) /* not portable, do not use outside */                 \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        minrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
-        minrs_ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x04))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        minrs_ld(W(XD), Mebp, inf_SCR01(0x14))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
-        minrs_ld(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        minrs_ld(W(XD), Mebp, inf_SCR02(0x04))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        minrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x14))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        minrs_ld(W(XD), Mebp, inf_SCR02(0x14))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        minrs_ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+        /* mnp, mnh defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
@@ -924,58 +773,8 @@
         movcx_rr(W(XD), W(XS))                                              \
         maxcs_ld(W(XD), W(MT), W(DT))
 
-#define mxpcs_rr(XG, XS) /* horizontal pairwise max */                      \
-        mxpcs3rr(W(XG), W(XG), W(XS))
-
-#define mxpcs_ld(XG, MS, DS)                                                \
-        mxpcs3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mxpcs3rr(XD, XS, XT)                                                \
-        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpcs_rx(W(XD))
-
-#define mxpcs3ld(XD, XS, MT, DT)                                            \
-        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movcx_ld(W(XD), W(MT), W(DT))                                       \
-        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpcs_rx(W(XD))
-
-#define mxhcs_rr(XD, XS) /* horizontal reductive max */                     \
-        mxpcs3rr(W(XD), W(XS), W(XS))                                       \
-        mxpcs3rr(W(XD), W(XD), W(XD))                                       \
-        mxpcs3rr(W(XD), W(XD), W(XD))
-
-#define mxhcs_ld(XD, MS, DS)                                                \
-        movcx_ld(W(XD), W(MS), W(DS))                                       \
-        mxhcs_rr(W(XD), W(XD))
-
-#define mxpcs_rx(XD) /* not portable, do not use outside */                 \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x04))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR01(0x14))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR02(0x04))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x14))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR02(0x14))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movrs_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        maxrs_ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+        /* mxp, mxh defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
