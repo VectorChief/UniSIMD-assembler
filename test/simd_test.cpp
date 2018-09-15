@@ -21,7 +21,7 @@
 #define RUN_LEVEL           27
 #define CYC_SIZE            1000000
 
-#define ARR_SIZE            S*3 /* hardcoded in asm sections, S = SIMD width */
+#define ARR_SIZE            S*3 /* hardcoded in ASM sections, S = SIMD elems */
 #define MASK                (RT_SIMD_ALIGN - 1) /* SIMD alignment mask */
 
 /* NOTE: floating point values are not tested for equality precisely due to
@@ -70,7 +70,7 @@ rt_void sys_free(rt_pntr ptr, rt_size size);
  * Extended SIMD info structure for ASM_ENTER/ASM_LEAVE
  * serves as a container for test arrays and internal variables.
  * Note that DP offsets below start where rt_SIMD_INFO ends (at Q*0x100).
- * SIMD width is taken into account via S and Q from rtarch.h
+ * SIMD width is taken into account via S and Q from rtbase.h
  */
 struct rt_SIMD_INFOX : public rt_SIMD_INFO
 {
@@ -1263,13 +1263,13 @@ rt_void s_test09(rt_SIMD_INFOX *info)
 
     LBL(loc_beg)
 
-        movyx_ld(Reax, Mecx, DP(Q*0x000))
-        mulyn_xm(Mecx, DP(Q*0x010))
-        movyx_st(Reax, Mebx, DP(Q*0x000))
-        movyx_ld(Reax, Mecx, DP(Q*0x000))
+        movyx_ld(Reax, Mecx, AJ0)
+        mulyn_xm(Mecx, AJ1)
+        movyx_st(Reax, Mebx, AJ0)
+        movyx_ld(Reax, Mecx, AJ0)
         preyn_xx()
-        divyn_xm(Mecx, DP(Q*0x010))
-        movyx_st(Reax, Mesi, DP(Q*0x000))
+        divyn_xm(Mecx, AJ1)
+        movyx_st(Reax, Mesi, AJ0)
 
         addxx_ri(Recx, IB(4*L))
         addxx_ri(Rebx, IB(4*L))
@@ -1283,13 +1283,13 @@ rt_void s_test09(rt_SIMD_INFOX *info)
 
     LBL(smd_beg)
 
-        movyx_ld(Reax, Mecx, DP(Q*0x000))
-        mulyn_xm(Medi, DP(Q*0x000))
-        movyx_st(Reax, Mebx, DP(Q*0x000))
-        movyx_ld(Reax, Mecx, DP(Q*0x000))
+        movyx_ld(Reax, Mecx, AJ0)
+        mulyn_xm(Medi, AJ0)
+        movyx_st(Reax, Mebx, AJ0)
+        movyx_ld(Reax, Mecx, AJ0)
         preyn_xx()
-        divyn_xm(Medi, DP(Q*0x000))
-        movyx_st(Reax, Mesi, DP(Q*0x000))
+        divyn_xm(Medi, AJ0)
+        movyx_st(Reax, Mesi, AJ0)
 
         addxx_ri(Recx, IB(4*L))
         addxx_ri(Rebx, IB(4*L))
@@ -2513,15 +2513,15 @@ rt_void s_test18(rt_SIMD_INFOX *info)
 
     LBL(loc_ini)
 
-        movyx_ld(Reax, Mecx, DP(Q*0x000))
-        mulyn_xm(Mecx, DP(Q*0x010))
-        movyx_st(Reax, Mebx, DP(Q*0x000))
-        movyx_ld(Reax, Mecx, DP(Q*0x000))
+        movyx_ld(Reax, Mecx, AJ0)
+        mulyn_xm(Mecx, AJ1)
+        movyx_st(Reax, Mebx, AJ0)
+        movyx_ld(Reax, Mecx, AJ0)
         preyn_xx()
         remyn_xx()
-        divyn_xm(Mecx, DP(Q*0x010))
-        remyn_xm(Mecx, DP(Q*0x010))
-        movyx_st(Redx, Mesi, DP(Q*0x000))
+        divyn_xm(Mecx, AJ1)
+        remyn_xm(Mecx, AJ1)
+        movyx_st(Redx, Mesi, AJ0)
 
         addxx_ri(Recx, IB(4*L))
         addxx_ri(Rebx, IB(4*L))
@@ -2535,15 +2535,15 @@ rt_void s_test18(rt_SIMD_INFOX *info)
 
     LBL(smd_ini)
 
-        movyx_ld(Reax, Mecx, DP(Q*0x000))
-        mulyn_xm(Medi, DP(Q*0x000))
-        movyx_st(Reax, Mebx, DP(Q*0x000))
-        movyx_ld(Reax, Mecx, DP(Q*0x000))
+        movyx_ld(Reax, Mecx, AJ0)
+        mulyn_xm(Medi, AJ0)
+        movyx_st(Reax, Mebx, AJ0)
+        movyx_ld(Reax, Mecx, AJ0)
         preyn_xx()
         remyn_xx()
-        divyn_xm(Medi, DP(Q*0x000))
-        remyn_xm(Mecx, DP(Q*0x010))
-        movyx_st(Redx, Mesi, DP(Q*0x000))
+        divyn_xm(Medi, AJ0)
+        remyn_xm(Mecx, AJ1)
+        movyx_st(Redx, Mesi, AJ0)
 
         addxx_ri(Recx, IB(4*L))
         addxx_ri(Rebx, IB(4*L))

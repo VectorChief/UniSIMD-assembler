@@ -20,38 +20,39 @@
 /*
  * Alphabetical view of current/future instruction namespaces:
  *
- * cmda*_** - SIMD-data args, SIMD ISA (data-element is 16-bit, packed-256-bit)
+ * cmda*_** - SIMD-data args, SIMD ISA (data element is 16-bit, packed-256-bit)
  * cmdb*_** - byte-size args, BASE ISA (displacement/alignment may differ)
- * cmdc*_** - SIMD-data args, SIMD ISA (data-element is 32-bit, packed-256-bit)
- * cmdd*_** - SIMD-data args, SIMD ISA (data-element is 64-bit, packed-256-bit)
+ * cmdc*_** - SIMD-data args, SIMD ISA (data element is 32-bit, packed-256-bit)
+ * cmdd*_** - SIMD-data args, SIMD ISA (data element is 64-bit, packed-256-bit)
  * cmde*_** - extd-size args, extd ISA (for 80-bit extended double, x87)
  * cmdf*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed-256-bit)
- * cmdg*_** - SIMD-data args, SIMD ISA (data-element is 16-bit, packed-128-bit)
+ * cmdg*_** - SIMD-data args, SIMD ISA (data element is 16-bit, packed-128-bit)
  * cmdh*_** - half-size args, BASE ISA (displacement/alignment may differ)
- * cmdi*_** - SIMD-data args, SIMD ISA (data-element is 32-bit, packed-128-bit)
- * cmdj*_** - SIMD-data args, SIMD ISA (data-element is 64-bit, packed-128-bit)
+ * cmdi*_** - SIMD-data args, SIMD ISA (data element is 32-bit, packed-128-bit)
+ * cmdj*_** - SIMD-data args, SIMD ISA (data element is 64-bit, packed-128-bit)
  * cmdk*_** - king-kong args, BASE ISA (for 128-bit BASE subset, RISC-V)
  * cmdl*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed-128-bit)
  * cmdm*_** - SIMD-data args, SIMD ISA (packed fp16/int subset, half-precision)
  * cmdn*_** - SIMD-elem args, SIMD ISA (scalar fp16/int subset, half-precision)
- * cmdo*_** - SIMD-data args, SIMD ISA (data-element is 32-bit, packed)
+ * cmdo*_** - SIMD-data args, SIMD ISA (data element is 32-bit, packed)
  * cmdp*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed)
- * cmdq*_** - SIMD-data args, SIMD ISA (data-element is 64-bit, packed)
- * cmdr*_** - SIMD-elem args, SIMD ISA (data-element is 32-bit, scalar)
+ * cmdq*_** - SIMD-data args, SIMD ISA (data element is 64-bit, packed)
+ * cmdr*_** - SIMD-elem args, SIMD ISA (data element is 32-bit, scalar)
  * cmds*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, scalar)
- * cmdt*_** - SIMD-elem args, SIMD ISA (data-element is 64-bit, scalar)
+ * cmdt*_** - SIMD-elem args, SIMD ISA (data element is 64-bit, scalar)
  * cmdu*_** - SIMD-data args, SIMD ISA (packed f128/int subset, quad-precision)
  * cmdv*_** - SIMD-elem args, SIMD ISA (scalar f128/int subset, quad-precision)
- * cmdw*_** - word-size args, BASE ISA (data-element is always fixed at 32-bit)
+ * cmdw*_** - word-size args, BASE ISA (data element is always fixed at 32-bit)
  * cmdx*_** - addr-size args, BASE ISA (32/64-bit configurable with RT_ADDRESS)
  * cmdy*_** - elem-size args, BASE ISA (32/64-bit configurable with RT_ELEMENT)
- * cmdz*_** - full-size args, BASE ISA (data-element is always fixed at 64-bit)
+ * cmdz*_** - full-size args, BASE ISA (data element is always fixed at 64-bit)
  *
  * More detailed description of the above is given in rtarch.h.
  */
 
 /*
- * Configurable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtbase.h.
+ * Alphabetical view of current/future instruction namespaces is in rtzero.h.
+ * Configurable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtconf.h.
  * Mixing of 64/32-bit fields in backend structures may lead to misalignment
  * of 64-bit fields to 4-byte boundary, which is not supported on some targets.
  * Place fields carefully to ensure natural alignment for all data types.
@@ -77,7 +78,7 @@
  * Working with 32-bit data in 64-bit fields in any other circumstances must be
  * done consistently within a subset of one size (32-bit, 64-bit or C/C++).
  * Alternatively, data written natively in C/C++ can be worked on from within
- * a given (one) subset if appropriate offset correction is used from rtarch.h.
+ * a given (one) subset if appropriate offset correction is used from rtbase.h.
  *
  * Setting-flags instruction naming scheme may change again in the future for
  * better orthogonality with operand size, type and args-list. It is therefore
@@ -89,11 +90,11 @@
  * while standalone remainder operations can only be done natively on MIPS.
  * Consider using special fixed-register forms for maximum performance.
  *
- * The cmdp*_** (rtbase.h) instructions are intended for SPMD programming model
- * and can be configured to work with 32/64-bit data-elements (int, fp).
- * In this model data-paths are fixed-width, BASE and SIMD data-elements are
- * width-compatible, code-path divergence is handled via mkj**_** pseudo-ops.
- * Matching element-sized BASE subset cmdy*_** is defined in rtbase.h as well.
+ * The cmdp*_** (rtconf.h) instructions are intended for SPMD programming model
+ * and can be configured to work with 32/64-bit data elements (fp+int).
+ * In this model data paths are fixed-width, BASE and SIMD data elements are
+ * width-compatible, code path divergence is handled via mkj**_** pseudo-ops.
+ * Matching element-sized BASE subset cmdy*_** is defined in rtconf.h as well.
  *
  * Note, when using fixed-data-size 128/256-bit SIMD subsets simultaneously
  * upper 128-bit halves of full 256-bit SIMD registers may end up undefined.

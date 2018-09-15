@@ -44,11 +44,11 @@
  * cmd*n_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
  * cmd*s_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
  *
- * The cmdp*_** (rtbase.h) instructions are intended for SPMD programming model
- * and can be configured to work with 32/64-bit data-elements (int, fp).
- * In this model data-paths are fixed-width, BASE and SIMD data-elements are
- * width-compatible, code-path divergence is handled via mkj**_** pseudo-ops.
- * Matching element-sized BASE subset cmdy*_** is defined in rtbase.h as well.
+ * The cmdp*_** (rtconf.h) instructions are intended for SPMD programming model
+ * and can be configured to work with 32/64-bit data elements (fp+int).
+ * In this model data paths are fixed-width, BASE and SIMD data elements are
+ * width-compatible, code path divergence is handled via mkj**_** pseudo-ops.
+ * Matching element-sized BASE subset cmdy*_** is defined in rtconf.h as well.
  *
  * Note, when using fixed-data-size 128/256-bit SIMD subsets simultaneously
  * upper 128-bit halves of full 256-bit SIMD registers may end up undefined.
@@ -316,46 +316,8 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-#define adpqs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
-        adpqs3rr(W(XG), W(XG), W(XS))
-
-#define adpqs_ld(XG, MS, DS)                                                \
-        adpqs3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define adpqs3rr(XD, XS, XT)                                                \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpqs_rx(W(XD))
-
-#define adpqs3ld(XD, XS, MT, DT)                                            \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_ld(W(XD), W(MT), W(DT))                                       \
-        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpqs_rx(W(XD))
-
-#define adhqs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
-        adpqs3rr(W(XD), W(XS), W(XS))                                       \
-        adpqs3rr(W(XD), W(XD), W(XD))                                       \
-        adpqs3rr(W(XD), W(XD), W(XD))
-
-#define adhqs_ld(XD, MS, DS)                                                \
-        movqx_ld(W(XD), W(MS), W(DS))                                       \
-        adhqs_rr(W(XD), W(XD))
-
-#define adpqs_rx(XD) /* not portable, do not use outside */                 \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        adpjs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movjx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
-        adpjs_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
-        movjx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movjx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        adpjs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        movjx_st(W(XD), Mebp, inf_SCR01(0x20))                              \
-        movjx_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        adpjs_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
-        movjx_st(W(XD), Mebp, inf_SCR01(0x30))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        /* adp, adh are defined in rtbase.h (first 15-regs only)
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
@@ -401,58 +363,8 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-#define mlpqs_rr(XG, XS) /* horizontal pairwise mul */                      \
-        mlpqs3rr(W(XG), W(XG), W(XS))
-
-#define mlpqs_ld(XG, MS, DS)                                                \
-        mlpqs3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mlpqs3rr(XD, XS, XT)                                                \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mlpqs_rx(W(XD))
-
-#define mlpqs3ld(XD, XS, MT, DT)                                            \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_ld(W(XD), W(MT), W(DT))                                       \
-        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mlpqs_rx(W(XD))
-
-#define mlhqs_rr(XD, XS) /* horizontal reductive mul */                     \
-        mlpqs3rr(W(XD), W(XS), W(XS))                                       \
-        mlpqs3rr(W(XD), W(XD), W(XD))                                       \
-        mlpqs3rr(W(XD), W(XD), W(XD))
-
-#define mlhqs_ld(XD, MS, DS)                                                \
-        movqx_ld(W(XD), W(MS), W(DS))                                       \
-        mlhqs_rr(W(XD), W(XD))
-
-#define mlpqs_rx(XD) /* not portable, do not use outside */                 \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        mults_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        mults_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
-        mults_ld(W(XD), Mebp, inf_SCR01(0x28))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
-        mults_ld(W(XD), Mebp, inf_SCR01(0x38))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        mults_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x20))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        mults_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x28))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        mults_ld(W(XD), Mebp, inf_SCR02(0x28))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x30))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
-        mults_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x38))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        /* mlp, mlh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
 
@@ -494,7 +406,7 @@
 
 /* cbr (D = cbrt S) */
 
-        /* cbe, cbs, cbr defined in rtbase.h
+        /* cbe, cbs, cbr are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rcp (D = 1.0 / S)
@@ -511,7 +423,7 @@
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
-        /* rcp defined in rtbase.h
+        /* rce, rcs, rcp are defined in rtconf.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rsq (D = 1.0 / sqrt S)
@@ -529,7 +441,7 @@
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-        /* rsq defined in rtbase.h
+        /* rse, rss, rsq are defined in rtconf.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 #if (RT_256X2 < 2)
@@ -818,58 +730,8 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-#define mnpqs_rr(XG, XS) /* horizontal pairwise min */                      \
-        mnpqs3rr(W(XG), W(XG), W(XS))
-
-#define mnpqs_ld(XG, MS, DS)                                                \
-        mnpqs3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mnpqs3rr(XD, XS, XT)                                                \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mnpqs_rx(W(XD))
-
-#define mnpqs3ld(XD, XS, MT, DT)                                            \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_ld(W(XD), W(MT), W(DT))                                       \
-        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mnpqs_rx(W(XD))
-
-#define mnhqs_rr(XD, XS) /* horizontal reductive min */                     \
-        mnpqs3rr(W(XD), W(XS), W(XS))                                       \
-        mnpqs3rr(W(XD), W(XD), W(XD))                                       \
-        mnpqs3rr(W(XD), W(XD), W(XD))
-
-#define mnhqs_ld(XD, MS, DS)                                                \
-        movqx_ld(W(XD), W(MS), W(DS))                                       \
-        mnhqs_rr(W(XD), W(XD))
-
-#define mnpqs_rx(XD) /* not portable, do not use outside */                 \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        mints_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        mints_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
-        mints_ld(W(XD), Mebp, inf_SCR01(0x28))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
-        mints_ld(W(XD), Mebp, inf_SCR01(0x38))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        mints_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x20))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        mints_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x28))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        mints_ld(W(XD), Mebp, inf_SCR02(0x28))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x30))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
-        mints_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x38))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        /* mnp, mnh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
@@ -893,58 +755,8 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-#define mxpqs_rr(XG, XS) /* horizontal pairwise max */                      \
-        mxpqs3rr(W(XG), W(XG), W(XS))
-
-#define mxpqs_ld(XG, MS, DS)                                                \
-        mxpqs3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mxpqs3rr(XD, XS, XT)                                                \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpqs_rx(W(XD))
-
-#define mxpqs3ld(XD, XS, MT, DT)                                            \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_ld(W(XD), W(MT), W(DT))                                       \
-        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpqs_rx(W(XD))
-
-#define mxhqs_rr(XD, XS) /* horizontal reductive max */                     \
-        mxpqs3rr(W(XD), W(XS), W(XS))                                       \
-        mxpqs3rr(W(XD), W(XD), W(XD))                                       \
-        mxpqs3rr(W(XD), W(XD), W(XD))
-
-#define mxhqs_ld(XD, MS, DS)                                                \
-        movqx_ld(W(XD), W(MS), W(DS))                                       \
-        mxhqs_rr(W(XD), W(XD))
-
-#define mxpqs_rx(XD) /* not portable, do not use outside */                 \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR01(0x28))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movts_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR01(0x38))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x20))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x28))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR02(0x28))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x30))                              \
-        movts_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
-        maxts_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x38))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        /* mxp, mxh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 

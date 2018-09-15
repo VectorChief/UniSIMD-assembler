@@ -51,11 +51,11 @@
  * cmd*n_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
  * cmd*s_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
  *
- * The cmdp*_** (rtbase.h) instructions are intended for SPMD programming model
- * and can be configured to work with 32/64-bit data-elements (int, fp).
- * In this model data-paths are fixed-width, BASE and SIMD data-elements are
- * width-compatible, code-path divergence is handled via mkj**_** pseudo-ops.
- * Matching element-sized BASE subset cmdy*_** is defined in rtbase.h as well.
+ * The cmdp*_** (rtconf.h) instructions are intended for SPMD programming model
+ * and can be configured to work with 32/64-bit data elements (fp+int).
+ * In this model data paths are fixed-width, BASE and SIMD data elements are
+ * width-compatible, code path divergence is handled via mkj**_** pseudo-ops.
+ * Matching element-sized BASE subset cmdy*_** is defined in rtconf.h as well.
  *
  * Note, when using fixed-data-size 128/256-bit SIMD subsets simultaneously
  * upper 128-bit halves of full 256-bit SIMD registers may end up undefined.
@@ -357,7 +357,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x1000000A | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-        /* adp, adh defined in rtbase.h (first 15-regs only)
+        /* adp, adh are defined in rtbase.h (first 15-regs only)
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
@@ -394,7 +394,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x1000002E | MXM(REG(XD), REG(XS), TmmS) | TmmM << 6)
 
-        /* mlp, mlh defined in rtbase.h
+        /* mlp, mlh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
@@ -559,7 +559,7 @@
 
 /* cbr (D = cbrt S) */
 
-        /* cbe, cbs, cbr defined in rtbase.h
+        /* cbe, cbs, cbr are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rcp (D = 1.0 / S)
@@ -576,7 +576,7 @@
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
-        /* rcp defined in rtbase.h
+        /* rce, rcs, rcp are defined in rtconf.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rsq (D = 1.0 / sqrt S)
@@ -595,7 +595,7 @@
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-        /* rsq defined in rtbase.h
+        /* rse, rss, rsq are defined in rtconf.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
@@ -651,7 +651,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x1000044A | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-        /* mnp, mnh defined in rtbase.h
+        /* mnp, mnh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 #undef  mnpis_rx
@@ -700,7 +700,7 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x1000040A | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-        /* mxp, mxh defined in rtbase.h
+        /* mxp, mxh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 #undef  mxpis_rx
@@ -1315,7 +1315,7 @@
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
-        /* rcp defined in rtbase.h
+        /* rce, rcs, rcp are defined in rtconf.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rsq (D = 1.0 / sqrt S)
@@ -1333,7 +1333,7 @@
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-        /* rsq defined in rtbase.h
+        /* rse, rss, rsq are defined in rtconf.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
@@ -1560,7 +1560,7 @@
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
-        /* rcp defined in rtbase.h
+        /* rce, rcs, rcp are defined in rtconf.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rsq (D = 1.0 / sqrt S)
@@ -1579,7 +1579,7 @@
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-        /* rsq defined in rtbase.h
+        /* rse, rss, rsq are defined in rtconf.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)

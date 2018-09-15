@@ -941,11 +941,11 @@ rt_si32 from_mask(rt_si32 mask)
  * cmd*n_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
  * cmd*s_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
  *
- * The cmdp*_** (rtbase.h) instructions are intended for SPMD programming model
- * and can be configured to work with 32/64-bit data-elements (int, fp).
- * In this model data-paths are fixed-width, BASE and SIMD data-elements are
- * width-compatible, code-path divergence is handled via mkj**_** pseudo-ops.
- * Matching element-sized BASE subset cmdy*_** is defined in rtbase.h as well.
+ * The cmdp*_** (rtconf.h) instructions are intended for SPMD programming model
+ * and can be configured to work with 32/64-bit data elements (fp+int).
+ * In this model data paths are fixed-width, BASE and SIMD data elements are
+ * width-compatible, code path divergence is handled via mkj**_** pseudo-ops.
+ * Matching element-sized BASE subset cmdy*_** is defined in rtconf.h as well.
  *
  * Note, when using fixed-data-size 128/256-bit SIMD subsets simultaneously
  * upper 128-bit halves of full 256-bit SIMD registers may end up undefined.
@@ -5052,7 +5052,7 @@ rt_si32 from_mask(rt_si32 mask)
  * IT - immediate value (is used as a third or second source)
  *
  * Alphabetical view of current/future instruction namespaces is in rtzero.h.
- * Configurable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtbase.h.
+ * Configurable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtconf.h.
  * Mixing of 64/32-bit fields in backend structures may lead to misalignment
  * of 64-bit fields to 4-byte boundary, which is not supported on some targets.
  * Place fields carefully to ensure natural alignment for all data types.
@@ -5078,7 +5078,7 @@ rt_si32 from_mask(rt_si32 mask)
  * Working with 32-bit data in 64-bit fields in any other circumstances must be
  * done consistently within a subset of one size (32-bit, 64-bit or C/C++).
  * Alternatively, data written natively in C/C++ can be worked on from within
- * a given (one) subset if appropriate offset correction is used from rtarch.h.
+ * a given (one) subset if appropriate offset correction is used from rtbase.h.
  *
  * Setting-flags instruction naming scheme may change again in the future for
  * better orthogonality with operand size, type and args-list. It is therefore

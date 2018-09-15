@@ -44,11 +44,11 @@
  * cmd*n_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
  * cmd*s_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
  *
- * The cmdp*_** (rtbase.h) instructions are intended for SPMD programming model
- * and can be configured to work with 32/64-bit data-elements (int, fp).
- * In this model data-paths are fixed-width, BASE and SIMD data-elements are
- * width-compatible, code-path divergence is handled via mkj**_** pseudo-ops.
- * Matching element-sized BASE subset cmdy*_** is defined in rtbase.h as well.
+ * The cmdp*_** (rtconf.h) instructions are intended for SPMD programming model
+ * and can be configured to work with 32/64-bit data elements (fp+int).
+ * In this model data paths are fixed-width, BASE and SIMD data elements are
+ * width-compatible, code path divergence is handled via mkj**_** pseudo-ops.
+ * Matching element-sized BASE subset cmdy*_** is defined in rtconf.h as well.
  *
  * Note, when using fixed-data-size 128/256-bit SIMD subsets simultaneously
  * upper 128-bit halves of full 256-bit SIMD registers may end up undefined.
@@ -281,7 +281,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-        /* adp, adh defined in rtbase.h (first 15-regs only)
+        /* adp, adh are defined in rtbase.h (first 15-regs only)
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 #undef  adpjs3rr
@@ -329,7 +329,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-        /* mlp, mlh defined in rtbase.h
+        /* mlp, mlh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* div (G = G / S), (D = S / T) if (#D != #S) */
@@ -362,7 +362,7 @@
 
 /* cbr (D = cbrt S) */
 
-        /* cbe, cbs, cbr defined in rtbase.h
+        /* cbe, cbs, cbr are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rcp (D = 1.0 / S)
@@ -390,7 +390,7 @@
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
-        /* rcp defined in rtbase.h
+        /* rce, rcs, rcp are defined in rtconf.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rsq (D = 1.0 / sqrt S)
@@ -419,7 +419,7 @@
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-        /* rsq defined in rtbase.h
+        /* rse, rss, rsq are defined in rtconf.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
@@ -475,7 +475,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-        /* mnp, mnh defined in rtbase.h
+        /* mnp, mnh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
@@ -495,7 +495,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-        /* mxp, mxh defined in rtbase.h
+        /* mxp, mxh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
@@ -1058,7 +1058,7 @@
 
 #endif /* RT_SIMD_COMPAT_RCP */
 
-        /* rcp defined in rtbase.h
+        /* rce, rcs, rcp are defined in rtconf.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* rsq (D = 1.0 / sqrt S)
@@ -1076,7 +1076,7 @@
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
-        /* rsq defined in rtbase.h
+        /* rse, rss, rsq are defined in rtconf.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
