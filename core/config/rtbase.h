@@ -110,23 +110,73 @@
 /*
  * Determine SIMD properties for a given SIMD target (vector-length-agnostic).
  */
-#if   (RT_SIMD >= 512)
-/* RT_SIMD_* definitions come directly from >= 512-bit rtarch headers */
+#if   (RT_SIMD == 2048)
+
+#define RT_SIMD_ALIGN       256
+#define RT_SIMD_WIDTH64     32
+#define RT_SIMD_SET64(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=\
+                            s[8]=s[9]=s[10]=s[11]=s[12]=s[13]=s[14]=s[15]=\
+                            s[16]=s[17]=s[18]=s[19]=s[20]=s[21]=s[22]=s[23]=\
+                            s[24]=s[25]=s[26]=s[27]=s[28]=s[29]=s[30]=s[31]=v
+#define RT_SIMD_WIDTH32     64
+#define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=\
+                            s[8]=s[9]=s[10]=s[11]=s[12]=s[13]=s[14]=s[15]=\
+                            s[16]=s[17]=s[18]=s[19]=s[20]=s[21]=s[22]=s[23]=\
+                            s[24]=s[25]=s[26]=s[27]=s[28]=s[29]=s[30]=s[31]=\
+                            s[32]=s[33]=s[34]=s[35]=s[36]=s[37]=s[38]=s[39]=\
+                            s[40]=s[41]=s[42]=s[43]=s[44]=s[45]=s[46]=s[47]=\
+                            s[48]=s[49]=s[50]=s[51]=s[52]=s[53]=s[54]=s[55]=\
+                            s[56]=s[57]=s[58]=s[59]=s[60]=s[61]=s[62]=s[63]=v
+#elif (RT_SIMD == 1024)
+
+#define RT_SIMD_ALIGN       128
+#define RT_SIMD_WIDTH64     16
+#define RT_SIMD_SET64(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=\
+                            s[8]=s[9]=s[10]=s[11]=s[12]=s[13]=s[14]=s[15]=v
+#define RT_SIMD_WIDTH32     32
+#define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=\
+                            s[8]=s[9]=s[10]=s[11]=s[12]=s[13]=s[14]=s[15]=\
+                            s[16]=s[17]=s[18]=s[19]=s[20]=s[21]=s[22]=s[23]=\
+                            s[24]=s[25]=s[26]=s[27]=s[28]=s[29]=s[30]=s[31]=v
+#elif (RT_SIMD == 512)
+
+#define RT_SIMD_ALIGN       64
+#define RT_SIMD_WIDTH64     8
+#define RT_SIMD_SET64(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=v
+#define RT_SIMD_WIDTH32     16
+#define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=\
+                            s[8]=s[9]=s[10]=s[11]=s[12]=s[13]=s[14]=s[15]=v
 #elif (RT_SIMD == 256)
+
 #define RT_SIMD_REGS            RT_SIMD_REGS_256
 #define RT_SIMD_ALIGN           RT_SIMD_ALIGN_256
 #define RT_SIMD_WIDTH64         RT_SIMD_WIDTH64_256
 #define RT_SIMD_SET64(s, v)     RT_SIMD_SET64_256(s, v)
 #define RT_SIMD_WIDTH32         RT_SIMD_WIDTH32_256
 #define RT_SIMD_SET32(s, v)     RT_SIMD_SET32_256(s, v)
+
 #elif (RT_SIMD == 128)
+
 #define RT_SIMD_REGS            RT_SIMD_REGS_128
 #define RT_SIMD_ALIGN           RT_SIMD_ALIGN_128
 #define RT_SIMD_WIDTH64         RT_SIMD_WIDTH64_128
 #define RT_SIMD_SET64(s, v)     RT_SIMD_SET64_128(s, v)
 #define RT_SIMD_WIDTH32         RT_SIMD_WIDTH32_128
 #define RT_SIMD_SET32(s, v)     RT_SIMD_SET32_128(s, v)
+
 #endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
+
+#define RT_SIMD_ALIGN_256       32
+#define RT_SIMD_WIDTH64_256     4
+#define RT_SIMD_SET64_256(s, v) s[0]=s[1]=s[2]=s[3]=v
+#define RT_SIMD_WIDTH32_256     8
+#define RT_SIMD_SET32_256(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=v
+
+#define RT_SIMD_ALIGN_128       16
+#define RT_SIMD_WIDTH64_128     2
+#define RT_SIMD_SET64_128(s, v) s[0]=s[1]=v
+#define RT_SIMD_WIDTH32_128     4
+#define RT_SIMD_SET32_128(s, v) s[0]=s[1]=s[2]=s[3]=v
 
 /*
  * SIMD total-quads (number of 128-bit chunks) for chosen SIMD target.

@@ -10,11 +10,6 @@
 #include "rtarch_m64.h"
 
 #define RT_SIMD_REGS_256        16
-#define RT_SIMD_ALIGN_256       32
-#define RT_SIMD_WIDTH64_256     4
-#define RT_SIMD_SET64_256(s, v) s[0]=s[1]=s[2]=s[3]=v
-#define RT_SIMD_WIDTH32_256     8
-#define RT_SIMD_SET32_256(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=v
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
