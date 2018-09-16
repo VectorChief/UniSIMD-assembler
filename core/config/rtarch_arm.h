@@ -184,10 +184,10 @@
 /* immediate encoding add/sub/cmp(TP1), and/orr/xor(TP2), mov/mul(TP3) */
 
 #define T10(tr) ((tr) << 12)
-#define M10(im) (0x02000000 | (im))
+#define M10(im) (0x02000000 |(0x00FF & (im)))
 #define G10(rg, im) EMPTY
 #define T20(tr) ((tr) << 12)
-#define M20(im) (0x02000000 | (im))
+#define M20(im) (0x02000000 |(0x00FF & (im)))
 #define G20(rg, im) EMPTY
 #define G30(rg, im) EMITW(0xE3000000 | MRM((rg),    0x00,    0x00) |        \
                             (0xF0000 & (im) <<  4) | (0xFFF & (im)))
@@ -215,7 +215,7 @@
 /* displacement encoding BASE(TP1), adr(TP3) */
 
 #define B10(br) (br)
-#define P10(dp) (0x00000000 | (dp))
+#define P10(dp) (0x00000000 |(0x0FFC & (dp)))
 #define C10(br, dp) EMPTY
 #define C30(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
                             (0xF0000 & (dp) <<  4) | (0xFFC & (dp)))
@@ -290,24 +290,24 @@
 #define Iesi    Tesi, TPxx, EMITW(0xE0800000 | MRM(TPxx,    Tesi,    Teax))
 #define Iedi    Tedi, TPxx, EMITW(0xE0800000 | MRM(TPxx,    Tedi,    Teax))
 
-/* immediate    VAL,  TP1,  TP2       (all immediate types are unsigned) */
+/* immediate    VAL,  TP1,  TP2            (all immediate types are unsigned) */
 
-#define IC(im)  ((im) & 0x7F),       0, 0      /* drop sign-ext (in x86) */
-#define IB(im)  ((im) & 0xFF),       0, 0        /* 32-bit word (in x86) */
-#define IM(im)  ((im) & 0xFFF),      1, 1  /* native AArch64 add/sub/cmp */
-#define IG(im)  ((im) & 0x7FFF),     1, 1  /* native on MIPS add/sub/cmp */
-#define IH(im)  ((im) & 0xFFFF),     1, 1  /* second native on ARMs/MIPS */
-#define IV(im)  ((im) & 0x7FFFFFFF), 2, 2        /* native x64 long mode */
-#define IW(im)  ((im) & 0xFFFFFFFF), 2, 2       /* only for cmdw*_** set */
+#define IC(im)  ((im) & 0x7F),            0, 0      /* drop sign-ext (on x86) */
+#define IB(im)  ((im) & 0xFF),            0, 0        /* 32-bit word (on x86) */
+#define IM(im)  ((im) & 0xFFF),           1, 1  /* native AArch64 add/sub/cmp */
+#define IG(im)  ((im) & 0x7FFF),          1, 1  /* native on MIPS add/sub/cmp */
+#define IH(im)  ((im) & 0xFFFF),          1, 1  /* second native on ARMs/MIPS */
+#define IV(im)  ((im) & 0x7FFFFFFF),      2, 2        /* native x64 long mode */
+#define IW(im)  ((im) & 0xFFFFFFFF),      2, 2       /* only for cmdw*_** set */
 
-/* displacement VAL,  TP1,  TP2    (all displacement types are unsigned) */
+/* displacement VAL,  TP1,  TP2         (all displacement types are unsigned) */
 
-#define DP(dp)  ((dp) & 0xFFC),      0, 0    /* native on all ARMs, MIPS */
-#define DF(dp)  ((dp) & 0x3FFC),     1, 1   /* native AArch64 BASE ld/st */
-#define DG(dp)  ((dp) & 0x7FFC),     1, 1      /* native MIPS BASE ld/st */
-#define DH(dp)  ((dp) & 0xFFFC),     1, 1   /* second native on all ARMs */
-#define DV(dp)  ((dp) & 0x7FFFFFFC), 2, 2        /* native x64 long mode */
-#define PLAIN   DP(0)           /* special type for Oeax addressing mode */
+#define DP(dp)  ((dp) & (0x0FFC*Q|0xFC)), 0, 0    /* native on all ARMs, MIPS */
+#define DF(dp)  ((dp) & (0x3FFC*Q|0xFC)), 1, 1   /* native AArch64 BASE ld/st */
+#define DG(dp)  ((dp) & (0x7FFC*Q|0xFC)), 1, 1   /* native on MIPS BASE ld/st */
+#define DH(dp)  ((dp) & (0xFFFC*Q|0xFC)), 1, 1   /* second native on all ARMs */
+#define DV(dp)  ((dp) & 0x7FFFFFFC),      2, 2        /* native x64 long mode */
+#define PLAIN   DP(0)                /* special type for Oeax addressing mode */
 
 /* triplet pass-through wrapper */
 

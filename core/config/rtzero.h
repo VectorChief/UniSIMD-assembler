@@ -148,6 +148,21 @@
 #undef H /* short name for RT_ENDIAN*(L-1)*4 */
 #undef I /* short name for RT_ENDIAN*(2-L)*4 */
 
+#undef IC /* immediate type:     0x0000007F */
+#undef IB /* immediate type:     0x000000FF */
+#undef IM /* immediate type:     0x00000FFF */
+#undef IG /* immediate type:     0x00007FFF */
+#undef IH /* immediate type:     0x0000FFFF */
+#undef IV /* immediate type:     0x7FFFFFFF */
+#undef IW /* immediate type:     0xFFFFFFFF, only for cmdw*_** subset */
+
+#undef DP /* displacement type:  0x00000FFF */
+#undef DF /* displacement type:  0x00003FFF */
+#undef DG /* displacement type:  0x00007FFF */
+#undef DH /* displacement type:  0x0000FFFF */
+#undef DV /* displacement type:  0x7FFFFFFF */
+#undef PLAIN     /* plain type:  0x00000000, only for Oeax addressing */
+
 #undef Oeax /* external name for BASE-plain addressing */
 
 #undef Mebx /* external name for BASE+displ addressing */

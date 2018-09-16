@@ -243,11 +243,11 @@
 #define RXB(reg, mod, sib)  ((reg) >> 3 & 0x03) /* full-reg-extension-bit */
 #define RMB(reg, mod, sib)  ((reg) >> 3 | 0x02) /* reg-bank-extension-bit */
 #define REG(reg, mod, sib)  ((reg) >> 0 & 0x07) /* register, lower 3-bits */
-#define REH(reg, mod, sib)  (((reg) & 0x07) + 8) /* 2nd 8-reg-bank 4-bits */
-#define REI(reg, mod, sib)  (((reg) & 0x07) +16) /* 3rd 8-reg-bank 5-bits */
-#define REJ(reg, mod, sib)  (((reg) & 0x07) +24) /* 4th 8-reg-bank 5-bits */
-#define REN(reg, mod, sib)  (reg) /* 3rd operand,  full-reg-bank, 4/5-bits */
-#define REM(reg, mod, sib)  (((reg) & 0x0F) +16) /* 2nd 16-reg-bank 5-bits */
+#define REH(reg, mod, sib)  (((reg) & 0x07)+ 8) /* 2nd 8-reg-bank, 4-bits */
+#define REI(reg, mod, sib)  (((reg) & 0x07)+16) /* 3rd 8-reg-bank, 5-bits */
+#define REJ(reg, mod, sib)  (((reg) & 0x07)+24) /* 4th 8-reg-bank, 5-bits */
+#define REN(reg, mod, sib)  (reg) /* 3rd operand, full-reg-bank, 4/5-bits */
+#define REM(reg, mod, sib)  (((reg) & 0x0F)+16) /* 2nd 16-reg-bank 5-bits */
 #define MOD(reg, mod, sib)  mod
 #define SIB(reg, mod, sib)  sib
 
@@ -321,20 +321,20 @@
 
 /* immediate    VAL,  TYP,  CMD            (all immediate types are unsigned) */
 
-#define IC(im)  (im), 0x02, EMITB((im) & 0x7F) /* drop sign-ext (zero in ARM) */
+#define IC(im)  (im), 0x02, EMITB((im) & 0x7F) /* drop sign-ext (zero on ARM) */
 #define IB(im)  (im), 0x00, EMITW((im) & 0xFF) /* drop sign-ext (32-bit word) */
 #define IM(im)  (im), 0x00, EMITW((im) & 0xFFF) /* native AArch64 add/sub/cmp */
-#define IG(im)  (im), 0x00, EMITW((im) & 0x7FFF) /* native MIPS32 add/sub/cmp */
+#define IG(im)  (im), 0x00, EMITW((im) & 0x7FFF) /* native MIPS64 add/sub/cmp */
 #define IH(im)  (im), 0x00, EMITW((im) & 0xFFFF) /* second native on all ARMs */
 #define IV(im)  (im), 0x00, EMITW((im) & 0x7FFFFFFF)  /* native x64 long mode */
 #define IW(im)  (im), 0x00, EMITW((im) & 0xFFFFFFFF) /* only for cmdw*_** set */
 
 /* displacement VAL,  TYP,  CMD         (all displacement types are unsigned) */
 
-#define DP(dp)  (dp), 0x00, EMITW((dp) & ((0xFFC *Q) | 0xFFC)) /* ext Q=1,2,4 */
-#define DF(dp)  (dp), 0x00, EMITW((dp) & ((0x3FFC*Q) | 0xFFC)) /* ext Q=1,2,4 */
-#define DG(dp)  (dp), 0x00, EMITW((dp) & ((0x7FFC*Q) | 0xFFC)) /* ext Q=1,2,4 */
-#define DH(dp)  (dp), 0x00, EMITW((dp) & ((0xFFFC*Q) | 0xFFC)) /* ext Q=1,2,4 */
+#define DP(dp)  (dp), 0x00, EMITW((dp) & (0x0FFC*Q|0xFC)) /* Q=1,2,4,16,32,64 */
+#define DF(dp)  (dp), 0x00, EMITW((dp) & (0x3FFC*Q|0xFC)) /* Q=1,2,4,16,32,64 */
+#define DG(dp)  (dp), 0x00, EMITW((dp) & (0x7FFC*Q|0xFC)) /* Q=1,2,4,16,32,64 */
+#define DH(dp)  (dp), 0x00, EMITW((dp) & (0xFFFC*Q|0xFC)) /* Q=1,2,4,16,32,64 */
 #define DV(dp)  (dp), 0x00, EMITW((dp) & 0x7FFFFFFC)  /* native x64 long mode */
 #define PLAIN   0x00, 0x00, EMPTY    /* special type for Oeax addressing mode */
 
