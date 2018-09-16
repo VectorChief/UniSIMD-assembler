@@ -691,18 +691,26 @@
 #define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#if   (RT_512X4 != 0) && (RT_SIMD == 2048)
-#error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
+#if   (RT_2K8X1 != 0) && (RT_SIMD == 2048)
+#include "rtarch_a64_SVEx1v1.h"
+#elif (RT_1K4X2 != 0) && (RT_SIMD == 2048)
+#error "AArch64 doesn't yet support paired SVE backends, check build flags"
+#elif (RT_512X4 != 0) && (RT_SIMD == 2048)
+#error "AArch64 doesn't support quaded SIMD backends, check build flags"
+#elif (RT_1K4X1 != 0) && (RT_SIMD == 1024)
+#include "rtarch_a64_SVEx1v1.h"
 #elif (RT_512X2 != 0) && (RT_SIMD == 1024)
-#error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
+#error "AArch64 doesn't yet support paired SVE backends, check build flags"
+#elif (RT_256X4 != 0) && (RT_SIMD == 1024)
+#error "AArch64 doesn't support quaded SIMD backends, check build flags"
 #elif (RT_512X1 != 0) && (RT_SIMD == 512)
 #include "rtarch_a64_SVEx1v1.h"
 #elif (RT_256X2 != 0) && (RT_SIMD == 512)
-#error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
+#error "AArch64 doesn't yet support paired SVE backends, check build flags"
 #elif (RT_128X4 != 0) && (RT_SIMD == 512)
 #error "AArch64 doesn't support quaded SIMD backends, check build flags"
 #elif (RT_256X1 != 0) && (RT_SIMD == 256)
-#error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
+#include "rtarch_a64_SVEx1v1.h"
 #elif (RT_128X2 != 0) && (RT_SIMD == 256)
 #include "rtarch_a64_128x2v1.h"
 #elif (RT_128X1 != 0) && (RT_SIMD == 128)

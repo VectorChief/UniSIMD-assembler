@@ -4408,18 +4408,24 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
         n_done = -1;
     }
 
-#if   (RT_512X4)  && (RT_SIMD == 2048)
+#if   (RT_2K8X1)  && (RT_SIMD == 2048)
+    simd = (1 << 16) | (RT_2K8X1 << 8) | 16;
+#elif (RT_1K4X2)  && (RT_SIMD == 2048)
+    simd = (2 << 16) | (RT_1K4X2 << 8) | 8;
+#elif (RT_512X4)  && (RT_SIMD == 2048)
     simd = (4 << 16) | (RT_512X4 << 8) | 4;
+#elif (RT_1K4X1)  && (RT_SIMD == 1024)
+    simd = (1 << 16) | (RT_1K4X1 << 8) | 8;
 #elif (RT_512X2)  && (RT_SIMD == 1024)
     simd = (2 << 16) | (RT_512X2 << 8) | 4;
 #elif (RT_512X1)  && (RT_SIMD == 512)
     simd = (1 << 16) | (RT_512X1 << 8) | 4;
 #elif (RT_256X2)  && (RT_SIMD == 512)
     simd = (2 << 16) | (RT_256X2 << 8) | 2;
-#elif (RT_256X1)  && (RT_SIMD == 256)
-    simd = (1 << 16) | (RT_256X1 << 8) | 2;
 #elif (RT_128X4)  && (RT_SIMD == 512)
     simd = (4 << 16) | (RT_128X4 << 8) | 1;
+#elif (RT_256X1)  && (RT_SIMD == 256)
+    simd = (1 << 16) | (RT_256X1 << 8) | 2;
 #elif (RT_128X2)  && (RT_SIMD == 256)
     simd = (2 << 16) | (RT_128X2 << 8) | 1;
 #elif (RT_128X1)  && (RT_SIMD == 128)

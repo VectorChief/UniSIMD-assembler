@@ -78,7 +78,7 @@
 /*
  * Determine mapping of vector-length-agnostic SIMD subsets: cmdo, cmdp, cmdq.
  */
-#if   (defined RT_SIMD)
+#if (defined RT_SIMD)
 /* RT_SIMD is already defined outside */
 #elif           (RT_2K8_R8)
 #define RT_SIMD 2048
@@ -95,7 +95,9 @@
 /*
  * Determine SIMD total-quads for backend structs (maximal for a given build).
  */
-#if             (RT_2K8_R8)
+#if (defined RT_MAXQ)
+#define Q RT_MAXQ
+#elif           (RT_2K8_R8)
 #define Q 16
 #elif (RT_1K4 || RT_1K4_R8)
 #define Q 8
@@ -206,9 +208,18 @@
 #define RT_SIMD_WIDTH32     16
 #define RT_SIMD_SET32(s, v) s[0]=s[1]=s[2]=s[3]=s[4]=s[5]=s[6]=s[7]=\
                             s[8]=s[9]=s[10]=s[11]=s[12]=s[13]=s[14]=s[15]=v
-#elif (RT_SIMD == 256)
+
+#elif (RT_SIMD == 256) && !(defined RT_SVEX1)
 
 #define RT_SIMD_REGS            RT_SIMD_REGS_256
+#define RT_SIMD_ALIGN           RT_SIMD_ALIGN_256
+#define RT_SIMD_WIDTH64         RT_SIMD_WIDTH64_256
+#define RT_SIMD_SET64(s, v)     RT_SIMD_SET64_256(s, v)
+#define RT_SIMD_WIDTH32         RT_SIMD_WIDTH32_256
+#define RT_SIMD_SET32(s, v)     RT_SIMD_SET32_256(s, v)
+
+#elif (RT_SIMD == 256)
+
 #define RT_SIMD_ALIGN           RT_SIMD_ALIGN_256
 #define RT_SIMD_WIDTH64         RT_SIMD_WIDTH64_256
 #define RT_SIMD_SET64(s, v)     RT_SIMD_SET64_256(s, v)
@@ -784,7 +795,7 @@ struct rt_SIMD_REGS
 
 /*
  * Return SIMD target mask (in rt_SIMD_INFO->ver format) from "simd" parameters:
- * SIMD native-size (1, 2, 4) in 0th (lowest) byte  <- number of 128-bit chunks
+ * SIMD native-size (1,..,16) in 0th (lowest) byte  <- number of 128-bit chunks
  * SIMD type (1,2,4,8, 16,32) in 1st (higher) byte  <- in format for given size
  * SIMD size-factor (1, 2, 4) in 2nd (higher) byte  <- register = size * factor
  * SIMD regs (8, 15, 16, 30) in 3rd (highest) byte  <- logical vector registers
@@ -809,8 +820,8 @@ rt_si32 mask_init(rt_si32 simd)
 #endif /* X86 targets */
 
     s_type = s_type == 0 ? 0xF : s_type & 0xF;
-    n_simd = n_simd == 0 ? 4 : n_simd;  /* <- 4 is the maximal native-size */
-    k_size = k_size == 0 ? 2 : k_size;  /* <- 2 is the optimal size-factor */
+    n_simd = n_simd == 0 ? 16 : n_simd; /* <- 16 is the maximal native-size */
+    k_size = k_size == 0 ? 2 : k_size;   /* <- 2 is the optimal size-factor */
 
     for (; n_simd >= n && n_simd > 0; n_simd /= 2)
     {
@@ -822,27 +833,46 @@ rt_si32 mask_init(rt_si32 simd)
                 mask |= s_type;
             }
 #elif !defined RT_X32  && !defined RT_X64  && !defined RT_X86 /* modern RISCs */
-#if   (defined RT_A32) || (defined RT_A64)
-            if (n_simd == 4)
+#if   (defined RT_SVEX1)
+            if (k <= 1 && n_simd == 16 && v_regs <= 30)
+            {
+                mask |= s_type << 28;
+            }
+            if (k <= 1 && n_simd == 8 && v_regs <= 30)
+            {
+                mask |= s_type << 24;
+            }
+            if (k <= 1 && n_simd == 4 && v_regs <= 30)
             {
                 mask |= s_type << 16;
             }
+            if (k <= 1 && n_simd == 2 && v_regs <= 30)
+            {
+                mask |= s_type <<  8;
+            }
 #endif /* SVE targets */
-            m = 2; s = 1;
+            m = 2; s = 0x00030F;
 #if   (defined RT_P32) || (defined RT_P64)
-            m = 4; s = 2;
-            if (n_simd == 4 && n != 0)
+            m = 4; s = 0x030F0F;
+            if (k <= 1 && n && n_simd == 4 && v_regs <= 15)
             {
                 k_size = k = 4;
                 n_simd = n = 1;
             }
-#endif /* PPC targets */
-            if (n_simd <= 2 && n != 0)
+            if (k == 2 && n && n_simd == 2 && v_regs <= 15)
             {
-                if (k != 0)
-                {
-                    k_size = k = k * n_simd;
-                }
+                k_size = k = 4;
+                n_simd = n = 1;
+            }
+            if (k <= 1 && n && n_simd == 2 && v_regs <= 30)
+            {
+                k_size = k = 2;
+                n_simd = n = 1;
+            }
+#endif /* PPC targets */
+            if (k <= 1 && n && n_simd == 2 && v_regs <= 15)
+            {
+                k_size = k = 2;
                 n_simd = n = 1;
             }
             if (k_size <= m && n_simd == 1 && v_regs <= 8)
@@ -851,23 +881,30 @@ rt_si32 mask_init(rt_si32 simd)
             }
             if (k_size <= m && n_simd == 1 && v_regs <= 15)
             {
-                mask |= s_type << (8*(k_size/2));
+                mask |= s_type << (8*(k_size/2)) & s;
             }
             if (k_size == 1 && n_simd == 1 && v_regs <= 30 && s_type <= 2)
             {
-                mask |= s_type << (8*(k_size/2));
+                mask |= s_type << (8*(k_size/2)) & s;
             }
             if (k_size == 2 && n_simd == 1 && v_regs <= 30 && s_type >= 4)
             {
-                mask |= s_type << (8*(k_size/2));
+                mask |= s_type << (8*(k_size/2)) & s;
             }
 #elif (defined RT_X32) || (defined RT_X64)
-            if (n_simd >= 4 && n != 0)
+            if (k <= 1 && n && n_simd == 16 && v_regs <= 8)
             {
-                if (k != 0)
-                {
-                    k_size = k = k * n_simd / 4;
-                }
+                k_size = k = 4;
+                n_simd = n = 4;
+            }
+            if (k == 2 && n && n_simd == 8 && v_regs <= 8)
+            {
+                k_size = k = 4;
+                n_simd = n = 4;
+            }
+            if (k <= 1 && n && n_simd == 8 && v_regs <= 16)
+            {
+                k_size = k = 2;
                 n_simd = n = 4;
             }
             if (k_size == 4 && n_simd == 4 && v_regs <= 8)
@@ -906,7 +943,7 @@ rt_si32 mask_init(rt_si32 simd)
 #endif /* all targets */
         }
 
-        k_size = k == 0 ? 2 : k;        /* <- 2 is the optimal size-factor */
+        k_size = k == 0 ? 2 : k;         /* <- 2 is the optimal size-factor */
     }
 
     return mask;
@@ -914,7 +951,7 @@ rt_si32 mask_init(rt_si32 simd)
 
 /*
  * Pack/return SIMD parameters from target "mask" (in rt_SIMD_INFO->ver format).
- * SIMD native-size (1, 2, 4) in 0th (lowest) byte  <- number of 128-bit chunks
+ * SIMD native-size (1,..,16) in 0th (lowest) byte  <- number of 128-bit chunks
  * SIMD type (1,2,4,8, 16,32) in 1st (higher) byte  <- in format for given size
  * SIMD size-factor (1, 2, 4) in 2nd (higher) byte  <- register = size * factor
  * SIMD regs (8, 15, 16, 30) in 3rd (highest) byte  <- logical vector registers
@@ -944,17 +981,26 @@ rt_si32 from_mask(rt_si32 mask)
     }
 #elif !defined RT_X32  && !defined RT_X64  && !defined RT_X86 /* modern RISCs */
     v_regs = v_regs == 16 ? 15 : 8;
-#if (defined RT_A32) || (defined RT_A64)
-    if (n_simd == 4 && k_size == 1 && s_type >= 4)
+#if   (defined RT_SVEX1)
+    if (n_simd == 6)
+    {
+        n_simd = k_size * 8;
+        k_size = 1;
+    }
+    if (n_simd >= 2 && k_size == 1 && s_type >= 4)
     {
         v_regs = 30;
     }
-    if (n_simd == 4 && k_size == 1)
+    if (n_simd >= 4 && k_size == 1)
+    {
+        n_keep = 1;
+    }
+    if (n_simd == 2 && k_size == 1 && s_type >= 4)
     {
         n_keep = 1;
     }
 #endif /* SVE targets */
-#if (defined RT_P32) || (defined RT_P64)
+#if  (defined RT_P32) || (defined RT_P64)
     if (n_simd == 2 && k_size == 1 && s_type >= 4)
     {
         v_regs = 30;
@@ -2961,7 +3007,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
-#if   (RT_SIMD >= 512)
+#if   (RT_SIMD >= 512) || (RT_SIMD == 256 && defined RT_SVEX1)
 
 /* cbr (D = cbrt S) */
 
@@ -3025,13 +3071,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpcs3rr(XD, XS, XT)                                                \
         movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpcs_rx(W(XD))
+        adpcs_rx(W(XD))                                                     \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adpcs3ld(XD, XS, MT, DT)                                            \
         movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movcx_ld(W(XD), W(MT), W(DT))                                       \
         movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpcs_rx(W(XD))
+        adpcs_rx(W(XD))                                                     \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adhcs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
         adpcs3rr(W(XD), W(XS), W(XS))                                       \
@@ -3041,6 +3089,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define adhcs_ld(XD, MS, DS)                                                \
         movcx_ld(W(XD), W(MS), W(DS))                                       \
         adhcs_rr(W(XD), W(XD))
+
+#if (defined RT_A32) || (defined RT_A64) || (defined RT_X32) || (defined RT_X64)
+
+#define adpcs_rx(XD) /* not portable, do not use outside */                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        adpis_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        adpis_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x10))
+
+#else /* RT_M32, RT_M64, RT_P32, RT_P64 */
 
 #define adpcs_rx(XD) /* not portable, do not use outside */                 \
         movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -3066,8 +3126,9 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x18))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
         addrs_ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))
+
+#endif /* target specific (ARM/x86 or MIPS/POWER) */
 
 #define mlpcs_rr(XG, XS) /* horizontal pairwise mul */                      \
         mlpcs3rr(W(XG), W(XG), W(XS))
@@ -3078,13 +3139,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mlpcs3rr(XD, XS, XT)                                                \
         movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mlpcs_rx(W(XD))
+        mlpcs_rx(W(XD))                                                     \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlpcs3ld(XD, XS, MT, DT)                                            \
         movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movcx_ld(W(XD), W(MT), W(DT))                                       \
         movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mlpcs_rx(W(XD))
+        mlpcs_rx(W(XD))                                                     \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlhcs_rr(XD, XS) /* horizontal reductive mul */                     \
         mlpcs3rr(W(XD), W(XS), W(XS))                                       \
@@ -3119,8 +3182,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x18))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
         mulrs_ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))
 
 #define mnpcs_rr(XG, XS) /* horizontal pairwise min */                      \
         mnpcs3rr(W(XG), W(XG), W(XS))
@@ -3131,13 +3193,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpcs3rr(XD, XS, XT)                                                \
         movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mnpcs_rx(W(XD))
+        mnpcs_rx(W(XD))                                                     \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnpcs3ld(XD, XS, MT, DT)                                            \
         movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movcx_ld(W(XD), W(MT), W(DT))                                       \
         movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mnpcs_rx(W(XD))
+        mnpcs_rx(W(XD))                                                     \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnhcs_rr(XD, XS) /* horizontal reductive min */                     \
         mnpcs3rr(W(XD), W(XS), W(XS))                                       \
@@ -3172,8 +3236,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x18))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
         minrs_ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))
 
 #define mxpcs_rr(XG, XS) /* horizontal pairwise max */                      \
         mxpcs3rr(W(XG), W(XG), W(XS))
@@ -3184,13 +3247,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mxpcs3rr(XD, XS, XT)                                                \
         movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpcs_rx(W(XD))
+        mxpcs_rx(W(XD))                                                     \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxpcs3ld(XD, XS, MT, DT)                                            \
         movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movcx_ld(W(XD), W(MT), W(DT))                                       \
         movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpcs_rx(W(XD))
+        mxpcs_rx(W(XD))                                                     \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxhcs_rr(XD, XS) /* horizontal reductive max */                     \
         mxpcs3rr(W(XD), W(XS), W(XS))                                       \
@@ -3225,8 +3290,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x18))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
         maxrs_ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))
 
 /* cbr (D = cbrt S) */
 
@@ -4641,7 +4705,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
-#if   (RT_SIMD >= 512)
+#if   (RT_SIMD >= 512) || (RT_SIMD == 256 && defined RT_SVEX1)
 
 /* cbr (D = cbrt S) */
 
@@ -4705,13 +4769,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpds3rr(XD, XS, XT)                                                \
         movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpds_rx(W(XD))
+        adpds_rx(W(XD))                                                     \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adpds3ld(XD, XS, MT, DT)                                            \
         movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movdx_ld(W(XD), W(MT), W(DT))                                       \
         movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpds_rx(W(XD))
+        adpds_rx(W(XD))                                                     \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adhds_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
         adpds3rr(W(XD), W(XS), W(XS))                                       \
@@ -4720,6 +4786,18 @@ rt_si32 from_mask(rt_si32 mask)
 #define adhds_ld(XD, MS, DS)                                                \
         movdx_ld(W(XD), W(MS), W(DS))                                       \
         adhds_rr(W(XD), W(XD))
+
+#if (defined RT_A32) || (defined RT_A64) || (defined RT_X32) || (defined RT_X64)
+
+#define adpds_rx(XD) /* not portable, do not use outside */                 \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        adpjs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        adpjs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x10))
+
+#else /* RT_M32, RT_M64, RT_P32, RT_P64 */
 
 #define adpds_rx(XD) /* not portable, do not use outside */                 \
         movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -4733,8 +4811,9 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x10))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
         addts_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0x18))
+
+#endif /* target specific (ARM/x86 or MIPS/POWER) */
 
 #define mlpds_rr(XG, XS) /* horizontal pairwise mul */                      \
         mlpds3rr(W(XG), W(XG), W(XS))
@@ -4745,13 +4824,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mlpds3rr(XD, XS, XT)                                                \
         movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mlpds_rx(W(XD))
+        mlpds_rx(W(XD))                                                     \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlpds3ld(XD, XS, MT, DT)                                            \
         movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movdx_ld(W(XD), W(MT), W(DT))                                       \
         movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mlpds_rx(W(XD))
+        mlpds_rx(W(XD))                                                     \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlhds_rr(XD, XS) /* horizontal reductive mul */                     \
         mlpds3rr(W(XD), W(XS), W(XS))                                       \
@@ -4773,8 +4854,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x10))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
         mults_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0x18))
 
 #define mnpds_rr(XG, XS) /* horizontal pairwise min */                      \
         mnpds3rr(W(XG), W(XG), W(XS))
@@ -4785,13 +4865,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpds3rr(XD, XS, XT)                                                \
         movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mnpds_rx(W(XD))
+        mnpds_rx(W(XD))                                                     \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnpds3ld(XD, XS, MT, DT)                                            \
         movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movdx_ld(W(XD), W(MT), W(DT))                                       \
         movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mnpds_rx(W(XD))
+        mnpds_rx(W(XD))                                                     \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnhds_rr(XD, XS) /* horizontal reductive min */                     \
         mnpds3rr(W(XD), W(XS), W(XS))                                       \
@@ -4813,8 +4895,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x10))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
         mints_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0x18))
 
 #define mxpds_rr(XG, XS) /* horizontal pairwise max */                      \
         mxpds3rr(W(XG), W(XG), W(XS))
@@ -4825,13 +4906,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mxpds3rr(XD, XS, XT)                                                \
         movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpds_rx(W(XD))
+        mxpds_rx(W(XD))                                                     \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxpds3ld(XD, XS, MT, DT)                                            \
         movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movdx_ld(W(XD), W(MT), W(DT))                                       \
         movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpds_rx(W(XD))
+        mxpds_rx(W(XD))                                                     \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxhds_rr(XD, XS) /* horizontal reductive max */                     \
         mxpds3rr(W(XD), W(XS), W(XS))                                       \
@@ -4853,8 +4936,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x10))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
         maxts_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x18))                              \
-        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0x18))
 
 /* cbr (D = cbrt S) */
 

@@ -332,20 +332,23 @@
 
 #elif (defined RT_A32) || (defined RT_A64)
 
-#if   !(defined RT_512X4) && (RT_2K8_R8)
-#error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
+#if   !(defined RT_SVEX1) && (RT_2K8_R8)
+#define         RT_2K8X1     (RT_2K8_R8)
+#define         RT_SVEX1     (RT_2K8_R8)
 #endif
-#if   !(defined RT_512X2) && (RT_1K4 || RT_1K4_R8)
-#error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
+#if   !(defined RT_SVEX1) && (RT_1K4)
+#define         RT_1K4X1     (RT_1K4)
+#define         RT_SVEX1     (RT_1K4)
 #endif
-#if   !(defined RT_512X1) && (RT_512)
+#if   !(defined RT_SVEX1) && (RT_512)
 #define         RT_512X1     (RT_512)
 #define         RT_SVEX1     (RT_512)
 #endif
-#if   !(defined RT_256X2) && (RT_512_R8)
-#error "AArch64 doesn't support SIMD wider than 128-bit, check build flags"
+#if   !(defined RT_SVEX1) && (RT_256) & 0xC
+#define         RT_256X1     (RT_256)
+#define         RT_SVEX1     (RT_256)
 #endif
-#if   !(defined RT_128X2) && (RT_256 || RT_256_R8)
+#if   !(defined RT_128X2) && (RT_256 || RT_256_R8) & 0x3
 #define         RT_128X2     (RT_256 |  RT_256_R8)
 #endif
 #if   !(defined RT_128X1) && (RT_128)

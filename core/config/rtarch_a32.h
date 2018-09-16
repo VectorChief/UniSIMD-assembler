@@ -330,7 +330,7 @@
 
 #define _DP(dp) ((dp) & 0xFFC),         0, 0      /* native on all ARMs, MIPS */
 #define _DE(dp) ((dp) & 0x1FFC),        0, 0     /* AArch64 256-bit SVE ld/st */
-#define _DF(dp) ((dp) & 0x3FFC),        0, 0     /* native AArch64 BASE ld/st */
+#define _DF(dp) ((dp) & 0x3FFC),        1, 0     /* native AArch64 BASE ld/st */
 #define _DG(dp) ((dp) & 0x7FFC),        1, 0  /* native MIPS/POWER BASE ld/st */
 #define _DH(dp) ((dp) & 0xFFFC),        1, 0     /* second native on all ARMs */
 #define _DV(dp) ((dp) & 0x7FFFFFFC),    2, 2       /* native x86_64 long mode */
@@ -1416,7 +1416,27 @@
  * 2nd byte - 512-bit version, 3rd byte - 1K4-bit version, | in upper halves */
 
 #define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
-        movwx_mi(Mebp, inf_VER, IW(0x51145)) /* NEON: 0,2,6,8; SVE: 12,16,18 */
+        EMITW(0x04BF5020 | Teax)               /* <- rdvl to Reax */        \
+        shrwx_ri(Reax, IB(4))                                               \
+        movwx_ri(Resi, IM(0x145))                                           \
+        movwx_rr(Recx, Reax)                                                \
+        andwx_ri(Recx, IB(2))                                               \
+        shlwx_ri(Recx, IB(9))                                               \
+        orrwx_rr(Resi, Recx)                                                \
+        movwx_rr(Recx, Reax)                                                \
+        andwx_ri(Recx, IB(4))                                               \
+        shlwx_ri(Recx, IB(16))                                              \
+        orrwx_rr(Resi, Recx)                                                \
+        movwx_rr(Recx, Reax)                                                \
+        andwx_ri(Recx, IB(8))                                               \
+        shlwx_ri(Recx, IB(23))                                              \
+        orrwx_rr(Resi, Recx)                                                \
+        movwx_rr(Recx, Reax)                                                \
+        andwx_ri(Recx, IB(16))                                              \
+        shlwx_ri(Recx, IB(26))                                              \
+        orrwx_rr(Resi, Recx)                                                \
+        andwx_ri(Resi, IW(0x55151545)) /* NEON: 0,2,6,8; SVE: other */      \
+        movwx_st(Resi, Mebp, inf_VER)
 
 /************************* address-sized instructions *************************/
 

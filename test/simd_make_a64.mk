@@ -64,8 +64,14 @@ simd_test_a64f64:
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64_64 -c 1
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64f32 -c 1
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64f64 -c 1
-# qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f32 -c 1
-# qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f64 -c 1
+# qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64f32 -c 1     (for -DRT_256=4)
+# qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64f64 -c 1     (for -DRT_256=4)
+# qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f32 -c 1     (for -DRT_512=4)
+# qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f64 -c 1     (for -DRT_512=4)
+# qemu-aarch64 -cpu max,sve-max-vq=8 simd_test.a64f32 -c 1     (for -DRT_1K4=4)
+# qemu-aarch64 -cpu max,sve-max-vq=8 simd_test.a64f64 -c 1     (for -DRT_1K4=4)
+# qemu-aarch64 -cpu max,sve-max-vq=16 simd_test.a64f32 -c 1 (for -DRT_2K8_R8=4)
+# qemu-aarch64 -cpu max,sve-max-vq=16 simd_test.a64f64 -c 1 (for -DRT_2K8_R8=4)
 # Use "-c 1" option to reduce test time when emulating with QEMU
 
 # Clang compilation works too (takes much longer prior to 3.8), use (replace):
@@ -76,8 +82,10 @@ simd_test_a64f64:
 
 # For 128-bit NEON build use (replace): RT_128=1            (30 SIMD registers)
 # For 256-bit NEON build use (replace): RT_256=1            (15 SIMD reg-pairs)
-# For 512-bit SVE  build use (replace): RT_512=1            (15 SIMD registers)
-# For 512-bit SVE  build use (replace): RT_512=4            (30 SIMD registers)
+# For 256-bit  SVE build use (replace): RT_256=4            (30 SIMD registers)
+# For 512-bit  SVE build use (replace): RT_512=4            (30 SIMD registers)
+# For 1024-bit SVE build use (replace): RT_1K4=4            (30 SIMD registers)
+# For 2048-bit SVE build use (replace): RT_2K8_R8=4         (15 SIMD registers)
 
 # 64/32-bit (ptr/adr) hybrid mode is compatible with native 64-bit ABI,
 # use (replace): RT_ADDRESS=32, rename the binary to simd_test.a64_**
