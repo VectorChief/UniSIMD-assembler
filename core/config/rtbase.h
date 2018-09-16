@@ -108,6 +108,66 @@
 #endif /* Q: 16, 8, 4, 2, 1 */
 
 /*
+ * RT_DATA determines the maximum load-level for data structures in code-base.
+ * 1 - means full DP-level (12-bit displacements) is filled or exceeded (Q=1).
+ * 2 - means 1/2  DP-level (11-bit displacements) has not been exceeded (Q=1).
+ * 4 - means 1/4  DP-level (10-bit displacements) has not been exceeded (Q=1).
+ * 8 - means 1/8  DP-level  (9-bit displacements) has not been exceeded (Q=1).
+ * 16  means 1/16 DP-level  (8-bit displacements) has not been exceeded (Q=1).
+ * NOTE: the built-in rt_SIMD_INFO structure is already filled at full 1/16th.
+ */
+#ifndef RT_DATA
+#define RT_DATA 1
+#endif /* RT_DATA */
+
+#define O (Q/RT_DATA)
+
+#if O == 0
+#undef  O
+#define O 1
+#endif /* O */
+
+/*
+ * Determine SIMD quads scale-factor for displacements based on RT_DATA-level.
+ */
+#if   O == 16
+#define DP(dp) _DH(dp)
+#define DE(dp) _DV(dp)
+#define DF(dp) _DV(dp)
+#define DG(dp) _DV(dp)
+#define DH(dp) _DV(dp)
+#define DV(dp) _DV(dp)
+#elif O == 8
+#define DP(dp) _DG(dp)
+#define DE(dp) _DH(dp)
+#define DF(dp) _DV(dp)
+#define DG(dp) _DV(dp)
+#define DH(dp) _DV(dp)
+#define DV(dp) _DV(dp)
+#elif O == 4
+#define DP(dp) _DF(dp)
+#define DE(dp) _DG(dp)
+#define DF(dp) _DH(dp)
+#define DG(dp) _DV(dp)
+#define DH(dp) _DV(dp)
+#define DV(dp) _DV(dp)
+#elif O == 2
+#define DP(dp) _DE(dp)
+#define DE(dp) _DF(dp)
+#define DF(dp) _DG(dp)
+#define DG(dp) _DH(dp)
+#define DH(dp) _DV(dp)
+#define DV(dp) _DV(dp)
+#elif O == 1
+#define DP(dp) _DP(dp)
+#define DE(dp) _DE(dp)
+#define DF(dp) _DF(dp)
+#define DG(dp) _DG(dp)
+#define DH(dp) _DH(dp)
+#define DV(dp) _DV(dp)
+#endif /* O: 16, 8, 4, 2, 1 */
+
+/*
  * Determine SIMD properties for a given SIMD target (vector-length-agnostic).
  */
 #if   (RT_SIMD == 2048)

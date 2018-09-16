@@ -124,12 +124,13 @@
  * future extensions to current 2/3-operand SPMD-driven vertical SIMD ISA.
  */
 
-#undef Q /* short name for SIMD-quads in structs (number of 128-bit chunks) */
+#undef Q /* short name for SIMD quads in structs (number of 128-bit chunks) */
+#undef O /* short name for SIMD quads scale-factor in address-displacements */
 
-#undef N /* short name for SIMD-width in structs (with rt_fp16 SIMD-fields) */
-#undef R /* short name for SIMD-width in structs (with rt_fp32 SIMD-fields) */
-#undef S /* short name for SIMD-width in structs (with rt_real SIMD-fields) */
-#undef T /* short name for SIMD-width in structs (with rt_fp64 SIMD-fields) */
+#undef N /* short name for SIMD width in structs (with rt_fp16 SIMD-fields) */
+#undef R /* short name for SIMD width in structs (with rt_fp32 SIMD-fields) */
+#undef S /* short name for SIMD width in structs (with rt_real SIMD-fields) */
+#undef T /* short name for SIMD width in structs (with rt_fp64 SIMD-fields) */
 
 #undef W /* triplet pass-through wrapper */
 

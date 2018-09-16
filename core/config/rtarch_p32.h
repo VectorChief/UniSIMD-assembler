@@ -333,22 +333,24 @@
 
 /* immediate    VAL,  TP1,  TP2            (all immediate types are unsigned) */
 
-#define IC(im)  ((im) & 0x7F),            0, 0      /* drop sign-ext (on x86) */
-#define IB(im)  ((im) & 0xFF),            0, 0        /* 32-bit word (on x86) */
-#define IM(im)  ((im) & 0xFFF),           0, 0  /* native AArch64 add/sub/cmp */
-#define IG(im)  ((im) & 0x7FFF),          0, 0  /* native on MIPS add/sub/cmp */
-#define IH(im)  ((im) & 0xFFFF),          1, 0  /* second native on ARMs/MIPS */
-#define IV(im)  ((im) & 0x7FFFFFFF),      2, 2        /* native x64 long mode */
-#define IW(im)  ((im) & 0xFFFFFFFF),      2, 2       /* only for cmdw*_** set */
+#define  IC(im) ((im) & 0x7F),          0, 0        /* drop sign-ext (on x86) */
+#define  IB(im) ((im) & 0xFF),          0, 0          /* 32-bit word (on x86) */
+#define  IM(im) ((im) & 0xFFF),         0, 0    /* native AArch64 add/sub/cmp */
+#define  IG(im) ((im) & 0x7FFF),        0, 0 /* native MIPS/POWER add/sub/cmp */
+#define  IH(im) ((im) & 0xFFFF),        1, 0    /* second native on ARMs/MIPS */
+#define  IV(im) ((im) & 0x7FFFFFFF),    2, 2       /* native x86_64 long mode */
+#define  IW(im) ((im) & 0xFFFFFFFF),    2, 2         /* only for cmdw*_** set */
 
 /* displacement VAL,  TP1,  TP2         (all displacement types are unsigned) */
+/* public scalable DP/DE/DF/DG/DH/DV definitions are now provided in rtbase.h */
 
-#define DP(dp)  ((dp) & (0x0FFC*Q|0xFC)), 0, 0    /* native on all ARMs, MIPS */
-#define DF(dp)  ((dp) & (0x3FFC*Q|0xFC)), 0, 0   /* native AArch64 BASE ld/st */
-#define DG(dp)  ((dp) & (0x7FFC*Q|0xFC)), 0, 0   /* native on MIPS BASE ld/st */
-#define DH(dp)  ((dp) & (0xFFFC*Q|0xFC)), 1, 1   /* second native on all ARMs */
-#define DV(dp)  ((dp) & 0x7FFFFFFC),      2, 2        /* native x64 long mode */
-#define PLAIN   DP(0)                /* special type for Oeax addressing mode */
+#define _DP(dp) ((dp) & 0xFFC),         0, 0      /* native on all ARMs, MIPS */
+#define _DE(dp) ((dp) & 0x1FFC),        0, 0     /* AArch64 256-bit SVE ld/st */
+#define _DF(dp) ((dp) & 0x3FFC),        0, 0     /* native AArch64 BASE ld/st */
+#define _DG(dp) ((dp) & 0x7FFC),        0, 0  /* native MIPS/POWER BASE ld/st */
+#define _DH(dp) ((dp) & 0xFFFC),        1, 1     /* second native on all ARMs */
+#define _DV(dp) ((dp) & 0x7FFFFFFC),    2, 2       /* native x86_64 long mode */
+#define  PLAIN  DP(0)                /* special type for Oeax addressing mode */
 
 /* triplet pass-through wrapper */
 

@@ -12,6 +12,17 @@
 #define RT_BASE_TEST /* enable BASE instruction sub-tests */
 #define RT_ELEM_TEST /* enable scalar SIMD instruction sub-tests */
 
+/*
+ * RT_DATA determines the maximum load-level for data structures in code-base.
+ * 1 - means full DP-level (12-bit displacements) is filled or exceeded (Q=1).
+ * 2 - means 1/2  DP-level (11-bit displacements) has not been exceeded (Q=1).
+ * 4 - means 1/4  DP-level (10-bit displacements) has not been exceeded (Q=1).
+ * 8 - means 1/8  DP-level  (9-bit displacements) has not been exceeded (Q=1).
+ * 16  means 1/16 DP-level  (8-bit displacements) has not been exceeded (Q=1).
+ * NOTE: the built-in rt_SIMD_INFO structure is already filled at full 1/16th.
+ */
+#define RT_DATA 8
+
 #include "rtbase.h"
 
 /******************************************************************************/
