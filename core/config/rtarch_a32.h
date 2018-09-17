@@ -1416,7 +1416,7 @@
  * 2nd byte - 512-bit version, 3rd byte - 1K4-bit version, | in upper halves */
 
 #define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
-        EMITW(0x04BF5020 | Teax)               /* <- rdvl to Reax */        \
+        EMITV(0x04BF5020 | Teax)               /* <- rdvl to Reax */        \
         shrwx_ri(Reax, IB(4))                                               \
         movwx_ri(Resi, IM(0x145))                                           \
         movwx_rr(Recx, Reax)                                                \

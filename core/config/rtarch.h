@@ -882,6 +882,12 @@
 #define EMITS(w) /* EMPTY */
 #endif /* RT_SIMD_CODE */
 
+#if   RT_SVEX1 != 0
+#define EMITV(w)    EMITW(w)
+#else
+#define EMITV(w) /* EMPTY */
+#endif /* RT_SVEX1 */
+
 /* ------------------------------   M32, M64   ------------------------------ */
 
 #elif (defined RT_M32) || (defined RT_M64)
