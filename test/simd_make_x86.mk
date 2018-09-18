@@ -11,7 +11,7 @@ LIB_LIST =                              \
         -lm
 
 
-build: simd_test_x86
+build: simd_test_x86 simd_test_avx simd_test_512
 
 strip:
 	strip simd_test.x86
@@ -25,6 +25,18 @@ simd_test_x86:
         -DRT_LINUX -DRT_X86 -DRT_128=2 -DRT_DEBUG=0 \
         -DRT_POINTER=32 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x86
+
+simd_test_avx:
+	g++ -O3 -g -static -m32 \
+        -DRT_LINUX -DRT_X86 -DRT_256=2 -DRT_DEBUG=0 \
+        -DRT_POINTER=32 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x86avx
+
+simd_test_512:
+	g++ -O3 -g -static -m32 \
+        -DRT_LINUX -DRT_X86 -DRT_512=2 -DRT_DEBUG=0 \
+        -DRT_POINTER=32 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x86avx512
 
 
 # Prerequisites for the build:

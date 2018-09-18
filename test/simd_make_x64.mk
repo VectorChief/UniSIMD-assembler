@@ -11,7 +11,7 @@ LIB_LIST =                              \
         -lm
 
 
-build: simd_test_x64_32 simd_test_x64_64 simd_test_x64f32 simd_test_x64f64
+build: build_x64 build_avx
 
 strip:
 	x86_64-linux-gnu-strip simd_test.x64*
@@ -19,6 +19,8 @@ strip:
 clean:
 	rm simd_test.x64*
 
+
+build_x64: simd_test_x64_32 simd_test_x64_64 simd_test_x64f32 simd_test_x64f64
 
 simd_test_x64_32:
 	x86_64-linux-gnu-g++ -O3 -g -static \
@@ -43,6 +45,34 @@ simd_test_x64f64:
         -DRT_LINUX -DRT_X64 -DRT_256_R8=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f64
+
+
+build_avx: simd_test_x64_32avx simd_test_x64_64avx \
+           simd_test_x64f32avx simd_test_x64f64avx
+
+simd_test_x64_32avx:
+	x86_64-linux-gnu-g++ -O3 -g -static \
+        -DRT_LINUX -DRT_X64 -DRT_256=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_32avx
+
+simd_test_x64_64avx:
+	x86_64-linux-gnu-g++ -O3 -g -static \
+        -DRT_LINUX -DRT_X64 -DRT_256=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_64avx
+
+simd_test_x64f32avx:
+	x86_64-linux-gnu-g++ -O3 -g -static \
+        -DRT_LINUX -DRT_X64 -DRT_512=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f32avx
+
+simd_test_x64f64avx:
+	x86_64-linux-gnu-g++ -O3 -g -static \
+        -DRT_LINUX -DRT_X64 -DRT_512=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f64avx
 
 
 # Prerequisites for the build:

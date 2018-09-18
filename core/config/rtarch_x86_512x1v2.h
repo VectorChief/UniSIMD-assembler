@@ -111,9 +111,6 @@
 #include "rtarch_x86_256x1v2.h"
 #endif /* RT_RTARCH_X86_256X1V2_H */
 
-#undef  sregs_sa
-#undef  sregs_la
-
 #undef  K
 #define K 2
 
@@ -1079,6 +1076,7 @@
 
 /* sregs */
 
+#undef  sregs_sa
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movox_st(Xmm0, Oeax, PLAIN)                                         \
@@ -1115,6 +1113,7 @@
         stack_ld(Recx)                                                      \
         stack_ld(Redx)
 
+#undef  sregs_la
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movox_ld(Xmm0, Oeax, PLAIN)                                         \

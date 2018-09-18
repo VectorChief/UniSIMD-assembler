@@ -111,9 +111,6 @@
 #include "rtarch_x64_128x1v4.h"
 #endif /* RT_RTARCH_X64_128X1V4_H */
 
-#undef  sregs_sa
-#undef  sregs_la
-
 /* mandatory escape prefix for some opcodes (must preceed rex) */
 #define ESC                                                                 \
         EMITB(0x66)
@@ -1576,6 +1573,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
 
 /* sregs */
 
+#undef  sregs_sa
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movcx_st(Xmm0, Oeax, PLAIN)                                         \
@@ -1594,6 +1592,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
         movcx_st(Xmm7, Oeax, PLAIN)
 
+#undef  sregs_la
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movcx_ld(Xmm0, Oeax, PLAIN)                                         \

@@ -11,7 +11,7 @@ LIB_LIST =                              \
         -lm
 
 
-build: simd_test_w64_32 simd_test_w64_64 simd_test_w64f32 simd_test_w64f64
+build: build_w64 build_avx
 
 strip:
 	strip simd_test_w64*.exe
@@ -19,6 +19,8 @@ strip:
 clean:
 	del simd_test_w64*.exe
 
+
+build_w64: simd_test_w64_32 simd_test_w64_64 simd_test_w64f32 simd_test_w64f64
 
 simd_test_w64_32:
 	g++ -O3 -g -static -m64 \
@@ -43,6 +45,34 @@ simd_test_w64f64:
         -DRT_WIN64 -DRT_X64 -DRT_256_R8=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test_w64f64.exe
+
+
+build_avx: simd_test_w64_32avx simd_test_w64_64avx \
+           simd_test_w64f32avx simd_test_w64f64avx
+
+simd_test_w64_32avx:
+	g++ -O3 -g -static -m64 \
+        -DRT_WIN64 -DRT_X64 -DRT_256=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+     ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test_w64_32avx.exe
+
+simd_test_w64_64avx:
+	g++ -O3 -g -static -m64 \
+        -DRT_WIN64 -DRT_X64 -DRT_256=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+     ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test_w64_64avx.exe
+
+simd_test_w64f32avx:
+	g++ -O3 -g -static -m64 \
+        -DRT_WIN64 -DRT_X64 -DRT_512=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+     ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test_w64f32avx.exe
+
+simd_test_w64f64avx:
+	g++ -O3 -g -static -m64 \
+        -DRT_WIN64 -DRT_X64 -DRT_512=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+     ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test_w64f64avx.exe
 
 
 # Prerequisites for the build:

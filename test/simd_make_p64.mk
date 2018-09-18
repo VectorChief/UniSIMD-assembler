@@ -21,7 +21,8 @@ clean:
 	rm simd_test.p64*
 
 
-build_p9: simd_test_p64_32Lp9 simd_test_p64_64Lp9 simd_test_p64f32Lp9 simd_test_p64f64Lp9
+build_p9: simd_test_p64_32Lp9 simd_test_p64_64Lp9 \
+          simd_test_p64f32Lp9 simd_test_p64f64Lp9
 
 simd_test_p64_32Lp9:
 	powerpc64le-linux-gnu-g++ -O2 -g -static \
@@ -48,7 +49,8 @@ simd_test_p64f64Lp9:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f64Lp9
 
 
-build_pX: simd_test_p64_32LpX simd_test_p64_64LpX simd_test_p64f32LpX simd_test_p64f64LpX
+build_pX: simd_test_p64_32LpX simd_test_p64_64LpX \
+          simd_test_p64f32LpX simd_test_p64f64LpX
 
 simd_test_p64_32LpX:
 	powerpc64le-linux-gnu-g++ -O2 -g -static \
@@ -75,7 +77,8 @@ simd_test_p64f64LpX:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f64LpX
 
 
-build_le: simd_test_p64_32Lp8 simd_test_p64_64Lp8 simd_test_p64f32Lp8 simd_test_p64f64Lp8
+build_le: simd_test_p64_32Lp8 simd_test_p64_64Lp8 \
+          simd_test_p64f32Lp8 simd_test_p64f64Lp8
 
 simd_test_p64_32Lp8:
 	powerpc64le-linux-gnu-g++ -O2 -g -static \
@@ -102,7 +105,8 @@ simd_test_p64f64Lp8:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f64Lp8
 
 
-build_be: simd_test_p64_32Bp7 simd_test_p64_64Bp7 simd_test_p64f32Bp7 simd_test_p64f64Bp7
+build_be: simd_test_p64_32Bp7 simd_test_p64_64Bp7 \
+          simd_test_p64f32Bp7 simd_test_p64f64Bp7
 
 simd_test_p64_32Bp7:
 	powerpc64-linux-gnu-g++ -O2 -g -static \

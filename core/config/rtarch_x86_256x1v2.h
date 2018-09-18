@@ -111,9 +111,6 @@
 #include "rtarch_x86_128x1v8.h"
 #endif /* RT_RTARCH_X86_128X1V8_H */
 
-#undef  sregs_sa
-#undef  sregs_la
-
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -1448,6 +1445,7 @@
 
 /* sregs */
 
+#undef  sregs_sa
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         muvcx_st(Xmm0, Oeax, PLAIN)                                         \
@@ -1466,6 +1464,7 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_256*4))                           \
         muvcx_st(Xmm7, Oeax, PLAIN)
 
+#undef  sregs_la
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         muvcx_ld(Xmm0, Oeax, PLAIN)                                         \

@@ -105,9 +105,6 @@
 
 #if (RT_128X1 >= 1 && RT_128X1 <= 4)
 
-#undef  sregs_sa
-#undef  sregs_la
-
 /* structural */
 
 #define MXM(reg, ren, rem)                                                  \
@@ -1842,6 +1839,7 @@
 
 /* sregs */
 
+#undef  sregs_sa
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movix_st(Xmm0, Oeax, PLAIN)                                         \
@@ -1870,6 +1868,7 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMITW(0xF4000AAF | MXM(TmmF,    Teax,    0x00))
 
+#undef  sregs_la
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movix_ld(Xmm0, Oeax, PLAIN)                                         \

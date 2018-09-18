@@ -111,9 +111,6 @@
 #include "rtarch_x64_128x1v2.h"
 #endif /* RT_RTARCH_X64_128X1V2_H */
 
-#undef  sregs_sa
-#undef  sregs_la
-
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -960,6 +957,7 @@
 
 /* sregs */
 
+#undef  sregs_sa
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         muvox_st(Xmm0, Oeax, PLAIN)                                         \
@@ -1040,6 +1038,7 @@
         stack_ld(Recx)                                                      \
         stack_ld(Redx)
 
+#undef  sregs_la
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         muvox_ld(Xmm0, Oeax, PLAIN)                                         \

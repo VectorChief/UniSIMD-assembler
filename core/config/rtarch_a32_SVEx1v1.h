@@ -111,9 +111,6 @@
 #include "rtarch_a64_128x2v1.h"
 #endif /* RT_RTARCH_A64_128X2V1_H */
 
-#undef  sregs_sa
-#undef  sregs_la
-
 /* selectors  */
 
 #define  F1(val, tp1, tp2)  F1##tp1
@@ -1051,6 +1048,7 @@
 
 /* sregs */
 
+#undef  sregs_sa
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movox_st(Xmm0, Oeax, PLAIN)                                         \
@@ -1121,6 +1119,7 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         EMITW(0xE5800000 | MXM(0x01,    Teax,    0x00))
 
+#undef  sregs_la
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movox_ld(Xmm0, Oeax, PLAIN)                                         \

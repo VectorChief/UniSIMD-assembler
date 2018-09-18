@@ -11,7 +11,7 @@ LIB_LIST =                              \
         -lm
 
 
-build: simd_test_a64_32 simd_test_a64_64 simd_test_a64f32 simd_test_a64f64
+build: build_a64 build_sve
 
 strip:
 	aarch64-linux-gnu-strip simd_test.a64*
@@ -19,6 +19,8 @@ strip:
 clean:
 	rm simd_test.a64*
 
+
+build_a64: simd_test_a64_32 simd_test_a64_64 simd_test_a64f32 simd_test_a64f64
 
 simd_test_a64_32:
 	aarch64-linux-gnu-g++ -O3 -g -static \
@@ -45,6 +47,34 @@ simd_test_a64f64:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64f64
 
 
+build_sve: simd_test_a64_32sve simd_test_a64_64sve \
+           simd_test_a64f32sve simd_test_a64f64sve
+
+simd_test_a64_32sve:
+	aarch64-linux-gnu-g++ -O3 -g -static \
+        -DRT_LINUX -DRT_A64 -DRT_256=4 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64_32sve
+
+simd_test_a64_64sve:
+	aarch64-linux-gnu-g++ -O3 -g -static \
+        -DRT_LINUX -DRT_A64 -DRT_256=4 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64_64sve
+
+simd_test_a64f32sve:
+	aarch64-linux-gnu-g++ -O3 -g -static \
+        -DRT_LINUX -DRT_A64 -DRT_512=4 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64f32sve
+
+simd_test_a64f64sve:
+	aarch64-linux-gnu-g++ -O3 -g -static \
+        -DRT_LINUX -DRT_A64 -DRT_512=4 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64f64sve
+
+
 # On Ubuntu 16.04 Live DVD add "universe multiverse" to "main restricted"
 # in /etc/apt/sources.list (sudo gedit /etc/apt/sources.list) then run:
 # sudo apt-get update (ignoring the old database errors in the end)
@@ -64,14 +94,14 @@ simd_test_a64f64:
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64_64 -c 1
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64f32 -c 1
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64f64 -c 1
-# qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64f32 -c 1     (for -DRT_256=4)
-# qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64f64 -c 1     (for -DRT_256=4)
-# qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f32 -c 1     (for -DRT_512=4)
-# qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f64 -c 1     (for -DRT_512=4)
-# qemu-aarch64 -cpu max,sve-max-vq=8 simd_test.a64f32 -c 1     (for -DRT_1K4=4)
-# qemu-aarch64 -cpu max,sve-max-vq=8 simd_test.a64f64 -c 1     (for -DRT_1K4=4)
-# qemu-aarch64 -cpu max,sve-max-vq=16 simd_test.a64f32 -c 1 (for -DRT_2K8_R8=4)
-# qemu-aarch64 -cpu max,sve-max-vq=16 simd_test.a64f64 -c 1 (for -DRT_2K8_R8=4)
+# qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64f32sve -c 1  (for RT_256=4)
+# qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64f64sve -c 1  (for RT_256=4)
+# qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f32sve -c 1  (for RT_512=4)
+# qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f64sve -c 1  (for RT_512=4)
+# qemu-aarch64 -cpu max,sve-max-vq=8 simd_test.a64f32sve -c 1  (for RT_1K4=4)
+# qemu-aarch64 -cpu max,sve-max-vq=8 simd_test.a64f64sve -c 1  (for RT_1K4=4)
+# qemu-aarch64 -cpu max,sve-max-vq=16 simd_test.a64f32sve -c 1 (for RT_2K8_R8=4)
+# qemu-aarch64 -cpu max,sve-max-vq=16 simd_test.a64f64sve -c 1 (for RT_2K8_R8=4)
 # Use "-c 1" option to reduce test time when emulating with QEMU
 
 # Clang compilation works too (takes much longer prior to 3.8), use (replace):

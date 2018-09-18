@@ -1489,7 +1489,7 @@
         EMITB(0x0F) EMITB(0xA2)     /* not portable, do not use outside */
 
 #define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
-        /* request cpuid:eax=1 */                                           \
+        /* request cpuid:Reax=1 */                                          \
         movwx_ri(Reax, IB(1))                                               \
         cpuid_xx()                                                          \
         shrwx_ri(Redx, IB(24))                                              \
@@ -1508,17 +1508,19 @@
         shrwx_ri(Redx, IB(8))                                               \
         andwx_ri(Redx, IV(0x00000010))  /* <- FMA3 to bit4 */               \
         orrwx_rr(Resi, Redx)                                                \
-        /* request cpuid:eax=0 to test input value eax=7 */                 \
+        /* request cpuid:Reax=0 to test input value Reax=7 */               \
         movwx_ri(Reax, IB(0))                                               \
         cpuid_xx()                                                          \
         subwx_ri(Reax, IB(7))                                               \
         shrwn_ri(Reax, IB(31))                                              \
         movwx_rr(Redi, Reax)                                                \
         notwx_rx(Redi)                                                      \
-        /* request cpuid:eax=7:ecx=0 */                                     \
+        /* request cpuid:Reax=7:Recx=0 */                                   \
         movwx_ri(Reax, IB(7))                                               \
         movwx_ri(Recx, IB(0))                                               \
         cpuid_xx()                                                          \
+        movwx_rr(Recx, Resi)                                                \
+        shlwx_ri(Recx, IB(5))        /* always require FMA3 for AVX2 */     \
         movwx_rr(Reax, Rebx)                                                \
         shrwn_ri(Reax, IB(31)) /* make AVX512VL extension-bit a mask */     \
         movwx_rr(Redx, Rebx)                                                \
@@ -1528,6 +1530,7 @@
         shlwx_ri(Rebx, IB(4))                                               \
         andwx_ri(Rebx, IV(0x00000200))  /* <- AVX2 to bit9 */               \
         andwx_rr(Rebx, Redi)                                                \
+        andwx_rr(Rebx, Recx)                                                \
         orrwx_rr(Resi, Rebx)                                                \
         movwx_rr(Recx, Resi)                                                \
         shrwx_ri(Recx, IB(5))                                               \

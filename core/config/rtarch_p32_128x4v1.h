@@ -111,9 +111,6 @@
 #include "rtarch_p64_128x2v1.h"
 #endif /* RT_RTARCH_P64_128X2V1_H */
 
-#undef  sregs_sa
-#undef  sregs_la
-
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -1386,6 +1383,7 @@
 
 /* sregs */
 
+#undef  sregs_sa
 #define sregs_sa() /* save all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movox_st(Xmm0, Oeax, PLAIN)                                         \
@@ -1426,6 +1424,7 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         EMITW(0x7C000718 | MXM(TmmM,    0x00,    Teax))
 
+#undef  sregs_la
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
         movox_ld(Xmm0, Oeax, PLAIN)                                         \
