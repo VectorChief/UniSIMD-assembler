@@ -662,8 +662,7 @@
         movrs2st(W(XD), Mebp, inf_SCR01(0x08))                              \
         movrs2ld(W(XD), Mebp, inf_SCR02(0x08))                              \
         minrs2ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
-        movrs2st(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs2st(W(XD), Mebp, inf_SCR01(0x0C))
 
 #define movrs2ld(XD, MS, DS) /* not portable, do not use outside */         \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
@@ -711,8 +710,7 @@
         movrs2st(W(XD), Mebp, inf_SCR01(0x08))                              \
         movrs2ld(W(XD), Mebp, inf_SCR02(0x08))                              \
         maxrs2ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
-        movrs2st(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs2st(W(XD), Mebp, inf_SCR01(0x0C))
 
 #define movrs2st(XS, MD, DD) /* not portable, do not use outside */         \
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \

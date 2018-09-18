@@ -277,16 +277,6 @@
         /* adp, adh are defined in rtbase.h (first 15-regs only)
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#undef  adpds_rx
-#define adpds_rx(XD) /* not portable, do not use outside */                 \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        adpjs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movjx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movjx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        adpjs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        movjx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movdx_ld(W(XD), Mebp, inf_SCR01(0))
-
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subds_rr(XG, XS)                                                    \

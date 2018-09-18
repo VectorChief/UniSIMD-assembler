@@ -295,8 +295,7 @@
         movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
         movix_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
         adpis_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+        movix_st(W(XD), Mebp, inf_SCR01(0x10))
 
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 

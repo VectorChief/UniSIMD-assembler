@@ -329,19 +329,24 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x58)                       \
         /* adp, adh are defined in rtbase.h (first 15-regs only)
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (RT_SIMD_COMPAT_SSE >= 4)
+#if (RT_SIMD_COMPAT_SSE < 4)
 
 #undef  adpds_rx
 #define adpds_rx(XD) /* not portable, do not use outside */                 \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        adpjs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movjx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movjx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        adpjs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        movjx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        addts_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movts_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        addts_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        addts_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movts_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        addts_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
+        movts_st(W(XD), Mebp, inf_SCR01(0x18))
 
-#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+#endif /* RT_SIMD_COMPAT_SSE < 4 */
 
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 

@@ -348,19 +348,36 @@
         /* adp, adh are defined in rtbase.h (first 15-regs only)
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (RT_SIMD_COMPAT_SSE >= 4)
+#if (RT_SIMD_COMPAT_SSE < 4)
 
 #undef  adpcs_rx
 #define adpcs_rx(XD) /* not portable, do not use outside */                 \
-        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
-        adpis_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
-        movix_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
-        adpis_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
-        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
-        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        addrs_ld(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x08))                              \
+        addrs_ld(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x04))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        addrs_ld(W(XD), Mebp, inf_SCR01(0x14))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR01(0x18))                              \
+        addrs_ld(W(XD), Mebp, inf_SCR01(0x1C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        addrs_ld(W(XD), Mebp, inf_SCR02(0x04))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
+        addrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x14))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        addrs_ld(W(XD), Mebp, inf_SCR02(0x14))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x18))                              \
+        movrs_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
+        addrs_ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
+        movrs_st(W(XD), Mebp, inf_SCR01(0x1C))
 
-#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+#endif /* RT_SIMD_COMPAT_SSE < 4 */
 
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 

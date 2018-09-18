@@ -326,6 +326,11 @@
 
 #endif /* RT_SIMD: 256 */
 
+#undef  adhos_rr
+#define adhos_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
+        EMITW(0x65802000 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x05A08000 | MXM(REG(XD), REG(XD), 0x00))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subos_rr(XG, XS)                                                    \
@@ -548,6 +553,11 @@
 
 #endif /* RT_SIMD: 256 */
 
+#undef  mnhos_rr
+#define mnhos_rr(XD, XS) /* horizontal reductive min */                     \
+        EMITW(0x65872000 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x05A08000 | MXM(REG(XD), REG(XD), 0x00))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxos_rr(XG, XS)                                                    \
@@ -600,6 +610,11 @@
         mxhos_rr(W(XD), W(XD))
 
 #endif /* RT_SIMD: 256 */
+
+#undef  mxhos_rr
+#define mxhos_rr(XD, XS) /* horizontal reductive max */                     \
+        EMITW(0x65862000 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x05A08000 | MXM(REG(XD), REG(XD), 0x00))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 

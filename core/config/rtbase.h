@@ -1183,13 +1183,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpos3rr(XD, XS, XT)                                                \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpos_rx(W(XD))
+        adpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adpos3ld(XD, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_ld(W(XD), W(MT), W(DT))                                       \
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpos_rx(W(XD))
+        adpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adhos_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
         adpos3rr(W(XD), W(XS), W(XS))                                       \
@@ -1253,8 +1255,7 @@ rt_si32 from_mask(rt_si32 mask)
         movix_st(W(XD), Mebp, inf_SCR01(0xE0))                              \
         movix_ld(W(XD), Mebp, inf_SCR02(0xE0))                              \
         adpis_ld(W(XD), Mebp, inf_SCR02(0xF0))                              \
-        movix_st(W(XD), Mebp, inf_SCR01(0xF0))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        movix_st(W(XD), Mebp, inf_SCR01(0xF0))
 
 #else /* RT_M32, RT_M64, RT_P32, RT_P64 */
 
@@ -1450,8 +1451,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0xF8))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0xF8))                              \
         addrs_ld(W(XD), Mebp, inf_SCR02(0xFC))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0xFC))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0xFC))
 
 #endif /* target specific (ARM/x86 or MIPS/POWER) */
 
@@ -1464,13 +1464,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mlpos3rr(XD, XS, XT)                                                \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mlpos_rx(W(XD))
+        mlpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlpos3ld(XD, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_ld(W(XD), W(MT), W(DT))                                       \
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mlpos_rx(W(XD))
+        mlpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlhos_rr(XD, XS) /* horizontal reductive mul */                     \
         mlpos3rr(W(XD), W(XS), W(XS))                                       \
@@ -1676,8 +1678,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0xF8))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0xF8))                              \
         mulrs_ld(W(XD), Mebp, inf_SCR02(0xFC))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0xFC))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0xFC))
 
 #define mnpos_rr(XG, XS) /* horizontal pairwise min */                      \
         mnpos3rr(W(XG), W(XG), W(XS))
@@ -1688,13 +1689,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpos3rr(XD, XS, XT)                                                \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mnpos_rx(W(XD))
+        mnpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnpos3ld(XD, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_ld(W(XD), W(MT), W(DT))                                       \
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mnpos_rx(W(XD))
+        mnpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnhos_rr(XD, XS) /* horizontal reductive min */                     \
         mnpos3rr(W(XD), W(XS), W(XS))                                       \
@@ -1900,8 +1903,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0xF8))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0xF8))                              \
         minrs_ld(W(XD), Mebp, inf_SCR02(0xFC))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0xFC))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0xFC))
 
 #define mxpos_rr(XG, XS) /* horizontal pairwise max */                      \
         mxpos3rr(W(XG), W(XG), W(XS))
@@ -1912,13 +1914,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mxpos3rr(XD, XS, XT)                                                \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpos_rx(W(XD))
+        mxpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxpos3ld(XD, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_ld(W(XD), W(MT), W(DT))                                       \
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpos_rx(W(XD))
+        mxpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxhos_rr(XD, XS) /* horizontal reductive max */                     \
         mxpos3rr(W(XD), W(XS), W(XS))                                       \
@@ -2124,8 +2128,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0xF8))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0xF8))                              \
         maxrs_ld(W(XD), Mebp, inf_SCR02(0xFC))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0xFC))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0xFC))
 
 #elif (RT_SIMD == 1024)
 
@@ -2138,13 +2141,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpos3rr(XD, XS, XT)                                                \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpos_rx(W(XD))
+        adpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adpos3ld(XD, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_ld(W(XD), W(MT), W(DT))                                       \
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpos_rx(W(XD))
+        adpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adhos_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
         adpos3rr(W(XD), W(XS), W(XS))                                       \
@@ -2183,8 +2188,7 @@ rt_si32 from_mask(rt_si32 mask)
         movix_st(W(XD), Mebp, inf_SCR01(0x60))                              \
         movix_ld(W(XD), Mebp, inf_SCR02(0x60))                              \
         adpis_ld(W(XD), Mebp, inf_SCR02(0x70))                              \
-        movix_st(W(XD), Mebp, inf_SCR01(0x70))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        movix_st(W(XD), Mebp, inf_SCR01(0x70))
 
 #else /* RT_M32, RT_M64, RT_P32, RT_P64 */
 
@@ -2284,8 +2288,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x78))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0x78))                              \
         addrs_ld(W(XD), Mebp, inf_SCR02(0x7C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x7C))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0x7C))
 
 #endif /* target specific (ARM/x86 or MIPS/POWER) */
 
@@ -2298,13 +2301,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mlpos3rr(XD, XS, XT)                                                \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mlpos_rx(W(XD))
+        mlpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlpos3ld(XD, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_ld(W(XD), W(MT), W(DT))                                       \
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mlpos_rx(W(XD))
+        mlpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlhos_rr(XD, XS) /* horizontal reductive mul */                     \
         mlpos3rr(W(XD), W(XS), W(XS))                                       \
@@ -2413,8 +2418,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x78))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0x78))                              \
         mulrs_ld(W(XD), Mebp, inf_SCR02(0x7C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x7C))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0x7C))
 
 #define mnpos_rr(XG, XS) /* horizontal pairwise min */                      \
         mnpos3rr(W(XG), W(XG), W(XS))
@@ -2425,13 +2429,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpos3rr(XD, XS, XT)                                                \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mnpos_rx(W(XD))
+        mnpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnpos3ld(XD, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_ld(W(XD), W(MT), W(DT))                                       \
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mnpos_rx(W(XD))
+        mnpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnhos_rr(XD, XS) /* horizontal reductive min */                     \
         mnpos3rr(W(XD), W(XS), W(XS))                                       \
@@ -2540,8 +2546,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x78))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0x78))                              \
         minrs_ld(W(XD), Mebp, inf_SCR02(0x7C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x7C))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0x7C))
 
 #define mxpos_rr(XG, XS) /* horizontal pairwise max */                      \
         mxpos3rr(W(XG), W(XG), W(XS))
@@ -2552,13 +2557,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mxpos3rr(XD, XS, XT)                                                \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpos_rx(W(XD))
+        mxpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxpos3ld(XD, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_ld(W(XD), W(MT), W(DT))                                       \
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpos_rx(W(XD))
+        mxpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxhos_rr(XD, XS) /* horizontal reductive max */                     \
         mxpos3rr(W(XD), W(XS), W(XS))                                       \
@@ -2667,8 +2674,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x78))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0x78))                              \
         maxrs_ld(W(XD), Mebp, inf_SCR02(0x7C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x7C))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0x7C))
 
 #elif (RT_SIMD == 512)
 
@@ -2681,13 +2687,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpos3rr(XD, XS, XT)                                                \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpos_rx(W(XD))
+        adpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adpos3ld(XD, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_ld(W(XD), W(MT), W(DT))                                       \
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpos_rx(W(XD))
+        adpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adhos_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
         adpos3rr(W(XD), W(XS), W(XS))                                       \
@@ -2713,8 +2721,7 @@ rt_si32 from_mask(rt_si32 mask)
         movix_st(W(XD), Mebp, inf_SCR01(0x20))                              \
         movix_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
         adpis_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
-        movix_st(W(XD), Mebp, inf_SCR01(0x30))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        movix_st(W(XD), Mebp, inf_SCR01(0x30))
 
 #else /* RT_M32, RT_M64, RT_P32, RT_P64 */
 
@@ -2766,8 +2773,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x38))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
         addrs_ld(W(XD), Mebp, inf_SCR02(0x3C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x3C))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0x3C))
 
 #endif /* target specific (ARM/x86 or MIPS/POWER) */
 
@@ -2780,13 +2786,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mlpos3rr(XD, XS, XT)                                                \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mlpos_rx(W(XD))
+        mlpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlpos3ld(XD, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_ld(W(XD), W(MT), W(DT))                                       \
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mlpos_rx(W(XD))
+        mlpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlhos_rr(XD, XS) /* horizontal reductive mul */                     \
         mlpos3rr(W(XD), W(XS), W(XS))                                       \
@@ -2846,8 +2854,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x38))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
         mulrs_ld(W(XD), Mebp, inf_SCR02(0x3C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x3C))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0x3C))
 
 #define mnpos_rr(XG, XS) /* horizontal pairwise min */                      \
         mnpos3rr(W(XG), W(XG), W(XS))
@@ -2858,13 +2865,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpos3rr(XD, XS, XT)                                                \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mnpos_rx(W(XD))
+        mnpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnpos3ld(XD, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_ld(W(XD), W(MT), W(DT))                                       \
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mnpos_rx(W(XD))
+        mnpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnhos_rr(XD, XS) /* horizontal reductive min */                     \
         mnpos3rr(W(XD), W(XS), W(XS))                                       \
@@ -2924,8 +2933,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x38))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
         minrs_ld(W(XD), Mebp, inf_SCR02(0x3C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x3C))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0x3C))
 
 #define mxpos_rr(XG, XS) /* horizontal pairwise max */                      \
         mxpos3rr(W(XG), W(XG), W(XS))
@@ -2936,13 +2944,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mxpos3rr(XD, XS, XT)                                                \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpos_rx(W(XD))
+        mxpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxpos3ld(XD, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_ld(W(XD), W(MT), W(DT))                                       \
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpos_rx(W(XD))
+        mxpos_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxhos_rr(XD, XS) /* horizontal reductive max */                     \
         mxpos3rr(W(XD), W(XS), W(XS))                                       \
@@ -3002,8 +3012,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x38))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
         maxrs_ld(W(XD), Mebp, inf_SCR02(0x3C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x3C))                              \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0x3C))
 
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
@@ -3352,13 +3361,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpis3rr(XD, XS, XT)                                                \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpis_rx(W(XD))
+        adpis_rx(W(XD))                                                     \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adpis3ld(XD, XS, MT, DT)                                            \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_ld(W(XD), W(MT), W(DT))                                       \
         movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpis_rx(W(XD))
+        adpis_rx(W(XD))                                                     \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adhis_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
         adpis3rr(W(XD), W(XS), W(XS))                                       \
@@ -3380,8 +3391,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
         addrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))
 
 #define mlpis_rr(XG, XS) /* horizontal pairwise mul */                      \
         mlpis3rr(W(XG), W(XG), W(XS))
@@ -3392,13 +3402,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mlpis3rr(XD, XS, XT)                                                \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mlpis_rx(W(XD))
+        mlpis_rx(W(XD))                                                     \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlpis3ld(XD, XS, MT, DT)                                            \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_ld(W(XD), W(MT), W(DT))                                       \
         movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mlpis_rx(W(XD))
+        mlpis_rx(W(XD))                                                     \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlhis_rr(XD, XS) /* horizontal reductive mul */                     \
         mlpis3rr(W(XD), W(XS), W(XS))                                       \
@@ -3420,8 +3432,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
         mulrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))
 
 #define mnpis_rr(XG, XS) /* horizontal pairwise min */                      \
         mnpis3rr(W(XG), W(XG), W(XS))
@@ -3432,13 +3443,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpis3rr(XD, XS, XT)                                                \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mnpis_rx(W(XD))
+        mnpis_rx(W(XD))                                                     \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnpis3ld(XD, XS, MT, DT)                                            \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_ld(W(XD), W(MT), W(DT))                                       \
         movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mnpis_rx(W(XD))
+        mnpis_rx(W(XD))                                                     \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnhis_rr(XD, XS) /* horizontal reductive min */                     \
         mnpis3rr(W(XD), W(XS), W(XS))                                       \
@@ -3460,8 +3473,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
         minrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))
 
 #define mxpis_rr(XG, XS) /* horizontal pairwise max */                      \
         mxpis3rr(W(XG), W(XG), W(XS))
@@ -3472,13 +3484,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mxpis3rr(XD, XS, XT)                                                \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpis_rx(W(XD))
+        mxpis_rx(W(XD))                                                     \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxpis3ld(XD, XS, MT, DT)                                            \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_ld(W(XD), W(MT), W(DT))                                       \
         movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpis_rx(W(XD))
+        mxpis_rx(W(XD))                                                     \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxhis_rr(XD, XS) /* horizontal reductive max */                     \
         mxpis3rr(W(XD), W(XS), W(XS))                                       \
@@ -3500,8 +3514,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x08))                              \
         movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
         maxrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
-        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))                              \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs_st(W(XD), Mebp, inf_SCR01(0x0C))
 
 /* cbr (D = cbrt S) */
 
@@ -3565,13 +3578,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpqs3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpqs_rx(W(XD))
+        adpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adpqs3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpqs_rx(W(XD))
+        adpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adhqs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
         adpqs3rr(W(XD), W(XS), W(XS))                                       \
@@ -3634,8 +3649,7 @@ rt_si32 from_mask(rt_si32 mask)
         movjx_st(W(XD), Mebp, inf_SCR01(0xE0))                              \
         movjx_ld(W(XD), Mebp, inf_SCR02(0xE0))                              \
         adpjs_ld(W(XD), Mebp, inf_SCR02(0xF0))                              \
-        movjx_st(W(XD), Mebp, inf_SCR01(0xF0))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        movjx_st(W(XD), Mebp, inf_SCR01(0xF0))
 
 #else /* RT_M32, RT_M64, RT_P32, RT_P64 */
 
@@ -3735,8 +3749,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0xF0))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0xF0))                              \
         addts_ld(W(XD), Mebp, inf_SCR02(0xF8))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0xF8))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0xF8))
 
 #endif /* target specific (ARM/x86 or MIPS/POWER) */
 
@@ -3749,13 +3762,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mlpqs3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mlpqs_rx(W(XD))
+        mlpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlpqs3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mlpqs_rx(W(XD))
+        mlpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlhqs_rr(XD, XS) /* horizontal reductive mul */                     \
         mlpqs3rr(W(XD), W(XS), W(XS))                                       \
@@ -3864,8 +3879,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0xF0))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0xF0))                              \
         mults_ld(W(XD), Mebp, inf_SCR02(0xF8))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0xF8))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0xF8))
 
 #define mnpqs_rr(XG, XS) /* horizontal pairwise min */                      \
         mnpqs3rr(W(XG), W(XG), W(XS))
@@ -3876,13 +3890,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpqs3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mnpqs_rx(W(XD))
+        mnpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnpqs3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mnpqs_rx(W(XD))
+        mnpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnhqs_rr(XD, XS) /* horizontal reductive min */                     \
         mnpqs3rr(W(XD), W(XS), W(XS))                                       \
@@ -3991,8 +4007,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0xF0))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0xF0))                              \
         mints_ld(W(XD), Mebp, inf_SCR02(0xF8))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0xF8))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0xF8))
 
 #define mxpqs_rr(XG, XS) /* horizontal pairwise max */                      \
         mxpqs3rr(W(XG), W(XG), W(XS))
@@ -4003,13 +4018,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mxpqs3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpqs_rx(W(XD))
+        mxpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxpqs3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpqs_rx(W(XD))
+        mxpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxhqs_rr(XD, XS) /* horizontal reductive max */                     \
         mxpqs3rr(W(XD), W(XS), W(XS))                                       \
@@ -4118,8 +4135,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0xF0))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0xF0))                              \
         maxts_ld(W(XD), Mebp, inf_SCR02(0xF8))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0xF8))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0xF8))
 
 #elif (RT_SIMD == 1024)
 
@@ -4132,13 +4148,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpqs3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpqs_rx(W(XD))
+        adpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adpqs3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpqs_rx(W(XD))
+        adpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adhqs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
         adpqs3rr(W(XD), W(XS), W(XS))                                       \
@@ -4176,8 +4194,7 @@ rt_si32 from_mask(rt_si32 mask)
         movjx_st(W(XD), Mebp, inf_SCR01(0x60))                              \
         movjx_ld(W(XD), Mebp, inf_SCR02(0x60))                              \
         adpjs_ld(W(XD), Mebp, inf_SCR02(0x70))                              \
-        movjx_st(W(XD), Mebp, inf_SCR01(0x70))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        movjx_st(W(XD), Mebp, inf_SCR01(0x70))
 
 #else /* RT_M32, RT_M64, RT_P32, RT_P64 */
 
@@ -4229,8 +4246,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x70))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0x70))                              \
         addts_ld(W(XD), Mebp, inf_SCR02(0x78))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x78))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0x78))
 
 #endif /* target specific (ARM/x86 or MIPS/POWER) */
 
@@ -4243,13 +4259,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mlpqs3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mlpqs_rx(W(XD))
+        mlpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlpqs3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mlpqs_rx(W(XD))
+        mlpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlhqs_rr(XD, XS) /* horizontal reductive mul */                     \
         mlpqs3rr(W(XD), W(XS), W(XS))                                       \
@@ -4309,8 +4327,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x70))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0x70))                              \
         mults_ld(W(XD), Mebp, inf_SCR02(0x78))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x78))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0x78))
 
 #define mnpqs_rr(XG, XS) /* horizontal pairwise min */                      \
         mnpqs3rr(W(XG), W(XG), W(XS))
@@ -4321,13 +4338,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpqs3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mnpqs_rx(W(XD))
+        mnpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnpqs3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mnpqs_rx(W(XD))
+        mnpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnhqs_rr(XD, XS) /* horizontal reductive min */                     \
         mnpqs3rr(W(XD), W(XS), W(XS))                                       \
@@ -4387,8 +4406,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x70))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0x70))                              \
         mints_ld(W(XD), Mebp, inf_SCR02(0x78))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x78))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0x78))
 
 #define mxpqs_rr(XG, XS) /* horizontal pairwise max */                      \
         mxpqs3rr(W(XG), W(XG), W(XS))
@@ -4399,13 +4417,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mxpqs3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpqs_rx(W(XD))
+        mxpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxpqs3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpqs_rx(W(XD))
+        mxpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxhqs_rr(XD, XS) /* horizontal reductive max */                     \
         mxpqs3rr(W(XD), W(XS), W(XS))                                       \
@@ -4465,8 +4485,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x70))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0x70))                              \
         maxts_ld(W(XD), Mebp, inf_SCR02(0x78))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x78))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0x78))
 
 #elif (RT_SIMD == 512)
 
@@ -4479,13 +4498,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpqs3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpqs_rx(W(XD))
+        adpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adpqs3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpqs_rx(W(XD))
+        adpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adhqs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
         adpqs3rr(W(XD), W(XS), W(XS))                                       \
@@ -4510,8 +4531,7 @@ rt_si32 from_mask(rt_si32 mask)
         movjx_st(W(XD), Mebp, inf_SCR01(0x20))                              \
         movjx_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
         adpjs_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
-        movjx_st(W(XD), Mebp, inf_SCR01(0x30))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        movjx_st(W(XD), Mebp, inf_SCR01(0x30))
 
 #else /* RT_M32, RT_M64, RT_P32, RT_P64 */
 
@@ -4539,8 +4559,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x30))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
         addts_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x38))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0x38))
 
 #endif /* target specific (ARM/x86 or MIPS/POWER) */
 
@@ -4553,13 +4572,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mlpqs3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mlpqs_rx(W(XD))
+        mlpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlpqs3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mlpqs_rx(W(XD))
+        mlpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlhqs_rr(XD, XS) /* horizontal reductive mul */                     \
         mlpqs3rr(W(XD), W(XS), W(XS))                                       \
@@ -4594,8 +4615,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x30))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
         mults_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x38))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0x38))
 
 #define mnpqs_rr(XG, XS) /* horizontal pairwise min */                      \
         mnpqs3rr(W(XG), W(XG), W(XS))
@@ -4606,13 +4626,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpqs3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mnpqs_rx(W(XD))
+        mnpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnpqs3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mnpqs_rx(W(XD))
+        mnpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnhqs_rr(XD, XS) /* horizontal reductive min */                     \
         mnpqs3rr(W(XD), W(XS), W(XS))                                       \
@@ -4647,8 +4669,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x30))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
         mints_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x38))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0x38))
 
 #define mxpqs_rr(XG, XS) /* horizontal pairwise max */                      \
         mxpqs3rr(W(XG), W(XG), W(XS))
@@ -4659,13 +4680,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mxpqs3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpqs_rx(W(XD))
+        mxpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxpqs3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpqs_rx(W(XD))
+        mxpqs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxhqs_rr(XD, XS) /* horizontal reductive max */                     \
         mxpqs3rr(W(XD), W(XS), W(XS))                                       \
@@ -4700,8 +4723,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x30))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
         maxts_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x38))                              \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0x38))
 
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
@@ -4998,13 +5020,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define adpjs3rr(XD, XS, XT)                                                \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpjs_rx(W(XD))
+        adpjs_rx(W(XD))                                                     \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adpjs3ld(XD, XS, MT, DT)                                            \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_ld(W(XD), W(MT), W(DT))                                       \
         movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpjs_rx(W(XD))
+        adpjs_rx(W(XD))                                                     \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define adhjs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
         adpjs3rr(W(XD), W(XS), W(XS))
@@ -5019,8 +5043,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
         addts_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0x08))
 
 #define mlpjs_rr(XG, XS) /* horizontal pairwise mul */                      \
         mlpjs3rr(W(XG), W(XG), W(XS))
@@ -5031,13 +5054,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mlpjs3rr(XD, XS, XT)                                                \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mlpjs_rx(W(XD))
+        mlpjs_rx(W(XD))                                                     \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlpjs3ld(XD, XS, MT, DT)                                            \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_ld(W(XD), W(MT), W(DT))                                       \
         movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mlpjs_rx(W(XD))
+        mlpjs_rx(W(XD))                                                     \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mlhjs_rr(XD, XS) /* horizontal reductive mul */                     \
         mlpjs3rr(W(XD), W(XS), W(XS))
@@ -5052,8 +5077,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
         mults_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0x08))
 
 #define mnpjs_rr(XG, XS) /* horizontal pairwise min */                      \
         mnpjs3rr(W(XG), W(XG), W(XS))
@@ -5064,13 +5088,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mnpjs3rr(XD, XS, XT)                                                \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mnpjs_rx(W(XD))
+        mnpjs_rx(W(XD))                                                     \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnpjs3ld(XD, XS, MT, DT)                                            \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_ld(W(XD), W(MT), W(DT))                                       \
         movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mnpjs_rx(W(XD))
+        mnpjs_rx(W(XD))                                                     \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mnhjs_rr(XD, XS) /* horizontal reductive min */                     \
         mnpjs3rr(W(XD), W(XS), W(XS))
@@ -5085,8 +5111,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
         mints_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0x08))
 
 #define mxpjs_rr(XG, XS) /* horizontal pairwise max */                      \
         mxpjs3rr(W(XG), W(XG), W(XS))
@@ -5097,13 +5122,15 @@ rt_si32 from_mask(rt_si32 mask)
 #define mxpjs3rr(XD, XS, XT)                                                \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpjs_rx(W(XD))
+        mxpjs_rx(W(XD))                                                     \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxpjs3ld(XD, XS, MT, DT)                                            \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_ld(W(XD), W(MT), W(DT))                                       \
         movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpjs_rx(W(XD))
+        mxpjs_rx(W(XD))                                                     \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mxhjs_rr(XD, XS) /* horizontal reductive max */                     \
         mxpjs3rr(W(XD), W(XS), W(XS))
@@ -5118,8 +5145,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x00))                              \
         movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
         maxts_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
-        movts_st(W(XD), Mebp, inf_SCR01(0x08))                              \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+        movts_st(W(XD), Mebp, inf_SCR01(0x08))
 
 /* cbr (D = cbrt S) */
 

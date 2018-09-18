@@ -730,8 +730,7 @@
         movrs2st(W(XD), Mebp, inf_SCR01(0x18))                              \
         movrs2ld(W(XD), Mebp, inf_SCR02(0x18))                              \
         minrs2ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
-        movrs2st(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs2st(W(XD), Mebp, inf_SCR01(0x1C))
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
@@ -781,8 +780,7 @@
         movrs2st(W(XD), Mebp, inf_SCR01(0x18))                              \
         movrs2ld(W(XD), Mebp, inf_SCR02(0x18))                              \
         maxrs2ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
-        movrs2st(W(XD), Mebp, inf_SCR01(0x1C))                              \
-        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+        movrs2st(W(XD), Mebp, inf_SCR01(0x1C))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 

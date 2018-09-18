@@ -302,6 +302,11 @@
 
 #endif /* RT_SIMD: 256 */
 
+#undef  adhqs_rr
+#define adhqs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
+        EMITW(0x65C02000 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x05E08000 | MXM(REG(XD), REG(XD), 0x00))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subqs_rr(XG, XS)                                                    \
@@ -522,6 +527,11 @@
 
 #endif /* RT_SIMD: 256 */
 
+#undef  mnhqs_rr
+#define mnhqs_rr(XD, XS) /* horizontal reductive min */                     \
+        EMITW(0x65C72000 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x05E08000 | MXM(REG(XD), REG(XD), 0x00))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
 #define maxqs_rr(XG, XS)                                                    \
@@ -573,6 +583,11 @@
         mxhqs_rr(W(XD), W(XD))
 
 #endif /* RT_SIMD: 256 */
+
+#undef  mxhqs_rr
+#define mxhqs_rr(XD, XS) /* horizontal reductive max */                     \
+        EMITW(0x65C62000 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x05E08000 | MXM(REG(XD), REG(XD), 0x00))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 

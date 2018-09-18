@@ -411,6 +411,21 @@
         /* adp, adh are defined in rtbase.h (first 15-regs only)
          * under "COMMON SIMD INSTRUCTIONS" section */
 
+#undef  adpos_rx
+#define adpos_rx(XD) /* not portable, do not use outside */                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        adpis_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        adpis_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movix_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        adpis_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movix_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        adpis_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x30))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subos_rr(XG, XS)                                                    \
