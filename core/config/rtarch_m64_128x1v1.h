@@ -968,8 +968,7 @@
         /* rse, rss, rsq are defined in rtconf.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* pre-r6 */
-#if (defined (RT_M32) && RT_M32 < 6) || (defined (RT_M64) && RT_M64 < 6)
+#if (RT_BASE_COMPAT_REV < 6) /* pre-r6 */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -1003,7 +1002,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else  /* r6 */
+#else /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -1037,12 +1036,11 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* r6 */
+#endif /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
 /*************   scalar double-precision floating-point compare   *************/
 
-/* pre-r6 */
-#if (defined (RT_M32) && RT_M32 < 6) || (defined (RT_M64) && RT_M64 < 6)
+#if (RT_BASE_COMPAT_REV < 6) /* pre-r6 */
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
@@ -1076,7 +1074,7 @@
         EMITW(0xD4000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
         EMITW(0x7BA0001B | MXM(REG(XD), REG(XS), TmmM))
 
-#else  /* r6 */
+#else /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
@@ -1110,7 +1108,7 @@
         EMITW(0xD4000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
         EMITW(0x4620001E | MXM(REG(XD), REG(XS), TmmM))
 
-#endif /* r6 */
+#endif /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 

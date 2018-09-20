@@ -144,27 +144,37 @@
                                                     (0xFFFC & (dp)))        \
                     EMITW(0x00000021 | MRM(TPxx,    (br),    TDxx) | ADR)
 
+/* configuration for vector/scalar compatibility mode */
+
+#if RT_ENDIAN == 1 && RT_SIMD_COMPAT_D12 != 0 && RT_ELEM_COMPAT_MSA == 0
+#define SBF(x)  x
+#define SBX(x)
+#else /* RT_ENDIAN, RT_SIMD_COMPAT_D12, RT_ELEM_COMPAT_MSA */
+#define SBF(x)
+#define SBX(x)  x
+#endif /* RT_ENDIAN, RT_SIMD_COMPAT_D12, RT_ELEM_COMPAT_MSA */
+
+#if RT_ENDIAN == 1 && RT_SIMD_COMPAT_D12 != 0 && RT_ELEM_COMPAT_MSA != 0
+#define SHF(x)  x
+#define SHX(x)
+#else /* RT_ENDIAN, RT_SIMD_COMPAT_D12, RT_ELEM_COMPAT_MSA */
+#define SHF(x)
+#define SHX(x)  x
+#endif /* RT_ENDIAN, RT_SIMD_COMPAT_D12, RT_ELEM_COMPAT_MSA */
+
+#if RT_ENDIAN == 1 && RT_SIMD_COMPAT_D12 != 0 && RT_ELEM_COMPAT_MSA != 0 && 0
+#define SJF(x)  x
+#define SJX(x)
+#else /* RT_ENDIAN, RT_SIMD_COMPAT_D12, RT_ELEM_COMPAT_MSA */
+#define SJF(x)
+#define SJX(x)  x
+#endif /* RT_ENDIAN, RT_SIMD_COMPAT_D12, RT_ELEM_COMPAT_MSA */
+
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
 #define Tmm0    0x00  /* w0,  internal name for Xmm0 (in mmv) */
 #define TmmZ    0x0F  /* w15, zero-mask all 0s, TmmZ (in sregs) */
 #define TmmM    0x1F  /* w31, temp-reg name for mem-args */
-
-#if RT_ENDIAN == 1 && RT_SIMD_COMPAT_D12 != 0 && RT_ELEM_COMPAT_MSA != 0
-#define SHF(x)  x
-#define SHX(x)
-#else  /* RT_ENDIAN, RT_SIMD_COMPAT_D12, RT_ELEM_COMPAT_MSA */
-#define SHF(x)
-#define SHX(x)  x
-#endif /* RT_ENDIAN, RT_SIMD_COMPAT_D12, RT_ELEM_COMPAT_MSA */
-
-#if RT_ENDIAN == 1 && RT_SIMD_COMPAT_D12 != 0
-#define SBF(x)  x
-#define SBX(x)
-#else  /* RT_ENDIAN, RT_SIMD_COMPAT_D12 */
-#define SBF(x)
-#define SBX(x)  x
-#endif /* RT_ENDIAN, RT_SIMD_COMPAT_D12 */
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -1161,8 +1171,7 @@
         /* rse, rss, rsq are defined in rtconf.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* pre-r6 */
-#if (defined (RT_M32) && RT_M32 < 6) || (defined (RT_M64) && RT_M64 < 6)
+#if (RT_BASE_COMPAT_REV < 6) /* pre-r6 */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -1196,7 +1205,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else  /* r6 */
+#else /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
@@ -1230,12 +1239,11 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* r6 */
+#endif /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
 /*************   scalar single-precision floating-point compare   *************/
 
-/* pre-r6 */
-#if (defined (RT_M32) && RT_M32 < 6) || (defined (RT_M64) && RT_M64 < 6)
+#if (RT_BASE_COMPAT_REV < 6) /* pre-r6 */
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
@@ -1269,7 +1277,7 @@
         EMITW(0xC4000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
         EMITW(0x7B80001B | MXM(REG(XD), REG(XS), TmmM))
 
-#else  /* r6 */
+#else /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
@@ -1303,7 +1311,7 @@
         EMITW(0xC4000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
         EMITW(0x4600001E | MXM(REG(XD), REG(XS), TmmM))
 
-#endif /* r6 */
+#endif /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 

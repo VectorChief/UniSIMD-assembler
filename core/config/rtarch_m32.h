@@ -1331,7 +1331,7 @@
 #define remwn_xm(MS, DS)    /* to be placed immediately after divwn_xm */   \
         EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))   /* Redx<-rem */
 
-#else /* RT_BASE_COMPAT_REV >= 6, r6 */
+#else /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
 /* mul (G = G * S)
  * set-flags: undefined */
@@ -1487,7 +1487,7 @@
 #define remwn_xm(MS, DS)    /* to be placed immediately after divwn_xm */   \
         EMITW(0x000000DA | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
 
-#endif /* RT_BASE_COMPAT_REV >= 6, r6 */
+#endif /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
 /* arj (G = G op S, if cc G then jump lb)
  * set-flags: undefined
@@ -1729,7 +1729,7 @@
 #define LBL(lb)                                          /* code label */   \
         ASM_BEG ASM_OP0(lb:) ASM_END
 
-#else /* RT_BASE_COMPAT_REV >= 6, r6 */
+#else /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
 /* jmp (if unconditional jump S/lb, else if cc flags then jump lb)
  * set-flags: no
@@ -1802,7 +1802,7 @@
 #define LBL(lb)                                          /* code label */   \
         ASM_BEG ASM_OP0(lb:) ASM_END
 
-#endif /* RT_BASE_COMPAT_REV >= 6, r6 */
+#endif /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
 /************************* register-size instructions *************************/
 
@@ -2011,7 +2011,7 @@
 #define CMR(cc, r1, r2, lb)                                                 \
         R##cc(r1, r2, lb)
 
-#else /* RT_BASE_COMPAT_REV >= 6, r6 */
+#else /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
 /* internal definitions for combined-compare-jump (cmj) */
 
@@ -2126,7 +2126,7 @@
 #define CMR(cc, r1, r2, lb)                                                 \
         R##cc(r1, r2, lb)
 
-#endif /* RT_BASE_COMPAT_REV >= 6, r6 */
+#endif /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
 #endif /* RT_RTARCH_M32_H */
 
