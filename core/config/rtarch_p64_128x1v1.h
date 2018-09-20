@@ -1145,7 +1145,7 @@
 
 /*********   scalar double-precision floating-point move/arithmetic   *********/
 
-#if (RT_SIMD_COMPAT_PW8 == 0) && RT_ELEM_COMPAT_VMX == 0
+#if RT_ELEM_COMPAT_VMX == 0
 
 /* mov (D = S) */
 
@@ -1301,7 +1301,7 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#else /* RT_SIMD_COMPAT_PW8 == 1, RT_ELEM_COMPAT_VMX == 1 */
+#else /* RT_ELEM_COMPAT_VMX == 1 */
 
 /* mov (D = S) */
 
@@ -1468,11 +1468,11 @@
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
-#endif /* RT_SIMD_COMPAT_PW8 == 1, RT_ELEM_COMPAT_VMX == 1 */
+#endif /* RT_ELEM_COMPAT_VMX */
 
 /*************   scalar double-precision floating-point compare   *************/
 
-#if (RT_SIMD_COMPAT_PW8 == 0) && RT_ELEM_COMPAT_VMX == 0
+#if RT_ELEM_COMPAT_VMX == 0
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
@@ -1483,12 +1483,12 @@
         mints3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define mints3rr(XD, XS, XT)                                                \
-        EMITW(0xF0000740 | MXM(REG(XD), REG(XS), REG(XT)))
+        EMITW(0xF0000540 | MXM(REG(XD), REG(XS), REG(XT)))
 
 #define mints3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
         EMITW(0xC8000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
-        EMITW(0xF0000740 | MXM(REG(XD), REG(XS), TmmM))
+        EMITW(0xF0000540 | MXM(REG(XD), REG(XS), TmmM))
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
@@ -1499,12 +1499,12 @@
         maxts3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define maxts3rr(XD, XS, XT)                                                \
-        EMITW(0xF0000700 | MXM(REG(XD), REG(XS), REG(XT)))
+        EMITW(0xF0000500 | MXM(REG(XD), REG(XS), REG(XT)))
 
 #define maxts3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
         EMITW(0xC8000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
-        EMITW(0xF0000700 | MXM(REG(XD), REG(XS), TmmM))
+        EMITW(0xF0000500 | MXM(REG(XD), REG(XS), TmmM))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
@@ -1604,7 +1604,7 @@
         EMITW(0xC8000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
         EMITW(0xF0000398 | MXM(REG(XD), REG(XS), TmmM))
 
-#else /* RT_SIMD_COMPAT_PW8 == 1, RT_ELEM_COMPAT_VMX == 1 */
+#else /* RT_ELEM_COMPAT_VMX == 1 */
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
 
@@ -1744,7 +1744,7 @@
         EMITW(0x7C000499 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF000039F | MXM(REG(XD), REG(XS), TmmM))/* ^ == -1 if true */
 
-#endif /* RT_SIMD_COMPAT_PW8 == 1, RT_ELEM_COMPAT_VMX == 1 */
+#endif /* RT_ELEM_COMPAT_VMX */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

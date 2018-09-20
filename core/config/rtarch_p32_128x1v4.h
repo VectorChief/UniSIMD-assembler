@@ -148,9 +148,6 @@
 #define TmmQ    0x0F  /* v15, internal name for all-ones */
 #define TmmM    0x1F  /* v31, temp-reg name for mem-args */
 
-#define SPLT    ((1-RT_ENDIAN)*3) /* splatter for shifts and scalars */
-#define SPL(DT) (SPLT+(2*RT_ENDIAN-1)*(3 & VAL(DT) >> 2))
-
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/

@@ -1301,7 +1301,7 @@
 /* RT_ELEM_COMPAT_VMX when enabled makes scalar SIMD (ELEM) ops
  * compatible with VMX, only if BASE regs are 128bit-aligned */
 #ifndef RT_ELEM_COMPAT_VMX
-#define RT_ELEM_COMPAT_VMX      0 /* applicable to older PPC */
+#define RT_ELEM_COMPAT_VMX      0 /* applicable to all Power */
 #endif /* RT_ELEM_COMPAT_VMX */
 
 /* RT_BASE_COMPAT_ZFL when enabled makes setting-flags BASE ops

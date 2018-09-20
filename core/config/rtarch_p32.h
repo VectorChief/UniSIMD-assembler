@@ -244,6 +244,11 @@
                     EMITW(0x60000000 | TDxx << 16 | TDxx << 21 |            \
                                                     (0xFFFC & (dp)))
 
+/* splatters for SIMD shifts and scalars */
+
+#define SPLT    ((1-RT_ENDIAN)*3)
+#define SPL(DT) (SPLT+(2*RT_ENDIAN-1)*(3 & VAL(DT) >> 2))
+
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
 #define Tff1    0x11  /* f17 */
