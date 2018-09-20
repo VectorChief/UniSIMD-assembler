@@ -14,10 +14,10 @@ LIB_LIST =                              \
 build: simd_test_a32
 
 strip:
-	aarch64-linux-gnu-strip simd_test.a32
+	aarch64-linux-gnu-strip simd_test.a32*
 
 clean:
-	rm simd_test.a32
+	rm simd_test.a32*
 
 
 simd_test_a32:

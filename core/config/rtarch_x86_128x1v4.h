@@ -1668,63 +1668,9 @@
         stack_ld(Recx)                                                      \
         movix_ld(W(XD), Mebp, inf_SCR01(0))
 
-/************************   helper macros (FPU mode)   ************************/
-
-/* simd mode
- * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),
- * original FCTRL blocks (FCTRL_ENTER/FCTRL_LEAVE) are defined in rtbase.h
- * NOTE: ARMv7 always uses ROUNDN non-IEEE mode for SIMD fp-arithmetic,
- * while fp<->int conversion takes ROUND* into account via VFP fallback */
-
-#if RT_SIMD_FLUSH_ZERO == 0
-
-#define RT_SIMD_MODE_ROUNDN     0x00    /* round towards near */
-#define RT_SIMD_MODE_ROUNDM     0x01    /* round towards -inf */
-#define RT_SIMD_MODE_ROUNDP     0x02    /* round towards +inf */
-#define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
-
-#else /* RT_SIMD_FLUSH_ZERO */
-
-#define RT_SIMD_MODE_ROUNDN     0x04    /* round towards near */
-#define RT_SIMD_MODE_ROUNDM     0x05    /* round towards -inf */
-#define RT_SIMD_MODE_ROUNDP     0x06    /* round towards +inf */
-#define RT_SIMD_MODE_ROUNDZ     0x07    /* round towards zero */
-
-#endif /* RT_SIMD_FLUSH_ZERO */
-
-#define RT_SIMD_MODE_ROUNDN_F   0x04    /* round towards near */
-#define RT_SIMD_MODE_ROUNDM_F   0x05    /* round towards -inf */
-#define RT_SIMD_MODE_ROUNDP_F   0x06    /* round towards +inf */
-#define RT_SIMD_MODE_ROUNDZ_F   0x07    /* round towards zero */
-
-#define mxcsr_ld(MS, DS) /* not portable, do not use outside */             \
-        EMITB(0x0F) EMITB(0xAE)                                             \
-        MRM(0x02,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define mxcsr_st(MD, DD) /* not portable, do not use outside */             \
-        EMITB(0x0F) EMITB(0xAE)                                             \
-        MRM(0x03,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-#if RT_SIMD_FAST_FCTRL == 0
-
-#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
-        movwx_mi(Mebp, inf_SCR02(4), IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))\
-        mxcsr_ld(Mebp, inf_SCR02(4))
-
-#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
-        mxcsr_ld(Mebp, inf_FCTRL((RT_SIMD_MODE_ROUNDN&3)*4))
-
-#else /* RT_SIMD_FAST_FCTRL */
-
-#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
-        mxcsr_ld(Mebp, inf_FCTRL((RT_SIMD_MODE_##mode&3)*4))
-
-#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
-        mxcsr_ld(Mebp, inf_FCTRL((RT_SIMD_MODE_ROUNDN&3)*4))
-
-#endif /* RT_SIMD_FAST_FCTRL */
+/******************************************************************************/
+/*********************************   SCALAR   *********************************/
+/******************************************************************************/
 
 /*********   scalar single-precision floating-point move/arithmetic   *********/
 
@@ -2188,223 +2134,67 @@
         movrs_rr(W(XD), W(XS))                                              \
         cgers_ld(W(XD), W(MT), W(DT))
 
-/**************************   extended float (x87)   **************************/
+/******************************************************************************/
+/**********************************   FPU   ***********************************/
+/******************************************************************************/
 
-#define fpuws_ld(MS, DS) /* not portable, do not use outside */             \
-        EMITB(0xD9)                                                         \
-        MRM(0x00,    MOD(MS), REG(MS))                                      \
+/************************   helper macros (FPU mode)   ************************/
+
+/* simd mode
+ * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),
+ * original FCTRL blocks (FCTRL_ENTER/FCTRL_LEAVE) are defined in rtbase.h
+ * NOTE: ARMv7 always uses ROUNDN non-IEEE mode for SIMD fp-arithmetic,
+ * while fp<->int conversion takes ROUND* into account via VFP fallback */
+
+#if RT_SIMD_FLUSH_ZERO == 0
+
+#define RT_SIMD_MODE_ROUNDN     0x00    /* round towards near */
+#define RT_SIMD_MODE_ROUNDM     0x01    /* round towards -inf */
+#define RT_SIMD_MODE_ROUNDP     0x02    /* round towards +inf */
+#define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
+
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define RT_SIMD_MODE_ROUNDN     0x04    /* round towards near */
+#define RT_SIMD_MODE_ROUNDM     0x05    /* round towards -inf */
+#define RT_SIMD_MODE_ROUNDP     0x06    /* round towards +inf */
+#define RT_SIMD_MODE_ROUNDZ     0x07    /* round towards zero */
+
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+#define RT_SIMD_MODE_ROUNDN_F   0x04    /* round towards near */
+#define RT_SIMD_MODE_ROUNDM_F   0x05    /* round towards -inf */
+#define RT_SIMD_MODE_ROUNDP_F   0x06    /* round towards +inf */
+#define RT_SIMD_MODE_ROUNDZ_F   0x07    /* round towards zero */
+
+#define mxcsr_ld(MS, DS) /* not portable, do not use outside */             \
+        EMITB(0x0F) EMITB(0xAE)                                             \
+        MRM(0x02,    MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define fpuws_st(MD, DD) /* not portable, do not use outside */             \
-        EMITB(0xD9)                                                         \
+#define mxcsr_st(MD, DD) /* not portable, do not use outside */             \
+        EMITB(0x0F) EMITB(0xAE)                                             \
         MRM(0x03,    MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
+#if RT_SIMD_FAST_FCTRL == 0
 
-#define fpuwn_ld(MS, DS) /* not portable, do not use outside */             \
-        EMITB(0xDB)                                                         \
-        MRM(0x00,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
+        movwx_mi(Mebp, inf_SCR02(4), IH(RT_SIMD_MODE_##mode << 13 | 0x1F80))\
+        mxcsr_ld(Mebp, inf_SCR02(4))
 
-#define fpuwn_st(MD, DD) /* not portable, do not use outside */             \
-        EMITB(0xDB)                                                         \
-        MRM(0x03,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
+#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
+        mxcsr_ld(Mebp, inf_FCTRL((RT_SIMD_MODE_ROUNDN&3)*4))
 
-#define fpuwt_st(MD, DD) /* not portable, do not use outside */             \
-        EMITB(0xDB)                                                         \
-        MRM(0x01,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
+#else /* RT_SIMD_FAST_FCTRL */
 
+#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
+        mxcsr_ld(Mebp, inf_FCTRL((RT_SIMD_MODE_##mode&3)*4))
 
-#define addws_ld(MS, DS) /* not portable, do not use outside */             \
-        EMITB(0xD8)                                                         \
-        MRM(0x00,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
+        mxcsr_ld(Mebp, inf_FCTRL((RT_SIMD_MODE_ROUNDN&3)*4))
 
-#define subws_ld(MS, DS) /* not portable, do not use outside */             \
-        EMITB(0xD8)                                                         \
-        MRM(0x04,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define sbrws_ld(MS, DS) /* not portable, do not use outside */             \
-        EMITB(0xD8)                                                         \
-        MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-
-#define mulws_ld(MS, DS) /* not portable, do not use outside */             \
-        EMITB(0xD8)                                                         \
-        MRM(0x01,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define divws_ld(MS, DS) /* not portable, do not use outside */             \
-        EMITB(0xD8)                                                         \
-        MRM(0x06,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define dvrws_ld(MS, DS) /* not portable, do not use outside */             \
-        EMITB(0xD8)                                                         \
-        MRM(0x07,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-
-#define addes_xn(n)      /* ST(0) = ST(0) + ST(n), don't pop */             \
-        EMITB(0xD8) EMITB(0xC0+(n))
-
-#define addes_nx(n)      /* ST(n) = ST(n) + ST(0), don't pop */             \
-        EMITB(0xDC) EMITB(0xC0+(n))
-
-#define addes_np(n)      /* ST(n) = ST(n) + ST(0), pop stack */             \
-        EMITB(0xDE) EMITB(0xC0+(n))
-
-
-#define subes_xn(n)      /* ST(0) = ST(0) - ST(n), don't pop */             \
-        EMITB(0xD8) EMITB(0xE0+(n))
-
-#define subes_nx(n)      /* ST(n) = ST(n) - ST(0), don't pop */             \
-        EMITB(0xDC) EMITB(0xE8+(n))
-
-#define subes_np(n)      /* ST(n) = ST(n) - ST(0), pop stack */             \
-        EMITB(0xDE) EMITB(0xE8+(n))
-
-
-#define sbres_xn(n)      /* ST(0) = ST(n) - ST(0), don't pop */             \
-        EMITB(0xD8) EMITB(0xE8+(n))
-
-#define sbres_nx(n)      /* ST(n) = ST(0) - ST(n), don't pop */             \
-        EMITB(0xDC) EMITB(0xE0+(n))
-
-#define sbres_np(n)      /* ST(n) = ST(0) - ST(n), pop stack */             \
-        EMITB(0xDE) EMITB(0xE0+(n))
-
-
-#define mules_xn(n)      /* ST(0) = ST(0) * ST(n), don't pop */             \
-        EMITB(0xD8) EMITB(0xC8+(n))
-
-#define mules_nx(n)      /* ST(n) = ST(n) * ST(0), don't pop */             \
-        EMITB(0xDC) EMITB(0xC8+(n))
-
-#define mules_np(n)      /* ST(n) = ST(n) * ST(0), pop stack */             \
-        EMITB(0xDE) EMITB(0xC8+(n))
-
-
-#define dives_xn(n)      /* ST(0) = ST(0) / ST(n), don't pop */             \
-        EMITB(0xD8) EMITB(0xF0+(n))
-
-#define dives_nx(n)      /* ST(n) = ST(n) / ST(0), don't pop */             \
-        EMITB(0xDC) EMITB(0xF8+(n))
-
-#define dives_np(n)      /* ST(n) = ST(n) / ST(0), pop stack */             \
-        EMITB(0xDE) EMITB(0xF8+(n))
-
-
-#define dvres_xn(n)      /* ST(0) = ST(n) / ST(0), don't pop */             \
-        EMITB(0xD8) EMITB(0xF8+(n))
-
-#define dvres_nx(n)      /* ST(n) = ST(0) / ST(n), don't pop */             \
-        EMITB(0xDC) EMITB(0xF0+(n))
-
-#define dvres_np(n)      /* ST(n) = ST(0) / ST(n), pop stack */             \
-        EMITB(0xDE) EMITB(0xF0+(n))
-
-
-#define sqres_xx()       /* ST(0) = sqr ST(0), don't pop */                 \
-        EMITB(0xD9) EMITB(0xFA)
-
-#define neges_xx()       /* ST(0) = neg ST(0), don't pop */                 \
-        EMITB(0xD9) EMITB(0xE0)
-
-#define abses_xx()       /* ST(0) = abs ST(0), don't pop */                 \
-        EMITB(0xD9) EMITB(0xE1)
-
-
-#define xm2es_xx()       /* ST(0) = 2^ST(0)-1, don't pop, [-1.0 : +1.0] */  \
-        EMITB(0xD9) EMITB(0xF0)
-
-#define lg2es_xx()       /* ST(1) = ST(1)*lg2 ST(0), pop stack */           \
-        EMITB(0xD9) EMITB(0xF1)
-
-#define lp2es_xx()       /* ST(1) = ST(1)*lg2 ST(0)+1.0, pop stack */       \
-        EMITB(0xD9) EMITB(0xF9)
-
-
-#define sines_xx()       /* ST(0) = sin ST(0), don't pop, [-2^63:+2^63] */  \
-        EMITB(0xD9) EMITB(0xFE)
-
-#define coses_xx()       /* ST(0) = cos ST(0), don't pop, [-2^63:+2^63] */  \
-        EMITB(0xD9) EMITB(0xFF)
-
-#define scses_xx()       /* ST(0) = sin ST(0), push cos ST(0), original */  \
-        EMITB(0xD9) EMITB(0xFB)
-
-#define tanes_xx()       /* ST(0) = tan ST(0), push +1.0, [-2^63:+2^63] */  \
-        EMITB(0xD9) EMITB(0xF2)
-
-#define atnes_xx()       /* ST(1) = atn ST(1)/ST(0), pop stack */           \
-        EMITB(0xD9) EMITB(0xF3)
-
-
-#define remes_xx()       /* ST(0) = ST(0)-Q*ST(1), Q = rnd ST(0)/ST(1) */   \
-        EMITB(0xD9) EMITB(0xF5)
-
-#define rexes_xx()       /* ST(0) = ST(0)-Q*ST(1), Q = trn ST(0)/ST(1) */   \
-        EMITB(0xD9) EMITB(0xF8)
-
-#define rndes_xx()       /* ST(0) = rnd ST(0), round to integral value */   \
-        EMITB(0xD9) EMITB(0xFC)
-
-#define extes_xx()       /* ST(0) = exp ST(0), push mts ST(0) */            \
-        EMITB(0xD9) EMITB(0xF4)
-
-#define scles_xx()       /* exp ST(0) = exp ST(0) + rnd ST(1) */            \
-        EMITB(0xD9) EMITB(0xFD)
-
-
-#define cmpes_xn(n)      /* flags = ST(0) ? ST(n), don't pop */             \
-        EMITB(0xDB) EMITB(0xF0+(n))
-
-#define cmpes_pn(n)      /* flags = ST(0) ? ST(n), pop stack */             \
-        EMITB(0xDF) EMITB(0xF0+(n))
-
-#define moves_nx(n)      /* ST(n) = ST(0), don't pop */                     \
-        EMITB(0xDD) EMITB(0xD0+(n))
-
-#define moves_np(n)      /* ST(n) = ST(0), pop stack */                     \
-        EMITB(0xDD) EMITB(0xD8+(n))
-
-#define popes_xx()       /* ST(0) = ST(0), pop stack */                     \
-        EMITB(0xDD) EMITB(0xD8)
-
-
-#define fpucw_ld(MS, DS) /* not portable, do not use outside */             \
-        EMITB(0xD9)                                                         \
-        MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define fpucw_st(MD, DD) /* not portable, do not use outside */             \
-    FWT EMITB(0xD9)                                                         \
-        MRM(0x07,    MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-
-#define fpurz_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        movwx_mi(Mebp,  inf_SCR02(0), IH(0x0C7F))                           \
-        fpucw_ld(Mebp,  inf_SCR02(0))
-
-#define fpurp_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        movwx_mi(Mebp,  inf_SCR02(0), IH(0x087F))                           \
-        fpucw_ld(Mebp,  inf_SCR02(0))
-
-#define fpurm_xx()       /* not portable, do not use outside */             \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        movwx_mi(Mebp,  inf_SCR02(0), IH(0x047F))                           \
-        fpucw_ld(Mebp,  inf_SCR02(0))
-
-#define fpurn_xx()       /* not portable, do not use outside */             \
-        fpucw_ld(Mebp,  inf_SCR02(4))
+#endif /* RT_SIMD_FAST_FCTRL */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

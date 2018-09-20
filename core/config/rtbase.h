@@ -54,13 +54,21 @@
 
 /************************   COMMON SIMD INSTRUCTIONS   ************************/
 
-/**** var-len **** SIMD instructions with fixed-32-bit-element ****************/
-/**** 256-bit **** SIMD instructions with fixed-32-bit-element ****************/
-/**** 128-bit **** SIMD instructions with fixed-32-bit-element ****************/
+/**** var-len **** (cbr/cbe/cbs/...) with fixed-32-bit-element ****************/
+/**** 256-bit **** (cbr/cbe/cbs/...) with fixed-32-bit-element ****************/
+/**** 128-bit **** (cbr/cbe/cbs/...) with fixed-32-bit-element ****************/
 
-/**** var-len **** SIMD instructions with fixed-64-bit-element ****************/
-/**** 256-bit **** SIMD instructions with fixed-64-bit-element ****************/
-/**** 128-bit **** SIMD instructions with fixed-64-bit-element ****************/
+/**** var-len **** (cbr/cbe/cbs/...) with fixed-64-bit-element ****************/
+/**** 256-bit **** (cbr/cbe/cbs/...) with fixed-64-bit-element ****************/
+/**** 128-bit **** (cbr/cbe/cbs/...) with fixed-64-bit-element ****************/
+
+/**** var-len **** (horizontal SIMD) with fixed-32-bit-element ****************/
+/**** 256-bit **** (horizontal SIMD) with fixed-32-bit-element ****************/
+/**** 128-bit **** (horizontal SIMD) with fixed-32-bit-element ****************/
+
+/**** var-len **** (horizontal SIMD) with fixed-64-bit-element ****************/
+/**** 256-bit **** (horizontal SIMD) with fixed-64-bit-element ****************/
+/**** 128-bit **** (horizontal SIMD) with fixed-64-bit-element ****************/
 
 /************************   COMMON BASE INSTRUCTIONS   ************************/
 
@@ -1169,7 +1177,321 @@ rt_si32 from_mask(rt_si32 mask)
         FCTRL_RESET()
 
 /******************************************************************************/
-/**** var-len **** SIMD instructions with fixed-32-bit-element ****************/
+/**** var-len **** (cbr/cbe/cbs/...) with fixed-32-bit-element ****************/
+/******************************************************************************/
+
+#if   (RT_SIMD >= 512) || (RT_SIMD == 256 && defined RT_SVEX1)
+
+/* cbr (D = cbrt S) */
+
+/*
+ * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
+ * available at http://www.musicdsp.org/showone.php?id=206
+ * converted to S-way SIMD version by VectorChief.
+ */
+#define cbros_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbeos_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsos_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsos_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsos_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbeos_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        /* cube root estimate, the exponent is divided by three             \
+         * in such a way that remainder bits get shoved into                \
+         * the top of the normalized mantissa */                            \
+        movox_ld(W(X2), Mebp, inf_GPC04_32)                                 \
+        movox_rr(W(XD), W(XS))                                              \
+        andox_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
+        subox_ld(W(XD), Mebp, inf_GPC05_32) /* convert to 2's complement */ \
+        shron_ri(W(XD), IB(10))  /* XD / 1024 */                            \
+        movox_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
+        shlox_ri(W(X1), IB(2))                                              \
+        addox_rr(W(XD), W(X1))                                              \
+        shlox_ri(W(X1), IB(2))                                              \
+        addox_rr(W(XD), W(X1))                                              \
+        shlox_ri(W(X1), IB(2))                                              \
+        addox_rr(W(XD), W(X1))                                              \
+        shlox_ri(W(X1), IB(2))                                              \
+        addox_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
+        addox_ld(W(XD), Mebp, inf_GPC05_32) /* back to biased-127 */        \
+        andox_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
+        annox_rr(W(X2), W(XS))   /* original sign */                        \
+        orrox_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
+
+#define cbsos_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        movox_rr(W(X1), W(XG))                                              \
+        mulos_rr(W(X1), W(XG))                                              \
+        movox_rr(W(X2), W(X1))                                              \
+        mulos_ld(W(X1), Mebp, inf_GPC03_32)                                 \
+        rceos_rr(W(X1), W(X1))                                              \
+        mulos_rr(W(X2), W(XG))                                              \
+        subos_rr(W(X2), W(XS))                                              \
+        mulos_rr(W(X2), W(X1))                                              \
+        subos_rr(W(XG), W(X2))
+
+#endif /* RT_SIMD: 2K8, 1K4, 512 */
+
+/******************************************************************************/
+/**** 256-bit **** (cbr/cbe/cbs/...) with fixed-32-bit-element ****************/
+/******************************************************************************/
+
+/* cbr (D = cbrt S) */
+
+/*
+ * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
+ * available at http://www.musicdsp.org/showone.php?id=206
+ * converted to S-way SIMD version by VectorChief.
+ */
+#define cbrcs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbecs_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbscs_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbscs_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbscs_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbecs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        /* cube root estimate, the exponent is divided by three             \
+         * in such a way that remainder bits get shoved into                \
+         * the top of the normalized mantissa */                            \
+        movcx_ld(W(X2), Mebp, inf_GPC04_32)                                 \
+        movcx_rr(W(XD), W(XS))                                              \
+        andcx_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
+        subcx_ld(W(XD), Mebp, inf_GPC05_32) /* convert to 2's complement */ \
+        shrcn_ri(W(XD), IB(10))  /* XD / 1024 */                            \
+        movcx_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
+        shlcx_ri(W(X1), IB(2))                                              \
+        addcx_rr(W(XD), W(X1))                                              \
+        shlcx_ri(W(X1), IB(2))                                              \
+        addcx_rr(W(XD), W(X1))                                              \
+        shlcx_ri(W(X1), IB(2))                                              \
+        addcx_rr(W(XD), W(X1))                                              \
+        shlcx_ri(W(X1), IB(2))                                              \
+        addcx_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
+        addcx_ld(W(XD), Mebp, inf_GPC05_32) /* back to biased-127 */        \
+        andcx_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
+        anncx_rr(W(X2), W(XS))   /* original sign */                        \
+        orrcx_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
+
+#define cbscs_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        movcx_rr(W(X1), W(XG))                                              \
+        mulcs_rr(W(X1), W(XG))                                              \
+        movcx_rr(W(X2), W(X1))                                              \
+        mulcs_ld(W(X1), Mebp, inf_GPC03_32)                                 \
+        rcecs_rr(W(X1), W(X1))                                              \
+        mulcs_rr(W(X2), W(XG))                                              \
+        subcs_rr(W(X2), W(XS))                                              \
+        mulcs_rr(W(X2), W(X1))                                              \
+        subcs_rr(W(XG), W(X2))
+
+/******************************************************************************/
+/**** 128-bit **** (cbr/cbe/cbs/...) with fixed-32-bit-element ****************/
+/******************************************************************************/
+
+/* cbr (D = cbrt S) */
+
+/*
+ * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
+ * available at http://www.musicdsp.org/showone.php?id=206
+ * converted to S-way SIMD version by VectorChief.
+ */
+#define cbris_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbeis_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsis_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsis_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsis_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbeis_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        /* cube root estimate, the exponent is divided by three             \
+         * in such a way that remainder bits get shoved into                \
+         * the top of the normalized mantissa */                            \
+        movix_ld(W(X2), Mebp, inf_GPC04_32)                                 \
+        movix_rr(W(XD), W(XS))                                              \
+        andix_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
+        subix_ld(W(XD), Mebp, inf_GPC05_32) /* convert to 2's complement */ \
+        shrin_ri(W(XD), IB(10))  /* XD / 1024 */                            \
+        movix_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
+        shlix_ri(W(X1), IB(2))                                              \
+        addix_rr(W(XD), W(X1))                                              \
+        shlix_ri(W(X1), IB(2))                                              \
+        addix_rr(W(XD), W(X1))                                              \
+        shlix_ri(W(X1), IB(2))                                              \
+        addix_rr(W(XD), W(X1))                                              \
+        shlix_ri(W(X1), IB(2))                                              \
+        addix_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
+        addix_ld(W(XD), Mebp, inf_GPC05_32) /* back to biased-127 */        \
+        andix_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
+        annix_rr(W(X2), W(XS))   /* original sign */                        \
+        orrix_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
+
+#define cbsis_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        movix_rr(W(X1), W(XG))                                              \
+        mulis_rr(W(X1), W(XG))                                              \
+        movix_rr(W(X2), W(X1))                                              \
+        mulis_ld(W(X1), Mebp, inf_GPC03_32)                                 \
+        rceis_rr(W(X1), W(X1))                                              \
+        mulis_rr(W(X2), W(XG))                                              \
+        subis_rr(W(X2), W(XS))                                              \
+        mulis_rr(W(X2), W(X1))                                              \
+        subis_rr(W(XG), W(X2))
+
+/******************************************************************************/
+/**** var-len **** (cbr/cbe/cbs/...) with fixed-64-bit-element ****************/
+/******************************************************************************/
+
+#if   (RT_SIMD >= 512) || (RT_SIMD == 256 && defined RT_SVEX1)
+
+/* cbr (D = cbrt S) */
+
+/*
+ * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
+ * available at http://www.musicdsp.org/showone.php?id=206
+ * converted to S-way SIMD version by VectorChief.
+ */
+#define cbrqs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbeqs_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsqs_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsqs_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsqs_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbeqs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        /* cube root estimate, the exponent is divided by three             \
+         * in such a way that remainder bits get shoved into                \
+         * the top of the normalized mantissa */                            \
+        movqx_ld(W(X2), Mebp, inf_GPC04_64)                                 \
+        movqx_rr(W(XD), W(XS))                                              \
+        andqx_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
+        subqx_ld(W(XD), Mebp, inf_GPC05_64) /* convert to 2's complement */ \
+        shrqn_ri(W(XD), IB(10))  /* XD / 1024 */                            \
+        movqx_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
+        shlqx_ri(W(X1), IB(2))                                              \
+        addqx_rr(W(XD), W(X1))                                              \
+        shlqx_ri(W(X1), IB(2))                                              \
+        addqx_rr(W(XD), W(X1))                                              \
+        shlqx_ri(W(X1), IB(2))                                              \
+        addqx_rr(W(XD), W(X1))                                              \
+        shlqx_ri(W(X1), IB(2))                                              \
+        addqx_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
+        addqx_ld(W(XD), Mebp, inf_GPC05_64) /* back to biased-127 */        \
+        andqx_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
+        annqx_rr(W(X2), W(XS))   /* original sign */                        \
+        orrqx_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
+
+#define cbsqs_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        movqx_rr(W(X1), W(XG))                                              \
+        mulqs_rr(W(X1), W(XG))                                              \
+        movqx_rr(W(X2), W(X1))                                              \
+        mulqs_ld(W(X1), Mebp, inf_GPC03_64)                                 \
+        rceqs_rr(W(X1), W(X1))                                              \
+        mulqs_rr(W(X2), W(XG))                                              \
+        subqs_rr(W(X2), W(XS))                                              \
+        mulqs_rr(W(X2), W(X1))                                              \
+        subqs_rr(W(XG), W(X2))
+
+#endif /* RT_SIMD: 2K8, 1K4, 512 */
+
+/******************************************************************************/
+/**** 256-bit **** (cbr/cbe/cbs/...) with fixed-64-bit-element ****************/
+/******************************************************************************/
+
+/* cbr (D = cbrt S) */
+
+/*
+ * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
+ * available at http://www.musicdsp.org/showone.php?id=206
+ * converted to S-way SIMD version by VectorChief.
+ */
+#define cbrds_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbeds_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsds_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsds_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsds_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbeds_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        /* cube root estimate, the exponent is divided by three             \
+         * in such a way that remainder bits get shoved into                \
+         * the top of the normalized mantissa */                            \
+        movdx_ld(W(X2), Mebp, inf_GPC04_64)                                 \
+        movdx_rr(W(XD), W(XS))                                              \
+        anddx_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
+        subdx_ld(W(XD), Mebp, inf_GPC05_64) /* convert to 2's complement */ \
+        shrdn_ri(W(XD), IB(10))  /* XD / 1024 */                            \
+        movdx_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
+        shldx_ri(W(X1), IB(2))                                              \
+        adddx_rr(W(XD), W(X1))                                              \
+        shldx_ri(W(X1), IB(2))                                              \
+        adddx_rr(W(XD), W(X1))                                              \
+        shldx_ri(W(X1), IB(2))                                              \
+        adddx_rr(W(XD), W(X1))                                              \
+        shldx_ri(W(X1), IB(2))                                              \
+        adddx_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
+        adddx_ld(W(XD), Mebp, inf_GPC05_64) /* back to biased-127 */        \
+        anddx_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
+        anndx_rr(W(X2), W(XS))   /* original sign */                        \
+        orrdx_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
+
+#define cbsds_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        movdx_rr(W(X1), W(XG))                                              \
+        mulds_rr(W(X1), W(XG))                                              \
+        movdx_rr(W(X2), W(X1))                                              \
+        mulds_ld(W(X1), Mebp, inf_GPC03_64)                                 \
+        rceds_rr(W(X1), W(X1))                                              \
+        mulds_rr(W(X2), W(XG))                                              \
+        subds_rr(W(X2), W(XS))                                              \
+        mulds_rr(W(X2), W(X1))                                              \
+        subds_rr(W(XG), W(X2))
+
+/******************************************************************************/
+/**** 128-bit **** (cbr/cbe/cbs/...) with fixed-64-bit-element ****************/
+/******************************************************************************/
+
+/* cbr (D = cbrt S) */
+
+/*
+ * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
+ * available at http://www.musicdsp.org/showone.php?id=206
+ * converted to S-way SIMD version by VectorChief.
+ */
+#define cbrjs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        cbejs_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsjs_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsjs_rr(W(XD), W(X1), W(X2), W(XS))                                \
+        cbsjs_rr(W(XD), W(X1), W(X2), W(XS))
+
+#define cbejs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        /* cube root estimate, the exponent is divided by three             \
+         * in such a way that remainder bits get shoved into                \
+         * the top of the normalized mantissa */                            \
+        movjx_ld(W(X2), Mebp, inf_GPC04_64)                                 \
+        movjx_rr(W(XD), W(XS))                                              \
+        andjx_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
+        subjx_ld(W(XD), Mebp, inf_GPC05_64) /* convert to 2's complement */ \
+        shrjn_ri(W(XD), IB(10))  /* XD / 1024 */                            \
+        movjx_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
+        shljx_ri(W(X1), IB(2))                                              \
+        addjx_rr(W(XD), W(X1))                                              \
+        shljx_ri(W(X1), IB(2))                                              \
+        addjx_rr(W(XD), W(X1))                                              \
+        shljx_ri(W(X1), IB(2))                                              \
+        addjx_rr(W(XD), W(X1))                                              \
+        shljx_ri(W(X1), IB(2))                                              \
+        addjx_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
+        addjx_ld(W(XD), Mebp, inf_GPC05_64) /* back to biased-127 */        \
+        andjx_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
+        annjx_rr(W(X2), W(XS))   /* original sign */                        \
+        orrjx_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
+
+#define cbsjs_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
+        movjx_rr(W(X1), W(XG))                                              \
+        muljs_rr(W(X1), W(XG))                                              \
+        movjx_rr(W(X2), W(X1))                                              \
+        muljs_ld(W(X1), Mebp, inf_GPC03_64)                                 \
+        rcejs_rr(W(X1), W(X1))                                              \
+        muljs_rr(W(X2), W(XG))                                              \
+        subjs_rr(W(X2), W(XS))                                              \
+        muljs_rr(W(X2), W(X1))                                              \
+        subjs_rr(W(XG), W(X2))
+
+/******************************************************************************/
+/**** var-len **** (horizontal SIMD) with fixed-32-bit-element ****************/
 /******************************************************************************/
 
 #if   (RT_SIMD == 2048)
@@ -3016,59 +3338,8 @@ rt_si32 from_mask(rt_si32 mask)
 
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
-#if   (RT_SIMD >= 512) || (RT_SIMD == 256 && defined RT_SVEX1)
-
-/* cbr (D = cbrt S) */
-
-/*
- * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
- * available at http://www.musicdsp.org/showone.php?id=206
- * converted to S-way SIMD version by VectorChief.
- */
-#define cbros_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        cbeos_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsos_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsos_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsos_rr(W(XD), W(X1), W(X2), W(XS))
-
-#define cbeos_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        /* cube root estimate, the exponent is divided by three             \
-         * in such a way that remainder bits get shoved into                \
-         * the top of the normalized mantissa */                            \
-        movox_ld(W(X2), Mebp, inf_GPC04_32)                                 \
-        movox_rr(W(XD), W(XS))                                              \
-        andox_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
-        subox_ld(W(XD), Mebp, inf_GPC05_32) /* convert to 2's complement */ \
-        shron_ri(W(XD), IB(10))  /* XD / 1024 */                            \
-        movox_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
-        shlox_ri(W(X1), IB(2))                                              \
-        addox_rr(W(XD), W(X1))                                              \
-        shlox_ri(W(X1), IB(2))                                              \
-        addox_rr(W(XD), W(X1))                                              \
-        shlox_ri(W(X1), IB(2))                                              \
-        addox_rr(W(XD), W(X1))                                              \
-        shlox_ri(W(X1), IB(2))                                              \
-        addox_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
-        addox_ld(W(XD), Mebp, inf_GPC05_32) /* back to biased-127 */        \
-        andox_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
-        annox_rr(W(X2), W(XS))   /* original sign */                        \
-        orrox_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
-
-#define cbsos_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        movox_rr(W(X1), W(XG))                                              \
-        mulos_rr(W(X1), W(XG))                                              \
-        movox_rr(W(X2), W(X1))                                              \
-        mulos_ld(W(X1), Mebp, inf_GPC03_32)                                 \
-        rceos_rr(W(X1), W(X1))                                              \
-        mulos_rr(W(X2), W(XG))                                              \
-        subos_rr(W(X2), W(XS))                                              \
-        mulos_rr(W(X2), W(X1))                                              \
-        subos_rr(W(XG), W(X2))
-
-#endif /* RT_SIMD: 2K8, 1K4, 512 */
-
 /******************************************************************************/
-/**** 256-bit **** SIMD instructions with fixed-32-bit-element ****************/
+/**** 256-bit **** (horizontal SIMD) with fixed-32-bit-element ****************/
 /******************************************************************************/
 
 #define adpcs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
@@ -3301,55 +3572,8 @@ rt_si32 from_mask(rt_si32 mask)
         maxrs_ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
         movrs_st(W(XD), Mebp, inf_SCR01(0x1C))
 
-/* cbr (D = cbrt S) */
-
-/*
- * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
- * available at http://www.musicdsp.org/showone.php?id=206
- * converted to S-way SIMD version by VectorChief.
- */
-#define cbrcs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        cbecs_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbscs_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbscs_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbscs_rr(W(XD), W(X1), W(X2), W(XS))
-
-#define cbecs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        /* cube root estimate, the exponent is divided by three             \
-         * in such a way that remainder bits get shoved into                \
-         * the top of the normalized mantissa */                            \
-        movcx_ld(W(X2), Mebp, inf_GPC04_32)                                 \
-        movcx_rr(W(XD), W(XS))                                              \
-        andcx_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
-        subcx_ld(W(XD), Mebp, inf_GPC05_32) /* convert to 2's complement */ \
-        shrcn_ri(W(XD), IB(10))  /* XD / 1024 */                            \
-        movcx_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
-        shlcx_ri(W(X1), IB(2))                                              \
-        addcx_rr(W(XD), W(X1))                                              \
-        shlcx_ri(W(X1), IB(2))                                              \
-        addcx_rr(W(XD), W(X1))                                              \
-        shlcx_ri(W(X1), IB(2))                                              \
-        addcx_rr(W(XD), W(X1))                                              \
-        shlcx_ri(W(X1), IB(2))                                              \
-        addcx_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
-        addcx_ld(W(XD), Mebp, inf_GPC05_32) /* back to biased-127 */        \
-        andcx_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
-        anncx_rr(W(X2), W(XS))   /* original sign */                        \
-        orrcx_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
-
-#define cbscs_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        movcx_rr(W(X1), W(XG))                                              \
-        mulcs_rr(W(X1), W(XG))                                              \
-        movcx_rr(W(X2), W(X1))                                              \
-        mulcs_ld(W(X1), Mebp, inf_GPC03_32)                                 \
-        rcecs_rr(W(X1), W(X1))                                              \
-        mulcs_rr(W(X2), W(XG))                                              \
-        subcs_rr(W(X2), W(XS))                                              \
-        mulcs_rr(W(X2), W(X1))                                              \
-        subcs_rr(W(XG), W(X2))
-
 /******************************************************************************/
-/**** 128-bit **** SIMD instructions with fixed-32-bit-element ****************/
+/**** 128-bit **** (horizontal SIMD) with fixed-32-bit-element ****************/
 /******************************************************************************/
 
 #define adpis_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
@@ -3516,55 +3740,8 @@ rt_si32 from_mask(rt_si32 mask)
         maxrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
         movrs_st(W(XD), Mebp, inf_SCR01(0x0C))
 
-/* cbr (D = cbrt S) */
-
-/*
- * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
- * available at http://www.musicdsp.org/showone.php?id=206
- * converted to S-way SIMD version by VectorChief.
- */
-#define cbris_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        cbeis_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsis_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsis_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsis_rr(W(XD), W(X1), W(X2), W(XS))
-
-#define cbeis_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        /* cube root estimate, the exponent is divided by three             \
-         * in such a way that remainder bits get shoved into                \
-         * the top of the normalized mantissa */                            \
-        movix_ld(W(X2), Mebp, inf_GPC04_32)                                 \
-        movix_rr(W(XD), W(XS))                                              \
-        andix_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
-        subix_ld(W(XD), Mebp, inf_GPC05_32) /* convert to 2's complement */ \
-        shrin_ri(W(XD), IB(10))  /* XD / 1024 */                            \
-        movix_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
-        shlix_ri(W(X1), IB(2))                                              \
-        addix_rr(W(XD), W(X1))                                              \
-        shlix_ri(W(X1), IB(2))                                              \
-        addix_rr(W(XD), W(X1))                                              \
-        shlix_ri(W(X1), IB(2))                                              \
-        addix_rr(W(XD), W(X1))                                              \
-        shlix_ri(W(X1), IB(2))                                              \
-        addix_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
-        addix_ld(W(XD), Mebp, inf_GPC05_32) /* back to biased-127 */        \
-        andix_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
-        annix_rr(W(X2), W(XS))   /* original sign */                        \
-        orrix_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
-
-#define cbsis_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        movix_rr(W(X1), W(XG))                                              \
-        mulis_rr(W(X1), W(XG))                                              \
-        movix_rr(W(X2), W(X1))                                              \
-        mulis_ld(W(X1), Mebp, inf_GPC03_32)                                 \
-        rceis_rr(W(X1), W(X1))                                              \
-        mulis_rr(W(X2), W(XG))                                              \
-        subis_rr(W(X2), W(XS))                                              \
-        mulis_rr(W(X2), W(X1))                                              \
-        subis_rr(W(XG), W(X2))
-
 /******************************************************************************/
-/**** var-len **** SIMD instructions with fixed-64-bit-element ****************/
+/**** var-len **** (horizontal SIMD) with fixed-64-bit-element ****************/
 /******************************************************************************/
 
 #if   (RT_SIMD == 2048)
@@ -4727,59 +4904,8 @@ rt_si32 from_mask(rt_si32 mask)
 
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
-#if   (RT_SIMD >= 512) || (RT_SIMD == 256 && defined RT_SVEX1)
-
-/* cbr (D = cbrt S) */
-
-/*
- * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
- * available at http://www.musicdsp.org/showone.php?id=206
- * converted to S-way SIMD version by VectorChief.
- */
-#define cbrqs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        cbeqs_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsqs_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsqs_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsqs_rr(W(XD), W(X1), W(X2), W(XS))
-
-#define cbeqs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        /* cube root estimate, the exponent is divided by three             \
-         * in such a way that remainder bits get shoved into                \
-         * the top of the normalized mantissa */                            \
-        movqx_ld(W(X2), Mebp, inf_GPC04_64)                                 \
-        movqx_rr(W(XD), W(XS))                                              \
-        andqx_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
-        subqx_ld(W(XD), Mebp, inf_GPC05_64) /* convert to 2's complement */ \
-        shrqn_ri(W(XD), IB(10))  /* XD / 1024 */                            \
-        movqx_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
-        shlqx_ri(W(X1), IB(2))                                              \
-        addqx_rr(W(XD), W(X1))                                              \
-        shlqx_ri(W(X1), IB(2))                                              \
-        addqx_rr(W(XD), W(X1))                                              \
-        shlqx_ri(W(X1), IB(2))                                              \
-        addqx_rr(W(XD), W(X1))                                              \
-        shlqx_ri(W(X1), IB(2))                                              \
-        addqx_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
-        addqx_ld(W(XD), Mebp, inf_GPC05_64) /* back to biased-127 */        \
-        andqx_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
-        annqx_rr(W(X2), W(XS))   /* original sign */                        \
-        orrqx_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
-
-#define cbsqs_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        movqx_rr(W(X1), W(XG))                                              \
-        mulqs_rr(W(X1), W(XG))                                              \
-        movqx_rr(W(X2), W(X1))                                              \
-        mulqs_ld(W(X1), Mebp, inf_GPC03_64)                                 \
-        rceqs_rr(W(X1), W(X1))                                              \
-        mulqs_rr(W(X2), W(XG))                                              \
-        subqs_rr(W(X2), W(XS))                                              \
-        mulqs_rr(W(X2), W(X1))                                              \
-        subqs_rr(W(XG), W(X2))
-
-#endif /* RT_SIMD: 2K8, 1K4, 512 */
-
 /******************************************************************************/
-/**** 256-bit **** SIMD instructions with fixed-64-bit-element ****************/
+/**** 256-bit **** (horizontal SIMD) with fixed-64-bit-element ****************/
 /******************************************************************************/
 
 #define adpds_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
@@ -4960,55 +5086,8 @@ rt_si32 from_mask(rt_si32 mask)
         maxts_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
         movts_st(W(XD), Mebp, inf_SCR01(0x18))
 
-/* cbr (D = cbrt S) */
-
-/*
- * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
- * available at http://www.musicdsp.org/showone.php?id=206
- * converted to S-way SIMD version by VectorChief.
- */
-#define cbrds_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        cbeds_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsds_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsds_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsds_rr(W(XD), W(X1), W(X2), W(XS))
-
-#define cbeds_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        /* cube root estimate, the exponent is divided by three             \
-         * in such a way that remainder bits get shoved into                \
-         * the top of the normalized mantissa */                            \
-        movdx_ld(W(X2), Mebp, inf_GPC04_64)                                 \
-        movdx_rr(W(XD), W(XS))                                              \
-        anddx_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
-        subdx_ld(W(XD), Mebp, inf_GPC05_64) /* convert to 2's complement */ \
-        shrdn_ri(W(XD), IB(10))  /* XD / 1024 */                            \
-        movdx_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
-        shldx_ri(W(X1), IB(2))                                              \
-        adddx_rr(W(XD), W(X1))                                              \
-        shldx_ri(W(X1), IB(2))                                              \
-        adddx_rr(W(XD), W(X1))                                              \
-        shldx_ri(W(X1), IB(2))                                              \
-        adddx_rr(W(XD), W(X1))                                              \
-        shldx_ri(W(X1), IB(2))                                              \
-        adddx_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
-        adddx_ld(W(XD), Mebp, inf_GPC05_64) /* back to biased-127 */        \
-        anddx_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
-        anndx_rr(W(X2), W(XS))   /* original sign */                        \
-        orrdx_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
-
-#define cbsds_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        movdx_rr(W(X1), W(XG))                                              \
-        mulds_rr(W(X1), W(XG))                                              \
-        movdx_rr(W(X2), W(X1))                                              \
-        mulds_ld(W(X1), Mebp, inf_GPC03_64)                                 \
-        rceds_rr(W(X1), W(X1))                                              \
-        mulds_rr(W(X2), W(XG))                                              \
-        subds_rr(W(X2), W(XS))                                              \
-        mulds_rr(W(X2), W(X1))                                              \
-        subds_rr(W(XG), W(X2))
-
 /******************************************************************************/
-/**** 128-bit **** SIMD instructions with fixed-64-bit-element ****************/
+/**** 128-bit **** (horizontal SIMD) with fixed-64-bit-element ****************/
 /******************************************************************************/
 
 #define adpjs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
@@ -5146,53 +5225,6 @@ rt_si32 from_mask(rt_si32 mask)
         movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
         maxts_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
         movts_st(W(XD), Mebp, inf_SCR01(0x08))
-
-/* cbr (D = cbrt S) */
-
-/*
- * Based on the original idea by Russell Borogove (kaleja[AT]estarcion[DOT]com)
- * available at http://www.musicdsp.org/showone.php?id=206
- * converted to S-way SIMD version by VectorChief.
- */
-#define cbrjs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        cbejs_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsjs_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsjs_rr(W(XD), W(X1), W(X2), W(XS))                                \
-        cbsjs_rr(W(XD), W(X1), W(X2), W(XS))
-
-#define cbejs_rr(XD, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        /* cube root estimate, the exponent is divided by three             \
-         * in such a way that remainder bits get shoved into                \
-         * the top of the normalized mantissa */                            \
-        movjx_ld(W(X2), Mebp, inf_GPC04_64)                                 \
-        movjx_rr(W(XD), W(XS))                                              \
-        andjx_rr(W(XD), W(X2))   /* exponent & mantissa in biased-127 */    \
-        subjx_ld(W(XD), Mebp, inf_GPC05_64) /* convert to 2's complement */ \
-        shrjn_ri(W(XD), IB(10))  /* XD / 1024 */                            \
-        movjx_rr(W(X1), W(XD))   /* XD * 341 (next 8 ops) */                \
-        shljx_ri(W(X1), IB(2))                                              \
-        addjx_rr(W(XD), W(X1))                                              \
-        shljx_ri(W(X1), IB(2))                                              \
-        addjx_rr(W(XD), W(X1))                                              \
-        shljx_ri(W(X1), IB(2))                                              \
-        addjx_rr(W(XD), W(X1))                                              \
-        shljx_ri(W(X1), IB(2))                                              \
-        addjx_rr(W(XD), W(X1))   /* XD * (341/1024) ~= XD * (0.333) */      \
-        addjx_ld(W(XD), Mebp, inf_GPC05_64) /* back to biased-127 */        \
-        andjx_rr(W(XD), W(X2))   /* remask exponent & mantissa */           \
-        annjx_rr(W(X2), W(XS))   /* original sign */                        \
-        orrjx_rr(W(XD), W(X2))   /* new exponent & mantissa, old sign */
-
-#define cbsjs_rr(XG, X1, X2, XS) /* destroys X1, X2 (temp regs) */          \
-        movjx_rr(W(X1), W(XG))                                              \
-        muljs_rr(W(X1), W(XG))                                              \
-        movjx_rr(W(X2), W(X1))                                              \
-        muljs_ld(W(X1), Mebp, inf_GPC03_64)                                 \
-        rcejs_rr(W(X1), W(X1))                                              \
-        muljs_rr(W(X2), W(XG))                                              \
-        subjs_rr(W(X2), W(XS))                                              \
-        muljs_rr(W(X2), W(X1))                                              \
-        subjs_rr(W(XG), W(X2))
 
 #endif /* RT_SIMD_CODE */
 

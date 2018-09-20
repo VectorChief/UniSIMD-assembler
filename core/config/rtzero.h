@@ -158,6 +158,7 @@
 #undef IW /* immediate type:     0xFFFFFFFF, only for cmdw*_** subset */
 
 #undef DP /* displacement type:  0x00000FFF */
+#undef DE /* displacement type:  0x00001FFF */
 #undef DF /* displacement type:  0x00003FFF */
 #undef DG /* displacement type:  0x00007FFF */
 #undef DH /* displacement type:  0x0000FFFF */

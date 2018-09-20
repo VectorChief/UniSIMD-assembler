@@ -20,15 +20,15 @@
 
 /************************   COMMON SIMD INSTRUCTIONS   ************************/
 
-/**** var-len **** SIMD instructions with fixed-32-bit-element ****************/
-/**** 256-bit **** SIMD instructions with fixed-32-bit-element ****************/
-/**** 128-bit **** SIMD instructions with fixed-32-bit-element ****************/
-/**** scalar ***** SIMD instructions with fixed-32-bit-element ****************/
+/**** var-len **** (rcp/rsq/fma/fms) with fixed-32-bit-element ****************/
+/**** 256-bit **** (rcp/rsq/fma/fms) with fixed-32-bit-element ****************/
+/**** 128-bit **** (rcp/rsq/fma/fms) with fixed-32-bit-element ****************/
+/**** scalar ***** (rcp/rsq/fma/fms) with fixed-32-bit-element ****************/
 
-/**** var-len **** SIMD instructions with fixed-64-bit-element ****************/
-/**** 256-bit **** SIMD instructions with fixed-64-bit-element ****************/
-/**** 128-bit **** SIMD instructions with fixed-64-bit-element ****************/
-/**** scalar ***** SIMD instructions with fixed-64-bit-element ****************/
+/**** var-len **** (rcp/rsq/fma/fms) with fixed-64-bit-element ****************/
+/**** 256-bit **** (rcp/rsq/fma/fms) with fixed-64-bit-element ****************/
+/**** 128-bit **** (rcp/rsq/fma/fms) with fixed-64-bit-element ****************/
+/**** scalar ***** (rcp/rsq/fma/fms) with fixed-64-bit-element ****************/
 
 /**** var-len **** SIMD instructions with fixed-32-bit-element **** 256-bit ***/
 /**** var-len **** SIMD instructions with fixed-32-bit-element **** 128-bit ***/
@@ -137,7 +137,7 @@
 #if (defined RT_SIMD_CODE)
 
 /******************************************************************************/
-/**** var-len **** SIMD instructions with fixed-32-bit-element ****************/
+/**** var-len **** (rcp/rsq/fma/fms) with fixed-32-bit-element ****************/
 /******************************************************************************/
 
 #if   (RT_SIMD >= 512) || (RT_SIMD == 256 && defined RT_SVEX1)
@@ -235,7 +235,7 @@
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
 /******************************************************************************/
-/**** 256-bit **** SIMD instructions with fixed-32-bit-element ****************/
+/**** 256-bit **** (rcp/rsq/fma/fms) with fixed-32-bit-element ****************/
 /******************************************************************************/
 
 /* rcp (D = 1.0 / S)
@@ -329,7 +329,7 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /******************************************************************************/
-/**** 128-bit **** SIMD instructions with fixed-32-bit-element ****************/
+/**** 128-bit **** (rcp/rsq/fma/fms) with fixed-32-bit-element ****************/
 /******************************************************************************/
 
 /* rcp (D = 1.0 / S)
@@ -423,7 +423,7 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /******************************************************************************/
-/**** scalar ***** SIMD instructions with fixed-32-bit-element ****************/
+/**** scalar ***** (rcp/rsq/fma/fms) with fixed-32-bit-element ****************/
 /******************************************************************************/
 
 /* rcp (D = 1.0 / S)
@@ -517,7 +517,7 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /******************************************************************************/
-/**** var-len **** SIMD instructions with fixed-64-bit-element ****************/
+/**** var-len **** (rcp/rsq/fma/fms) with fixed-64-bit-element ****************/
 /******************************************************************************/
 
 #if   (RT_SIMD >= 512) || (RT_SIMD == 256 && defined RT_SVEX1)
@@ -615,7 +615,7 @@
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
 /******************************************************************************/
-/**** 256-bit **** SIMD instructions with fixed-64-bit-element ****************/
+/**** 256-bit **** (rcp/rsq/fma/fms) with fixed-64-bit-element ****************/
 /******************************************************************************/
 
 /* rcp (D = 1.0 / S)
@@ -709,7 +709,7 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /******************************************************************************/
-/**** 128-bit **** SIMD instructions with fixed-64-bit-element ****************/
+/**** 128-bit **** (rcp/rsq/fma/fms) with fixed-64-bit-element ****************/
 /******************************************************************************/
 
 /* rcp (D = 1.0 / S)
@@ -803,7 +803,7 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /******************************************************************************/
-/**** scalar ***** SIMD instructions with fixed-64-bit-element ****************/
+/**** scalar ***** (rcp/rsq/fma/fms) with fixed-64-bit-element ****************/
 /******************************************************************************/
 
 /* rcp (D = 1.0 / S)

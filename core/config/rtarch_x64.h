@@ -1302,6 +1302,68 @@
      /* stack_** is defined in 32-bit rtarch_***.h files */
 
 /******************************************************************************/
+/**************************   extended float (x87)   **************************/
+/******************************************************************************/
+
+#define fpuzs_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDD)                                   \
+        MRM(0x00,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define fpuzs_st(MD, DD) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MD)) EMITB(0xDD)                                   \
+        MRM(0x03,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+
+#define fpuzn_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDF)                                   \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define fpuzn_st(MD, DD) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MD)) EMITB(0xDF)                                   \
+        MRM(0x07,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+#define fpuzt_st(MD, DD) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MD)) EMITB(0xDD)                                   \
+        MRM(0x01,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+
+#define addzs_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
+        MRM(0x00,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define subzs_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
+        MRM(0x04,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define sbrzs_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+
+#define mulzs_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
+        MRM(0x01,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define divzs_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
+        MRM(0x06,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define dvrzs_ld(MS, DS) /* not portable, do not use outside */             \
+    ADR REX(0,       RXB(MS)) EMITB(0xDC)                                   \
+        MRM(0x07,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 

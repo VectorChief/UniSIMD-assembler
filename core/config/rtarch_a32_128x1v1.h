@@ -925,60 +925,9 @@
         EMITW(0x6EA0B800 | MXM(TmmM,    TmmM,    0x00))                     \
         EMITW(0x4EA04400 | MXM(REG(XD), REG(XS), TmmM))
 
-/************************   helper macros (FPU mode)   ************************/
-
-/* simd mode
- * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),
- * original FCTRL blocks (FCTRL_ENTER/FCTRL_LEAVE) are defined in rtbase.h
- * NOTE: ARMv7 always uses ROUNDN non-IEEE mode for SIMD fp-arithmetic,
- * while fp<->int conversion takes ROUND* into account via VFP fallback */
-
-#if RT_SIMD_FLUSH_ZERO == 0
-
-#define RT_SIMD_MODE_ROUNDN     0x00    /* round towards near */
-#define RT_SIMD_MODE_ROUNDM     0x02    /* round towards -inf */
-#define RT_SIMD_MODE_ROUNDP     0x01    /* round towards +inf */
-#define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
-
-#else /* RT_SIMD_FLUSH_ZERO */
-
-#define RT_SIMD_MODE_ROUNDN     0x04    /* round towards near */
-#define RT_SIMD_MODE_ROUNDM     0x06    /* round towards -inf */
-#define RT_SIMD_MODE_ROUNDP     0x05    /* round towards +inf */
-#define RT_SIMD_MODE_ROUNDZ     0x07    /* round towards zero */
-
-#endif /* RT_SIMD_FLUSH_ZERO */
-
-#define RT_SIMD_MODE_ROUNDN_F   0x04    /* round towards near */
-#define RT_SIMD_MODE_ROUNDM_F   0x06    /* round towards -inf */
-#define RT_SIMD_MODE_ROUNDP_F   0x05    /* round towards +inf */
-#define RT_SIMD_MODE_ROUNDZ_F   0x07    /* round towards zero */
-
-#define fpscr_ld(RS) /* not portable, do not use outside */                 \
-        EMITW(0xD51B4400 | MRM(REG(RS), 0x00,    0x00))
-
-#define fpscr_st(RD) /* not portable, do not use outside */                 \
-        EMITW(0xD53B4400 | MRM(REG(RD), 0x00,    0x00))
-
-#if RT_SIMD_FAST_FCTRL == 0
-
-#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
-        EMITW(0x52A00000 | MRM(TIxx,    0x00,    0x00) |                    \
-                           RT_SIMD_MODE_##mode << 11)                       \
-        EMITW(0xD51B4400 | MRM(TIxx,    0x00,    0x00))
-
-#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
-        EMITW(0xD51B4400 | MRM(TNxx,    0x00,    0x00))
-
-#else /* RT_SIMD_FAST_FCTRL */
-
-#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
-        EMITW(0xD51B4400 | MRM(TNxx+(RT_SIMD_MODE_##mode&3), 0x00, 0x00))
-
-#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
-        EMITW(0xD51B4400 | MRM(TNxx,    0x00,    0x00))
-
-#endif /* RT_SIMD_FAST_FCTRL */
+/******************************************************************************/
+/*********************************   SCALAR   *********************************/
+/******************************************************************************/
 
 /*********   scalar single-precision floating-point move/arithmetic   *********/
 
@@ -1267,6 +1216,65 @@
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
         EMITW(0xBD400000 | MPM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
         EMITW(0x7E20E400 | MXM(REG(XD), REG(XS), TmmM))
+
+/******************************************************************************/
+/**********************************   FPU   ***********************************/
+/******************************************************************************/
+
+/************************   helper macros (FPU mode)   ************************/
+
+/* simd mode
+ * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),
+ * original FCTRL blocks (FCTRL_ENTER/FCTRL_LEAVE) are defined in rtbase.h
+ * NOTE: ARMv7 always uses ROUNDN non-IEEE mode for SIMD fp-arithmetic,
+ * while fp<->int conversion takes ROUND* into account via VFP fallback */
+
+#if RT_SIMD_FLUSH_ZERO == 0
+
+#define RT_SIMD_MODE_ROUNDN     0x00    /* round towards near */
+#define RT_SIMD_MODE_ROUNDM     0x02    /* round towards -inf */
+#define RT_SIMD_MODE_ROUNDP     0x01    /* round towards +inf */
+#define RT_SIMD_MODE_ROUNDZ     0x03    /* round towards zero */
+
+#else /* RT_SIMD_FLUSH_ZERO */
+
+#define RT_SIMD_MODE_ROUNDN     0x04    /* round towards near */
+#define RT_SIMD_MODE_ROUNDM     0x06    /* round towards -inf */
+#define RT_SIMD_MODE_ROUNDP     0x05    /* round towards +inf */
+#define RT_SIMD_MODE_ROUNDZ     0x07    /* round towards zero */
+
+#endif /* RT_SIMD_FLUSH_ZERO */
+
+#define RT_SIMD_MODE_ROUNDN_F   0x04    /* round towards near */
+#define RT_SIMD_MODE_ROUNDM_F   0x06    /* round towards -inf */
+#define RT_SIMD_MODE_ROUNDP_F   0x05    /* round towards +inf */
+#define RT_SIMD_MODE_ROUNDZ_F   0x07    /* round towards zero */
+
+#define fpscr_ld(RS) /* not portable, do not use outside */                 \
+        EMITW(0xD51B4400 | MRM(REG(RS), 0x00,    0x00))
+
+#define fpscr_st(RD) /* not portable, do not use outside */                 \
+        EMITW(0xD53B4400 | MRM(REG(RD), 0x00,    0x00))
+
+#if RT_SIMD_FAST_FCTRL == 0
+
+#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
+        EMITW(0x52A00000 | MRM(TIxx,    0x00,    0x00) |                    \
+                           RT_SIMD_MODE_##mode << 11)                       \
+        EMITW(0xD51B4400 | MRM(TIxx,    0x00,    0x00))
+
+#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
+        EMITW(0xD51B4400 | MRM(TNxx,    0x00,    0x00))
+
+#else /* RT_SIMD_FAST_FCTRL */
+
+#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
+        EMITW(0xD51B4400 | MRM(TNxx+(RT_SIMD_MODE_##mode&3), 0x00, 0x00))
+
+#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
+        EMITW(0xD51B4400 | MRM(TNxx,    0x00,    0x00))
+
+#endif /* RT_SIMD_FAST_FCTRL */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

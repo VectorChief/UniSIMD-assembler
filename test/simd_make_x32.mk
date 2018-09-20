@@ -14,10 +14,10 @@ LIB_LIST =                              \
 build: simd_test_x32
 
 strip:
-	x86_64-linux-gnu-strip simd_test.x32
+	x86_64-linux-gnu-strip simd_test.x32*
 
 clean:
-	rm simd_test.x32
+	rm simd_test.x32*
 
 
 simd_test_x32:

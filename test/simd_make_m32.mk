@@ -14,7 +14,7 @@ LIB_LIST =                              \
 build: simd_test_m32Lr5 simd_test_m32Br5
 
 strip:
-	mips-mti-linux-gnu-strip simd_test.m32?r5
+	mips-mti-linux-gnu-strip simd_test.m32?r5*
 
 clean:
 	rm simd_test.m32*
