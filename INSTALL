@@ -8,20 +8,18 @@ for native builds (binary ABI matches host):
 for multilib builds (if libs are available):
     sudo apt-get install make g++-multilib
 run for x86 architecture:
-    make -f simd_make_x86.mk
+    make -f simd_make_x86.mk -j8
     ./simd_test.x86
 run for x64 architecture:
-    make -f simd_make_x64.mk
+    make -f simd_make_x64.mk -j8
     ./simd_test.x64f32
 run for non-x86 architectures:
-    make -f simd_make_***.mk
+    make -f simd_make_***.mk -j8
     ./simd_test.***
 Prerequisites for building/emulating guest non-x86 architectures as well as
 configurations for particular hardware platforms are given in the makefiles.
 Only DEB-based distributions (Mint, Ubuntu, Debian) are supported for now,
 users of RPM-based distributions need to figure out build-deps on their own.
-
-================================================================================
 
 To build SIMD test framework on Windows,
 go to UniSIMD's "test" folder and open (in Visual C++ 6.0 or later):
@@ -57,18 +55,27 @@ run installation script:
 When building QEMU from source isn't necessary install a full binary package:
     sudo apt-get install qemu
 
+To test SVE targets with patched version of QEMU 3.0.0 run:
+    qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f32sve -c 1
+
+Use "-c 1" option to reduce test time when emulating with QEMU.
+
 ================================================================================
 
 To emulate future x86 targets (AVX-512) on modern x86 Linux hosts use Intel SDE:
     http://software.intel.com/en-us/articles/intel-software-development-emulator
+Download and unpack the archive.
 
-In terminal window for 32-bit x86 use:
-    path-to-kit/sde   -knl -- ./test/simd_test.x86 -c 1
-    path-to-kit/sde   -skx -- ./test/simd_test.x86 -c 1
-In terminal window for 64-bit x64 use:
-    path-to-kit/sde64 -knl -- ./test/simd_test.x64f32 -c 1
-    path-to-kit/sde64 -skx -- ./test/simd_test.x64f32 -c 1
-for AVX512F (Knights Landing) and AVX512DQ (Skylake-X) respectively.
+In terminal window for 32-bit x86 run:
+    path-to-kit/sde   -snb -- ./simd_test.x86avx -c 1
+    path-to-kit/sde   -knl -- ./simd_test.x86avx512 -c 1
+for AVX (Sandy Bridge) and AVX512F (Knights Landing) respectively.
+
+In terminal window for 64-bit x64 run:
+    path-to-kit/sde64 -hsw -- ./simd_test.x64_32avx -c 1
+    path-to-kit/sde64 -skx -- ./simd_test.x64f32avx -c 1
+for AVX2 (Haswell) and AVX512DQ (Skylake-X) respectively.
+
 Use "-c 1" option to reduce test time when emulating with Intel SDE.
 
 ================================================================================
@@ -111,6 +118,16 @@ to setup ARM Instruction Emulator for SVE on AArch64 hosts, install modules:
     zypper in environment-modules
     (reboot)
 
+Download the archive from github.com and unpack it (in terminal window):
+    cd Downloads
+    unzip UniSIMD-assembler-master.zip
+    cd UniSIMD-assembler-master/test
+    make -f simd_make_a64.mk -j8
+    ./simd_test.a64f32
+
+Adjust UniSIMD's makefiles to use g++ instead of triplet name, remove -static
+    nano simd_make_a64.mk (edit file, Ctrl-O, Enter, Ctrl-X)
+
 Download the ARM IE and install it (Ubuntu16.04 for Devuan, SUSE12 for SUSE):
 https://developer.arm.com/products/software-development-tools/
                                         /hpc/arm-instruction-emulator/download
@@ -126,20 +143,10 @@ https://developer.arm.com/products/software-development-tools/
     (armie should now be available in the PATH variable, check vector lengths)
     armie -mlist-vector-lengths
 
-Download the archive from github.com and unpack it (in terminal window):
-    cd Downloads
-    unzip UniSIMD-assembler-master.zip
-    cd UniSIMD-assembler-master/test
-    make -f simd_make_a64.mk -j4
-    ./simd_test.a64f32
-to test SVE targets with ARM Instruction Emulator put -DRT_512=1 into makefile:
-    nano simd_make_a64.mk (edit file, Ctrl-O, Enter, Ctrl-X)
-then run:
-    make -f simd_make_a64.mk -j4
-    armie -msve-vector-bits=512 -- ./simd_test.a64f32 -c 1
+To test SVE targets with ARM Instruction Emulator run:
+    armie -msve-vector-bits=512 -- ./simd_test.a64f32sve -c 1
 
-Adjust UniSIMD's makefiles to use g++ instead of triplet name, remove -static
-    nano simd_make_a64.mk (edit file, Ctrl-O, Enter, Ctrl-X)
+Use "-c 1" option to reduce test time when emulating with ARM IE.
 
 Current frequency (600Mhz idle, 1200Mhz load) can be monitored using:
 cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq   (tested both images)

@@ -52,25 +52,25 @@ build_avx: simd_test_x64_32avx simd_test_x64_64avx \
 
 simd_test_x64_32avx:
 	x86_64-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_X64 -DRT_256=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_X64 -DRT_256=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_32avx
 
 simd_test_x64_64avx:
 	x86_64-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_X64 -DRT_256=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_X64 -DRT_256=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_64avx
 
 simd_test_x64f32avx:
 	x86_64-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_X64 -DRT_512=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_X64 -DRT_512=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f32avx
 
 simd_test_x64f64avx:
 	x86_64-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_X64 -DRT_512=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_X64 -DRT_512=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f64avx
 
