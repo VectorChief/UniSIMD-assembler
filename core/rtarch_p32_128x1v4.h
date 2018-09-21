@@ -1395,12 +1395,12 @@
         minrs3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define minrs3rr(XD, XS, XT)                                                \
-        EMITW(0xF0000640 | MXM(REG(XD), REG(XS), REG(XT)))
+        EMITW(0xF0000540 | MXM(REG(XD), REG(XS), REG(XT)))
 
 #define minrs3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
         EMITW(0xC0000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
-        EMITW(0xF0000640 | MXM(REG(XD), REG(XS), TmmM))
+        EMITW(0xF0000540 | MXM(REG(XD), REG(XS), TmmM))
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
 
@@ -1411,12 +1411,12 @@
         maxrs3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define maxrs3rr(XD, XS, XT)                                                \
-        EMITW(0xF0000600 | MXM(REG(XD), REG(XS), REG(XT)))
+        EMITW(0xF0000500 | MXM(REG(XD), REG(XS), REG(XT)))
 
 #define maxrs3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
         EMITW(0xC0000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
-        EMITW(0xF0000600 | MXM(REG(XD), REG(XS), TmmM))
+        EMITW(0xF0000500 | MXM(REG(XD), REG(XS), TmmM))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
 
