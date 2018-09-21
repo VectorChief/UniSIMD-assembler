@@ -841,22 +841,24 @@ rt_si32 mask_init(rt_si32 simd)
                 mask |= s_type;
             }
 #elif !defined RT_X32  && !defined RT_X64  && !defined RT_X86 /* modern RISCs */
-#if   (defined RT_SVEX1)
+#if   (defined RT_SVEX1) || (defined RT_SVEX2)
+            s = (v_regs > 15 ? 0xC : 0xF);
+            s = (k_size == 2 ? 0x3 & s : s);
             if (k <= 1 && n_simd == 16 && v_regs <= 30)
             {
-                mask |= s_type << 28;
+                mask |= (s_type & s) << 28;
             }
-            if (k <= 1 && n_simd == 8 && v_regs <= 30)
+            if (k <= 2 && n_simd == 8 && v_regs <= 30)
             {
-                mask |= s_type << 24;
+                mask |= (s_type & s) << (24 + 4*(k_size/2));
             }
-            if (k <= 1 && n_simd == 4 && v_regs <= 30)
+            if (k <= 2 && n_simd == 4 && v_regs <= 30)
             {
-                mask |= s_type << 16;
+                mask |= (s_type & s) << (16 + 8*(k_size/2));
             }
-            if (k <= 1 && n_simd == 2 && v_regs <= 30)
+            if (k <= 2 && n_simd == 2 && v_regs <= 30)
             {
-                mask |= s_type <<  8;
+                mask |= (s_type & s) <<  (8 + 8*(k_size/2));
             }
 #endif /* SVE targets */
             m = 2; s = 0x00030F;
@@ -989,7 +991,7 @@ rt_si32 from_mask(rt_si32 mask)
     }
 #elif !defined RT_X32  && !defined RT_X64  && !defined RT_X86 /* modern RISCs */
     v_regs = v_regs == 16 ? 15 : 8;
-#if   (defined RT_SVEX1)
+#if   (defined RT_SVEX1) || (defined RT_SVEX2)
     if (n_simd == 6)
     {
         n_simd = k_size * 8;
@@ -1006,6 +1008,11 @@ rt_si32 from_mask(rt_si32 mask)
     if (n_simd == 2 && k_size == 1 && s_type >= 4)
     {
         n_keep = 1;
+    }
+    if (n_simd >= 4 && k_size == 1 && s_type <= 3)
+    {
+        n_simd = n_simd / 2;
+        k_size = 2;
     }
 #endif /* SVE targets */
 #if  (defined RT_P32) || (defined RT_P64)

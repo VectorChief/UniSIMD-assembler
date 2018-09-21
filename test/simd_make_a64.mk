@@ -52,25 +52,25 @@ build_sve: simd_test_a64_32sve simd_test_a64_64sve \
 
 simd_test_a64_32sve:
 	aarch64-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_A64 -DRT_256=4 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_A64 -DRT_512=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64_32sve
 
 simd_test_a64_64sve:
 	aarch64-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_A64 -DRT_256=4 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_A64 -DRT_512=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64_64sve
 
 simd_test_a64f32sve:
 	aarch64-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_A64 -DRT_512=4 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_A64 -DRT_1K4=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64f32sve
 
 simd_test_a64f64sve:
 	aarch64-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_A64 -DRT_512=4 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_A64 -DRT_1K4=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64f64sve
 
@@ -96,10 +96,16 @@ simd_test_a64f64sve:
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64f64 -c 1
 # qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64f32sve -c 1  (for RT_256=4)
 # qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64f64sve -c 1  (for RT_256=4)
+# qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64f32sve -c 1  (for RT_512=1)
+# qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64f64sve -c 1  (for RT_512=1)
 # qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f32sve -c 1  (for RT_512=4)
 # qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f64sve -c 1  (for RT_512=4)
+# qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f32sve -c 1  (for RT_1K4=1)
+# qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f64sve -c 1  (for RT_1K4=1)
 # qemu-aarch64 -cpu max,sve-max-vq=8 simd_test.a64f32sve -c 1  (for RT_1K4=4)
 # qemu-aarch64 -cpu max,sve-max-vq=8 simd_test.a64f64sve -c 1  (for RT_1K4=4)
+# qemu-aarch64 -cpu max,sve-max-vq=8 simd_test.a64f32sve -c 1  (for RT_2K8_R8=1)
+# qemu-aarch64 -cpu max,sve-max-vq=8 simd_test.a64f64sve -c 1  (for RT_2K8_R8=1)
 # qemu-aarch64 -cpu max,sve-max-vq=16 simd_test.a64f32sve -c 1 (for RT_2K8_R8=4)
 # qemu-aarch64 -cpu max,sve-max-vq=16 simd_test.a64f64sve -c 1 (for RT_2K8_R8=4)
 # Use "-c 1" option to reduce test time when emulating with QEMU
@@ -112,10 +118,14 @@ simd_test_a64f64sve:
 
 # For 128-bit NEON build use (replace): RT_128=1            (30 SIMD registers)
 # For 256-bit NEON build use (replace): RT_256=1            (15 SIMD reg-pairs)
-# For 256-bit  SVE build use (replace): RT_256=4            (30 SIMD registers)
-# For 512-bit  SVE build use (replace): RT_512=4            (30 SIMD registers)
-# For 1024-bit SVE build use (replace): RT_1K4=4            (30 SIMD registers)
-# For 2048-bit SVE build use (replace): RT_2K8_R8=4         (15 SIMD registers)
+# For 256-bit  SVEx1 build use (replace): RT_256=4          (30 SIMD registers)
+# For 512-bit  SVEx2 build use (replace): RT_512=1          (15 SIMD registers)
+# For 512-bit  SVEx1 build use (replace): RT_512=4          (30 SIMD registers)
+# For 1024-bit SVEx2 build use (replace): RT_1K4=1          (15 SIMD registers)
+# For 1024-bit SVEx1 build use (replace): RT_1K4=4          (30 SIMD registers)
+# For 2048-bit SVEx2 build use (replace): RT_2K8_R8=1        (8 SIMD registers)
+# For 2048-bit SVEx1 build use (replace): RT_2K8_R8=4       (15 SIMD registers)
+# The last two slots are artificially reg-limited for compatibility with AVX512
 
 # 64/32-bit (ptr/adr) hybrid mode is compatible with native 64-bit ABI,
 # use (replace): RT_ADDRESS=32, rename the binary to simd_test.a64_**

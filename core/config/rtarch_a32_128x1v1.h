@@ -136,7 +136,7 @@
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
 #define Tmm0    0x00  /* v0,  internal name for Xmm0 (in mmv) */
-#define TmmQ    0x1E  /* v30, internal name for all-ones */
+#define TmmQ    0x0F  /* v15, internal name for all-ones */
 #define TmmM    0x1F  /* v31, temp-reg name for mem-args */
 
 /******************************************************************************/
@@ -164,7 +164,7 @@
 /* only for 128-bit instructions (save/restore in 256-bit header)
  * provided as an extension to common baseline of 15 registers */
 
-#define XmmF    0x0F, 0x00, EMPTY       /* v15 */
+#define XmmF    0x1E, 0x00, EMPTY       /* v30 */
 #define XmmG    0x10, 0x00, EMPTY       /* v16 */
 #define XmmH    0x11, 0x00, EMPTY       /* v17 */
 #define XmmI    0x12, 0x00, EMPTY       /* v18 */

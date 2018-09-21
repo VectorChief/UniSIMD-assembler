@@ -703,20 +703,20 @@
 
 #if   (RT_2K8X1 >= 1) && (RT_SIMD == 2048) && (RT_REGS <= 32)
 #include "rtarch_a64_SVEx1v1.h"
-#elif (RT_1K4X2 != 0) && (RT_SIMD == 2048)
-#error "AArch64 doesn't yet support paired SVE backends, check build flags"
+#elif (RT_1K4X2 != 0) && (RT_SIMD == 2048) && (RT_REGS <= 16)
+#include "rtarch_a64_SVEx2v1.h"
 #elif (RT_512X4 != 0) && (RT_SIMD == 2048)
 #error "AArch64 doesn't support quaded SIMD backends, check build flags"
 #elif (RT_1K4X1 >= 1) && (RT_SIMD == 1024) && (RT_REGS <= 32)
 #include "rtarch_a64_SVEx1v1.h"
-#elif (RT_512X2 != 0) && (RT_SIMD == 1024)
-#error "AArch64 doesn't yet support paired SVE backends, check build flags"
+#elif (RT_512X2 != 0) && (RT_SIMD == 1024) && (RT_REGS <= 16)
+#include "rtarch_a64_SVEx2v1.h"
 #elif (RT_256X4 != 0) && (RT_SIMD == 1024)
 #error "AArch64 doesn't support quaded SIMD backends, check build flags"
 #elif (RT_512X1 >= 1) && (RT_SIMD == 512) && (RT_REGS <= 32)
 #include "rtarch_a64_SVEx1v1.h"
-#elif (RT_256X2 != 0) && (RT_SIMD == 512)
-#error "AArch64 doesn't yet support paired SVE backends, check build flags"
+#elif (RT_256X2 != 0) && (RT_SIMD == 512) && (RT_REGS <= 16)
+#include "rtarch_a64_SVEx2v1.h"
 #elif (RT_128X4 != 0) && (RT_SIMD == 512)
 #error "AArch64 doesn't support quaded SIMD backends, check build flags"
 #elif (RT_256X1 >= 1) && (RT_SIMD == 256) && (RT_REGS <= 32)
@@ -754,8 +754,8 @@
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
         EMITS(0x2518E3E0)                                                   \
-        movpx_ld(XmmF, Mebp, inf_GPC07)                                     \
-        EMITS(0x04603000 | MXM(TmmQ, 0x0F, 0x0F))                           \
+        movpx_ld(XmmE, Mebp, inf_GPC07)                                     \
+        EMITS(0x04603000 | MXM(TmmQ, 0x0E, 0x0E))                           \
         EMITW(0x52A00000 | MRM(TNxx, 0x00, 0x00)) /* w22 <- (0 << 22) */
 
 #define ASM_LEAVE(__Info__)                                                 \
@@ -783,8 +783,8 @@
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
         EMITS(0x2518E3E0)                                                   \
-        movpx_ld(XmmF, Mebp, inf_GPC07)                                     \
-        EMITS(0x04603000 | MXM(TmmQ, 0x0F, 0x0F))                           \
+        movpx_ld(XmmE, Mebp, inf_GPC07)                                     \
+        EMITS(0x04603000 | MXM(TmmQ, 0x0E, 0x0E))                           \
         EMITW(0x52A01800 | MRM(TExx, 0x00, 0x00)) /* w25 <- (3 << 22) */    \
         EMITW(0x52A01000 | MRM(TCxx, 0x00, 0x00)) /* w24 <- (2 << 22) */    \
         EMITW(0x52A00800 | MRM(TAxx, 0x00, 0x00)) /* w23 <- (1 << 22) */    \
@@ -831,8 +831,8 @@
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
         EMITS(0x2518E3E0)                                                   \
-        movpx_ld(XmmF, Mebp, inf_GPC07)                                     \
-        EMITS(0x04603000 | MXM(TmmQ, 0x0F, 0x0F))                           \
+        movpx_ld(XmmE, Mebp, inf_GPC07)                                     \
+        EMITS(0x04603000 | MXM(TmmQ, 0x0E, 0x0E))                           \
         EMITW(0x52A02000 | MRM(TNxx, 0x00, 0x00)) /* w22 <- (4 << 22) */    \
         EMITW(0xD51B4400 | MRM(TNxx, 0x00, 0x00)) /* fpcr <- w22 */
 
@@ -863,8 +863,8 @@
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
         EMITS(0x2518E3E0)                                                   \
-        movpx_ld(XmmF, Mebp, inf_GPC07)                                     \
-        EMITS(0x04603000 | MXM(TmmQ, 0x0F, 0x0F))                           \
+        movpx_ld(XmmE, Mebp, inf_GPC07)                                     \
+        EMITS(0x04603000 | MXM(TmmQ, 0x0E, 0x0E))                           \
         EMITW(0x52A03800 | MRM(TExx, 0x00, 0x00)) /* w25 <- (7 << 22) */    \
         EMITW(0x52A03000 | MRM(TCxx, 0x00, 0x00)) /* w24 <- (6 << 22) */    \
         EMITW(0x52A02800 | MRM(TAxx, 0x00, 0x00)) /* w23 <- (5 << 22) */    \
@@ -890,17 +890,17 @@
 #define sregs_la()
 #define movpx_ld(XD, MS, DS)
 #define EMITS(w) /* EMPTY */
-#elif RT_SVEX1 != 0
+#elif (defined RT_SVEX1) || (defined RT_SVEX2)
 #define EMITS(w)    EMITW(w)
 #else
 #define EMITS(w) /* EMPTY */
 #endif /* RT_SIMD_CODE */
 
-#if   RT_SVEX1 != 0
+#if   (defined RT_SVEX1) || (defined RT_SVEX2)
 #define EMITV(w)    EMITW(w)
 #else
 #define EMITV(w) /* EMPTY */
-#endif /* RT_SVEX1 */
+#endif /* RT_SVEX1, RT_SVEX2 */
 
 /* ------------------------------   M32, M64   ------------------------------ */
 

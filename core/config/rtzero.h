@@ -333,17 +333,29 @@
 
 #elif (defined RT_A32) || (defined RT_A64)
 
-#if   !(defined RT_SVEX1) && (RT_2K8_R8)
+#if   !(defined RT_SVEX1) && (RT_2K8_R8) & 0xC
 #define         RT_2K8X1     (RT_2K8_R8)
 #define         RT_SVEX1     (RT_2K8_R8)
 #endif
-#if   !(defined RT_SVEX1) && (RT_1K4 || RT_1K4_R8)
+#if   !(defined RT_SVEX2) && (RT_2K8_R8) & 0x3
+#define         RT_1K4X2     (RT_2K8_R8)
+#define         RT_SVEX2     (RT_2K8_R8)
+#endif
+#if   !(defined RT_SVEX1) && (RT_1K4 |  RT_1K4_R8) & 0xC
 #define         RT_1K4X1     (RT_1K4 |  RT_1K4_R8)
 #define         RT_SVEX1     (RT_1K4 |  RT_1K4_R8)
 #endif
-#if   !(defined RT_SVEX1) && (RT_512 || RT_512_R8)
+#if   !(defined RT_SVEX2) && (RT_1K4 |  RT_1K4_R8) & 0x3
+#define         RT_512X2     (RT_1K4 |  RT_1K4_R8)
+#define         RT_SVEX2     (RT_1K4 |  RT_1K4_R8)
+#endif
+#if   !(defined RT_SVEX1) && (RT_512 |  RT_512_R8) & 0xC
 #define         RT_512X1     (RT_512 |  RT_512_R8)
 #define         RT_SVEX1     (RT_512 |  RT_512_R8)
+#endif
+#if   !(defined RT_SVEX2) && (RT_512 |  RT_512_R8) & 0x3
+#define         RT_256X2     (RT_512 |  RT_512_R8)
+#define         RT_SVEX2     (RT_512 |  RT_512_R8)
 #endif
 #if   !(defined RT_SVEX1) && (RT_256 |  RT_256_R8) & 0xC
 #define         RT_256X1     (RT_256 |  RT_256_R8)
