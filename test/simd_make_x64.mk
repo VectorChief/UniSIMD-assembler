@@ -79,9 +79,15 @@ simd_test_x64f64avx:
 # native-compiler for x86_64 is installed and in the PATH variable.
 # sudo apt-get install g++
 #
+# Prerequisites for emulation:
+# http://software.intel.com/en-us/articles/intel-software-development-emulator
+# Intel SDE is downloaded, unpacked and in the PATH variable.
+#
 # Building/running SIMD test:
 # make -f simd_make_x64.mk
 # ./simd_test.x64f32
+# sde64 -hsw -- ./simd_test.x64_32avx -c 1
+# sde64 -skx -- ./simd_test.x64f32avx -c 1
 # Use "-c 1" option to reduce test time when emulating with Intel SDE
 
 # Clang compilation works too (takes much longer prior to 3.8), use (replace):

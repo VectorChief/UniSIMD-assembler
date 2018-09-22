@@ -138,7 +138,7 @@
 #endif /* O */
 
 /*
- * Determine SIMD quads scale-factor for displacements based on RT_DATA-level.
+ * Determine SIMD quads scale-factor for displacements based on RT_DATA level.
  */
 #if   O == 16
 #define DP(dp) _DH(dp)
@@ -829,7 +829,7 @@ rt_si32 mask_init(rt_si32 simd)
 
     s_type = s_type == 0 ? 0xF : s_type & 0xF;
     n_simd = n_simd == 0 ? 16 : n_simd; /* <- 16 is the maximal native-size */
-    k_size = k_size == 0 ? 2 : k_size;   /* <- 2 is the optimal size-factor */
+    k_size = k_size == 0 ? 4 : k_size;   /* <- 4 is the maximal size-factor */
 
     for (; n_simd >= n && n_simd > 0; n_simd /= 2)
     {
@@ -841,8 +841,8 @@ rt_si32 mask_init(rt_si32 simd)
                 mask |= s_type;
             }
 #elif !defined RT_X32  && !defined RT_X64  && !defined RT_X86 /* modern RISCs */
-#if   (defined RT_SVEX1) || (defined RT_SVEX2)
-            s = (v_regs > 15 ? 0xC : 0xF);
+#if (defined RT_SVEX1) || (defined RT_SVEX2)
+            s = (v_regs > 15 || k == 1 ? 0xC : 0xF);
             s = (k_size == 2 ? 0x3 & s : s);
             if (k <= 1 && n_simd == 16 && v_regs <= 30)
             {
@@ -864,6 +864,7 @@ rt_si32 mask_init(rt_si32 simd)
             m = 2; s = 0x00030F;
 #if   (defined RT_P32) || (defined RT_P64)
             m = 4; s = 0x030F0F;
+            s_x2r8 = (k == 1 || k == 4 ? 0 : s_x2r8);
             if (k <= 1 && n && n_simd == 4 && v_regs <= 15)
             {
                 k_size = k = 4;
@@ -953,8 +954,15 @@ rt_si32 mask_init(rt_si32 simd)
 #endif /* all targets */
         }
 
-        k_size = k == 0 ? 2 : k;         /* <- 2 is the optimal size-factor */
+        k_size = k == 0 ? 4 : k;         /* <- 4 is the maximal size-factor */
     }
+
+#if   (defined RT_P32) || (defined RT_P64)
+    mask &= (s_type == 4 ? 0xFFFFFFBF : 0xFFFFFFFF); /* <- no 128-x2r8 vmx */
+#endif /* PPC targets */
+#if   (defined RT_X32) || (defined RT_X64) || (defined RT_X86)
+    mask &= (s_type>=1 && s_type<=2 ? 0xFFFFFFCF : -1); /* <- no fma3/avx2 */
+#endif /* X86 targets */
 
     return mask;
 }
@@ -991,7 +999,7 @@ rt_si32 from_mask(rt_si32 mask)
     }
 #elif !defined RT_X32  && !defined RT_X64  && !defined RT_X86 /* modern RISCs */
     v_regs = v_regs == 16 ? 15 : 8;
-#if   (defined RT_SVEX1) || (defined RT_SVEX2)
+#if (defined RT_SVEX1) || (defined RT_SVEX2)
     if (n_simd == 6)
     {
         n_simd = k_size * 8;
