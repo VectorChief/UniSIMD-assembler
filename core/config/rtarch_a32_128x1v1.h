@@ -117,21 +117,31 @@
 
 #define  B2(val, tp1, tp2)  B2##tp2
 #define  P2(val, tp1, tp2)  P2##tp2
+#define  L2(val, tp1, tp2)  L2##tp2
 #define  C2(val, tp1, tp2)  C2##tp2
 
 /* displacement encoding SIMD(TP2), ELEM(TP1) */
 
 #define B20(br) (br)
 #define P20(dp) (0x00000000 | ((dp) & 0xFFF0) << 6)
+#define L20(dp) (0x00000000 | ((dp) & 0xFFF0) << 6)
 #define C20(br, dp) EMPTY
+
+#define B21(br) TPxx
+#define P21(dp) (0x00000000)
+#define L21(dp) (0x00000000 | ((dp) & 0x0010) << 6)
+#define C21(br, dp) EMITW(0x52800000 | MRM(TDxx,    0x00,    0x00) |        \
+                             (0xFFFC & (dp)) << 5)                          \
+                    EMITW(0x0B000000 | MRM(TPxx,    (br),    TDxx) | ADR)
 
 #define B22(br) TPxx
 #define P22(dp) (0x00000000)
-#define C22(br, dp) EMITW(0x52800000 | MXM(TDxx,    0x00,    0x00) |        \
+#define L22(dp) (0x00000000 | ((dp) & 0x0010) << 6)
+#define C22(br, dp) EMITW(0x52800000 | MRM(TDxx,    0x00,    0x00) |        \
                              (0xFFF0 & (dp)) << 5)                          \
-                    EMITW(0x72A00000 | MXM(TDxx,    0x00,    0x00) |        \
+                    EMITW(0x72A00000 | MRM(TDxx,    0x00,    0x00) |        \
                              (0x7FFF & (dp) >> 16) << 5)                    \
-                    EMITW(0x0B000000 | MXM(TPxx,    (br),    TDxx) | ADR)
+                    EMITW(0x0B000000 | MRM(TPxx,    (br),    TDxx) | ADR)
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 

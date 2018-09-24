@@ -117,7 +117,7 @@
 
 /* displacement encoding SIMD(TP1) */
 
-#define F10(dp) (((dp)/(RT_SIMD/8)&0x07) << 10 | ((dp)/(RT_SIMD/8)&0xF8) << 13)
+#define F10(dp) (((dp)/(RT_SIMD/8)&0x07)<<10 | ((dp)/(RT_SIMD/8)&0xF8)<<13)
 
 #define F11(dp) (0x00000000)
 
@@ -739,8 +739,8 @@
 #define RT_SIMD_MASK_FULL32_SVE     0x01    /*  all satisfy the condition */
 
 #define mkjox_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        EMITW(0x04982000 | MXM(TmmM,    REG(XS), 0x00)|                     \
-                       RT_SIMD_MASK_##mask##32_SVE<<17)                     \
+        EMITW(0x04982000 | MXM(TmmM,    REG(XS), 0x00) |                    \
+                          RT_SIMD_MASK_##mask##32_SVE << 17)                \
         EMITW(0x0E043C00 | MXM(Teax,    TmmM,    0x00))                     \
         addwz_ri(Reax, IB(RT_SIMD_MASK_##mask##32_SVE))                     \
         jezxx_lb(lb)

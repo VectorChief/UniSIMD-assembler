@@ -715,8 +715,8 @@
 #define RT_SIMD_MASK_FULL64_SVE     0x01    /*  all satisfy the condition */
 
 #define mkjqx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        EMITW(0x04982000 | MXM(TmmM,    REG(XS), 0x00)|                     \
-                       RT_SIMD_MASK_##mask##64_SVE<<17)                     \
+        EMITW(0x04982000 | MXM(TmmM,    REG(XS), 0x00) |                    \
+                          RT_SIMD_MASK_##mask##64_SVE << 17)                \
         EMITW(0x0E043C00 | MXM(Teax,    TmmM,    0x00))                     \
         addwz_ri(Reax, IB(RT_SIMD_MASK_##mask##64_SVE))                     \
         jezxx_lb(lb)

@@ -121,6 +121,8 @@
 #define  B2(val, tp1, tp2)  B2##tp2
 #define  P2(val, tp1, tp2)  P2##tp2
 #define  F2(val, tp1, tp2)  F2##tp2
+#define  L2(val, tp1, tp2)  L2##tp2
+#define  K2(val, tp1, tp2)  K2##tp2
 #define  C2(val, tp1, tp2)  C2##tp2
 
 /* displacement encoding SIMD(TP2), ELEM(TP1) */
@@ -128,17 +130,23 @@
 #define B20(br) (br)
 #define P20(dp) (0x00000000 | ((dp) & 0xFF8) << 13)
 #define F20(dp) (0x01FF0000 & ((dp) & 0xFFC) << (14 - RT_SIMD_COMPAT_D12))
+#define L20(dp) (0x00000000 | ((dp) & 0xFF8) << 13)
+#define K20(dp) (0x01FF0000 & ((dp) & 0xFFC) << (14 - RT_SIMD_COMPAT_D12))
 #define C20(br, dp) EMPTY
 
 #define B21(br) TPxx
 #define P21(dp) (0x00000000)
 #define F21(dp) (0x00000000)
+#define L21(dp) (0x00000000 | ((dp) & 0x010) << 13)
+#define K21(dp) (0x01FF0000 & ((dp) & 0x010) << (14 - RT_SIMD_COMPAT_D12))
 #define C21(br, dp) EMITW(0x34000000 | TDxx << 16 | (0xFFFC & (dp)))        \
                     EMITW(0x00000021 | MRM(TPxx,    (br),    TDxx) | ADR)
 
 #define B22(br) TPxx
 #define P22(dp) (0x00000000)
 #define F22(dp) (0x00000000)
+#define L22(dp) (0x00000000 | ((dp) & 0x010) << 13)
+#define K22(dp) (0x01FF0000 & ((dp) & 0x010) << (14 - RT_SIMD_COMPAT_D12))
 #define C22(br, dp) EMITW(0x3C000000 | TDxx << 16 | (0x7FFF & (dp) >> 16))  \
                     EMITW(0x34000000 | TDxx << 16 | TDxx << 21 |            \
                                                     (0xFFFC & (dp)))        \

@@ -1377,8 +1377,8 @@
         EMITS(0x38000010 | MRM(T1xx, 0x00, 0x00)) /* r21 <- 16 */           \
         EMITS(0x38000020 | MRM(T2xx, 0x00, 0x00)) /* r22 <- 32 */           \
         EMITS(0x38000030 | MRM(T3xx, 0x00, 0x00)) /* r23 <- 48 */           \
-        sregs_sa()                                                          \
         EMITW(0x7C000278 | MSM(TZxx, TZxx, TZxx)) /* r0  <- 0 (xor) */      \
+        sregs_sa()                                                          \
         EMITW(0x7C000040 | MRM(0x08, TLxx, TLxx)) /* cmplw cr2, r24, r24 */ \
         EMITW(0x7C0002A6 | MRM(TCxx, 0x00, 0x09)) /* ctr -> r27 */          \
         EMITS(0x7C0002A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave -> r28 */       \
@@ -1436,8 +1436,8 @@
         EMITS(0x38000010 | MRM(T1xx, 0x00, 0x00)) /* r21 <- 16 */           \
         EMITS(0x38000020 | MRM(T2xx, 0x00, 0x00)) /* r22 <- 32 */           \
         EMITS(0x38000030 | MRM(T3xx, 0x00, 0x00)) /* r23 <- 48 */           \
-        sregs_sa()                                                          \
         EMITW(0x7C000278 | MSM(TZxx, TZxx, TZxx)) /* r0  <- 0 (xor) */      \
+        sregs_sa()                                                          \
         EMITW(0x7C000040 | MRM(0x08, TLxx, TLxx)) /* cmplw cr2, r24, r24 */ \
         EMITW(0x7C0002A6 | MRM(TCxx, 0x00, 0x09)) /* ctr -> r27 */          \
         EMITS(0x7C0002A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave -> r28 */       \
