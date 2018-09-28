@@ -145,7 +145,7 @@
 #if   (defined RT_M64)
 
 /******************************************************************************/
-/**********************************   M64   ***********************************/
+/**********************************   BASE   **********************************/
 /******************************************************************************/
 
 /* mov (D = S)
@@ -1498,14 +1498,14 @@
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    TDxx) | (+0x80 & 0xFFFF))  \
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x88 & 0xFFFF))  \
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x90 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,  1+TNxx) | (+0x98 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,  2+TNxx) | (+0xA0 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,  3+TNxx) | (+0xA8 & 0xFFFF))
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TAxx) | (+0x98 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TCxx) | (+0xA0 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TExx) | (+0xA8 & 0xFFFF))
 
 #define stack_la()   /* load all, 8 temps + [RegE - Reax], 22 regs total */ \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,  3+TNxx) | (+0xA8 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,  2+TNxx) | (+0xA0 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,  1+TNxx) | (+0x98 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TExx) | (+0xA8 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TCxx) | (+0xA0 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TAxx) | (+0x98 & 0xFFFF))  \
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    TNxx) | (+0x90 & 0xFFFF))  \
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    TPxx) | (+0x88 & 0xFFFF))  \
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    TDxx) | (+0x80 & 0xFFFF))  \

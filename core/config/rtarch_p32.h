@@ -250,26 +250,29 @@
 #define SPL(DT) (SPLT+(2*RT_ENDIAN-1)*(3 & VAL(DT) >> 2))
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
+/* four registers below T0xx,T1xx,T2xx,T3xx must occupy consecutive indices
+ * and start with a multiple-of-4 index (like r20), constructed from offsets */
 
 #define Tff1    0x11  /* f17 */
 #define Tff2    0x12  /* f18 */
 
+#define T0xx    0x14  /* r20, extra reg for fast SIMD-load */
+#define T1xx    0x15  /* r21, extra reg for fast SIMD-load */
+#define T2xx    0x16  /* r22, extra reg for fast SIMD-load */
+#define T3xx    0x17  /* r23, extra reg for fast SIMD-load */
+
 #define TLxx    0x18  /* r24, left  arg for compare */
 #define TRxx    0x19  /* r25, right arg for compare */
 #define TMxx    0x18  /* r24 */
-#define TIxx    0x19  /* r25, not used at the same time with TDxx */
-#define TDxx    0x1D  /* r29, not used at the same time with TIxx */
-#define TPxx    0x1A  /* r26 */
-#define TCxx    0x1B  /* r27 */
-#define TVxx    0x1C  /* r28 */
-#define TZxx    0x00  /* r0 */
+#define TIxx    0x19  /* r25 */
+#define TDxx    0x1A  /* r26 */
+#define TPxx    0x1B  /* r27 */
+#define TCxx    0x1C  /* r28 */
+#define TVxx    0x1D  /* r29 */
+#define TZxx    0x00  /* r0, must be zero for logic ops */
 #define SPxx    0x01  /* r1 */
-#define T0xx    0x14  /* r20 */
-#define T1xx    0x15  /* r21 */
-#define T2xx    0x16  /* r22 */
-#define T3xx    0x17  /* r23 */
 
-#define Teax    0x04  /* r4, must be larger reg-num than zero (r0) */
+#define Teax    0x04  /* r4, must be non-zero reg-index */
 #define Tecx    0x0F  /* r15 */
 #define Tedx    0x10  /* r16 */
 #define Tebx    0x03  /* r3 */
@@ -363,7 +366,7 @@
 #define W(p1, p2, p3)       p1,  p2,  p3
 
 /******************************************************************************/
-/**********************************   P32   ***********************************/
+/**********************************   BASE   **********************************/
 /******************************************************************************/
 
 /* mov (D = S)

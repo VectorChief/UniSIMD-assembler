@@ -18,7 +18,7 @@
 /******************************************************************************/
 
 /*
- * rtbase.h: Base type definitions file.
+ * rtbase.h: Base type definitions file (root header for apps to include).
  * The table of contents is provided below.
  *
  * Recommended naming scheme for C++ types and definitions:

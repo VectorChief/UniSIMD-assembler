@@ -235,33 +235,34 @@
                              (0x7FFF & (dp) >> 16) << 5)
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
+/* four registers below TNxx,TAxx,TCxx,TExx must occupy consecutive indices */
 
-#define TNxx    0x16  /* w22, default FCTRL round mode */
-#define TAxx    0x17  /* w23, extra reg for FAST_FCTRL */
-#define TCxx    0x18  /* w24, extra reg for FAST_FCTRL */
-#define TExx    0x19  /* w25, extra reg for FAST_FCTRL */
+#define TNxx    0x14  /* x20, default FCTRL round mode */
+#define TAxx    0x15  /* x21, extra reg for FAST_FCTRL */
+#define TCxx    0x16  /* x22, extra reg for FAST_FCTRL */
+#define TExx    0x17  /* x23, extra reg for FAST_FCTRL */
 
-#define TMxx    0x1A  /* w26 */
-#define TIxx    0x1B  /* w27, not used at the same time with TDxx */
-#define TDxx    0x1B  /* w27, not used at the same time with TIxx */
-#define TPxx    0x1C  /* w28 */
-#define TZxx    0x1F  /* w31 */
-#define SPxx    0x1F  /* w31 */
+#define TMxx    0x18  /* x24 */
+#define TIxx    0x19  /* x25 */
+#define TDxx    0x1A  /* x26 */
+#define TPxx    0x1B  /* x27 */
+#define TZxx    0x1F  /* x31 */
+#define SPxx    0x1F  /* x31 */
 
-#define Teax    0x00  /* w0 */
-#define Tecx    0x01  /* w1 */
-#define Tedx    0x02  /* w2 */
-#define Tebx    0x03  /* w3 */
-#define Tebp    0x05  /* w5 */
-#define Tesi    0x06  /* w6 */
-#define Tedi    0x07  /* w7 */
-#define Teg8    0x08  /* w8 */
-#define Teg9    0x09  /* w9 */
-#define TegA    0x0A  /* w10 */
-#define TegB    0x0B  /* w11 */
-#define TegC    0x0C  /* w12 */
-#define TegD    0x0D  /* w13 */
-#define TegE    0x0E  /* w14 */
+#define Teax    0x00  /* x0 */
+#define Tecx    0x01  /* x1 */
+#define Tedx    0x02  /* x2 */
+#define Tebx    0x03  /* x3 */
+#define Tebp    0x05  /* x5 */
+#define Tesi    0x06  /* x6 */
+#define Tedi    0x07  /* x7 */
+#define Teg8    0x08  /* x8 */
+#define Teg9    0x09  /* x9 */
+#define TegA    0x0A  /* x10 */
+#define TegB    0x0B  /* x11 */
+#define TegC    0x0C  /* x12 */
+#define TegD    0x0D  /* x13 */
+#define TegE    0x0E  /* x14 */
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -351,7 +352,7 @@
 #define W(p1, p2, p3)       p1,  p2,  p3
 
 /******************************************************************************/
-/**********************************   A32   ***********************************/
+/**********************************   BASE   **********************************/
 /******************************************************************************/
 
 /* mov (D = S)
@@ -1563,7 +1564,7 @@
 #define stack_ld(RD)                                                        \
         EMITW(0xA8C10000 | MRM(REG(RD), SPxx,    0x00) | TZxx << 10)
 
-#define stack_sa()   /* save all, [Reax - RegE] + 7 temps, 21 regs total */ \
+#define stack_sa()   /* save all, [Reax - RegE] + 8 temps, 22 regs total */ \
         EMITW(0xA9BF0000 | MRM(Teax,    SPxx,    0x00) | Tecx << 10)        \
         EMITW(0xA9BF0000 | MRM(Tedx,    SPxx,    0x00) | Tebx << 10)        \
         EMITW(0xA9BF0000 | MRM(Tebp,    SPxx,    0x00) | Tesi << 10)        \
@@ -1572,14 +1573,14 @@
         EMITW(0xA9BF0000 | MRM(TegB,    SPxx,    0x00) | TegC << 10)        \
         EMITW(0xA9BF0000 | MRM(TegD,    SPxx,    0x00) | TegE << 10)        \
         EMITW(0xA9BF0000 | MRM(TMxx,    SPxx,    0x00) | TIxx << 10)        \
-        EMITW(0xA9BF0000 | MRM(TPxx,    SPxx,    0x00) | TNxx << 10)        \
-        EMITW(0xA9BF0000 | MRM(TNxx+1,  SPxx,    0x00) |(TNxx+2) << 10)     \
-        EMITW(0xA9BF0000 | MRM(TNxx+3,  SPxx,    0x00) | TZxx << 10)
+        EMITW(0xA9BF0000 | MRM(TDxx,    SPxx,    0x00) | TPxx << 10)        \
+        EMITW(0xA9BF0000 | MRM(TNxx,    SPxx,    0x00) | TAxx << 10)        \
+        EMITW(0xA9BF0000 | MRM(TCxx,    SPxx,    0x00) | TExx << 10)
 
-#define stack_la()   /* load all, 7 temps + [RegE - Reax], 21 regs total */ \
-        EMITW(0xA8C10000 | MRM(TNxx+3,  SPxx,    0x00) | TZxx << 10)        \
-        EMITW(0xA8C10000 | MRM(TNxx+1,  SPxx,    0x00) |(TNxx+2) << 10)     \
-        EMITW(0xA8C10000 | MRM(TPxx,    SPxx,    0x00) | TNxx << 10)        \
+#define stack_la()   /* load all, 8 temps + [RegE - Reax], 22 regs total */ \
+        EMITW(0xA8C10000 | MRM(TCxx,    SPxx,    0x00) | TExx << 10)        \
+        EMITW(0xA8C10000 | MRM(TNxx,    SPxx,    0x00) | TAxx << 10)        \
+        EMITW(0xA8C10000 | MRM(TDxx,    SPxx,    0x00) | TPxx << 10)        \
         EMITW(0xA8C10000 | MRM(TMxx,    SPxx,    0x00) | TIxx << 10)        \
         EMITW(0xA8C10000 | MRM(TegD,    SPxx,    0x00) | TegE << 10)        \
         EMITW(0xA8C10000 | MRM(TegB,    SPxx,    0x00) | TegC << 10)        \

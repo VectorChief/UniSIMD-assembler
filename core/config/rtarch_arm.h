@@ -237,6 +237,7 @@
                             (0x70000 & (dp) >> 12) | (0xFFF & (dp) >> 16))
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
+/* four registers below TNxx,TAxx,TCxx,TExx must retain their current mapping */
 
 #define TNxx    0x08  /* r8,  default FCTRL round mode */
 #define TAxx    0x0A  /* r10, extra reg for FAST_FCTRL */
@@ -316,7 +317,7 @@
 #define W(p1, p2, p3)       p1,  p2,  p3
 
 /******************************************************************************/
-/**********************************   ARM   ***********************************/
+/**********************************   BASE   **********************************/
 /******************************************************************************/
 
 /* mov (D = S)

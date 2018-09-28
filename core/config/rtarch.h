@@ -12,11 +12,12 @@
 /******************************************************************************/
 
 /*
- * rtarch.h: Main architecture selection file.
+ * rtarch.h: Architecture selection file (apps include rtbase.h as root).
+ * The initial documentation is provided below with links to other files.
  *
- * Main file of the unified SIMD assembler framework
+ * Unified SIMD assembler framework consists of multiple header files and is
  * designed to be compatible with different processor architectures,
- * while maintaining strictly defined common API. Namespaces for current
+ * while maintaining clearly defined common API. Namespaces for current
  * and future instruction subsets are defined (reserved) in the next section.
  *
  * Definitions provided in this file are intended to hide the differences of
@@ -33,89 +34,93 @@
  * Current naming scheme for legacy, modern and potential future targets.
  *
  * Legacy 32/64-bit BASE
- *    and 32/64-bit SIMD targets:
+ *   plus 32/64-bit SIMD combinations:
  *
- *  - rtarch_arm.h         - AArch32:ARMv7 ISA, 16 BASE regs, 8 + temps used
- *  - rtarch_arm_128x1v4.h - 32-bit elements, 16 SIMD regs, MPE 128-bit NEON, 8+
- *  - rtarch_p32.h         - Power 32-bit ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_p32_128x1v4.h - 32-bit elements, 32 SIMD regs, VMX 128-bit, 16,15/8
- *  - rtarch_p32_128x2vG.h - 32-bit elements, 32 SIMD regs, VMX 128-bit pairs, 8
- *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 14 + temps used
- *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 14 + temps used
- *  - rtarch_x32_128x1v4.h - 32-bit elements, 16 SIMD regs, SSE 128-bit, 16 used
- *  - rtarch_x64_128x1v4.h - 64-bit elements, 16 SIMD regs, SSE 128-bit, 16 used
- *  - rtarch_x32_128x2v4.h - 32-bit elements, 16 SIMD regs, SSE 128-bit pairs, 8
- *  - rtarch_x64_128x2v4.h - 64-bit elements, 16 SIMD regs, SSE 128-bit pairs, 8
- *  - rtarch_x32_256x2v2.h - 32-bit elements, 16 SIMD regs, AVX 256-bit pairs, 8
- *  - rtarch_x64_256x2v2.h - 64-bit elements, 16 SIMD regs, AVX 256-bit pairs, 8
- *  - rtarch_x32_512x4v2.h - 32-bit elements, 32 SIMD regs, AVX 512-bit quads, 8
- *  - rtarch_x64_512x4v2.h - 64-bit elements, 32 SIMD regs, AVX 512-bit quads, 8
- *  - rtarch_x86.h         - x86 32-bit ISA, 8 BASE regs, 6 + esp, ebp used
- *  - rtarch_x86_128x1v4.h - 32-bit elements, 8 SIMD regs, SSE 128-bit, 8 used
- *  - rtarch_x86_256x1v2.h - 32-bit elements, 8 SIMD regs, AVX 256-bit, 8 used
- *  - rtarch_x86_512x1v2.h - 32-bit elements, 8 SIMD regs, AVX 512-bit, 8 used
+ *  - rtarch_arm.h         - AArch32:ARMv7 ISA, 16 BASE regs, 8+temps used
+ *  - rtarch_arm_128x1v4.h - fp32, 16 SIMD regs, NEON 128-bit, 8+temps used
+ *  - rtarch_p32.h         - Power 32-bit ISA, 32 BASE regs, 14+temps used
+ *  - rtarch_p32_128x1v4.h - fp32, 32 SIMD regs, VMX 128-bit, 15+temps used
+ *  - rtarch_p32_128x2vG.h - fp32, 32 SIMD regs, 8 128-bit pairs, 15+temps used
+ *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 14+temps used
+ *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 14+temps used
+ *  - rtarch_x32_128x1v4.h - fp32, 16 SIMD regs, SSE 128-bit, all 16 can be used
+ *  - rtarch_x64_128x1v4.h - fp64, 16 SIMD regs, SSE 128-bit, all 16 can be used
+ *  - rtarch_x32_128x2v4.h - fp32, 16 SIMD regs, 8 SSE 128-bit pairs, 16 used
+ *  - rtarch_x64_128x2v4.h - fp64, 16 SIMD regs, 8 SSE 128-bit pairs, 16 used
+ *  - rtarch_x32_256x2v2.h - fp32, 16 SIMD regs, 8 AVX 256-bit pairs, 16 used
+ *  - rtarch_x64_256x2v2.h - fp64, 16 SIMD regs, 8 AVX 256-bit pairs, 16 used
+ *  - rtarch_x32_512x4v2.h - fp32, 32 SIMD regs, 8 AVX 512-bit quads, 32 used
+ *  - rtarch_x64_512x4v2.h - fp64, 32 SIMD regs, 8 AVX 512-bit quads, 32 used
+ *  - rtarch_x86.h         - x86 32-bit ISA, 8 BASE regs, 6+esp/ebp used
+ *  - rtarch_x86_128x1v4.h - fp32, 8 SIMD regs, SSE 128-bit, all 8 used
+ *  - rtarch_x86_256x1v2.h - fp32, 8 SIMD regs, AVX 256-bit, all 8 used
+ *  - rtarch_x86_512x1v2.h - fp32, 8 SIMD regs, AVX 512-bit, all 8 used
  *
  * Modern 32/64-bit BASE
- *    and 32/64-bit SIMD targets:
+ *   plus 32/64-bit SIMD combination:
  *
- *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 BASE regs, 14 + temps used
- *  - rtarch_a64.h         - AArch64:ARMv8 ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_a32_128x1v1.h - 32-bit elements, 32 SIMD regs, MPE 128-bit NEON, 30
- *  - rtarch_a64_128x1v1.h - 64-bit elements, 32 SIMD regs, MPE 128-bit NEON, 30
- *  - rtarch_a32_128x2v1.h - 32-bit elements, 32 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_a64_128x2v1.h - 64-bit elements, 32 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_m32.h         - MIPS32 r5/r6 ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_m64.h         - MIPS64 r5/r6 ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_m32_128x1v1.h - 32-bit elements, 32 SIMD regs, MSA 128-bit, 30 used
- *  - rtarch_m64_128x1v1.h - 64-bit elements, 32 SIMD regs, MSA 128-bit, 30 used
- *  - rtarch_m32_128x2v1.h - 32-bit elements, 32 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_m64_128x2v1.h - 64-bit elements, 32 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_p32.h         - Power 32-bit ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_p64.h         - Power 64-bit ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_p32_128x1v1.h - 32-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
- *  - rtarch_p32_128x1v2.h - 32-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
- *  - rtarch_p64_128x1v1.h - 64-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
- *  - rtarch_p64_128x1v2.h - 64-bit elements, 64 SIMD regs, VSX 128-bit, 30 used
- *  - rtarch_p32_128x2v1.h - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_p32_128x2v2.h - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_p64_128x2v1.h - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_p64_128x2v2.h - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_p32_128x2v4.h - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 30
- *  - rtarch_p32_128x2v8.h - 32-bit elements, 64 SIMD regs, pairs of 128-bit, 30
- *  - rtarch_p64_128x2v4.h - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 30
- *  - rtarch_p64_128x2v8.h - 64-bit elements, 64 SIMD regs, pairs of 128-bit, 30
- *  - rtarch_p32_128x4v1.h - 32-bit elements, 64 SIMD regs, quads of 128-bit, 15
- *  - rtarch_p32_128x4v2.h - 32-bit elements, 64 SIMD regs, quads of 128-bit, 15
- *  - rtarch_p64_128x4v1.h - 64-bit elements, 64 SIMD regs, quads of 128-bit, 15
- *  - rtarch_p64_128x4v2.h - 64-bit elements, 64 SIMD regs, quads of 128-bit, 15
- *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 14 + temps used
- *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 14 + temps used
- *  - rtarch_x32_128x1v2.h - 32-bit elements, 32 SIMD regs, AVX-512+ 128-bit, 30
- *  - rtarch_x64_128x1v2.h - 64-bit elements, 32 SIMD regs, AVX-512+ 128-bit, 30
- *  - rtarch_x32_128x1v8.h - 32-bit elements, 16 SIMD regs, AVX 128-bit, 16 used
- *  - rtarch_x64_128x1v8.h - 64-bit elements, 16 SIMD regs, AVX 128-bit, 16 used
- *  - rtarch_x32_256x1v2.h - 32-bit elements, 16 SIMD regs, AVX 256-bit, 16 used
- *  - rtarch_x64_256x1v2.h - 64-bit elements, 16 SIMD regs, AVX 256-bit, 16 used
- *  - rtarch_x32_256x1v8.h - 32-bit elements, 32 SIMD regs, AVX-512+ 256-bit, 30
- *  - rtarch_x64_256x1v8.h - 64-bit elements, 32 SIMD regs, AVX-512+ 256-bit, 30
- *  - rtarch_x32_512x1v2.h - 32-bit elements, 32 SIMD regs, AVX 512-bit, 16 used
- *  - rtarch_x64_512x1v2.h - 64-bit elements, 32 SIMD regs, AVX 512-bit, 16 used
- *  - rtarch_x32_512x2v2.h - 32-bit elements, 32 SIMD regs, AVX 512-bit pairs*16
- *  - rtarch_x64_512x2v2.h - 64-bit elements, 32 SIMD regs, AVX 512-bit pairs*16
+ *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 BASE regs, 14+temps used
+ *  - rtarch_a64.h         - AArch64:ARMv8 ISA, 32 BASE regs, 14+temps used
+ *  - rtarch_a32_128x1v1.h - fp32, 32 SIMD regs, AdvSIMD 128-bit, 30+temps used
+ *  - rtarch_a64_128x1v1.h - fp64, 32 SIMD regs, AdvSIMD 128-bit, 30+temps used
+ *  - rtarch_a32_128x2v1.h - fp32, 32 SIMD regs, 15 128-bit pairs, 30+temps used
+ *  - rtarch_a64_128x2v1.h - fp64, 32 SIMD regs, 15 128-bit pairs, 30+temps used
+ *  - rtarch_a32_SVEx1v1.h - fp32, 32 SIMD regs, SVE 256:2048-bit, 30+temps used
+ *  - rtarch_a64_SVEx1v1.h - fp64, 32 SIMD regs, SVE 256:2048-bit, 30+temps used
+ *  - rtarch_a32_SVEx2v1.h - fp32, 32 SIMD regs, 15 ARM-SVE pairs, 30+temps used
+ *  - rtarch_a64_SVEx2v1.h - fp64, 32 SIMD regs, 15 ARM-SVE pairs, 30+temps used
+ *  - rtarch_m32.h         - MIPS32 r5/r6 ISA, 32 BASE regs, 14+temps used
+ *  - rtarch_m64.h         - MIPS64 r5/r6 ISA, 32 BASE regs, 14+temps used
+ *  - rtarch_m32_128x1v1.h - fp32, 32 SIMD regs, MSA 128-bit, 30+temps used
+ *  - rtarch_m64_128x1v1.h - fp64, 32 SIMD regs, MSA 128-bit, 30+temps used
+ *  - rtarch_m32_128x2v1.h - fp32, 32 SIMD regs, 15 128-bit pairs, 30+temps used
+ *  - rtarch_m64_128x2v1.h - fp64, 32 SIMD regs, 15 128-bit pairs, 30+temps used
+ *  - rtarch_p32.h         - Power 32-bit ISA, 32 BASE regs, 14+temps used
+ *  - rtarch_p64.h         - Power 64-bit ISA, 32 BASE regs, 14+temps used
+ *  - rtarch_p32_128x1v1.h - fp32, 64 SIMD regs, VSX1+2 128-bit, 30+temps used
+ *  - rtarch_p64_128x1v1.h - fp64, 64 SIMD regs, VSX1+2 128-bit, 30+temps used
+ *  - rtarch_p32_128x2v1.h - fp32, 64 SIMD regs, 15 128-bit pairs, 30+temps used
+ *  - rtarch_p64_128x2v1.h - fp64, 64 SIMD regs, 15 128-bit pairs, 30+temps used
+ *  - rtarch_p32_128x2v4.h - fp32, 64 SIMD regs, 30 128-bit pairs, 60+temps used
+ *  - rtarch_p64_128x2v4.h - fp64, 64 SIMD regs, 30 128-bit pairs, 60+temps used
+ *  - rtarch_p32_128x4v1.h - fp32, 64 SIMD regs, 15 128-bit quads, 60+temps used
+ *  - rtarch_p64_128x4v1.h - fp64, 64 SIMD regs, 15 128-bit quads, 60+temps used
+ *  - rtarch_p32_128x1v2.h - fp32, 64 SIMD regs, VSX3 128-bit, 30+temps used
+ *  - rtarch_p64_128x1v2.h - fp64, 64 SIMD regs, VSX3 128-bit, 30+temps used
+ *  - rtarch_p32_128x2v2.h - fp32, 64 SIMD regs, 15 128-bit pairs, 30+temps used
+ *  - rtarch_p64_128x2v2.h - fp64, 64 SIMD regs, 15 128-bit pairs, 30+temps used
+ *  - rtarch_p32_128x2v8.h - fp32, 64 SIMD regs, 30 128-bit pairs, 60+temps used
+ *  - rtarch_p64_128x2v8.h - fp64, 64 SIMD regs, 30 128-bit pairs, 60+temps used
+ *  - rtarch_p32_128x4v2.h - fp32, 64 SIMD regs, 15 128-bit quads, 60+temps used
+ *  - rtarch_p64_128x4v2.h - fp64, 64 SIMD regs, 15 128-bit quads, 60+temps used
+ *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 14+temps used
+ *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 14+temps used
+ *  - rtarch_x32_128x1v2.h - fp32, 32 SIMD regs, AVX-512+ 128-bit, only 30 used
+ *  - rtarch_x64_128x1v2.h - fp64, 32 SIMD regs, AVX-512+ 128-bit, only 30 used
+ *  - rtarch_x32_128x1v8.h - fp32, 16 SIMD regs, AVX 128-bit, all 16 can be used
+ *  - rtarch_x64_128x1v8.h - fp64, 16 SIMD regs, AVX 128-bit, all 16 can be used
+ *  - rtarch_x32_256x1v2.h - fp32, 16 SIMD regs, AVX 256-bit, all 16 can be used
+ *  - rtarch_x64_256x1v2.h - fp64, 16 SIMD regs, AVX 256-bit, all 16 can be used
+ *  - rtarch_x32_256x1v8.h - fp32, 32 SIMD regs, AVX-512+ 256-bit, only 30 used
+ *  - rtarch_x64_256x1v8.h - fp64, 32 SIMD regs, AVX-512+ 256-bit, only 30 used
+ *  - rtarch_x32_512x1v8.h - fp32, 32 SIMD regs, AVX-512+ 512-bit, only 30 used
+ *  - rtarch_x64_512x1v8.h - fp64, 32 SIMD regs, AVX-512+ 512-bit, only 30 used
+ *  - rtarch_x32_512x2v2.h - fp32, 32 SIMD regs, 16 512-bit pairs, 32 used
+ *  - rtarch_x64_512x2v2.h - fp64, 32 SIMD regs, 16 512-bit pairs, 32 used
  *
  * Future 32/64-bit BASE
- *    and 32/64-bit SIMD targets:
+ *   plus 32/64-bit SIMD combinations:
  *
- *  - rtarch_a32_256x1v*.h - 32-bit elements, 32 SIMD regs, SVE 256-bit, 30 used
- *  - rtarch_a64_256x1v*.h - 64-bit elements, 32 SIMD regs, SVE 256-bit, 30 used
- *  - rtarch_a32_512x1v*.h - 32-bit elements, 32 SIMD regs, SVE 512-bit, 30 used
- *  - rtarch_a64_512x1v*.h - 64-bit elements, 32 SIMD regs, SVE 512-bit, 30 used
- *  - rtarch_r32.h         - RISC-V 32-bit ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_r64.h         - RISC-V 64-bit ISA, 32 BASE regs, 14 + temps used
- *  - rtarch_r32_128x1v*.h - 32-bit elements, 32 SIMD regs, SIMD 128-bit, 30
- *  - rtarch_r64_128x1v*.h - 64-bit elements, 32 SIMD regs, SIMD 128-bit, 30
- *  - rtarch_r32_128x2v*.h - 32-bit elements, 32 SIMD regs, pairs of 128-bit, 15
- *  - rtarch_r64_128x2v*.h - 64-bit elements, 32 SIMD regs, pairs of 128-bit, 15
+ *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 14+temps used
+ *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 14+temps used
+ *  - rtarch_x32_128x1v1.h - fp32, 16 SIMD regs, SSE 128-bit, 30 regs emulated
+ *  - rtarch_x64_128x1v1.h - fp64, 16 SIMD regs, SSE 128-bit, 30 regs emulated
+ *  - rtarch_x32_256x1v4.h - fp32, 16 SIMD regs, AVX 256-bit, 30 regs emulated
+ *  - rtarch_x64_256x1v4.h - fp64, 16 SIMD regs, AVX 256-bit, 30 regs emulated
+ *  - rtarch_r32.h         - RISC-V 32-bit ISA, 32 BASE regs, 14+temps used
+ *  - rtarch_r64.h         - RISC-V 64-bit ISA, 32 BASE regs, 14+temps used
+ *  - rtarch_r32_***x*v*.h - fp32, SIMD alternative for RISC-V
+ *  - rtarch_r64_***x*v*.h - fp64, SIMD alternative for RISC-V
  *
  * not all registers in target descriptions are always exposed for apps to use
  * flags RT_BASE_REGS and RT_SIMD_REGS are available for rough differentiation
@@ -132,8 +137,8 @@
  *  - Reax, ... , Redi, Reg8, Reg9, RegA, ... , RegF
  *  - Xmm0, ... , Xmm7, Xmm8, Xmm9, XmmA, ... , XmmF
  *
- * Future 32 BASE and 32 SIMD registers:
- *  - Reax, ... , Redi, Reg8, Reg9, RegA, ... , RegV
+ * Modern 16 BASE and 32 SIMD registers:
+ *  - Reax, ... , Redi, Reg8, Reg9, RegA, ... , RegF
  *  - Xmm0, ... , Xmm7, Xmm8, Xmm9, XmmA, ... , XmmV
  *
  * Although register names are fixed, register sizes are not and depend
@@ -753,10 +758,10 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
-        EMITS(0x2518E3E0)                                                   \
-        movpx_ld(XmmE, Mebp, inf_GPC07)                                     \
-        EMITS(0x04603000 | MXM(TmmQ, 0x0E, 0x0E))                           \
-        EMITW(0x52A00000 | MRM(TNxx, 0x00, 0x00)) /* w22 <- (0 << 22) */
+        EMITS(0x2518E3E0)                    /* SVE: p0  <- all-ones */     \
+        movpx_ld(XmmE, Mebp, inf_GPC07)      /* SVE: z14 <- all-ones */     \
+        EMITS(0x04603000 | MXM(TmmQ, 0x0E, 0x0E)) /* z15 <- z14 (or) */     \
+        EMITW(0x52A00000 | MRM(TNxx, 0x00, 0x00)) /* x20 <- (0 << 22) */
 
 #define ASM_LEAVE(__Info__)                                                 \
         sregs_la()                                                          \
@@ -782,13 +787,13 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
-        EMITS(0x2518E3E0)                                                   \
-        movpx_ld(XmmE, Mebp, inf_GPC07)                                     \
-        EMITS(0x04603000 | MXM(TmmQ, 0x0E, 0x0E))                           \
-        EMITW(0x52A01800 | MRM(TExx, 0x00, 0x00)) /* w25 <- (3 << 22) */    \
-        EMITW(0x52A01000 | MRM(TCxx, 0x00, 0x00)) /* w24 <- (2 << 22) */    \
-        EMITW(0x52A00800 | MRM(TAxx, 0x00, 0x00)) /* w23 <- (1 << 22) */    \
-        EMITW(0x52A00000 | MRM(TNxx, 0x00, 0x00)) /* w22 <- (0 << 22) */
+        EMITS(0x2518E3E0)                    /* SVE: p0  <- all-ones */     \
+        movpx_ld(XmmE, Mebp, inf_GPC07)      /* SVE: z14 <- all-ones */     \
+        EMITS(0x04603000 | MXM(TmmQ, 0x0E, 0x0E)) /* z15 <- z14 (or) */     \
+        EMITW(0x52A01800 | MRM(TExx, 0x00, 0x00)) /* x23 <- (3 << 22) */    \
+        EMITW(0x52A01000 | MRM(TCxx, 0x00, 0x00)) /* x22 <- (2 << 22) */    \
+        EMITW(0x52A00800 | MRM(TAxx, 0x00, 0x00)) /* x21 <- (1 << 22) */    \
+        EMITW(0x52A00000 | MRM(TNxx, 0x00, 0x00)) /* x20 <- (0 << 22) */
 
 #define ASM_LEAVE(__Info__)                                                 \
         sregs_la()                                                          \
@@ -830,15 +835,15 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
-        EMITS(0x2518E3E0)                                                   \
-        movpx_ld(XmmE, Mebp, inf_GPC07)                                     \
-        EMITS(0x04603000 | MXM(TmmQ, 0x0E, 0x0E))                           \
-        EMITW(0x52A02000 | MRM(TNxx, 0x00, 0x00)) /* w22 <- (4 << 22) */    \
-        EMITW(0xD51B4400 | MRM(TNxx, 0x00, 0x00)) /* fpcr <- w22 */
+        EMITS(0x2518E3E0)                    /* SVE: p0  <- all-ones */     \
+        movpx_ld(XmmE, Mebp, inf_GPC07)      /* SVE: z14 <- all-ones */     \
+        EMITS(0x04603000 | MXM(TmmQ, 0x0E, 0x0E)) /* z15 <- z14 (or) */     \
+        EMITW(0x52A02000 | MRM(TNxx, 0x00, 0x00)) /* x20 <- (4 << 22) */    \
+        EMITW(0xD51B4400 | MRM(TNxx, 0x00, 0x00)) /* fpcr <- x20 */
 
 #define ASM_LEAVE_F(__Info__)                                               \
-        EMITW(0x52A00000 | MRM(TNxx, 0x00, 0x00)) /* w22 <- (0 << 22) */    \
-        EMITW(0xD51B4400 | MRM(TNxx, 0x00, 0x00)) /* fpcr <- w22 */         \
+        EMITW(0x52A00000 | MRM(TNxx, 0x00, 0x00)) /* x20 <- (0 << 22) */    \
+        EMITW(0xD51B4400 | MRM(TNxx, 0x00, 0x00)) /* fpcr <- x20 */         \
         sregs_la()                                                          \
         stack_la()                                                          \
         movlb_ld(%[Reax_])                                                  \
@@ -862,18 +867,18 @@
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
-        EMITS(0x2518E3E0)                                                   \
-        movpx_ld(XmmE, Mebp, inf_GPC07)                                     \
-        EMITS(0x04603000 | MXM(TmmQ, 0x0E, 0x0E))                           \
-        EMITW(0x52A03800 | MRM(TExx, 0x00, 0x00)) /* w25 <- (7 << 22) */    \
-        EMITW(0x52A03000 | MRM(TCxx, 0x00, 0x00)) /* w24 <- (6 << 22) */    \
-        EMITW(0x52A02800 | MRM(TAxx, 0x00, 0x00)) /* w23 <- (5 << 22) */    \
-        EMITW(0x52A02000 | MRM(TNxx, 0x00, 0x00)) /* w22 <- (4 << 22) */    \
-        EMITW(0xD51B4400 | MRM(TNxx, 0x00, 0x00)) /* fpcr <- w22 */
+        EMITS(0x2518E3E0)                    /* SVE: p0  <- all-ones */     \
+        movpx_ld(XmmE, Mebp, inf_GPC07)      /* SVE: z14 <- all-ones */     \
+        EMITS(0x04603000 | MXM(TmmQ, 0x0E, 0x0E)) /* z15 <- z14 (or) */     \
+        EMITW(0x52A03800 | MRM(TExx, 0x00, 0x00)) /* x23 <- (7 << 22) */    \
+        EMITW(0x52A03000 | MRM(TCxx, 0x00, 0x00)) /* x22 <- (6 << 22) */    \
+        EMITW(0x52A02800 | MRM(TAxx, 0x00, 0x00)) /* x21 <- (5 << 22) */    \
+        EMITW(0x52A02000 | MRM(TNxx, 0x00, 0x00)) /* x20 <- (4 << 22) */    \
+        EMITW(0xD51B4400 | MRM(TNxx, 0x00, 0x00)) /* fpcr <- x20 */
 
 #define ASM_LEAVE_F(__Info__)                                               \
-        EMITW(0x52A00000 | MRM(TNxx, 0x00, 0x00)) /* w22 <- (0 << 22) */    \
-        EMITW(0xD51B4400 | MRM(TNxx, 0x00, 0x00)) /* fpcr <- w22 */         \
+        EMITW(0x52A00000 | MRM(TNxx, 0x00, 0x00)) /* x20 <- (0 << 22) */    \
+        EMITW(0xD51B4400 | MRM(TNxx, 0x00, 0x00)) /* fpcr <- x20 */         \
         sregs_la()                                                          \
         stack_la()                                                          \
         movlb_ld(%[Reax_])                                                  \
@@ -989,7 +994,7 @@
 /* RT_SIMD_COMPAT_D12 when enabled uses fp64 load/store in SIMD
  * to make DP displacement type 12-bit for fp32, 11-bit if 0 */
 #ifndef RT_SIMD_COMPAT_D12
-#define RT_SIMD_COMPAT_D12      (Q/RT_DATA != 0)
+#define RT_SIMD_COMPAT_D12      (Q/RT_DATA != 0) /* if DP is filled over half */
 #endif /* RT_SIMD_COMPAT_D12 */
 
 /* RT_ELEM_COMPAT_MSA when enabled makes scalar SIMD (ELEM) ops
@@ -1083,10 +1088,10 @@
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
         EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
-        EMITW(0x3C000000 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(0 << 24) */  \
-        EMITW(0x34000001 | MRM(0x00, TNxx, TAxx)) /* r21 <- 1|(0 << 24) */  \
-        EMITW(0x34000002 | MRM(0x00, TNxx, TCxx)) /* r22 <- 2|(0 << 24) */  \
-        EMITW(0x34000003 | MRM(0x00, TNxx, TExx)) /* r23 <- 3|(0 << 24) */
+        EMITW(0x34000003 | MRM(0x00, TZxx, TExx)) /* r23 <- 3|(0 << 24) */  \
+        EMITW(0x34000002 | MRM(0x00, TZxx, TCxx)) /* r22 <- 2|(0 << 24) */  \
+        EMITW(0x34000001 | MRM(0x00, TZxx, TAxx)) /* r21 <- 1|(0 << 24) */  \
+        EMITW(0x3C000000 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(0 << 24) */
 
 #define ASM_LEAVE(__Info__)                                                 \
         sregs_la()                                                          \
@@ -1161,10 +1166,10 @@
         movxx_rr(Rebp, Reax)                                                \
         sregs_sa()                                                          \
         EMITS(0x7860001E | MXM(TmmZ, TmmZ, TmmZ)) /* w30 <- 0 (xor) */      \
+        EMITW(0x34000003 | MRM(0x00, TZxx, TExx)) /* r23 <- 3|(1 << 24) */  \
+        EMITW(0x34000002 | MRM(0x00, TZxx, TCxx)) /* r22 <- 2|(1 << 24) */  \
+        EMITW(0x34000001 | MRM(0x00, TZxx, TAxx)) /* r21 <- 1|(1 << 24) */  \
         EMITW(0x3C000100 | MRM(0x00, 0x00, TNxx)) /* r20 <- 0|(1 << 24) */  \
-        EMITW(0x34000001 | MRM(0x00, TNxx, TAxx)) /* r21 <- 1|(1 << 24) */  \
-        EMITW(0x34000002 | MRM(0x00, TNxx, TCxx)) /* r22 <- 2|(1 << 24) */  \
-        EMITW(0x34000003 | MRM(0x00, TNxx, TExx)) /* r23 <- 3|(1 << 24) */  \
         EMITW(0x44C0F800 | MRM(0x00, 0x00, TNxx)) /* fcsr <- r20 */         \
         EMITS(0x783E0059 | MXM(0x00, TNxx, 0x00)) /* msacsr <- r20 */
 
@@ -1381,8 +1386,8 @@
         EMITW(0x7C000278 | MSM(TZxx, TZxx, TZxx)) /* r0  <- 0 (xor) */      \
         sregs_sa()                                                          \
         EMITW(0x7C000040 | MRM(0x08, TLxx, TLxx)) /* cmplw cr2, r24, r24 */ \
-        EMITW(0x7C0002A6 | MRM(TCxx, 0x00, 0x09)) /* ctr -> r27 */          \
-        EMITS(0x7C0002A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave -> r28 */       \
+        EMITW(0x7C0002A6 | MRM(TCxx, 0x00, 0x09)) /* ctr -> r28 */          \
+        EMITS(0x7C0002A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave -> r29 */       \
         EMITS(0x3800FFFF | MRM(TIxx, 0x00, 0x00)) /* r25 <- -1 */           \
         EMITS(0x7C0003A6 | MRM(TIxx, 0x08, 0x00)) /* vrsave <- r25 */       \
         EMITS(0x1000038C | MXM(TmmQ, 0x1F, 0x00)) /* v15 <- all-ones */     \
@@ -1397,8 +1402,8 @@
         EMITP(0xF0000496 | MXM(TmmM, 0x04, 0x04)) /* vs31 <- v4 */
 
 #define ASM_LEAVE(__Info__)                                                 \
-        EMITW(0x7C0003A6 | MRM(TCxx, 0x00, 0x09)) /* ctr <- r27 */          \
-        EMITS(0x7C0003A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave <- r28 */       \
+        EMITW(0x7C0003A6 | MRM(TCxx, 0x00, 0x09)) /* ctr <- r28 */          \
+        EMITS(0x7C0003A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave <- r29 */       \
         sregs_la()                                                          \
         stack_la()                                                          \
         movlb_ld(%[Reax_])                                                  \
@@ -1441,8 +1446,8 @@
         EMITW(0x7C000278 | MSM(TZxx, TZxx, TZxx)) /* r0  <- 0 (xor) */      \
         sregs_sa()                                                          \
         EMITW(0x7C000040 | MRM(0x08, TLxx, TLxx)) /* cmplw cr2, r24, r24 */ \
-        EMITW(0x7C0002A6 | MRM(TCxx, 0x00, 0x09)) /* ctr -> r27 */          \
-        EMITS(0x7C0002A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave -> r28 */       \
+        EMITW(0x7C0002A6 | MRM(TCxx, 0x00, 0x09)) /* ctr -> r28 */          \
+        EMITS(0x7C0002A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave -> r29 */       \
         EMITS(0x3800FFFF | MRM(TIxx, 0x00, 0x00)) /* r25 <- -1 */           \
         EMITS(0x7C0003A6 | MRM(TIxx, 0x08, 0x00)) /* vrsave <- r25 */       \
         EMITS(0x1000038C | MXM(TmmQ, 0x1F, 0x00)) /* v15 <- all-ones */     \
@@ -1463,8 +1468,8 @@
         EMITW(0xFC00010C | MRM(0x1C, 0x00, 0x00)) /* fpscr <- NI(0) */      \
         EMITS(0x1000034C | MXM(TmmM, 0x00, 0x00)) /* v31 <- splt-half(0) */ \
         EMITS(0x10000644 | MXM(0x00, 0x00, TmmM)) /* vscr <- v31, NJ(16) */ \
-        EMITW(0x7C0003A6 | MRM(TCxx, 0x00, 0x09)) /* ctr <- r27 */          \
-        EMITS(0x7C0003A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave <- r28 */       \
+        EMITW(0x7C0003A6 | MRM(TCxx, 0x00, 0x09)) /* ctr <- r28 */          \
+        EMITS(0x7C0003A6 | MRM(TVxx, 0x08, 0x00)) /* vrsave <- r29 */       \
         sregs_la()                                                          \
         stack_la()                                                          \
         movlb_ld(%[Reax_])                                                  \
@@ -1538,7 +1543,7 @@
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #ifndef RT_SIMD_FAST_FCTRL
-#define RT_SIMD_FAST_FCTRL      1*(Q/2) /* only if AVX is among build targets */
+#define RT_SIMD_FAST_FCTRL      (Q/2 != 0) /* if build includes wider targets */
 #endif /* RT_SIMD_FAST_FCTRL */
 
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
@@ -1831,7 +1836,7 @@
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #ifndef RT_SIMD_FAST_FCTRL
-#define RT_SIMD_FAST_FCTRL      1*(Q/2) /* only if AVX is among build targets */
+#define RT_SIMD_FAST_FCTRL      (Q/2 != 0) /* if build includes wider targets */
 #endif /* RT_SIMD_FAST_FCTRL */
 
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
@@ -2103,7 +2108,7 @@
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #ifndef RT_SIMD_FAST_FCTRL
-#define RT_SIMD_FAST_FCTRL      1*(Q/2) /* only if AVX is among build targets */
+#define RT_SIMD_FAST_FCTRL      (Q/2 != 0) /* if build includes wider targets */
 #endif /* RT_SIMD_FAST_FCTRL */
 
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
