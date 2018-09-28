@@ -1374,6 +1374,7 @@
         movlb_ld(%[Info_])                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
+        EMITS(0x38000000 | MRM(T0xx, 0x00, 0x00)) /* r20 <- 0 */            \
         EMITS(0x38000010 | MRM(T1xx, 0x00, 0x00)) /* r21 <- 16 */           \
         EMITS(0x38000020 | MRM(T2xx, 0x00, 0x00)) /* r22 <- 32 */           \
         EMITS(0x38000030 | MRM(T3xx, 0x00, 0x00)) /* r23 <- 48 */           \
@@ -1433,6 +1434,7 @@
         movlb_ld(%[Info_])                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
+        EMITS(0x38000000 | MRM(T0xx, 0x00, 0x00)) /* r20 <- 0 */            \
         EMITS(0x38000010 | MRM(T1xx, 0x00, 0x00)) /* r21 <- 16 */           \
         EMITS(0x38000020 | MRM(T2xx, 0x00, 0x00)) /* r22 <- 32 */           \
         EMITS(0x38000030 | MRM(T3xx, 0x00, 0x00)) /* r23 <- 48 */           \

@@ -123,6 +123,16 @@
 #define  Q2(val, tp1, tp2)  Q2##tp2
 #define  C2(val, tp1, tp2)  C2##tp2
 
+#define  L2(val, tp1, tp2)  L2##tp2
+#define  K2(val, tp1, tp2)  K2##tp2
+#define  U2(val, tp1, tp2)  U2##tp2
+#define  V2(val, tp1, tp2)  V2##tp2
+
+#define  L3(val, tp1, tp2)  L3##tp2
+#define  K3(val, tp1, tp2)  K3##tp2
+#define  U3(val, tp1, tp2)  U3##tp2
+#define  V3(val, tp1, tp2)  V3##tp2
+
 /* displacement encoding SIMD(TP2), ELEM(TP1) */
 
 #define B20(br) (br)
@@ -150,6 +160,37 @@
 #define C22(br, dp) EMITW(0x64000000 | TDxx << 16 | (0x7FFF & (dp) >> 16))  \
                     EMITW(0x60000000 | TDxx << 16 | TDxx << 21 |            \
                                                     (0xFFFC & (dp)))
+
+#define L20(dp) (0xF4000009 | ((dp) & 0x7FFC))
+#define K20(dp) (0xF4000001 | ((dp) & 0x7FFC))
+#define U20(dp) (0xF400000D | ((dp) & 0x7FFC))
+#define V20(dp) (0xF4000005 | ((dp) & 0x7FFC))
+
+#define L21(dp) (0x7C000219 | (T0xx | ((dp) & 0x10) >> 4) << 11)
+#define K21(dp) (0x7C000218 | (T0xx | ((dp) & 0x10) >> 4) << 11)
+#define U21(dp) (0x7C000319 | (T0xx | ((dp) & 0x10) >> 4) << 11)
+#define V21(dp) (0x7C000318 | (T0xx | ((dp) & 0x10) >> 4) << 11)
+
+#define L22(dp) (0x7C000219 | (T0xx | ((dp) & 0x10) >> 4) << 11)
+#define K22(dp) (0x7C000218 | (T0xx | ((dp) & 0x10) >> 4) << 11)
+#define U22(dp) (0x7C000319 | (T0xx | ((dp) & 0x10) >> 4) << 11)
+#define V22(dp) (0x7C000318 | (T0xx | ((dp) & 0x10) >> 4) << 11)
+
+
+#define L30(dp) (0xF4000009 | ((dp) & 0x7FFC))
+#define K30(dp) (0xF4000001 | ((dp) & 0x7FFC))
+#define U30(dp) (0xF400000D | ((dp) & 0x7FFC))
+#define V30(dp) (0xF4000005 | ((dp) & 0x7FFC))
+
+#define L31(dp) (0x7C000219 | (T0xx | ((dp) & 0x30) >> 4) << 11)
+#define K31(dp) (0x7C000218 | (T0xx | ((dp) & 0x30) >> 4) << 11)
+#define U31(dp) (0x7C000319 | (T0xx | ((dp) & 0x30) >> 4) << 11)
+#define V31(dp) (0x7C000318 | (T0xx | ((dp) & 0x30) >> 4) << 11)
+
+#define L32(dp) (0x7C000219 | (T0xx | ((dp) & 0x30) >> 4) << 11)
+#define K32(dp) (0x7C000218 | (T0xx | ((dp) & 0x30) >> 4) << 11)
+#define U32(dp) (0x7C000319 | (T0xx | ((dp) & 0x30) >> 4) << 11)
+#define V32(dp) (0x7C000318 | (T0xx | ((dp) & 0x30) >> 4) << 11)
 
 /* lxvwsx-workaround for POWER9 on QEMU 3.0.0 */
 

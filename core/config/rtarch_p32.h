@@ -264,6 +264,7 @@
 #define TVxx    0x1C  /* r28 */
 #define TZxx    0x00  /* r0 */
 #define SPxx    0x01  /* r1 */
+#define T0xx    0x14  /* r20 */
 #define T1xx    0x15  /* r21 */
 #define T2xx    0x16  /* r22 */
 #define T3xx    0x17  /* r23 */
@@ -1797,8 +1798,8 @@
         EMITW(0x80000000 | MTM(REG(RD), SPxx,    0x00))                     \
         EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x08 & 0xFFFF))
 
-#define stack_sa()  /* save all, [Reax - RegE] + 12 temps, 26 regs total */ \
-        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x70 & 0xFFFF))  \
+#define stack_sa()  /* save all, [Reax - RegE] + 13 temps, 27 regs total */ \
+        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x80 & 0xFFFF))  \
         EMITW(0xD8000000 | MTM(Tff1,    SPxx,    0x00) | (+0x00 & 0xFFFF))  \
         EMITW(0xD8000000 | MTM(Tff2,    SPxx,    0x00) | (+0x08 & 0xFFFF))  \
         EMITW(0x90000000 | MTM(Teax,    SPxx,    0x00) | (+0x10 & 0xFFFF))  \
@@ -1821,16 +1822,18 @@
         EMITW(0x90000000 | MTM(TPxx,    SPxx,    0x00) | (+0x54 & 0xFFFF))  \
         EMITW(0x90000000 | MTM(TCxx,    SPxx,    0x00) | (+0x58 & 0xFFFF))  \
         EMITW(0x90000000 | MTM(TVxx,    SPxx,    0x00) | (+0x5C & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(TZxx,    SPxx,    0x00) | (+0x60 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(T0xx,    SPxx,    0x00) | (+0x60 & 0xFFFF))  \
         EMITW(0x90000000 | MTM(T1xx,    SPxx,    0x00) | (+0x64 & 0xFFFF))  \
         EMITW(0x90000000 | MTM(T2xx,    SPxx,    0x00) | (+0x68 & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(T3xx,    SPxx,    0x00) | (+0x6C & 0xFFFF))
+        EMITW(0x90000000 | MTM(T3xx,    SPxx,    0x00) | (+0x6C & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(TZxx,    SPxx,    0x00) | (+0x70 & 0xFFFF))
 
-#define stack_la()  /* load all, 12 temps + [RegE - Reax], 26 regs total */ \
+#define stack_la()  /* load all, 13 temps + [RegE - Reax], 27 regs total */ \
+        EMITW(0x80000000 | MTM(TZxx,    SPxx,    0x00) | (+0x70 & 0xFFFF))  \
         EMITW(0x80000000 | MTM(T3xx,    SPxx,    0x00) | (+0x6C & 0xFFFF))  \
         EMITW(0x80000000 | MTM(T2xx,    SPxx,    0x00) | (+0x68 & 0xFFFF))  \
         EMITW(0x80000000 | MTM(T1xx,    SPxx,    0x00) | (+0x64 & 0xFFFF))  \
-        EMITW(0x80000000 | MTM(TZxx,    SPxx,    0x00) | (+0x60 & 0xFFFF))  \
+        EMITW(0x80000000 | MTM(T0xx,    SPxx,    0x00) | (+0x60 & 0xFFFF))  \
         EMITW(0x80000000 | MTM(TVxx,    SPxx,    0x00) | (+0x5C & 0xFFFF))  \
         EMITW(0x80000000 | MTM(TCxx,    SPxx,    0x00) | (+0x58 & 0xFFFF))  \
         EMITW(0x80000000 | MTM(TPxx,    SPxx,    0x00) | (+0x54 & 0xFFFF))  \
@@ -1853,7 +1856,7 @@
         EMITW(0x80000000 | MTM(Teax,    SPxx,    0x00) | (+0x10 & 0xFFFF))  \
         EMITW(0xC8000000 | MTM(Tff2,    SPxx,    0x00) | (+0x08 & 0xFFFF))  \
         EMITW(0xC8000000 | MTM(Tff1,    SPxx,    0x00) | (+0x00 & 0xFFFF))  \
-        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x70 & 0xFFFF))
+        EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x80 & 0xFFFF))
 
 #endif /* (defined RT_P32) */
 
