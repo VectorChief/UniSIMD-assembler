@@ -990,15 +990,15 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x00000000 | MPM(REG(XD), MOD(MS), VAL(DS), B1(DS), L2(DS)))  \
         EMITW(0x00000000 | MPM(RYG(XD), MOD(MS), VYL(DS), B1(DS), L2(DS)))  \
-        EMITW(0x00000000 | MPM(REG(XD), MOD(MS), VXL(DS), B1(DS), K3(DS)))  \
-        EMITW(0x00000000 | MPM(RYG(XD), MOD(MS), VZL(DS), B1(DS), K3(DS)))
+        EMITW(0x00000000 | MPM(REG(XD), MOD(MS), VXL(DS), B1(DS), K4(DS)))  \
+        EMITW(0x00000000 | MPM(RYG(XD), MOD(MS), VZL(DS), B1(DS), K4(DS)))
 
 #define movox2st(XS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0x00000000 | MPM(REG(XS), MOD(MD), VAL(DD), B1(DD), U2(DD)))  \
         EMITW(0x00000000 | MPM(RYG(XS), MOD(MD), VYL(DD), B1(DD), U2(DD)))  \
-        EMITW(0x00000000 | MPM(REG(XS), MOD(MD), VXL(DD), B1(DD), V3(DD)))  \
-        EMITW(0x00000000 | MPM(RYG(XS), MOD(MD), VZL(DD), B1(DD), V3(DD)))
+        EMITW(0x00000000 | MPM(REG(XS), MOD(MD), VXL(DD), B1(DD), V4(DD)))  \
+        EMITW(0x00000000 | MPM(RYG(XS), MOD(MD), VZL(DD), B1(DD), V4(DD)))
 
 /* sregs */
 

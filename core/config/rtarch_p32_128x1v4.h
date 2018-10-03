@@ -1953,8 +1953,8 @@
 #define fpscr_st(RD) /* not portable, do not use outside */                 \
         EMITW(0xFC00048E | MRM(REG(RD), 0x00,    0x00))
 
-#define F0(mode)    F1(mode)
-#define F1(mode)    F##mode
+#define F0(mode)    FT(mode)
+#define FT(mode)    F##mode
 #define F0x00                   EMITW(0x1000004A | MXM(TmmR, TmmS, TmmS))
 #define F0x03                   EMITW(0x1000000A | MXM(TmmR, TmmS, TmmV))
 #define F0x02                   EMITW(0x1000004A | MXM(TmmR, TmmS, TmmV))

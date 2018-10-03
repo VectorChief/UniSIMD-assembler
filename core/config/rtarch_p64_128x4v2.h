@@ -133,9 +133,9 @@
     SHF(EMITW(0xF0000257 | MXM(REG(XD), REG(XD), REG(XD))))                 \
         EMITW(0x00000000 | MPM(RYG(XD), MOD(MS), VYL(DS), B1(DS), L2(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(RYG(XD), RYG(XD), RYG(XD))))                 \
-        EMITW(0x00000000 | MPM(REG(XD), MOD(MS), VXL(DS), B1(DS), K3(DS)))  \
+        EMITW(0x00000000 | MPM(REG(XD), MOD(MS), VXL(DS), B1(DS), K4(DS)))  \
     SJF(EMITW(0xF0000250 | MXM(REG(XD), REG(XD), REG(XD))))                 \
-        EMITW(0x00000000 | MPM(RYG(XD), MOD(MS), VZL(DS), B1(DS), K3(DS)))  \
+        EMITW(0x00000000 | MPM(RYG(XD), MOD(MS), VZL(DS), B1(DS), K4(DS)))  \
     SJF(EMITW(0xF0000250 | MXM(RYG(XD), RYG(XD), RYG(XD))))
 
 #define movqx_st(XS, MD, DD)                                                \
@@ -147,11 +147,11 @@
     SJF(EMITW(0x00000000 | MPM(TmmM,    MOD(MD), VYL(DD), B1(DD), U2(DD)))) \
     SJX(EMITW(0x00000000 | MPM(RYG(XS), MOD(MD), VYL(DD), B1(DD), U2(DD)))) \
     SJF(EMITW(0xF0000251 | MXM(TmmM,    REG(XS), REG(XS))))                 \
-    SJF(EMITW(0x00000000 | MPM(TmmM,    MOD(MD), VXL(DD), B1(DD), U3(DD)))) \
-    SJX(EMITW(0x00000000 | MPM(REG(XS), MOD(MD), VXL(DD), B1(DD), V3(DD)))) \
+    SJF(EMITW(0x00000000 | MPM(TmmM,    MOD(MD), VXL(DD), B1(DD), U4(DD)))) \
+    SJX(EMITW(0x00000000 | MPM(REG(XS), MOD(MD), VXL(DD), B1(DD), V4(DD)))) \
     SJF(EMITW(0xF0000251 | MXM(TmmM,    RYG(XS), RYG(XS))))                 \
-    SJF(EMITW(0x00000000 | MPM(TmmM,    MOD(MD), VZL(DD), B1(DD), U3(DD)))) \
-    SJX(EMITW(0x00000000 | MPM(RYG(XS), MOD(MD), VZL(DD), B1(DD), V3(DD))))
+    SJF(EMITW(0x00000000 | MPM(TmmM,    MOD(MD), VZL(DD), B1(DD), U4(DD)))) \
+    SJX(EMITW(0x00000000 | MPM(RYG(XS), MOD(MD), VZL(DD), B1(DD), V4(DD))))
 
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
@@ -170,10 +170,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VYL(DS), B1(DS), L2(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000043F | MXM(RYG(XG), RYG(XG), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000032 | MXM(REG(XG), REG(XG), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000432 | MXM(RYG(XG), RYG(XG), TmmM))
 
@@ -189,16 +189,16 @@
         EMITW(0xF000043F | MXM(TmmM,    TmmM,    RYG(XS)))                  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0x00000000 | MPM(TmmM,    MOD(MG), VYL(DG), B1(DG), U2(DG)))  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MG), VXL(DG), B1(DG), L3(DG)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MG), VXL(DG), B1(DG), L4(DG)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000035 | MXM(TmmM,    TmmM,    REG(XS)))                  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MG), VXL(DG), B1(DG), U3(DG)))  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MG), VZL(DG), B1(DG), L3(DG)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MG), VXL(DG), B1(DG), U4(DG)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MG), VZL(DG), B1(DG), L4(DG)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000435 | MXM(TmmM,    TmmM,    RYG(XS)))                  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MG), VZL(DG), B1(DG), U3(DG)))
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MG), VZL(DG), B1(DG), U4(DG)))
 
 /* and (G = G & S), (D = S & T) if (#D != #S) */
 
@@ -222,10 +222,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000417 | MXM(RYG(XD), RYG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000412 | MXM(REG(XD), REG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000412 | MXM(RYG(XD), RYG(XS), TmmM))
 
@@ -251,10 +251,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000457 | MXM(RYG(XD), TmmM,    RYG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000454 | MXM(REG(XD), TmmM,    REG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000454 | MXM(RYG(XD), TmmM,    RYG(XS)))
 
@@ -280,10 +280,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000497 | MXM(RYG(XD), RYG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000492 | MXM(REG(XD), REG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000492 | MXM(RYG(XD), RYG(XS), TmmM))
 
@@ -309,10 +309,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000557 | MXM(RYG(XD), TmmM,    RYG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000554 | MXM(REG(XD), TmmM,    REG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000554 | MXM(RYG(XD), TmmM,    RYG(XS)))
 
@@ -338,10 +338,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00004D7 | MXM(RYG(XD), RYG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00004D2 | MXM(REG(XD), REG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00004D2 | MXM(RYG(XD), RYG(XS), TmmM))
 
@@ -391,10 +391,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000307 | MXM(RYG(XD), RYG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000302 | MXM(REG(XD), REG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000302 | MXM(RYG(XD), RYG(XS), TmmM))
 
@@ -423,10 +423,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000347 | MXM(RYG(XD), RYG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000342 | MXM(REG(XD), REG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000342 | MXM(RYG(XD), RYG(XS), TmmM))
 
@@ -452,10 +452,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000387 | MXM(RYG(XD), RYG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000382 | MXM(REG(XD), REG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000382 | MXM(RYG(XD), RYG(XS), TmmM))
 
@@ -484,10 +484,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00003C7 | MXM(RYG(XD), RYG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00003C2 | MXM(REG(XD), REG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00003C2 | MXM(RYG(XD), RYG(XS), TmmM))
 
@@ -507,10 +507,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VYL(DS), B1(DS), L2(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000032F | MXM(RYG(XD), 0x00,    TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000032E | MXM(REG(XD), 0x00,    TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000032E | MXM(RYG(XD), 0x00,    TmmM))
 
@@ -574,10 +574,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000030F | MXM(RYG(XG), RYG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000030A | MXM(REG(XG), REG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000030A | MXM(RYG(XG), RYG(XS), TmmM))
 
@@ -603,10 +603,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000078F | MXM(RYG(XG), RYG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000078A | MXM(REG(XG), REG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000078A | MXM(RYG(XG), RYG(XS), TmmM))
 
@@ -636,10 +636,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000747 | MXM(RYG(XD), RYG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000742 | MXM(REG(XD), REG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000742 | MXM(RYG(XD), RYG(XS), TmmM))
 
@@ -668,10 +668,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000707 | MXM(RYG(XD), RYG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000702 | MXM(REG(XD), REG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000702 | MXM(RYG(XD), RYG(XS), TmmM))
 
@@ -700,10 +700,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000031F | MXM(RYG(XD), RYG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000031A | MXM(REG(XD), REG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000031A | MXM(RYG(XD), RYG(XS), TmmM))
 
@@ -735,11 +735,11 @@
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000031F | MXM(RYG(XD), RYG(XS), TmmM))                     \
         EMITW(0xF0000517 | MXM(RYG(XD), RYG(XD), RYG(XD)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000031A | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0xF0000510 | MXM(REG(XD), REG(XD), REG(XD)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000031A | MXM(RYG(XD), RYG(XS), TmmM))                     \
         EMITW(0xF0000510 | MXM(RYG(XD), RYG(XD), RYG(XD)))
@@ -766,10 +766,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000035F | MXM(RYG(XD), TmmM,    RYG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000035C | MXM(REG(XD), TmmM,    REG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000035C | MXM(RYG(XD), TmmM,    RYG(XS)))
 
@@ -795,10 +795,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000039F | MXM(RYG(XD), TmmM,    RYG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000039C | MXM(REG(XD), TmmM,    REG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000039C | MXM(RYG(XD), TmmM,    RYG(XS)))
 
@@ -824,10 +824,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000035F | MXM(RYG(XD), RYG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000035A | MXM(REG(XD), REG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000035A | MXM(RYG(XD), RYG(XS), TmmM))
 
@@ -853,10 +853,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B1(DT), L2(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000039F | MXM(RYG(XD), RYG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000039A | MXM(REG(XD), REG(XS), TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF000039A | MXM(RYG(XD), RYG(XS), TmmM))
 
@@ -909,10 +909,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VYL(DS), B1(DS), L2(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000367 | MXM(RYG(XD), 0x00,    TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000366 | MXM(REG(XD), 0x00,    TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000366 | MXM(RYG(XD), 0x00,    TmmM))
 
@@ -930,10 +930,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VYL(DS), B1(DS), L2(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000763 | MXM(RYG(XD), 0x00,    TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000762 | MXM(REG(XD), 0x00,    TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF0000762 | MXM(RYG(XD), 0x00,    TmmM))
 
@@ -956,10 +956,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VYL(DS), B1(DS), L2(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00003A7 | MXM(RYG(XD), 0x00,    TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00003A6 | MXM(REG(XD), 0x00,    TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00003A6 | MXM(RYG(XD), 0x00,    TmmM))
 
@@ -990,10 +990,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VYL(DS), B1(DS), L2(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00003E7 | MXM(RYG(XD), 0x00,    TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00003E6 | MXM(REG(XD), 0x00,    TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00003E6 | MXM(RYG(XD), 0x00,    TmmM))
 
@@ -1024,10 +1024,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VYL(DS), B1(DS), L2(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00003AF | MXM(RYG(XD), 0x00,    TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00003AE | MXM(REG(XD), 0x00,    TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00003AE | MXM(RYG(XD), 0x00,    TmmM))
 
@@ -1068,10 +1068,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VYL(DS), B1(DS), L2(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00003AF | MXM(RYG(XD), 0x00,    TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00003AE | MXM(REG(XD), 0x00,    TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00003AE | MXM(RYG(XD), 0x00,    TmmM))
 
@@ -1101,10 +1101,10 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VYL(DS), B1(DS), L2(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00007E3 | MXM(RYG(XD), 0x00,    TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VXL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00007E2 | MXM(REG(XD), 0x00,    TmmM))                     \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L3(DS)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B1(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00007E2 | MXM(RYG(XD), 0x00,    TmmM))
 
@@ -1155,12 +1155,12 @@
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0x100000C0 | MXM(RYG(XD), RYG(XS), TmmM))                     \
         EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0x100000C0 | MXM(TmmQ,    TmmQ,    TmmM))                     \
         EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
         EMITW(0xF0000491 | MXM(TmmQ,    RYG(XS), RYG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0x100000C0 | MXM(TmmQ,    TmmQ,    TmmM))                     \
         EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
@@ -1194,12 +1194,12 @@
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0x100004C0 | MXM(RYG(XD), RYG(XS), TmmM))                     \
         EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0x100004C0 | MXM(TmmQ,    TmmQ,    TmmM))                     \
         EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
         EMITW(0xF0000491 | MXM(TmmQ,    RYG(XS), RYG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0x100004C0 | MXM(TmmQ,    TmmQ,    TmmM))                     \
         EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
@@ -1309,12 +1309,12 @@
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0x100005C4 | MXM(RYG(XD), RYG(XS), TmmM))                     \
         EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0x100005C4 | MXM(TmmQ,    TmmQ,    TmmM))                     \
         EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
         EMITW(0xF0000491 | MXM(TmmQ,    RYG(XS), RYG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0x100005C4 | MXM(TmmQ,    TmmQ,    TmmM))                     \
         EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
@@ -1349,12 +1349,12 @@
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0x100006C4 | MXM(RYG(XD), RYG(XS), TmmM))                     \
         EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0x100006C4 | MXM(TmmQ,    TmmQ,    TmmM))                     \
         EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
         EMITW(0xF0000491 | MXM(TmmQ,    RYG(XS), RYG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0x100006C4 | MXM(TmmQ,    TmmQ,    TmmM))                     \
         EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
@@ -1389,12 +1389,12 @@
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0x100003C4 | MXM(RYG(XD), RYG(XS), TmmM))                     \
         EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0x100003C4 | MXM(TmmQ,    TmmQ,    TmmM))                     \
         EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
         EMITW(0xF0000491 | MXM(TmmQ,    RYG(XS), RYG(XS)))                  \
-        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L3(DT)))  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B1(DT), L4(DT)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0x100003C4 | MXM(TmmQ,    TmmQ,    TmmM))                     \
         EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))

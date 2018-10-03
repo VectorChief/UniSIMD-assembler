@@ -128,10 +128,10 @@
 #define  U2(val, tp1, tp2)  U2##tp2
 #define  V2(val, tp1, tp2)  V2##tp2
 
-#define  L3(val, tp1, tp2)  L3##tp2
-#define  K3(val, tp1, tp2)  K3##tp2
-#define  U3(val, tp1, tp2)  U3##tp2
-#define  V3(val, tp1, tp2)  V3##tp2
+#define  L4(val, tp1, tp2)  L4##tp2
+#define  K4(val, tp1, tp2)  K4##tp2
+#define  U4(val, tp1, tp2)  U4##tp2
+#define  V4(val, tp1, tp2)  V4##tp2
 
 /* displacement encoding SIMD(TP2), ELEM(TP1) */
 
@@ -177,20 +177,20 @@
 #define V22(dp) (0x7C000318 | (T0xx + (((dp) & 0x10) >> 4)) << 11)
 
 
-#define L30(dp) (0xF4000009 | ((dp) & 0x7FFC))
-#define K30(dp) (0xF4000001 | ((dp) & 0x7FFC))
-#define U30(dp) (0xF400000D | ((dp) & 0x7FFC))
-#define V30(dp) (0xF4000005 | ((dp) & 0x7FFC))
+#define L40(dp) (0xF4000009 | ((dp) & 0x7FFC))
+#define K40(dp) (0xF4000001 | ((dp) & 0x7FFC))
+#define U40(dp) (0xF400000D | ((dp) & 0x7FFC))
+#define V40(dp) (0xF4000005 | ((dp) & 0x7FFC))
 
-#define L31(dp) (0x7C000219 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
-#define K31(dp) (0x7C000218 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
-#define U31(dp) (0x7C000319 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
-#define V31(dp) (0x7C000318 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
+#define L41(dp) (0x7C000219 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
+#define K41(dp) (0x7C000218 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
+#define U41(dp) (0x7C000319 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
+#define V41(dp) (0x7C000318 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
 
-#define L32(dp) (0x7C000219 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
-#define K32(dp) (0x7C000218 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
-#define U32(dp) (0x7C000319 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
-#define V32(dp) (0x7C000318 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
+#define L42(dp) (0x7C000219 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
+#define K42(dp) (0x7C000218 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
+#define U42(dp) (0x7C000319 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
+#define V42(dp) (0x7C000318 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
 
 /* lxvwsx-workaround for POWER9 on QEMU 3.0.0 */
 
