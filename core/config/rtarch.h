@@ -652,14 +652,14 @@
 #define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
-        EMITW(0xB9000000 | MDM(Teax,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
+        EMITW(0xB8000000 | MDM(Teax,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
 #elif (defined RT_A64)
 
 #define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
-        EMITW(0xF9000000 | MDM(Teax,    MOD(MD), VXL(DD), B1(DD), P1(DD)))
+        EMITW(0xF8000000 | MDM(Teax,    MOD(MD), VXL(DD), B1(DD), P1(DD)))
 
 #endif /* defined (RT_A32, RT_A64) */
 
