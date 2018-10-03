@@ -155,8 +155,8 @@
         AUW(EMPTY,    VAL(IS), REG(RD), EMPTY,   EMPTY,   EMPTY2, G3(IS))
 
 #define movzx_mi(MD, DD, IS)                                                \
-        AUW(SIB(MD),  VAL(IS), TDxx,    MOD(MD), VAL(DD), C1(DD), G3(IS))   \
-        EMITW(0xF8000000 | MDM(TDxx,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
+        AUW(SIB(MD),  VAL(IS), TWxx,    MOD(MD), VAL(DD), C1(DD), G3(IS))   \
+        EMITW(0xF8000000 | MDM(TWxx,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
 #define movzx_rr(RD, RS)                                                    \
         EMITW(0x7C000378 | MSM(REG(RD), REG(RS), REG(RS)))
@@ -500,9 +500,9 @@
 
 #define notzx_mx(MG, DG)                                                    \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
-        EMITW(0xE8000000 | MDM(TDxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x7C0000F8 | MSM(TDxx,    TDxx,    TDxx))                     \
-        EMITW(0xF8000000 | MDM(TDxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
+        EMITW(0xE8000000 | MDM(TWxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(0x7C0000F8 | MSM(TWxx,    TWxx,    TWxx))                     \
+        EMITW(0xF8000000 | MDM(TWxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 /* neg (G = -G)
  * set-flags: undefined (*x), yes (*z) */
@@ -1359,7 +1359,7 @@
         EMITW(0xE8000000 | MTM(REG(RD), SPxx,    0x00))                     \
         EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x08 & 0xFFFF))
 
-#define stack_sa()  /* save all, [Reax - RegE] + 13 temps, 27 regs total */ \
+#define stack_sa()  /* save all, [Reax - RegE] + 12 temps, 26 regs total */ \
         EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0xD0 & 0xFFFF))  \
         EMITW(0xF8000000 | MTM(Teax,    SPxx,    0x00) | (+0x00 & 0xFFFF))  \
         EMITW(0xF8000000 | MTM(Tecx,    SPxx,    0x00) | (+0x08 & 0xFFFF))  \
@@ -1385,9 +1385,11 @@
         EMITW(0xF8000000 | MTM(T1xx,    SPxx,    0x00) | (+0xA8 & 0xFFFF))  \
         EMITW(0xF8000000 | MTM(T2xx,    SPxx,    0x00) | (+0xB0 & 0xFFFF))  \
         EMITW(0xF8000000 | MTM(T3xx,    SPxx,    0x00) | (+0xB8 & 0xFFFF))  \
-        EMITW(0xF8000000 | MTM(TZxx,    SPxx,    0x00) | (+0xC0 & 0xFFFF))
+        EMITW(0xF8000000 | MTM(TZxx,    SPxx,    0x00) | (+0xC0 & 0xFFFF))  \
+        EMITW(0xF8000000 | MTM(TWxx,    SPxx,    0x00) | (+0xC8 & 0xFFFF))
 
-#define stack_la()  /* load all, 13 temps + [RegE - Reax], 27 regs total */ \
+#define stack_la()  /* load all, 12 temps + [RegE - Reax], 26 regs total */ \
+        EMITW(0xE8000000 | MTM(TWxx,    SPxx,    0x00) | (+0xC8 & 0xFFFF))  \
         EMITW(0xE8000000 | MTM(TZxx,    SPxx,    0x00) | (+0xC0 & 0xFFFF))  \
         EMITW(0xE8000000 | MTM(T3xx,    SPxx,    0x00) | (+0xB8 & 0xFFFF))  \
         EMITW(0xE8000000 | MTM(T2xx,    SPxx,    0x00) | (+0xB0 & 0xFFFF))  \

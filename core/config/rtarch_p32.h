@@ -250,8 +250,7 @@
 #define SPL(DT) (SPLT+(2*RT_ENDIAN-1)*(3 & VAL(DT) >> 2))
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
-/* four registers below T0xx,T1xx,T2xx,T3xx must occupy consecutive indices
- * and start with a multiple-of-4 index (like r20), constructed from offsets */
+/* four registers below T0xx,T1xx,T2xx,T3xx must occupy consecutive indices */
 
 #define T0xx    0x14  /* r20, extra reg for fast SIMD-load */
 #define T1xx    0x15  /* r21, extra reg for fast SIMD-load */
@@ -266,6 +265,7 @@
 #define TPxx    0x1B  /* r27 */
 #define TCxx    0x1C  /* r28 */
 #define TVxx    0x1D  /* r29 */
+#define TWxx    0x1E  /* r30 */
 #define TZxx    0x00  /* r0, must be zero for logic ops */
 #define SPxx    0x01  /* r1 */
 
@@ -373,8 +373,8 @@
         AUW(EMPTY,    VAL(IS), REG(RD), EMPTY,   EMPTY,   EMPTY2, G3(IS))
 
 #define movwx_mi(MD, DD, IS)                                                \
-        AUW(SIB(MD),  VAL(IS), TDxx,    MOD(MD), VAL(DD), C1(DD), G3(IS))   \
-        EMITW(0x90000000 | MDM(TDxx,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
+        AUW(SIB(MD),  VAL(IS), TWxx,    MOD(MD), VAL(DD), C1(DD), G3(IS))   \
+        EMITW(0x90000000 | MDM(TWxx,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
 #define movwx_rr(RD, RS)                                                    \
         EMITW(0x7C000378 | MSM(REG(RD), REG(RS), REG(RS)))
@@ -852,9 +852,9 @@
 
 #define notwx_mx(MG, DG)                                                    \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
-        EMITW(0x80000000 | MDM(TDxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMITW(0x7C0000F8 | MSM(TDxx,    TDxx,    TDxx))                     \
-        EMITW(0x90000000 | MDM(TDxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
+        EMITW(0x80000000 | MDM(TWxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(0x7C0000F8 | MSM(TWxx,    TWxx,    TWxx))                     \
+        EMITW(0x90000000 | MDM(TWxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))
 
 /* neg (G = -G)
  * set-flags: undefined (*x), yes (*z) */
@@ -1798,7 +1798,7 @@
         EMITW(0x80000000 | MTM(REG(RD), SPxx,    0x00))                     \
         EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (+0x08 & 0xFFFF))
 
-#define stack_sa()  /* save all, [Reax - RegE] + 13 temps, 27 regs total */ \
+#define stack_sa()  /* save all, [Reax - RegE] + 12 temps, 26 regs total */ \
         EMITW(0x38000000 | MTM(SPxx,    SPxx,    0x00) | (-0x70 & 0xFFFF))  \
         EMITW(0x90000000 | MTM(Teax,    SPxx,    0x00) | (+0x00 & 0xFFFF))  \
         EMITW(0x90000000 | MTM(Tecx,    SPxx,    0x00) | (+0x04 & 0xFFFF))  \
@@ -1824,9 +1824,11 @@
         EMITW(0x90000000 | MTM(T1xx,    SPxx,    0x00) | (+0x54 & 0xFFFF))  \
         EMITW(0x90000000 | MTM(T2xx,    SPxx,    0x00) | (+0x58 & 0xFFFF))  \
         EMITW(0x90000000 | MTM(T3xx,    SPxx,    0x00) | (+0x5C & 0xFFFF))  \
-        EMITW(0x90000000 | MTM(TZxx,    SPxx,    0x00) | (+0x60 & 0xFFFF))
+        EMITW(0x90000000 | MTM(TZxx,    SPxx,    0x00) | (+0x60 & 0xFFFF))  \
+        EMITW(0x90000000 | MTM(TWxx,    SPxx,    0x00) | (+0x64 & 0xFFFF))
 
-#define stack_la()  /* load all, 13 temps + [RegE - Reax], 27 regs total */ \
+#define stack_la()  /* load all, 12 temps + [RegE - Reax], 26 regs total */ \
+        EMITW(0x80000000 | MTM(TWxx,    SPxx,    0x00) | (+0x64 & 0xFFFF))  \
         EMITW(0x80000000 | MTM(TZxx,    SPxx,    0x00) | (+0x60 & 0xFFFF))  \
         EMITW(0x80000000 | MTM(T3xx,    SPxx,    0x00) | (+0x5C & 0xFFFF))  \
         EMITW(0x80000000 | MTM(T2xx,    SPxx,    0x00) | (+0x58 & 0xFFFF))  \

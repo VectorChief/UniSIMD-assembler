@@ -166,15 +166,15 @@
 #define U20(dp) (0xF400000D | ((dp) & 0x7FFC))
 #define V20(dp) (0xF4000005 | ((dp) & 0x7FFC))
 
-#define L21(dp) (0x7C000219 | (T0xx | ((dp) & 0x10) >> 4) << 11)
-#define K21(dp) (0x7C000218 | (T0xx | ((dp) & 0x10) >> 4) << 11)
-#define U21(dp) (0x7C000319 | (T0xx | ((dp) & 0x10) >> 4) << 11)
-#define V21(dp) (0x7C000318 | (T0xx | ((dp) & 0x10) >> 4) << 11)
+#define L21(dp) (0x7C000219 | (T0xx + (((dp) & 0x10) >> 4)) << 11)
+#define K21(dp) (0x7C000218 | (T0xx + (((dp) & 0x10) >> 4)) << 11)
+#define U21(dp) (0x7C000319 | (T0xx + (((dp) & 0x10) >> 4)) << 11)
+#define V21(dp) (0x7C000318 | (T0xx + (((dp) & 0x10) >> 4)) << 11)
 
-#define L22(dp) (0x7C000219 | (T0xx | ((dp) & 0x10) >> 4) << 11)
-#define K22(dp) (0x7C000218 | (T0xx | ((dp) & 0x10) >> 4) << 11)
-#define U22(dp) (0x7C000319 | (T0xx | ((dp) & 0x10) >> 4) << 11)
-#define V22(dp) (0x7C000318 | (T0xx | ((dp) & 0x10) >> 4) << 11)
+#define L22(dp) (0x7C000219 | (T0xx + (((dp) & 0x10) >> 4)) << 11)
+#define K22(dp) (0x7C000218 | (T0xx + (((dp) & 0x10) >> 4)) << 11)
+#define U22(dp) (0x7C000319 | (T0xx + (((dp) & 0x10) >> 4)) << 11)
+#define V22(dp) (0x7C000318 | (T0xx + (((dp) & 0x10) >> 4)) << 11)
 
 
 #define L30(dp) (0xF4000009 | ((dp) & 0x7FFC))
@@ -182,15 +182,15 @@
 #define U30(dp) (0xF400000D | ((dp) & 0x7FFC))
 #define V30(dp) (0xF4000005 | ((dp) & 0x7FFC))
 
-#define L31(dp) (0x7C000219 | (T0xx | ((dp) & 0x30) >> 4) << 11)
-#define K31(dp) (0x7C000218 | (T0xx | ((dp) & 0x30) >> 4) << 11)
-#define U31(dp) (0x7C000319 | (T0xx | ((dp) & 0x30) >> 4) << 11)
-#define V31(dp) (0x7C000318 | (T0xx | ((dp) & 0x30) >> 4) << 11)
+#define L31(dp) (0x7C000219 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
+#define K31(dp) (0x7C000218 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
+#define U31(dp) (0x7C000319 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
+#define V31(dp) (0x7C000318 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
 
-#define L32(dp) (0x7C000219 | (T0xx | ((dp) & 0x30) >> 4) << 11)
-#define K32(dp) (0x7C000218 | (T0xx | ((dp) & 0x30) >> 4) << 11)
-#define U32(dp) (0x7C000319 | (T0xx | ((dp) & 0x30) >> 4) << 11)
-#define V32(dp) (0x7C000318 | (T0xx | ((dp) & 0x30) >> 4) << 11)
+#define L32(dp) (0x7C000219 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
+#define K32(dp) (0x7C000218 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
+#define U32(dp) (0x7C000319 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
+#define V32(dp) (0x7C000318 | (T0xx + (((dp) & 0x30) >> 4)) << 11)
 
 /* lxvwsx-workaround for POWER9 on QEMU 3.0.0 */
 
