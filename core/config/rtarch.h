@@ -386,8 +386,8 @@
 
 #define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
-        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
-        EMITW(0xE5800000 | MDM(Teax,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
+        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), A1(DD), EMPTY2)   \
+        EMITW(0xE5800000 | MDM(Teax,    MOD(MD), VAL(DD), B3(DD), P1(DD)))
 
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
