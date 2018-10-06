@@ -1405,7 +1405,11 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movts_st(XmmE, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movts_st(XmmF, Oeax, PLAIN)
+        movts_st(XmmF, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
+        EMITW(0xD8000000 | MTM(Tff1,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
+        EMITW(0xD8000000 | MTM(Tff2,    Teax,    0x00))
 
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
         movxx_ld(Reax, Mebp, inf_REGS)                                      \
@@ -1473,7 +1477,11 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         movts_ld(XmmE, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
-        movts_ld(XmmF, Oeax, PLAIN)
+        movts_ld(XmmF, Oeax, PLAIN)                                         \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
+        EMITW(0xC8000000 | MTM(Tff1,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
+        EMITW(0xC8000000 | MTM(Tff2,    Teax,    0x00))
 
 #endif /* RT_128X2 */
 

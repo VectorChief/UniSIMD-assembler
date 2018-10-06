@@ -142,6 +142,9 @@
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
+#define Tff1    0x11  /* f17 */
+#define Tff2    0x12  /* f18 */
+
 #define TmmR    0x18  /* v24, VMX only, Rounding Mode */
 #define TmmS    0x19  /* v25, VMX only, sign-mask 32-bit */
 #define TmmT    0x1E  /* v30, VMX only */
