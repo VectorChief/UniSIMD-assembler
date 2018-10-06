@@ -1,12 +1,13 @@
 ================================================================================
 
 To build SIMD test framework on Linux, open terminal window,
-go to UniSIMD's "test" folder,
+go to UniSIMD's "test" subfolder,
 make sure necessary tools and libraries are installed
+    sudo apt-get update
 for native builds (binary ABI matches host):
-    sudo apt-get install make g++
+    sudo apt-get install make g++ clang
 for multilib builds (if libs are available):
-    sudo apt-get install make g++-multilib
+    sudo apt-get install make g++-multilib clang
 run for x86 architecture:
     make -f simd_make_x86.mk -j8
     ./simd_test.x86
@@ -18,28 +19,34 @@ run for non-x86 architectures:
     ./simd_test.***
 Prerequisites for building/emulating guest non-x86 architectures as well as
 configurations for particular hardware platforms are given in the makefiles.
-Only DEB-based distributions (Mint, Ubuntu, Debian) are supported for now,
-users of RPM-based distributions need to figure out build-deps on their own.
+By default, DEB-based distributions (Mint, Ubuntu, Debian) are implied,
+refer to the AArch64 Linux section at the bottom for RPM-based options.
 
 To build SIMD test framework on Windows,
-go to UniSIMD's "test" folder and open (in Visual C++ 6.0 or later):
+go to UniSIMD's "test" subfolder and open (in Visual C++ 6.0 or later):
     simd_workspace.dsw
 In newer versions of VC++ agree to convert workspace files.
 Exit and open newly created solution file for development.
 Select "Release" build target in drop-down list/menus, then press F5.
+More recent versions (2017) need a few extra steps to complete the build.
+Right-click on the Solution in the Solution Explorer window on the left
+and select "Retarget solution", choose Windows SDK Version "10.0.15063.0",
+then select "Build" -> "Rebuild Solution" from the top-level menu, not F5.
+Run produced binary simd_test.exe in "test" subfolder from Windows Explorer.
 
 To build SIMD test framework for 64-bit Windows,
 download and install TDM64-GCC toolchain (tdm64-gcc-5.1.0-2.exe),
-then open UniSIMD's "test" folder and run (from Windows UI):
+then open UniSIMD's "test" subfolder and run from "cmd" or Windows Explorer:
     simd_make_w64.bat
 produced simd_test_w64f32.exe binary file will launch upon build completion.
 
 ================================================================================
 
-To build QEMU emulator from source on Linux, download the latest version from
+To build QEMU emulator from source on Linux, download the latest version from:
     http://wiki.qemu.org/Download
-and unpack the archive, open terminal window, go to QEMU's root folder,
+unpack the archive, open terminal window, go to QEMU's root folder,
 make sure necessary tools and libraries are installed:
+    sudo apt-get update
     sudo apt-get install make g++
     sudo apt-get install libfdt-dev libglib2.0-dev libpixman-1-dev zlib1g-dev
 when building QEMU 3.0.0 for SVE targets apply patch for sve-max-vq cpu property
@@ -64,7 +71,7 @@ Use "-c 1" option to reduce test time when emulating with QEMU.
 
 To emulate future x86 targets (AVX-512) on modern x86 Linux hosts use Intel SDE:
     http://software.intel.com/en-us/articles/intel-software-development-emulator
-Download and unpack the archive.
+download and unpack the archive.
 
 In terminal window for 32-bit x86 run:
     path-to-kit/sde   -snb -- ./simd_test.x86avx -c 1
@@ -82,61 +89,87 @@ Use "-c 1" option to reduce test time when emulating with Intel SDE.
 
 To experiment with Linux in AArch64 mode on Raspberry Pi 3 consider:
 
-1) Devuan Jessie 1.0.0 (arm64 raspi3 image) 23-May-2017:
+1) Devuan ASCII 2.0.0 plain (arm64 raspi3) image from 06-Jun-2018:
     https://devuan.org/
-    https://files.devuan.org/devuan_jessie/embedded/
+    https://files.devuan.org/devuan_ascii/embedded/
+    devuan_ascii_2.0.0_arm64_raspi3.img.xz
 image boot credentials:
     login: root
     password: toor
 
-2) openSUSE Leap42.2 XFCE (arm64 raspi3 image) 23-Jun-2017:
+2) openSUSE Leap15.0 XFCE (aarch64 raspi3) image from 02-Jul-2018:
     https://en.opensuse.org/HCL:Raspberry_Pi3
-    http://download.opensuse.org/ports/aarch64/distribution/leap/42.2/appliances
+    http://download.opensuse.org/ports/aarch64/distribution/leap/15.0/appliances
+    openSUSE-...-ARM-XFCE-raspberrypi3.aarch64-2018.07.02-Buildlp150.1.1.raw.xz
 image boot credentials:
     login: root
     password: linux
 
 Flashing images above to an SD card is similar to a Raspbian installation:
 http://www.raspberrypi.org/documentation/installation/installing-images/linux.md
+    lsblk (before inserting SD card)
+    lsblk (after inserting SD card to see its device ID, mmcblk0 in this case)
+    sudo su
+    umount /dev/mmcblk0p1 (if exists and mounted, unmount partition: p1)
+    umount /dev/mmcblk0p2 (if exists and mounted, unmount partition: p2)
+    (change to Downloads directory where image file is unpacked)
+    dcfldd bs=4M if=devuan_ascii_2.0.0_arm64_raspi3.img of=/dev/mmcblk0
+    sync (before extracting SD card from the slot)
+    exit (from super-user mode)
 
-Devuan image requires additional partition resizing steps after flashing:
-    http://elinux.org/RPi_Resize_Flash_Partitions (performed on RPi using fdisk)
-as well as installing XFCE once the image is booted (credentials above):
+Devuan image requires partition resizing once booted (credentials above):
+http://elinux.org/RPi_Resize_Flash_Partitions (performed on RPi using fdisk)
+    fdisk /dev/mmcblk0
+    p (to see the current partition table)
+    d (answer: 2, to delete partition 2)
+    n (answer: p, for primary; answer: 2, for new partition 2; <enter>; <enter>)
+    (when fdisk asks to remove ext4 signature at the end, answer: N, to keep it)
+    w (writes the changes and quits fdisk)
+    shutdown -r now (login again after reboot)
+    resize2fs /dev/mmcblk0p2
+    df -h (to check the new partition size)
+to install XFCE once the partition is resized:
     apt-get update
     apt-get install xfce4 (choose keyboard layout)
-    apt-get install make g++
-    startx (choose "default config" on first start)
-    (launch terminal window in XFCE)
+    reboot (for XFCE to honour chosen keyboard layout)
+    startx (choose "Use default config" on first start)
+    (launch terminal window in XFCE from the bottom panel)
     apt-get install firefox-esr unzip
-to setup ARM Instruction Emulator for SVE on AArch64 hosts, install modules:
+    (firefox is now available under "Internet" section of the main menu)
+    apt-get install make g++ clang
+to setup ARM Instruction Emulator for SVE on AArch64 hosts install modules:
     apt-get install environment-modules
-    (reboot)
+    reboot (and login again)
+    (modules only work outside of XFCE, use "Log Out" to configure modules)
+    (once armie module is loaded, use startx again to work with it in XFCE)
 
-openSUSE image is RPM based (boots directly to XFCE, credentials above):
-    zypper in make gcc-c++
+openSUSE image is RPM based & boots directly to XFCE (credentials above):
+    zypper install MozillaFirefox
+    reboot (and login again)
+    (firefox is now available under "Internet" section of the main menu)
+    zypper install make gcc-c++ clang
 to setup ARM Instruction Emulator for SVE on AArch64 hosts, install modules:
-    zypper in environment-modules
-    (reboot)
+    zypper install Modules
+    reboot (and login again)
+adjust UniSIMD's makefiles to use g++ instead of triplet name, remove -static
+    leafpad simd_make_a64.mk &
 
 Download the archive from github.com and unpack it (in terminal window):
     cd Downloads
     unzip UniSIMD-assembler-master.zip
     cd UniSIMD-assembler-master/test
-    make -f simd_make_a64.mk -j8
+    make -f simd_make_a64.mk -j4
     ./simd_test.a64f32
-
-Adjust UniSIMD's makefiles to use g++ instead of triplet name, remove -static
-    nano simd_make_a64.mk (edit file, Ctrl-O, Enter, Ctrl-X)
 
 Download the ARM IE and install it (Ubuntu16.04 for Devuan, SUSE12 for SUSE):
 https://developer.arm.com/products/software-development-tools/
                                         /hpc/arm-instruction-emulator/download
     cd Downloads
-    tar -xzf ARM-Instruction-Emulator_18.2_AArch64_***_aarch64.tar.gz
+    tar -xvf ARM-Instruction-Emulator_18.2_AArch64_***_aarch64.tar.gz
     cd ARM-Instruction-Emulator_18.2_AArch64_***_aarch64
     ./arm-instruction-emulator-18.2_Generic-AArch64_***_aarch64-linux-***.sh
     (scroll down and type: yes <enter>, when license shows up on the screen)
-    (reboot)
+    reboot (and login again)
     module use /opt/arm/modulefiles
     module avail
     module load Generic-AArch64/***/arm-instruction-emulator/18.2
@@ -148,14 +181,19 @@ To test SVE targets with ARM Instruction Emulator run:
 
 Use "-c 1" option to reduce test time when emulating with ARM IE.
 
-Current frequency (600Mhz idle, 1200Mhz load) can be monitored using:
-cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq   (tested both images)
-
-Devuan image has support for USB flash drives, but offers 16-bit display output,
-it also requires setting frequency scaling governor for maximum performance:
+Devuan ASCII 2.0.0 image has USB flash drives automount, but older clang 3.8.1,
+it also allows setting CPU frequency scaling governor for maximum performance:
 echo "performance" | tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+Current frequency (600Mhz min-level, 1200Mhz max-level) can be monitored using:
+cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
 
-openSUSE image has newer clang, 32-bit display output, but no USB flash drives,
-although it offers high performance immediately, it lacks CPU scaling_governor
+openSUSE Leap15.0 image has newer clang, but no automount for USB flash drives,
+it offers min-level CPU frequency by default and it lacks CPU scaling governor.
+On the bonus side, modules can be configured from within XFCE as they should be.
+
+Both images feature modern set of compilers sufficient for the build:
+g++ 6.3.0, clang 3.8.1 (Devuan ASCII 2.0.0, clang prior to 3.8 was much slower)
+g++ 7.3.1, clang 5.0.1 (openSUSE Leap15.0)
+fresh Firefox 60.2.2esr browser and a 32bpp display output.
 
 ================================================================================
