@@ -84,7 +84,7 @@
  * better orthogonality with operand size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
- * of higher performance on MIPS and POWER use combined-compare-jump (cmj).
+ * of higher performance on MIPS and Power use combined-compare-jump (cmj).
  * Not all canonical forms of BASE instructions have efficient implementation.
  * For example, some forms of shifts and division use stack ops on x86 targets,
  * while standalone remainder operations can only be done natively on MIPS.
@@ -111,6 +111,14 @@
  * said about mixing vector and scalar subsets. Scalars can be completely
  * detached on some architectures. Use elm*x_st to store 1st vector element.
  * 128-bit vectors should be memory-compatible with any wider vector subset.
+ *
+ * Handling of NaNs in the floating point pipeline may not be consistent
+ * across different architectures. Avoid NaNs entering the data flow by using
+ * masking or control flow instructions. Apply special care when dealing with
+ * floating point compare and min/max input/output. The result of floating point
+ * compare instructions can be considered a -QNaN, though it is also interpreted
+ * as integer -1 and is often treated as a mask. Most arithmetic instructions
+ * should propagate QNaNs unchanged, however this behavior hasn't been verified.
  *
  * Working with sub-word BASE elements (byte, half) is reserved for future use.
  * However, current displacement types may not work due to natural alignment.
