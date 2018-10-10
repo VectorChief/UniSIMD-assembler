@@ -111,6 +111,14 @@
  * detached on some architectures. Use elm*x_st to store 1st vector element.
  * 128-bit vectors should be memory-compatible with any wider vector subset.
  *
+ * Handling of NaNs in the floating point pipeline may not be consistent
+ * across different architectures. Avoid NaNs entering the data flow by using
+ * masking or control flow instructions. Apply special care when dealing with
+ * floating point compare and min/max input/output. The result of floating point
+ * compare instructions can be considered a -QNaN, though it is also interpreted
+ * as integer -1 and is often treated as a mask. Most arithmetic instructions
+ * should propagate QNaNs unchanged, however this behavior hasn't been verified.
+ *
  * Working with sub-word BASE elements (byte, half) is reserved for future use.
  * However, current displacement types may not work due to natural alignment.
  * Signed/unsigned types can be supported orthogonally in cmd*n_**, cmd*x_**.
