@@ -197,7 +197,11 @@
 
 #define T11(tr) ((tr) << 11)
 #define M11(im) (0x00000000 | TIxx << 16)
-#define G11(rg, im) G30(rg, im)
+#define G11(rg, im) G31(rg, im)
+#define T21(tr) ((tr) << 11)
+#define M21(im) (0x00000000 | TIxx << 16)
+#define G21(rg, im) G31(rg, im)
+#define G31(rg, im) EMITW(0x34000000 | (rg) << 16 | (0xFFFF & (im)))
 
 #define T12(tr) ((tr) << 11)
 #define M12(im) (0x00000000 | TIxx << 16)

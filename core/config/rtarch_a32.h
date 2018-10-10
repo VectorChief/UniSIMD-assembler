@@ -190,6 +190,12 @@
 #define T10(tr) (tr)
 #define M10(im) (0x10000000 |(0x0FFF & (im)) << 10)
 #define G10(rg, im) EMPTY
+#define T20(tr) (tr)
+#define M20(im) (0x10000000 |(0x0FFF & (im)) << 10)
+#define G20(rg, im) EMPTY
+#define G30(rg, im) EMITW(0x52800000 | MRM(((rg)&0x1F),    0x00,    0x00) | \
+                     ((rg)&0x20)<<26 | ((rg)&0x20)<<24 | ((rg)&0x20)<<17  | \
+                             (0xFFFF & (im)) << 5)
 
 #define T11(tr) (tr)
 #define M11(im) (0x0A000000 | TIxx << 16)

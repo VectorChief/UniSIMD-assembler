@@ -203,16 +203,22 @@
 #define M20(im) (0x00000000 |(0xFFFF & (im)))
 #define G20(rg, im) EMPTY
 #define T30(tr, sr) ((tr) << 16 | (sr) << 21)
-#define M30(im) (0x00000000 | (im))
+#define M30(im) (0x00000000 |(0x7FFF & (im)))
 #define G30(rg, im) EMITW(0x60000000 | ((rg)&0x1F) << 16 |                  \
                          ((((rg)&0x1F) << 21) & M(((rg)&0x20) != 0)) |      \
                                                     (0xFFFF & (im)))
 
 #define T11(tr, sr) ((tr) << 21 | (sr) << 11)
 #define M11(im) (0x00000000 | TIxx << 16)
-#define G11(rg, im) G30(rg, im)
+#define G11(rg, im) G31(rg, im)
+#define T21(tr, sr) ((tr) << 16 | (sr) << 21)
+#define M21(im) (0x00000000 | TIxx << 11)
+#define G21(rg, im) G31(rg, im)
 #define T31(tr, sr) ((tr) << 16 | (sr) << 21)
 #define M31(im) (0x00000000 | TIxx << 11)
+#define G31(rg, im) EMITW(0x60000000 | ((rg)&0x1F) << 16 |                  \
+                         ((((rg)&0x1F) << 21) & M(((rg)&0x20) != 0)) |      \
+                                                    (0xFFFF & (im)))
 
 #define T12(tr, sr) ((tr) << 21 | (sr) << 11)
 #define M12(im) (0x00000000 | TIxx << 16)
