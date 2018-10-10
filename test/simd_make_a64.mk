@@ -94,20 +94,20 @@ simd_test_a64f64sve:
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64_64 -c 1
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64f32 -c 1
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64f64 -c 1
-# qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64f32sve -c 1  (for RT_256=4)
-# qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64f64sve -c 1  (for RT_256=4)
+# qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64_32sve -c 1  (for RT_256=4)
+# qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64_64sve -c 1  (for RT_256=4)
 # qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64f32sve -c 1  (for RT_512=1)
 # qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64f64sve -c 1  (for RT_512=1)
-# qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f32sve -c 1  (for RT_512=4)
-# qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f64sve -c 1  (for RT_512=4)
+# qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64_32sve -c 1  (for RT_512=4)
+# qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64_64sve -c 1  (for RT_512=4)
 # qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f32sve -c 1  (for RT_1K4=1)
 # qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f64sve -c 1  (for RT_1K4=1)
-# qemu-aarch64 -cpu max,sve-max-vq=8 simd_test.a64f32sve -c 1  (for RT_1K4=4)
-# qemu-aarch64 -cpu max,sve-max-vq=8 simd_test.a64f64sve -c 1  (for RT_1K4=4)
+# qemu-aarch64 -cpu max,sve-max-vq=8 simd_test.a64_32sve -c 1  (for RT_1K4=4)
+# qemu-aarch64 -cpu max,sve-max-vq=8 simd_test.a64_64sve -c 1  (for RT_1K4=4)
 # qemu-aarch64 -cpu max,sve-max-vq=8 simd_test.a64f32sve -c 1  (for RT_2K8_R8=1)
 # qemu-aarch64 -cpu max,sve-max-vq=8 simd_test.a64f64sve -c 1  (for RT_2K8_R8=1)
-# qemu-aarch64 -cpu max,sve-max-vq=16 simd_test.a64f32sve -c 1 (for RT_2K8_R8=4)
-# qemu-aarch64 -cpu max,sve-max-vq=16 simd_test.a64f64sve -c 1 (for RT_2K8_R8=4)
+# qemu-aarch64 -cpu max,sve-max-vq=16 simd_test.a64_32sve -c 1 (for RT_2K8_R8=4)
+# qemu-aarch64 -cpu max,sve-max-vq=16 simd_test.a64_64sve -c 1 (for RT_2K8_R8=4)
 # Use "-c 1" option to reduce test time when emulating with QEMU
 
 # Clang compilation works too (takes much longer prior to 3.8), use (replace):
