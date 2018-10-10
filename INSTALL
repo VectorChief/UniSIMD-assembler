@@ -47,13 +47,23 @@ To build QEMU emulator from source on Linux, download the latest version from:
 unpack the archive, open terminal window, go to QEMU's root folder,
 make sure necessary tools and libraries are installed:
     sudo apt-get update
-    sudo apt-get install make g++
-    sudo apt-get install libfdt-dev libglib2.0-dev libpixman-1-dev zlib1g-dev
+    sudo apt-get install make g++ clang
+    sudo apt-get install pkg-config libglib2.0-dev libpixman-1-dev zlib1g-dev
+when building QEMU on RPM-based systems like openSUSE:
+    sudo zypper install make gcc-c++ clang
+    sudo zypper install glib2-devel libpixman-1-0-devel zlib-devel
 when building QEMU 3.0.0 for SVE targets apply patch for sve-max-vq cpu property
 from https://patchwork.kernel.org/patch/10541199/  (scroll down and click diff):
     patch -p1 < ../for-3.0-target-arm-Add-sve-max-vq-cpu-property-to--***.diff
 run configure script:
     ./configure
+to build a reduced set of targets for linux-user mode emulation only, use:
+    ./configure --target-list=arm-linux-user,aarch64-linux-user,\
+mips-linux-user,mipsel-linux-user,mips64-linux-user,mips64el-linux-user,\
+ppc-linux-user,ppc64abi32-linux-user,ppc64-linux-user,ppc64le-linux-user,\
+i386-linux-user,x86_64-linux-user
+    (copy the whole multi-line command above without leading or trailing spaces)
+    (paste into terminal and run instead of plain ./configure script)
 run multithreaded make:
     make -j8
 run installation script:
@@ -61,6 +71,8 @@ run installation script:
 
 When building QEMU from source isn't necessary install a full binary package:
     sudo apt-get install qemu
+on RPM-based systems like openSUSE:
+    sudo zypper install qemu
 
 To test SVE targets with patched version of QEMU 3.0.0 run:
     qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f32sve -c 1
@@ -129,21 +141,25 @@ http://elinux.org/RPi_Resize_Flash_Partitions (performed on RPi using fdisk)
     resize2fs /dev/mmcblk0p2
     df -h (to check the new partition size)
 to install XFCE once the partition is resized:
+    (commands below are not prefixed with "sudo" as image is booted into "root")
+    (using "apt" command instead of "apt-get" allows to save space on SD card)
     apt-get update
-    apt-get install xfce4 (choose keyboard layout)
+    apt install xfce4 (choose keyboard layout)
     reboot (for XFCE to honour chosen keyboard layout)
     startx (choose "Use default config" on first start)
     (launch terminal window in XFCE from the bottom panel)
-    apt-get install firefox-esr unzip
+    apt install firefox-esr unzip
+    reboot (login again and "startx" into XFCE)
     (firefox is now available under "Internet" section of the main menu)
-    apt-get install make g++ clang
+    apt install make g++ clang
 to setup ARM Instruction Emulator for SVE on AArch64 hosts install modules:
-    apt-get install environment-modules
-    reboot (and login again)
+    apt install environment-modules
+    reboot (login again and "startx" into XFCE)
     (modules only work outside of XFCE, use "Log Out" to configure modules)
     (once armie module is loaded, use startx again to work with it in XFCE)
 
 openSUSE image is RPM based & boots directly to XFCE (credentials above):
+    (commands below are not prefixed with "sudo" as image is booted into "root")
     zypper install MozillaFirefox
     reboot (and login again)
     (firefox is now available under "Internet" section of the main menu)
@@ -152,10 +168,13 @@ to setup ARM Instruction Emulator for SVE on AArch64 hosts, install modules:
     zypper install Modules
     reboot (and login again)
 adjust UniSIMD's makefiles to use g++ instead of triplet name, remove -static
-    leafpad simd_make_a64.mk &
+    leafpad simd_make_a64.mk & (once archive is downloaded as shown below)
 
 Download the archive from github.com and unpack it (in terminal window):
     cd Downloads
+    (alternatively to using a browser for downloading, use wget from terminal)
+    (wget https://github.com/VectorChief/UniSIMD-assembler/archive/master.zip)
+    (mv master.zip UniSIMD-assembler-master.zip)
     unzip UniSIMD-assembler-master.zip
     cd UniSIMD-assembler-master/test
     make -f simd_make_a64.mk -j4
