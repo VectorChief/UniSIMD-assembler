@@ -6,7 +6,7 @@ The assembler itself isn't a separate tool, but rather a collection of C/C++
 header files, which applications need to include directly in order to use.
 
 At present, Intel SSE/SSE2/SSE4 and AVX/AVX2/AVX-512 (32/64-bit x86 ISAs),
-ARMv7 NEON/NEONv2, ARMv8 AArch32 NEON and AArch64 NEON (32/64-bit ARM ISAs),
+ARMv7 NEON/NEONv2, ARMv8 AArch32 and AArch64 NEON, SVE (32/64-bit ARM ISAs),
 MIPS 32/64-bit r5/r6 MSA and POWER 32/64-bit VMX/VSX (little/big-endian ISAs)
 are mostly implemented (/w horizontal reductions) although scalar improvements,
 wider SIMD vectors with zeroing/merging predicates in 3/4-operand instructions,
@@ -28,7 +28,7 @@ UniSIMD core features:
  - ISA reservation for fp16/fp128 (half/quad) SIMD ops
  - C/C++, Compute, SPMD on 4 major archs
  - Intel SSE/SSE2/SSE4 and AVX/AVX2/AVX-512
- - ARMv7 NEON/NEONv2, ARMv8 AArch32/AArch64 NEON
+ - ARMv7 NEON/NEONv2, ARMv8 AArch32/AArch64 NEON, SVE
  - MIPS r5/r6 MSA (Warrior P5600, I6400/P6600)
  - POWER VMX/VSX (PowerPC G4/G5, POWER6/7/8/9)
  - CISC, RISC, CISC on RISC, little/big-endian ISA
