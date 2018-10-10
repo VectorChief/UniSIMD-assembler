@@ -38,7 +38,7 @@
  *
  *  - rtarch_arm.h         - AArch32:ARMv7 ISA, 16 BASE regs, 8+temps used
  *  - rtarch_arm_128x1v4.h - fp32, 16 SIMD regs, NEON 128-bit, 8+temps used
- *  - rtarch_p32.h         - Power 32-bit ISA, 32 BASE regs, 14+temps used
+ *  - rtarch_p32.h         - POWER 32-bit ISA, 32 BASE regs, 14+temps used
  *  - rtarch_p32_128x1v4.h - fp32, 32 SIMD regs, VMX 128-bit, 15+temps used
  *  - rtarch_p32_128x2vG.h - fp32, 32 SIMD regs, 8 128-bit pairs, 15+temps used
  *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 14+temps used
@@ -75,8 +75,8 @@
  *  - rtarch_m64_128x1v1.h - fp64, 32 SIMD regs, MSA 128-bit, 30+temps used
  *  - rtarch_m32_128x2v1.h - fp32, 32 SIMD regs, 15 128-bit pairs, 30+temps used
  *  - rtarch_m64_128x2v1.h - fp64, 32 SIMD regs, 15 128-bit pairs, 30+temps used
- *  - rtarch_p32.h         - Power 32-bit ISA, 32 BASE regs, 14+temps used
- *  - rtarch_p64.h         - Power 64-bit ISA, 32 BASE regs, 14+temps used
+ *  - rtarch_p32.h         - POWER 32-bit ISA, 32 BASE regs, 14+temps used
+ *  - rtarch_p64.h         - POWER 64-bit ISA, 32 BASE regs, 14+temps used
  *  - rtarch_p32_128x1v1.h - fp32, 64 SIMD regs, VSX1+2 128-bit, 30+temps used
  *  - rtarch_p64_128x1v1.h - fp64, 64 SIMD regs, VSX1+2 128-bit, 30+temps used
  *  - rtarch_p32_128x2v1.h - fp32, 64 SIMD regs, 15 128-bit pairs, 30+temps used
@@ -187,9 +187,9 @@
  * cmdf*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed-256-bit)
  *
  * fixed 256-bit ops can be done as pairs with 2*15 128-bit regs on modern RISCs
- * fixed 256-bit ops can be done as pairs with 2*30 128-bit regs on modern Power
- * while 512-bit ops can be done as quads with 4*15 128-bit regs on modern Power
- * potentially saving extra address-calculation step using indexed-load on Power
+ * fixed 256-bit ops can be done as pairs with 2*30 128-bit regs on modern POWER
+ * while 512-bit ops can be done as quads with 4*15 128-bit regs on modern POWER
+ * potentially saving extra address-calculation step using indexed-load on POWER
  * in case of only 14/28 exposed SIMD registers some rare ops can be done faster
  *
  * cvx*s_** - SIMD-data args, SIMD ISA (convert to fp-precision below selected)
@@ -260,7 +260,7 @@
  * better orthogonality with operand size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
- * of higher performance on MIPS and Power use combined-compare-jump (cmj).
+ * of higher performance on MIPS and POWER use combined-compare-jump (cmj).
  * Not all canonical forms of BASE instructions have efficient implementation.
  * For example, some forms of shifts and division use stack ops on x86 targets,
  * while standalone remainder operations can only be done natively on MIPS.
@@ -320,7 +320,7 @@
 #define RT_SIMD_COMPAT_SQR_MASTER       1 /* for full-precision sqrps_** */
 #define RT_SIMD_COMPAT_SSE_MASTER       4 /* for v4 slot SSE2/4.1 - 2,4 (x64) */
 #define RT_SIMD_COMPAT_FMR_MASTER       0 /* for fm*ps_** rounding mode (x86) */
-#define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and Power */
+#define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and POWER */
 
 /*
  * Determine maximum of available SIMD registers for applications' code-bases.
@@ -1246,7 +1246,7 @@
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
  * with (_F) and without (_F) are not intermixed in the code */
 #ifndef RT_SIMD_FAST_FCTRL
-#define RT_SIMD_FAST_FCTRL      1 /* not applicable to Power */
+#define RT_SIMD_FAST_FCTRL      1 /* not applicable to POWER */
 #endif /* RT_SIMD_FAST_FCTRL */
 
 /* RT_SIMD_FLUSH_ZERO when enabled changes the default behavior
@@ -1306,13 +1306,13 @@
 /* RT_ELEM_COMPAT_VMX when enabled makes scalar SIMD (ELEM) ops
  * compatible with VMX, only if BASE regs are 128bit-aligned */
 #ifndef RT_ELEM_COMPAT_VMX
-#define RT_ELEM_COMPAT_VMX      0 /* applicable to all Power */
+#define RT_ELEM_COMPAT_VMX      0 /* applicable to all POWER */
 #endif /* RT_ELEM_COMPAT_VMX */
 
 /* RT_BASE_COMPAT_ZFL when enabled makes setting-flags BASE ops
  * compatible with 64-bit processors running 32-bit ISA mode */
 #ifndef RT_BASE_COMPAT_ZFL
-#define RT_BASE_COMPAT_ZFL      1 /* only necessary on Power */
+#define RT_BASE_COMPAT_ZFL      1 /* only necessary on POWER */
 #endif /* RT_BASE_COMPAT_ZFL */
 
 #if   (RT_2K8X1 != 0) && (RT_SIMD == 2048)

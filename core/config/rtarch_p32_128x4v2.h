@@ -16,7 +16,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_p32_128x4v2.h: Implementation of Power fp32 VSX3 instruction quads.
+ * rtarch_p32_128x4v2.h: Implementation of POWER fp32 VSX3 instruction quads.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -550,7 +550,7 @@
 #endif /* RT_SIMD_COMPAT_FMA */
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #if RT_SIMD_COMPAT_FMS <= 1
@@ -960,7 +960,7 @@
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
  * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
@@ -991,7 +991,7 @@
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
 
 #define cvton_rr(XD, XS)                                                    \
         EMITW(0xF00002E3 | MXM(REG(XD), 0x00,    REG(XS)))                  \

@@ -84,7 +84,7 @@
  * better orthogonality with operand size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
- * of higher performance on MIPS and Power use combined-compare-jump (cmj).
+ * of higher performance on MIPS and POWER use combined-compare-jump (cmj).
  * Not all canonical forms of BASE instructions have efficient implementation.
  * For example, some forms of shifts and division use stack ops on x86 targets,
  * while standalone remainder operations can only be done natively on MIPS.

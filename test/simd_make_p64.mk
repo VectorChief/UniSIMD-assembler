@@ -138,7 +138,7 @@ simd_test_p64f64Bp7:
 # sudo apt-get update (ignoring the old database errors in the end)
 #
 # Prerequisites for the build:
-# (cross-)compiler for 64-bit Power is installed and in the PATH variable.
+# (cross-)compiler for 64-bit POWER is installed and in the PATH variable.
 # sudo apt-get install g++-powerpc64le-linux-gnu
 # (recent g++-5-powerpc64le series target POWER8 and don't work well with -O3)
 #

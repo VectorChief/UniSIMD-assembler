@@ -213,7 +213,7 @@
 #endif /* RT_SIMD_COMPAT_FMA */
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #if RT_SIMD_COMPAT_FMS == 2
@@ -309,7 +309,7 @@
 #endif /* RT_SIMD_COMPAT_FMA */
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #if RT_SIMD_COMPAT_FMS == 2
@@ -403,7 +403,7 @@
 #endif /* RT_SIMD_COMPAT_FMA */
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #if RT_SIMD_COMPAT_FMS == 2
@@ -497,7 +497,7 @@
 #endif /* RT_SIMD_COMPAT_FMA */
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #if RT_SIMD_COMPAT_FMS == 2
@@ -593,7 +593,7 @@
 #endif /* RT_SIMD_COMPAT_FMA */
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #if RT_SIMD_COMPAT_FMS == 2
@@ -689,7 +689,7 @@
 #endif /* RT_SIMD_COMPAT_FMA */
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #if RT_SIMD_COMPAT_FMS == 2
@@ -783,7 +783,7 @@
 #endif /* RT_SIMD_COMPAT_FMA */
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #if RT_SIMD_COMPAT_FMS == 2
@@ -877,7 +877,7 @@
 #endif /* RT_SIMD_COMPAT_FMA */
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #if RT_SIMD_COMPAT_FMS == 2
@@ -1164,7 +1164,7 @@
         fmacs_ld(W(XG), W(XS), W(MT), W(DT))
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsos_rr(XG, XS, XT)                                                \
@@ -1409,7 +1409,7 @@
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
  * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
@@ -1427,7 +1427,7 @@
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
 
 #define cvton_rr(XD, XS)                                                    \
         cvtcn_rr(W(XD), W(XS))
@@ -1836,7 +1836,7 @@
         fmais_ld(W(XG), W(XS), W(MT), W(DT))
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsos_rr(XG, XS, XT)                                                \
@@ -2081,7 +2081,7 @@
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
  * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
@@ -2099,7 +2099,7 @@
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
 
 #define cvton_rr(XD, XS)                                                    \
         cvtin_rr(W(XD), W(XS))
@@ -2510,7 +2510,7 @@
         fmads_ld(W(XG), W(XS), W(MT), W(DT))
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsqs_rr(XG, XS, XT)                                                \
@@ -2755,7 +2755,7 @@
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
  * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
@@ -2773,7 +2773,7 @@
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
 
 #define cvtqn_rr(XD, XS)                                                    \
         cvtdn_rr(W(XD), W(XS))
@@ -3182,7 +3182,7 @@
         fmajs_ld(W(XG), W(XS), W(MT), W(DT))
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsqs_rr(XG, XS, XT)                                                \
@@ -3427,7 +3427,7 @@
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
  * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
@@ -3445,7 +3445,7 @@
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
 
 #define cvtqn_rr(XD, XS)                                                    \
         cvtjn_rr(W(XD), W(XS))
@@ -3856,7 +3856,7 @@
         fmaos_ld(W(XG), W(XS), W(MT), W(DT))
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsps_rr(XG, XS, XT)                                                \
@@ -4101,7 +4101,7 @@
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
  * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
@@ -4119,7 +4119,7 @@
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
 
 #define cvtpn_rr(XD, XS)                                                    \
         cvton_rr(W(XD), W(XS))
@@ -4526,7 +4526,7 @@
         fmacs_ld(W(XG), W(XS), W(MT), W(DT))
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsfs_rr(XG, XS, XT)                                                \
@@ -4771,7 +4771,7 @@
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
  * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
@@ -4789,7 +4789,7 @@
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
 
 #define cvtfn_rr(XD, XS)                                                    \
         cvtcn_rr(W(XD), W(XS))
@@ -5196,7 +5196,7 @@
         fmais_ld(W(XG), W(XS), W(MT), W(DT))
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsls_rr(XG, XS, XT)                                                \
@@ -5441,7 +5441,7 @@
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
  * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
@@ -5459,7 +5459,7 @@
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
 
 #define cvtln_rr(XD, XS)                                                    \
         cvtin_rr(W(XD), W(XS))
@@ -5716,7 +5716,7 @@
         fmars_ld(W(XG), W(XS), W(MT), W(DT))
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsss_rr(XG, XS, XT)                                                \
@@ -6107,7 +6107,7 @@
         fmaqs_ld(W(XG), W(XS), W(MT), W(DT))
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsps_rr(XG, XS, XT)                                                \
@@ -6352,7 +6352,7 @@
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
  * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
@@ -6370,7 +6370,7 @@
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
 
 #define cvtpn_rr(XD, XS)                                                    \
         cvtqn_rr(W(XD), W(XS))
@@ -6777,7 +6777,7 @@
         fmads_ld(W(XG), W(XS), W(MT), W(DT))
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsfs_rr(XG, XS, XT)                                                \
@@ -7022,7 +7022,7 @@
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
  * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
@@ -7040,7 +7040,7 @@
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
 
 #define cvtfn_rr(XD, XS)                                                    \
         cvtdn_rr(W(XD), W(XS))
@@ -7447,7 +7447,7 @@
         fmajs_ld(W(XG), W(XS), W(MT), W(DT))
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsls_rr(XG, XS, XT)                                                \
@@ -7692,7 +7692,7 @@
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
  * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
 
@@ -7710,7 +7710,7 @@
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
 
 #define cvtln_rr(XD, XS)                                                    \
         cvtjn_rr(W(XD), W(XS))
@@ -7967,7 +7967,7 @@
         fmats_ld(W(XG), W(XS), W(MT), W(DT))
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsss_rr(XG, XS, XT)                                                \
@@ -8200,7 +8200,7 @@
  * better orthogonality with operand size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
- * of higher performance on MIPS and Power use combined-compare-jump (cmj).
+ * of higher performance on MIPS and POWER use combined-compare-jump (cmj).
  * Not all canonical forms of BASE instructions have efficient implementation.
  * For example, some forms of shifts and division use stack ops on x86 targets,
  * while standalone remainder operations can only be done natively on MIPS.
@@ -8960,15 +8960,15 @@
  * set-flags: no
  * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
  * based on minimum natively-encoded offset across supported targets (u/c)
- * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
- * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
+ * MIPS:18-bit, POWER:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
+ * MIPS:18-bit, POWER:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
 
      /* jccxx_** is defined in 32-bit rtarch_***.h files */
 
 /************************* register-size instructions *************************/
 
 /* stack (push stack = S, D = pop stack)
- * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & Power)
+ * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & POWER)
  * adjust stack pointer with 8-byte (64-bit) steps on all current targets */
 
      /* stack_** is defined in 32-bit rtarch_***.h files */
@@ -9722,15 +9722,15 @@
  * set-flags: no
  * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
  * based on minimum natively-encoded offset across supported targets (u/c)
- * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
- * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
+ * MIPS:18-bit, POWER:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
+ * MIPS:18-bit, POWER:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
 
      /* jccxx_** is defined in 32-bit rtarch_***.h files */
 
 /************************* register-size instructions *************************/
 
 /* stack (push stack = S, D = pop stack)
- * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & Power)
+ * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & POWER)
  * adjust stack pointer with 8-byte (64-bit) steps on all current targets */
 
      /* stack_** is defined in 32-bit rtarch_***.h files */

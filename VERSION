@@ -73,7 +73,7 @@ v0.9.0: Unified SIMD Assembler, 256-bit SIMD on RISCs, basic AVX-512 support
   - add new fp-negate and inverse-logic SIMD instructions (neg, orn, not)
   - add new variable SIMD shifts with per-element count to all targets
   - implement 256-bit SIMD support (2x128-bit, 15 regs) on modern RISC targets
-  - implement 512-bit SIMD support (4x128-bit, 15 regs) on modern Power targets
+  - implement 512-bit SIMD support (4x128-bit, 15 regs) on modern POWER targets
   - implement 512-bit SIMD support (1x512-bit, 16 regs) on future x86 targets
   - AVX1/AVX2 256-bit SIMD for x86 (1x256-bit, 16 regs) remains supported
   - 256-bit SIMD with 15 regs becomes new common baseline for modern hardware
@@ -86,7 +86,7 @@ v0.9.0: Unified SIMD Assembler, 256-bit SIMD on RISCs, basic AVX-512 support
   - add new SIMD compatibility flags for 128-bit AVX1/2, FMA/FMS/FMR, XMM regs
   - add wrappers for 64-bit literals to better support legacy 32-bit compilers
   - fix label_ld/label_st range on ARMv7/AArch64 to be on par with other targets
-  - fix discrepancy in VMX/VSX vector-loads on Power (from here backported down)
+  - fix discrepancy in VMX/VSX vector-loads on POWER (from here backported down)
   - fix AVX-version of mmvpx_ld from zeroing to merging on x86
 
 v0.8.1: Unified SIMD Assembler, full 64-bit fp/int SIMD compute elements
@@ -103,8 +103,8 @@ v0.8.1: Unified SIMD Assembler, full 64-bit fp/int SIMD compute elements
   - add build/clean scripts, update makefiles with extra targets, MIPS notes
   - remove unnecessary limitation on SIMD masks (add AVX-512/ARM-SVE notes)
   - distinguish SIMD NEONv1/v2 vanilla ARM builds (cortex-a8/cortex-a15)
-  - distinguish SIMD v2/v4 64-bit Power builds (POWER7+VSX/POWER8+VSX2)
-  - fix non-setting-flags instructions to not interfere with cmp on MIPS, Power
+  - distinguish SIMD v2/v4 64-bit POWER builds (POWER7+VSX/POWER8+VSX2)
+  - fix non-setting-flags instructions to not interfere with cmp on MIPS, POWER
   - fix full-precision IEEE-compat divps_ld on ARMv7 targets (backported down)
 
 v0.8.0: Unified SIMD Assembler, full 64-bit addressing for BASE and SIMD
@@ -125,22 +125,22 @@ v0.8.0: Unified SIMD Assembler, full 64-bit addressing for BASE and SIMD
   - add new offset corrections for endianness (from here backported down)
   - add Win64 support via TDM64-GCC toolchain (tdm64-gcc-5.1.0-2.exe)
   - add NULL-ptr checks to custom allocators (Linux/mmap, Win64/VirtualAlloc)
-  - fix setting-flags instructions for 64-bit Power running 32-bit ISA
+  - fix setting-flags instructions for 64-bit POWER running 32-bit ISA
   - fix non-setting-flags instructions (neg*x) to not set flags on MIPS
 
 v0.7.1: Unified SIMD Assembler, 64/32-bit hybrid mode for native 64-bit ABI
   - use fixed-sized and adjustable integer types in rtbase and SIMD test
   - add a64 (AArch64 native ABI) and x64 (x86_64 native ABI) targets/makefiles
-  - add m64 (MIPS64 native ABI) and p64 (Power64 native ABI) targets/makefiles
+  - add m64 (MIPS64 native ABI) and p64 (POWER64 native ABI) targets/makefiles
   - most of the current ISA remains 32-bit for BASE and SIMD with few exceptions
   - adjust backend structures to support 64-bit pointer types in select places
   - move sys_alloc/sys_free to platform-specific sections in SIMD test
   - implement custom allocators (mmap) to limit address range to 32-bit (Linux)
   - limit address range to 2GB boundary as MIPS64 sign-extends 32-bit mem-loads
   - treat code labels as 64-bit in label_ld/st and jmpxx_mm instructions
-  - implement 64-bit versions of stack_sa/la instructions on MIPS and Power
-  - fix variable SIMD shifts to support little-endian on Power targets
-  - fix ASM blocks to only use SIMD registers within VRSAVE segment on Power
+  - implement 64-bit versions of stack_sa/la instructions on MIPS and POWER
+  - fix variable SIMD shifts to support little-endian on POWER targets
+  - fix ASM blocks to only use SIMD registers within VRSAVE segment on POWER
   - remove ASM block's zeroing of r15 as unnecessary on x32/x64 targets
   - reformat/rework ASM blocks to better respect internal register mapping
   - explicitly save/load SIMD registers in ASM blocks across all targets
@@ -148,25 +148,25 @@ v0.7.1: Unified SIMD Assembler, 64/32-bit hybrid mode for native 64-bit ABI
   - fix clang's ASM block l-value errors and other warnings, official support
   - add build instructions to makefiles for Ubuntu 16.04 LTS 64-bit Live CD
   - fix divps_ld instruction's encoding on ARM
-  - use IEEE-compatible div/sqr on legacy ARM and Power
+  - use IEEE-compatible div/sqr on legacy ARM and POWER
 
 v0.7: Unified SIMD Assembler, additional 32-bit CPU architectures
   - add a32 (AArch64:ILP32 ABI) and x32 (x86_64:mx32 ABI) targets/makefiles
-  - add m32 (MIPS32r5/r6 + MSA) and p32 (Power + VMX/VSX) targets/makefiles
+  - add m32 (MIPS32r5/r6 + MSA) and p32 (POWER + VMX/VSX) targets/makefiles
   - add yet another SIMD variant (v4) for x86/SSE4.1 and ARMv8/AArch32
   - separate ARMv7/ASIMDv2 (v2) and ARMv8/AArch32 (v4) SIMD variants on ARM
   - add ARM builds for Raspberry Pi 2 and 3 in addition to Nokia N900
   - use static linking in SIMD tests for QEMU emulation
   - add mmv (blendvps) to x86/x32 SSE4.1 for fast conditional loads
-  - add combined-compare-jumps to rtarch for better efficiency (MIPS, Power)
+  - add combined-compare-jumps to rtarch for better efficiency (MIPS, POWER)
   - remove limitation for BASE instructions to only accept DP offsets
   - add new immediate/displacement types, add comment that they are unsigned
   - add comments throughout rtarch about instructions' set-flags behavior
   - implement full-range 32-bit integer divide on ARMv7 (v1) as 64-bit fp-div
   - add widening versions of integer multiply instructions to rtarch definitions
   - add remainder wrappers for integer divide instructions to rtarch definitions
-  - add IEEE-compatible versions of fp div & sqr for ARMv7 and Power targets
-  - add "residual correction" to non-IEEE fp div on ARMv7 and Power targets
+  - add IEEE-compatible versions of fp div & sqr for ARMv7 and POWER targets
+  - add "residual correction" to non-IEEE fp div on ARMv7 and POWER targets
   - add SIMD tests for fp-to-int round and int-div remainder, run level 18
 
 v0.6: Unified SIMD Assembler, additional SIMD targets
@@ -194,7 +194,7 @@ v0.6: Unified SIMD Assembler, additional SIMD targets
   - clean up rtarch whitespace formatting
 
 v0.5: Unified SIMD Assembler, API freeze for the engine
-  - instructions naming scheme finalized
+  - instruction naming scheme finalized
   - change ARM instructions to set flags
   - added framework for internal constants (used by reciprocals)
   - added SIMD instruction for cube root, reciprocal steps redesigned

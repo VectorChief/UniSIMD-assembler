@@ -495,7 +495,7 @@
 #if RT_SIMD_COMPAT_FMS == 0
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsis_rr(XG, XS, XT)                                                \
@@ -513,7 +513,7 @@
 #elif RT_SIMD_COMPAT_FMS == 1
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsis_rr(XG, XS, XT)                                                \
@@ -560,7 +560,7 @@
 #endif /* RT_SIMD_COMPAT_FMA */
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #if RT_SIMD_COMPAT_FMS <= 1
@@ -843,7 +843,7 @@
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX Power systems, use cvz
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
  * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
  * round instructions are only accurate within 32-bit signed int range */
 
@@ -868,7 +868,7 @@
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX Power systems */
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
 
 #define cvtin_rr(XD, XS)                                                    \
         VEX(RXB(XD), RXB(XS),    0x00, 0, 0, 1) EMITB(0x5B)                 \
@@ -1378,7 +1378,7 @@
 #if RT_SIMD_COMPAT_FMS == 0
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsrs_rr(XG, XS, XT)                                                \
@@ -1396,7 +1396,7 @@
 #elif RT_SIMD_COMPAT_FMS == 1
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #if RT_SIMD_COMPAT_FMR == 0
@@ -1473,7 +1473,7 @@
 #endif /* RT_SIMD_COMPAT_FMA */
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all Power systems
+ * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #if RT_SIMD_COMPAT_FMS <= 1
@@ -1642,7 +1642,7 @@
 /************************   helper macros (FPU mode)   ************************/
 
 /* simd mode
- * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/Power),
+ * set via FCTRL macros, *_F for faster non-IEEE mode (optional on MIPS/POWER),
  * original FCTRL blocks (FCTRL_ENTER/FCTRL_LEAVE) are defined in rtbase.h
  * NOTE: ARMv7 always uses ROUNDN non-IEEE mode for SIMD fp-arithmetic,
  * while fp<->int conversion takes ROUND* into account via VFP fallback */

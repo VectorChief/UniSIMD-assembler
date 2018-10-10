@@ -1,5 +1,5 @@
 UniSIMD assembler is a high-level C/C++ macro assembler framework unified across
-ARM, MIPS, Power and x86 architectures. It establishes a subset of both BASE and
+ARM, MIPS, POWER and x86 architectures. It establishes a subset of both BASE and
 SIMD instruction sets with clearly defined common API, so that application logic
 can be written and maintained in one place without code replication.
 The assembler itself isn't a separate tool, but rather a collection of C/C++
@@ -7,7 +7,7 @@ header files, which applications need to include directly in order to use.
 
 At present, Intel SSE/SSE2/SSE4 and AVX/AVX2/AVX-512 (32/64-bit x86 ISAs),
 ARMv7 NEON/NEONv2, ARMv8 AArch32 NEON and AArch64 NEON (32/64-bit ARM ISAs),
-MIPS 32/64-bit r5/r6 MSA and Power 32/64-bit VMX/VSX (little/big-endian ISAs)
+MIPS 32/64-bit r5/r6 MSA and POWER 32/64-bit VMX/VSX (little/big-endian ISAs)
 are mostly implemented (/w horizontal reductions) although scalar improvements,
 wider SIMD vectors with zeroing/merging predicates in 3/4-operand instructions,
 cross-precision fp-converters as well as sub-word (byte/half) integer SIMD ops
@@ -30,7 +30,7 @@ UniSIMD core features:
  - Intel SSE/SSE2/SSE4 and AVX/AVX2/AVX-512
  - ARMv7 NEON/NEONv2, ARMv8 AArch32/AArch64 NEON
  - MIPS r5/r6 MSA (Warrior P5600, I6400/P6600)
- - Power VMX/VSX (PowerPC G4/G5, POWER6/7/8/9)
+ - POWER VMX/VSX (PowerPC G4/G5, POWER6/7/8/9)
  - CISC, RISC, CISC on RISC, little/big-endian ISA
  - Support for reg-reg, load/store, load-op instructions
  - FMA3 support (native or higher-precision emulation)

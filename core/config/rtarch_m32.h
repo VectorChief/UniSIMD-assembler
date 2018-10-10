@@ -121,7 +121,7 @@
  * better orthogonality with operand size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
- * of higher performance on MIPS and Power use combined-compare-jump (cmj).
+ * of higher performance on MIPS and POWER use combined-compare-jump (cmj).
  * Not all canonical forms of BASE instructions have efficient implementation.
  * For example, some forms of shifts and division use stack ops on x86 targets,
  * while standalone remainder operations can only be done natively on MIPS.
@@ -241,7 +241,7 @@
                                                     (0xFFFC & (dp)))
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
-/* four registers below TNxx,TAxx,TCxx,TExx must occupy consecutive indices */
+/* four registers TNxx,TAxx,TCxx,TExx below must occupy consecutive indices */
 
 #define TNxx    0x14  /* s4 (r20), default FCTRL round mode */
 #define TAxx    0x15  /* s5 (r21), extra reg for FAST_FCTRL */
@@ -1667,8 +1667,8 @@
  * set-flags: no
  * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
  * based on minimum natively-encoded offset across supported targets (u/c)
- * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
- * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
+ * MIPS:18-bit, POWER:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
+ * MIPS:18-bit, POWER:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
 
 #define jmpxx_xr(RS)           /* register-targeted unconditional jump */   \
         EMITW(0x00000008 | MRM(0x00,    REG(RS), 0x00))                     \
@@ -1748,8 +1748,8 @@
  * set-flags: no
  * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
  * based on minimum natively-encoded offset across supported targets (u/c)
- * MIPS:18-bit, Power:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
- * MIPS:18-bit, Power:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
+ * MIPS:18-bit, POWER:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
+ * MIPS:18-bit, POWER:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
 
 #define jmpxx_xr(RS)           /* register-targeted unconditional jump */   \
         EMITW(0x00000009 | MRM(0x00,    REG(RS), 0x00))                     \
@@ -1822,7 +1822,7 @@
 #if   (defined RT_M32)
 
 /* stack (push stack = S, D = pop stack)
- * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & Power)
+ * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & POWER)
  * adjust stack pointer with 8-byte (64-bit) steps on all current targets */
 
 #define stack_st(RS)                                                        \
