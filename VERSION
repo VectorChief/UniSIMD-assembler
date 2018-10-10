@@ -10,18 +10,35 @@
   - add support for POWER9 backend (v2) with immediate vector loads/stores
   - move 128-bit 30 SIMD registers Skylake-X target from v1 to v2, match POWER9
   - reserve 128-bit v1 and 256-bit v4 for 30 SIMD registers emulation on AVX1/2
+  - implement plain ARM-SVE backend (v4) for 256/512/1K4/2K8-bit vector lengths
+  - implement paired ARM-SVE backend (v1) for 512/1K4/2K8-bit SIMD target slots
   - new scheme: RT_128=4+8, RT_256=1+2, RT_512=1+2, RT_1K4=1+2 are 15 registers
   - new scheme: RT_128=1+2, RT_256=4+8, RT_512=4+8, RT_1K4=4+8 are 30 registers
-  - add elm*x_st instruction to decouple scalar subset from vectors (via mem)
+  - add elm*x_st instruction to detach scalar subset from vectors (via mem)
   - add support for horizontal pairwise/reductive add/mul/min/max instructions
   - add VMX-compatible scalar SIMD subset on PPC G4 and POWER family of CPUs
   - add MSA/scalar compatibility on big-endian MIPS, support for fp32 11-bit DP
+  - rename sections in target-specific headers to BASE, SIMD, ELEM (for scalar)
+  - optimize long displacements for BASE, SIMD, ELEM on RISCs where applicable
+  - implement proper SIMD-scaling for displacement types (as sliding in rtbase)
+  - move common internal x87 FPU sections to BASE headers on x86
+  - dedicate rtconf header for configurable instruction subsets on all targets
+  - allow target-specific headers to redefine common instructions from rtbase
   - improve SIMD target reporting in tests, add -c n option to reduce test time
+  - update notes for MIPS cross-compiler location, add -mnan=2008 to makefiles
+  - update notes for AArch64 Linux, QEMU 3.0.0, Intel SDE, add ARM IE reference
   - fix BASE shifts with zero immediate arg on legacy ARMv7 (backported down)
+  - always reserve maximum space for SIMD register file
+  - save/restore temp predicate register on AVX512
+  - fix SIMD registers save/restore for 15x128x2 on POWER7
+  - fix temporary FPRs save/restore on POWER
+  - fix scalar SIMD min/max on POWER7
   - fix location for 128/256-bit common SIMD instructions
-  - fix comment for SIMD shifts with count in memory
   - fix for scalar SIMD alignment on ARMv7, POWER8
   - fix compilation in C++11 mode with RT_DEBUG=2
+  - add comment for NaNs handling in floating point piepline
+  - clarify comments about SIMD fp round instructions
+  - fix comment for SIMD shifts with count in memory
   - add comment for scalar/vector compatibility
 
 v0.9.1: Unified SIMD Assembler, 3-operand + basic scalar SIMD, extra backends
@@ -131,7 +148,7 @@ v0.8.0: Unified SIMD Assembler, full 64-bit addressing for BASE and SIMD
 v0.7.1: Unified SIMD Assembler, 64/32-bit hybrid mode for native 64-bit ABI
   - use fixed-sized and adjustable integer types in rtbase and SIMD test
   - add a64 (AArch64 native ABI) and x64 (x86_64 native ABI) targets/makefiles
-  - add m64 (MIPS64 native ABI) and p64 (POWER64 native ABI) targets/makefiles
+  - add m64 (MIPS64 native ABI) and p64 (Power64 native ABI) targets/makefiles
   - most of the current ISA remains 32-bit for BASE and SIMD with few exceptions
   - adjust backend structures to support 64-bit pointer types in select places
   - move sys_alloc/sys_free to platform-specific sections in SIMD test
