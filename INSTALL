@@ -51,7 +51,7 @@ make sure necessary tools and libraries are installed:
     sudo apt-get install pkg-config libglib2.0-dev libpixman-1-dev zlib1g-dev
 when building QEMU on RPM-based systems like openSUSE:
     sudo zypper install make gcc-c++ clang
-    sudo zypper install glib2-devel libpixman-1-0-devel zlib-devel
+    sudo zypper install patch glib2-devel libpixman-1-0-devel zlib-devel
 when building QEMU 3.0.0 for SVE targets apply patch for sve-max-vq cpu property
 from https://patchwork.kernel.org/patch/10541199/  (scroll down and click diff):
     patch -p1 < ../for-3.0-target-arm-Add-sve-max-vq-cpu-property-to--***.diff
@@ -63,7 +63,7 @@ mips-linux-user,mipsel-linux-user,mips64-linux-user,mips64el-linux-user,\
 ppc-linux-user,ppc64abi32-linux-user,ppc64-linux-user,ppc64le-linux-user,\
 i386-linux-user,x86_64-linux-user
     (copy the whole multi-line command above without leading or trailing spaces)
-    (paste into terminal and run instead of plain ./configure script)
+    (paste into terminal and run after or instead of plain ./configure script)
 run multithreaded make:
     make -j8
 run installation script:
@@ -134,12 +134,17 @@ http://elinux.org/RPi_Resize_Flash_Partitions (performed on RPi using fdisk)
     fdisk /dev/mmcblk0
     p (to see the current partition table)
     d (answer: 2, to delete partition 2)
+    (for swap leave some space at the end by subtracting 1M from default sector)
     n (answer: p, for primary; answer: 2, for new partition 2; <enter>; <enter>)
     (when fdisk asks to remove ext4 signature at the end, answer: N, to keep it)
+    (create new partition 3 as 2, from the space left at the end of the SD card)
+    (t 3, to change partition type from 83 "Linux" to 82 "Linux-swap / Solaris")
     w (writes the changes and quits fdisk)
     shutdown -r now (login again after reboot)
     resize2fs /dev/mmcblk0p2
     df -h (to check the new partition size)
+    (mkswap /dev/mmcblk0p3)
+    (add "/dev/mmcblk0p3 none swap sw 0 0" to /etc/fstab to auto-swapon at boot)
 to install XFCE once the partition is resized:
     (commands below are not prefixed with "sudo" as image is booted into "root")
     (using "apt" command instead of "apt-get" allows to save space on SD card)
@@ -160,6 +165,7 @@ to setup ARM Instruction Emulator for SVE on AArch64 hosts install modules:
 
 openSUSE image is RPM based & boots directly to XFCE (credentials above):
     (commands below are not prefixed with "sudo" as image is booted into "root")
+    (Raspberry Pi 3 Model B+ doesn't have networking with openSUSE, use old one)
     zypper install MozillaFirefox
     reboot (and login again)
     (firefox is now available under "Internet" section of the main menu)
@@ -184,14 +190,14 @@ Download the ARM IE and install it (Ubuntu16.04 for Devuan, SUSE12 for SUSE):
 https://developer.arm.com/products/software-development-tools/
                                         /hpc/arm-instruction-emulator/download
     cd Downloads
-    tar -xvf ARM-Instruction-Emulator_18.2_AArch64_***_aarch64.tar.gz
-    cd ARM-Instruction-Emulator_18.2_AArch64_***_aarch64
-    ./arm-instruction-emulator-18.2_Generic-AArch64_***_aarch64-linux-***.sh
+    tar -xvf ARM-Instruction-Emulator_18.3_AArch64_***_aarch64.tar.gz
+    cd ARM-Instruction-Emulator_18.3_AArch64_***_aarch64
+    ./arm-instruction-emulator-18.3_Generic-AArch64_***_aarch64-linux-***.sh
     (scroll down and type: yes <enter>, when license shows up on the screen)
     reboot (and login again)
     module use /opt/arm/modulefiles
     module avail
-    module load Generic-AArch64/***/arm-instruction-emulator/18.2
+    module load Generic-AArch64/***/arm-instruction-emulator/18.3
     (armie should now be available in the PATH variable, check vector lengths)
     armie -mlist-vector-lengths
 
@@ -208,6 +214,7 @@ cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq
 
 openSUSE Leap15.0 image has newer clang, but no automount for USB flash drives,
 it offers min-level CPU frequency by default and it lacks CPU scaling governor.
+It also doesn't support networking on newer Raspberry Pi 3 Model B+ from 2018.
 On the bonus side, modules can be configured from within XFCE as they should be.
 
 Both images feature modern set of compilers sufficient for the build:
