@@ -1454,25 +1454,25 @@
 #define IXJ6(r1, p1, IS, lb)                                                \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IS), T3(IS), M3(IS)) | \
-        (M(TP2(IS) == 0) & 0x2C200000) | (M(TP2(IS) != 0) & 0x7C200000))    \
+        (M(TP1(IS) == 0) & 0x2C200000) | (M(TP1(IS) != 0) & 0x7C200000))    \
         ASM_BEG ASM_OP1(blt,   lb) ASM_END
 
 #define IXJ7(r1, p1, IS, lb)                                                \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IS), T3(IS), M3(IS)) | \
-        (M(TP2(IS) == 0) & 0x2C200000) | (M(TP2(IS) != 0) & 0x7C200000))    \
+        (M(TP1(IS) == 0) & 0x2C200000) | (M(TP1(IS) != 0) & 0x7C200000))    \
         ASM_BEG ASM_OP1(ble,   lb) ASM_END
 
 #define IXJ8(r1, p1, IS, lb)                                                \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IS), T3(IS), M3(IS)) | \
-        (M(TP2(IS) == 0) & 0x2C200000) | (M(TP2(IS) != 0) & 0x7C200000))    \
+        (M(TP1(IS) == 0) & 0x2C200000) | (M(TP1(IS) != 0) & 0x7C200000))    \
         ASM_BEG ASM_OP1(bgt,   lb) ASM_END
 
 #define IXJ9(r1, p1, IS, lb)                                                \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
         EMITW(0x00000000 | MIM(p1,      0x00,    VAL(IS), T3(IS), M3(IS)) | \
-        (M(TP2(IS) == 0) & 0x2C200000) | (M(TP2(IS) != 0) & 0x7C200000))    \
+        (M(TP1(IS) == 0) & 0x2C200000) | (M(TP1(IS) != 0) & 0x7C200000))    \
         ASM_BEG ASM_OP1(bge,   lb) ASM_END
 
 #define CXI(cc, r1, p1, IS, lb)                                             \
