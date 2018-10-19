@@ -4628,6 +4628,10 @@ rt_time get_time()
 
 #include <sys/mman.h>
 
+#ifndef MAP_ANONYMOUS
+#define MAP_ANONYMOUS MAP_ANON  /* workaround for MacOS compilation */
+#endif /* MacOS still cannot allocate with mmap within 32-bit range */
+
 #endif /* RT_POINTER */
 
 /*
