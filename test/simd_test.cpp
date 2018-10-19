@@ -1259,9 +1259,6 @@ rt_void s_test09(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
-        label_st(cyc_beg,
-                 Mebp, inf_LABEL)
-
         movwx_ld(Reax, Mebp, inf_CYC)
         movwx_st(Reax, Mebp, inf_LOC)
 
@@ -1313,8 +1310,8 @@ rt_void s_test09(rt_SIMD_INFOX *info)
         subwx_mi(Mebp, inf_LOC, IB(1))
         cmjwx_mz(Mebp, inf_LOC,
         /* if */ EQ_x, cyc_end)
-        jmpxx_mm(Mebp, inf_LABEL)
-        jmpxx_lb(cyc_beg) /* the same jump as above */
+
+        jmpxx_lb(cyc_beg)
 
     LBL(cyc_end)
 
@@ -2509,9 +2506,6 @@ rt_void s_test18(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
-        label_st(cyc_ini,
-                 Mebp, inf_LABEL)
-
         movwx_ld(Reax, Mebp, inf_CYC)
         movwx_st(Reax, Mebp, inf_LOC)
 
@@ -2567,8 +2561,8 @@ rt_void s_test18(rt_SIMD_INFOX *info)
         subwx_mi(Mebp, inf_LOC, IB(1))
         cmjwx_mz(Mebp, inf_LOC,
         /* if */ EQ_x, cyc_fin)
-        jmpxx_mm(Mebp, inf_LABEL)
-        jmpxx_lb(cyc_ini) /* the same jump as above */
+
+        jmpxx_lb(cyc_ini)
 
     LBL(cyc_fin)
 
