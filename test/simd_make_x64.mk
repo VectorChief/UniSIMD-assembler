@@ -14,7 +14,7 @@ LIB_LIST =                              \
 build: build_x64 build_avx
 
 strip:
-	x86_64-linux-gnu-strip simd_test.x64*
+	strip simd_test.x64*
 
 clean:
 	rm simd_test.x64*
@@ -23,25 +23,25 @@ clean:
 build_x64: simd_test_x64_32 simd_test_x64_64 simd_test_x64f32 simd_test_x64f64
 
 simd_test_x64_32:
-	x86_64-linux-gnu-g++ -O3 -g -static \
+	g++ -O3 -g \
         -DRT_LINUX -DRT_X64 -DRT_128=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_32
 
 simd_test_x64_64:
-	x86_64-linux-gnu-g++ -O3 -g -static \
+	g++ -O3 -g \
         -DRT_LINUX -DRT_X64 -DRT_128=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_64
 
 simd_test_x64f32:
-	x86_64-linux-gnu-g++ -O3 -g -static \
+	g++ -O3 -g \
         -DRT_LINUX -DRT_X64 -DRT_256_R8=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f32
 
 simd_test_x64f64:
-	x86_64-linux-gnu-g++ -O3 -g -static \
+	g++ -O3 -g \
         -DRT_LINUX -DRT_X64 -DRT_256_R8=4 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f64
@@ -51,25 +51,25 @@ build_avx: simd_test_x64_32avx simd_test_x64_64avx \
            simd_test_x64f32avx simd_test_x64f64avx
 
 simd_test_x64_32avx:
-	x86_64-linux-gnu-g++ -O3 -g -static \
+	g++ -O3 -g \
         -DRT_LINUX -DRT_X64 -DRT_256=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_32avx
 
 simd_test_x64_64avx:
-	x86_64-linux-gnu-g++ -O3 -g -static \
+	g++ -O3 -g \
         -DRT_LINUX -DRT_X64 -DRT_256=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_64avx
 
 simd_test_x64f32avx:
-	x86_64-linux-gnu-g++ -O3 -g -static \
+	g++ -O3 -g \
         -DRT_LINUX -DRT_X64 -DRT_512=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f32avx
 
 simd_test_x64f64avx:
-	x86_64-linux-gnu-g++ -O3 -g -static \
+	g++ -O3 -g \
         -DRT_LINUX -DRT_X64 -DRT_512=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f64avx
@@ -91,7 +91,7 @@ simd_test_x64f64avx:
 # Use "-c 1" option to reduce test time when emulating with Intel SDE
 
 # Clang compilation works too (takes much longer prior to 3.8), use (replace):
-# clang++ (in place of x86_64-linux-gnu-g++)
+# clang++ (in place of g++)
 # sudo apt-get install clang
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h
