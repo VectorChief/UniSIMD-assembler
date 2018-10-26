@@ -5,6 +5,9 @@
 make -f simd_make_x86.mk build -j16
 make -f simd_make_x64.mk build -j16
 
+make -f simd_make_x86.mk macRD
+make -f simd_make_x64.mk macRD
+
 make -f simd_make_x86.mk strip
 make -f simd_make_x64.mk strip
 

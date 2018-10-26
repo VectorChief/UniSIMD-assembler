@@ -24,6 +24,9 @@ macOS:
 	mv simd_test.x86avx simd_test.o86avx
 	mv simd_test.x86avx512 simd_test.o86avx512
 
+macRD:
+	rm -fr simd_test.x86*.dSYM/
+
 macRM:
 	rm simd_test.o86*
 

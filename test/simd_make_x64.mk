@@ -33,6 +33,9 @@ macOS:
 	mv simd_test.x64f32avx512 simd_test.o64f32avx512
 	mv simd_test.x64f64avx512 simd_test.o64f64avx512
 
+macRD:
+	rm -fr simd_test.x64*.dSYM/
+
 macRM:
 	rm simd_test.o64*
 
