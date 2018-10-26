@@ -19,6 +19,14 @@ strip:
 clean:
 	rm simd_test.x86*
 
+macOS:
+	mv simd_test.x86 simd_test.o86
+	mv simd_test.x86avx simd_test.o86avx
+	mv simd_test.x86avx512 simd_test.o86avx512
+
+macRM:
+	rm simd_test.o86*
+
 
 simd_test_x86:
 	g++ -O3 -g -m32 \
@@ -44,6 +52,9 @@ simd_test_x86avx512:
 # sudo apt-get install g++ (for x86 host)
 # sudo apt-get install g++-multilib (for x86_64 host)
 # (installation of g++-multilib removes any g++ cross-compilers)
+#
+# When building on macOS install Command Line Tools first.
+# http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/
 #
 # Prerequisites for emulation:
 # http://software.intel.com/en-us/articles/intel-software-development-emulator

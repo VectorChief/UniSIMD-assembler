@@ -19,6 +19,23 @@ strip:
 clean:
 	rm simd_test.x64*
 
+macOS:
+	mv simd_test.x64_32 simd_test.o64_32
+	mv simd_test.x64_64 simd_test.o64_64
+	mv simd_test.x64f32 simd_test.o64f32
+	mv simd_test.x64f64 simd_test.o64f64
+	mv simd_test.x64_32avx simd_test.o64_32avx
+	mv simd_test.x64_64avx simd_test.o64_64avx
+	mv simd_test.x64f32avx simd_test.o64f32avx
+	mv simd_test.x64f64avx simd_test.o64f64avx
+	mv simd_test.x64_32avx512 simd_test.o64_32avx512
+	mv simd_test.x64_64avx512 simd_test.o64_64avx512
+	mv simd_test.x64f32avx512 simd_test.o64f32avx512
+	mv simd_test.x64f64avx512 simd_test.o64f64avx512
+
+macRM:
+	rm simd_test.o64*
+
 
 build_x64: simd_test_x64_32 simd_test_x64_64 simd_test_x64f32 simd_test_x64f64
 
@@ -106,6 +123,9 @@ simd_test_x64f64avx512:
 # Prerequisites for the build:
 # native-compiler for x86_64 is installed and in the PATH variable.
 # sudo apt-get install g++
+#
+# When building on macOS install Command Line Tools first.
+# http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/
 #
 # Prerequisites for emulation:
 # http://software.intel.com/en-us/articles/intel-software-development-emulator
