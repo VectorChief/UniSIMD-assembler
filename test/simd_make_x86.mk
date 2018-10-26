@@ -52,6 +52,8 @@ simd_test_x86avx512:
 # Building/running SIMD test:
 # make -f simd_make_x86.mk
 # ./simd_test.x86
+# ./simd_test.x86avx
+# ./simd_test.x86avx512
 # sde -snb -- ./simd_test.x86avx -c 1
 # sde -knl -- ./simd_test.x86avx512 -c 1
 # Use "-c 1" option to reduce test time when emulating with Intel SDE

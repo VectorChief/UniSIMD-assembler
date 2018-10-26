@@ -11,7 +11,7 @@ LIB_LIST =                              \
         -lm
 
 
-build: build_a64 build_sve
+build: build_a64 build_a64sve
 
 strip:
 	aarch64-linux-gnu-strip simd_test.a64*
@@ -47,8 +47,8 @@ simd_test_a64f64:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64f64
 
 
-build_sve: simd_test_a64_32sve simd_test_a64_64sve \
-           simd_test_a64f32sve simd_test_a64f64sve
+build_a64sve: simd_test_a64_32sve simd_test_a64_64sve \
+              simd_test_a64f32sve simd_test_a64f64sve
 
 simd_test_a64_32sve:
 	aarch64-linux-gnu-g++ -O3 -g -static \
