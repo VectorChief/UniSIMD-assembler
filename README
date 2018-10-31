@@ -14,6 +14,7 @@ cross-precision fp-converters as well as sub-word (byte/half) integer SIMD ops
 are planned as extensions to current 2/3-operand SPMD-driven vertical SIMD ISA.
 
 The project has a test framework for Linux/GCC/Clang and Windows/VC++/TDM64-GCC.
+Support for macOS is provided via Command Line Tools with GCC and Clang options.
 Instructions for resolving dependencies and building the binaries
 for supported platforms can be found in the accompanying INSTALL file.
 
