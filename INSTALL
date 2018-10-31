@@ -22,6 +22,15 @@ configurations for particular hardware platforms are given in the makefiles.
 By default, DEB-based distributions (Mint, Ubuntu, Debian) are implied,
 refer to the AArch64 Linux section at the bottom for RPM-based options.
 
+To build SIMD test framework on macOS, open terminal window,
+go to UniSIMD's "test" subfolder,
+make sure necessary tools and libraries are installed:
+http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/
+    xcode-select --install
+run for x64 architecture:
+    make -f simd_make_x64.mk -j8
+    ./simd_test.x64f32
+
 To build SIMD test framework on Windows,
 go to UniSIMD's "test" subfolder and open (in Visual C++ 6.0 or later):
     simd_workspace.dsw
