@@ -16,6 +16,9 @@
   - new scheme: RT_128=1+2, RT_256=4+8, RT_512=4+8, RT_1K4=4+8 are 30 registers
   - add elm*x_st instruction to detach scalar subset from vectors (via mem)
   - add support for horizontal pairwise/reductive add/mul/min/max instructions
+  - patch system allocators to compile on macOS, widen OS support in makefiles
+  - clean up SIMD tests to support PIE (also macOS)
+  - separate 64-bit Linux from multilib build scripts, add for macOS
   - add VMX-compatible scalar SIMD subset on PPC G4 and POWER family of CPUs
   - add MSA/scalar compatibility on big-endian MIPS, support for fp32 11-bit DP
   - rename sections in target-specific headers to BASE, SIMD, ELEM (for scalar)
@@ -33,6 +36,7 @@
   - fix SIMD registers save/restore for 15x128x2 on POWER7
   - fix temporary FPRs save/restore on POWER
   - fix scalar SIMD min/max on POWER7
+  - fix BASE compare immediate encodings on POWER
   - fix location for 128/256-bit common SIMD instructions
   - fix for scalar SIMD alignment on ARMv7, POWER8
   - fix compilation in C++11 mode with RT_DEBUG=2
