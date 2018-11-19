@@ -932,6 +932,9 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
+#define mmvox_rr(XD, XS)                                                    \
+        mmvcx_rr(W(XD), W(XS))
+
 #define mmvox_ld(XG, MS, DS)                                                \
         mmvcx_ld(W(XG), W(MS), W(DS))
 
@@ -1603,6 +1606,9 @@
 
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
+
+#define mmvox_rr(XD, XS)                                                    \
+        mmvix_rr(W(XD), W(XS))
 
 #define mmvox_ld(XG, MS, DS)                                                \
         mmvix_ld(W(XG), W(MS), W(DS))
@@ -2278,6 +2284,9 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
+#define mmvqx_rr(XD, XS)                                                    \
+        mmvdx_rr(W(XD), W(XS))
+
 #define mmvqx_ld(XG, MS, DS)                                                \
         mmvdx_ld(W(XG), W(MS), W(DS))
 
@@ -2949,6 +2958,9 @@
 
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
+
+#define mmvqx_rr(XD, XS)                                                    \
+        mmvjx_rr(W(XD), W(XS))
 
 #define mmvqx_ld(XG, MS, DS)                                                \
         mmvjx_ld(W(XG), W(MS), W(DS))
@@ -3624,6 +3636,9 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
+#define mmvpx_rr(XD, XS)                                                    \
+        mmvox_rr(W(XD), W(XS))
+
 #define mmvpx_ld(XG, MS, DS)                                                \
         mmvox_ld(W(XG), W(MS), W(DS))
 
@@ -4294,6 +4309,9 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
+#define mmvfx_rr(XD, XS)                                                    \
+        mmvcx_rr(W(XD), W(XS))
+
 #define mmvfx_ld(XG, MS, DS)                                                \
         mmvcx_ld(W(XG), W(MS), W(DS))
 
@@ -4963,6 +4981,9 @@
 
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
+
+#define mmvlx_rr(XD, XS)                                                    \
+        mmvix_rr(W(XD), W(XS))
 
 #define mmvlx_ld(XG, MS, DS)                                                \
         mmvix_ld(W(XG), W(MS), W(DS))
@@ -5875,6 +5896,9 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
+#define mmvpx_rr(XD, XS)                                                    \
+        mmvqx_rr(W(XD), W(XS))
+
 #define mmvpx_ld(XG, MS, DS)                                                \
         mmvqx_ld(W(XG), W(MS), W(DS))
 
@@ -6545,6 +6569,9 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
 
+#define mmvfx_rr(XD, XS)                                                    \
+        mmvdx_rr(W(XD), W(XS))
+
 #define mmvfx_ld(XG, MS, DS)                                                \
         mmvdx_ld(W(XG), W(MS), W(DS))
 
@@ -7214,6 +7241,9 @@
 
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
+
+#define mmvlx_rr(XD, XS)                                                    \
+        mmvjx_rr(W(XD), W(XS))
 
 #define mmvlx_ld(XG, MS, DS)                                                \
         mmvjx_ld(W(XG), W(MS), W(DS))
