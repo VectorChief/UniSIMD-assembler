@@ -3731,6 +3731,14 @@ rt_void c_test27(rt_SIMD_INFOX *info)
         while (j-->0)
         {
             fco1[j] = 0.0f;
+            if (far0[j] > far0[(j + S) % n])
+            {
+                fco2[j] = far0[(j + S) % n];
+            }
+            else
+            {
+                fco2[j] = far0[(j + 0) % n];
+            }
         }
         fco1[0*S+(1%S)] = far0[0*S];
         fco1[1*S+(2%S)] = far0[1*S];
@@ -3756,20 +3764,41 @@ rt_void s_test27(rt_SIMD_INFOX *info)
 
         movxx_ld(Recx, Mebp, inf_FAR0)
         movxx_ld(Redx, Mebp, inf_FSO1)
+        movxx_ld(Rebx, Mebp, inf_FSO2)
 
         xorpx_rr(Xmm0, Xmm0)
 
         movpx_ld(Xmm1, Mecx, AJ0)
         movpx_st(Xmm0, Medx, AJ0)
-        elmlx_st(Xmm1, Medx, DP(Q*0x000+(1&(S-1))*4*L))
+        elmpx_st(Xmm1, Medx, DP(Q*0x000+(1&(S-1))*4*L))
 
         movpx_ld(Xmm2, Mecx, AJ1)
         movpx_st(Xmm0, Medx, AJ1)
-        elmlx_st(Xmm2, Medx, DP(Q*0x010+(2&(S-1))*4*L))
+        elmpx_st(Xmm2, Medx, DP(Q*0x010+(2&(S-1))*4*L))
 
         movpx_ld(Xmm3, Mecx, AJ2)
         movpx_st(Xmm0, Medx, AJ2)
-        elmlx_st(Xmm3, Medx, DP(Q*0x020+(3&(S-1))*4*L))
+        elmpx_st(Xmm3, Medx, DP(Q*0x020+(3&(S-1))*4*L))
+
+        movpx_ld(Xmm0, Mecx, AJ0)
+        cgtps_ld(Xmm0, Mecx, AJ1)
+        movpx_ld(Xmm1, Mecx, AJ0)
+        movpx_ld(Xmm2, Mecx, AJ1)
+        mmvpx_rr(Xmm1, Xmm2)
+        movpx_st(Xmm1, Mebx, AJ0)
+
+        movpx_ld(Xmm0, Mecx, AJ1)
+        cgtps_ld(Xmm0, Mecx, AJ2)
+        movpx_ld(Xmm1, Mecx, AJ1)
+        mmvpx_ld(Xmm1, Mecx, AJ2)
+        movpx_st(Xmm1, Mebx, AJ1)
+
+        movpx_ld(Xmm0, Mecx, AJ2)
+        cgtps_ld(Xmm0, Mecx, AJ0)
+        movpx_ld(Xmm1, Mecx, AJ2)
+        movpx_st(Xmm1, Mebx, AJ2)
+        movpx_ld(Xmm1, Mecx, AJ0)
+        mmvpx_st(Xmm1, Mebx, AJ2)
 
         ASM_LEAVE(info)
     }
@@ -3781,21 +3810,26 @@ rt_void p_test27(rt_SIMD_INFOX *info)
 
     rt_real *far0 = info->far0;
     rt_real *fco1 = info->fco1;
+    rt_real *fco2 = info->fco2;
     rt_real *fso1 = info->fso1;
+    rt_real *fso2 = info->fso2;
 
     j = n;
     while (j-->0)
     {
-        if (FEQ(fco1[j], fso1[j]) && !v_mode)
+        if (FEQ(fco1[j], fso1[j]) && FEQ(fco2[j], fso2[j]) && !v_mode)
         {
             continue;
         }
 
-        RT_LOGI("farr[%d] = %e\n", (j/S)*S, far0[(j/S)*S]);
+        RT_LOGI("farr[%d] = %e, farr[%d] = %e\n",
+                j, far0[j], (j + S) % n, far0[(j + S) % n]);
 
-        RT_LOGI("C fout[%d] = %e\n", j, fco1[j]);
+        RT_LOGI("C fout[%d] = %e, MIN(farr[%d],farr[%d]) = %e\n",
+                j, fco1[j], j, (j + S) % n, fco2[j]);
 
-        RT_LOGI("S fout[%d] = %e\n", j, fso1[j]);
+        RT_LOGI("S fout[%d] = %e, MIN(farr[%d],farr[%d]) = %e\n",
+                j, fso1[j], j, (j + S) % n, fso2[j]);
     }
 }
 
