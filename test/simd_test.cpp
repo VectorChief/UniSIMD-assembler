@@ -3968,22 +3968,22 @@ rt_void s_test28(rt_SIMD_INFOX *info)
 #if RT_REGS >= 8
 
         /* BASE regs */
-        movxx_ri(Reax, IB(1))
+        movyx_ri(Reax, IB(1))
 
-        movxx_rr(Rebx, Reax)
-        addxx_rr(Rebx, Reax)
+        movyx_rr(Rebx, Reax)
+        addyx_rr(Rebx, Reax)
 
-        movxx_rr(Recx, Rebx)
-        addxx_rr(Recx, Reax)
+        movyx_rr(Recx, Rebx)
+        addyx_rr(Recx, Reax)
 
-        movxx_rr(Redx, Recx)
-        addxx_rr(Redx, Reax)
+        movyx_rr(Redx, Recx)
+        addyx_rr(Redx, Reax)
 
-        movxx_rr(Resi, Redx)
-        addxx_rr(Resi, Reax)
+        movyx_rr(Resi, Redx)
+        addyx_rr(Resi, Reax)
 
-        movxx_rr(Redi, Resi)
-        addxx_rr(Redi, Reax)
+        movyx_rr(Redi, Resi)
+        addyx_rr(Redi, Reax)
 
         /* SIMD regs */
         movpx_ld(Xmm0, Mebp, inf_GPC01)
@@ -4034,26 +4034,26 @@ rt_void s_test28(rt_SIMD_INFOX *info)
         addps_rr(XmmE, Xmm0)
 
         /* BASE regs */
-        movxx_rr(Reg8, Redi)
-        addxx_rr(Reg8, Reax)
+        movyx_rr(Reg8, Redi)
+        addyx_rr(Reg8, Reax)
 
-        movxx_rr(Reg9, Reg8)
-        addxx_rr(Reg9, Reax)
+        movyx_rr(Reg9, Reg8)
+        addyx_rr(Reg9, Reax)
 
-        movxx_rr(RegA, Reg9)
-        addxx_rr(RegA, Reax)
+        movyx_rr(RegA, Reg9)
+        addyx_rr(RegA, Reax)
 
-        movxx_rr(RegB, RegA)
-        addxx_rr(RegB, Reax)
+        movyx_rr(RegB, RegA)
+        addyx_rr(RegB, Reax)
 
-        movxx_rr(RegC, RegB)
-        addxx_rr(RegC, Reax)
+        movyx_rr(RegC, RegB)
+        addyx_rr(RegC, Reax)
 
-        movxx_rr(RegD, RegC)
-        addxx_rr(RegD, Reax)
+        movyx_rr(RegD, RegC)
+        addyx_rr(RegD, Reax)
 
-        movxx_rr(RegE, RegD)
-        addxx_rr(RegE, Reax)
+        movyx_rr(RegE, RegD)
+        addyx_rr(RegE, Reax)
 
 #if RT_REGS >= 32
 
@@ -4125,13 +4125,13 @@ rt_void s_test28(rt_SIMD_INFOX *info)
 #endif /* RT_REGS >= 32 */
 
         /* BASE regs */
-        addxx_rr(Reax, RegE)
-        addxx_rr(Reax, RegD)
-        addxx_rr(Reax, RegC)
-        addxx_rr(Reax, RegB)
-        addxx_rr(Reax, RegA)
-        addxx_rr(Reax, Reg9)
-        addxx_rr(Reax, Reg8)
+        addyx_rr(Reax, RegE)
+        addyx_rr(Reax, RegD)
+        addyx_rr(Reax, RegC)
+        addyx_rr(Reax, RegB)
+        addyx_rr(Reax, RegA)
+        addyx_rr(Reax, Reg9)
+        addyx_rr(Reax, Reg8)
 
         /* SIMD regs */
         addps_rr(Xmm0, XmmE)
@@ -4154,18 +4154,18 @@ rt_void s_test28(rt_SIMD_INFOX *info)
         addps_rr(Xmm0, Xmm1)
 
         /* BASE regs */
-        addxx_rr(Reax, Redi)
-        addxx_rr(Reax, Resi)
-        addxx_rr(Reax, Redx)
-        addxx_rr(Reax, Recx)
-        addxx_rr(Reax, Rebx)
+        addyx_rr(Reax, Redi)
+        addyx_rr(Reax, Resi)
+        addyx_rr(Reax, Redx)
+        addyx_rr(Reax, Recx)
+        addyx_rr(Reax, Rebx)
 
 #endif /* RT_REGS >= 8 */
 
         movxx_ld(Redx, Mebp, inf_ISO1)
         movxx_ld(Rebx, Mebp, inf_FSO2)
 
-        movxx_st(Reax, Medx, AJ0)
+        movyx_st(Reax, Medx, AJ0)
         movpx_st(Xmm0, Mebx, AJ0)
 
         ASM_LEAVE(info)
