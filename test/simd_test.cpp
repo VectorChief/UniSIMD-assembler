@@ -29,7 +29,7 @@
 /*******************************   DEFINITIONS   ******************************/
 /******************************************************************************/
 
-#define RUN_LEVEL           27
+#define RUN_LEVEL           28
 #define CYC_SIZE            1000000
 
 #define ARR_SIZE            S*3 /* hardcoded in ASM sections, S = SIMD elems */
@@ -3836,6 +3836,286 @@ rt_void p_test27(rt_SIMD_INFOX *info)
 #endif /* RUN_LEVEL 27 */
 
 /******************************************************************************/
+/******************************   RUN LEVEL 28   ******************************/
+/******************************************************************************/
+
+#if RUN_LEVEL >= 28
+
+rt_void c_test28(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = info->size;
+
+    rt_elem *ico1 = info->ico1;
+    rt_real *fco2 = info->fco2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+#if RT_REGS >= 8
+        ico1[0] = 21;
+        fco2[0] = 36.0f;
+#if RT_REGS >= 16
+        ico1[0] = 91;
+        fco2[0] = 120.0f;
+#if RT_REGS >= 32
+        fco2[0] = 465.0f;
+#endif /* RT_REGS >= 32 */
+#endif /* RT_REGS >= 16 */
+#endif /* RT_REGS >= 8 */
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ */
+rt_void s_test28(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+#if RT_REGS >= 8
+
+        /* BASE regs */
+        movxx_ri(Reax, IB(1))
+
+        movxx_rr(Rebx, Reax)
+        addxx_rr(Rebx, Reax)
+
+        movxx_rr(Recx, Rebx)
+        addxx_rr(Recx, Reax)
+
+        movxx_rr(Redx, Recx)
+        addxx_rr(Redx, Reax)
+
+        movxx_rr(Resi, Redx)
+        addxx_rr(Resi, Reax)
+
+        movxx_rr(Redi, Resi)
+        addxx_rr(Redi, Reax)
+
+        /* SIMD regs */
+        movpx_ld(Xmm0, Mebp, inf_GPC01)
+
+        movpx_rr(Xmm1, Xmm0)
+        addps_rr(Xmm1, Xmm0)
+
+        movpx_rr(Xmm2, Xmm1)
+        addps_rr(Xmm2, Xmm0)
+
+        movpx_rr(Xmm3, Xmm2)
+        addps_rr(Xmm3, Xmm0)
+
+        movpx_rr(Xmm4, Xmm3)
+        addps_rr(Xmm4, Xmm0)
+
+        movpx_rr(Xmm5, Xmm4)
+        addps_rr(Xmm5, Xmm0)
+
+        movpx_rr(Xmm6, Xmm5)
+        addps_rr(Xmm6, Xmm0)
+
+        movpx_rr(Xmm7, Xmm6)
+        addps_rr(Xmm7, Xmm0)
+
+#if RT_REGS >= 16
+
+        /* SIMD regs */
+        movpx_rr(Xmm8, Xmm7)
+        addps_rr(Xmm8, Xmm0)
+
+        movpx_rr(Xmm9, Xmm8)
+        addps_rr(Xmm9, Xmm0)
+
+        movpx_rr(XmmA, Xmm9)
+        addps_rr(XmmA, Xmm0)
+
+        movpx_rr(XmmB, XmmA)
+        addps_rr(XmmB, Xmm0)
+
+        movpx_rr(XmmC, XmmB)
+        addps_rr(XmmC, Xmm0)
+
+        movpx_rr(XmmD, XmmC)
+        addps_rr(XmmD, Xmm0)
+
+        movpx_rr(XmmE, XmmD)
+        addps_rr(XmmE, Xmm0)
+
+        /* BASE regs */
+        movxx_rr(Reg8, Redi)
+        addxx_rr(Reg8, Reax)
+
+        movxx_rr(Reg9, Reg8)
+        addxx_rr(Reg9, Reax)
+
+        movxx_rr(RegA, Reg9)
+        addxx_rr(RegA, Reax)
+
+        movxx_rr(RegB, RegA)
+        addxx_rr(RegB, Reax)
+
+        movxx_rr(RegC, RegB)
+        addxx_rr(RegC, Reax)
+
+        movxx_rr(RegD, RegC)
+        addxx_rr(RegD, Reax)
+
+        movxx_rr(RegE, RegD)
+        addxx_rr(RegE, Reax)
+
+#if RT_REGS >= 32
+
+        /* SIMD regs */
+        movpx_rr(XmmF, XmmE)
+        addps_rr(XmmF, Xmm0)
+
+        movpx_rr(XmmG, XmmF)
+        addps_rr(XmmG, Xmm0)
+
+        movpx_rr(XmmH, XmmG)
+        addps_rr(XmmH, Xmm0)
+
+        movpx_rr(XmmI, XmmH)
+        addps_rr(XmmI, Xmm0)
+
+        movpx_rr(XmmJ, XmmI)
+        addps_rr(XmmJ, Xmm0)
+
+        movpx_rr(XmmK, XmmJ)
+        addps_rr(XmmK, Xmm0)
+
+        movpx_rr(XmmL, XmmK)
+        addps_rr(XmmL, Xmm0)
+
+        movpx_rr(XmmM, XmmL)
+        addps_rr(XmmM, Xmm0)
+
+        movpx_rr(XmmN, XmmM)
+        addps_rr(XmmN, Xmm0)
+
+        movpx_rr(XmmO, XmmN)
+        addps_rr(XmmO, Xmm0)
+
+        movpx_rr(XmmP, XmmO)
+        addps_rr(XmmP, Xmm0)
+
+        movpx_rr(XmmQ, XmmP)
+        addps_rr(XmmQ, Xmm0)
+
+        movpx_rr(XmmR, XmmQ)
+        addps_rr(XmmR, Xmm0)
+
+        movpx_rr(XmmS, XmmR)
+        addps_rr(XmmS, Xmm0)
+
+        movpx_rr(XmmT, XmmS)
+        addps_rr(XmmT, Xmm0)
+
+        /* SIMD regs */
+        addps_rr(Xmm0, XmmT)
+        addps_rr(Xmm0, XmmS)
+        addps_rr(Xmm0, XmmR)
+        addps_rr(Xmm0, XmmQ)
+        addps_rr(Xmm0, XmmP)
+        addps_rr(Xmm0, XmmO)
+        addps_rr(Xmm0, XmmN)
+
+        addps_rr(Xmm0, XmmM)
+        addps_rr(Xmm0, XmmL)
+        addps_rr(Xmm0, XmmK)
+        addps_rr(Xmm0, XmmJ)
+        addps_rr(Xmm0, XmmI)
+        addps_rr(Xmm0, XmmH)
+        addps_rr(Xmm0, XmmG)
+
+        addps_rr(Xmm0, XmmF)
+
+#endif /* RT_REGS >= 32 */
+
+        /* BASE regs */
+        addxx_rr(Reax, RegE)
+        addxx_rr(Reax, RegD)
+        addxx_rr(Reax, RegC)
+        addxx_rr(Reax, RegB)
+        addxx_rr(Reax, RegA)
+        addxx_rr(Reax, Reg9)
+        addxx_rr(Reax, Reg8)
+
+        /* SIMD regs */
+        addps_rr(Xmm0, XmmE)
+        addps_rr(Xmm0, XmmD)
+        addps_rr(Xmm0, XmmC)
+        addps_rr(Xmm0, XmmB)
+        addps_rr(Xmm0, XmmA)
+        addps_rr(Xmm0, Xmm9)
+        addps_rr(Xmm0, Xmm8)
+
+#endif /* RT_REGS >= 16 */
+
+        /* SIMD regs */
+        addps_rr(Xmm0, Xmm7)
+        addps_rr(Xmm0, Xmm6)
+        addps_rr(Xmm0, Xmm5)
+        addps_rr(Xmm0, Xmm4)
+        addps_rr(Xmm0, Xmm3)
+        addps_rr(Xmm0, Xmm2)
+        addps_rr(Xmm0, Xmm1)
+
+        /* BASE regs */
+        addxx_rr(Reax, Redi)
+        addxx_rr(Reax, Resi)
+        addxx_rr(Reax, Redx)
+        addxx_rr(Reax, Recx)
+        addxx_rr(Reax, Rebx)
+
+#endif /* RT_REGS >= 8 */
+
+        movxx_ld(Redx, Mebp, inf_ISO1)
+        movxx_ld(Rebx, Mebp, inf_FSO2)
+
+        movxx_st(Reax, Medx, AJ0)
+        movpx_st(Xmm0, Mebx, AJ0)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test28(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = info->size;
+
+    rt_elem *ico1 = info->ico1;
+    rt_elem *iso1 = info->iso1;
+    rt_real *fco2 = info->fco2;
+    rt_real *fso2 = info->fso2;
+
+    j = 1;
+    while (j-->0)
+    {
+        if (IEQ(ico1[j], iso1[j]) && FEQ(fco2[j], fso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("C iout[%d] = %" PR_L "d, fout[%d] = %e\n",
+                j, ico1[j], j, fco2[j]);
+
+        RT_LOGI("S iout[%d] = %" PR_L "d, fout[%d] = %e\n",
+                j, iso1[j], j, fso2[j]);
+    }
+}
+
+#endif /* RUN_LEVEL 28 */
+
+/******************************************************************************/
 /*********************************   TABLES   *********************************/
 /******************************************************************************/
 
@@ -3950,6 +4230,10 @@ testXX c_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 27
     c_test27,
 #endif /* RUN_LEVEL 27 */
+
+#if RUN_LEVEL >= 28
+    c_test28,
+#endif /* RUN_LEVEL 28 */
 };
 
 testXX s_test[RUN_LEVEL] =
@@ -4061,6 +4345,10 @@ testXX s_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 27
     s_test27,
 #endif /* RUN_LEVEL 27 */
+
+#if RUN_LEVEL >= 28
+    s_test28,
+#endif /* RUN_LEVEL 28 */
 };
 
 testXX p_test[RUN_LEVEL] =
@@ -4172,6 +4460,10 @@ testXX p_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 27
     p_test27,
 #endif /* RUN_LEVEL 27 */
+
+#if RUN_LEVEL >= 28
+    p_test28,
+#endif /* RUN_LEVEL 28 */
 };
 
 /******************************************************************************/
