@@ -1,3 +1,4 @@
+v1.0.0: UniSIMD assembler, code name "ENsed", base for future SIMD enhancements
   - renewed directory structure, move BASE/SIMD header files to core/config
   - add new fp-compatibility and feature tasks, rename TASKS file to ROADMAP
   - add support for 30 SIMD register pairs (2x128) backend on POWER7/8
@@ -30,6 +31,9 @@
   - improve SIMD target reporting in tests, add -c n option to reduce test time
   - update notes for MIPS cross-compiler location, add -mnan=2008 to makefiles
   - update notes for AArch64 Linux, QEMU 3.0.0, Intel SDE, add ARM IE reference
+  - add test for SIMD mask-move (mmv), run level 27
+  - add test for 8/15/30 BASE/SIMD registers, run level 28
+  - convert all text files with unix2dos
   - fix BASE shifts with zero immediate arg on legacy ARMv7 (backported down)
   - always reserve maximum space for SIMD register file
   - save/restore temp predicate register on AVX512
