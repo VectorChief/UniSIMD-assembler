@@ -158,7 +158,7 @@
     SJX(EMITW(0x78000026 | MFM(RYG(XS), MOD(MD), VYL(DD), B4(DD), K2(DD))))
 
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
 #define mmvcx_rr(XG, XS)                                                    \
         EMITW(0x7880001E | MXM(REG(XG), REG(XS), Tmm0))                     \

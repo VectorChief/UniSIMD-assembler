@@ -141,7 +141,7 @@
         EMITW(0xE5804000 | MPM(REG(XS), MOD(MD), VAL(DD), B3(DD), F1(DD)))
 
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
 #define mmvqx_rr(XG, XS)                                                    \
         EMITW(0x24C0A000 | MXM(0x01,    Tmm0,    TmmQ))                     \

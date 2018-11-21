@@ -240,7 +240,7 @@
         EMITW(0x7C0001CE | MXM(REG(XS), Teax & M(MOD(MD) == TPxx), TPxx))
 
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
 #define mmvix_rr(XG, XS)                                                    \
         EMITW(0x1000002A | MXM(REG(XG), REG(XG), REG(XS)))

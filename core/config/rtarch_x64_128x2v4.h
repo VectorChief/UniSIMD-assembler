@@ -156,7 +156,7 @@ ADR ESC REX(1,       RXB(MD)) EMITB(0x0F) EMITB(0x29)                       \
         AUX(SIB(MD), EMITW(VYL(DD)), EMPTY)
 
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
 #define mmvdx_rr(XG, XS)                                                    \
         anddx_rr(W(XS), Xmm0)                                               \

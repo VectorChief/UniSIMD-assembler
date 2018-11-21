@@ -152,7 +152,7 @@
         AUX(SIB(MD), CMD(DD), EMPTY)
 
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
- * uses Xmm0 implicitly as a mask register, destroys Xmm0, XS unmasked elems */
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
 #define mmvcx_rr(XG, XS)                                                    \
     ADR VEX(RXB(XG), RXB(XS), REN(XG), 1, 1, 3) EMITB(0x4A)                 \
