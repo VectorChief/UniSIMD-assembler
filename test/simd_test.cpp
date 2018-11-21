@@ -180,6 +180,9 @@ rt_void c_test01(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test01(rt_SIMD_INFOX *info)
 {
@@ -316,6 +319,9 @@ rt_void c_test02(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test02(rt_SIMD_INFOX *info)
 {
@@ -452,6 +458,9 @@ rt_void c_test03(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test03(rt_SIMD_INFOX *info)
 {
@@ -590,6 +599,9 @@ rt_void c_test04(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test04(rt_SIMD_INFOX *info)
 {
@@ -728,6 +740,9 @@ rt_void c_test05(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test05(rt_SIMD_INFOX *info)
 {
@@ -867,6 +882,9 @@ rt_void c_test06(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test06(rt_SIMD_INFOX *info)
 {
@@ -969,6 +987,9 @@ rt_void c_test07(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test07(rt_SIMD_INFOX *info)
 {
@@ -1089,6 +1110,9 @@ rt_void c_test08(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test08(rt_SIMD_INFOX *info)
 {
@@ -1254,6 +1278,9 @@ rt_void c_test09(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test09(rt_SIMD_INFOX *info)
 {
@@ -1383,6 +1410,9 @@ rt_void c_test10(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test10(rt_SIMD_INFOX *info)
 {
@@ -1519,6 +1549,9 @@ rt_void c_test11(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test11(rt_SIMD_INFOX *info)
 {
@@ -1671,6 +1704,9 @@ rt_void c_test12(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test12(rt_SIMD_INFOX *info)
 {
@@ -1824,6 +1860,9 @@ rt_void c_test13(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test13(rt_SIMD_INFOX *info)
 {
@@ -1940,6 +1979,9 @@ rt_void c_test14(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test14(rt_SIMD_INFOX *info)
 {
@@ -2122,6 +2164,9 @@ rt_void c_test15(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test15(rt_SIMD_INFOX *info)
 {
@@ -2254,6 +2299,9 @@ rt_void c_test16(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test16(rt_SIMD_INFOX *info)
 {
@@ -2403,6 +2451,9 @@ rt_void c_test17(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test17(rt_SIMD_INFOX *info)
 {
@@ -2501,6 +2552,9 @@ rt_void c_test18(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test18(rt_SIMD_INFOX *info)
 {
@@ -2634,6 +2688,9 @@ rt_void c_test19(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test19(rt_SIMD_INFOX *info)
 {
@@ -2776,6 +2833,9 @@ rt_void c_test20(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test20(rt_SIMD_INFOX *info)
 {
@@ -2917,6 +2977,9 @@ rt_void c_test21(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test21(rt_SIMD_INFOX *info)
 {
@@ -3043,6 +3106,9 @@ rt_void c_test22(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test22(rt_SIMD_INFOX *info)
 {
@@ -3169,6 +3235,9 @@ rt_void c_test23(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test23(rt_SIMD_INFOX *info)
 {
@@ -3289,6 +3358,9 @@ rt_void c_test24(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test24(rt_SIMD_INFOX *info)
 {
@@ -3429,6 +3501,9 @@ rt_void c_test25(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test25(rt_SIMD_INFOX *info)
 {
@@ -3605,6 +3680,9 @@ rt_void c_test26(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test26(rt_SIMD_INFOX *info)
 {
@@ -3752,6 +3830,9 @@ rt_void c_test27(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test27(rt_SIMD_INFOX *info)
 {
@@ -3871,6 +3952,9 @@ rt_void c_test28(rt_SIMD_INFOX *info)
  * intensive parts of the program, in which case the ASM overhead is minimized.
  * The test code below was designed mainly for assembler validation purposes
  * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
  */
 rt_void s_test28(rt_SIMD_INFOX *info)
 {
