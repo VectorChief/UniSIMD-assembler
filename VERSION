@@ -1,5 +1,6 @@
 v1.0.0: UniSIMD assembler, code name "ENsed", base for future SIMD enhancements
-  - renewed directory structure, move BASE/SIMD header files to core/config
+  - foundation for QuadRay engine 0.7.0 "GIzmo" with ARM-SVE, POWER9, new scheme
+  - renewed directory structure, move BASE and SIMD header files to core/config
   - add new fp-compatibility and feature tasks, rename TASKS file to ROADMAP
   - add support for 30 SIMD register pairs (2x128) backend on POWER7/8
   - add support for 30 SIMD registers (scalar+128+256) backend on Skylake-X
