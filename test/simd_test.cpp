@@ -3924,7 +3924,7 @@ rt_void p_test27(rt_SIMD_INFOX *info)
 
 rt_void c_test28(rt_SIMD_INFOX *info)
 {
-    rt_si32 i, j, n = info->size;
+    rt_si32 i;
 
     rt_elem *ico1 = info->ico1;
     rt_real *fco2 = info->fco2;
@@ -4174,7 +4174,7 @@ rt_void s_test28(rt_SIMD_INFOX *info)
 
 rt_void p_test28(rt_SIMD_INFOX *info)
 {
-    rt_si32 j, n = info->size;
+    rt_si32 j;
 
     rt_elem *ico1 = info->ico1;
     rt_elem *iso1 = info->iso1;

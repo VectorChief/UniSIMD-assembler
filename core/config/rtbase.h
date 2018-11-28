@@ -372,6 +372,12 @@ typedef unsigned int        rt_ui32;
 /* fixed 64-bit integer types */
 #if   (defined RT_WIN32) /* Win32, MSVC -------- for older versions --------- */
 
+#pragma warning (disable : 4244) /* VC++ 6.0: conversion from double to float */
+#pragma warning (disable : 4305) /* VC++ 6.0: truncation from double to float */
+#pragma warning (disable : 4291) /* VC++ 6.0: operator new no matching delete */
+#pragma warning (disable : 4838) /* VS 2017:  conversion from double to float */
+#pragma warning (disable : 4996) /* VS 2017:  secure form of string functions */
+
 typedef __int64             rt_si64;
 #define    PR_Z /*printf*/  "I64"
 
@@ -817,15 +823,19 @@ rt_si32 mask_init(rt_si32 simd)
     rt_si32 k_size = (simd >> 16) & 0xFF;
     rt_si32 v_regs = (simd >> 24) & 0xFF;
 
-    rt_si32 mask = 0, s_x2r8 = 0, s_fma3 = 0;
-    rt_si32 n = n_simd, k = k_size, m = 0, s = 0;
+    rt_si32 mask = 0;
+    rt_si32 n = n_simd, k = k_size;
 
+#if   (defined RT_ARM) /* original legacy target, supports only 8 registers */
+#elif !defined RT_X32  && !defined RT_X64  && !defined RT_X86 /* modern RISCs */
+    rt_si32 s_x2r8 = 0, m = 0, s = 0;
 #if   (defined RT_P32) || (defined RT_P64)
     s_x2r8 = (s_type == 0 ? 0x10 : s_type & 0x10) >> 2; /* <- 128-x2r8 vmx */
 #endif /* PPC targets */
-#if   (defined RT_X32) || (defined RT_X64) || (defined RT_X86)
+#elif (defined RT_X32) || (defined RT_X64) || (defined RT_X86)
+    rt_si32 s_fma3 = 0;
     s_fma3 = (s_type == 0 ? 0x30 : s_type & 0x30); /* <- 128-bit fma3/avx2 */
-#endif /* X86 targets */
+#endif /* all targets */
 
     s_type = s_type == 0 ? 0xF : s_type & 0xF;
     n_simd = n_simd == 0 ? 16 : n_simd; /* <- 16 is the maximal native-size */
@@ -978,7 +988,7 @@ rt_si32 mask_init(rt_si32 simd)
 static
 rt_si32 from_mask(rt_si32 mask)
 {
-    rt_si32 n_simd, s_type, k_size, v_regs, n_keep = 0;
+    rt_si32 n_simd, s_type, k_size, v_regs;
 
     n_simd = mask >= 0x01000000 ? 6 : mask >= 0x00010000 ? 4 :
              mask >= 0x00000100 ? 2 : mask >= 0x00000001 ? 1 : 0;
@@ -998,6 +1008,7 @@ rt_si32 from_mask(rt_si32 mask)
         v_regs = 8;
     }
 #elif !defined RT_X32  && !defined RT_X64  && !defined RT_X86 /* modern RISCs */
+    rt_si32 n_keep = 0;
     v_regs = v_regs == 16 ? 15 : 8;
 #if (defined RT_SVEX1) || (defined RT_SVEX2)
     if (n_simd == 6)
