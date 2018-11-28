@@ -34,8 +34,9 @@ v1.0.0: UniSIMD assembler, code name "ENsed", base for future SIMD enhancements
   - update notes for AArch64 Linux, QEMU 3.0.0, Intel SDE, add ARM IE reference
   - add test for SIMD mask-move (mmv), run level 27
   - add test for 8/15/30 BASE/SIMD registers, run level 28
-  - convert all text files with unix2dos
+  - warning-free building with GCC/Clang and MSVC++
   - fix BASE shifts with zero immediate arg on legacy ARMv7 (backported down)
+  - convert all text files with unix2dos
   - always reserve maximum space for SIMD register file
   - save/restore temp predicate register on AVX512
   - fix SIMD registers save/restore for 15x128x2 on POWER7
