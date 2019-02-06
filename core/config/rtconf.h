@@ -20,30 +20,30 @@
 
 /************************   COMMON SIMD INSTRUCTIONS   ************************/
 
-/**** var-len **** (rcp/rsq/fma/fms) with fixed-32-bit-element ****************/
-/**** 256-bit **** (rcp/rsq/fma/fms) with fixed-32-bit-element ****************/
-/**** 128-bit **** (rcp/rsq/fma/fms) with fixed-32-bit-element ****************/
-/**** scalar ***** (rcp/rsq/fma/fms) with fixed-32-bit-element ****************/
+/**** var-len **** (rcp/rsq/fma/fms) with fixed-32-bit element ****************/
+/**** 256-bit **** (rcp/rsq/fma/fms) with fixed-32-bit element ****************/
+/**** 128-bit **** (rcp/rsq/fma/fms) with fixed-32-bit element ****************/
+/**** scalar ***** (rcp/rsq/fma/fms) with fixed-32-bit element ****************/
 
-/**** var-len **** (rcp/rsq/fma/fms) with fixed-64-bit-element ****************/
-/**** 256-bit **** (rcp/rsq/fma/fms) with fixed-64-bit-element ****************/
-/**** 128-bit **** (rcp/rsq/fma/fms) with fixed-64-bit-element ****************/
-/**** scalar ***** (rcp/rsq/fma/fms) with fixed-64-bit-element ****************/
+/**** var-len **** (rcp/rsq/fma/fms) with fixed-64-bit element ****************/
+/**** 256-bit **** (rcp/rsq/fma/fms) with fixed-64-bit element ****************/
+/**** 128-bit **** (rcp/rsq/fma/fms) with fixed-64-bit element ****************/
+/**** scalar ***** (rcp/rsq/fma/fms) with fixed-64-bit element ****************/
 
-/**** var-len **** SIMD instructions with fixed-32-bit-element **** 256-bit ***/
-/**** var-len **** SIMD instructions with fixed-32-bit-element **** 128-bit ***/
-/**** var-len **** SIMD instructions with fixed-64-bit-element **** 256-bit ***/
-/**** var-len **** SIMD instructions with fixed-64-bit-element **** 128-bit ***/
+/**** var-len **** SIMD instructions with fixed-32-bit element **** 256-bit ***/
+/**** var-len **** SIMD instructions with fixed-32-bit element **** 128-bit ***/
+/**** var-len **** SIMD instructions with fixed-64-bit element **** 256-bit ***/
+/**** var-len **** SIMD instructions with fixed-64-bit element **** 128-bit ***/
 
-/**** var-len **** SIMD instructions with configurable-element **** 32-bit ****/
-/**** 256-bit **** SIMD instructions with configurable-element **** 32-bit ****/
-/**** 128-bit **** SIMD instructions with configurable-element **** 32-bit ****/
-/**** scalar ***** SIMD instructions with configurable-element **** 32-bit ****/
+/**** var-len **** SIMD instructions with configurable element **** 32-bit ****/
+/**** 256-bit **** SIMD instructions with configurable element **** 32-bit ****/
+/**** 128-bit **** SIMD instructions with configurable element **** 32-bit ****/
+/**** scalar ***** SIMD instructions with configurable element **** 32-bit ****/
 
-/**** var-len **** SIMD instructions with configurable-element **** 64-bit ****/
-/**** 256-bit **** SIMD instructions with configurable-element **** 64-bit ****/
-/**** 128-bit **** SIMD instructions with configurable-element **** 64-bit ****/
-/**** scalar ***** SIMD instructions with configurable-element **** 64-bit ****/
+/**** var-len **** SIMD instructions with configurable element **** 64-bit ****/
+/**** 256-bit **** SIMD instructions with configurable element **** 64-bit ****/
+/**** 128-bit **** SIMD instructions with configurable element **** 64-bit ****/
+/**** scalar ***** SIMD instructions with configurable element **** 64-bit ****/
 
 /************************   COMMON BASE INSTRUCTIONS   ************************/
 
@@ -145,7 +145,7 @@
 #if (defined RT_SIMD_CODE)
 
 /******************************************************************************/
-/**** var-len **** (rcp/rsq/fma/fms) with fixed-32-bit-element ****************/
+/**** var-len **** (rcp/rsq/fma/fms) with fixed-32-bit element ****************/
 /******************************************************************************/
 
 #if   (RT_SIMD >= 512) || (RT_SIMD == 256 && defined RT_SVEX1)
@@ -243,7 +243,7 @@
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
 /******************************************************************************/
-/**** 256-bit **** (rcp/rsq/fma/fms) with fixed-32-bit-element ****************/
+/**** 256-bit **** (rcp/rsq/fma/fms) with fixed-32-bit element ****************/
 /******************************************************************************/
 
 /* rcp (D = 1.0 / S)
@@ -337,7 +337,7 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /******************************************************************************/
-/**** 128-bit **** (rcp/rsq/fma/fms) with fixed-32-bit-element ****************/
+/**** 128-bit **** (rcp/rsq/fma/fms) with fixed-32-bit element ****************/
 /******************************************************************************/
 
 /* rcp (D = 1.0 / S)
@@ -431,7 +431,7 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /******************************************************************************/
-/**** scalar ***** (rcp/rsq/fma/fms) with fixed-32-bit-element ****************/
+/**** scalar ***** (rcp/rsq/fma/fms) with fixed-32-bit element ****************/
 /******************************************************************************/
 
 /* rcp (D = 1.0 / S)
@@ -525,7 +525,7 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /******************************************************************************/
-/**** var-len **** (rcp/rsq/fma/fms) with fixed-64-bit-element ****************/
+/**** var-len **** (rcp/rsq/fma/fms) with fixed-64-bit element ****************/
 /******************************************************************************/
 
 #if   (RT_SIMD >= 512) || (RT_SIMD == 256 && defined RT_SVEX1)
@@ -623,7 +623,7 @@
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
 /******************************************************************************/
-/**** 256-bit **** (rcp/rsq/fma/fms) with fixed-64-bit-element ****************/
+/**** 256-bit **** (rcp/rsq/fma/fms) with fixed-64-bit element ****************/
 /******************************************************************************/
 
 /* rcp (D = 1.0 / S)
@@ -717,7 +717,7 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /******************************************************************************/
-/**** 128-bit **** (rcp/rsq/fma/fms) with fixed-64-bit-element ****************/
+/**** 128-bit **** (rcp/rsq/fma/fms) with fixed-64-bit element ****************/
 /******************************************************************************/
 
 /* rcp (D = 1.0 / S)
@@ -811,7 +811,7 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /******************************************************************************/
-/**** scalar ***** (rcp/rsq/fma/fms) with fixed-64-bit-element ****************/
+/**** scalar ***** (rcp/rsq/fma/fms) with fixed-64-bit element ****************/
 /******************************************************************************/
 
 /* rcp (D = 1.0 / S)
@@ -905,7 +905,7 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /******************************************************************************/
-/**** var-len **** SIMD instructions with fixed-32-bit-element **** 256-bit ***/
+/**** var-len **** SIMD instructions with fixed-32-bit element **** 256-bit ***/
 /******************************************************************************/
 
 #if   (RT_SIMD == 256) && !(defined RT_SVEX1)
@@ -1489,6 +1489,20 @@
 #define subox3ld(XD, XS, MT, DT)                                            \
         subcx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulox_rr(XG, XS)                                                    \
+        mulcx_rr(W(XG), W(XS))
+
+#define mulox_ld(XG, MS, DS)                                                \
+        mulcx_ld(W(XG), W(MS), W(DS))
+
+#define mulox3rr(XD, XS, XT)                                                \
+        mulcx3rr(W(XD), W(XS), W(XT))
+
+#define mulox3ld(XD, XS, MT, DT)                                            \
+        mulcx3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
@@ -1580,7 +1594,7 @@
         svrcn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
-/**** var-len **** SIMD instructions with fixed-32-bit-element **** 128-bit ***/
+/**** var-len **** SIMD instructions with fixed-32-bit element **** 128-bit ***/
 /******************************************************************************/
 
 #elif (RT_SIMD == 128)
@@ -2164,6 +2178,20 @@
 #define subox3ld(XD, XS, MT, DT)                                            \
         subix3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulox_rr(XG, XS)                                                    \
+        mulix_rr(W(XG), W(XS))
+
+#define mulox_ld(XG, MS, DS)                                                \
+        mulix_ld(W(XG), W(MS), W(DS))
+
+#define mulox3rr(XD, XS, XT)                                                \
+        mulix3rr(W(XD), W(XS), W(XT))
+
+#define mulox3ld(XD, XS, MT, DT)                                            \
+        mulix3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
@@ -2257,7 +2285,7 @@
 #endif /* RT_SIMD: 256, 128 */
 
 /******************************************************************************/
-/**** var-len **** SIMD instructions with fixed-64-bit-element **** 256-bit ***/
+/**** var-len **** SIMD instructions with fixed-64-bit element **** 256-bit ***/
 /******************************************************************************/
 
 #if   (RT_SIMD == 256) && !(defined RT_SVEX1)
@@ -2841,6 +2869,20 @@
 #define subqx3ld(XD, XS, MT, DT)                                            \
         subdx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulqx_rr(XG, XS)                                                    \
+        muldx_rr(W(XG), W(XS))
+
+#define mulqx_ld(XG, MS, DS)                                                \
+        muldx_ld(W(XG), W(MS), W(DS))
+
+#define mulqx3rr(XD, XS, XT)                                                \
+        muldx3rr(W(XD), W(XS), W(XT))
+
+#define mulqx3ld(XD, XS, MT, DT)                                            \
+        muldx3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
@@ -2932,7 +2974,7 @@
         svrdn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
-/**** var-len **** SIMD instructions with fixed-64-bit-element **** 128-bit ***/
+/**** var-len **** SIMD instructions with fixed-64-bit element **** 128-bit ***/
 /******************************************************************************/
 
 #elif (RT_SIMD == 128)
@@ -3516,6 +3558,20 @@
 #define subqx3ld(XD, XS, MT, DT)                                            \
         subjx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulqx_rr(XG, XS)                                                    \
+        muljx_rr(W(XG), W(XS))
+
+#define mulqx_ld(XG, MS, DS)                                                \
+        muljx_ld(W(XG), W(MS), W(DS))
+
+#define mulqx3rr(XD, XS, XT)                                                \
+        muljx3rr(W(XD), W(XS), W(XT))
+
+#define mulqx3ld(XD, XS, MT, DT)                                            \
+        muljx3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
@@ -3609,7 +3665,7 @@
 #endif /* RT_SIMD: 256, 128 */
 
 /******************************************************************************/
-/**** var-len **** SIMD instructions with configurable-element **** 32-bit ****/
+/**** var-len **** SIMD instructions with configurable element **** 32-bit ****/
 /******************************************************************************/
 
 #if   RT_ELEMENT == 32
@@ -4193,6 +4249,20 @@
 #define subpx3ld(XD, XS, MT, DT)                                            \
         subox3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulpx_rr(XG, XS)                                                    \
+        mulox_rr(W(XG), W(XS))
+
+#define mulpx_ld(XG, MS, DS)                                                \
+        mulox_ld(W(XG), W(MS), W(DS))
+
+#define mulpx3rr(XD, XS, XT)                                                \
+        mulox3rr(W(XD), W(XS), W(XT))
+
+#define mulpx3ld(XD, XS, MT, DT)                                            \
+        mulox3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
@@ -4284,7 +4354,7 @@
         svron3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
-/**** 256-bit **** SIMD instructions with configurable-element **** 32-bit ****/
+/**** 256-bit **** SIMD instructions with configurable element **** 32-bit ****/
 /******************************************************************************/
 
 /* elm (D = S), store first SIMD element with natural alignment
@@ -4866,6 +4936,20 @@
 #define subfx3ld(XD, XS, MT, DT)                                            \
         subcx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulfx_rr(XG, XS)                                                    \
+        mulcx_rr(W(XG), W(XS))
+
+#define mulfx_ld(XG, MS, DS)                                                \
+        mulcx_ld(W(XG), W(MS), W(DS))
+
+#define mulfx3rr(XD, XS, XT)                                                \
+        mulcx3rr(W(XD), W(XS), W(XT))
+
+#define mulfx3ld(XD, XS, MT, DT)                                            \
+        mulcx3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
@@ -4957,7 +5041,7 @@
         svrcn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
-/**** 128-bit **** SIMD instructions with configurable-element **** 32-bit ****/
+/**** 128-bit **** SIMD instructions with configurable element **** 32-bit ****/
 /******************************************************************************/
 
 /* elm (D = S), store first SIMD element with natural alignment
@@ -5539,6 +5623,20 @@
 #define sublx3ld(XD, XS, MT, DT)                                            \
         subix3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mullx_rr(XG, XS)                                                    \
+        mulix_rr(W(XG), W(XS))
+
+#define mullx_ld(XG, MS, DS)                                                \
+        mulix_ld(W(XG), W(MS), W(DS))
+
+#define mullx3rr(XD, XS, XT)                                                \
+        mulix3rr(W(XD), W(XS), W(XT))
+
+#define mullx3ld(XD, XS, MT, DT)                                            \
+        mulix3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
@@ -5630,7 +5728,7 @@
         svrin3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
-/**** scalar ***** SIMD instructions with configurable-element **** 32-bit ****/
+/**** scalar ***** SIMD instructions with configurable element **** 32-bit ****/
 /******************************************************************************/
 
 /*********   scalar single-precision floating-point move/arithmetic   *********/
@@ -5869,7 +5967,7 @@
         cgers3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
-/**** var-len **** SIMD instructions with configurable-element **** 64-bit ****/
+/**** var-len **** SIMD instructions with configurable element **** 64-bit ****/
 /******************************************************************************/
 
 #elif RT_ELEMENT == 64
@@ -6453,6 +6551,20 @@
 #define subpx3ld(XD, XS, MT, DT)                                            \
         subqx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulpx_rr(XG, XS)                                                    \
+        mulqx_rr(W(XG), W(XS))
+
+#define mulpx_ld(XG, MS, DS)                                                \
+        mulqx_ld(W(XG), W(MS), W(DS))
+
+#define mulpx3rr(XD, XS, XT)                                                \
+        mulqx3rr(W(XD), W(XS), W(XT))
+
+#define mulpx3ld(XD, XS, MT, DT)                                            \
+        mulqx3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
@@ -6544,7 +6656,7 @@
         svrqn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
-/**** 256-bit **** SIMD instructions with configurable-element **** 64-bit ****/
+/**** 256-bit **** SIMD instructions with configurable element **** 64-bit ****/
 /******************************************************************************/
 
 /* elm (D = S), store first SIMD element with natural alignment
@@ -7126,6 +7238,20 @@
 #define subfx3ld(XD, XS, MT, DT)                                            \
         subdx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulfx_rr(XG, XS)                                                    \
+        muldx_rr(W(XG), W(XS))
+
+#define mulfx_ld(XG, MS, DS)                                                \
+        muldx_ld(W(XG), W(MS), W(DS))
+
+#define mulfx3rr(XD, XS, XT)                                                \
+        muldx3rr(W(XD), W(XS), W(XT))
+
+#define mulfx3ld(XD, XS, MT, DT)                                            \
+        muldx3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
@@ -7217,7 +7343,7 @@
         svrdn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
-/**** 128-bit **** SIMD instructions with configurable-element **** 64-bit ****/
+/**** 128-bit **** SIMD instructions with configurable element **** 64-bit ****/
 /******************************************************************************/
 
 /* elm (D = S), store first SIMD element with natural alignment
@@ -7799,6 +7925,20 @@
 #define sublx3ld(XD, XS, MT, DT)                                            \
         subjx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mullx_rr(XG, XS)                                                    \
+        muljx_rr(W(XG), W(XS))
+
+#define mullx_ld(XG, MS, DS)                                                \
+        muljx_ld(W(XG), W(MS), W(DS))
+
+#define mullx3rr(XD, XS, XT)                                                \
+        muljx3rr(W(XD), W(XS), W(XT))
+
+#define mullx3ld(XD, XS, MT, DT)                                            \
+        muljx3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
@@ -7890,7 +8030,7 @@
         svrjn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
-/**** scalar ***** SIMD instructions with configurable-element **** 64-bit ****/
+/**** scalar ***** SIMD instructions with configurable element **** 64-bit ****/
 /******************************************************************************/
 
 /*********   scalar double-precision floating-point move/arithmetic   *********/

@@ -931,6 +931,23 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulox_rr(XG, XS)                                                    \
+        mulox3rr(W(XG), W(XG), W(XS))
+
+#define mulox_ld(XG, MS, DS)                                                \
+        mulox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulox3rr(XD, XS, XT)                                                \
+        EVX(RXB(XD), RXB(XT), REN(XS), K, 1, 2) EMITB(0x40)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define mulox3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(RXB(XD), RXB(MT), REN(XS), K, 1, 2) EMITB(0x40)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 

@@ -1623,6 +1623,38 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulox_rr(XG, XS)                                                    \
+        mulox3rr(W(XG), W(XG), W(XS))
+
+#define mulox_ld(XG, MS, DS)                                                \
+        mulox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulox3rr(XD, XS, XT)                                                \
+        EVX(0,             0, REG(XS), K, 1, 2) EMITB(0x40)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVX(1,             1, REH(XS), K, 1, 2) EMITB(0x40)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVX(2,             2, REI(XS), K, 1, 2) EMITB(0x40)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EVX(3,             3, REJ(XS), K, 1, 2) EMITB(0x40)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define mulox3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REG(XS), K, 1, 2) EMITB(0x40)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EVX(1,       RXB(MT), REH(XS), K, 1, 2) EMITB(0x40)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)                                 \
+    ADR EVX(2,       RXB(MT), REI(XS), K, 1, 2) EMITB(0x40)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VSL(DT)), EMPTY)                                 \
+    ADR EVX(3,       RXB(MT), REJ(XS), K, 1, 2) EMITB(0x40)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 

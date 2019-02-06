@@ -998,6 +998,37 @@
         movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
         movcx_ld(W(XD), Mebp, inf_SCR01(0))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulcx_rr(XG, XS)                                                    \
+        mulcx3rr(W(XG), W(XG), W(XS))
+
+#define mulcx_ld(XG, MS, DS)                                                \
+        mulcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulcx3rr(XD, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        mulix_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        mulix_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mulcx3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_ld(W(XD), W(MT), W(DT))                                       \
+        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        mulix_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        mulix_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
@@ -1280,6 +1311,23 @@
 
 #define subcx3ld(XD, XS, MT, DT)                                            \
     ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xFA)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulcx_rr(XG, XS)                                                    \
+        mulcx3rr(W(XG), W(XG), W(XS))
+
+#define mulcx_ld(XG, MS, DS)                                                \
+        mulcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulcx3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 1, 2) EMITB(0x40)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define mulcx3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 1, 2) EMITB(0x40)                 \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 

@@ -901,6 +901,27 @@
         EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
         EMITW(0x04E00400 | MXM(RYG(XD), RYG(XS), TmmM))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulqx_rr(XG, XS)                                                    \
+        EMITW(0x04D00000 | MXM(REG(XG), REG(XS), 0x00))                     \
+        EMITW(0x04D00000 | MXM(RYG(XG), RYG(XS), 0x00))
+
+#define mulqx_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), K1(DS)))  \
+        EMITW(0x04D00000 | MXM(REG(XG), TmmM,    0x00))                     \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VZL(DS), B3(DS), K1(DS)))  \
+        EMITW(0x04D00000 | MXM(RYG(XG), TmmM,    0x00))
+
+#define mulqx3rr(XD, XS, XT)                                                \
+        movqx_rr(W(XD), W(XS))                                              \
+        mulqx_rr(W(XD), W(XT))
+
+#define mulqx3ld(XD, XS, MT, DT)                                            \
+        movqx_rr(W(XD), W(XS))                                              \
+        mulqx_ld(W(XD), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 

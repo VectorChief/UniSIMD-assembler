@@ -14,7 +14,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x64_256x1v8.h: Implementation of x86_64 fp64 AVX512F/VL instructions.
+ * rtarch_x64_256x1v8.h: Implementation of x86_64 fp64 AVX512VL/DQ instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -830,6 +830,23 @@
 
 #define subdx3ld(XD, XS, MT, DT)                                            \
     ADR EVW(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xFB)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define muldx_rr(XG, XS)                                                    \
+        muldx3rr(W(XG), W(XG), W(XS))
+
+#define muldx_ld(XG, MS, DS)                                                \
+        muldx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define muldx3rr(XD, XS, XT)                                                \
+        EVW(RXB(XD), RXB(XT), REN(XS), 1, 1, 2) EMITB(0x40)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define muldx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(RXB(XD), RXB(MT), REN(XS), 1, 1, 2) EMITB(0x40)                 \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 

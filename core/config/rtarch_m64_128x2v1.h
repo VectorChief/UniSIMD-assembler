@@ -837,6 +837,25 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x78E0000E | MXM(RYG(XD), RYG(XS), TmmM))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define muldx_rr(XG, XS)                                                    \
+        muldx3rr(W(XG), W(XG), W(XS))
+
+#define muldx_ld(XG, MS, DS)                                                \
+        muldx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define muldx3rr(XD, XS, XT)                                                \
+        EMITW(0x78600012 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x78600012 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define muldx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x78600012 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x78600012 | MXM(RYG(XD), RYG(XS), TmmM))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 

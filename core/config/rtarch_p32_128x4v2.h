@@ -1117,6 +1117,41 @@
         EMITW(0x10000480 | MXM(TmmQ,    TmmQ,    TmmM))                     \
         EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulox_rr(XG, XS)                                                    \
+        mulox3rr(W(XG), W(XG), W(XS))
+
+#define mulox_ld(XG, MS, DS)                                                \
+        mulox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulox3rr(XD, XS, XT)                                                \
+        EMITW(0x10000089 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x10000089 | MXM(RYG(XD), RYG(XS), RYG(XT)))                  \
+        EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
+        EMITW(0xF0000491 | MXM(TmmM,    REG(XT), REG(XT)))                  \
+        EMITW(0x10000089 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XS), RYG(XS)))                  \
+        EMITW(0xF0000491 | MXM(TmmM,    RYG(XT), RYG(XT)))                  \
+        EMITW(0x10000089 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
+
+#define mulox3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x10000089 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x10000089 | MXM(RYG(XD), RYG(XS), TmmM))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VXL(DT), B4(DT), L4(DT)))  \
+        EMITW(0x10000089 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XS), RYG(XS)))                  \
+        EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VZL(DT), B4(DT), L4(DT)))  \
+        EMITW(0x10000089 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 

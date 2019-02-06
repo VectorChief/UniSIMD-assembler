@@ -907,6 +907,27 @@
     SJF(EMITW(0x7AB10002 | MXM(TmmM,    TmmM,    0x00)))                    \
         EMITW(0x78C0000E | MXM(RYG(XD), RYG(XS), TmmM))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulcx_rr(XG, XS)                                                    \
+        mulcx3rr(W(XG), W(XG), W(XS))
+
+#define mulcx_ld(XG, MS, DS)                                                \
+        mulcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulcx3rr(XD, XS, XT)                                                \
+        EMITW(0x78400012 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x78400012 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define mulcx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x78000022 | MFM(TmmM,    MOD(MT), VAL(DT), B4(DT), K2(DT)))  \
+    SHF(EMITW(0x7AB10002 | MXM(TmmM,    TmmM,    0x00)))                    \
+        EMITW(0x78400012 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x78000022 | MFM(TmmM,    MOD(MT), VYL(DT), B4(DT), K2(DT)))  \
+    SJF(EMITW(0x7AB10002 | MXM(TmmM,    TmmM,    0x00)))                    \
+        EMITW(0x78400012 | MXM(RYG(XD), RYG(XS), TmmM))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility, shift count mustn't exceed elem-size */
 
