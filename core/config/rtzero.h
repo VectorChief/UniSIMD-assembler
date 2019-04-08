@@ -33,15 +33,15 @@
  * cmdk*_** - king-kong args, BASE ISA (for 128-bit BASE subset, RISC-V)
  * cmdl*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed-128-bit)
  * cmdm*_** - SIMD-data args, SIMD ISA (packed fp16/int subset, half-precision)
- * cmdn*_** - SIMD-elem args, SIMD ISA (scalar fp16/int subset, half-precision)
+ * cmdn*_** - SIMD-elem args, ELEM ISA (scalar fp16/int subset, half-precision)
  * cmdo*_** - SIMD-data args, SIMD ISA (data element is 32-bit, packed)
  * cmdp*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed)
  * cmdq*_** - SIMD-data args, SIMD ISA (data element is 64-bit, packed)
- * cmdr*_** - SIMD-elem args, SIMD ISA (data element is 32-bit, scalar)
- * cmds*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, scalar)
- * cmdt*_** - SIMD-elem args, SIMD ISA (data element is 64-bit, scalar)
+ * cmdr*_** - SIMD-elem args, ELEM ISA (data element is 32-bit, scalar)
+ * cmds*_** - SIMD-elem args, ELEM ISA (32/64-bit configurable, scalar)
+ * cmdt*_** - SIMD-elem args, ELEM ISA (data element is 64-bit, scalar)
  * cmdu*_** - SIMD-data args, SIMD ISA (packed f128/int subset, quad-precision)
- * cmdv*_** - SIMD-elem args, SIMD ISA (scalar f128/int subset, quad-precision)
+ * cmdv*_** - SIMD-elem args, ELEM ISA (scalar f128/int subset, quad-precision)
  * cmdw*_** - word-size args, BASE ISA (data element is always fixed at 32-bit)
  * cmdx*_** - addr-size args, BASE ISA (32/64-bit configurable with RT_ADDRESS)
  * cmdy*_** - elem-size args, BASE ISA (32/64-bit configurable with RT_ELEMENT)
@@ -233,7 +233,7 @@
 #undef XmmC /* external name for SIMD register */
 #undef XmmD /* external name for SIMD register */
 #undef XmmE /* external name for SIMD register */
-#undef XmmF /* external name for SIMD register, may be reserved in some cases */
+#undef XmmF /* external name for SIMD register, may be reserved in most cases */
 
 #undef XmmG /* external name for SIMD register */
 #undef XmmH /* external name for SIMD register */
@@ -256,7 +256,7 @@
 /*****************   SIMD FLAGS EXTENDED COMPATIBILITY LAYER   ****************/
 /******************************************************************************/
 
-/* Interpretation of a 32-bit SIMD-version field (ver) in SIMD-info structure:
+/* Interpretation of a 32-bit SIMD-version field (ver) in rt_SIMD_INFO struct:
  *
  * |RT_128 |256_R8 |RT_256 |512_R8 |RT_512 |1K4_R8 |RT_1K4 |2K8_R8 | - SIMD-flag
  * |1 2 4 8|- - 4|*|1 2 4 8|1 2 -|*|1 2 4 8|1 2 -|*|1 2 4 8|1 2 -|*| - cur-value
@@ -279,7 +279,7 @@
  * The original RT_*** targets have only 8 registers on legacy CPUs (x86/ARMv7).
  * The original RT_*** targets can be either native (x64) or composite (RISCs).
  * The *_R8 targets are always composed of register/instruction pairs or quads.
- * The *_RX targets have 30 registers + 7 masks (AVX-512/1K4 and ARM-SVE only).
+ * The *_RX targets have 30 registers + 6 masks (AVX-512/1K4 and ARM-SVE only).
  *
  * Some targets may have less registers than category-defined maximum (8,16,32).
  * The common minimum in each category is then defined with RT_SIMD_COMPAT_XMM:
