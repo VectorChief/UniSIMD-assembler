@@ -1172,7 +1172,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xFB)                       \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shljx_ri(XG, IS)                                                    \
     ESC REX(0,       RXB(XG)) EMITB(0x0F) EMITB(0x73)                       \
@@ -1193,7 +1193,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xF3)                       \
         shljx_ld(W(XD), W(MT), W(DT))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrjx_ri(XG, IS)                                                    \
     ESC REX(0,       RXB(XG)) EMITB(0x0F) EMITB(0x73)                       \
@@ -1214,7 +1214,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         shrjx_ld(W(XD), W(MT), W(DT))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrjn_ri(XG, IS)                                                    \
         shrjn3ri(W(XG), W(XG), W(IS))
@@ -1238,7 +1238,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svljx_rr(XG, XS)     /* variable shift with per-elem count */       \
         svljx3rr(W(XG), W(XG), W(XS))
@@ -1270,7 +1270,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrjx_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrjx3rr(W(XG), W(XG), W(XS))
@@ -1302,7 +1302,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrjn_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrjn3rr(W(XG), W(XG), W(XS))

@@ -858,7 +858,8 @@
         subwz_st(W(RS), W(MG), W(DG))
 
 /* shl (G = G << S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*x), yes (*z)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlwx_rx(RG)                     /* reads Recx for shift count */   \
         EMITW(0x1AC02000 | MRM(REG(RG), REG(RG), Tecx))
@@ -943,7 +944,8 @@
         shlwz_st(W(RS), W(MG), W(DG))
 
 /* shr (G = G >> S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*x), yes (*z)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrwx_rx(RG)                     /* reads Recx for shift count */   \
         EMITW(0x1AC02400 | MRM(REG(RG), REG(RG), Tecx))
@@ -1060,7 +1062,8 @@
         shrwn_st(W(RS), W(MG), W(DG))
 
 /* ror (G = G >> S | G << 32 - S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*x), yes (*z)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define rorwx_rx(RG)                     /* reads Recx for shift count */   \
         EMITW(0x1AC02C00 | MRM(REG(RG), REG(RG), Tecx))

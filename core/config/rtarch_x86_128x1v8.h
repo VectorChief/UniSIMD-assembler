@@ -943,7 +943,7 @@
         AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlix_ri(XG, IS)                                                    \
         shlix3ri(W(XG), W(XG), W(IS))
@@ -962,7 +962,7 @@
         AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrix_ri(XG, IS)                                                    \
         shrix3ri(W(XG), W(XG), W(IS))
@@ -981,7 +981,7 @@
         AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrin_ri(XG, IS)                                                    \
         shrin3ri(W(XG), W(XG), W(IS))
@@ -1000,7 +1000,7 @@
         AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlix_rr(XG, XS)     /* variable shift with per-elem count */       \
         svlix3rr(W(XG), W(XG), W(XS))
@@ -1055,7 +1055,7 @@
 #endif /* RT_128X1 >= 32, AVX2 */
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrix_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrix3rr(W(XG), W(XG), W(XS))
@@ -1110,7 +1110,7 @@
 #endif /* RT_128X1 >= 32, AVX2 */
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrin_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrin3rr(W(XG), W(XG), W(XS))
