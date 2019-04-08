@@ -808,7 +808,7 @@
         EMITW(0x100004C0 | MXM(REG(XD), REG(XS), TmmM))
 
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shljx_ri(XG, IS)                                                    \
         shljx3ri(W(XG), W(XG), W(IS))
@@ -826,7 +826,7 @@
         EMITW(0x100005C4 | MXM(REG(XD), REG(XS), TmmM))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrjx_ri(XG, IS)                                                    \
         shrjx3ri(W(XG), W(XG), W(IS))
@@ -844,7 +844,7 @@
         EMITW(0x100006C4 | MXM(REG(XD), REG(XS), TmmM))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrjn_ri(XG, IS)                                                    \
         shrjn3ri(W(XG), W(XG), W(IS))
@@ -862,7 +862,7 @@
         EMITW(0x100003C4 | MXM(REG(XD), REG(XS), TmmM))
 
 /* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svljx_rr(XG, XS)     /* variable shift with per-elem count */       \
         svljx3rr(W(XG), W(XG), W(XS))
@@ -880,7 +880,7 @@
         EMITW(0x100005C4 | MXM(REG(XD), REG(XS), TmmM))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrjx_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrjx3rr(W(XG), W(XG), W(XS))
@@ -898,7 +898,7 @@
         EMITW(0x100006C4 | MXM(REG(XD), REG(XS), TmmM))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrjn_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrjn3rr(W(XG), W(XG), W(XS))

@@ -1327,7 +1327,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xFA)                       \
         subcx_ld(W(XD), W(MT), W(DT))
 
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlcx_ri(XG, IS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x72)                       \
@@ -1354,7 +1354,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xF2)                       \
         shlcx_ld(W(XD), W(MT), W(DT))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrcx_ri(XG, IS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x72)                       \
@@ -1381,7 +1381,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD2)                       \
         shrcx_ld(W(XD), W(MT), W(DT))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrcn_ri(XG, IS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x72)                       \
@@ -1408,7 +1408,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
         shrcn_ld(W(XD), W(MT), W(DT))
 
 /* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlcx_rr(XG, XS)     /* variable shift with per-elem count */       \
         svlcx3rr(W(XG), W(XG), W(XS))
@@ -1464,7 +1464,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
         movcx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrcx_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrcx3rr(W(XG), W(XG), W(XS))
@@ -1520,7 +1520,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
         movcx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrcn_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrcn3rr(W(XG), W(XG), W(XS))

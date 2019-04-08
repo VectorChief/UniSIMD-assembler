@@ -1368,7 +1368,7 @@
         movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlix_ri(XG, IS)                                                    \
         shlix3ri(W(XG), W(XG), W(IS))
@@ -1396,7 +1396,7 @@
         movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrix_ri(XG, IS)                                                    \
         shrix3ri(W(XG), W(XG), W(IS))
@@ -1424,7 +1424,7 @@
         movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrin_ri(XG, IS)                                                    \
         shrin3ri(W(XG), W(XG), W(IS))
@@ -1492,7 +1492,7 @@
         subix_ld(W(XD), W(MT), W(DT))
 
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlix_ri(XG, IS)                                                    \
     ESC EMITB(0x0F) EMITB(0x72)                                             \
@@ -1513,7 +1513,7 @@
         shlix_ld(W(XD), W(MT), W(DT))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrix_ri(XG, IS)                                                    \
     ESC EMITB(0x0F) EMITB(0x72)                                             \
@@ -1534,7 +1534,7 @@
         shrix_ld(W(XD), W(MT), W(DT))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrin_ri(XG, IS)                                                    \
     ESC EMITB(0x0F) EMITB(0x72)                                             \
@@ -1557,7 +1557,7 @@
 #endif /* RT_128X1 >= 2 */
 
 /* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlix_rr(XG, XS)     /* variable shift with per-elem count */       \
         svlix3rr(W(XG), W(XG), W(XS))
@@ -1597,7 +1597,7 @@
         movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrix_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrix3rr(W(XG), W(XG), W(XS))
@@ -1637,7 +1637,7 @@
         movix_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrin_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrin3rr(W(XG), W(XG), W(XS))

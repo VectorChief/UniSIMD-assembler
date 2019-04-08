@@ -908,7 +908,7 @@
         EMITW(0x78C0000E | MXM(RYG(XD), RYG(XS), TmmM))
 
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlcx_ri(XG, IS)                                                    \
         shlcx3ri(W(XG), W(XG), W(IS))
@@ -930,7 +930,7 @@
         EMITW(0x7840000D | MXM(RYG(XD), RYG(XS), TmmM))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrcx_ri(XG, IS)                                                    \
         shrcx3ri(W(XG), W(XG), W(IS))
@@ -952,7 +952,7 @@
         EMITW(0x7940000D | MXM(RYG(XD), RYG(XS), TmmM))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrcn_ri(XG, IS)                                                    \
         shrcn3ri(W(XG), W(XG), W(IS))
@@ -974,7 +974,7 @@
         EMITW(0x78C0000D | MXM(RYG(XD), RYG(XS), TmmM))
 
 /* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlcx_rr(XG, XS)     /* variable shift with per-elem count */       \
         svlcx3rr(W(XG), W(XG), W(XS))
@@ -996,7 +996,7 @@
         EMITW(0x7840000D | MXM(RYG(XD), RYG(XS), TmmM))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrcx_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrcx3rr(W(XG), W(XG), W(XS))
@@ -1018,7 +1018,7 @@
         EMITW(0x7940000D | MXM(RYG(XD), RYG(XS), TmmM))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
- * for maximum compatibility, shift count mustn't exceed elem-size */
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrcn_rr(XG, XS)     /* variable shift with per-elem count */       \
         svrcn3rr(W(XG), W(XG), W(XS))
