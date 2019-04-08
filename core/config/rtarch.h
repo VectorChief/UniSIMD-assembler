@@ -57,7 +57,7 @@
  *  - rtarch_x86_512x1v2.h - fp32, 8 SIMD regs, AVX 512-bit, all 8 used
  *
  * Modern 32/64-bit BASE
- *   plus 32/64-bit SIMD combination:
+ *   plus 32/64-bit SIMD combinations:
  *
  *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 BASE regs, 14+temps used
  *  - rtarch_a64.h         - AArch64:ARMv8 ISA, 32 BASE regs, 14+temps used
@@ -164,9 +164,9 @@
  *
  *** The following SIMD instruction namespaces are defined for current use.
  *
- * cmdr*_** - SIMD-elem args, SIMD ISA (data element is 32-bit, scalar)
- * cmds*_** - SIMD-elem args, SIMD ISA (32/64-bit configurable, scalar)
- * cmdt*_** - SIMD-elem args, SIMD ISA (data element is 64-bit, scalar)
+ * cmdr*_** - SIMD-elem args, ELEM ISA (data element is 32-bit, scalar)
+ * cmds*_** - SIMD-elem args, ELEM ISA (32/64-bit configurable, scalar)
+ * cmdt*_** - SIMD-elem args, ELEM ISA (data element is 64-bit, scalar)
  *
  * cmde*_** - extd-size args, extd ISA (for 80-bit extended double, x87)
  *
@@ -214,13 +214,13 @@
  *** The following SIMD instruction namespaces are reserved for the future.
  *
  * cmdm*_** - SIMD-data args, SIMD ISA (packed fp16/int subset, half-precision)
- * cmdn*_** - SIMD-elem args, SIMD ISA (scalar fp16/int subset, half-precision)
+ * cmdn*_** - SIMD-elem args, ELEM ISA (scalar fp16/int subset, half-precision)
  *
  * cmdu*_** - SIMD-data args, SIMD ISA (packed f128/int subset, quad-precision)
- * cmdv*_** - SIMD-elem args, SIMD ISA (scalar f128/int subset, quad-precision)
+ * cmdv*_** - SIMD-elem args, ELEM ISA (scalar f128/int subset, quad-precision)
  *
- * cmdpb_** - SIMD-data args, SIMD ISA (packed byte-int subset)
- * cmdph_** - SIMD-data args, SIMD ISA (packed half-int subset)
+ * cmdpb_** - SIMD-data args, uint ISA (packed byte-int subset)
+ * cmdph_** - SIMD-data args, uint ISA (packed half-int subset)
  *
  * packed SIMD instructions above are vector-length-agnostic: 128-bit multiples
  *
