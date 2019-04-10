@@ -30,6 +30,8 @@
 /**** 128-bit **** (rcp/rsq/fma/fms) with fixed-64-bit element ****************/
 /**** scalar ***** (rcp/rsq/fma/fms) with fixed-64-bit element ****************/
 
+/**** var-len **** SIMD instructions with fixed-16-bit element **** 256-bit ***/
+/**** var-len **** SIMD instructions with fixed-16-bit element **** 128-bit ***/
 /**** var-len **** SIMD instructions with fixed-32-bit element **** 256-bit ***/
 /**** var-len **** SIMD instructions with fixed-32-bit element **** 128-bit ***/
 /**** var-len **** SIMD instructions with fixed-64-bit element **** 256-bit ***/
@@ -903,6 +905,1164 @@
         movts_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMS */
+
+/******************************************************************************/
+/**** var-len **** SIMD instructions with fixed-16-bit element **** 256-bit ***/
+/******************************************************************************/
+
+#if   (RT_SIMD == 256) && !(defined RT_SVEX1)
+
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmmx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        elmax_st(W(XS), W(MD), W(DD))
+
+/****************   packed half-precision generic move/logic   ****************/
+
+/* mov (D = S) */
+
+#define movmx_rr(XD, XS)                                                    \
+        movax_rr(W(XD), W(XS))
+
+#define movmx_ld(XD, MS, DS)                                                \
+        movax_ld(W(XD), W(MS), W(DS))
+
+#define movmx_st(XS, MD, DD)                                                \
+        movax_st(W(XS), W(MD), W(DD))
+
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
+
+#define mmvmx_rr(XD, XS)                                                    \
+        mmvax_rr(W(XD), W(XS))
+
+#define mmvmx_ld(XG, MS, DS)                                                \
+        mmvax_ld(W(XG), W(MS), W(DS))
+
+#define mmvmx_st(XS, MG, DG)                                                \
+        mmvax_st(W(XS), W(MG), W(DG))
+
+/* and (G = G & S), (D = S & T) if (#D != #S) */
+
+#define andmx_rr(XG, XS)                                                    \
+        andax_rr(W(XG), W(XS))
+
+#define andmx_ld(XG, MS, DS)                                                \
+        andax_ld(W(XG), W(MS), W(DS))
+
+#define andmx3rr(XD, XS, XT)                                                \
+        andax3rr(W(XD), W(XS), W(XT))
+
+#define andmx3ld(XD, XS, MT, DT)                                            \
+        andax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+
+#define annmx_rr(XG, XS)                                                    \
+        annax_rr(W(XG), W(XS))
+
+#define annmx_ld(XG, MS, DS)                                                \
+        annax_ld(W(XG), W(MS), W(DS))
+
+#define annmx3rr(XD, XS, XT)                                                \
+        annax3rr(W(XD), W(XS), W(XT))
+
+#define annmx3ld(XD, XS, MT, DT)                                            \
+        annax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orr (G = G | S), (D = S | T) if (#D != #S) */
+
+#define orrmx_rr(XG, XS)                                                    \
+        orrax_rr(W(XG), W(XS))
+
+#define orrmx_ld(XG, MS, DS)                                                \
+        orrax_ld(W(XG), W(MS), W(DS))
+
+#define orrmx3rr(XD, XS, XT)                                                \
+        orrax3rr(W(XD), W(XS), W(XT))
+
+#define orrmx3ld(XD, XS, MT, DT)                                            \
+        orrax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+
+#define ornmx_rr(XG, XS)                                                    \
+        ornax_rr(W(XG), W(XS))
+
+#define ornmx_ld(XG, MS, DS)                                                \
+        ornax_ld(W(XG), W(MS), W(DS))
+
+#define ornmx3rr(XD, XS, XT)                                                \
+        ornax3rr(W(XD), W(XS), W(XT))
+
+#define ornmx3ld(XD, XS, MT, DT)                                            \
+        ornax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+
+#define xormx_rr(XG, XS)                                                    \
+        xorax_rr(W(XG), W(XS))
+
+#define xormx_ld(XG, MS, DS)                                                \
+        xorax_ld(W(XG), W(MS), W(DS))
+
+#define xormx3rr(XD, XS, XT)                                                \
+        xorax3rr(W(XD), W(XS), W(XT))
+
+#define xormx3ld(XD, XS, MT, DT)                                            \
+        xorax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* not (G = ~G), (D = ~S) */
+
+#define notmx_rx(XG)                                                        \
+        notax_rx(W(XG))
+
+#define notmx_rr(XD, XS)                                                    \
+        notax_rr(W(XD), W(XS))
+
+/*************   packed half-precision floating-point arithmetic   ************/
+
+/* neg (G = -G), (D = -S) */
+
+#define negms_rx(XG)                                                        \
+        negas_rx(W(XG))
+
+#define negms_rr(XD, XS)                                                    \
+        negas_rr(W(XD), W(XS))
+
+/* add (G = G + S), (D = S + T) if (#D != #S) */
+
+#define addms_rr(XG, XS)                                                    \
+        addas_rr(W(XG), W(XS))
+
+#define addms_ld(XG, MS, DS)                                                \
+        addas_ld(W(XG), W(MS), W(DS))
+
+#define addms3rr(XD, XS, XT)                                                \
+        addas3rr(W(XD), W(XS), W(XT))
+
+#define addms3ld(XD, XS, MT, DT)                                            \
+        addas3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (#D != #S) */
+
+#define subms_rr(XG, XS)                                                    \
+        subas_rr(W(XG), W(XS))
+
+#define subms_ld(XG, MS, DS)                                                \
+        subas_ld(W(XG), W(MS), W(DS))
+
+#define subms3rr(XD, XS, XT)                                                \
+        subas3rr(W(XD), W(XS), W(XT))
+
+#define subms3ld(XD, XS, MT, DT)                                            \
+        subas3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulms_rr(XG, XS)                                                    \
+        mulas_rr(W(XG), W(XS))
+
+#define mulms_ld(XG, MS, DS)                                                \
+        mulas_ld(W(XG), W(MS), W(DS))
+
+#define mulms3rr(XD, XS, XT)                                                \
+        mulas3rr(W(XD), W(XS), W(XT))
+
+#define mulms3ld(XD, XS, MT, DT)                                            \
+        mulas3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #S) */
+
+#define divms_rr(XG, XS)                                                    \
+        divas_rr(W(XG), W(XS))
+
+#define divms_ld(XG, MS, DS)                                                \
+        divas_ld(W(XG), W(MS), W(DS))
+
+#define divms3rr(XD, XS, XT)                                                \
+        divas3rr(W(XD), W(XS), W(XT))
+
+#define divms3ld(XD, XS, MT, DT)                                            \
+        divas3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sqr (D = sqrt S) */
+
+#define sqrms_rr(XD, XS)                                                    \
+        sqras_rr(W(XD), W(XS))
+
+#define sqrms_ld(XD, MS, DS)                                                \
+        sqras_ld(W(XD), W(MS), W(DS))
+
+/* rcp (D = 1.0 / S) */
+
+#define rcems_rr(XD, XS)                                                    \
+        rceas_rr(W(XD), W(XS))
+
+#define rcsms_rr(XG, XS) /* destroys XS */                                  \
+        rcsas_rr(W(XG), W(XS))
+
+/* rsq (D = 1.0 / sqrt S) */
+
+#define rsems_rr(XD, XS)                                                    \
+        rseas_rr(W(XD), W(XS))
+
+#define rssms_rr(XG, XS) /* destroys XS */                                  \
+        rssas_rr(W(XG), W(XS))
+
+/* fma (G = G + S * T) if (#G != #S && #G != #T) */
+
+#define fmams_rr(XG, XS, XT)                                                \
+        fmaas_rr(W(XG), W(XS), W(XT))
+
+#define fmams_ld(XG, XS, MT, DT)                                            \
+        fmaas_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* fms (G = G - S * T) if (#G != #S && #G != #T) */
+
+#define fmsms_rr(XG, XS, XT)                                                \
+        fmsas_rr(W(XG), W(XS), W(XT))
+
+#define fmsms_ld(XG, XS, MT, DT)                                            \
+        fmsas_ld(W(XG), W(XS), W(MT), W(DT))
+
+/**************   packed half-precision floating-point compare   **************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+
+#define minms_rr(XG, XS)                                                    \
+        minas_rr(W(XG), W(XS))
+
+#define minms_ld(XG, MS, DS)                                                \
+        minas_ld(W(XG), W(MS), W(DS))
+
+#define minms3rr(XD, XS, XT)                                                \
+        minas3rr(W(XD), W(XS), W(XT))
+
+#define minms3ld(XD, XS, MT, DT)                                            \
+        minas3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+
+#define maxms_rr(XG, XS)                                                    \
+        maxas_rr(W(XG), W(XS))
+
+#define maxms_ld(XG, MS, DS)                                                \
+        maxas_ld(W(XG), W(MS), W(DS))
+
+#define maxms3rr(XD, XS, XT)                                                \
+        maxas3rr(W(XD), W(XS), W(XT))
+
+#define maxms3ld(XD, XS, MT, DT)                                            \
+        maxas3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+
+#define ceqms_rr(XG, XS)                                                    \
+        ceqas_rr(W(XG), W(XS))
+
+#define ceqms_ld(XG, MS, DS)                                                \
+        ceqas_ld(W(XG), W(MS), W(DS))
+
+#define ceqms3rr(XD, XS, XT)                                                \
+        ceqas3rr(W(XD), W(XS), W(XT))
+
+#define ceqms3ld(XD, XS, MT, DT)                                            \
+        ceqas3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+
+#define cnems_rr(XG, XS)                                                    \
+        cneas_rr(W(XG), W(XS))
+
+#define cnems_ld(XG, MS, DS)                                                \
+        cneas_ld(W(XG), W(MS), W(DS))
+
+#define cnems3rr(XD, XS, XT)                                                \
+        cneas3rr(W(XD), W(XS), W(XT))
+
+#define cnems3ld(XD, XS, MT, DT)                                            \
+        cneas3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+
+#define cltms_rr(XG, XS)                                                    \
+        cltas_rr(W(XG), W(XS))
+
+#define cltms_ld(XG, MS, DS)                                                \
+        cltas_ld(W(XG), W(MS), W(DS))
+
+#define cltms3rr(XD, XS, XT)                                                \
+        cltas3rr(W(XD), W(XS), W(XT))
+
+#define cltms3ld(XD, XS, MT, DT)                                            \
+        cltas3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+
+#define clems_rr(XG, XS)                                                    \
+        cleas_rr(W(XG), W(XS))
+
+#define clems_ld(XG, MS, DS)                                                \
+        cleas_ld(W(XG), W(MS), W(DS))
+
+#define clems3rr(XD, XS, XT)                                                \
+        cleas3rr(W(XD), W(XS), W(XT))
+
+#define clems3ld(XD, XS, MT, DT)                                            \
+        cleas3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+
+#define cgtms_rr(XG, XS)                                                    \
+        cgtas_rr(W(XG), W(XS))
+
+#define cgtms_ld(XG, MS, DS)                                                \
+        cgtas_ld(W(XG), W(MS), W(DS))
+
+#define cgtms3rr(XD, XS, XT)                                                \
+        cgtas3rr(W(XD), W(XS), W(XT))
+
+#define cgtms3ld(XD, XS, MT, DT)                                            \
+        cgtas3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+
+#define cgems_rr(XG, XS)                                                    \
+        cgeas_rr(W(XG), W(XS))
+
+#define cgems_ld(XG, MS, DS)                                                \
+        cgeas_ld(W(XG), W(MS), W(DS))
+
+#define cgems3rr(XD, XS, XT)                                                \
+        cgeas3rr(W(XD), W(XS), W(XT))
+
+#define cgems3ld(XD, XS, MT, DT)                                            \
+        cgeas3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define mkjmx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjax_rx(W(XS), mask, lb)
+
+/**************   packed half-precision floating-point convert   **************/
+
+/* cvz (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rnzms_rr(XD, XS)     /* round towards zero */                       \
+        rnzas_rr(W(XD), W(XS))
+
+#define rnzms_ld(XD, MS, DS) /* round towards zero */                       \
+        rnzas_ld(W(XD), W(MS), W(DS))
+
+#define cvzms_rr(XD, XS)     /* round towards zero */                       \
+        cvzas_rr(W(XD), W(XS))
+
+#define cvzms_ld(XD, MS, DS) /* round towards zero */                       \
+        cvzas_ld(W(XD), W(MS), W(DS))
+
+/* cvp (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rnpms_rr(XD, XS)     /* round towards +inf */                       \
+        rnpas_rr(W(XD), W(XS))
+
+#define rnpms_ld(XD, MS, DS) /* round towards +inf */                       \
+        rnpas_ld(W(XD), W(MS), W(DS))
+
+#define cvpms_rr(XD, XS)     /* round towards +inf */                       \
+        cvpas_rr(W(XD), W(XS))
+
+#define cvpms_ld(XD, MS, DS) /* round towards +inf */                       \
+        cvpas_ld(W(XD), W(MS), W(DS))
+
+/* cvm (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rnmms_rr(XD, XS)     /* round towards -inf */                       \
+        rnmas_rr(W(XD), W(XS))
+
+#define rnmms_ld(XD, MS, DS) /* round towards -inf */                       \
+        rnmas_ld(W(XD), W(MS), W(DS))
+
+#define cvmms_rr(XD, XS)     /* round towards -inf */                       \
+        cvmas_rr(W(XD), W(XS))
+
+#define cvmms_ld(XD, MS, DS) /* round towards -inf */                       \
+        cvmas_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rnnms_rr(XD, XS)     /* round towards near */                       \
+        rnnas_rr(W(XD), W(XS))
+
+#define rnnms_ld(XD, MS, DS) /* round towards near */                       \
+        rnnas_ld(W(XD), W(MS), W(DS))
+
+#define cvnms_rr(XD, XS)     /* round towards near */                       \
+        cvnas_rr(W(XD), W(XS))
+
+#define cvnms_ld(XD, MS, DS) /* round towards near */                       \
+        cvnas_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnmn_rr(XD, XS)     /* round towards near */                       \
+        cvnan_rr(W(XD), W(XS))
+
+#define cvnmn_ld(XD, MS, DS) /* round towards near */                       \
+        cvnan_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from control register (set in FCTRL blocks) */
+
+#define rndms_rr(XD, XS)                                                    \
+        rndas_rr(W(XD), W(XS))
+
+#define rndms_ld(XD, MS, DS)                                                \
+        rndas_ld(W(XD), W(MS), W(DS))
+
+#define cvtms_rr(XD, XS)                                                    \
+        cvtas_rr(W(XD), W(XS))
+
+#define cvtms_ld(XD, MS, DS)                                                \
+        cvtas_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from control register (set in FCTRL blocks) */
+
+#define cvtmn_rr(XD, XS)                                                    \
+        cvtan_rr(W(XD), W(XS))
+
+#define cvtmn_ld(XD, MS, DS)                                                \
+        cvtan_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rnrms_rr(XD, XS, mode)                                              \
+        rnras_rr(W(XD), W(XS), mode)
+
+#define cvrms_rr(XD, XS, mode)                                              \
+        cvras_rr(W(XD), W(XS), mode)
+
+/*************   packed half-precision integer arithmetic/shifts   ************/
+
+/* add (G = G + S), (D = S + T) if (#D != #S) */
+
+#define addmx_rr(XG, XS)                                                    \
+        addax_rr(W(XG), W(XS))
+
+#define addmx_ld(XG, MS, DS)                                                \
+        addax_ld(W(XG), W(MS), W(DS))
+
+#define addmx3rr(XD, XS, XT)                                                \
+        addax3rr(W(XD), W(XS), W(XT))
+
+#define addmx3ld(XD, XS, MT, DT)                                            \
+        addax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (#D != #S) */
+
+#define submx_rr(XG, XS)                                                    \
+        subax_rr(W(XG), W(XS))
+
+#define submx_ld(XG, MS, DS)                                                \
+        subax_ld(W(XG), W(MS), W(DS))
+
+#define submx3rr(XD, XS, XT)                                                \
+        subax3rr(W(XD), W(XS), W(XT))
+
+#define submx3ld(XD, XS, MT, DT)                                            \
+        subax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulmx_rr(XG, XS)                                                    \
+        mulax_rr(W(XG), W(XS))
+
+#define mulmx_ld(XG, MS, DS)                                                \
+        mulax_ld(W(XG), W(MS), W(DS))
+
+#define mulmx3rr(XD, XS, XT)                                                \
+        mulax3rr(W(XD), W(XS), W(XT))
+
+#define mulmx3ld(XD, XS, MT, DT)                                            \
+        mulax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shlmx_ri(XG, IS)                                                    \
+        shlax_ri(W(XG), W(IS))
+
+#define shlmx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shlax_ld(W(XG), W(MS), W(DS))
+
+#define shlmx3ri(XD, XS, IT)                                                \
+        shlax3ri(W(XD), W(XS), W(IT))
+
+#define shlmx3ld(XD, XS, MT, DT)                                            \
+        shlax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrmx_ri(XG, IS)                                                    \
+        shrax_ri(W(XG), W(IS))
+
+#define shrmx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrax_ld(W(XG), W(MS), W(DS))
+
+#define shrmx3ri(XD, XS, IT)                                                \
+        shrax3ri(W(XD), W(XS), W(IT))
+
+#define shrmx3ld(XD, XS, MT, DT)                                            \
+        shrax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrmn_ri(XG, IS)                                                    \
+        shran_ri(W(XG), W(IS))
+
+#define shrmn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shran_ld(W(XG), W(MS), W(DS))
+
+#define shrmn3ri(XD, XS, IT)                                                \
+        shran3ri(W(XD), W(XS), W(IT))
+
+#define shrmn3ld(XD, XS, MT, DT)                                            \
+        shran3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svlmx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlax_rr(W(XG), W(XS))
+
+#define svlmx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlax_ld(W(XG), W(MS), W(DS))
+
+#define svlmx3rr(XD, XS, XT)                                                \
+        svlax3rr(W(XD), W(XS), W(XT))
+
+#define svlmx3ld(XD, XS, MT, DT)                                            \
+        svlax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svrmx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrax_rr(W(XG), W(XS))
+
+#define svrmx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrax_ld(W(XG), W(MS), W(DS))
+
+#define svrmx3rr(XD, XS, XT)                                                \
+        svrax3rr(W(XD), W(XS), W(XT))
+
+#define svrmx3ld(XD, XS, MT, DT)                                            \
+        svrax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svrmn_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svran_rr(W(XG), W(XS))
+
+#define svrmn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svran_ld(W(XG), W(MS), W(DS))
+
+#define svrmn3rr(XD, XS, XT)                                                \
+        svran3rr(W(XD), W(XS), W(XT))
+
+#define svrmn3ld(XD, XS, MT, DT)                                            \
+        svran3ld(W(XD), W(XS), W(MT), W(DT))
+
+/******************************************************************************/
+/**** var-len **** SIMD instructions with fixed-16-bit element **** 128-bit ***/
+/******************************************************************************/
+
+#elif (RT_SIMD == 128)
+
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmmx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        elmgx_st(W(XS), W(MD), W(DD))
+
+/****************   packed half-precision generic move/logic   ****************/
+
+/* mov (D = S) */
+
+#define movmx_rr(XD, XS)                                                    \
+        movgx_rr(W(XD), W(XS))
+
+#define movmx_ld(XD, MS, DS)                                                \
+        movgx_ld(W(XD), W(MS), W(DS))
+
+#define movmx_st(XS, MD, DD)                                                \
+        movgx_st(W(XS), W(MD), W(DD))
+
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
+
+#define mmvmx_rr(XD, XS)                                                    \
+        mmvgx_rr(W(XD), W(XS))
+
+#define mmvmx_ld(XG, MS, DS)                                                \
+        mmvgx_ld(W(XG), W(MS), W(DS))
+
+#define mmvmx_st(XS, MG, DG)                                                \
+        mmvgx_st(W(XS), W(MG), W(DG))
+
+/* and (G = G & S), (D = S & T) if (#D != #S) */
+
+#define andmx_rr(XG, XS)                                                    \
+        andgx_rr(W(XG), W(XS))
+
+#define andmx_ld(XG, MS, DS)                                                \
+        andgx_ld(W(XG), W(MS), W(DS))
+
+#define andmx3rr(XD, XS, XT)                                                \
+        andgx3rr(W(XD), W(XS), W(XT))
+
+#define andmx3ld(XD, XS, MT, DT)                                            \
+        andgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+
+#define annmx_rr(XG, XS)                                                    \
+        anngx_rr(W(XG), W(XS))
+
+#define annmx_ld(XG, MS, DS)                                                \
+        anngx_ld(W(XG), W(MS), W(DS))
+
+#define annmx3rr(XD, XS, XT)                                                \
+        anngx3rr(W(XD), W(XS), W(XT))
+
+#define annmx3ld(XD, XS, MT, DT)                                            \
+        anngx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orr (G = G | S), (D = S | T) if (#D != #S) */
+
+#define orrmx_rr(XG, XS)                                                    \
+        orrgx_rr(W(XG), W(XS))
+
+#define orrmx_ld(XG, MS, DS)                                                \
+        orrgx_ld(W(XG), W(MS), W(DS))
+
+#define orrmx3rr(XD, XS, XT)                                                \
+        orrgx3rr(W(XD), W(XS), W(XT))
+
+#define orrmx3ld(XD, XS, MT, DT)                                            \
+        orrgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+
+#define ornmx_rr(XG, XS)                                                    \
+        orngx_rr(W(XG), W(XS))
+
+#define ornmx_ld(XG, MS, DS)                                                \
+        orngx_ld(W(XG), W(MS), W(DS))
+
+#define ornmx3rr(XD, XS, XT)                                                \
+        orngx3rr(W(XD), W(XS), W(XT))
+
+#define ornmx3ld(XD, XS, MT, DT)                                            \
+        orngx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+
+#define xormx_rr(XG, XS)                                                    \
+        xorgx_rr(W(XG), W(XS))
+
+#define xormx_ld(XG, MS, DS)                                                \
+        xorgx_ld(W(XG), W(MS), W(DS))
+
+#define xormx3rr(XD, XS, XT)                                                \
+        xorgx3rr(W(XD), W(XS), W(XT))
+
+#define xormx3ld(XD, XS, MT, DT)                                            \
+        xorgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* not (G = ~G), (D = ~S) */
+
+#define notmx_rx(XG)                                                        \
+        notgx_rx(W(XG))
+
+#define notmx_rr(XD, XS)                                                    \
+        notgx_rr(W(XD), W(XS))
+
+/*************   packed half-precision floating-point arithmetic   ************/
+
+/* neg (G = -G), (D = -S) */
+
+#define negms_rx(XG)                                                        \
+        neggs_rx(W(XG))
+
+#define negms_rr(XD, XS)                                                    \
+        neggs_rr(W(XD), W(XS))
+
+/* add (G = G + S), (D = S + T) if (#D != #S) */
+
+#define addms_rr(XG, XS)                                                    \
+        addgs_rr(W(XG), W(XS))
+
+#define addms_ld(XG, MS, DS)                                                \
+        addgs_ld(W(XG), W(MS), W(DS))
+
+#define addms3rr(XD, XS, XT)                                                \
+        addgs3rr(W(XD), W(XS), W(XT))
+
+#define addms3ld(XD, XS, MT, DT)                                            \
+        addgs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (#D != #S) */
+
+#define subms_rr(XG, XS)                                                    \
+        subgs_rr(W(XG), W(XS))
+
+#define subms_ld(XG, MS, DS)                                                \
+        subgs_ld(W(XG), W(MS), W(DS))
+
+#define subms3rr(XD, XS, XT)                                                \
+        subgs3rr(W(XD), W(XS), W(XT))
+
+#define subms3ld(XD, XS, MT, DT)                                            \
+        subgs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulms_rr(XG, XS)                                                    \
+        mulgs_rr(W(XG), W(XS))
+
+#define mulms_ld(XG, MS, DS)                                                \
+        mulgs_ld(W(XG), W(MS), W(DS))
+
+#define mulms3rr(XD, XS, XT)                                                \
+        mulgs3rr(W(XD), W(XS), W(XT))
+
+#define mulms3ld(XD, XS, MT, DT)                                            \
+        mulgs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #S) */
+
+#define divms_rr(XG, XS)                                                    \
+        divgs_rr(W(XG), W(XS))
+
+#define divms_ld(XG, MS, DS)                                                \
+        divgs_ld(W(XG), W(MS), W(DS))
+
+#define divms3rr(XD, XS, XT)                                                \
+        divgs3rr(W(XD), W(XS), W(XT))
+
+#define divms3ld(XD, XS, MT, DT)                                            \
+        divgs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sqr (D = sqrt S) */
+
+#define sqrms_rr(XD, XS)                                                    \
+        sqrgs_rr(W(XD), W(XS))
+
+#define sqrms_ld(XD, MS, DS)                                                \
+        sqrgs_ld(W(XD), W(MS), W(DS))
+
+/* rcp (D = 1.0 / S) */
+
+#define rcems_rr(XD, XS)                                                    \
+        rcegs_rr(W(XD), W(XS))
+
+#define rcsms_rr(XG, XS) /* destroys XS */                                  \
+        rcsgs_rr(W(XG), W(XS))
+
+/* rsq (D = 1.0 / sqrt S) */
+
+#define rsems_rr(XD, XS)                                                    \
+        rsegs_rr(W(XD), W(XS))
+
+#define rssms_rr(XG, XS) /* destroys XS */                                  \
+        rssgs_rr(W(XG), W(XS))
+
+/* fma (G = G + S * T) if (#G != #S && #G != #T) */
+
+#define fmams_rr(XG, XS, XT)                                                \
+        fmags_rr(W(XG), W(XS), W(XT))
+
+#define fmams_ld(XG, XS, MT, DT)                                            \
+        fmags_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* fms (G = G - S * T) if (#G != #S && #G != #T) */
+
+#define fmsms_rr(XG, XS, XT)                                                \
+        fmsgs_rr(W(XG), W(XS), W(XT))
+
+#define fmsms_ld(XG, XS, MT, DT)                                            \
+        fmsgs_ld(W(XG), W(XS), W(MT), W(DT))
+
+/**************   packed half-precision floating-point compare   **************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+
+#define minms_rr(XG, XS)                                                    \
+        mings_rr(W(XG), W(XS))
+
+#define minms_ld(XG, MS, DS)                                                \
+        mings_ld(W(XG), W(MS), W(DS))
+
+#define minms3rr(XD, XS, XT)                                                \
+        mings3rr(W(XD), W(XS), W(XT))
+
+#define minms3ld(XD, XS, MT, DT)                                            \
+        mings3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+
+#define maxms_rr(XG, XS)                                                    \
+        maxgs_rr(W(XG), W(XS))
+
+#define maxms_ld(XG, MS, DS)                                                \
+        maxgs_ld(W(XG), W(MS), W(DS))
+
+#define maxms3rr(XD, XS, XT)                                                \
+        maxgs3rr(W(XD), W(XS), W(XT))
+
+#define maxms3ld(XD, XS, MT, DT)                                            \
+        maxgs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+
+#define ceqms_rr(XG, XS)                                                    \
+        ceqgs_rr(W(XG), W(XS))
+
+#define ceqms_ld(XG, MS, DS)                                                \
+        ceqgs_ld(W(XG), W(MS), W(DS))
+
+#define ceqms3rr(XD, XS, XT)                                                \
+        ceqgs3rr(W(XD), W(XS), W(XT))
+
+#define ceqms3ld(XD, XS, MT, DT)                                            \
+        ceqgs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+
+#define cnems_rr(XG, XS)                                                    \
+        cnegs_rr(W(XG), W(XS))
+
+#define cnems_ld(XG, MS, DS)                                                \
+        cnegs_ld(W(XG), W(MS), W(DS))
+
+#define cnems3rr(XD, XS, XT)                                                \
+        cnegs3rr(W(XD), W(XS), W(XT))
+
+#define cnems3ld(XD, XS, MT, DT)                                            \
+        cnegs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+
+#define cltms_rr(XG, XS)                                                    \
+        cltgs_rr(W(XG), W(XS))
+
+#define cltms_ld(XG, MS, DS)                                                \
+        cltgs_ld(W(XG), W(MS), W(DS))
+
+#define cltms3rr(XD, XS, XT)                                                \
+        cltgs3rr(W(XD), W(XS), W(XT))
+
+#define cltms3ld(XD, XS, MT, DT)                                            \
+        cltgs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+
+#define clems_rr(XG, XS)                                                    \
+        clegs_rr(W(XG), W(XS))
+
+#define clems_ld(XG, MS, DS)                                                \
+        clegs_ld(W(XG), W(MS), W(DS))
+
+#define clems3rr(XD, XS, XT)                                                \
+        clegs3rr(W(XD), W(XS), W(XT))
+
+#define clems3ld(XD, XS, MT, DT)                                            \
+        clegs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+
+#define cgtms_rr(XG, XS)                                                    \
+        cgtgs_rr(W(XG), W(XS))
+
+#define cgtms_ld(XG, MS, DS)                                                \
+        cgtgs_ld(W(XG), W(MS), W(DS))
+
+#define cgtms3rr(XD, XS, XT)                                                \
+        cgtgs3rr(W(XD), W(XS), W(XT))
+
+#define cgtms3ld(XD, XS, MT, DT)                                            \
+        cgtgs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+
+#define cgems_rr(XG, XS)                                                    \
+        cgegs_rr(W(XG), W(XS))
+
+#define cgems_ld(XG, MS, DS)                                                \
+        cgegs_ld(W(XG), W(MS), W(DS))
+
+#define cgems3rr(XD, XS, XT)                                                \
+        cgegs3rr(W(XD), W(XS), W(XT))
+
+#define cgems3ld(XD, XS, MT, DT)                                            \
+        cgegs3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define mkjmx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjgx_rx(W(XS), mask, lb)
+
+/**************   packed half-precision floating-point convert   **************/
+
+/* cvz (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rnzms_rr(XD, XS)     /* round towards zero */                       \
+        rnzgs_rr(W(XD), W(XS))
+
+#define rnzms_ld(XD, MS, DS) /* round towards zero */                       \
+        rnzgs_ld(W(XD), W(MS), W(DS))
+
+#define cvzms_rr(XD, XS)     /* round towards zero */                       \
+        cvzgs_rr(W(XD), W(XS))
+
+#define cvzms_ld(XD, MS, DS) /* round towards zero */                       \
+        cvzgs_ld(W(XD), W(MS), W(DS))
+
+/* cvp (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rnpms_rr(XD, XS)     /* round towards +inf */                       \
+        rnpgs_rr(W(XD), W(XS))
+
+#define rnpms_ld(XD, MS, DS) /* round towards +inf */                       \
+        rnpgs_ld(W(XD), W(MS), W(DS))
+
+#define cvpms_rr(XD, XS)     /* round towards +inf */                       \
+        cvpgs_rr(W(XD), W(XS))
+
+#define cvpms_ld(XD, MS, DS) /* round towards +inf */                       \
+        cvpgs_ld(W(XD), W(MS), W(DS))
+
+/* cvm (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rnmms_rr(XD, XS)     /* round towards -inf */                       \
+        rnmgs_rr(W(XD), W(XS))
+
+#define rnmms_ld(XD, MS, DS) /* round towards -inf */                       \
+        rnmgs_ld(W(XD), W(MS), W(DS))
+
+#define cvmms_rr(XD, XS)     /* round towards -inf */                       \
+        cvmgs_rr(W(XD), W(XS))
+
+#define cvmms_ld(XD, MS, DS) /* round towards -inf */                       \
+        cvmgs_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rnnms_rr(XD, XS)     /* round towards near */                       \
+        rnngs_rr(W(XD), W(XS))
+
+#define rnnms_ld(XD, MS, DS) /* round towards near */                       \
+        rnngs_ld(W(XD), W(MS), W(DS))
+
+#define cvnms_rr(XD, XS)     /* round towards near */                       \
+        cvngs_rr(W(XD), W(XS))
+
+#define cvnms_ld(XD, MS, DS) /* round towards near */                       \
+        cvngs_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnmn_rr(XD, XS)     /* round towards near */                       \
+        cvngn_rr(W(XD), W(XS))
+
+#define cvnmn_ld(XD, MS, DS) /* round towards near */                       \
+        cvngn_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from control register (set in FCTRL blocks) */
+
+#define rndms_rr(XD, XS)                                                    \
+        rndgs_rr(W(XD), W(XS))
+
+#define rndms_ld(XD, MS, DS)                                                \
+        rndgs_ld(W(XD), W(MS), W(DS))
+
+#define cvtms_rr(XD, XS)                                                    \
+        cvtgs_rr(W(XD), W(XS))
+
+#define cvtms_ld(XD, MS, DS)                                                \
+        cvtgs_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from control register (set in FCTRL blocks) */
+
+#define cvtmn_rr(XD, XS)                                                    \
+        cvtgn_rr(W(XD), W(XS))
+
+#define cvtmn_ld(XD, MS, DS)                                                \
+        cvtgn_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rnrms_rr(XD, XS, mode)                                              \
+        rnrgs_rr(W(XD), W(XS), mode)
+
+#define cvrms_rr(XD, XS, mode)                                              \
+        cvrgs_rr(W(XD), W(XS), mode)
+
+/*************   packed half-precision integer arithmetic/shifts   ************/
+
+/* add (G = G + S), (D = S + T) if (#D != #S) */
+
+#define addmx_rr(XG, XS)                                                    \
+        addgx_rr(W(XG), W(XS))
+
+#define addmx_ld(XG, MS, DS)                                                \
+        addgx_ld(W(XG), W(MS), W(DS))
+
+#define addmx3rr(XD, XS, XT)                                                \
+        addgx3rr(W(XD), W(XS), W(XT))
+
+#define addmx3ld(XD, XS, MT, DT)                                            \
+        addgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (#D != #S) */
+
+#define submx_rr(XG, XS)                                                    \
+        subgx_rr(W(XG), W(XS))
+
+#define submx_ld(XG, MS, DS)                                                \
+        subgx_ld(W(XG), W(MS), W(DS))
+
+#define submx3rr(XD, XS, XT)                                                \
+        subgx3rr(W(XD), W(XS), W(XT))
+
+#define submx3ld(XD, XS, MT, DT)                                            \
+        subgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulmx_rr(XG, XS)                                                    \
+        mulgx_rr(W(XG), W(XS))
+
+#define mulmx_ld(XG, MS, DS)                                                \
+        mulgx_ld(W(XG), W(MS), W(DS))
+
+#define mulmx3rr(XD, XS, XT)                                                \
+        mulgx3rr(W(XD), W(XS), W(XT))
+
+#define mulmx3ld(XD, XS, MT, DT)                                            \
+        mulgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shlmx_ri(XG, IS)                                                    \
+        shlgx_ri(W(XG), W(IS))
+
+#define shlmx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shlgx_ld(W(XG), W(MS), W(DS))
+
+#define shlmx3ri(XD, XS, IT)                                                \
+        shlgx3ri(W(XD), W(XS), W(IT))
+
+#define shlmx3ld(XD, XS, MT, DT)                                            \
+        shlgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrmx_ri(XG, IS)                                                    \
+        shrgx_ri(W(XG), W(IS))
+
+#define shrmx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrgx_ld(W(XG), W(MS), W(DS))
+
+#define shrmx3ri(XD, XS, IT)                                                \
+        shrgx3ri(W(XD), W(XS), W(IT))
+
+#define shrmx3ld(XD, XS, MT, DT)                                            \
+        shrgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrmn_ri(XG, IS)                                                    \
+        shrgn_ri(W(XG), W(IS))
+
+#define shrmn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrgn_ld(W(XG), W(MS), W(DS))
+
+#define shrmn3ri(XD, XS, IT)                                                \
+        shrgn3ri(W(XD), W(XS), W(IT))
+
+#define shrmn3ld(XD, XS, MT, DT)                                            \
+        shrgn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svlmx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlgx_rr(W(XG), W(XS))
+
+#define svlmx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlgx_ld(W(XG), W(MS), W(DS))
+
+#define svlmx3rr(XD, XS, XT)                                                \
+        svlgx3rr(W(XD), W(XS), W(XT))
+
+#define svlmx3ld(XD, XS, MT, DT)                                            \
+        svlgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svrmx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrgx_rr(W(XG), W(XS))
+
+#define svrmx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrgx_ld(W(XG), W(MS), W(DS))
+
+#define svrmx3rr(XD, XS, XT)                                                \
+        svrgx3rr(W(XD), W(XS), W(XT))
+
+#define svrmx3ld(XD, XS, MT, DT)                                            \
+        svrgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svrmn_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrgn_rr(W(XG), W(XS))
+
+#define svrmn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrgn_ld(W(XG), W(MS), W(DS))
+
+#define svrmn3rr(XD, XS, XT)                                                \
+        svrgn3rr(W(XD), W(XS), W(XT))
+
+#define svrmn3ld(XD, XS, MT, DT)                                            \
+        svrgn3ld(W(XD), W(XS), W(MT), W(DT))
+
+#endif /* RT_SIMD: 256, 128 */
 
 /******************************************************************************/
 /**** var-len **** SIMD instructions with fixed-32-bit element **** 256-bit ***/

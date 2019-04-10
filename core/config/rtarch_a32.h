@@ -164,6 +164,7 @@
 #define SIB(reg, mod, sib)  sib
 
 #define VAL(val, tp1, tp2)  val
+#define VHL(val, tp1, tp2)  ((val) << 1 & 0x3FFC)
 #define VXL(val, tp1, tp2)  ((val) >> 1 & 0x3FFC)
 #define VYL(val, tp1, tp2)  ((val) | 0x10)
 #define VZL(val, tp1, tp2)  ((val) | 0x10 * (RT_SIMD/256))
@@ -228,7 +229,7 @@
 #define C10(br, dp) EMPTY
 #define A10(br, dp) EMPTY
 #define C30(br, dp) EMITW(0x52800000 | MRM(TDxx,    0x00,    0x00) |        \
-                             (0xFFFC & (dp)) << 5)
+                             (0xFFFE & (dp)) << 5)
 
 #define B11(br) (br)
 #define B31(br) TPxx
@@ -237,7 +238,7 @@
 #define A11(br, dp) C31(br, dp)                                             \
                     EMITW(0x0B000000 | MRM(TPxx,    (br),    TDxx) | ADR)
 #define C31(br, dp) EMITW(0x52800000 | MRM(TDxx,    0x00,    0x00) |        \
-                             (0xFFFC & (dp)) << 5)
+                             (0xFFFE & (dp)) << 5)
 
 #define B12(br) (br)
 #define B32(br) TPxx
@@ -246,7 +247,7 @@
 #define A12(br, dp) C32(br, dp)                                             \
                     EMITW(0x0B000000 | MRM(TPxx,    (br),    TDxx) | ADR)
 #define C32(br, dp) EMITW(0x52800000 | MRM(TDxx,    0x00,    0x00) |        \
-                             (0xFFFC & (dp)) << 5)                          \
+                             (0xFFFE & (dp)) << 5)                          \
                     EMITW(0x72A00000 | MRM(TDxx,    0x00,    0x00) |        \
                              (0x7FFF & (dp) >> 16) << 5)
 
@@ -354,11 +355,11 @@
 #define _DV(dp) ((dp) & 0x7FFFFFFC),    2, 2       /* native x86_64 long mode */
 #define  PLAIN  DP(0)                /* special type for Oeax addressing mode */
 
-#if (defined RT_SIMD_CODE) && (RT_SIMD == 256 && defined RT_SVEX1)
+#if (defined RT_SIMD_CODE && RT_SIMD == 256 && defined RT_SVEX1) || RT_128X1 & 2
 #undef  _DF
 #define _DF(dp) ((dp) & 0x3FFC),        1, 0     /* native AArch64 BASE ld/st */
 #endif /* RT_SIMD: 256, SVEx1 */
-#if (defined RT_SIMD_CODE) && (RT_SIMD == 512 && defined RT_SVEX2)
+#if (defined RT_SIMD_CODE && RT_SIMD == 512 && defined RT_SVEX2) || RT_128X2 & 2
 #undef  _DF
 #define _DF(dp) ((dp) & 0x3FFC),        1, 0     /* native AArch64 BASE ld/st */
 #endif /* RT_SIMD: 512, SVEx2 */
@@ -1482,7 +1483,7 @@
         andwx_ri(Recx, IB(16))                                              \
         shlwx_ri(Recx, IB(26))                                              \
         orrwx_rr(Resi, Recx)  /* 2K8-bit to RT_2K8=4 */                     \
-        andwx_ri(Resi, IV(0x55151545)) /* NEON: 0,2,6,8; SVE: other */      \
+        andwx_ri(Resi, IV(0x5515174F)) /* NEON: 0,1,2,3,6,8,9; SVE: rest */ \
         movwx_st(Resi, Mebp, inf_VER)
 
 /************************* address-sized instructions *************************/
