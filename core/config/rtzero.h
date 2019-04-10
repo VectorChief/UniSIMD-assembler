@@ -233,7 +233,7 @@
 #undef XmmC /* external name for SIMD register */
 #undef XmmD /* external name for SIMD register */
 #undef XmmE /* external name for SIMD register */
-#undef XmmF /* external name for SIMD register, may be reserved in most cases */
+#undef XmmF /* external name for SIMD register, may be reserved in some cases */
 
 #undef XmmG /* external name for SIMD register */
 #undef XmmH /* external name for SIMD register */
