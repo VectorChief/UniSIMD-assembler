@@ -9,13 +9,13 @@ for native builds (binary ABI matches host):
 for multilib builds (if libs are available):
     sudo apt-get install make g++-multilib clang
 run for x86 architecture:
-    make -f simd_make_x86.mk -j8
+    make -f simd_make_x86.mk -j4
     ./simd_test.x86
 run for x64 architecture:
-    make -f simd_make_x64.mk -j8
+    make -f simd_make_x64.mk -j4
     ./simd_test.x64f32
 run for non-x86 architectures:
-    make -f simd_make_***.mk -j8
+    make -f simd_make_***.mk -j4
     ./simd_test.***
 Prerequisites for building/emulating guest non-x86 architectures as well as
 configurations for particular hardware platforms are given in the makefiles.
@@ -28,7 +28,7 @@ make sure necessary tools and libraries are installed:
 http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/
     xcode-select --install
 run for x64 architecture:
-    make -f simd_make_x64.mk -j8
+    make -f simd_make_x64.mk -j4
     ./simd_test.x64f32
 
 To build SIMD test framework on Windows,
@@ -73,8 +73,8 @@ ppc-linux-user,ppc64abi32-linux-user,ppc64-linux-user,ppc64le-linux-user,\
 i386-linux-user,x86_64-linux-user
     (copy the whole multi-line command above without leading or trailing spaces)
     (paste into terminal and run after or instead of plain ./configure script)
-run multithreaded make:
-    make -j8
+run multithreaded make (use -j8 or -j16 on machines with higher core count):
+    make -j4
 run installation script:
     sudo make install
 
