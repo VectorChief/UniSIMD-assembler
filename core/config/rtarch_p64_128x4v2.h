@@ -1293,8 +1293,15 @@
         shlqx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shlqx3ri(XD, XS, IT)                                                \
-        movzx_mi(Mebp, inf_SCR01(0), W(IT))                                 \
-        shlqx3ld(W(XD), W(XS), Mebp, inf_SCR01(0))
+        EMITW(0xF00002D1 | TmmM << 21 | (0x3F & VAL(IT)) << 11)             \
+        EMITW(0x100005C4 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x100005C4 | MXM(RYG(XD), RYG(XS), TmmM))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
+        EMITW(0x100005C4 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XS), RYG(XS)))                  \
+        EMITW(0x100005C4 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
 
 #define shlqx3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
@@ -1318,8 +1325,15 @@
         shrqx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrqx3ri(XD, XS, IT)                                                \
-        movzx_mi(Mebp, inf_SCR01(0), W(IT))                                 \
-        shrqx3ld(W(XD), W(XS), Mebp, inf_SCR01(0))
+        EMITW(0xF00002D1 | TmmM << 21 | (0x3F & VAL(IT)) << 11)             \
+        EMITW(0x100006C4 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x100006C4 | MXM(RYG(XD), RYG(XS), TmmM))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
+        EMITW(0x100006C4 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XS), RYG(XS)))                  \
+        EMITW(0x100006C4 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
 
 #define shrqx3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
@@ -1343,8 +1357,15 @@
         shrqn3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrqn3ri(XD, XS, IT)                                                \
-        movzx_mi(Mebp, inf_SCR01(0), W(IT))                                 \
-        shrqn3ld(W(XD), W(XS), Mebp, inf_SCR01(0))
+        EMITW(0xF00002D1 | TmmM << 21 | (0x3F & VAL(IT)) << 11)             \
+        EMITW(0x100003C4 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x100003C4 | MXM(RYG(XD), RYG(XS), TmmM))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
+        EMITW(0x100003C4 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XS), RYG(XS)))                  \
+        EMITW(0x100003C4 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
 
 #define shrqn3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \

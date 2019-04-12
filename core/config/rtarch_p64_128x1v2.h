@@ -853,8 +853,8 @@
         shljx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shljx3ri(XD, XS, IT)                                                \
-        movzx_mi(Mebp, inf_SCR01(0), W(IT))                                 \
-        shljx3ld(W(XD), W(XS), Mebp, inf_SCR01(0))
+        EMITW(0xF00002D1 | TmmM << 21 | (0x3F & VAL(IT)) << 11)             \
+        EMITW(0x100005C4 | MXM(REG(XD), REG(XS), TmmM))
 
 #define shljx3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
@@ -871,8 +871,8 @@
         shrjx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrjx3ri(XD, XS, IT)                                                \
-        movzx_mi(Mebp, inf_SCR01(0), W(IT))                                 \
-        shrjx3ld(W(XD), W(XS), Mebp, inf_SCR01(0))
+        EMITW(0xF00002D1 | TmmM << 21 | (0x3F & VAL(IT)) << 11)             \
+        EMITW(0x100006C4 | MXM(REG(XD), REG(XS), TmmM))
 
 #define shrjx3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
@@ -889,8 +889,8 @@
         shrjn3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrjn3ri(XD, XS, IT)                                                \
-        movzx_mi(Mebp, inf_SCR01(0), W(IT))                                 \
-        shrjn3ld(W(XD), W(XS), Mebp, inf_SCR01(0))
+        EMITW(0xF00002D1 | TmmM << 21 | (0x3F & VAL(IT)) << 11)             \
+        EMITW(0x100003C4 | MXM(REG(XD), REG(XS), TmmM))
 
 #define shrjn3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
