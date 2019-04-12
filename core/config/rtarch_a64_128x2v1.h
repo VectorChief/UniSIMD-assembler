@@ -927,10 +927,12 @@
         shldx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shldx3ri(XD, XS, IT)                                                \
-        EMITW(0x4F405400 | MXM(REG(XD), REG(XS), 0x00) |                    \
-                                                 (0x3F & VAL(IT)) << 16)    \
-        EMITW(0x4F405400 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
-                                                 (0x3F & VAL(IT)) << 16)
+        EMITW(0x4F400400 | MXM(REG(XD), REG(XS), 0x00) |                    \
+        (M(VAL(IT) < 64) & 0x00005000) | (M(VAL(IT) > 63) & 0x20000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x3F & VAL(IT)) << 16)    \
+        EMITW(0x4F400400 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
+        (M(VAL(IT) < 64) & 0x00005000) | (M(VAL(IT) > 63) & 0x20000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x3F & VAL(IT)) << 16)
 
 #define shldx3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \

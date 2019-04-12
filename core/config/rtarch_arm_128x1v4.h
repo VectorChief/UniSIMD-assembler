@@ -1301,8 +1301,9 @@
         shlix3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shlix3ri(XD, XS, IT)                                                \
-        EMITW(0xF2A00550 | MXM(REG(XD), 0x00,    REG(XS)) |                 \
-                                                 (0x1F & VAL(IT)) << 16)
+        EMITW(0xF2A00050 | MXM(REG(XD), 0x00,    REG(XS)) |                 \
+        (M(VAL(IT) < 32) & 0x00000500) | (M(VAL(IT) > 31) & 0x01000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F & VAL(IT)) << 16)
 
 #define shlix3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \

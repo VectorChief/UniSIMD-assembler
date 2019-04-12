@@ -939,7 +939,8 @@
         EMITW(0x04D38000 | MXM(REG(XG), TmmM,    0x00))
 
 #define shlqx3ri(XD, XS, IT)                                                \
-        EMITW(0x04A09C00 | MXM(REG(XD), REG(XS), 0x00) |                    \
+        EMITW(0x04A09400 | MXM(REG(XD), REG(XS), 0x00) |                    \
+        (M(VAL(IT) < 64) & 0x00000800) | (M(VAL(IT) > 63) & 0x00000000) |   \
                         (0x20 & VAL(IT)) << 17 | (0x1F & VAL(IT)) << 16)
 
 #define shlqx3ld(XD, XS, MT, DT)                                            \

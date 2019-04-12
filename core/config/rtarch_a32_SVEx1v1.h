@@ -962,8 +962,9 @@
         EMITW(0x04938000 | MXM(REG(XG), TmmM,    0x00))
 
 #define shlox3ri(XD, XS, IT)                                                \
-        EMITW(0x04609C00 | MXM(REG(XD), REG(XS), 0x00) |                    \
-                                                 (0x1F & VAL(IT)) << 16)
+        EMITW(0x04609400 | MXM(REG(XD), REG(XS), 0x00) |                    \
+        (M(VAL(IT) < 32) & 0x00000800) | (M(VAL(IT) > 31) & 0x00000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x1F & VAL(IT)) << 16)
 
 #define shlox3ld(XD, XS, MT, DT)                                            \
         movox_rr(W(XD), W(XS))                                              \

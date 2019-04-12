@@ -776,10 +776,12 @@
         shlax3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shlax3ri(XD, XS, IT)                                                \
-        EMITW(0x4F105400 | MXM(REG(XD), REG(XS), 0x00) |                    \
-                                                 (0x0F & VAL(IT)) << 16)    \
-        EMITW(0x4F105400 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
-                                                 (0x0F & VAL(IT)) << 16)
+        EMITW(0x4F100400 | MXM(REG(XD), REG(XS), 0x00) |                    \
+        (M(VAL(IT) < 16) & 0x00005000) | (M(VAL(IT) > 15) & 0x20000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x0F & VAL(IT)) << 16)    \
+        EMITW(0x4F100400 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
+        (M(VAL(IT) < 16) & 0x00005000) | (M(VAL(IT) > 15) & 0x20000000) |   \
+        /* if true ^ equals to -1 (not 1) */     (0x0F & VAL(IT)) << 16)
 
 #define shlax3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \

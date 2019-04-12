@@ -827,9 +827,11 @@
         EMITW(0x04538000 | MXM(RYG(XG), TmmM,    0x00))
 
 #define shlmx3ri(XD, XS, IT)                                                \
-        EMITW(0x04309C00 | MXM(REG(XD), REG(XS), 0x00) |                    \
+        EMITW(0x04309400 | MXM(REG(XD), REG(XS), 0x00) |                    \
+        (M(VAL(IT) < 16) & 0x00000800) | (M(VAL(IT) > 15) & 0x00000000) |   \
                                                  (0x0F & VAL(IT)) << 16)    \
-        EMITW(0x04309C00 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
+        EMITW(0x04309400 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
+        (M(VAL(IT) < 16) & 0x00000800) | (M(VAL(IT) > 15) & 0x00000000) |   \
                                                  (0x0F & VAL(IT)) << 16)
 
 #define shlmx3ld(XD, XS, MT, DT)                                            \
