@@ -769,7 +769,7 @@
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#define shlax_ri(XG, IS)                                                    \
+#define shlax_ri(XG, IS)     /* emits shift-right with out-of-range args */ \
         shlax3ri(W(XG), W(XG), W(IS))
 
 #define shlax_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
@@ -778,10 +778,10 @@
 #define shlax3ri(XD, XS, IT)                                                \
         EMITW(0x4F100400 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) < 16) & 0x00005000) | (M(VAL(IT) > 15) & 0x20000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x0F & VAL(IT)) << 16)    \
+        (M(VAL(IT) < 16) & ((0x0F & VAL(IT)) << 16)))                       \
         EMITW(0x4F100400 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
         (M(VAL(IT) < 16) & 0x00005000) | (M(VAL(IT) > 15) & 0x20000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x0F & VAL(IT)) << 16)
+        (M(VAL(IT) < 16) & ((0x0F & VAL(IT)) << 16)))
 
 #define shlax3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
@@ -793,7 +793,7 @@
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#define shrax_ri(XG, IS)     /* emits shift-left for zero-immediate args */ \
+#define shrax_ri(XG, IS)     /* emits shift-left for immediate-zero args */ \
         shrax3ri(W(XG), W(XG), W(IS))
 
 #define shrax_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
@@ -802,10 +802,10 @@
 #define shrax3ri(XD, XS, IT)                                                \
         EMITW(0x4F100400 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00005000) | (M(VAL(IT) != 0) & 0x20000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x0F &-VAL(IT)) << 16)    \
+        (M(VAL(IT) < 16) & ((0x0F &-VAL(IT)) << 16)))                       \
         EMITW(0x4F100400 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00005000) | (M(VAL(IT) != 0) & 0x20000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x0F &-VAL(IT)) << 16)
+        (M(VAL(IT) < 16) & ((0x0F &-VAL(IT)) << 16)))
 
 #define shrax3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
@@ -818,7 +818,7 @@
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#define shran_ri(XG, IS)     /* emits shift-left for zero-immediate args */ \
+#define shran_ri(XG, IS)     /* emits shift-left for immediate-zero args */ \
         shran3ri(W(XG), W(XG), W(IS))
 
 #define shran_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
@@ -827,10 +827,10 @@
 #define shran3ri(XD, XS, IT)                                                \
         EMITW(0x4F100400 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00005000) | (M(VAL(IT) != 0) & 0x00000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x0F &-VAL(IT)) << 16)    \
+        (M(VAL(IT) < 16) & ((0x0F &-VAL(IT)) << 16)))                       \
         EMITW(0x4F100400 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00005000) | (M(VAL(IT) != 0) & 0x00000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x0F &-VAL(IT)) << 16)
+        (M(VAL(IT) < 16) & ((0x0F &-VAL(IT)) << 16)))
 
 #define shran3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \

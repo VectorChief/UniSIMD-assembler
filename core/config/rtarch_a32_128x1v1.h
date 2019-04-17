@@ -854,7 +854,7 @@
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#define shlix_ri(XG, IS)                                                    \
+#define shlix_ri(XG, IS)     /* emits shift-right with out-of-range args */ \
         shlix3ri(W(XG), W(XG), W(IS))
 
 #define shlix_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
@@ -863,7 +863,7 @@
 #define shlix3ri(XD, XS, IT)                                                \
         EMITW(0x4F200400 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) < 32) & 0x00005000) | (M(VAL(IT) > 31) & 0x20000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F & VAL(IT)) << 16)
+        (M(VAL(IT) < 32) & ((0x1F & VAL(IT)) << 16)))
 
 #define shlix3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
@@ -874,7 +874,7 @@
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#define shrix_ri(XG, IS)     /* emits shift-left for zero-immediate args */ \
+#define shrix_ri(XG, IS)     /* emits shift-left for immediate-zero args */ \
         shrix3ri(W(XG), W(XG), W(IS))
 
 #define shrix_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
@@ -883,7 +883,7 @@
 #define shrix3ri(XD, XS, IT)                                                \
         EMITW(0x4F200400 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00005000) | (M(VAL(IT) != 0) & 0x20000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)
+        (M(VAL(IT) < 32) & ((0x1F &-VAL(IT)) << 16)))
 
 #define shrix3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
@@ -895,7 +895,7 @@
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#define shrin_ri(XG, IS)     /* emits shift-left for zero-immediate args */ \
+#define shrin_ri(XG, IS)     /* emits shift-left for immediate-zero args */ \
         shrin3ri(W(XG), W(XG), W(IS))
 
 #define shrin_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
@@ -904,7 +904,7 @@
 #define shrin3ri(XD, XS, IT)                                                \
         EMITW(0x4F200400 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00005000) | (M(VAL(IT) != 0) & 0x00000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)
+        (M(VAL(IT) < 32) & ((0x1F &-VAL(IT)) << 16)))
 
 #define shrin3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \

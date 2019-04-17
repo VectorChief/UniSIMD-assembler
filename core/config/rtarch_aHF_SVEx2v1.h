@@ -816,7 +816,7 @@
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#define shlmx_ri(XG, IS)                                                    \
+#define shlmx_ri(XG, IS)     /* emits shift-right with out-of-range args */ \
         shlmx3ri(W(XG), W(XG), W(IS))
 
 #define shlmx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
@@ -829,10 +829,10 @@
 #define shlmx3ri(XD, XS, IT)                                                \
         EMITW(0x04309400 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) < 16) & 0x00000800) | (M(VAL(IT) > 15) & 0x00000000) |   \
-                                                 (0x0F & VAL(IT)) << 16)    \
+        (M(VAL(IT) < 16) & ((0x0F & VAL(IT)) << 16)))                       \
         EMITW(0x04309400 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
         (M(VAL(IT) < 16) & 0x00000800) | (M(VAL(IT) > 15) & 0x00000000) |   \
-                                                 (0x0F & VAL(IT)) << 16)
+        (M(VAL(IT) < 16) & ((0x0F & VAL(IT)) << 16)))
 
 #define shlmx3ld(XD, XS, MT, DT)                                            \
         movmx_rr(W(XD), W(XS))                                              \
@@ -841,7 +841,7 @@
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#define shrmx_ri(XG, IS)     /* emits shift-left for zero-immediate args */ \
+#define shrmx_ri(XG, IS)     /* emits shift-left for immediate-zero args */ \
         shrmx3ri(W(XG), W(XG), W(IS))
 
 #define shrmx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
@@ -854,10 +854,10 @@
 #define shrmx3ri(XD, XS, IT)                                                \
         EMITW(0x04309400 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00000800) | (M(VAL(IT) != 0) & 0x00000000) |   \
-                                                 (0x0F &-VAL(IT)) << 16)    \
+        (M(VAL(IT) < 16) & ((0x0F &-VAL(IT)) << 16)))                       \
         EMITW(0x04309400 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00000800) | (M(VAL(IT) != 0) & 0x00000000) |   \
-                                                 (0x0F &-VAL(IT)) << 16)
+        (M(VAL(IT) < 16) & ((0x0F &-VAL(IT)) << 16)))
 
 #define shrmx3ld(XD, XS, MT, DT)                                            \
         movmx_rr(W(XD), W(XS))                                              \
@@ -866,7 +866,7 @@
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#define shrmn_ri(XG, IS)     /* emits shift-left for zero-immediate args */ \
+#define shrmn_ri(XG, IS)     /* emits shift-left for immediate-zero args */ \
         shrmn3ri(W(XG), W(XG), W(IS))
 
 #define shrmn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
@@ -879,10 +879,10 @@
 #define shrmn3ri(XD, XS, IT)                                                \
         EMITW(0x04309000 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00000C00) | (M(VAL(IT) != 0) & 0x00000000) |   \
-                                                 (0x0F &-VAL(IT)) << 16)    \
+        (M(VAL(IT) < 16) & ((0x0F &-VAL(IT)) << 16)))                       \
         EMITW(0x04309000 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00000C00) | (M(VAL(IT) != 0) & 0x00000000) |   \
-                                                 (0x0F &-VAL(IT)) << 16)
+        (M(VAL(IT) < 16) & ((0x0F &-VAL(IT)) << 16)))
 
 #define shrmn3ld(XD, XS, MT, DT)                                            \
         movmx_rr(W(XD), W(XS))                                              \

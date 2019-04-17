@@ -952,7 +952,7 @@
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#define shlox_ri(XG, IS)                                                    \
+#define shlox_ri(XG, IS)     /* emits shift-right with out-of-range args */ \
         shlox3ri(W(XG), W(XG), W(IS))
 
 #define shlox_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
@@ -964,7 +964,7 @@
 #define shlox3ri(XD, XS, IT)                                                \
         EMITW(0x04609400 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) < 32) & 0x00000800) | (M(VAL(IT) > 31) & 0x00000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F & VAL(IT)) << 16)
+        (M(VAL(IT) < 32) & ((0x1F & VAL(IT)) << 16)))
 
 #define shlox3ld(XD, XS, MT, DT)                                            \
         movox_rr(W(XD), W(XS))                                              \
@@ -973,7 +973,7 @@
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#define shrox_ri(XG, IS)     /* emits shift-left for zero-immediate args */ \
+#define shrox_ri(XG, IS)     /* emits shift-left for immediate-zero args */ \
         shrox3ri(W(XG), W(XG), W(IS))
 
 #define shrox_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
@@ -985,7 +985,7 @@
 #define shrox3ri(XD, XS, IT)                                                \
         EMITW(0x04609400 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00000800) | (M(VAL(IT) != 0) & 0x00000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)
+        (M(VAL(IT) < 32) & ((0x1F &-VAL(IT)) << 16)))
 
 #define shrox3ld(XD, XS, MT, DT)                                            \
         movox_rr(W(XD), W(XS))                                              \
@@ -994,7 +994,7 @@
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#define shron_ri(XG, IS)     /* emits shift-left for zero-immediate args */ \
+#define shron_ri(XG, IS)     /* emits shift-left for immediate-zero args */ \
         shron3ri(W(XG), W(XG), W(IS))
 
 #define shron_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
@@ -1006,7 +1006,7 @@
 #define shron3ri(XD, XS, IT)                                                \
         EMITW(0x04609000 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00000C00) | (M(VAL(IT) != 0) & 0x00000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)
+        (M(VAL(IT) < 32) & ((0x1F &-VAL(IT)) << 16)))
 
 #define shron3ld(XD, XS, MT, DT)                                            \
         movox_rr(W(XD), W(XS))                                              \
