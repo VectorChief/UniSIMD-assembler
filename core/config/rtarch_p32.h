@@ -1722,7 +1722,7 @@
  * 2nd byte - 512-bit version, 3rd byte - 1K4-bit version, | in upper halves */
 
 #define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
-        movwx_mi(Mebp, inf_VER, IV(0x033F47)) /* <- VSX1/2/VMX to 128/256/512 */
+        movwx_mi(Mebp, inf_VER, IV(0x033F4F)) /* <- VSX1+2/3/VMX: 128,256,512 */
 
 /************************* address-sized instructions *************************/
 

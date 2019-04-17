@@ -189,19 +189,19 @@
 #undef MegD /* external name for BASE+displ addressing */
 #undef MegE /* external name for BASE+displ addressing */
 
-#undef Iebx /* external name for BASE+index addressing */
-#undef Iecx /* external name for BASE+index addressing */
-#undef Iedx /* external name for BASE+index addressing */
-#undef Iebp /* external name for BASE+index addressing */
-#undef Iesi /* external name for BASE+index addressing */
-#undef Iedi /* external name for BASE+index addressing */
-#undef Ieg8 /* external name for BASE+index addressing */
-#undef Ieg9 /* external name for BASE+index addressing */
-#undef IegA /* external name for BASE+index addressing */
-#undef IegB /* external name for BASE+index addressing */
-#undef IegC /* external name for BASE+index addressing */
-#undef IegD /* external name for BASE+index addressing */
-#undef IegE /* external name for BASE+index addressing */
+#undef Iebx /* external name for BASE+index+displ addressing */
+#undef Iecx /* external name for BASE+index+displ addressing */
+#undef Iedx /* external name for BASE+index+displ addressing */
+#undef Iebp /* external name for BASE+index+displ addressing */
+#undef Iesi /* external name for BASE+index+displ addressing */
+#undef Iedi /* external name for BASE+index+displ addressing */
+#undef Ieg8 /* external name for BASE+index+displ addressing */
+#undef Ieg9 /* external name for BASE+index+displ addressing */
+#undef IegA /* external name for BASE+index+displ addressing */
+#undef IegB /* external name for BASE+index+displ addressing */
+#undef IegC /* external name for BASE+index+displ addressing */
+#undef IegD /* external name for BASE+index+displ addressing */
+#undef IegE /* external name for BASE+index+displ addressing */
 
 #undef Reax /* external name for BASE register */
 #undef Rebx /* external name for BASE register */
@@ -275,6 +275,7 @@
  * Original RT_128, RT_256, RT_512, RT_1K4 flags expose 15/30-register targets.
  * New RT_256_R8, RT_512_R8, RT_1K4_R8, RT_2K8_R8 flags are 8-register targets.
  * New RT_128_RX, RT_256_RX, RT_512_RX, RT_1K4_RX flags are predicated targets.
+ * NOTE: predicated targets can be implemented as extensions to existing ones.
  *
  * The original RT_*** targets have only 8 registers on legacy CPUs (x86/ARMv7).
  * The original RT_*** targets can be either native (x64) or composite (RISCs).
@@ -365,12 +366,15 @@
 #define         RT_256X2     (RT_512 |  RT_512_R8)
 #define         RT_SVEX2     (RT_512 |  RT_512_R8)
 #endif
-#if   !(defined RT_SVEX1) && (RT_256 |  RT_256_R8) & 0xC
-#define         RT_256X1     (RT_256 |  RT_256_R8)
-#define         RT_SVEX1     (RT_256 |  RT_256_R8)
+#if   !(defined RT_SVEX1) && (RT_256) & 0xC
+#define         RT_256X1     (RT_256)
+#define         RT_SVEX1     (RT_256)
 #endif
-#if   !(defined RT_128X2) && (RT_256 |  RT_256_R8) & 0x3
-#define         RT_128X2     (RT_256 |  RT_256_R8)
+#if   !(defined RT_128X2) && (RT_256) & 0x3
+#define         RT_128X2     (RT_256)
+#endif
+#if   !(defined RT_128X2) && (RT_256_R8)
+#define         RT_128X2     (RT_256_R8)
 #endif
 #if   !(defined RT_128X1) && (RT_128)
 #define         RT_128X1     (RT_128)

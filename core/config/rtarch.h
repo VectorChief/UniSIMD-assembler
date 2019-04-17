@@ -734,8 +734,6 @@
 #error "AArch64 doesn't support quaded SIMD backends, check build flags"
 #elif (RT_256X1 >= 1) && (RT_SIMD == 256) && (RT_REGS <= 32)
 #include "rtarch_a64_SVEx1v1.h"
-#elif (RT_128X2 >= 4) && (RT_SIMD == 256) && (RT_REGS <= 32)
-#error "AArch64 doesn't support 128x2 SIMD with 30-regs, check build flags"
 #elif (RT_128X2 >= 1) && (RT_SIMD == 256) && (RT_REGS <= 16)
 #include "rtarch_a64_128x2v1.h"
 #elif (RT_128X1 >= 1) && (RT_SIMD == 128) && (RT_REGS <= 32)
@@ -1036,8 +1034,6 @@
 #error "mipsMSA doesn't support quaded SIMD backends, check build flags"
 #elif (RT_256X1 != 0) && (RT_SIMD == 256)
 #error "mipsMSA doesn't support SIMD wider than 128-bit, check build flags"
-#elif (RT_128X2 >= 4) && (RT_SIMD == 256) && (RT_REGS <= 32)
-#error "mipsMSA doesn't support 128x2 SIMD with 30-regs, check build flags"
 #elif (RT_128X2 >= 1) && (RT_SIMD == 256) && (RT_REGS <= 16)
 #include "rtarch_m64_128x2v1.h"
 #elif (RT_128X1 >= 1) && (RT_SIMD == 128) && (RT_REGS <= 32)

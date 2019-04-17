@@ -1520,7 +1520,7 @@
  * 2nd byte - 512-bit version, 3rd byte - 1K4-bit version, | in upper halves */
 
 #define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
-        movwx_mi(Mebp, inf_VER, IB(7)) /* <- NEON to bit0, bit1, bit2 */
+        movwx_mi(Mebp, inf_VER, IB(0xF)) /* <- NEON to bits: 0,1,2,3 */
 
 /************************* address-sized instructions *************************/
 

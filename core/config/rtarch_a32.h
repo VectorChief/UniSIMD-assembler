@@ -355,11 +355,11 @@
 #define _DV(dp) ((dp) & 0x7FFFFFFC),    2, 2       /* native x86_64 long mode */
 #define  PLAIN  DP(0)                /* special type for Oeax addressing mode */
 
-#if (defined RT_SIMD_CODE && RT_SIMD == 256 && defined RT_SVEX1) || RT_128X1 & 2
+#if (defined RT_SIMD_CODE && RT_SIMD == 256 && defined RT_SVEX1) || RT_128X1&0xA
 #undef  _DF
 #define _DF(dp) ((dp) & 0x3FFC),        1, 0     /* native AArch64 BASE ld/st */
 #endif /* RT_SIMD: 256, SVEx1 */
-#if (defined RT_SIMD_CODE && RT_SIMD == 512 && defined RT_SVEX2) || RT_128X2 & 2
+#if (defined RT_SIMD_CODE && RT_SIMD == 512 && defined RT_SVEX2) || RT_128X2&0x2
 #undef  _DF
 #define _DF(dp) ((dp) & 0x3FFC),        1, 0     /* native AArch64 BASE ld/st */
 #endif /* RT_SIMD: 512, SVEx2 */
@@ -1454,7 +1454,7 @@
         movwx_ri(Reax, IB(0))                                               \
         rdvla_xx()                                                          \
         shrwx_ri(Reax, IB(4)) /* get as quads */                            \
-        movwx_ri(Resi, IM(0x145))                                           \
+        movwx_ri(Resi, IM(0x34F)) /* NEON to bits: 0,1,2,3,6,8,9 */         \
         movwx_rr(Recx, Reax)                                                \
         andwx_ri(Recx, IB(2))                                               \
         shlwx_ri(Recx, IB(9))                                               \
