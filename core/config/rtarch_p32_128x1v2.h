@@ -111,7 +111,7 @@
 
 #if (defined RT_SIMD_CODE)
 
-#if (RT_128X1 == 2)
+#if (RT_128X1 == 2 || RT_128X1 == 8)
 
 /* structural */
 
@@ -1687,7 +1687,7 @@
 
 #if !(defined RT_RTARCH_P64_128X2V2_H) && !(defined RT_RTARCH_P64_128X2V8_H)
 #undef  RT_128X2
-#define RT_128X2  RT_128X1
+#define RT_128X2  2
 #include "rtarch_p64_128x2v2.h"
 #endif /* RT_RTARCH_P64_128X2V2_H, RT_RTARCH_P64_128X2V8_H */
 

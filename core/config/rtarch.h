@@ -1307,6 +1307,12 @@
 #define RT_SIMD_COMPAT_PW8      (1 - RT_ENDIAN)
 #endif /* RT_SIMD_COMPAT_PW8 */
 
+/* RT_SIMD_COMPAT_VSX when enabled replaces default VMX targets
+ * with regular VSX implementation (RT_128=4+8, RT_256_R8=4) */
+#ifndef RT_SIMD_COMPAT_VSX
+#define RT_SIMD_COMPAT_VSX      0 /* applicable to POWER+VSX */
+#endif /* RT_SIMD_COMPAT_VSX */
+
 /* RT_ELEM_COMPAT_VMX when enabled makes scalar SIMD (ELEM) ops
  * compatible with VMX, only if BASE regs are 128bit-aligned */
 #ifndef RT_ELEM_COMPAT_VMX
@@ -1344,7 +1350,11 @@
 #elif (RT_256X1 != 0) && (RT_SIMD == 256)
 #error "PowerPC doesn't support SIMD wider than 128-bit, check build flags"
 #elif (RT_128X2 & 16) && (RT_SIMD == 256) && (RT_REGS <= 8)
+#if (RT_SIMD_COMPAT_VSX != 0)
+#include "rtarch_p64_128x2v1.h"
+#else  /* RT_SIMD_COMPAT_VSX */
 #include "rtarch_p32_128x2vG.h"
+#endif /* RT_SIMD_COMPAT_VSX */
 #elif (RT_128X2 >= 8) && (RT_SIMD == 256) && (RT_REGS <= 32)
 #include "rtarch_p64_128x2v8.h"
 #elif (RT_128X2 >= 4) && (RT_SIMD == 256) && (RT_REGS <= 32)
@@ -1353,8 +1363,18 @@
 #include "rtarch_p64_128x2v2.h"
 #elif (RT_128X2 >= 1) && (RT_SIMD == 256) && (RT_REGS <= 16)
 #include "rtarch_p64_128x2v1.h"
-#elif (RT_128X1 >= 4) && (RT_SIMD == 128) && (RT_REGS <= 16)
+#elif (RT_128X1 >= 8) && (RT_SIMD == 128) && (RT_REGS <= 16)
+#if (RT_SIMD_COMPAT_VSX != 0)
+#include "rtarch_p64_128x1v2.h"
+#else  /* RT_SIMD_COMPAT_VSX */
 #include "rtarch_p32_128x1v4.h"
+#endif /* RT_SIMD_COMPAT_VSX */
+#elif (RT_128X1 >= 4) && (RT_SIMD == 128) && (RT_REGS <= 16)
+#if (RT_SIMD_COMPAT_VSX != 0)
+#include "rtarch_p64_128x1v1.h"
+#else  /* RT_SIMD_COMPAT_VSX */
+#include "rtarch_p32_128x1v4.h"
+#endif /* RT_SIMD_COMPAT_VSX */
 #elif (RT_128X1 >= 2) && (RT_SIMD == 128) && (RT_REGS <= 32)
 #include "rtarch_p64_128x1v2.h"
 #elif (RT_128X1 >= 1) && (RT_SIMD == 128) && (RT_REGS <= 32)
@@ -1490,11 +1510,11 @@
 #define EMITS(w) /* EMPTY */
 #define EMITM(w) /* EMPTY */
 #define EMITP(w) /* EMPTY */
-#elif (RT_128X1 == 4 || RT_128X2 == 16)
+#elif (RT_128X1 >= 4 || RT_128X2 == 16) && (RT_SIMD_COMPAT_VSX == 0)
 #define EMITS(w)    EMITW(w)
 #define EMITM(w)    EMITW(w)
 #define EMITP(w) /* EMPTY */
-#else /* RT_128X1 <= 2 || RT_128X2 <= 8 || RT_128X4 <= 2 */
+#else /* RT_128X1 <= 2 || RT_128X2 <= 8 || RT_128X4 <= 2 || SIMD_COMPAT_VSX */
 #define EMITS(w)    EMITW(w)
 #define EMITM(w) /* EMPTY */
 #define EMITP(w)    EMITW(w)
