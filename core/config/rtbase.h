@@ -828,7 +828,7 @@ rt_si32 mask_init(rt_si32 simd)
 
 #if   (defined RT_ARM) /* original legacy target, supports only 8 registers */
 #elif !defined RT_X32  && !defined RT_X64  && !defined RT_X86 /* modern RISCs */
-    rt_si32 s_x2r8 = 0, m = 0, s = 0;
+    rt_si32 s_x2r8 = (s_type == 0 ? 0x4 : s_type & 0x4), m = 0, s = 0;
 #if   (defined RT_P32) || (defined RT_P64)
     s_x2r8 = (s_type == 0 ? 0x10 : s_type & 0x10) >> 2; /* <- 128-x2r8 vmx */
 #endif /* PPC targets */
@@ -1034,6 +1034,11 @@ rt_si32 from_mask(rt_si32 mask)
         k_size = 2;
     }
 #endif /* SVE targets */
+    if (n_simd == 1 && k_size == 2 && s_type == 4)
+    {
+        s_type = 0x4;
+        v_regs = 8;
+    }
 #if  (defined RT_P32) || (defined RT_P64)
     if (n_simd == 2 && k_size == 1 && s_type >= 4)
     {

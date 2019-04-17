@@ -1453,7 +1453,7 @@
         movwx_ri(Reax, IB(0))                                               \
         rdvla_xx()                                                          \
         shrwx_ri(Reax, IB(4)) /* get as quads */                            \
-        movwx_ri(Resi, IM(0x145))                                           \
+        movwx_ri(Resi, IM(0x145)) /* NEON to bits: 0,2,6,8 */               \
         movwx_rr(Recx, Reax)                                                \
         andwx_ri(Recx, IB(2))                                               \
         shlwx_ri(Recx, IB(9))                                               \
@@ -1482,7 +1482,7 @@
         andwx_ri(Recx, IB(16))                                              \
         shlwx_ri(Recx, IB(26))                                              \
         orrwx_rr(Resi, Recx)  /* 2K8-bit to RT_2K8=4 */                     \
-        andwx_ri(Resi, IV(0x55151545)) /* NEON: 0,2,6,8; SVE: other */      \
+        andwx_ri(Resi, IV(0x55151545)) /* NEON: 0,2,6,8; SVE: rest */       \
         movwx_st(Resi, Mebp, inf_VER)
 
 /************************* address-sized instructions *************************/
