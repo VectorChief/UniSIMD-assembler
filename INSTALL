@@ -83,7 +83,7 @@ When building QEMU from source isn't necessary install a full binary package:
 on RPM-based systems like openSUSE:
     sudo zypper install qemu
 
-To test SVE targets with patched version of QEMU 3.0.0 run:
+To test SVE targets with QEMU 3.1.0 or patched version of QEMU 3.0.0 run:
     qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f32sve -c 1
 
 Use "-c 1" option to reduce test time when emulating with QEMU.

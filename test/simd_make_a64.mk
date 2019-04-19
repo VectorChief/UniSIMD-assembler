@@ -85,7 +85,7 @@ simd_test_a64f64sve:
 #
 # Prerequisites for emulation:
 # recent QEMU(-2.5) is installed or built from source and in the PATH variable.
-# SVE target requires QEMU 3.0.0 with sve-max-vq cpu property patch.
+# SVE targets require QEMU 3.1.0 (or 3.0.0 with sve-max-vq cpu property patch).
 # sudo apt-get install qemu
 #
 # Building/running SIMD test:
