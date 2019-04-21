@@ -133,19 +133,21 @@ simd_test_p64f64Bp7:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f64Bp7
 
 
-# On Ubuntu 16.04 Live DVD add "universe multiverse" to "main restricted"
-# in /etc/apt/sources.list (sudo gedit /etc/apt/sources.list) then run:
-# sudo apt-get update (ignoring the old database errors in the end)
+# On Ubuntu (Mate) 16.04/18.04 add "universe multiverse" to "main restricted"
+# in /etc/apt/sources.list (sudo nano /etc/apt/sources.list) then run:
+# sudo apt-get update
 #
 # Prerequisites for the build:
 # (cross-)compiler for 64-bit POWER is installed and in the PATH variable.
-# sudo apt-get install g++-powerpc64le-linux-gnu
+# sudo apt-get install make g++-powerpc64le-linux-gnu
+# sudo apt-get install make g++-powerpc64-linux-gnu
 # (recent g++-5-powerpc64le series target POWER8 and don't work well with -O3)
+# (recent g++-8-powerpc64le series show issues with powf in QEMU, but not on HW)
 #
 # Prerequisites for emulation:
 # recent QEMU(-2.5) is installed or built from source and in the PATH variable.
-# POWER9 target requires more recent QEMU, tested with 3.0.0.
-# sudo apt-get install qemu
+# POWER9 target requires more recent QEMU, tested with 3.0.0 and 3.1.0.
+# sudo apt-get install qemu-user
 #
 # Building/running SIMD test:
 # make -f simd_make_p64.mk
@@ -167,27 +169,31 @@ simd_test_p64f64Bp7:
 # qemu-ppc64   -cpu POWER7 simd_test.p64f64Bp7 -c 1
 # Use "-c 1" option to reduce test time when emulating with QEMU
 
-# For interpretation of SIMD build flags check compatibility layer in rtzero.h
+# Clang native build works too (takes much longer prior to 3.8), use (replace):
+# clang++ -O0 (in place of ...-g++ -O2) on 64-bit POWER host (Tyan TN71-BP012)
+# sudo apt-get install clang
+
+# For interpretation of SIMD build flags check compatibility layer in rtzero.h.
+# The RT_SIMD_COMPAT_PW8=1 flag below is redundant when building in LE mode.
 
 # For 128-bit VSX1 build use (replace): RT_128=1            (30 SIMD registers)
-# For 128-bit VSX2 build use (replace): RT_128=1 RT_SIMD_COMPAT_PW8=1
+# For 128-bit VSX2 build use (replace): RT_128=1 RT_SIMD_COMPAT_PW8=1 (30 regs)
 # For 128-bit VSX3 build use (replace): RT_128=2            (30 SIMD registers)
-# For 128-bit VMX  build use (replace): RT_128=4            (15 SIMD registers)
+# For 128-bit VMX  build use (replace): RT_128=4 RT_SIMD_COMPAT_VSX=0 (15 regs)
 
-# For 256-bit VMX  build use (replace): RT_256_R8=4          (8 SIMD reg-pairs)
+# For 256-bit VMX  build use (replace): RT_256_R8=4 RT_SIMD_COMPAT_VSX=0 (8 rp)
 # For 256-bit VSX1 build use (replace): RT_256=1            (15 SIMD reg-pairs)
-# For 256-bit VSX2 build use (replace): RT_256=1 RT_SIMD_COMPAT_PW8=1
+# For 256-bit VSX2 build use (replace): RT_256=1 RT_SIMD_COMPAT_PW8=1   (15 rp)
 # For 256-bit VSX3 build use (replace): RT_256=2            (15 SIMD reg-pairs)
 # For 256-bit VSX1 build use (replace): RT_256=4            (30 SIMD reg-pairs)
-# For 256-bit VSX2 build use (replace): RT_256=4 RT_SIMD_COMPAT_PW8=1
+# For 256-bit VSX2 build use (replace): RT_256=4 RT_SIMD_COMPAT_PW8=1   (30 rp)
 # For 256-bit VSX3 build use (replace): RT_256=8            (30 SIMD reg-pairs)
 
 # For 512-bit VSX1 build use (replace): RT_512=1            (15 SIMD reg-quads)
-# For 512-bit VSX2 build use (replace): RT_512=1 RT_SIMD_COMPAT_PW8=1
+# For 512-bit VSX2 build use (replace): RT_512=1 RT_SIMD_COMPAT_PW8=1   (15 rq)
 # For 512-bit VSX3 build use (replace): RT_512=2            (15 SIMD reg-quads)
 
 # 64/32-bit (ptr/adr) hybrid mode is compatible with native 64-bit ABI,
 # use (replace): RT_ADDRESS=32, rename the binary to simd_test.p64_**
-
 # 64-bit packed SIMD mode (fp64/int64) is supported on 64-bit targets,
 # use (replace): RT_ELEMENT=64, rename the binary to simd_test.p64*64

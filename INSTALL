@@ -5,9 +5,9 @@ go to UniSIMD's "test" subfolder,
 make sure necessary tools and libraries are installed
     sudo apt-get update
 for native builds (binary ABI matches host):
-    sudo apt-get install make g++ clang
+    sudo apt-get install make g++
 for multilib builds (if libs are available):
-    sudo apt-get install make g++-multilib clang
+    sudo apt-get install make g++-multilib
 run for x86 architecture:
     make -f simd_make_x86.mk -j4
     ./simd_test.x86
@@ -56,10 +56,10 @@ To build QEMU emulator from source on Linux, download the latest version from:
 unpack the archive, open terminal window, go to QEMU's root folder,
 make sure necessary tools and libraries are installed:
     sudo apt-get update
-    sudo apt-get install make g++ clang
+    sudo apt-get install make g++
     sudo apt-get install pkg-config libglib2.0-dev libpixman-1-dev zlib1g-dev
 when building QEMU on RPM-based systems like openSUSE:
-    sudo zypper install make gcc-c++ clang
+    sudo zypper install make gcc-c++
     sudo zypper install patch glib2-devel libpixman-1-0-devel zlib-devel
 when building QEMU 3.0.0 for SVE targets apply patch for sve-max-vq cpu property
 from https://patchwork.kernel.org/patch/10541199/  (scroll down and click diff):
@@ -79,7 +79,7 @@ run installation script:
     sudo make install
 
 When building QEMU from source isn't necessary install a full binary package:
-    sudo apt-get install qemu
+    sudo apt-get install qemu-user
 on RPM-based systems like openSUSE:
     sudo zypper install qemu
 

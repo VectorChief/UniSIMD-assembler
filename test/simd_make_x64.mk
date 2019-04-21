@@ -125,7 +125,8 @@ simd_test_x64f64avx512:
 
 # Prerequisites for the build:
 # native-compiler for x86_64 is installed and in the PATH variable.
-# sudo apt-get install g++
+# sudo apt-get update
+# sudo apt-get install make g++
 #
 # When building on macOS install Command Line Tools first.
 # http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/
@@ -143,21 +144,23 @@ simd_test_x64f64avx512:
 # sde64 -skx -- ./simd_test.x64f32avx512 -c 1
 # Use "-c 1" option to reduce test time when emulating with Intel SDE
 
-# Clang compilation works too (takes much longer prior to 3.8), use (replace):
-# clang++ (in place of g++)
+# Clang native build works too (takes much longer prior to 3.8), use (replace):
+# clang++ -O0 (in place of g++ -O3) add "universe" to /etc/apt/sources.list
+# sudo apt-get update
 # sudo apt-get install clang
 
-# For interpretation of SIMD build flags check compatibility layer in rtzero.h
+# For interpretation of SIMD build flags check compatibility layer in rtzero.h.
+# The 30-reg targets on top of AVX1+2/SSEx below will require in-mem emulation.
 
 # For 128-bit 30-reg build use (replace): RT_128=1   (reserved for AVX1+2/SSEx)
 # For 128-bit 30-reg build use (replace): RT_128=2   (Skylake-X w/ AVX512DQ+VL)
-# For 128-bit SSE2 build use (replace): RT_128=4 RT_SIMD_COMPAT_SSE=2
+# For 128-bit SSE2 build use (replace): RT_128=4 RT_SIMD_COMPAT_SSE=2 (15 regs)
 # For 128-bit SSE4 build use (replace): RT_128=4            (15 SIMD registers)
 # For 128-bit AVX1 build use (replace): RT_128=8            (15 SIMD registers)
-# For 128-bit FMA3 build use (replace): RT_128=16           (AMD's AVX1+FMA3)
-# For 128-bit AVX2 build use (replace): RT_128=32           (AMD's AVX2+FMA3)
+# For 128-bit FMA3 build use (replace): RT_128=16   (AMD's AVX1+FMA3) (15 regs)
+# For 128-bit AVX2 build use (replace): RT_128=32   (AMD's AVX2+FMA3) (15 regs)
 
-# For 256-bit SSE2 build use (replace): RT_256_R8=4 RT_SIMD_COMPAT_SSE=2
+# For 256-bit SSE2 build use (replace): RT_256_R8=4 RT_SIMD_COMPAT_SSE=2 (8 rp)
 # For 256-bit SSE4 build use (replace): RT_256_R8=4          (8 SIMD reg-pairs)
 # For 256-bit AVX1 build use (replace): RT_256=1            (15 SIMD registers)
 # For 256-bit AVX2 build use (replace): RT_256=2            (15 SIMD registers)
@@ -178,6 +181,5 @@ simd_test_x64f64avx512:
 
 # 64/32-bit (ptr/adr) hybrid mode is compatible with native 64-bit ABI,
 # use (replace): RT_ADDRESS=32, rename the binary to simd_test.x64_**
-
 # 64-bit packed SIMD mode (fp64/int64) is supported on 64-bit targets,
 # use (replace): RT_ELEMENT=64, rename the binary to simd_test.x64*64

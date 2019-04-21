@@ -36,20 +36,17 @@ simd_test_m32Br5:
 # The up-to-date MIPS toolchain (g++) can be found here:
 # https://www.mips.com/develop/tools/codescape-mips-sdk/
 # https://codescape.mips.com/components/toolchain/2017.10-08/downloads.html
-
-# On Ubuntu 16.04 Live DVD add "universe multiverse" to "main restricted"
-# in /etc/apt/sources.list (sudo gedit /etc/apt/sources.list) then run:
-# sudo apt-get update (ignoring the old database errors in the end)
 #
 # Prerequisites for the build:
 # (cross-)compiler for MIPSr5+MSA is installed and in the PATH variable.
 # Codescape.GNU.Tools.Package.2017.10-08.for.MIPS.MTI.Linux.CentOS-5.x86_64
 # is unpacked and folder mips-mti-linux-gnu/2017.10-08/bin is added to PATH:
 # PATH=/home/ubuntu/Downloads/mips-mti-linux-gnu/2017.10-08/bin:$PATH
+# PATH=/home/ubuntu-mate/Downloads/mips-mti-linux-gnu/2017.10-08/bin:$PATH
 #
 # Prerequisites for emulation:
 # recent QEMU(-2.5) is installed or built from source and in the PATH variable.
-# sudo apt-get install qemu
+# sudo apt-get install qemu-user make
 #
 # Building/running SIMD test:
 # make -f simd_make_m32.mk
@@ -57,7 +54,13 @@ simd_test_m32Br5:
 # qemu-mips   -cpu P5600 simd_test.m32Br5 -c 1
 # Use "-c 1" option to reduce test time when emulating with QEMU
 
-# For interpretation of SIMD build flags check compatibility layer in rtzero.h
+# Clang native build should theoretically work too (not tested), use (replace):
+# clang++ -O0 (in place of ...-g++ -O3) on MIPS32 host
+# sudo apt-get install clang
+
+# For interpretation of SIMD build flags check compatibility layer in rtzero.h.
+# The 128-bit 15-reg targets are supported for compatibility with x86/POWER.
 
 # For 128-bit SIMD build use (replace): RT_128=1            (30 SIMD registers)
+# For 128-bit SIMD build use (replace): RT_128=4            (15 SIMD registers)
 # For 256-bit SIMD build use (replace): RT_256=1            (15 SIMD reg-pairs)
