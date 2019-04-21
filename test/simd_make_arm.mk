@@ -71,17 +71,17 @@ simd_test_arm_rpi3:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.arm_rpi3
 
 
-# On Ubuntu 16.04 Live DVD add "universe multiverse" to "main restricted"
-# in /etc/apt/sources.list (sudo gedit /etc/apt/sources.list) then run:
-# sudo apt-get update (ignoring the old database errors in the end)
+# On Ubuntu (Mate) 16.04/18.04 add "universe multiverse" to "main restricted"
+# in /etc/apt/sources.list (sudo nano /etc/apt/sources.list) then run:
+# sudo apt-get update
 #
 # Prerequisites for the build:
 # (cross-)compiler for ARMv7 is installed and in the PATH variable.
-# sudo apt-get install g++-arm-linux-gnueabi
+# sudo apt-get install make g++-arm-linux-gnueabi
 #
 # Prerequisites for emulation:
 # recent QEMU(-2.5) is installed or built from source and in the PATH variable.
-# sudo apt-get install qemu
+# sudo apt-get install qemu-user
 #
 # Building/running SIMD test:
 # make -f simd_make_arm.mk
@@ -89,12 +89,13 @@ simd_test_arm_rpi3:
 # qemu-arm -cpu cortex-a15 simd_test.arm_v2 -c 1
 # Use "-c 1" option to reduce test time when emulating with QEMU
 
-# Clang compilation works too (takes much longer prior to 3.8), use (replace):
-# clang++ (in place of ...-g++)
+# Clang native build works too (takes much longer prior to 3.8), use (replace):
+# clang++ -O0 (in place of ...-g++ -O3) on ARMv7 host (Raspberry Pi 2)
 # sudo apt-get install clang
 
-# For interpretation of SIMD build flags check compatibility layer in rtzero.h
+# For interpretation of SIMD build flags check compatibility layer in rtzero.h.
+# Original legacy 32-bit ARMv7/x86 targets only support 8 SIMD registers.
 
-# 1) Nokia N900, Maemo 5 scratchbox: "vanilla" (-DRT_128=1)
-# 2) Raspberry Pi 2, Raspbian: arm-linux-gnueabihf-g++ -DRT_128=2
-# 3) Raspberry Pi 3, Raspbian: arm-linux-gnueabihf-g++ -DRT_128=4
+# 1) Nokia N900, Maemo 5 scratchbox: "vanilla" (-DRT_128=1)  (8 SIMD registers)
+# 2) Raspberry Pi 2, Raspbian: arm-linux-gnueabihf-g++ -DRT_128=2 (8 SIMD regs)
+# 3) Raspberry Pi 3, Raspbian: arm-linux-gnueabihf-g++ -DRT_128=4 (8 SIMD regs)

@@ -75,18 +75,18 @@ simd_test_a64f64sve:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64f64sve
 
 
-# On Ubuntu 16.04 Live DVD add "universe multiverse" to "main restricted"
-# in /etc/apt/sources.list (sudo gedit /etc/apt/sources.list) then run:
-# sudo apt-get update (ignoring the old database errors in the end)
+# On Ubuntu (Mate) 16.04/18.04 add "universe multiverse" to "main restricted"
+# in /etc/apt/sources.list (sudo nano /etc/apt/sources.list) then run:
+# sudo apt-get update
 #
 # Prerequisites for the build:
 # (cross-)compiler for AArch64 is installed and in the PATH variable.
-# sudo apt-get install g++-aarch64-linux-gnu
+# sudo apt-get install make g++-aarch64-linux-gnu
 #
 # Prerequisites for emulation:
 # recent QEMU(-2.5) is installed or built from source and in the PATH variable.
 # SVE targets require QEMU 3.1.0 (or 3.0.0 with sve-max-vq cpu property patch).
-# sudo apt-get install qemu
+# sudo apt-get install qemu-user
 #
 # Building/running SIMD test:
 # make -f simd_make_a64.mk
@@ -110,25 +110,27 @@ simd_test_a64f64sve:
 # qemu-aarch64 -cpu max,sve-max-vq=16 simd_test.a64_64sve -c 1 (for RT_2K8_R8=4)
 # Use "-c 1" option to reduce test time when emulating with QEMU
 
-# Clang compilation works too (takes much longer prior to 3.8), use (replace):
-# clang++ (in place of ...-g++)
+# Clang native build works too (takes much longer prior to 3.8), use (replace):
+# clang++ -O0 (in place of ...-g++ -O3) on AArch64 host (Raspberry Pi 3)
 # sudo apt-get install clang
 
-# For interpretation of SIMD build flags check compatibility layer in rtzero.h
+# For interpretation of SIMD build flags check compatibility layer in rtzero.h.
+# The 128-bit 15-reg targets are supported for compatibility with x86/POWER.
 
 # For 128-bit NEON build use (replace): RT_128=1            (30 SIMD registers)
+# For 128-bit NEON build use (replace): RT_128=4            (15 SIMD registers)
 # For 256-bit NEON build use (replace): RT_256=1            (15 SIMD reg-pairs)
+
 # For 256-bit  SVEx1 build use (replace): RT_256=4          (30 SIMD registers)
-# For 512-bit  SVEx2 build use (replace): RT_512=1          (15 SIMD registers)
+# For 512-bit  SVEx2 build use (replace): RT_512=1          (15 SIMD reg-pairs)
 # For 512-bit  SVEx1 build use (replace): RT_512=4          (30 SIMD registers)
-# For 1024-bit SVEx2 build use (replace): RT_1K4=1          (15 SIMD registers)
+# For 1024-bit SVEx2 build use (replace): RT_1K4=1          (15 SIMD reg-pairs)
 # For 1024-bit SVEx1 build use (replace): RT_1K4=4          (30 SIMD registers)
-# For 2048-bit SVEx2 build use (replace): RT_2K8_R8=1        (8 SIMD registers)
+# For 2048-bit SVEx2 build use (replace): RT_2K8_R8=1        (8 SIMD reg-pairs)
 # For 2048-bit SVEx1 build use (replace): RT_2K8_R8=4       (15 SIMD registers)
 # The last two slots are artificially reg-limited for compatibility with AVX512
 
 # 64/32-bit (ptr/adr) hybrid mode is compatible with native 64-bit ABI,
 # use (replace): RT_ADDRESS=32, rename the binary to simd_test.a64_**
-
 # 64-bit packed SIMD mode (fp64/int64) is supported on 64-bit targets,
 # use (replace): RT_ELEMENT=64, rename the binary to simd_test.a64*64

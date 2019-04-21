@@ -52,8 +52,9 @@ simd_test_x86avx512:
 
 # Prerequisites for the build:
 # native/multilib-compiler for x86/x86_64 is installed and in the PATH variable.
-# sudo apt-get install g++ (for x86 host)
-# sudo apt-get install g++-multilib (for x86_64 host)
+# sudo apt-get update
+# sudo apt-get install make g++ (for x86 host)
+# sudo apt-get install make g++-multilib (for x86_64 host)
 # (installation of g++-multilib removes any g++ cross-compilers)
 #
 # When building on macOS install Command Line Tools first.
@@ -72,20 +73,22 @@ simd_test_x86avx512:
 # sde -knl -- ./simd_test.x86avx512 -c 1
 # Use "-c 1" option to reduce test time when emulating with Intel SDE
 
-# Clang compilation works too (takes much longer prior to 3.8), use (replace):
-# clang++ (in place of g++)
+# Clang native build works too (takes much longer prior to 3.8), use (replace):
+# clang++ -O0 (in place of g++ -O3) add "universe" to /etc/apt/sources.list
+# sudo apt-get update
 # sudo apt-get install clang (requires g++-multilib for non-native ABI)
 
-# For interpretation of SIMD build flags check compatibility layer in rtzero.h
+# For interpretation of SIMD build flags check compatibility layer in rtzero.h.
+# Original legacy 32-bit ARMv7/x86 targets only support 8 SIMD registers.
 
-# For 128-bit SSE1 build use (replace): RT_128=1
-# For 128-bit SSE2 build use (replace): RT_128=2
-# For 128-bit SSE4 build use (replace): RT_128=4
-# For 128-bit AVX1 build use (replace): RT_128=8            (AMD's AVX1-only)
-# For 128-bit FMA3 build use (replace): RT_128=16           (AMD's AVX1+FMA3)
-# For 128-bit AVX2 build use (replace): RT_128=32           (AMD's AVX2+FMA3)
+# For 128-bit SSE1 build use (replace): RT_128=1             (8 SIMD registers)
+# For 128-bit SSE2 build use (replace): RT_128=2             (8 SIMD registers)
+# For 128-bit SSE4 build use (replace): RT_128=4             (8 SIMD registers)
+# For 128-bit AVX1 build use (replace): RT_128=8     (AMD's AVX1-only) (8 regs)
+# For 128-bit FMA3 build use (replace): RT_128=16    (AMD's AVX1+FMA3) (8 regs)
+# For 128-bit AVX2 build use (replace): RT_128=32    (AMD's AVX2+FMA3) (8 regs)
 
-# For 256-bit AVX1 build use (replace): RT_256=1          (Intel's AVX1-only)
-# For 256-bit AVX2 build use (replace): RT_256=2          (Intel's AVX2+FMA3)
-# For 512-bit AVX512F  build use (replace): RT_512=1
-# For 512-bit AVX512DQ build use (replace): RT_512=2
+# For 256-bit AVX1 build use (replace): RT_256=1   (Intel's AVX1-only) (8 regs)
+# For 256-bit AVX2 build use (replace): RT_256=2   (Intel's AVX2+FMA3) (8 regs)
+# For 512-bit AVX512F  build use (replace): RT_512=1         (8 SIMD registers)
+# For 512-bit AVX512DQ build use (replace): RT_512=2         (8 SIMD registers)
