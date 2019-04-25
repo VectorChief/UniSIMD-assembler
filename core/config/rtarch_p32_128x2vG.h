@@ -920,13 +920,13 @@
 /* #define S1(mask)    S##mask             (defined in 32_128-bit header) */
 
 #define SMN32_256(xs, lb) /* not portable, do not use outside */            \
-        EMITW(0x10000484 | MXM(TmmM, xs,  xs+16))                           \
-        EMITW(0x10000486 | MXM(TmmM, TmmM, TmmQ))                           \
+        EMITW(0x10000484 | MXM(TmmM,    xs,      xs+16))                    \
+        EMITW(0x10000486 | MXM(TmmM,    TmmM,    TmmQ))                     \
         ASM_BEG ASM_OP2(beq, cr6, lb) ASM_END
 
 #define SMF32_256(xs, lb) /* not portable, do not use outside */            \
-        EMITW(0x10000404 | MXM(TmmM, xs,  xs+16))                           \
-        EMITW(0x10000486 | MXM(TmmM, TmmM, TmmQ))                           \
+        EMITW(0x10000404 | MXM(TmmM,    xs,      xs+16))                    \
+        EMITW(0x10000486 | MXM(TmmM,    TmmM,    TmmQ))                     \
         ASM_BEG ASM_OP2(blt, cr6, lb) ASM_END
 
 #define mkjcx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
