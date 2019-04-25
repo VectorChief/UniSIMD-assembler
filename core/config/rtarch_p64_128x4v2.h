@@ -877,19 +877,19 @@
 /* #define S1(mask)    S##mask             (defined in 32_128-bit header) */
 
 #define SMN64_512(xs, lb) /* not portable, do not use outside */            \
-        EMITW(0xF0000497 | MXM(TmmM, xs,  xs+16))                           \
-        EMITW(0xF0000491 | MXM(TmmQ, xs,  xs+16))                           \
-        EMITW(0xF0000497 | MXM(TmmM, TmmM, TmmQ))                           \
-        EMITW(0x1000038C | MXM(TmmQ, 0x1F, 0x00))                           \
-        EMITW(0x10000486 | MXM(TmmM, TmmM, TmmQ))                           \
+        EMITW(0xF0000497 | MXM(TmmM,    xs,      xs+16))                    \
+        EMITW(0xF0000491 | MXM(TmmQ,    xs,      xs+16))                    \
+        EMITW(0xF0000497 | MXM(TmmM,    TmmM,    TmmQ))                     \
+        EMITW(0x1000038C | MXM(TmmQ,    0x1F,    0x00))                     \
+        EMITW(0x10000486 | MXM(TmmM,    TmmM,    TmmQ))                     \
         ASM_BEG ASM_OP2(beq, cr6, lb) ASM_END
 
 #define SMF64_512(xs, lb) /* not portable, do not use outside */            \
-        EMITW(0xF0000417 | MXM(TmmM, xs,  xs+16))                           \
-        EMITW(0xF0000411 | MXM(TmmQ, xs,  xs+16))                           \
-        EMITW(0xF0000417 | MXM(TmmM, TmmM, TmmQ))                           \
-        EMITW(0x1000038C | MXM(TmmQ, 0x1F, 0x00))                           \
-        EMITW(0x10000486 | MXM(TmmM, TmmM, TmmQ))                           \
+        EMITW(0xF0000417 | MXM(TmmM,    xs,      xs+16))                    \
+        EMITW(0xF0000411 | MXM(TmmQ,    xs,      xs+16))                    \
+        EMITW(0xF0000417 | MXM(TmmM,    TmmM,    TmmQ))                     \
+        EMITW(0x1000038C | MXM(TmmQ,    0x1F,    0x00))                     \
+        EMITW(0x10000486 | MXM(TmmM,    TmmM,    TmmQ))                     \
         ASM_BEG ASM_OP2(blt, cr6, lb) ASM_END
 
 #define mkjqx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
