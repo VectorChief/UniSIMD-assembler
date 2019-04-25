@@ -426,8 +426,7 @@
         EMITW(0xF0000287 | MXM(TmmM,    RYG(XG), RYG(XG)))                  \
         EMITW(0xF0000285 | MXM(TmmQ,    RYG(XG), TmmM))                     \
         EMITW(0xF00006CD | MXM(TmmM,    RYG(XS), TmmQ))                     \
-        EMITW(0xF000068F | MXM(RYG(XG), TmmM,    TmmQ))                     \
-        EMITW(0x1000038C | MXM(TmmQ,    0x1F,    0x00))
+        EMITW(0xF000068F | MXM(RYG(XG), TmmM,    TmmQ))
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
@@ -655,6 +654,7 @@
         ASM_BEG ASM_OP2(blt, cr6, lb) ASM_END
 
 #define mkjcx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        EMITW(0x1000038C | MXM(TmmQ,    0x1F,    0x00))                     \
         AUW(EMPTY, EMPTY, EMPTY, REG(XS), lb,                               \
         S0(RT_SIMD_MASK_##mask##32_256), EMPTY2)
 
