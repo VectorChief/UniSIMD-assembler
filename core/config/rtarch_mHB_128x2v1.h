@@ -293,8 +293,8 @@
 
 #define shlax3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0xDC000000 | MDM(TMxx,    MOD(MT), VAL(DT), B3(DT), P1(DT)))  \
-        EMITW(0x7B03001E | MXM(TmmM,    TMxx,    0x00))                     \
+        EMITW(0x84000000 | MDM(TMxx,    MOD(MT), VAL(DT), B3(DT), P1(DT)))  \
+        EMITW(0x7B01001E | MXM(TmmM,    TMxx,    0x00))                     \
         EMITW(0x7820000D | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x7820000D | MXM(RYG(XD), RYG(XS), TmmM))
 
@@ -315,8 +315,8 @@
 
 #define shrax3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0xDC000000 | MDM(TMxx,    MOD(MT), VAL(DT), B3(DT), P1(DT)))  \
-        EMITW(0x7B03001E | MXM(TmmM,    TMxx,    0x00))                     \
+        EMITW(0x84000000 | MDM(TMxx,    MOD(MT), VAL(DT), B3(DT), P1(DT)))  \
+        EMITW(0x7B01001E | MXM(TmmM,    TMxx,    0x00))                     \
         EMITW(0x7920000D | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x7920000D | MXM(RYG(XD), RYG(XS), TmmM))
 
@@ -337,8 +337,8 @@
 
 #define shran3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0xDC000000 | MDM(TMxx,    MOD(MT), VAL(DT), B3(DT), P1(DT)))  \
-        EMITW(0x7B03001E | MXM(TmmM,    TMxx,    0x00))                     \
+        EMITW(0x84000000 | MDM(TMxx,    MOD(MT), VAL(DT), B3(DT), P1(DT)))  \
+        EMITW(0x7B01001E | MXM(TmmM,    TMxx,    0x00))                     \
         EMITW(0x78A0000D | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x78A0000D | MXM(RYG(XD), RYG(XS), TmmM))
 

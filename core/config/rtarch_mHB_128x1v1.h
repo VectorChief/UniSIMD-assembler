@@ -260,8 +260,8 @@
 
 #define shlgx3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0xDC000000 | MDM(TMxx,    MOD(MT), VAL(DT), B3(DT), P1(DT)))  \
-        EMITW(0x7B03001E | MXM(TmmM,    TMxx,    0x00))                     \
+        EMITW(0x84000000 | MDM(TMxx,    MOD(MT), VAL(DT), B3(DT), P1(DT)))  \
+        EMITW(0x7B01001E | MXM(TmmM,    TMxx,    0x00))                     \
         EMITW(0x7820000D | MXM(REG(XD), REG(XS), TmmM))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
@@ -279,8 +279,8 @@
 
 #define shrgx3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0xDC000000 | MDM(TMxx,    MOD(MT), VAL(DT), B3(DT), P1(DT)))  \
-        EMITW(0x7B03001E | MXM(TmmM,    TMxx,    0x00))                     \
+        EMITW(0x84000000 | MDM(TMxx,    MOD(MT), VAL(DT), B3(DT), P1(DT)))  \
+        EMITW(0x7B01001E | MXM(TmmM,    TMxx,    0x00))                     \
         EMITW(0x7920000D | MXM(REG(XD), REG(XS), TmmM))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
@@ -298,8 +298,8 @@
 
 #define shrgn3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0xDC000000 | MDM(TMxx,    MOD(MT), VAL(DT), B3(DT), P1(DT)))  \
-        EMITW(0x7B03001E | MXM(TmmM,    TMxx,    0x00))                     \
+        EMITW(0x84000000 | MDM(TMxx,    MOD(MT), VAL(DT), B3(DT), P1(DT)))  \
+        EMITW(0x7B01001E | MXM(TmmM,    TMxx,    0x00))                     \
         EMITW(0x78A0000D | MXM(REG(XD), REG(XS), TmmM))
 
 /* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
