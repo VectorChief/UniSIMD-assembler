@@ -273,6 +273,7 @@
 /* splatters for SIMD shifts and scalars */
 
 #define SPLT    ((1-RT_ENDIAN)*3)
+#define SP16    ((1-RT_ENDIAN)*7)
 #define SPL(DT) (SPLT+(2*RT_ENDIAN-1)*(3 & VAL(DT) >> 2))
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */

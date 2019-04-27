@@ -8,6 +8,7 @@
 #define RT_RTARCH_P32_128X1V4_H
 
 #include "rtarch_p64.h"
+#include "rtarch_pHB_128x1v4.h"
 
 #define RT_SIMD_REGS_128        16
 
