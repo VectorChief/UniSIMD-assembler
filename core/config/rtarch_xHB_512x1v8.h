@@ -794,11 +794,11 @@
         svlmx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define svlmx3rr(XD, XS, XT)                                                \
-        EVX(RXB(XD), RXB(XT), REN(XS), K, 1, 2) EMITB(0x12)                 \
+        EVW(RXB(XD), RXB(XT), REN(XS), K, 1, 2) EMITB(0x12)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define svlmx3ld(XD, XS, MT, DT)                                            \
-    ADR EVX(RXB(XD), RXB(MT), REN(XS), K, 1, 2) EMITB(0x12)                 \
+    ADR EVW(RXB(XD), RXB(MT), REN(XS), K, 1, 2) EMITB(0x12)                 \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -812,11 +812,11 @@
         svrmx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define svrmx3rr(XD, XS, XT)                                                \
-        EVX(RXB(XD), RXB(XT), REN(XS), K, 1, 2) EMITB(0x10)                 \
+        EVW(RXB(XD), RXB(XT), REN(XS), K, 1, 2) EMITB(0x10)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define svrmx3ld(XD, XS, MT, DT)                                            \
-    ADR EVX(RXB(XD), RXB(MT), REN(XS), K, 1, 2) EMITB(0x10)                 \
+    ADR EVW(RXB(XD), RXB(MT), REN(XS), K, 1, 2) EMITB(0x10)                 \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -830,11 +830,11 @@
         svrmn3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define svrmn3rr(XD, XS, XT)                                                \
-        EVX(RXB(XD), RXB(XT), REN(XS), K, 1, 2) EMITB(0x11)                 \
+        EVW(RXB(XD), RXB(XT), REN(XS), K, 1, 2) EMITB(0x11)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define svrmn3ld(XD, XS, MT, DT)                                            \
-    ADR EVX(RXB(XD), RXB(MT), REN(XS), K, 1, 2) EMITB(0x11)                 \
+    ADR EVW(RXB(XD), RXB(MT), REN(XS), K, 1, 2) EMITB(0x11)                 \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 

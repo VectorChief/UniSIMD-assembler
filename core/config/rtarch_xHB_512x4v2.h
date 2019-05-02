@@ -1748,26 +1748,26 @@
         svlmx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define svlmx3rr(XD, XS, XT)                                                \
-        EVX(0,             0, REG(XS), K, 1, 2) EMITB(0x12)                 \
+        EVW(0,             0, REG(XS), K, 1, 2) EMITB(0x12)                 \
         MRM(REG(XD), MOD(XT), REG(XT))                                      \
-        EVX(1,             1, REH(XS), K, 1, 2) EMITB(0x12)                 \
+        EVW(1,             1, REH(XS), K, 1, 2) EMITB(0x12)                 \
         MRM(REG(XD), MOD(XT), REG(XT))                                      \
-        EVX(2,             2, REI(XS), K, 1, 2) EMITB(0x12)                 \
+        EVW(2,             2, REI(XS), K, 1, 2) EMITB(0x12)                 \
         MRM(REG(XD), MOD(XT), REG(XT))                                      \
-        EVX(3,             3, REJ(XS), K, 1, 2) EMITB(0x12)                 \
+        EVW(3,             3, REJ(XS), K, 1, 2) EMITB(0x12)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define svlmx3ld(XD, XS, MT, DT)                                            \
-    ADR EVX(0,       RXB(MT), REG(XS), K, 1, 2) EMITB(0x12)                 \
+    ADR EVW(0,       RXB(MT), REG(XS), K, 1, 2) EMITB(0x12)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MT), REH(XS), K, 1, 2) EMITB(0x12)                 \
+    ADR EVW(1,       RXB(MT), REH(XS), K, 1, 2) EMITB(0x12)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)                                 \
-    ADR EVX(2,       RXB(MT), REI(XS), K, 1, 2) EMITB(0x12)                 \
+    ADR EVW(2,       RXB(MT), REI(XS), K, 1, 2) EMITB(0x12)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VSL(DT)), EMPTY)                                 \
-    ADR EVX(3,       RXB(MT), REJ(XS), K, 1, 2) EMITB(0x12)                 \
+    ADR EVW(3,       RXB(MT), REJ(XS), K, 1, 2) EMITB(0x12)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
 
@@ -1781,26 +1781,26 @@
         svrmx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define svrmx3rr(XD, XS, XT)                                                \
-        EVX(0,             0, REG(XS), K, 1, 2) EMITB(0x10)                 \
+        EVW(0,             0, REG(XS), K, 1, 2) EMITB(0x10)                 \
         MRM(REG(XD), MOD(XT), REG(XT))                                      \
-        EVX(1,             1, REH(XS), K, 1, 2) EMITB(0x10)                 \
+        EVW(1,             1, REH(XS), K, 1, 2) EMITB(0x10)                 \
         MRM(REG(XD), MOD(XT), REG(XT))                                      \
-        EVX(2,             2, REI(XS), K, 1, 2) EMITB(0x10)                 \
+        EVW(2,             2, REI(XS), K, 1, 2) EMITB(0x10)                 \
         MRM(REG(XD), MOD(XT), REG(XT))                                      \
-        EVX(3,             3, REJ(XS), K, 1, 2) EMITB(0x10)                 \
+        EVW(3,             3, REJ(XS), K, 1, 2) EMITB(0x10)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define svrmx3ld(XD, XS, MT, DT)                                            \
-    ADR EVX(0,       RXB(MT), REG(XS), K, 1, 2) EMITB(0x10)                 \
+    ADR EVW(0,       RXB(MT), REG(XS), K, 1, 2) EMITB(0x10)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MT), REH(XS), K, 1, 2) EMITB(0x10)                 \
+    ADR EVW(1,       RXB(MT), REH(XS), K, 1, 2) EMITB(0x10)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)                                 \
-    ADR EVX(2,       RXB(MT), REI(XS), K, 1, 2) EMITB(0x10)                 \
+    ADR EVW(2,       RXB(MT), REI(XS), K, 1, 2) EMITB(0x10)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VSL(DT)), EMPTY)                                 \
-    ADR EVX(3,       RXB(MT), REJ(XS), K, 1, 2) EMITB(0x10)                 \
+    ADR EVW(3,       RXB(MT), REJ(XS), K, 1, 2) EMITB(0x10)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
 
@@ -1814,26 +1814,26 @@
         svrmn3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define svrmn3rr(XD, XS, XT)                                                \
-        EVX(0,             0, REG(XS), K, 1, 2) EMITB(0x11)                 \
+        EVW(0,             0, REG(XS), K, 1, 2) EMITB(0x11)                 \
         MRM(REG(XD), MOD(XT), REG(XT))                                      \
-        EVX(1,             1, REH(XS), K, 1, 2) EMITB(0x11)                 \
+        EVW(1,             1, REH(XS), K, 1, 2) EMITB(0x11)                 \
         MRM(REG(XD), MOD(XT), REG(XT))                                      \
-        EVX(2,             2, REI(XS), K, 1, 2) EMITB(0x11)                 \
+        EVW(2,             2, REI(XS), K, 1, 2) EMITB(0x11)                 \
         MRM(REG(XD), MOD(XT), REG(XT))                                      \
-        EVX(3,             3, REJ(XS), K, 1, 2) EMITB(0x11)                 \
+        EVW(3,             3, REJ(XS), K, 1, 2) EMITB(0x11)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define svrmn3ld(XD, XS, MT, DT)                                            \
-    ADR EVX(0,       RXB(MT), REG(XS), K, 1, 2) EMITB(0x11)                 \
+    ADR EVW(0,       RXB(MT), REG(XS), K, 1, 2) EMITB(0x11)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
-    ADR EVX(1,       RXB(MT), REH(XS), K, 1, 2) EMITB(0x11)                 \
+    ADR EVW(1,       RXB(MT), REH(XS), K, 1, 2) EMITB(0x11)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)                                 \
-    ADR EVX(2,       RXB(MT), REI(XS), K, 1, 2) EMITB(0x11)                 \
+    ADR EVW(2,       RXB(MT), REI(XS), K, 1, 2) EMITB(0x11)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VSL(DT)), EMPTY)                                 \
-    ADR EVX(3,       RXB(MT), REJ(XS), K, 1, 2) EMITB(0x11)                 \
+    ADR EVW(3,       RXB(MT), REJ(XS), K, 1, 2) EMITB(0x11)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VTL(DT)), EMPTY)
 
