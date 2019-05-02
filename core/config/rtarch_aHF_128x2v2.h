@@ -61,7 +61,7 @@
 
 #if (defined RT_SIMD_CODE)
 
-#if (RT_128X2 == 2) && (RT_SIMD_COMPAT_XMM > 0)
+#if (RT_128X2 != 0) && (RT_SIMD_COMPAT_XMM > 0)
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -223,6 +223,8 @@
         EMITW(0x6E205800 | MXM(RYG(XD), RYG(XS), 0x00))
 
 /*************   packed half-precision floating-point arithmetic   ************/
+
+#if (RT_128X2 == 2)
 
 /* neg (G = -G), (D = -S) */
 
@@ -706,6 +708,8 @@
         (RT_SIMD_MODE_##mode&1) << 23 | (RT_SIMD_MODE_##mode&2) << 11)      \
         EMITW(0x4E79A800 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
         (RT_SIMD_MODE_##mode&1) << 23 | (RT_SIMD_MODE_##mode&2) << 11)
+
+#endif /* RT_128X2 == 2 */
 
 /*************   packed half-precision integer arithmetic/shifts   ************/
 

@@ -61,7 +61,7 @@
 
 #if (defined RT_SIMD_CODE)
 
-#if (RT_128X1 == 2 || RT_128X1 == 8)
+#if (RT_128X1 != 0)
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -198,6 +198,8 @@
         EMITW(0x6E205800 | MXM(REG(XD), REG(XS), 0x00))
 
 /*************   packed half-precision floating-point arithmetic   ************/
+
+#if (RT_128X1 == 2 || RT_128X1 == 8)
 
 /* neg (G = -G), (D = -S) */
 
@@ -590,6 +592,8 @@
 #define cvrgs_rr(XD, XS, mode)                                              \
         EMITW(0x4E79A800 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (RT_SIMD_MODE_##mode&1) << 23 | (RT_SIMD_MODE_##mode&2) << 11)
+
+#endif /* RT_128X1 == 2, 8 */
 
 /*************   packed half-precision integer arithmetic/shifts   ************/
 
