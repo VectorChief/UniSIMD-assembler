@@ -20,11 +20,11 @@
  *
  * Recommended naming scheme for instructions:
  *
- * cmdg*_ri - applies [cmd] to [p]acked: [r]egister from [i]mmediate
- * cmdg*_rr - applies [cmd] to [p]acked: [r]egister from [r]egister
+ * cmdg*_rx - applies [cmd] to 128-bit packed-half: [r]egister (one operand)
+ * cmdg*_rr - applies [cmd] to 128-bit packed-half: [r]egister from [r]egister
  *
- * cmdg*_rm - applies [cmd] to [p]acked: [r]egister from [m]emory
- * cmdg*_ld - applies [cmd] to [p]acked: as above
+ * cmdg*_rm - applies [cmd] to 128-bit packed-half: [r]egister from [m]emory
+ * cmdg*_ld - applies [cmd] to 128-bit packed-half: as above (friendly alias)
  *
  * Interpretation of instruction parameters:
  *
