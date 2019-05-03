@@ -71,7 +71,7 @@
  * lower-case params are singular and can be used/passed as such directly
  *
  * RD - BASE register serving as destination only, if present
- * RG - BASE register serving as destination and fisrt source
+ * RG - BASE register serving as destination and first source
  * RS - BASE register serving as second source (first if any)
  * RT - BASE register serving as third source (second if any)
  *

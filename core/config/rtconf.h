@@ -121,12 +121,12 @@
  * lower-case params are singular and can be used/passed as such directly
  *
  * XD - SIMD register serving as destination only, if present
- * XG - SIMD register serving as destination and fisrt source
+ * XG - SIMD register serving as destination and first source
  * XS - SIMD register serving as second source (first if any)
  * XT - SIMD register serving as third source (second if any)
  *
  * RD - BASE register serving as destination only, if present
- * RG - BASE register serving as destination and fisrt source
+ * RG - BASE register serving as destination and first source
  * RS - BASE register serving as second source (first if any)
  * RT - BASE register serving as third source (second if any)
  *
@@ -9488,7 +9488,7 @@
  * lower-case params are singular and can be used/passed as such directly
  *
  * RD - BASE register serving as destination only, if present
- * RG - BASE register serving as destination and fisrt source
+ * RG - BASE register serving as destination and first source
  * RS - BASE register serving as second source (first if any)
  * RT - BASE register serving as third source (second if any)
  *
