@@ -2214,16 +2214,16 @@
 #define shlqx3ri(XD, XS, IT)                                                \
         EVW(0,             0, REG(XD), K, 1, 1) EMITB(0x73)                 \
         MRM(0x06,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))                               \
         EVW(0,             1, REH(XD), K, 1, 1) EMITB(0x73)                 \
         MRM(0x06,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))                               \
         EVW(0,             2, REI(XD), K, 1, 1) EMITB(0x73)                 \
         MRM(0x06,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))                               \
         EVW(0,             3, REJ(XD), K, 1, 1) EMITB(0x73)                 \
         MRM(0x06,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define shlqx3ld(XD, XS, MT, DT)                                            \
     ADR EVW(0,       RXB(MT), REG(XS), K, 1, 1) EMITB(0xF3)                 \
@@ -2251,16 +2251,16 @@
 #define shrqx3ri(XD, XS, IT)                                                \
         EVW(0,             0, REG(XD), K, 1, 1) EMITB(0x73)                 \
         MRM(0x02,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))                               \
         EVW(0,             1, REH(XD), K, 1, 1) EMITB(0x73)                 \
         MRM(0x02,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))                               \
         EVW(0,             2, REI(XD), K, 1, 1) EMITB(0x73)                 \
         MRM(0x02,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))                               \
         EVW(0,             3, REJ(XD), K, 1, 1) EMITB(0x73)                 \
         MRM(0x02,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define shrqx3ld(XD, XS, MT, DT)                                            \
     ADR EVW(0,       RXB(MT), REG(XS), K, 1, 1) EMITB(0xD3)                 \
@@ -2288,16 +2288,16 @@
 #define shrqn3ri(XD, XS, IT)                                                \
         EVW(0,             0, REG(XD), K, 1, 1) EMITB(0x72)                 \
         MRM(0x04,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))                               \
         EVW(0,             1, REH(XD), K, 1, 1) EMITB(0x72)                 \
         MRM(0x04,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))                               \
         EVW(0,             2, REI(XD), K, 1, 1) EMITB(0x72)                 \
         MRM(0x04,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))                               \
         EVW(0,             3, REJ(XD), K, 1, 1) EMITB(0x72)                 \
         MRM(0x04,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define shrqn3ld(XD, XS, MT, DT)                                            \
     ADR EVW(0,       RXB(MT), REG(XS), K, 1, 1) EMITB(0xE2)                 \

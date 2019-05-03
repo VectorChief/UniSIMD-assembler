@@ -863,7 +863,7 @@
 #define shldx3ri(XD, XS, IT)                                                \
         EVW(0,       RXB(XS), REN(XD), 1, 1, 1) EMITB(0x73)                 \
         MRM(0x06,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define shldx3ld(XD, XS, MT, DT)                                            \
     ADR EVW(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xF3)                 \
@@ -882,7 +882,7 @@
 #define shrdx3ri(XD, XS, IT)                                                \
         EVW(0,       RXB(XS), REN(XD), 1, 1, 1) EMITB(0x73)                 \
         MRM(0x02,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define shrdx3ld(XD, XS, MT, DT)                                            \
     ADR EVW(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xD3)                 \
@@ -901,7 +901,7 @@
 #define shrdn3ri(XD, XS, IT)                                                \
         EVW(0,       RXB(XS), REN(XD), 1, 1, 1) EMITB(0x72)                 \
         MRM(0x04,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define shrdn3ld(XD, XS, MT, DT)                                            \
     ADR EVW(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xE2)                 \

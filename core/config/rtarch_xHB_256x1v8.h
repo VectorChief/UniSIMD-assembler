@@ -273,7 +273,7 @@
 #define shlax3ri(XD, XS, IT)                                                \
         EVX(0,       RXB(XS), REN(XD), 1, 1, 1) EMITB(0x71)                 \
         MRM(0x06,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x0F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define shlax3ld(XD, XS, MT, DT)                                            \
     ADR EVX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xF1)                 \
@@ -292,7 +292,7 @@
 #define shrax3ri(XD, XS, IT)                                                \
         EVX(0,       RXB(XS), REN(XD), 1, 1, 1) EMITB(0x71)                 \
         MRM(0x02,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x0F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define shrax3ld(XD, XS, MT, DT)                                            \
     ADR EVX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xD1)                 \
@@ -311,7 +311,7 @@
 #define shran3ri(XD, XS, IT)                                                \
         EVX(0,       RXB(XS), REN(XD), 1, 1, 1) EMITB(0x71)                 \
         MRM(0x04,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x0F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define shran3ld(XD, XS, MT, DT)                                            \
     ADR EVX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xE1)                 \

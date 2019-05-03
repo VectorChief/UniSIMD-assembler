@@ -1178,7 +1178,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xFB)                       \
 #define shljx_ri(XG, IS)                                                    \
     ESC REX(0,       RXB(XG)) EMITB(0x0F) EMITB(0x73)                       \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
 #define shljx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
 ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xF3)                       \
@@ -1199,7 +1199,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xF3)                       \
 #define shrjx_ri(XG, IS)                                                    \
     ESC REX(0,       RXB(XG)) EMITB(0x0F) EMITB(0x73)                       \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
 #define shrjx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
 ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \

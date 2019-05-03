@@ -321,10 +321,10 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD5)                       \
 #define shlax_ri(XG, IS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x71)                       \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x0F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))                               \
     ESC REX(0,             1) EMITB(0x0F) EMITB(0x71)                       \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x0F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
 #define shlax_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
 ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0xF1)                       \
@@ -348,10 +348,10 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xF1)                       \
 #define shrax_ri(XG, IS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x71)                       \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x0F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))                               \
     ESC REX(0,             1) EMITB(0x0F) EMITB(0x71)                       \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x0F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
 #define shrax_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
 ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0xD1)                       \
@@ -375,10 +375,10 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD1)                       \
 #define shran_ri(XG, IS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x71)                       \
         MRM(0x04,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x0F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))                               \
     ESC REX(0,             1) EMITB(0x0F) EMITB(0x71)                       \
         MRM(0x04,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x0F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
 #define shran_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
 ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0xE1)                       \

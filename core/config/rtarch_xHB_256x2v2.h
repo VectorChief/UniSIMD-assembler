@@ -538,10 +538,10 @@
 #define shlmx3ri(XD, XS, IT)                                                \
         VEX(0,             0, REG(XD), 1, 1, 1) EMITB(0x71)                 \
         MRM(0x06,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x0F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))                               \
         VEX(0,             1, REH(XD), 1, 1, 1) EMITB(0x71)                 \
         MRM(0x06,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x0F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define shlmx3ld(XD, XS, MT, DT)                                            \
     ADR VEX(0,       RXB(MT), REG(XS), 1, 1, 1) EMITB(0xF1)                 \
@@ -563,10 +563,10 @@
 #define shrmx3ri(XD, XS, IT)                                                \
         VEX(0,             0, REG(XD), 1, 1, 1) EMITB(0x71)                 \
         MRM(0x02,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x0F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))                               \
         VEX(0,             1, REH(XD), 1, 1, 1) EMITB(0x71)                 \
         MRM(0x02,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x0F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define shrmx3ld(XD, XS, MT, DT)                                            \
     ADR VEX(0,       RXB(MT), REG(XS), 1, 1, 1) EMITB(0xD1)                 \
@@ -588,10 +588,10 @@
 #define shrmn3ri(XD, XS, IT)                                                \
         VEX(0,             0, REG(XD), 1, 1, 1) EMITB(0x71)                 \
         MRM(0x04,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x0F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))                               \
         VEX(0,             1, REH(XD), 1, 1, 1) EMITB(0x71)                 \
         MRM(0x04,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x0F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define shrmn3ld(XD, XS, MT, DT)                                            \
     ADR VEX(0,       RXB(MT), REG(XS), 1, 1, 1) EMITB(0xE1)                 \

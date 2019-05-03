@@ -1039,10 +1039,10 @@
 #define shlmx3ri(XD, XS, IT)                                                \
         EVX(0,       RXB(XS), REN(XD), K, 1, 1) EMITB(0x71)                 \
         MRM(0x06,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x0F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))                               \
         EVX(0,       RMB(XS), REM(XD), K, 1, 1) EMITB(0x71)                 \
         MRM(0x06,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x0F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define shlmx3ld(XD, XS, MT, DT)                                            \
     ADR EVX(RXB(XD), RXB(MT), REN(XS), K, 1, 1) EMITB(0xF1)                 \
@@ -1064,10 +1064,10 @@
 #define shrmx3ri(XD, XS, IT)                                                \
         EVX(0,       RXB(XS), REN(XD), K, 1, 1) EMITB(0x71)                 \
         MRM(0x02,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x0F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))                               \
         EVX(0,       RMB(XS), REM(XD), K, 1, 1) EMITB(0x71)                 \
         MRM(0x02,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x0F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define shrmx3ld(XD, XS, MT, DT)                                            \
     ADR EVX(RXB(XD), RXB(MT), REN(XS), K, 1, 1) EMITB(0xD1)                 \
@@ -1089,10 +1089,10 @@
 #define shrmn3ri(XD, XS, IT)                                                \
         EVX(0,       RXB(XS), REN(XD), K, 1, 1) EMITB(0x71)                 \
         MRM(0x04,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x0F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))                               \
         EVX(0,       RMB(XS), REM(XD), K, 1, 1) EMITB(0x71)                 \
         MRM(0x04,    MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & 0x0F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
 #define shrmn3ld(XD, XS, MT, DT)                                            \
     ADR EVX(RXB(XD), RXB(MT), REN(XS), K, 1, 1) EMITB(0xE1)                 \

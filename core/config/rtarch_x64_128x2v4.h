@@ -1346,10 +1346,10 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xFB)                       \
 #define shldx_ri(XG, IS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x73)                       \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))                               \
     ESC REX(0,             1) EMITB(0x0F) EMITB(0x73)                       \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
 #define shldx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
 ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0xF3)                       \
@@ -1373,10 +1373,10 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xF3)                       \
 #define shrdx_ri(XG, IS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x73)                       \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))                        \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))                               \
     ESC REX(0,             1) EMITB(0x0F) EMITB(0x73)                       \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
 #define shrdx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
 ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \

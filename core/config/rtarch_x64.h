@@ -642,12 +642,12 @@
 #define shlzz_ri(RG, IS)                                                    \
         REW(0,       RXB(RG)) EMITB(0xC1)                                   \
         MRM(0x04,    MOD(RG), REG(RG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
 #define shlzz_mi(MG, DG, IS)                                                \
     ADR REW(0,       RXB(MG)) EMITB(0xC1)                                   \
         MRM(0x04,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS) & 0x3F))
+        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS)))
 
 #define shlzz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
@@ -746,12 +746,12 @@
 #define shrzz_ri(RG, IS)                                                    \
         REW(0,       RXB(RG)) EMITB(0xC1)                                   \
         MRM(0x05,    MOD(RG), REG(RG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
 #define shrzz_mi(MG, DG, IS)                                                \
     ADR REW(0,       RXB(MG)) EMITB(0xC1)                                   \
         MRM(0x05,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS) & 0x3F))
+        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS)))
 
 #define shrzz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
@@ -797,12 +797,12 @@
 #define shrzn_ri(RG, IS)                                                    \
         REW(0,       RXB(RG)) EMITB(0xC1)                                   \
         MRM(0x07,    MOD(RG), REG(RG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x3F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
 #define shrzn_mi(MG, DG, IS)                                                \
     ADR REW(0,       RXB(MG)) EMITB(0xC1)                                   \
         MRM(0x07,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS) & 0x3F))
+        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS)))
 
 #if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
 
