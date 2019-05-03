@@ -71,7 +71,7 @@
 /**********************************   SIMD   **********************************/
 /******************************************************************************/
 
-/***************   packed double-precision generic move/logic   ***************/
+/****************   packed half-precision generic move/logic   ****************/
 
 /* mov (D = S) */
 
@@ -195,7 +195,7 @@
 #define notgx_rr(XD, XS)                                                    \
         EMITW(0x7840001E | MXM(REG(XD), TmmZ,    REG(XS)))
 
-/************   packed double-precision integer arithmetic/shifts   ***********/
+/*************   packed half-precision integer arithmetic/shifts   ************/
 
 /* add (G = G + S), (D = S + T) if (#D != #S) */
 
