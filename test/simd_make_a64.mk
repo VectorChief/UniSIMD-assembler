@@ -75,7 +75,7 @@ simd_test_a64f64sve:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64f64sve
 
 
-# On Ubuntu (Mate) 16.04/18.04 add "universe multiverse" to "main restricted"
+# On Ubuntu (MATE) 16.04/18.04 add "universe multiverse" to "main restricted"
 # in /etc/apt/sources.list (sudo nano /etc/apt/sources.list) then run:
 # sudo apt-get update
 #
