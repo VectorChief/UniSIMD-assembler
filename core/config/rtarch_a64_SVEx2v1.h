@@ -8,6 +8,7 @@
 #define RT_RTARCH_A64_SVEX2V1_H
 
 #include "rtarch_a32_SVEx2v1.h"
+#include "rtarch_aHB_SVEx2v1.h"
 #include "rtarch_aHF_SVEx2v1.h"
 
 /******************************************************************************/
