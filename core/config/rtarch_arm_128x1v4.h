@@ -1411,6 +1411,308 @@
         EMITW(0xF3B903C0 | MXM(TmmM,    0x00,    TmmM))                     \
         EMITW(0xF2200440 | MXM(REG(XD), TmmM,    REG(XS)))
 
+/****************   packed half-precision generic move/logic   ****************/
+
+/* mov (D = S) */
+
+#define movgx_rr(XD, XS)                                                    \
+        EMITW(0xF2200150 | MXM(REG(XD), REG(XS), REG(XS)))
+
+#define movgx_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4200AAF | MXM(REG(XD), TPxx,    0x00))
+
+#define movgx_st(XS, MD, DD)                                                \
+        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MD), VAL(DD), B2(DD), P2(DD)))  \
+        EMITW(0xF4000AAF | MXM(REG(XS), TPxx,    0x00))
+
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
+
+#define mmvgx_rr(XG, XS)                                                    \
+        EMITW(0xF3200150 | MXM(REG(XG), REG(XS), Tmm0))
+
+#define mmvgx_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3200150 | MXM(REG(XG), TmmM,    Tmm0))
+
+#define mmvgx_st(XS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C2(DG), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MG), VAL(DG), B2(DG), P2(DG)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3200150 | MXM(TmmM,    REG(XS), Tmm0))                     \
+        EMITW(0xF4000AAF | MXM(TmmM,    TPxx,    0x00))
+
+/* and (G = G & S), (D = S & T) if (#D != #S) */
+
+#define andgx_rr(XG, XS)                                                    \
+        andgx3rr(W(XG), W(XG), W(XS))
+
+#define andgx_ld(XG, MS, DS)                                                \
+        andgx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define andgx3rr(XD, XS, XT)                                                \
+        EMITW(0xF2000150 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define andgx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF2000150 | MXM(REG(XD), REG(XS), TmmM))
+
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+
+#define anngx_rr(XG, XS)                                                    \
+        anngx3rr(W(XG), W(XG), W(XS))
+
+#define anngx_ld(XG, MS, DS)                                                \
+        anngx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define anngx3rr(XD, XS, XT)                                                \
+        EMITW(0xF2100150 | MXM(REG(XD), REG(XT), REG(XS)))
+
+#define anngx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF2100150 | MXM(REG(XD), TmmM,    REG(XS)))
+
+/* orr (G = G | S), (D = S | T) if (#D != #S) */
+
+#define orrgx_rr(XG, XS)                                                    \
+        orrgx3rr(W(XG), W(XG), W(XS))
+
+#define orrgx_ld(XG, MS, DS)                                                \
+        orrgx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define orrgx3rr(XD, XS, XT)                                                \
+        EMITW(0xF2200150 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define orrgx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF2200150 | MXM(REG(XD), REG(XS), TmmM))
+
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+
+#define orngx_rr(XG, XS)                                                    \
+        orngx3rr(W(XG), W(XG), W(XS))
+
+#define orngx_ld(XG, MS, DS)                                                \
+        orngx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define orngx3rr(XD, XS, XT)                                                \
+        EMITW(0xF2300150 | MXM(REG(XD), REG(XT), REG(XS)))
+
+#define orngx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF2300150 | MXM(REG(XD), TmmM,    REG(XS)))
+
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+
+#define xorgx_rr(XG, XS)                                                    \
+        xorgx3rr(W(XG), W(XG), W(XS))
+
+#define xorgx_ld(XG, MS, DS)                                                \
+        xorgx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define xorgx3rr(XD, XS, XT)                                                \
+        EMITW(0xF3000150 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define xorgx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3000150 | MXM(REG(XD), REG(XS), TmmM))
+
+/* not (G = ~G), (D = ~S) */
+
+#define notgx_rx(XG)                                                        \
+        notgx_rr(W(XG), W(XG))
+
+#define notgx_rr(XD, XS)                                                    \
+        EMITW(0xF3B005C0 | MXM(REG(XD), 0x00,    REG(XS)))
+
+/*************   packed half-precision integer arithmetic/shifts   ************/
+
+/* add (G = G + S), (D = S + T) if (#D != #S) */
+
+#define addgx_rr(XG, XS)                                                    \
+        addgx3rr(W(XG), W(XG), W(XS))
+
+#define addgx_ld(XG, MS, DS)                                                \
+        addgx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define addgx3rr(XD, XS, XT)                                                \
+        EMITW(0xF2100840 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define addgx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF2100840 | MXM(REG(XD), REG(XS), TmmM))
+
+/* sub (G = G - S), (D = S - T) if (#D != #S) */
+
+#define subgx_rr(XG, XS)                                                    \
+        subgx3rr(W(XG), W(XG), W(XS))
+
+#define subgx_ld(XG, MS, DS)                                                \
+        subgx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subgx3rr(XD, XS, XT)                                                \
+        EMITW(0xF3100840 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define subgx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3100840 | MXM(REG(XD), REG(XS), TmmM))
+
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulgx_rr(XG, XS)                                                    \
+        mulgx3rr(W(XG), W(XG), W(XS))
+
+#define mulgx_ld(XG, MS, DS)                                                \
+        mulgx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulgx3rr(XD, XS, XT)                                                \
+        EMITW(0xF2100950 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define mulgx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF2100950 | MXM(REG(XD), REG(XS), TmmM))
+
+/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shlgx_ri(XG, IS)     /* emits shift-right with out-of-range args */ \
+        shlgx3ri(W(XG), W(XG), W(IS))
+
+#define shlgx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shlgx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shlgx3ri(XD, XS, IT)                                                \
+        EMITW(0xF2900050 | MXM(REG(XD), 0x00,    REG(XS)) |                 \
+        (M(VAL(IT) < 16) & 0x00000500) | (M(VAL(IT) > 15) & 0x01000000) |   \
+        (M(VAL(IT) < 16) & ((0x0F & VAL(IT)) << 16)))
+
+#define shlgx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4A00C7F | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3100440 | MXM(REG(XD), TmmM,    REG(XS)))
+
+/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrgx_ri(XG, IS)     /* emits shift-left for immediate-zero args */ \
+        shrgx3ri(W(XG), W(XG), W(IS))
+
+#define shrgx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrgx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shrgx3ri(XD, XS, IT)                                                \
+        EMITW(0xF2900050 | MXM(REG(XD), 0x00,    REG(XS)) |                 \
+        (M(VAL(IT) == 0) & 0x00000500) | (M(VAL(IT) != 0) & 0x01000000) |   \
+        (M(VAL(IT) < 16) & ((0x0F &-VAL(IT)) << 16)))
+
+#define shrgx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4A00C7F | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3B503C0 | MXM(TmmM,    0x00,    TmmM))                     \
+        EMITW(0xF3100440 | MXM(REG(XD), TmmM,    REG(XS)))
+
+/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrgn_ri(XG, IS)     /* emits shift-left for immediate-zero args */ \
+        shrgn3ri(W(XG), W(XG), W(IS))
+
+#define shrgn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrgn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shrgn3ri(XD, XS, IT)                                                \
+        EMITW(0xF2900050 | MXM(REG(XD), 0x00,    REG(XS)) |                 \
+        (M(VAL(IT) == 0) & 0x00000500) | (M(VAL(IT) != 0) & 0x00000000) |   \
+        (M(VAL(IT) < 16) & ((0x0F &-VAL(IT)) << 16)))
+
+#define shrgn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4A00C7F | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3B503C0 | MXM(TmmM,    0x00,    TmmM))                     \
+        EMITW(0xF2100440 | MXM(REG(XD), TmmM,    REG(XS)))
+
+/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svlgx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlgx3rr(W(XG), W(XG), W(XS))
+
+#define svlgx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlgx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svlgx3rr(XD, XS, XT)                                                \
+        EMITW(0xF3100440 | MXM(REG(XD), REG(XT), REG(XS)))
+
+#define svlgx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3100440 | MXM(REG(XD), TmmM,    REG(XS)))
+
+/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svrgx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrgx3rr(W(XG), W(XG), W(XS))
+
+#define svrgx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrgx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrgx3rr(XD, XS, XT)                                                \
+        EMITW(0xF3B503C0 | MXM(TmmM,    0x00,    REG(XT)))                  \
+        EMITW(0xF3100440 | MXM(REG(XD), TmmM,    REG(XS)))
+
+#define svrgx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3B503C0 | MXM(TmmM,    0x00,    TmmM))                     \
+        EMITW(0xF3100440 | MXM(REG(XD), TmmM,    REG(XS)))
+
+/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svrgn_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrgn3rr(W(XG), W(XG), W(XS))
+
+#define svrgn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrgn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrgn3rr(XD, XS, XT)                                                \
+        EMITW(0xF3B503C0 | MXM(TmmM,    0x00,    REG(XT)))                  \
+        EMITW(0xF2100440 | MXM(REG(XD), TmmM,    REG(XS)))
+
+#define svrgn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3B503C0 | MXM(TmmM,    0x00,    TmmM))                     \
+        EMITW(0xF2100440 | MXM(REG(XD), TmmM,    REG(XS)))
+
 /******************************************************************************/
 /**********************************   ELEM   **********************************/
 /******************************************************************************/

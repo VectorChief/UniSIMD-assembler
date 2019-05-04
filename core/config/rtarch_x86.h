@@ -172,6 +172,13 @@
         EMITB(0x00 | (0x1) << 2 | (0x0F - (ren)) << 3 | (pfx))              \
         EMITB(0x08 | (len) << 5)
 
+/* 4-byte EVEX prefix with full customization (W1, K0, Z0) */
+#define EVW(ren, len, pfx, aux)                                             \
+        EMITB(0x62)                                                         \
+        EMITB(0xF0 | (aux))                                                 \
+        EMITB(0x80 | (0x1) << 2 | (0x0F - (ren)) << 3 | (pfx))              \
+        EMITB(0x08 | (len) << 5)
+
 /* selectors  */
 
 #define REG(reg, mod, sib)  reg
@@ -227,12 +234,12 @@
 /* displacement VAL,  TYP,  CMD         (all displacement types are unsigned) */
 /* public scalable DP/DE/DF/DG/DH/DV definitions are now provided in rtbase.h */
 
-#define _DP(dp) (dp), 0x00, EMITW((dp) & 0xFFC)   /* native on all ARMs, MIPS */
-#define _DE(dp) (dp), 0x00, EMITW((dp) & 0x1FFC) /* AArch64 256-bit SVE ld/st */
-#define _DF(dp) (dp), 0x00, EMITW((dp) & 0x3FFC) /* native AArch64 BASE ld/st */
-#define _DG(dp) (dp), 0x00, EMITW((dp) & 0x7FFC)  /* native MIPS64 BASE ld/st */
-#define _DH(dp) (dp), 0x00, EMITW((dp) & 0xFFFC) /* second native on all ARMs */
-#define _DV(dp) (dp), 0x00, EMITW((dp) & 0x7FFFFFFC)  /* native x64 long mode */
+#define _DP(dp) (dp), 0x00, EMITW((dp) & 0xFFE)   /* native on all ARMs, MIPS */
+#define _DE(dp) (dp), 0x00, EMITW((dp) & 0x1FFE) /* AArch64 256-bit SVE ld/st */
+#define _DF(dp) (dp), 0x00, EMITW((dp) & 0x3FFE) /* native AArch64 BASE ld/st */
+#define _DG(dp) (dp), 0x00, EMITW((dp) & 0x7FFE)  /* native MIPS64 BASE ld/st */
+#define _DH(dp) (dp), 0x00, EMITW((dp) & 0xFFFE) /* second native on all ARMs */
+#define _DV(dp) (dp), 0x00, EMITW((dp) & 0x7FFFFFFE)  /* native x64 long mode */
 #define  PLAIN  0x00, 0x00, EMPTY    /* special type for Oeax addressing mode */
 
 /* triplet pass-through wrapper */
