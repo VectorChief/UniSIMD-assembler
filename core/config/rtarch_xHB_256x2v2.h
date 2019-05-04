@@ -247,17 +247,17 @@
 #define addmx3rr(XD, XS, XT)                                                \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        addmx_xx()                                                          \
+        addmx_rx(W(XD))                                                     \
         movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define addmx3ld(XD, XS, MT, DT)                                            \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_ld(W(XD), W(MT), W(DT))                                       \
         movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        addmx_xx()                                                          \
+        addmx_rx(W(XD))                                                     \
         movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
-#define addmx_xx() /* not portable, do not use outside */                   \
+#define addmx_rx(XD) /* not portable, do not use outside */                 \
         movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
         addgx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
         movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -282,17 +282,17 @@
 #define submx3rr(XD, XS, XT)                                                \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        submx_xx()                                                          \
+        submx_rx(W(XD))                                                     \
         movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define submx3ld(XD, XS, MT, DT)                                            \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_ld(W(XD), W(MT), W(DT))                                       \
         movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        submx_xx()                                                          \
+        submx_rx(W(XD))                                                     \
         movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
-#define submx_xx() /* not portable, do not use outside */                   \
+#define submx_rx(XD) /* not portable, do not use outside */                 \
         movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
         subgx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
         movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -317,17 +317,17 @@
 #define mulmx3rr(XD, XS, XT)                                                \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mulmx_xx()                                                          \
+        mulmx_rx(W(XD))                                                     \
         movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define mulmx3ld(XD, XS, MT, DT)                                            \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_ld(W(XD), W(MT), W(DT))                                       \
         movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mulmx_xx()                                                          \
+        mulmx_rx(W(XD))                                                     \
         movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
-#define mulmx_xx() /* not portable, do not use outside */                   \
+#define mulmx_rx(XD) /* not portable, do not use outside */                 \
         movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
         mulgx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
         movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
