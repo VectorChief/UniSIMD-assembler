@@ -347,22 +347,13 @@
 /* displacement VAL,  TP1,  TP2         (all displacement types are unsigned) */
 /* public scalable DP/DE/DF/DG/DH/DV definitions are now provided in rtbase.h */
 
-#define _DP(dp) ((dp) & 0xFFC),         0, 0      /* native on all ARMs, MIPS */
-#define _DE(dp) ((dp) & 0x1FFC),        0, 0     /* AArch64 256-bit SVE ld/st */
-#define _DF(dp) ((dp) & 0x3FFC),        0, 0     /* native AArch64 BASE ld/st */
-#define _DG(dp) ((dp) & 0x7FFC),        1, 0  /* native MIPS/POWER BASE ld/st */
-#define _DH(dp) ((dp) & 0xFFFC),        1, 0     /* second native on all ARMs */
-#define _DV(dp) ((dp) & 0x7FFFFFFC),    2, 2       /* native x86_64 long mode */
+#define _DP(dp) ((dp) & 0xFFE),         0, 0      /* native on all ARMs, MIPS */
+#define _DE(dp) ((dp) & 0x1FFE),        0, 0     /* AArch64 256-bit SVE ld/st */
+#define _DF(dp) ((dp) & 0x3FFE),        1, 0     /* native AArch64 BASE ld/st */
+#define _DG(dp) ((dp) & 0x7FFE),        1, 0  /* native MIPS/POWER BASE ld/st */
+#define _DH(dp) ((dp) & 0xFFFE),        1, 0     /* second native on all ARMs */
+#define _DV(dp) ((dp) & 0x7FFFFFFE),    2, 2       /* native x86_64 long mode */
 #define  PLAIN  DP(0)                /* special type for Oeax addressing mode */
-
-#if (defined RT_SIMD_CODE && RT_SIMD == 256 && defined RT_SVEX1) || RT_128X1&0xA
-#undef  _DF
-#define _DF(dp) ((dp) & 0x3FFC),        1, 0     /* native AArch64 BASE ld/st */
-#endif /* RT_SIMD: 256, SVEx1 */
-#if (defined RT_SIMD_CODE && RT_SIMD == 512 && defined RT_SVEX2) || RT_128X2&0x2
-#undef  _DF
-#define _DF(dp) ((dp) & 0x3FFC),        1, 0     /* native AArch64 BASE ld/st */
-#endif /* RT_SIMD: 512, SVEx2 */
 
 /* triplet pass-through wrapper */
 
