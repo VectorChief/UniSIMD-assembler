@@ -14,7 +14,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x32.h: Implementation of x86_64:x32 BASE instructions.
+ * rtarch_x32.h: Implementation of x86_64 32-bit BASE instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
