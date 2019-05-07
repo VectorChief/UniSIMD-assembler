@@ -1215,7 +1215,7 @@
 
 #define cmpwx_mi(MS, DS, IT)                                                \
         AUW(SIB(MS),  VAL(IT), TRxx,    MOD(MS), VAL(DS), C1(DS), G3(IT))   \
-        EMITW(0xE8000002 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x00000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), PW(DS)))  \
         EMITW(0x7C0007B4 | MSM(TRxx,    TRxx,    0x00))
 
 #define cmpwx_rr(RS, RT)                                                    \
@@ -1224,12 +1224,12 @@
 
 #define cmpwx_rm(RS, MT, DT)                                                \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
-        EMITW(0xE8000002 | MDM(TRxx,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMITW(0x00000000 | MDM(TRxx,    MOD(MT), VAL(DT), B1(DT), PW(DT)))  \
         EMITW(0x7C0007B4 | MSM(TLxx,    REG(RS), 0x00))
 
 #define cmpwx_mr(MS, DS, RT)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0xE8000002 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x00000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), PW(DS)))  \
         EMITW(0x7C0007B4 | MSM(TRxx,    REG(RT), 0x00))
 
 

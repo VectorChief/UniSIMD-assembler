@@ -187,6 +187,7 @@
 #define  B1(val, tp1, tp2)  B1##tp1
 #define  B3(val, tp1, tp2)  B3##tp1
 #define  P1(val, tp1, tp2)  P1##tp1
+#define  PW(val, tp1, tp2)  PW##tp1
 #define  F1(val, tp1, tp2)  F1##tp1
 #define  O1(val, tp1, tp2)  O1##tp1
 #define  Q1(val, tp1, tp2)  Q1##tp1
@@ -239,6 +240,7 @@
 #define B10(br) (br)
 #define B30(br) (br)
 #define P10(dp) (0x80000000 |(0x7FFC & (dp)))
+#define PW0(dp) (0xE8000002 |(0x7FFC & (dp)))
 #define F10(dp) (0xE8000000 |(0x7FFC & (dp)))
 #define O10(dp) (0x90000000 |(0x7FFC & (dp)))
 #define Q10(dp) (0xF8000000 |(0x7FFC & (dp)))
@@ -249,6 +251,7 @@
 #define B11(br) (br)
 #define B31(br) TPxx
 #define P11(dp) (0x7C00002E | TDxx << 11)
+#define PW1(dp) (0x7C0002AA | TDxx << 11)
 #define F11(dp) (0x7C00002A | TDxx << 11)
 #define O11(dp) (0x7C00012E | TDxx << 11)
 #define Q11(dp) (0x7C00012A | TDxx << 11)
@@ -260,6 +263,7 @@
 #define B12(br) (br)
 #define B32(br) TPxx
 #define P12(dp) (0x7C00002E | TDxx << 11)
+#define PW2(dp) (0x7C0002AA | TDxx << 11)
 #define F12(dp) (0x7C00002A | TDxx << 11)
 #define O12(dp) (0x7C00012E | TDxx << 11)
 #define Q12(dp) (0x7C00012A | TDxx << 11)
