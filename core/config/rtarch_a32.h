@@ -14,7 +14,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_a32.h: Implementation of AArch64:ILP32 BASE instructions.
+ * rtarch_a32.h: Implementation of ARMv8:AArch64 32-bit BASE instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

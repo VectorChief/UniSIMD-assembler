@@ -14,7 +14,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_m64.h: Implementation of MIPS64 r5/r6 BASE instructions.
+ * rtarch_m64.h: Implementation of MIPS64 r5/r6 64-bit BASE instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

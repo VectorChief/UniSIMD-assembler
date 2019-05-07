@@ -14,7 +14,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_a64.h: Implementation of AArch64:ARMv8 BASE instructions.
+ * rtarch_a64.h: Implementation of ARMv8:AArch64 64-bit BASE instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
