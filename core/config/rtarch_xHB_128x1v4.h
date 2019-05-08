@@ -465,40 +465,6 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xE1)                       \
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
-#define movhx_ld(RD, MS, DS)                                                \
-ADR ESC REX(RXB(RD), RXB(MS)) EMITB(0x8B)                                   \
-        MRM(REG(RD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define movhx_st(RS, MD, DD)                                                \
-ADR ESC REX(RXB(RS), RXB(MD)) EMITB(0x89)                                   \
-        MRM(REG(RS), MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-
-#define shlhx_mx(MG, DG)                 /* reads Recx for shift count */   \
-        shlhz_mx(W(MG), W(DG))
-
-#define shlhz_mx(MG, DG)                 /* reads Recx for shift count */   \
-ADR ESC REX(0,       RXB(MG)) EMITB(0xD3)                                   \
-        MRM(0x04,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DG), EMPTY)
-
-
-#define shrhx_mx(MG, DG)                 /* reads Recx for shift count */   \
-        shrhz_mx(W(MG), W(DG))
-
-#define shrhz_mx(MG, DG)                 /* reads Recx for shift count */   \
-ADR ESC REX(0,       RXB(MG)) EMITB(0xD3)                                   \
-        MRM(0x05,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DG), EMPTY)
-
-
-#define shrhn_mx(MG, DG)                 /* reads Recx for shift count */   \
-ADR ESC REX(0,       RXB(MG)) EMITB(0xD3)                                   \
-        MRM(0x07,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DG), EMPTY)
-
 #endif /* RT_128X1 */
 
 #endif /* RT_SIMD_CODE */

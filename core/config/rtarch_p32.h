@@ -188,8 +188,11 @@
 #define  B3(val, tp1, tp2)  B3##tp1
 #define  P1(val, tp1, tp2)  P1##tp1
 #define  PW(val, tp1, tp2)  PW##tp1
+#define  PH(val, tp1, tp2)  PH##tp1
+#define  PS(val, tp1, tp2)  PS##tp1
 #define  F1(val, tp1, tp2)  F1##tp1
 #define  O1(val, tp1, tp2)  O1##tp1
+#define  OH(val, tp1, tp2)  OH##tp1
 #define  Q1(val, tp1, tp2)  Q1##tp1
 #define  C1(val, tp1, tp2)  C1##tp1
 #define  A1(val, tp1, tp2)  A1##tp1
@@ -241,8 +244,11 @@
 #define B30(br) (br)
 #define P10(dp) (0x80000000 |(0x7FFC & (dp)))
 #define PW0(dp) (0xE8000002 |(0x7FFC & (dp)))
+#define PH0(dp) (0xA0000000 |(0x7FFE & (dp)))
+#define PS0(dp) (0xA8000000 |(0x7FFE & (dp)))
 #define F10(dp) (0xE8000000 |(0x7FFC & (dp)))
 #define O10(dp) (0x90000000 |(0x7FFC & (dp)))
+#define OH0(dp) (0xB0000000 |(0x7FFE & (dp)))
 #define Q10(dp) (0xF8000000 |(0x7FFC & (dp)))
 #define C10(br, dp) EMPTY
 #define A10(br, dp) EMPTY
@@ -252,8 +258,11 @@
 #define B31(br) TPxx
 #define P11(dp) (0x7C00002E | TDxx << 11)
 #define PW1(dp) (0x7C0002AA | TDxx << 11)
+#define PH1(dp) (0x7C00022E | TDxx << 11)
+#define PS1(dp) (0x7C0002AE | TDxx << 11)
 #define F11(dp) (0x7C00002A | TDxx << 11)
 #define O11(dp) (0x7C00012E | TDxx << 11)
+#define OH1(dp) (0x7C00032E | TDxx << 11)
 #define Q11(dp) (0x7C00012A | TDxx << 11)
 #define C11(br, dp) C31(br, dp)
 #define A11(br, dp) C31(br, dp)                                             \
@@ -264,8 +273,11 @@
 #define B32(br) TPxx
 #define P12(dp) (0x7C00002E | TDxx << 11)
 #define PW2(dp) (0x7C0002AA | TDxx << 11)
+#define PH2(dp) (0x7C00022E | TDxx << 11)
+#define PS2(dp) (0x7C0002AE | TDxx << 11)
 #define F12(dp) (0x7C00002A | TDxx << 11)
 #define O12(dp) (0x7C00012E | TDxx << 11)
+#define OH2(dp) (0x7C00032E | TDxx << 11)
 #define Q12(dp) (0x7C00012A | TDxx << 11)
 #define C12(br, dp) C32(br, dp)
 #define A12(br, dp) C32(br, dp)                                             \
@@ -381,12 +393,12 @@
 /* displacement VAL,  TP1,  TP2         (all displacement types are unsigned) */
 /* public scalable DP/DE/DF/DG/DH/DV definitions are now provided in rtbase.h */
 
-#define _DP(dp) ((dp) & 0xFFC),         0, 0      /* native on all ARMs, MIPS */
-#define _DE(dp) ((dp) & 0x1FFC),        0, 0     /* AArch64 256-bit SVE ld/st */
-#define _DF(dp) ((dp) & 0x3FFC),        0, 0     /* native AArch64 BASE ld/st */
-#define _DG(dp) ((dp) & 0x7FFC),        0, 0  /* native MIPS/POWER BASE ld/st */
-#define _DH(dp) ((dp) & 0xFFFC),        1, 1     /* second native on all ARMs */
-#define _DV(dp) ((dp) & 0x7FFFFFFC),    2, 2       /* native x86_64 long mode */
+#define _DP(dp) ((dp) & 0xFFE),         0, 0      /* native on all ARMs, MIPS */
+#define _DE(dp) ((dp) & 0x1FFE),        0, 0     /* AArch64 256-bit SVE ld/st */
+#define _DF(dp) ((dp) & 0x3FFE),        0, 0     /* native AArch64 BASE ld/st */
+#define _DG(dp) ((dp) & 0x7FFE),        0, 0  /* native MIPS/POWER BASE ld/st */
+#define _DH(dp) ((dp) & 0xFFFE),        1, 1     /* second native on all ARMs */
+#define _DV(dp) ((dp) & 0x7FFFFFFE),    2, 2       /* native x86_64 long mode */
 #define  PLAIN  DP(0)                /* special type for Oeax addressing mode */
 
 /* triplet pass-through wrapper */

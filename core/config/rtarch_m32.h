@@ -217,10 +217,10 @@
 
 #define B10(br) (br)
 #define B30(br) (br)
-#define P10(dp) (0x00000000 |(0x7FFC & (dp)))
+#define P10(dp) (0x00000000 |(0x7FFE & (dp)))
 #define C10(br, dp) EMPTY
 #define A10(br, dp) EMPTY
-#define C30(br, dp) EMITW(0x34000000 | TDxx << 16 | (0xFFFC & (dp)))
+#define C30(br, dp) EMITW(0x34000000 | TDxx << 16 | (0xFFFE & (dp)))
 
 #define B11(br) (br)
 #define B31(br) TPxx
@@ -228,7 +228,7 @@
 #define C11(br, dp) C31(br, dp)
 #define A11(br, dp) C31(br, dp)                                             \
                     EMITW(0x00000021 | MRM(TPxx,    (br),    TDxx) | ADR)
-#define C31(br, dp) EMITW(0x34000000 | TDxx << 16 | (0xFFFC & (dp)))
+#define C31(br, dp) EMITW(0x34000000 | TDxx << 16 | (0xFFFE & (dp)))
 
 #define B12(br) (br)
 #define B32(br) TPxx
@@ -238,7 +238,7 @@
                     EMITW(0x00000021 | MRM(TPxx,    (br),    TDxx) | ADR)
 #define C32(br, dp) EMITW(0x3C000000 | TDxx << 16 | (0x7FFF & (dp) >> 16))  \
                     EMITW(0x34000000 | TDxx << 16 | TDxx << 21 |            \
-                                                    (0xFFFC & (dp)))
+                                                    (0xFFFE & (dp)))
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 /* four registers TNxx,TAxx,TCxx,TExx below must occupy consecutive indices */
@@ -338,12 +338,12 @@
 /* displacement VAL,  TP1,  TP2         (all displacement types are unsigned) */
 /* public scalable DP/DE/DF/DG/DH/DV definitions are now provided in rtbase.h */
 
-#define _DP(dp) ((dp) & 0xFFC),         0, 0      /* native on all ARMs, MIPS */
-#define _DE(dp) ((dp) & 0x1FFC),        0, 1     /* AArch64 256-bit SVE ld/st */
-#define _DF(dp) ((dp) & 0x3FFC),        0, 1     /* native AArch64 BASE ld/st */
-#define _DG(dp) ((dp) & 0x7FFC),        0, 1  /* native MIPS/POWER BASE ld/st */
-#define _DH(dp) ((dp) & 0xFFFC),        1, 1     /* second native on all ARMs */
-#define _DV(dp) ((dp) & 0x7FFFFFFC),    2, 2       /* native x86_64 long mode */
+#define _DP(dp) ((dp) & 0xFFE),         0, 0      /* native on all ARMs, MIPS */
+#define _DE(dp) ((dp) & 0x1FFE),        0, 1     /* AArch64 256-bit SVE ld/st */
+#define _DF(dp) ((dp) & 0x3FFE),        0, 1     /* native AArch64 BASE ld/st */
+#define _DG(dp) ((dp) & 0x7FFE),        0, 1  /* native MIPS/POWER BASE ld/st */
+#define _DH(dp) ((dp) & 0xFFFE),        1, 1     /* second native on all ARMs */
+#define _DV(dp) ((dp) & 0x7FFFFFFE),    2, 2       /* native x86_64 long mode */
 #define  PLAIN  DP(0)                /* special type for Oeax addressing mode */
 
 /* triplet pass-through wrapper */
