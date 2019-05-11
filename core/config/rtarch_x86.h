@@ -1831,6 +1831,9 @@
 #define addhx_ld(RG, MS, DS)                                                \
         addhz_ld(W(RG), W(MS), W(DS))
 
+#define addhn_ld(RG, MS, DS)                                                \
+        addhz_ld(W(RG), W(MS), W(DS))
+
 #define addhx_st(RS, MG, DG)                                                \
         addhz_st(W(RS), W(MG), W(DG))
 
@@ -1878,6 +1881,9 @@
         subhz_rr(W(RG), W(RS))
 
 #define subhx_ld(RG, MS, DS)                                                \
+        subhz_ld(W(RG), W(MS), W(DS))
+
+#define subhn_ld(RG, MS, DS)                                                \
         subhz_ld(W(RG), W(MS), W(DS))
 
 #define subhx_st(RS, MG, DG)                                                \
@@ -2093,19 +2099,9 @@
         shrhz_st(W(RS), W(MG), W(DG))
 
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shrhn_rx(RG)                     /* reads Recx for shift count */   \
-        EMITB(0xD3)                                                         \
+    ESC EMITB(0xD3)                                                         \
         MRM(0x07,    MOD(RG), REG(RG))                                      \
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shrhn_rx(RG)                     /* reads Recx for shift count */   \
-        VEX(0x01,    0, 2, 2) EMITB(0xF7)                                   \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shrhn_mx(MG, DG)                 /* reads Recx for shift count */   \
     ESC EMITB(0xD3)                                                         \
@@ -2113,7 +2109,7 @@
         AUX(SIB(MG), CMD(DG), EMPTY)
 
 #define shrhn_ri(RG, IS)                                                    \
-        EMITB(0xC1)                                                         \
+    ESC EMITB(0xC1)                                                         \
         MRM(0x07,    MOD(RG), REG(RG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
@@ -2122,21 +2118,11 @@
         MRM(0x07,    MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMITB(VAL(IS)))
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shrhn_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
         movhx_rr(Recx, W(RS))                                               \
         shrhn_rx(W(RG))                                                     \
         stack_ld(Recx)
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shrhn_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        VEX(REG(RS), 0, 2, 2) EMITB(0xF7)                                   \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shrhn_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         stack_st(Recx)                                                      \
@@ -2169,6 +2155,9 @@
     ESC EMITB(0x0F) EMITB(0xAF)                                             \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define mulhn_ld(RG, MS, DS)                                                \
+        mulhx_ld(W(RG), W(MS), W(DS))
 
 
 #define mulhx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
@@ -2493,7 +2482,7 @@
         AUX(SIB(MS), CMD(DS), EMITH(VAL(IT) & ((TYP(IT) << 6) - 1)))
 
 #define cmphx_rr(RS, RT)                                                    \
-        EMITB(0x3B)                                                         \
+    ESC EMITB(0x3B)                                                         \
         MRM(REG(RS), MOD(RT), REG(RT))
 
 #define cmphx_rm(RS, MT, DT)                                                \
