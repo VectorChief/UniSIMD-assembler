@@ -2078,40 +2078,6 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
-#define movhx_ld(RD, MS, DS)                                                \
-    ESC EMITB(0x8B)                                                         \
-        MRM(REG(RD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define movhx_st(RS, MD, DD)                                                \
-    ESC EMITB(0x89)                                                         \
-        MRM(REG(RS), MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
-
-#define shlhx_mx(MG, DG)                 /* reads Recx for shift count */   \
-        shlhz_mx(W(MG), W(DG))
-
-#define shlhz_mx(MG, DG)                 /* reads Recx for shift count */   \
-    ESC EMITB(0xD3)                                                         \
-        MRM(0x04,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DG), EMPTY)
-
-
-#define shrhx_mx(MG, DG)                 /* reads Recx for shift count */   \
-        shrhz_mx(W(MG), W(DG))
-
-#define shrhz_mx(MG, DG)                 /* reads Recx for shift count */   \
-    ESC EMITB(0xD3)                                                         \
-        MRM(0x05,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DG), EMPTY)
-
-
-#define shrhn_mx(MG, DG)                 /* reads Recx for shift count */   \
-    ESC EMITB(0xD3)                                                         \
-        MRM(0x07,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DG), EMPTY)
-
 #ifndef RT_RTARCH_X86_256X1V2_H
 #undef  RT_256X1
 #define RT_256X1  (RT_128X1/16 + (RT_128X1 == 8))

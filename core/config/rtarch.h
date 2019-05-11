@@ -1848,6 +1848,10 @@
 #define EMITB(b)                ASM_BEG ASM_OP1(.byte, b) ASM_END
 #define EMITW(w)                ASM_BEG ASM_OP1(.long, w) ASM_END
 
+#define EMITH(h)                                                            \
+        EMITB((h) >> 0x00 & 0xFF)                                           \
+        EMITB((h) >> 0x08 & 0xFF)
+
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, %%eax, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(movl, lb, %%eax) ASM_END
 
@@ -2119,6 +2123,10 @@
                                 EMITB((w) >> 0x08 & 0xFF)                   \
                                 EMITB((w) >> 0x10 & 0xFF)                   \
                                 EMITB((w) >> 0x18 & 0xFF)
+
+#define EMITH(h)                                                            \
+        EMITB((h) >> 0x00 & 0xFF)                                           \
+        EMITB((h) >> 0x08 & 0xFF)
 
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, eax, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(mov, lb, eax) ASM_END
