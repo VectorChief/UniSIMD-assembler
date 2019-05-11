@@ -148,6 +148,14 @@
 #define RT_X86 RT_BASE_COMPAT_BMI /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
 #endif /* RT_BASE_COMPAT_BMI */
 
+/* mandatory escape prefix for some opcodes */
+#define ESC                                                                 \
+        EMITB(0x66)
+
+/* fwait instruction for legacy processors (fix for fstcw) */
+#define FWT                                                                 \
+        EMITB(0x9B)
+
 /* 2-byte VEX prefix with full customization (W0) */
 #define V2X(ren, len, pfx)                                                  \
         EMITB(0xC5)                                                         \

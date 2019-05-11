@@ -170,6 +170,14 @@
 
 #endif /* defined (RT_X32, RT_X64) */
 
+/* mandatory escape prefix for some opcodes (must preceed rex) */
+#define ESC                                                                 \
+        EMITB(0x66)
+
+/* fwait instruction for legacy processors (fix for fstcw) */
+#define FWT                                                                 \
+        EMITB(0x9B)
+
 /* 3-byte VEX prefix with full customization (W0) */
 #define VEX(rxg, rxm, ren, len, pfx, aux)                                   \
         EMITB(0xC4)                                                         \

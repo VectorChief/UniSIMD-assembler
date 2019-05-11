@@ -119,18 +119,6 @@
 #include "rtarch_x64_128x1v4.h"
 #endif /* RT_RTARCH_X64_128X1V4_H */
 
-/* mandatory escape prefix for some opcodes (must preceed rex) */
-#define ESC                                                                 \
-        EMITB(0x66)
-
-/* mandatory escape prefix for some opcodes (must preceed rex) */
-#define xF3                                                                 \
-        EMITB(0xF3)
-
-/* fwait instruction for legacy processors (fix for fstcw) */
-#define FWT                                                                 \
-        EMITB(0x9B)
-
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
