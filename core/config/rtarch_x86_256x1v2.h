@@ -1635,6 +1635,64 @@
         addgx_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
         movgx_st(W(XD), Mebp, inf_SCR01(0x10))
 
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, unsigned */
+
+#define adsax_rr(XG, XS)                                                    \
+        adsax3rr(W(XG), W(XG), W(XS))
+
+#define adsax_ld(XG, MS, DS)                                                \
+        adsax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adsax3rr(XD, XS, XT)                                                \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        adsax_rx(W(XD))                                                     \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adsax3ld(XD, XS, MT, DT)                                            \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        adsax_rx(W(XD))                                                     \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adsax_rx(XD) /* not portable, do not use outside */                 \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        adsgx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        adsgx_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x10))
+
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, signed */
+
+#define adsan_rr(XG, XS)                                                    \
+        adsan3rr(W(XG), W(XG), W(XS))
+
+#define adsan_ld(XG, MS, DS)                                                \
+        adsan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adsan3rr(XD, XS, XT)                                                \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        adsan_rx(W(XD))                                                     \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adsan3ld(XD, XS, MT, DT)                                            \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        adsan_rx(W(XD))                                                     \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adsan_rx(XD) /* not portable, do not use outside */                 \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        adsgn_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        adsgn_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x10))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subax_rr(XG, XS)                                                    \
@@ -1662,6 +1720,64 @@
         movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
         movgx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
         subgx_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x10))
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, unsigned */
+
+#define sbsax_rr(XG, XS)                                                    \
+        sbsax3rr(W(XG), W(XG), W(XS))
+
+#define sbsax_ld(XG, MS, DS)                                                \
+        sbsax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define sbsax3rr(XD, XS, XT)                                                \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        sbsax_rx(W(XD))                                                     \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define sbsax3ld(XD, XS, MT, DT)                                            \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        sbsax_rx(W(XD))                                                     \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define sbsax_rx(XD) /* not portable, do not use outside */                 \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        sbsgx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        sbsgx_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x10))
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, signed */
+
+#define sbsan_rr(XG, XS)                                                    \
+        sbsan3rr(W(XG), W(XG), W(XS))
+
+#define sbsan_ld(XG, MS, DS)                                                \
+        sbsan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define sbsan3rr(XD, XS, XT)                                                \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        sbsan_rx(W(XD))                                                     \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define sbsan3ld(XD, XS, MT, DT)                                            \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        sbsan_rx(W(XD))                                                     \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define sbsan_rx(XD) /* not portable, do not use outside */                 \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        sbsgn_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        sbsgn_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
         movgx_st(W(XD), Mebp, inf_SCR01(0x10))
 
 /* mul (G = G * S), (D = S * T) if (#D != #S) */
@@ -1793,6 +1909,40 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, unsigned */
+
+#define adsax_rr(XG, XS)                                                    \
+        adsax3rr(W(XG), W(XG), W(XS))
+
+#define adsax_ld(XG, MS, DS)                                                \
+        adsax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adsax3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 1, 1) EMITB(0xDD)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define adsax3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 1, 1) EMITB(0xDD)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, signed */
+
+#define adsan_rr(XG, XS)                                                    \
+        adsan3rr(W(XG), W(XG), W(XS))
+
+#define adsan_ld(XG, MS, DS)                                                \
+        adsan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adsan3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 1, 1) EMITB(0xED)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define adsan3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 1, 1) EMITB(0xED)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subax_rr(XG, XS)                                                    \
@@ -1807,6 +1957,40 @@
 
 #define subax3ld(XD, XS, MT, DT)                                            \
         V2X(REG(XS), 1, 1) EMITB(0xF9)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, unsigned */
+
+#define sbsax_rr(XG, XS)                                                    \
+        sbsax3rr(W(XG), W(XG), W(XS))
+
+#define sbsax_ld(XG, MS, DS)                                                \
+        sbsax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define sbsax3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 1, 1) EMITB(0xD9)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define sbsax3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 1, 1) EMITB(0xD9)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, signed */
+
+#define sbsan_rr(XG, XS)                                                    \
+        sbsan3rr(W(XG), W(XG), W(XS))
+
+#define sbsan_ld(XG, MS, DS)                                                \
+        sbsan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define sbsan3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 1, 1) EMITB(0xE9)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define sbsan3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 1, 1) EMITB(0xE9)                                      \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 

@@ -269,6 +269,46 @@
         EMITW(0x7C000619 | MXM(TmmM,    T1xx,    TPxx))                     \
         EMITW(0x10000040 | MXM(RYG(XD), RYG(XS), TmmM))
 
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, unsigned */
+
+#define adsax_rr(XG, XS)                                                    \
+        adsax3rr(W(XG), W(XG), W(XS))
+
+#define adsax_ld(XG, MS, DS)                                                \
+        adsax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adsax3rr(XD, XS, XT)                                                \
+        EMITW(0x10000240 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x10000240 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define adsax3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000619 | MXM(TmmM,    T0xx,    TPxx))                     \
+        EMITW(0x10000240 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x7C000619 | MXM(TmmM,    T1xx,    TPxx))                     \
+        EMITW(0x10000240 | MXM(RYG(XD), RYG(XS), TmmM))
+
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, signed */
+
+#define adsan_rr(XG, XS)                                                    \
+        adsan3rr(W(XG), W(XG), W(XS))
+
+#define adsan_ld(XG, MS, DS)                                                \
+        adsan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adsan3rr(XD, XS, XT)                                                \
+        EMITW(0x10000340 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x10000340 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define adsan3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000619 | MXM(TmmM,    T0xx,    TPxx))                     \
+        EMITW(0x10000340 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x7C000619 | MXM(TmmM,    T1xx,    TPxx))                     \
+        EMITW(0x10000340 | MXM(RYG(XD), RYG(XS), TmmM))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subax_rr(XG, XS)                                                    \
@@ -288,6 +328,46 @@
         EMITW(0x10000440 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x7C000619 | MXM(TmmM,    T1xx,    TPxx))                     \
         EMITW(0x10000440 | MXM(RYG(XD), RYG(XS), TmmM))
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, unsigned */
+
+#define sbsax_rr(XG, XS)                                                    \
+        sbsax3rr(W(XG), W(XG), W(XS))
+
+#define sbsax_ld(XG, MS, DS)                                                \
+        sbsax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define sbsax3rr(XD, XS, XT)                                                \
+        EMITW(0x10000640 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x10000640 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define sbsax3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000619 | MXM(TmmM,    T0xx,    TPxx))                     \
+        EMITW(0x10000640 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x7C000619 | MXM(TmmM,    T1xx,    TPxx))                     \
+        EMITW(0x10000640 | MXM(RYG(XD), RYG(XS), TmmM))
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, signed */
+
+#define sbsan_rr(XG, XS)                                                    \
+        sbsan3rr(W(XG), W(XG), W(XS))
+
+#define sbsan_ld(XG, MS, DS)                                                \
+        sbsan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define sbsan3rr(XD, XS, XT)                                                \
+        EMITW(0x10000740 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x10000740 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define sbsan3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000619 | MXM(TmmM,    T0xx,    TPxx))                     \
+        EMITW(0x10000740 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x7C000619 | MXM(TmmM,    T1xx,    TPxx))                     \
+        EMITW(0x10000740 | MXM(RYG(XD), RYG(XS), TmmM))
 
 /* mul (G = G * S), (D = S * T) if (#D != #S) */
 

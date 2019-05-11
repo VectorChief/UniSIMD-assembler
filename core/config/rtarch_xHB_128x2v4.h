@@ -267,6 +267,54 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xFD)                       \
         movax_rr(W(XD), W(XS))                                              \
         addax_ld(W(XD), W(MT), W(DT))
 
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, unsigned */
+
+#define adsax_rr(XG, XS)                                                    \
+    ESC REX(0,             0) EMITB(0x0F) EMITB(0xDD)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+    ESC REX(1,             1) EMITB(0x0F) EMITB(0xDD)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define adsax_ld(XG, MS, DS)                                                \
+ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0xDD)                       \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xDD)                       \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
+
+#define adsax3rr(XD, XS, XT)                                                \
+        movax_rr(W(XD), W(XS))                                              \
+        adsax_rr(W(XD), W(XT))
+
+#define adsax3ld(XD, XS, MT, DT)                                            \
+        movax_rr(W(XD), W(XS))                                              \
+        adsax_ld(W(XD), W(MT), W(DT))
+
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, signed */
+
+#define adsan_rr(XG, XS)                                                    \
+    ESC REX(0,             0) EMITB(0x0F) EMITB(0xED)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+    ESC REX(1,             1) EMITB(0x0F) EMITB(0xED)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define adsan_ld(XG, MS, DS)                                                \
+ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0xED)                       \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xED)                       \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
+
+#define adsan3rr(XD, XS, XT)                                                \
+        movax_rr(W(XD), W(XS))                                              \
+        adsan_rr(W(XD), W(XT))
+
+#define adsan3ld(XD, XS, MT, DT)                                            \
+        movax_rr(W(XD), W(XS))                                              \
+        adsan_ld(W(XD), W(MT), W(DT))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subax_rr(XG, XS)                                                    \
@@ -290,6 +338,54 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xF9)                       \
 #define subax3ld(XD, XS, MT, DT)                                            \
         movax_rr(W(XD), W(XS))                                              \
         subax_ld(W(XD), W(MT), W(DT))
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, unsigned */
+
+#define sbsax_rr(XG, XS)                                                    \
+    ESC REX(0,             0) EMITB(0x0F) EMITB(0xD9)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+    ESC REX(1,             1) EMITB(0x0F) EMITB(0xD9)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define sbsax_ld(XG, MS, DS)                                                \
+ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0xD9)                       \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD9)                       \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
+
+#define sbsax3rr(XD, XS, XT)                                                \
+        movax_rr(W(XD), W(XS))                                              \
+        sbsax_rr(W(XD), W(XT))
+
+#define sbsax3ld(XD, XS, MT, DT)                                            \
+        movax_rr(W(XD), W(XS))                                              \
+        sbsax_ld(W(XD), W(MT), W(DT))
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, signed */
+
+#define sbsan_rr(XG, XS)                                                    \
+    ESC REX(0,             0) EMITB(0x0F) EMITB(0xE9)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+    ESC REX(1,             1) EMITB(0x0F) EMITB(0xE9)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define sbsan_ld(XG, MS, DS)                                                \
+ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0xE9)                       \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE9)                       \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
+
+#define sbsan3rr(XD, XS, XT)                                                \
+        movax_rr(W(XD), W(XS))                                              \
+        sbsan_rr(W(XD), W(XT))
+
+#define sbsan3ld(XD, XS, MT, DT)                                            \
+        movax_rr(W(XD), W(XS))                                              \
+        sbsan_ld(W(XD), W(MT), W(DT))
 
 /* mul (G = G * S), (D = S * T) if (#D != #S) */
 

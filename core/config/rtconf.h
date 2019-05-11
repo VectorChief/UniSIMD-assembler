@@ -1366,6 +1366,34 @@
 #define addmx3ld(XD, XS, MT, DT)                                            \
         addax3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, unsigned */
+
+#define adsmx_rr(XG, XS)                                                    \
+        adsax_rr(W(XG), W(XS))
+
+#define adsmx_ld(XG, MS, DS)                                                \
+        adsax_ld(W(XG), W(MS), W(DS))
+
+#define adsmx3rr(XD, XS, XT)                                                \
+        adsax3rr(W(XD), W(XS), W(XT))
+
+#define adsmx3ld(XD, XS, MT, DT)                                            \
+        adsax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, signed */
+
+#define adsmn_rr(XG, XS)                                                    \
+        adsan_rr(W(XG), W(XS))
+
+#define adsmn_ld(XG, MS, DS)                                                \
+        adsan_ld(W(XG), W(MS), W(DS))
+
+#define adsmn3rr(XD, XS, XT)                                                \
+        adsan3rr(W(XD), W(XS), W(XT))
+
+#define adsmn3ld(XD, XS, MT, DT)                                            \
+        adsan3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define submx_rr(XG, XS)                                                    \
@@ -1379,6 +1407,34 @@
 
 #define submx3ld(XD, XS, MT, DT)                                            \
         subax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, unsigned */
+
+#define sbsmx_rr(XG, XS)                                                    \
+        sbsax_rr(W(XG), W(XS))
+
+#define sbsmx_ld(XG, MS, DS)                                                \
+        sbsax_ld(W(XG), W(MS), W(DS))
+
+#define sbsmx3rr(XD, XS, XT)                                                \
+        sbsax3rr(W(XD), W(XS), W(XT))
+
+#define sbsmx3ld(XD, XS, MT, DT)                                            \
+        sbsax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, signed */
+
+#define sbsmn_rr(XG, XS)                                                    \
+        sbsan_rr(W(XG), W(XS))
+
+#define sbsmn_ld(XG, MS, DS)                                                \
+        sbsan_ld(W(XG), W(MS), W(DS))
+
+#define sbsmn3rr(XD, XS, XT)                                                \
+        sbsan3rr(W(XD), W(XS), W(XT))
+
+#define sbsmn3ld(XD, XS, MT, DT)                                            \
+        sbsan3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* mul (G = G * S), (D = S * T) if (#D != #S) */
 
@@ -1944,6 +2000,34 @@
 #define addmx3ld(XD, XS, MT, DT)                                            \
         addgx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, unsigned */
+
+#define adsmx_rr(XG, XS)                                                    \
+        adsgx_rr(W(XG), W(XS))
+
+#define adsmx_ld(XG, MS, DS)                                                \
+        adsgx_ld(W(XG), W(MS), W(DS))
+
+#define adsmx3rr(XD, XS, XT)                                                \
+        adsgx3rr(W(XD), W(XS), W(XT))
+
+#define adsmx3ld(XD, XS, MT, DT)                                            \
+        adsgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, signed */
+
+#define adsmn_rr(XG, XS)                                                    \
+        adsgn_rr(W(XG), W(XS))
+
+#define adsmn_ld(XG, MS, DS)                                                \
+        adsgn_ld(W(XG), W(MS), W(DS))
+
+#define adsmn3rr(XD, XS, XT)                                                \
+        adsgn3rr(W(XD), W(XS), W(XT))
+
+#define adsmn3ld(XD, XS, MT, DT)                                            \
+        adsgn3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define submx_rr(XG, XS)                                                    \
@@ -1957,6 +2041,34 @@
 
 #define submx3ld(XD, XS, MT, DT)                                            \
         subgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, unsigned */
+
+#define sbsmx_rr(XG, XS)                                                    \
+        sbsgx_rr(W(XG), W(XS))
+
+#define sbsmx_ld(XG, MS, DS)                                                \
+        sbsgx_ld(W(XG), W(MS), W(DS))
+
+#define sbsmx3rr(XD, XS, XT)                                                \
+        sbsgx3rr(W(XD), W(XS), W(XT))
+
+#define sbsmx3ld(XD, XS, MT, DT)                                            \
+        sbsgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, signed */
+
+#define sbsmn_rr(XG, XS)                                                    \
+        sbsgn_rr(W(XG), W(XS))
+
+#define sbsmn_ld(XG, MS, DS)                                                \
+        sbsgn_ld(W(XG), W(MS), W(DS))
+
+#define sbsmn3rr(XD, XS, XT)                                                \
+        sbsgn3rr(W(XD), W(XS), W(XT))
+
+#define sbsmn3ld(XD, XS, MT, DT)                                            \
+        sbsgn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* mul (G = G * S), (D = S * T) if (#D != #S) */
 

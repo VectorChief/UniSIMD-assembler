@@ -271,6 +271,76 @@
         addgx_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
         movgx_st(W(XD), Mebp, inf_SCR01(0x30))
 
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, unsigned */
+
+#define adsmx_rr(XG, XS)                                                    \
+        adsmx3rr(W(XG), W(XG), W(XS))
+
+#define adsmx_ld(XG, MS, DS)                                                \
+        adsmx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adsmx3rr(XD, XS, XT)                                                \
+        movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        adsmx_rx(W(XD))                                                     \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adsmx3ld(XD, XS, MT, DT)                                            \
+        movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movmx_ld(W(XD), W(MT), W(DT))                                       \
+        movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        adsmx_rx(W(XD))                                                     \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adsmx_rx(XD) /* not portable, do not use outside */                 \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        adsgx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        adsgx_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        adsgx_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        adsgx_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x30))
+
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, signed */
+
+#define adsmn_rr(XG, XS)                                                    \
+        adsmn3rr(W(XG), W(XG), W(XS))
+
+#define adsmn_ld(XG, MS, DS)                                                \
+        adsmn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adsmn3rr(XD, XS, XT)                                                \
+        movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        adsmn_rx(W(XD))                                                     \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adsmn3ld(XD, XS, MT, DT)                                            \
+        movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movmx_ld(W(XD), W(MT), W(DT))                                       \
+        movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        adsmn_rx(W(XD))                                                     \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adsmn_rx(XD) /* not portable, do not use outside */                 \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        adsgn_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        adsgn_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        adsgn_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        adsgn_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x30))
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define submx_rr(XG, XS)                                                    \
@@ -304,6 +374,76 @@
         movgx_st(W(XD), Mebp, inf_SCR01(0x20))                              \
         movgx_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
         subgx_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x30))
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, unsigned */
+
+#define sbsmx_rr(XG, XS)                                                    \
+        sbsmx3rr(W(XG), W(XG), W(XS))
+
+#define sbsmx_ld(XG, MS, DS)                                                \
+        sbsmx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define sbsmx3rr(XD, XS, XT)                                                \
+        movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        sbsmx_rx(W(XD))                                                     \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define sbsmx3ld(XD, XS, MT, DT)                                            \
+        movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movmx_ld(W(XD), W(MT), W(DT))                                       \
+        movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        sbsmx_rx(W(XD))                                                     \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define sbsmx_rx(XD) /* not portable, do not use outside */                 \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        sbsgx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        sbsgx_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        sbsgx_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        sbsgx_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x30))
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, signed */
+
+#define sbsmn_rr(XG, XS)                                                    \
+        sbsmn3rr(W(XG), W(XG), W(XS))
+
+#define sbsmn_ld(XG, MS, DS)                                                \
+        sbsmn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define sbsmn3rr(XD, XS, XT)                                                \
+        movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        sbsmn_rx(W(XD))                                                     \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define sbsmn3ld(XD, XS, MT, DT)                                            \
+        movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movmx_ld(W(XD), W(MT), W(DT))                                       \
+        movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        sbsmn_rx(W(XD))                                                     \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define sbsmn_rx(XD) /* not portable, do not use outside */                 \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        sbsgn_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        sbsgn_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        sbsgn_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        sbsgn_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
         movgx_st(W(XD), Mebp, inf_SCR01(0x30))
 
 /* mul (G = G * S), (D = S * T) if (#D != #S) */
@@ -482,6 +622,50 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, unsigned */
+
+#define adsmx_rr(XG, XS)                                                    \
+        adsmx3rr(W(XG), W(XG), W(XS))
+
+#define adsmx_ld(XG, MS, DS)                                                \
+        adsmx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adsmx3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 1, 1) EMITB(0xDD)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 1, 1) EMITB(0xDD)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define adsmx3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 1, 1) EMITB(0xDD)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 1, 1) EMITB(0xDD)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, signed */
+
+#define adsmn_rr(XG, XS)                                                    \
+        adsmn3rr(W(XG), W(XG), W(XS))
+
+#define adsmn_ld(XG, MS, DS)                                                \
+        adsmn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adsmn3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 1, 1) EMITB(0xED)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 1, 1) EMITB(0xED)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define adsmn3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 1, 1) EMITB(0xED)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 1, 1) EMITB(0xED)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define submx_rr(XG, XS)                                                    \
@@ -501,6 +685,50 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
     ADR VEX(1,       RXB(MT), REH(XS), 1, 1, 1) EMITB(0xF9)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, unsigned */
+
+#define sbsmx_rr(XG, XS)                                                    \
+        sbsmx3rr(W(XG), W(XG), W(XS))
+
+#define sbsmx_ld(XG, MS, DS)                                                \
+        sbsmx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define sbsmx3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 1, 1) EMITB(0xD9)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 1, 1) EMITB(0xD9)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define sbsmx3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 1, 1) EMITB(0xD9)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 1, 1) EMITB(0xD9)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, signed */
+
+#define sbsmn_rr(XG, XS)                                                    \
+        sbsmn3rr(W(XG), W(XG), W(XS))
+
+#define sbsmn_ld(XG, MS, DS)                                                \
+        sbsmn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define sbsmn3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 1, 1) EMITB(0xE9)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 1, 1) EMITB(0xE9)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define sbsmn3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 1, 1) EMITB(0xE9)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 1, 1) EMITB(0xE9)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 

@@ -227,6 +227,40 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, unsigned */
+
+#define adsax_rr(XG, XS)                                                    \
+        adsax3rr(W(XG), W(XG), W(XS))
+
+#define adsax_ld(XG, MS, DS)                                                \
+        adsax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adsax3rr(XD, XS, XT)                                                \
+        EVX(RXB(XD), RXB(XT), REN(XS), 1, 1, 1) EMITB(0xDD)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define adsax3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xDD)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, signed */
+
+#define adsan_rr(XG, XS)                                                    \
+        adsan3rr(W(XG), W(XG), W(XS))
+
+#define adsan_ld(XG, MS, DS)                                                \
+        adsan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adsan3rr(XD, XS, XT)                                                \
+        EVX(RXB(XD), RXB(XT), REN(XS), 1, 1, 1) EMITB(0xED)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define adsan3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xED)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* sub (G = G - S), (D = S - T) if (#D != #S) */
 
 #define subax_rr(XG, XS)                                                    \
@@ -241,6 +275,40 @@
 
 #define subax3ld(XD, XS, MT, DT)                                            \
     ADR EVX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xF9)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, unsigned */
+
+#define sbsax_rr(XG, XS)                                                    \
+        sbsax3rr(W(XG), W(XG), W(XS))
+
+#define sbsax_ld(XG, MS, DS)                                                \
+        sbsax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define sbsax3rr(XD, XS, XT)                                                \
+        EVX(RXB(XD), RXB(XT), REN(XS), 1, 1, 1) EMITB(0xD9)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define sbsax3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xD9)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, signed */
+
+#define sbsan_rr(XG, XS)                                                    \
+        sbsan3rr(W(XG), W(XG), W(XS))
+
+#define sbsan_ld(XG, MS, DS)                                                \
+        sbsan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define sbsan3rr(XD, XS, XT)                                                \
+        EVX(RXB(XD), RXB(XT), REN(XS), 1, 1, 1) EMITB(0xE9)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define sbsan3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xE9)                 \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
