@@ -1055,19 +1055,19 @@ ADR ESC REX(0,       RXB(MS)) EMITB(0xF7)                                   \
  * set-flags: yes */
 
 #define cmphx_ri(RS, IT)                                                    \
-        REX(0,       RXB(RS)) EMITB(0x81)                                   \
-        MRM(0x07,    MOD(RS), REG(RS))                                      \
-        AUX(EMPTY,   EMPTY,   CMD(IT))
+    ESC REX(0,       RXB(RS)) EMITB(0x81)                                   \
+        MRM(0x07,    MOD(RS), REG(RS))   /* truncate IC with TYP below */   \
+        AUX(EMPTY,   EMPTY,   EMITH(VAL(IT) & ((TYP(IT) << 6) - 1)))
 
 #define cmphx_mi(MS, DS, IT)                                                \
 ADR ESC REX(0,       RXB(MS)) EMITB(0x81)                                   \
-        MRM(0x07,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), CMD(IT))
+        MRM(0x07,    MOD(MS), REG(MS))   /* truncate IC with TYP below */   \
+        AUX(SIB(MS), CMD(DS), EMITH(VAL(IT) & ((TYP(IT) << 6) - 1)))
 
 #define cmphn_mi(MS, DS, IT)                                                \
 ADR ESC REX(0,       RXB(MS)) EMITB(0x81)                                   \
-        MRM(0x07,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), CMD(IT))
+        MRM(0x07,    MOD(MS), REG(MS))   /* truncate IC with TYP below */   \
+        AUX(SIB(MS), CMD(DS), EMITH(VAL(IT) & ((TYP(IT) << 6) - 1)))
 
 #define cmphx_rr(RS, RT)                                                    \
         REX(RXB(RS), RXB(RT)) EMITB(0x3B)                                   \
