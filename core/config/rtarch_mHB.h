@@ -814,6 +814,8 @@
 #define shrhn_mr(MG, DG, RS)                                                \
         shrhn_st(W(RS), W(MG), W(DG))
 
+#if (RT_BASE_COMPAT_REV < 6) /* pre-r6 */
+
 /* mul (G = G * S)
  * set-flags: undefined */
 
