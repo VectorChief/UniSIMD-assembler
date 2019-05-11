@@ -7,14 +7,12 @@
 #ifndef RT_RTARCH_A64_H
 #define RT_RTARCH_A64_H
 
-#define RT_BASE_REGS        16
-
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
 
 /*
- * rtarch_a64.h: Implementation of ARMv8:AArch64 64-bit BASE instructions.
+ * rtarch_a64.h: Implementation of AArch64 64-bit BASE instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

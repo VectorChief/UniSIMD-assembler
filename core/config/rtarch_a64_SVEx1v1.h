@@ -14,7 +14,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_a64_SVEx1v1.h: Implementation of ARMv8:AArch64 fp64 SVE instructions.
+ * rtarch_a64_SVEx1v1.h: Implementation of AArch64 fp64 SVE instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
