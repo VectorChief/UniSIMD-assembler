@@ -12,7 +12,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_aHF_SVEx1v1.h: Implementation of AArch64 half-fp SVE instructions.
+ * rtarch_aHF_SVEx1v1.h: Implementation of AArch64 fp16 SVE instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * and contains architecture-specific extensions

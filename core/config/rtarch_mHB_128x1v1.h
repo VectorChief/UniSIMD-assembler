@@ -12,7 +12,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_mHB_128x1v1.h: Implementation of MIPS half+byte MSA instructions.
+ * rtarch_mHB_128x1v1.h: Implementation of MIPS32 half+byte MSA instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

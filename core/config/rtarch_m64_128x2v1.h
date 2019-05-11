@@ -15,7 +15,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_m64_128x2v1.h: Implementation of MIPS fp64 MSA instruction pairs.
+ * rtarch_m64_128x2v1.h: Implementation of MIPS64 fp64 MSA instruction pairs.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

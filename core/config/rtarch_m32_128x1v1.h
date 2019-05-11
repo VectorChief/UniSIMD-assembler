@@ -16,7 +16,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_m32_128x1v1.h: Implementation of MIPS fp32 MSA instructions.
+ * rtarch_m32_128x1v1.h: Implementation of MIPS32 fp32 MSA instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

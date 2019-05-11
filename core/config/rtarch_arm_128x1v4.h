@@ -16,7 +16,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_arm_128x1v4.h: Implementation of ARMv7/AArch32 fp32 NEON instructions.
+ * rtarch_arm_128x1v4.h: Implementation of ARMv7 fp32 NEON instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

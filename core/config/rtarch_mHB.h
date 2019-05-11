@@ -12,7 +12,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_mHB.h: Implementation of MIPS r5/r6 half+byte BASE instructions.
+ * rtarch_mHB.h: Implementation of MIPS32 r5/r6 half+byte BASE instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

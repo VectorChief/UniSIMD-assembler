@@ -12,7 +12,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_aHF_128x1v2.h: Implementation of AArch64 half-fp NEON instructions.
+ * rtarch_aHF_128x1v2.h: Implementation of AArch64 fp16 NEON instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * and contains architecture-specific extensions

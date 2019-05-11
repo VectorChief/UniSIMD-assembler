@@ -12,7 +12,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_pQF_128x1v2.h: Implementation of POWER quad-fp VSX3 instructions.
+ * rtarch_pQF_128x1v2.h: Implementation of POWER fp128 VSX3 instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * and contains architecture-specific extensions
