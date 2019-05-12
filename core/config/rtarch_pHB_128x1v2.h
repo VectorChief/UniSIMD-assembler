@@ -227,16 +227,16 @@
 
 /* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, signed */
 
-#define adsgx_rr(XG, XS)                                                    \
-        adsgx3rr(W(XG), W(XG), W(XS))
+#define adsgn_rr(XG, XS)                                                    \
+        adsgn3rr(W(XG), W(XG), W(XS))
 
-#define adsgx_ld(XG, MS, DS)                                                \
-        adsgx3ld(W(XG), W(XG), W(MS), W(DS))
+#define adsgn_ld(XG, MS, DS)                                                \
+        adsgn3ld(W(XG), W(XG), W(MS), W(DS))
 
-#define adsgx3rr(XD, XS, XT)                                                \
+#define adsgn3rr(XD, XS, XT)                                                \
         EMITW(0x10000340 | MXM(REG(XD), REG(XS), REG(XT)))
 
-#define adsgx3ld(XD, XS, MT, DT)                                            \
+#define adsgn3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x10000340 | MXM(REG(XD), REG(XS), TmmM))
