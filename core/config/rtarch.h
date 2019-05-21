@@ -29,7 +29,7 @@
  * Note that AArch32 mode of ARMv8 ISA is a part of legacy ARM target as it
  * only brings SIMD fp-convert with round parameter and other minor tweaks,
  * while IEEE-compatible SIMD fp-arithmetic with full square root and divide
- * is exposed in AArch64 mode of ARMv8 ISA via A32 and A64 targets (fp32+fp64).
+ * is exposed in AArch64 mode of ARMv8 ISA via A32 and A64 targets (fp32/fp64).
  *
  * Current naming scheme for legacy, modern and potential future targets.
  *
