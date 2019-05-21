@@ -9590,7 +9590,7 @@
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
  * cmd*p_** - applies [cmd] to   signed integer args, [p] - part-range
  *
- * cmd*z_** - applies [cmd] while setting condition flags, [z] - zero flag.
+ * cmd**Z** - applies [cmd] while setting condition flags, [Z] - zero flag.
  * Regular cmd*x_**, cmd*n_** instructions may or may not set flags depending
  * on the target architecture, thus no assumptions can be made for jezxx/jnzxx.
  *
@@ -9646,7 +9646,7 @@
  * Alternatively, data written natively in C/C++ can be worked on from within
  * a given (one) subset if appropriate offset correction is used from rtbase.h.
  *
- * Setting-flags instruction naming scheme may change again in the future for
+ * Setting-flags instruction naming scheme has been changed again recently for
  * better orthogonality with operand size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
@@ -9714,23 +9714,23 @@
         andwx_mr(W(MG), W(DG), W(RS))
 
 
-#define andxz_ri(RG, IS)                                                    \
-        andwz_ri(W(RG), W(IS))
+#define andxxZri(RG, IS)                                                    \
+        andwxZri(W(RG), W(IS))
 
-#define andxz_mi(MG, DG, IS)                                                \
-        andwz_mi(W(MG), W(DG), W(IS))
+#define andxxZmi(MG, DG, IS)                                                \
+        andwxZmi(W(MG), W(DG), W(IS))
 
-#define andxz_rr(RG, RS)                                                    \
-        andwz_rr(W(RG), W(RS))
+#define andxxZrr(RG, RS)                                                    \
+        andwxZrr(W(RG), W(RS))
 
-#define andxz_ld(RG, MS, DS)                                                \
-        andwz_ld(W(RG), W(MS), W(DS))
+#define andxxZld(RG, MS, DS)                                                \
+        andwxZld(W(RG), W(MS), W(DS))
 
-#define andxz_st(RS, MG, DG)                                                \
-        andwz_st(W(RS), W(MG), W(DG))
+#define andxxZst(RS, MG, DG)                                                \
+        andwxZst(W(RS), W(MG), W(DG))
 
-#define andxz_mr(MG, DG, RS)                                                \
-        andwz_mr(W(MG), W(DG), W(RS))
+#define andxxZmr(MG, DG, RS)                                                \
+        andwxZmr(W(MG), W(DG), W(RS))
 
 /* ann (G = ~G & S)
  * set-flags: undefined (*x), yes (*z) */
@@ -9754,23 +9754,23 @@
         annwx_mr(W(MG), W(DG), W(RS))
 
 
-#define annxz_ri(RG, IS)                                                    \
-        annwz_ri(W(RG), W(IS))
+#define annxxZri(RG, IS)                                                    \
+        annwxZri(W(RG), W(IS))
 
-#define annxz_mi(MG, DG, IS)                                                \
-        annwz_mi(W(MG), W(DG), W(IS))
+#define annxxZmi(MG, DG, IS)                                                \
+        annwxZmi(W(MG), W(DG), W(IS))
 
-#define annxz_rr(RG, RS)                                                    \
-        annwz_rr(W(RG), W(RS))
+#define annxxZrr(RG, RS)                                                    \
+        annwxZrr(W(RG), W(RS))
 
-#define annxz_ld(RG, MS, DS)                                                \
-        annwz_ld(W(RG), W(MS), W(DS))
+#define annxxZld(RG, MS, DS)                                                \
+        annwxZld(W(RG), W(MS), W(DS))
 
-#define annxz_st(RS, MG, DG)                                                \
-        annwz_st(W(RS), W(MG), W(DG))
+#define annxxZst(RS, MG, DG)                                                \
+        annwxZst(W(RS), W(MG), W(DG))
 
-#define annxz_mr(MG, DG, RS)                                                \
-        annwz_mr(W(MG), W(DG), W(RS))
+#define annxxZmr(MG, DG, RS)                                                \
+        annwxZmr(W(MG), W(DG), W(RS))
 
 /* orr (G = G | S)
  * set-flags: undefined (*x), yes (*z) */
@@ -9794,23 +9794,23 @@
         orrwx_mr(W(MG), W(DG), W(RS))
 
 
-#define orrxz_ri(RG, IS)                                                    \
-        orrwz_ri(W(RG), W(IS))
+#define orrxxZri(RG, IS)                                                    \
+        orrwxZri(W(RG), W(IS))
 
-#define orrxz_mi(MG, DG, IS)                                                \
-        orrwz_mi(W(MG), W(DG), W(IS))
+#define orrxxZmi(MG, DG, IS)                                                \
+        orrwxZmi(W(MG), W(DG), W(IS))
 
-#define orrxz_rr(RG, RS)                                                    \
-        orrwz_rr(W(RG), W(RS))
+#define orrxxZrr(RG, RS)                                                    \
+        orrwxZrr(W(RG), W(RS))
 
-#define orrxz_ld(RG, MS, DS)                                                \
-        orrwz_ld(W(RG), W(MS), W(DS))
+#define orrxxZld(RG, MS, DS)                                                \
+        orrwxZld(W(RG), W(MS), W(DS))
 
-#define orrxz_st(RS, MG, DG)                                                \
-        orrwz_st(W(RS), W(MG), W(DG))
+#define orrxxZst(RS, MG, DG)                                                \
+        orrwxZst(W(RS), W(MG), W(DG))
 
-#define orrxz_mr(MG, DG, RS)                                                \
-        orrwz_mr(W(MG), W(DG), W(RS))
+#define orrxxZmr(MG, DG, RS)                                                \
+        orrwxZmr(W(MG), W(DG), W(RS))
 
 /* orn (G = ~G | S)
  * set-flags: undefined (*x), yes (*z) */
@@ -9834,23 +9834,23 @@
         ornwx_mr(W(MG), W(DG), W(RS))
 
 
-#define ornxz_ri(RG, IS)                                                    \
-        ornwz_ri(W(RG), W(IS))
+#define ornxxZri(RG, IS)                                                    \
+        ornwxZri(W(RG), W(IS))
 
-#define ornxz_mi(MG, DG, IS)                                                \
-        ornwz_mi(W(MG), W(DG), W(IS))
+#define ornxxZmi(MG, DG, IS)                                                \
+        ornwxZmi(W(MG), W(DG), W(IS))
 
-#define ornxz_rr(RG, RS)                                                    \
-        ornwz_rr(W(RG), W(RS))
+#define ornxxZrr(RG, RS)                                                    \
+        ornwxZrr(W(RG), W(RS))
 
-#define ornxz_ld(RG, MS, DS)                                                \
-        ornwz_ld(W(RG), W(MS), W(DS))
+#define ornxxZld(RG, MS, DS)                                                \
+        ornwxZld(W(RG), W(MS), W(DS))
 
-#define ornxz_st(RS, MG, DG)                                                \
-        ornwz_st(W(RS), W(MG), W(DG))
+#define ornxxZst(RS, MG, DG)                                                \
+        ornwxZst(W(RS), W(MG), W(DG))
 
-#define ornxz_mr(MG, DG, RS)                                                \
-        ornwz_mr(W(MG), W(DG), W(RS))
+#define ornxxZmr(MG, DG, RS)                                                \
+        ornwxZmr(W(MG), W(DG), W(RS))
 
 /* xor (G = G ^ S)
  * set-flags: undefined (*x), yes (*z) */
@@ -9874,23 +9874,23 @@
         xorwx_mr(W(MG), W(DG), W(RS))
 
 
-#define xorxz_ri(RG, IS)                                                    \
-        xorwz_ri(W(RG), W(IS))
+#define xorxxZri(RG, IS)                                                    \
+        xorwxZri(W(RG), W(IS))
 
-#define xorxz_mi(MG, DG, IS)                                                \
-        xorwz_mi(W(MG), W(DG), W(IS))
+#define xorxxZmi(MG, DG, IS)                                                \
+        xorwxZmi(W(MG), W(DG), W(IS))
 
-#define xorxz_rr(RG, RS)                                                    \
-        xorwz_rr(W(RG), W(RS))
+#define xorxxZrr(RG, RS)                                                    \
+        xorwxZrr(W(RG), W(RS))
 
-#define xorxz_ld(RG, MS, DS)                                                \
-        xorwz_ld(W(RG), W(MS), W(DS))
+#define xorxxZld(RG, MS, DS)                                                \
+        xorwxZld(W(RG), W(MS), W(DS))
 
-#define xorxz_st(RS, MG, DG)                                                \
-        xorwz_st(W(RS), W(MG), W(DG))
+#define xorxxZst(RS, MG, DG)                                                \
+        xorwxZst(W(RS), W(MG), W(DG))
 
-#define xorxz_mr(MG, DG, RS)                                                \
-        xorwz_mr(W(MG), W(DG), W(RS))
+#define xorxxZmr(MG, DG, RS)                                                \
+        xorwxZmr(W(MG), W(DG), W(RS))
 
 /* not (G = ~G)
  * set-flags: no */
@@ -9911,11 +9911,11 @@
         negwx_mx(W(MG), W(DG))
 
 
-#define negxz_rx(RG)                                                        \
-        negwz_rx(W(RG))
+#define negxxZrx(RG)                                                        \
+        negwxZrx(W(RG))
 
-#define negxz_mx(MG, DG)                                                    \
-        negwz_mx(W(MG), W(DG))
+#define negxxZmx(MG, DG)                                                    \
+        negwxZmx(W(MG), W(DG))
 
 /* add (G = G + S)
  * set-flags: undefined (*x), yes (*z) */
@@ -9939,23 +9939,23 @@
         addwx_mr(W(MG), W(DG), W(RS))
 
 
-#define addxz_ri(RG, IS)                                                    \
-        addwz_ri(W(RG), W(IS))
+#define addxxZri(RG, IS)                                                    \
+        addwxZri(W(RG), W(IS))
 
-#define addxz_mi(MG, DG, IS)                                                \
-        addwz_mi(W(MG), W(DG), W(IS))
+#define addxxZmi(MG, DG, IS)                                                \
+        addwxZmi(W(MG), W(DG), W(IS))
 
-#define addxz_rr(RG, RS)                                                    \
-        addwz_rr(W(RG), W(RS))
+#define addxxZrr(RG, RS)                                                    \
+        addwxZrr(W(RG), W(RS))
 
-#define addxz_ld(RG, MS, DS)                                                \
-        addwz_ld(W(RG), W(MS), W(DS))
+#define addxxZld(RG, MS, DS)                                                \
+        addwxZld(W(RG), W(MS), W(DS))
 
-#define addxz_st(RS, MG, DG)                                                \
-        addwz_st(W(RS), W(MG), W(DG))
+#define addxxZst(RS, MG, DG)                                                \
+        addwxZst(W(RS), W(MG), W(DG))
 
-#define addxz_mr(MG, DG, RS)                                                \
-        addwz_mr(W(MG), W(DG), W(RS))
+#define addxxZmr(MG, DG, RS)                                                \
+        addwxZmr(W(MG), W(DG), W(RS))
 
 /* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */
@@ -9979,23 +9979,23 @@
         subwx_mr(W(MG), W(DG), W(RS))
 
 
-#define subxz_ri(RG, IS)                                                    \
-        subwz_ri(W(RG), W(IS))
+#define subxxZri(RG, IS)                                                    \
+        subwxZri(W(RG), W(IS))
 
-#define subxz_mi(MG, DG, IS)                                                \
-        subwz_mi(W(MG), W(DG), W(IS))
+#define subxxZmi(MG, DG, IS)                                                \
+        subwxZmi(W(MG), W(DG), W(IS))
 
-#define subxz_rr(RG, RS)                                                    \
-        subwz_rr(W(RG), W(RS))
+#define subxxZrr(RG, RS)                                                    \
+        subwxZrr(W(RG), W(RS))
 
-#define subxz_ld(RG, MS, DS)                                                \
-        subwz_ld(W(RG), W(MS), W(DS))
+#define subxxZld(RG, MS, DS)                                                \
+        subwxZld(W(RG), W(MS), W(DS))
 
-#define subxz_st(RS, MG, DG)                                                \
-        subwz_st(W(RS), W(MG), W(DG))
+#define subxxZst(RS, MG, DG)                                                \
+        subwxZst(W(RS), W(MG), W(DG))
 
-#define subxz_mr(MG, DG, RS)                                                \
-        subwz_mr(W(MG), W(DG), W(RS))
+#define subxxZmr(MG, DG, RS)                                                \
+        subwxZmr(W(MG), W(DG), W(RS))
 
 /* shl (G = G << S)
  * set-flags: undefined (*x), yes (*z)
@@ -10026,29 +10026,29 @@
         shlwx_mr(W(MG), W(DG), W(RS))
 
 
-#define shlxz_rx(RG)                     /* reads Recx for shift count */   \
-        shlwz_rx(W(RG))
+#define shlxxZrx(RG)                     /* reads Recx for shift count */   \
+        shlwxZrx(W(RG))
 
-#define shlxz_mx(MG, DG)                 /* reads Recx for shift count */   \
-        shlwz_mx(W(MG), W(DG))
+#define shlxxZmx(MG, DG)                 /* reads Recx for shift count */   \
+        shlwxZmx(W(MG), W(DG))
 
-#define shlxz_ri(RG, IS)                                                    \
-        shlwz_ri(W(RG), W(IS))
+#define shlxxZri(RG, IS)                                                    \
+        shlwxZri(W(RG), W(IS))
 
-#define shlxz_mi(MG, DG, IS)                                                \
-        shlwz_mi(W(MG), W(DG), W(IS))
+#define shlxxZmi(MG, DG, IS)                                                \
+        shlwxZmi(W(MG), W(DG), W(IS))
 
-#define shlxz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        shlwz_rr(W(RG), W(RS))
+#define shlxxZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        shlwxZrr(W(RG), W(RS))
 
-#define shlxz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        shlwz_ld(W(RG), W(MS), W(DS))
+#define shlxxZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        shlwxZld(W(RG), W(MS), W(DS))
 
-#define shlxz_st(RS, MG, DG)                                                \
-        shlwz_st(W(RS), W(MG), W(DG))
+#define shlxxZst(RS, MG, DG)                                                \
+        shlwxZst(W(RS), W(MG), W(DG))
 
-#define shlxz_mr(MG, DG, RS)                                                \
-        shlwz_mr(W(MG), W(DG), W(RS))
+#define shlxxZmr(MG, DG, RS)                                                \
+        shlwxZmr(W(MG), W(DG), W(RS))
 
 /* shr (G = G >> S)
  * set-flags: undefined (*x), yes (*z)
@@ -10079,29 +10079,29 @@
         shrwx_mr(W(MG), W(DG), W(RS))
 
 
-#define shrxz_rx(RG)                     /* reads Recx for shift count */   \
-        shrwz_rx(W(RG))
+#define shrxxZrx(RG)                     /* reads Recx for shift count */   \
+        shrwxZrx(W(RG))
 
-#define shrxz_mx(MG, DG)                 /* reads Recx for shift count */   \
-        shrwz_mx(W(MG), W(DG))
+#define shrxxZmx(MG, DG)                 /* reads Recx for shift count */   \
+        shrwxZmx(W(MG), W(DG))
 
-#define shrxz_ri(RG, IS)                                                    \
-        shrwz_ri(W(RG), W(IS))
+#define shrxxZri(RG, IS)                                                    \
+        shrwxZri(W(RG), W(IS))
 
-#define shrxz_mi(MG, DG, IS)                                                \
-        shrwz_mi(W(MG), W(DG), W(IS))
+#define shrxxZmi(MG, DG, IS)                                                \
+        shrwxZmi(W(MG), W(DG), W(IS))
 
-#define shrxz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        shrwz_rr(W(RG), W(RS))
+#define shrxxZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        shrwxZrr(W(RG), W(RS))
 
-#define shrxz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        shrwz_ld(W(RG), W(MS), W(DS))
+#define shrxxZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        shrwxZld(W(RG), W(MS), W(DS))
 
-#define shrxz_st(RS, MG, DG)                                                \
-        shrwz_st(W(RS), W(MG), W(DG))
+#define shrxxZst(RS, MG, DG)                                                \
+        shrwxZst(W(RS), W(MG), W(DG))
 
-#define shrxz_mr(MG, DG, RS)                                                \
-        shrwz_mr(W(MG), W(DG), W(RS))
+#define shrxxZmr(MG, DG, RS)                                                \
+        shrwxZmr(W(MG), W(DG), W(RS))
 
 
 #define shrxn_rx(RG)                     /* reads Recx for shift count */   \
@@ -10157,29 +10157,29 @@
         rorwx_mr(W(MG), W(DG), W(RS))
 
 
-#define rorxz_rx(RG)                     /* reads Recx for shift count */   \
-        rorwz_rx(W(RG))
+#define rorxxZrx(RG)                     /* reads Recx for shift count */   \
+        rorwxZrx(W(RG))
 
-#define rorxz_mx(MG, DG)                 /* reads Recx for shift count */   \
-        rorwz_mx(W(MG), W(DG))
+#define rorxxZmx(MG, DG)                 /* reads Recx for shift count */   \
+        rorwxZmx(W(MG), W(DG))
 
-#define rorxz_ri(RG, IS)                                                    \
-        rorwz_ri(W(RG), W(IS))
+#define rorxxZri(RG, IS)                                                    \
+        rorwxZri(W(RG), W(IS))
 
-#define rorxz_mi(MG, DG, IS)                                                \
-        rorwz_mi(W(MG), W(DG), W(IS))
+#define rorxxZmi(MG, DG, IS)                                                \
+        rorwxZmi(W(MG), W(DG), W(IS))
 
-#define rorxz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        rorwz_rr(W(RG), W(RS))
+#define rorxxZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        rorwxZrr(W(RG), W(RS))
 
-#define rorxz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        rorwz_ld(W(RG), W(MS), W(DS))
+#define rorxxZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        rorwxZld(W(RG), W(MS), W(DS))
 
-#define rorxz_st(RS, MG, DG)                                                \
-        rorwz_st(W(RS), W(MG), W(DG))
+#define rorxxZst(RS, MG, DG)                                                \
+        rorwxZst(W(RS), W(MG), W(DG))
 
-#define rorxz_mr(MG, DG, RS)                                                \
-        rorwz_mr(W(MG), W(DG), W(RS))
+#define rorxxZmr(MG, DG, RS)                                                \
+        rorwxZmr(W(MG), W(DG), W(RS))
 
 /* mul (G = G * S)
  * set-flags: undefined */
@@ -10479,23 +10479,23 @@
         andzx_mr(W(MG), W(DG), W(RS))
 
 
-#define andxz_ri(RG, IS)                                                    \
-        andzz_ri(W(RG), W(IS))
+#define andxxZri(RG, IS)                                                    \
+        andzxZri(W(RG), W(IS))
 
-#define andxz_mi(MG, DG, IS)                                                \
-        andzz_mi(W(MG), W(DG), W(IS))
+#define andxxZmi(MG, DG, IS)                                                \
+        andzxZmi(W(MG), W(DG), W(IS))
 
-#define andxz_rr(RG, RS)                                                    \
-        andzz_rr(W(RG), W(RS))
+#define andxxZrr(RG, RS)                                                    \
+        andzxZrr(W(RG), W(RS))
 
-#define andxz_ld(RG, MS, DS)                                                \
-        andzz_ld(W(RG), W(MS), W(DS))
+#define andxxZld(RG, MS, DS)                                                \
+        andzxZld(W(RG), W(MS), W(DS))
 
-#define andxz_st(RS, MG, DG)                                                \
-        andzz_st(W(RS), W(MG), W(DG))
+#define andxxZst(RS, MG, DG)                                                \
+        andzxZst(W(RS), W(MG), W(DG))
 
-#define andxz_mr(MG, DG, RS)                                                \
-        andzz_mr(W(MG), W(DG), W(RS))
+#define andxxZmr(MG, DG, RS)                                                \
+        andzxZmr(W(MG), W(DG), W(RS))
 
 /* ann (G = ~G & S)
  * set-flags: undefined (*x), yes (*z) */
@@ -10519,23 +10519,23 @@
         annzx_mr(W(MG), W(DG), W(RS))
 
 
-#define annxz_ri(RG, IS)                                                    \
-        annzz_ri(W(RG), W(IS))
+#define annxxZri(RG, IS)                                                    \
+        annzxZri(W(RG), W(IS))
 
-#define annxz_mi(MG, DG, IS)                                                \
-        annzz_mi(W(MG), W(DG), W(IS))
+#define annxxZmi(MG, DG, IS)                                                \
+        annzxZmi(W(MG), W(DG), W(IS))
 
-#define annxz_rr(RG, RS)                                                    \
-        annzz_rr(W(RG), W(RS))
+#define annxxZrr(RG, RS)                                                    \
+        annzxZrr(W(RG), W(RS))
 
-#define annxz_ld(RG, MS, DS)                                                \
-        annzz_ld(W(RG), W(MS), W(DS))
+#define annxxZld(RG, MS, DS)                                                \
+        annzxZld(W(RG), W(MS), W(DS))
 
-#define annxz_st(RS, MG, DG)                                                \
-        annzz_st(W(RS), W(MG), W(DG))
+#define annxxZst(RS, MG, DG)                                                \
+        annzxZst(W(RS), W(MG), W(DG))
 
-#define annxz_mr(MG, DG, RS)                                                \
-        annzz_mr(W(MG), W(DG), W(RS))
+#define annxxZmr(MG, DG, RS)                                                \
+        annzxZmr(W(MG), W(DG), W(RS))
 
 /* orr (G = G | S)
  * set-flags: undefined (*x), yes (*z) */
@@ -10559,23 +10559,23 @@
         orrzx_mr(W(MG), W(DG), W(RS))
 
 
-#define orrxz_ri(RG, IS)                                                    \
-        orrzz_ri(W(RG), W(IS))
+#define orrxxZri(RG, IS)                                                    \
+        orrzxZri(W(RG), W(IS))
 
-#define orrxz_mi(MG, DG, IS)                                                \
-        orrzz_mi(W(MG), W(DG), W(IS))
+#define orrxxZmi(MG, DG, IS)                                                \
+        orrzxZmi(W(MG), W(DG), W(IS))
 
-#define orrxz_rr(RG, RS)                                                    \
-        orrzz_rr(W(RG), W(RS))
+#define orrxxZrr(RG, RS)                                                    \
+        orrzxZrr(W(RG), W(RS))
 
-#define orrxz_ld(RG, MS, DS)                                                \
-        orrzz_ld(W(RG), W(MS), W(DS))
+#define orrxxZld(RG, MS, DS)                                                \
+        orrzxZld(W(RG), W(MS), W(DS))
 
-#define orrxz_st(RS, MG, DG)                                                \
-        orrzz_st(W(RS), W(MG), W(DG))
+#define orrxxZst(RS, MG, DG)                                                \
+        orrzxZst(W(RS), W(MG), W(DG))
 
-#define orrxz_mr(MG, DG, RS)                                                \
-        orrzz_mr(W(MG), W(DG), W(RS))
+#define orrxxZmr(MG, DG, RS)                                                \
+        orrzxZmr(W(MG), W(DG), W(RS))
 
 /* orn (G = ~G | S)
  * set-flags: undefined (*x), yes (*z) */
@@ -10599,23 +10599,23 @@
         ornzx_mr(W(MG), W(DG), W(RS))
 
 
-#define ornxz_ri(RG, IS)                                                    \
-        ornzz_ri(W(RG), W(IS))
+#define ornxxZri(RG, IS)                                                    \
+        ornzxZri(W(RG), W(IS))
 
-#define ornxz_mi(MG, DG, IS)                                                \
-        ornzz_mi(W(MG), W(DG), W(IS))
+#define ornxxZmi(MG, DG, IS)                                                \
+        ornzxZmi(W(MG), W(DG), W(IS))
 
-#define ornxz_rr(RG, RS)                                                    \
-        ornzz_rr(W(RG), W(RS))
+#define ornxxZrr(RG, RS)                                                    \
+        ornzxZrr(W(RG), W(RS))
 
-#define ornxz_ld(RG, MS, DS)                                                \
-        ornzz_ld(W(RG), W(MS), W(DS))
+#define ornxxZld(RG, MS, DS)                                                \
+        ornzxZld(W(RG), W(MS), W(DS))
 
-#define ornxz_st(RS, MG, DG)                                                \
-        ornzz_st(W(RS), W(MG), W(DG))
+#define ornxxZst(RS, MG, DG)                                                \
+        ornzxZst(W(RS), W(MG), W(DG))
 
-#define ornxz_mr(MG, DG, RS)                                                \
-        ornzz_mr(W(MG), W(DG), W(RS))
+#define ornxxZmr(MG, DG, RS)                                                \
+        ornzxZmr(W(MG), W(DG), W(RS))
 
 /* xor (G = G ^ S)
  * set-flags: undefined (*x), yes (*z) */
@@ -10639,23 +10639,23 @@
         xorzx_mr(W(MG), W(DG), W(RS))
 
 
-#define xorxz_ri(RG, IS)                                                    \
-        xorzz_ri(W(RG), W(IS))
+#define xorxxZri(RG, IS)                                                    \
+        xorzxZri(W(RG), W(IS))
 
-#define xorxz_mi(MG, DG, IS)                                                \
-        xorzz_mi(W(MG), W(DG), W(IS))
+#define xorxxZmi(MG, DG, IS)                                                \
+        xorzxZmi(W(MG), W(DG), W(IS))
 
-#define xorxz_rr(RG, RS)                                                    \
-        xorzz_rr(W(RG), W(RS))
+#define xorxxZrr(RG, RS)                                                    \
+        xorzxZrr(W(RG), W(RS))
 
-#define xorxz_ld(RG, MS, DS)                                                \
-        xorzz_ld(W(RG), W(MS), W(DS))
+#define xorxxZld(RG, MS, DS)                                                \
+        xorzxZld(W(RG), W(MS), W(DS))
 
-#define xorxz_st(RS, MG, DG)                                                \
-        xorzz_st(W(RS), W(MG), W(DG))
+#define xorxxZst(RS, MG, DG)                                                \
+        xorzxZst(W(RS), W(MG), W(DG))
 
-#define xorxz_mr(MG, DG, RS)                                                \
-        xorzz_mr(W(MG), W(DG), W(RS))
+#define xorxxZmr(MG, DG, RS)                                                \
+        xorzxZmr(W(MG), W(DG), W(RS))
 
 /* not (G = ~G)
  * set-flags: no */
@@ -10676,11 +10676,11 @@
         negzx_mx(W(MG), W(DG))
 
 
-#define negxz_rx(RG)                                                        \
-        negzz_rx(W(RG))
+#define negxxZrx(RG)                                                        \
+        negzxZrx(W(RG))
 
-#define negxz_mx(MG, DG)                                                    \
-        negzz_mx(W(MG), W(DG))
+#define negxxZmx(MG, DG)                                                    \
+        negzxZmx(W(MG), W(DG))
 
 /* add (G = G + S)
  * set-flags: undefined (*x), yes (*z) */
@@ -10704,23 +10704,23 @@
         addzx_mr(W(MG), W(DG), W(RS))
 
 
-#define addxz_ri(RG, IS)                                                    \
-        addzz_ri(W(RG), W(IS))
+#define addxxZri(RG, IS)                                                    \
+        addzxZri(W(RG), W(IS))
 
-#define addxz_mi(MG, DG, IS)                                                \
-        addzz_mi(W(MG), W(DG), W(IS))
+#define addxxZmi(MG, DG, IS)                                                \
+        addzxZmi(W(MG), W(DG), W(IS))
 
-#define addxz_rr(RG, RS)                                                    \
-        addzz_rr(W(RG), W(RS))
+#define addxxZrr(RG, RS)                                                    \
+        addzxZrr(W(RG), W(RS))
 
-#define addxz_ld(RG, MS, DS)                                                \
-        addzz_ld(W(RG), W(MS), W(DS))
+#define addxxZld(RG, MS, DS)                                                \
+        addzxZld(W(RG), W(MS), W(DS))
 
-#define addxz_st(RS, MG, DG)                                                \
-        addzz_st(W(RS), W(MG), W(DG))
+#define addxxZst(RS, MG, DG)                                                \
+        addzxZst(W(RS), W(MG), W(DG))
 
-#define addxz_mr(MG, DG, RS)                                                \
-        addzz_mr(W(MG), W(DG), W(RS))
+#define addxxZmr(MG, DG, RS)                                                \
+        addzxZmr(W(MG), W(DG), W(RS))
 
 /* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */
@@ -10744,23 +10744,23 @@
         subzx_mr(W(MG), W(DG), W(RS))
 
 
-#define subxz_ri(RG, IS)                                                    \
-        subzz_ri(W(RG), W(IS))
+#define subxxZri(RG, IS)                                                    \
+        subzxZri(W(RG), W(IS))
 
-#define subxz_mi(MG, DG, IS)                                                \
-        subzz_mi(W(MG), W(DG), W(IS))
+#define subxxZmi(MG, DG, IS)                                                \
+        subzxZmi(W(MG), W(DG), W(IS))
 
-#define subxz_rr(RG, RS)                                                    \
-        subzz_rr(W(RG), W(RS))
+#define subxxZrr(RG, RS)                                                    \
+        subzxZrr(W(RG), W(RS))
 
-#define subxz_ld(RG, MS, DS)                                                \
-        subzz_ld(W(RG), W(MS), W(DS))
+#define subxxZld(RG, MS, DS)                                                \
+        subzxZld(W(RG), W(MS), W(DS))
 
-#define subxz_st(RS, MG, DG)                                                \
-        subzz_st(W(RS), W(MG), W(DG))
+#define subxxZst(RS, MG, DG)                                                \
+        subzxZst(W(RS), W(MG), W(DG))
 
-#define subxz_mr(MG, DG, RS)                                                \
-        subzz_mr(W(MG), W(DG), W(RS))
+#define subxxZmr(MG, DG, RS)                                                \
+        subzxZmr(W(MG), W(DG), W(RS))
 
 /* shl (G = G << S)
  * set-flags: undefined (*x), yes (*z)
@@ -10791,29 +10791,29 @@
         shlzx_mr(W(MG), W(DG), W(RS))
 
 
-#define shlxz_rx(RG)                     /* reads Recx for shift count */   \
-        shlzz_rx(W(RG))
+#define shlxxZrx(RG)                     /* reads Recx for shift count */   \
+        shlzxZrx(W(RG))
 
-#define shlxz_mx(MG, DG)                 /* reads Recx for shift count */   \
-        shlzz_mx(W(MG), W(DG))
+#define shlxxZmx(MG, DG)                 /* reads Recx for shift count */   \
+        shlzxZmx(W(MG), W(DG))
 
-#define shlxz_ri(RG, IS)                                                    \
-        shlzz_ri(W(RG), W(IS))
+#define shlxxZri(RG, IS)                                                    \
+        shlzxZri(W(RG), W(IS))
 
-#define shlxz_mi(MG, DG, IS)                                                \
-        shlzz_mi(W(MG), W(DG), W(IS))
+#define shlxxZmi(MG, DG, IS)                                                \
+        shlzxZmi(W(MG), W(DG), W(IS))
 
-#define shlxz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        shlzz_rr(W(RG), W(RS))
+#define shlxxZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        shlzxZrr(W(RG), W(RS))
 
-#define shlxz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        shlzz_ld(W(RG), W(MS), W(DS))
+#define shlxxZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        shlzxZld(W(RG), W(MS), W(DS))
 
-#define shlxz_st(RS, MG, DG)                                                \
-        shlzz_st(W(RS), W(MG), W(DG))
+#define shlxxZst(RS, MG, DG)                                                \
+        shlzxZst(W(RS), W(MG), W(DG))
 
-#define shlxz_mr(MG, DG, RS)                                                \
-        shlzz_mr(W(MG), W(DG), W(RS))
+#define shlxxZmr(MG, DG, RS)                                                \
+        shlzxZmr(W(MG), W(DG), W(RS))
 
 /* shr (G = G >> S)
  * set-flags: undefined (*x), yes (*z)
@@ -10844,29 +10844,29 @@
         shrzx_mr(W(MG), W(DG), W(RS))
 
 
-#define shrxz_rx(RG)                     /* reads Recx for shift count */   \
-        shrzz_rx(W(RG))
+#define shrxxZrx(RG)                     /* reads Recx for shift count */   \
+        shrzxZrx(W(RG))
 
-#define shrxz_mx(MG, DG)                 /* reads Recx for shift count */   \
-        shrzz_mx(W(MG), W(DG))
+#define shrxxZmx(MG, DG)                 /* reads Recx for shift count */   \
+        shrzxZmx(W(MG), W(DG))
 
-#define shrxz_ri(RG, IS)                                                    \
-        shrzz_ri(W(RG), W(IS))
+#define shrxxZri(RG, IS)                                                    \
+        shrzxZri(W(RG), W(IS))
 
-#define shrxz_mi(MG, DG, IS)                                                \
-        shrzz_mi(W(MG), W(DG), W(IS))
+#define shrxxZmi(MG, DG, IS)                                                \
+        shrzxZmi(W(MG), W(DG), W(IS))
 
-#define shrxz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        shrzz_rr(W(RG), W(RS))
+#define shrxxZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        shrzxZrr(W(RG), W(RS))
 
-#define shrxz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        shrzz_ld(W(RG), W(MS), W(DS))
+#define shrxxZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        shrzxZld(W(RG), W(MS), W(DS))
 
-#define shrxz_st(RS, MG, DG)                                                \
-        shrzz_st(W(RS), W(MG), W(DG))
+#define shrxxZst(RS, MG, DG)                                                \
+        shrzxZst(W(RS), W(MG), W(DG))
 
-#define shrxz_mr(MG, DG, RS)                                                \
-        shrzz_mr(W(MG), W(DG), W(RS))
+#define shrxxZmr(MG, DG, RS)                                                \
+        shrzxZmr(W(MG), W(DG), W(RS))
 
 
 #define shrxn_rx(RG)                     /* reads Recx for shift count */   \
@@ -10922,29 +10922,29 @@
         rorzx_mr(W(MG), W(DG), W(RS))
 
 
-#define rorxz_rx(RG)                     /* reads Recx for shift count */   \
-        rorzz_rx(W(RG))
+#define rorxxZrx(RG)                     /* reads Recx for shift count */   \
+        rorzxZrx(W(RG))
 
-#define rorxz_mx(MG, DG)                 /* reads Recx for shift count */   \
-        rorzz_mx(W(MG), W(DG))
+#define rorxxZmx(MG, DG)                 /* reads Recx for shift count */   \
+        rorzxZmx(W(MG), W(DG))
 
-#define rorxz_ri(RG, IS)                                                    \
-        rorzz_ri(W(RG), W(IS))
+#define rorxxZri(RG, IS)                                                    \
+        rorzxZri(W(RG), W(IS))
 
-#define rorxz_mi(MG, DG, IS)                                                \
-        rorzz_mi(W(MG), W(DG), W(IS))
+#define rorxxZmi(MG, DG, IS)                                                \
+        rorzxZmi(W(MG), W(DG), W(IS))
 
-#define rorxz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        rorzz_rr(W(RG), W(RS))
+#define rorxxZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        rorzxZrr(W(RG), W(RS))
 
-#define rorxz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        rorzz_ld(W(RG), W(MS), W(DS))
+#define rorxxZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        rorzxZld(W(RG), W(MS), W(DS))
 
-#define rorxz_st(RS, MG, DG)                                                \
-        rorzz_st(W(RS), W(MG), W(DG))
+#define rorxxZst(RS, MG, DG)                                                \
+        rorzxZst(W(RS), W(MG), W(DG))
 
-#define rorxz_mr(MG, DG, RS)                                                \
-        rorzz_mr(W(MG), W(DG), W(RS))
+#define rorxxZmr(MG, DG, RS)                                                \
+        rorzxZmr(W(MG), W(DG), W(RS))
 
 /* mul (G = G * S)
  * set-flags: undefined */
@@ -11246,23 +11246,23 @@
         andwx_mr(W(MG), W(DG), W(RS))
 
 
-#define andyz_ri(RG, IS)                                                    \
-        andwz_ri(W(RG), W(IS))
+#define andyxZri(RG, IS)                                                    \
+        andwxZri(W(RG), W(IS))
 
-#define andyz_mi(MG, DG, IS)                                                \
-        andwz_mi(W(MG), W(DG), W(IS))
+#define andyxZmi(MG, DG, IS)                                                \
+        andwxZmi(W(MG), W(DG), W(IS))
 
-#define andyz_rr(RG, RS)                                                    \
-        andwz_rr(W(RG), W(RS))
+#define andyxZrr(RG, RS)                                                    \
+        andwxZrr(W(RG), W(RS))
 
-#define andyz_ld(RG, MS, DS)                                                \
-        andwz_ld(W(RG), W(MS), W(DS))
+#define andyxZld(RG, MS, DS)                                                \
+        andwxZld(W(RG), W(MS), W(DS))
 
-#define andyz_st(RS, MG, DG)                                                \
-        andwz_st(W(RS), W(MG), W(DG))
+#define andyxZst(RS, MG, DG)                                                \
+        andwxZst(W(RS), W(MG), W(DG))
 
-#define andyz_mr(MG, DG, RS)                                                \
-        andwz_mr(W(MG), W(DG), W(RS))
+#define andyxZmr(MG, DG, RS)                                                \
+        andwxZmr(W(MG), W(DG), W(RS))
 
 /* ann (G = ~G & S)
  * set-flags: undefined (*x), yes (*z) */
@@ -11286,23 +11286,23 @@
         annwx_mr(W(MG), W(DG), W(RS))
 
 
-#define annyz_ri(RG, IS)                                                    \
-        annwz_ri(W(RG), W(IS))
+#define annyxZri(RG, IS)                                                    \
+        annwxZri(W(RG), W(IS))
 
-#define annyz_mi(MG, DG, IS)                                                \
-        annwz_mi(W(MG), W(DG), W(IS))
+#define annyxZmi(MG, DG, IS)                                                \
+        annwxZmi(W(MG), W(DG), W(IS))
 
-#define annyz_rr(RG, RS)                                                    \
-        annwz_rr(W(RG), W(RS))
+#define annyxZrr(RG, RS)                                                    \
+        annwxZrr(W(RG), W(RS))
 
-#define annyz_ld(RG, MS, DS)                                                \
-        annwz_ld(W(RG), W(MS), W(DS))
+#define annyxZld(RG, MS, DS)                                                \
+        annwxZld(W(RG), W(MS), W(DS))
 
-#define annyz_st(RS, MG, DG)                                                \
-        annwz_st(W(RS), W(MG), W(DG))
+#define annyxZst(RS, MG, DG)                                                \
+        annwxZst(W(RS), W(MG), W(DG))
 
-#define annyz_mr(MG, DG, RS)                                                \
-        annwz_mr(W(MG), W(DG), W(RS))
+#define annyxZmr(MG, DG, RS)                                                \
+        annwxZmr(W(MG), W(DG), W(RS))
 
 /* orr (G = G | S)
  * set-flags: undefined (*x), yes (*z) */
@@ -11326,23 +11326,23 @@
         orrwx_mr(W(MG), W(DG), W(RS))
 
 
-#define orryz_ri(RG, IS)                                                    \
-        orrwz_ri(W(RG), W(IS))
+#define orryxZri(RG, IS)                                                    \
+        orrwxZri(W(RG), W(IS))
 
-#define orryz_mi(MG, DG, IS)                                                \
-        orrwz_mi(W(MG), W(DG), W(IS))
+#define orryxZmi(MG, DG, IS)                                                \
+        orrwxZmi(W(MG), W(DG), W(IS))
 
-#define orryz_rr(RG, RS)                                                    \
-        orrwz_rr(W(RG), W(RS))
+#define orryxZrr(RG, RS)                                                    \
+        orrwxZrr(W(RG), W(RS))
 
-#define orryz_ld(RG, MS, DS)                                                \
-        orrwz_ld(W(RG), W(MS), W(DS))
+#define orryxZld(RG, MS, DS)                                                \
+        orrwxZld(W(RG), W(MS), W(DS))
 
-#define orryz_st(RS, MG, DG)                                                \
-        orrwz_st(W(RS), W(MG), W(DG))
+#define orryxZst(RS, MG, DG)                                                \
+        orrwxZst(W(RS), W(MG), W(DG))
 
-#define orryz_mr(MG, DG, RS)                                                \
-        orrwz_mr(W(MG), W(DG), W(RS))
+#define orryxZmr(MG, DG, RS)                                                \
+        orrwxZmr(W(MG), W(DG), W(RS))
 
 /* orn (G = ~G | S)
  * set-flags: undefined (*x), yes (*z) */
@@ -11366,23 +11366,23 @@
         ornwx_mr(W(MG), W(DG), W(RS))
 
 
-#define ornyz_ri(RG, IS)                                                    \
-        ornwz_ri(W(RG), W(IS))
+#define ornyxZri(RG, IS)                                                    \
+        ornwxZri(W(RG), W(IS))
 
-#define ornyz_mi(MG, DG, IS)                                                \
-        ornwz_mi(W(MG), W(DG), W(IS))
+#define ornyxZmi(MG, DG, IS)                                                \
+        ornwxZmi(W(MG), W(DG), W(IS))
 
-#define ornyz_rr(RG, RS)                                                    \
-        ornwz_rr(W(RG), W(RS))
+#define ornyxZrr(RG, RS)                                                    \
+        ornwxZrr(W(RG), W(RS))
 
-#define ornyz_ld(RG, MS, DS)                                                \
-        ornwz_ld(W(RG), W(MS), W(DS))
+#define ornyxZld(RG, MS, DS)                                                \
+        ornwxZld(W(RG), W(MS), W(DS))
 
-#define ornyz_st(RS, MG, DG)                                                \
-        ornwz_st(W(RS), W(MG), W(DG))
+#define ornyxZst(RS, MG, DG)                                                \
+        ornwxZst(W(RS), W(MG), W(DG))
 
-#define ornyz_mr(MG, DG, RS)                                                \
-        ornwz_mr(W(MG), W(DG), W(RS))
+#define ornyxZmr(MG, DG, RS)                                                \
+        ornwxZmr(W(MG), W(DG), W(RS))
 
 /* xor (G = G ^ S)
  * set-flags: undefined (*x), yes (*z) */
@@ -11406,23 +11406,23 @@
         xorwx_mr(W(MG), W(DG), W(RS))
 
 
-#define xoryz_ri(RG, IS)                                                    \
-        xorwz_ri(W(RG), W(IS))
+#define xoryxZri(RG, IS)                                                    \
+        xorwxZri(W(RG), W(IS))
 
-#define xoryz_mi(MG, DG, IS)                                                \
-        xorwz_mi(W(MG), W(DG), W(IS))
+#define xoryxZmi(MG, DG, IS)                                                \
+        xorwxZmi(W(MG), W(DG), W(IS))
 
-#define xoryz_rr(RG, RS)                                                    \
-        xorwz_rr(W(RG), W(RS))
+#define xoryxZrr(RG, RS)                                                    \
+        xorwxZrr(W(RG), W(RS))
 
-#define xoryz_ld(RG, MS, DS)                                                \
-        xorwz_ld(W(RG), W(MS), W(DS))
+#define xoryxZld(RG, MS, DS)                                                \
+        xorwxZld(W(RG), W(MS), W(DS))
 
-#define xoryz_st(RS, MG, DG)                                                \
-        xorwz_st(W(RS), W(MG), W(DG))
+#define xoryxZst(RS, MG, DG)                                                \
+        xorwxZst(W(RS), W(MG), W(DG))
 
-#define xoryz_mr(MG, DG, RS)                                                \
-        xorwz_mr(W(MG), W(DG), W(RS))
+#define xoryxZmr(MG, DG, RS)                                                \
+        xorwxZmr(W(MG), W(DG), W(RS))
 
 /* not (G = ~G)
  * set-flags: no */
@@ -11443,11 +11443,11 @@
         negwx_mx(W(MG), W(DG))
 
 
-#define negyz_rx(RG)                                                        \
-        negwz_rx(W(RG))
+#define negyxZrx(RG)                                                        \
+        negwxZrx(W(RG))
 
-#define negyz_mx(MG, DG)                                                    \
-        negwz_mx(W(MG), W(DG))
+#define negyxZmx(MG, DG)                                                    \
+        negwxZmx(W(MG), W(DG))
 
 /* add (G = G + S)
  * set-flags: undefined (*x), yes (*z) */
@@ -11471,23 +11471,23 @@
         addwx_mr(W(MG), W(DG), W(RS))
 
 
-#define addyz_ri(RG, IS)                                                    \
-        addwz_ri(W(RG), W(IS))
+#define addyxZri(RG, IS)                                                    \
+        addwxZri(W(RG), W(IS))
 
-#define addyz_mi(MG, DG, IS)                                                \
-        addwz_mi(W(MG), W(DG), W(IS))
+#define addyxZmi(MG, DG, IS)                                                \
+        addwxZmi(W(MG), W(DG), W(IS))
 
-#define addyz_rr(RG, RS)                                                    \
-        addwz_rr(W(RG), W(RS))
+#define addyxZrr(RG, RS)                                                    \
+        addwxZrr(W(RG), W(RS))
 
-#define addyz_ld(RG, MS, DS)                                                \
-        addwz_ld(W(RG), W(MS), W(DS))
+#define addyxZld(RG, MS, DS)                                                \
+        addwxZld(W(RG), W(MS), W(DS))
 
-#define addyz_st(RS, MG, DG)                                                \
-        addwz_st(W(RS), W(MG), W(DG))
+#define addyxZst(RS, MG, DG)                                                \
+        addwxZst(W(RS), W(MG), W(DG))
 
-#define addyz_mr(MG, DG, RS)                                                \
-        addwz_mr(W(MG), W(DG), W(RS))
+#define addyxZmr(MG, DG, RS)                                                \
+        addwxZmr(W(MG), W(DG), W(RS))
 
 /* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */
@@ -11511,23 +11511,23 @@
         subwx_mr(W(MG), W(DG), W(RS))
 
 
-#define subyz_ri(RG, IS)                                                    \
-        subwz_ri(W(RG), W(IS))
+#define subyxZri(RG, IS)                                                    \
+        subwxZri(W(RG), W(IS))
 
-#define subyz_mi(MG, DG, IS)                                                \
-        subwz_mi(W(MG), W(DG), W(IS))
+#define subyxZmi(MG, DG, IS)                                                \
+        subwxZmi(W(MG), W(DG), W(IS))
 
-#define subyz_rr(RG, RS)                                                    \
-        subwz_rr(W(RG), W(RS))
+#define subyxZrr(RG, RS)                                                    \
+        subwxZrr(W(RG), W(RS))
 
-#define subyz_ld(RG, MS, DS)                                                \
-        subwz_ld(W(RG), W(MS), W(DS))
+#define subyxZld(RG, MS, DS)                                                \
+        subwxZld(W(RG), W(MS), W(DS))
 
-#define subyz_st(RS, MG, DG)                                                \
-        subwz_st(W(RS), W(MG), W(DG))
+#define subyxZst(RS, MG, DG)                                                \
+        subwxZst(W(RS), W(MG), W(DG))
 
-#define subyz_mr(MG, DG, RS)                                                \
-        subwz_mr(W(MG), W(DG), W(RS))
+#define subyxZmr(MG, DG, RS)                                                \
+        subwxZmr(W(MG), W(DG), W(RS))
 
 /* shl (G = G << S)
  * set-flags: undefined (*x), yes (*z)
@@ -11558,29 +11558,29 @@
         shlwx_mr(W(MG), W(DG), W(RS))
 
 
-#define shlyz_rx(RG)                     /* reads Recx for shift count */   \
-        shlwz_rx(W(RG))
+#define shlyxZrx(RG)                     /* reads Recx for shift count */   \
+        shlwxZrx(W(RG))
 
-#define shlyz_mx(MG, DG)                 /* reads Recx for shift count */   \
-        shlwz_mx(W(MG), W(DG))
+#define shlyxZmx(MG, DG)                 /* reads Recx for shift count */   \
+        shlwxZmx(W(MG), W(DG))
 
-#define shlyz_ri(RG, IS)                                                    \
-        shlwz_ri(W(RG), W(IS))
+#define shlyxZri(RG, IS)                                                    \
+        shlwxZri(W(RG), W(IS))
 
-#define shlyz_mi(MG, DG, IS)                                                \
-        shlwz_mi(W(MG), W(DG), W(IS))
+#define shlyxZmi(MG, DG, IS)                                                \
+        shlwxZmi(W(MG), W(DG), W(IS))
 
-#define shlyz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        shlwz_rr(W(RG), W(RS))
+#define shlyxZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        shlwxZrr(W(RG), W(RS))
 
-#define shlyz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        shlwz_ld(W(RG), W(MS), W(DS))
+#define shlyxZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        shlwxZld(W(RG), W(MS), W(DS))
 
-#define shlyz_st(RS, MG, DG)                                                \
-        shlwz_st(W(RS), W(MG), W(DG))
+#define shlyxZst(RS, MG, DG)                                                \
+        shlwxZst(W(RS), W(MG), W(DG))
 
-#define shlyz_mr(MG, DG, RS)                                                \
-        shlwz_mr(W(MG), W(DG), W(RS))
+#define shlyxZmr(MG, DG, RS)                                                \
+        shlwxZmr(W(MG), W(DG), W(RS))
 
 /* shr (G = G >> S)
  * set-flags: undefined (*x), yes (*z)
@@ -11611,29 +11611,29 @@
         shrwx_mr(W(MG), W(DG), W(RS))
 
 
-#define shryz_rx(RG)                     /* reads Recx for shift count */   \
-        shrwz_rx(W(RG))
+#define shryxZrx(RG)                     /* reads Recx for shift count */   \
+        shrwxZrx(W(RG))
 
-#define shryz_mx(MG, DG)                 /* reads Recx for shift count */   \
-        shrwz_mx(W(MG), W(DG))
+#define shryxZmx(MG, DG)                 /* reads Recx for shift count */   \
+        shrwxZmx(W(MG), W(DG))
 
-#define shryz_ri(RG, IS)                                                    \
-        shrwz_ri(W(RG), W(IS))
+#define shryxZri(RG, IS)                                                    \
+        shrwxZri(W(RG), W(IS))
 
-#define shryz_mi(MG, DG, IS)                                                \
-        shrwz_mi(W(MG), W(DG), W(IS))
+#define shryxZmi(MG, DG, IS)                                                \
+        shrwxZmi(W(MG), W(DG), W(IS))
 
-#define shryz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        shrwz_rr(W(RG), W(RS))
+#define shryxZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        shrwxZrr(W(RG), W(RS))
 
-#define shryz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        shrwz_ld(W(RG), W(MS), W(DS))
+#define shryxZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        shrwxZld(W(RG), W(MS), W(DS))
 
-#define shryz_st(RS, MG, DG)                                                \
-        shrwz_st(W(RS), W(MG), W(DG))
+#define shryxZst(RS, MG, DG)                                                \
+        shrwxZst(W(RS), W(MG), W(DG))
 
-#define shryz_mr(MG, DG, RS)                                                \
-        shrwz_mr(W(MG), W(DG), W(RS))
+#define shryxZmr(MG, DG, RS)                                                \
+        shrwxZmr(W(MG), W(DG), W(RS))
 
 
 #define shryn_rx(RG)                     /* reads Recx for shift count */   \
@@ -11689,29 +11689,29 @@
         rorwx_mr(W(MG), W(DG), W(RS))
 
 
-#define roryz_rx(RG)                     /* reads Recx for shift count */   \
-        rorwz_rx(W(RG))
+#define roryxZrx(RG)                     /* reads Recx for shift count */   \
+        rorwxZrx(W(RG))
 
-#define roryz_mx(MG, DG)                 /* reads Recx for shift count */   \
-        rorwz_mx(W(MG), W(DG))
+#define roryxZmx(MG, DG)                 /* reads Recx for shift count */   \
+        rorwxZmx(W(MG), W(DG))
 
-#define roryz_ri(RG, IS)                                                    \
-        rorwz_ri(W(RG), W(IS))
+#define roryxZri(RG, IS)                                                    \
+        rorwxZri(W(RG), W(IS))
 
-#define roryz_mi(MG, DG, IS)                                                \
-        rorwz_mi(W(MG), W(DG), W(IS))
+#define roryxZmi(MG, DG, IS)                                                \
+        rorwxZmi(W(MG), W(DG), W(IS))
 
-#define roryz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        rorwz_rr(W(RG), W(RS))
+#define roryxZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        rorwxZrr(W(RG), W(RS))
 
-#define roryz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        rorwz_ld(W(RG), W(MS), W(DS))
+#define roryxZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        rorwxZld(W(RG), W(MS), W(DS))
 
-#define roryz_st(RS, MG, DG)                                                \
-        rorwz_st(W(RS), W(MG), W(DG))
+#define roryxZst(RS, MG, DG)                                                \
+        rorwxZst(W(RS), W(MG), W(DG))
 
-#define roryz_mr(MG, DG, RS)                                                \
-        rorwz_mr(W(MG), W(DG), W(RS))
+#define roryxZmr(MG, DG, RS)                                                \
+        rorwxZmr(W(MG), W(DG), W(RS))
 
 /* mul (G = G * S)
  * set-flags: undefined */
@@ -11970,23 +11970,23 @@
         andzx_mr(W(MG), W(DG), W(RS))
 
 
-#define andyz_ri(RG, IS)                                                    \
-        andzz_ri(W(RG), W(IS))
+#define andyxZri(RG, IS)                                                    \
+        andzxZri(W(RG), W(IS))
 
-#define andyz_mi(MG, DG, IS)                                                \
-        andzz_mi(W(MG), W(DG), W(IS))
+#define andyxZmi(MG, DG, IS)                                                \
+        andzxZmi(W(MG), W(DG), W(IS))
 
-#define andyz_rr(RG, RS)                                                    \
-        andzz_rr(W(RG), W(RS))
+#define andyxZrr(RG, RS)                                                    \
+        andzxZrr(W(RG), W(RS))
 
-#define andyz_ld(RG, MS, DS)                                                \
-        andzz_ld(W(RG), W(MS), W(DS))
+#define andyxZld(RG, MS, DS)                                                \
+        andzxZld(W(RG), W(MS), W(DS))
 
-#define andyz_st(RS, MG, DG)                                                \
-        andzz_st(W(RS), W(MG), W(DG))
+#define andyxZst(RS, MG, DG)                                                \
+        andzxZst(W(RS), W(MG), W(DG))
 
-#define andyz_mr(MG, DG, RS)                                                \
-        andzz_mr(W(MG), W(DG), W(RS))
+#define andyxZmr(MG, DG, RS)                                                \
+        andzxZmr(W(MG), W(DG), W(RS))
 
 /* ann (G = ~G & S)
  * set-flags: undefined (*x), yes (*z) */
@@ -12010,23 +12010,23 @@
         annzx_mr(W(MG), W(DG), W(RS))
 
 
-#define annyz_ri(RG, IS)                                                    \
-        annzz_ri(W(RG), W(IS))
+#define annyxZri(RG, IS)                                                    \
+        annzxZri(W(RG), W(IS))
 
-#define annyz_mi(MG, DG, IS)                                                \
-        annzz_mi(W(MG), W(DG), W(IS))
+#define annyxZmi(MG, DG, IS)                                                \
+        annzxZmi(W(MG), W(DG), W(IS))
 
-#define annyz_rr(RG, RS)                                                    \
-        annzz_rr(W(RG), W(RS))
+#define annyxZrr(RG, RS)                                                    \
+        annzxZrr(W(RG), W(RS))
 
-#define annyz_ld(RG, MS, DS)                                                \
-        annzz_ld(W(RG), W(MS), W(DS))
+#define annyxZld(RG, MS, DS)                                                \
+        annzxZld(W(RG), W(MS), W(DS))
 
-#define annyz_st(RS, MG, DG)                                                \
-        annzz_st(W(RS), W(MG), W(DG))
+#define annyxZst(RS, MG, DG)                                                \
+        annzxZst(W(RS), W(MG), W(DG))
 
-#define annyz_mr(MG, DG, RS)                                                \
-        annzz_mr(W(MG), W(DG), W(RS))
+#define annyxZmr(MG, DG, RS)                                                \
+        annzxZmr(W(MG), W(DG), W(RS))
 
 /* orr (G = G | S)
  * set-flags: undefined (*x), yes (*z) */
@@ -12050,23 +12050,23 @@
         orrzx_mr(W(MG), W(DG), W(RS))
 
 
-#define orryz_ri(RG, IS)                                                    \
-        orrzz_ri(W(RG), W(IS))
+#define orryxZri(RG, IS)                                                    \
+        orrzxZri(W(RG), W(IS))
 
-#define orryz_mi(MG, DG, IS)                                                \
-        orrzz_mi(W(MG), W(DG), W(IS))
+#define orryxZmi(MG, DG, IS)                                                \
+        orrzxZmi(W(MG), W(DG), W(IS))
 
-#define orryz_rr(RG, RS)                                                    \
-        orrzz_rr(W(RG), W(RS))
+#define orryxZrr(RG, RS)                                                    \
+        orrzxZrr(W(RG), W(RS))
 
-#define orryz_ld(RG, MS, DS)                                                \
-        orrzz_ld(W(RG), W(MS), W(DS))
+#define orryxZld(RG, MS, DS)                                                \
+        orrzxZld(W(RG), W(MS), W(DS))
 
-#define orryz_st(RS, MG, DG)                                                \
-        orrzz_st(W(RS), W(MG), W(DG))
+#define orryxZst(RS, MG, DG)                                                \
+        orrzxZst(W(RS), W(MG), W(DG))
 
-#define orryz_mr(MG, DG, RS)                                                \
-        orrzz_mr(W(MG), W(DG), W(RS))
+#define orryxZmr(MG, DG, RS)                                                \
+        orrzxZmr(W(MG), W(DG), W(RS))
 
 /* orn (G = ~G | S)
  * set-flags: undefined (*x), yes (*z) */
@@ -12090,23 +12090,23 @@
         ornzx_mr(W(MG), W(DG), W(RS))
 
 
-#define ornyz_ri(RG, IS)                                                    \
-        ornzz_ri(W(RG), W(IS))
+#define ornyxZri(RG, IS)                                                    \
+        ornzxZri(W(RG), W(IS))
 
-#define ornyz_mi(MG, DG, IS)                                                \
-        ornzz_mi(W(MG), W(DG), W(IS))
+#define ornyxZmi(MG, DG, IS)                                                \
+        ornzxZmi(W(MG), W(DG), W(IS))
 
-#define ornyz_rr(RG, RS)                                                    \
-        ornzz_rr(W(RG), W(RS))
+#define ornyxZrr(RG, RS)                                                    \
+        ornzxZrr(W(RG), W(RS))
 
-#define ornyz_ld(RG, MS, DS)                                                \
-        ornzz_ld(W(RG), W(MS), W(DS))
+#define ornyxZld(RG, MS, DS)                                                \
+        ornzxZld(W(RG), W(MS), W(DS))
 
-#define ornyz_st(RS, MG, DG)                                                \
-        ornzz_st(W(RS), W(MG), W(DG))
+#define ornyxZst(RS, MG, DG)                                                \
+        ornzxZst(W(RS), W(MG), W(DG))
 
-#define ornyz_mr(MG, DG, RS)                                                \
-        ornzz_mr(W(MG), W(DG), W(RS))
+#define ornyxZmr(MG, DG, RS)                                                \
+        ornzxZmr(W(MG), W(DG), W(RS))
 
 /* xor (G = G ^ S)
  * set-flags: undefined (*x), yes (*z) */
@@ -12130,23 +12130,23 @@
         xorzx_mr(W(MG), W(DG), W(RS))
 
 
-#define xoryz_ri(RG, IS)                                                    \
-        xorzz_ri(W(RG), W(IS))
+#define xoryxZri(RG, IS)                                                    \
+        xorzxZri(W(RG), W(IS))
 
-#define xoryz_mi(MG, DG, IS)                                                \
-        xorzz_mi(W(MG), W(DG), W(IS))
+#define xoryxZmi(MG, DG, IS)                                                \
+        xorzxZmi(W(MG), W(DG), W(IS))
 
-#define xoryz_rr(RG, RS)                                                    \
-        xorzz_rr(W(RG), W(RS))
+#define xoryxZrr(RG, RS)                                                    \
+        xorzxZrr(W(RG), W(RS))
 
-#define xoryz_ld(RG, MS, DS)                                                \
-        xorzz_ld(W(RG), W(MS), W(DS))
+#define xoryxZld(RG, MS, DS)                                                \
+        xorzxZld(W(RG), W(MS), W(DS))
 
-#define xoryz_st(RS, MG, DG)                                                \
-        xorzz_st(W(RS), W(MG), W(DG))
+#define xoryxZst(RS, MG, DG)                                                \
+        xorzxZst(W(RS), W(MG), W(DG))
 
-#define xoryz_mr(MG, DG, RS)                                                \
-        xorzz_mr(W(MG), W(DG), W(RS))
+#define xoryxZmr(MG, DG, RS)                                                \
+        xorzxZmr(W(MG), W(DG), W(RS))
 
 /* not (G = ~G)
  * set-flags: no */
@@ -12167,11 +12167,11 @@
         negzx_mx(W(MG), W(DG))
 
 
-#define negyz_rx(RG)                                                        \
-        negzz_rx(W(RG))
+#define negyxZrx(RG)                                                        \
+        negzxZrx(W(RG))
 
-#define negyz_mx(MG, DG)                                                    \
-        negzz_mx(W(MG), W(DG))
+#define negyxZmx(MG, DG)                                                    \
+        negzxZmx(W(MG), W(DG))
 
 /* add (G = G + S)
  * set-flags: undefined (*x), yes (*z) */
@@ -12195,23 +12195,23 @@
         addzx_mr(W(MG), W(DG), W(RS))
 
 
-#define addyz_ri(RG, IS)                                                    \
-        addzz_ri(W(RG), W(IS))
+#define addyxZri(RG, IS)                                                    \
+        addzxZri(W(RG), W(IS))
 
-#define addyz_mi(MG, DG, IS)                                                \
-        addzz_mi(W(MG), W(DG), W(IS))
+#define addyxZmi(MG, DG, IS)                                                \
+        addzxZmi(W(MG), W(DG), W(IS))
 
-#define addyz_rr(RG, RS)                                                    \
-        addzz_rr(W(RG), W(RS))
+#define addyxZrr(RG, RS)                                                    \
+        addzxZrr(W(RG), W(RS))
 
-#define addyz_ld(RG, MS, DS)                                                \
-        addzz_ld(W(RG), W(MS), W(DS))
+#define addyxZld(RG, MS, DS)                                                \
+        addzxZld(W(RG), W(MS), W(DS))
 
-#define addyz_st(RS, MG, DG)                                                \
-        addzz_st(W(RS), W(MG), W(DG))
+#define addyxZst(RS, MG, DG)                                                \
+        addzxZst(W(RS), W(MG), W(DG))
 
-#define addyz_mr(MG, DG, RS)                                                \
-        addzz_mr(W(MG), W(DG), W(RS))
+#define addyxZmr(MG, DG, RS)                                                \
+        addzxZmr(W(MG), W(DG), W(RS))
 
 /* sub (G = G - S)
  * set-flags: undefined (*x), yes (*z) */
@@ -12235,23 +12235,23 @@
         subzx_mr(W(MG), W(DG), W(RS))
 
 
-#define subyz_ri(RG, IS)                                                    \
-        subzz_ri(W(RG), W(IS))
+#define subyxZri(RG, IS)                                                    \
+        subzxZri(W(RG), W(IS))
 
-#define subyz_mi(MG, DG, IS)                                                \
-        subzz_mi(W(MG), W(DG), W(IS))
+#define subyxZmi(MG, DG, IS)                                                \
+        subzxZmi(W(MG), W(DG), W(IS))
 
-#define subyz_rr(RG, RS)                                                    \
-        subzz_rr(W(RG), W(RS))
+#define subyxZrr(RG, RS)                                                    \
+        subzxZrr(W(RG), W(RS))
 
-#define subyz_ld(RG, MS, DS)                                                \
-        subzz_ld(W(RG), W(MS), W(DS))
+#define subyxZld(RG, MS, DS)                                                \
+        subzxZld(W(RG), W(MS), W(DS))
 
-#define subyz_st(RS, MG, DG)                                                \
-        subzz_st(W(RS), W(MG), W(DG))
+#define subyxZst(RS, MG, DG)                                                \
+        subzxZst(W(RS), W(MG), W(DG))
 
-#define subyz_mr(MG, DG, RS)                                                \
-        subzz_mr(W(MG), W(DG), W(RS))
+#define subyxZmr(MG, DG, RS)                                                \
+        subzxZmr(W(MG), W(DG), W(RS))
 
 /* shl (G = G << S)
  * set-flags: undefined (*x), yes (*z)
@@ -12282,29 +12282,29 @@
         shlzx_mr(W(MG), W(DG), W(RS))
 
 
-#define shlyz_rx(RG)                     /* reads Recx for shift count */   \
-        shlzz_rx(W(RG))
+#define shlyxZrx(RG)                     /* reads Recx for shift count */   \
+        shlzxZrx(W(RG))
 
-#define shlyz_mx(MG, DG)                 /* reads Recx for shift count */   \
-        shlzz_mx(W(MG), W(DG))
+#define shlyxZmx(MG, DG)                 /* reads Recx for shift count */   \
+        shlzxZmx(W(MG), W(DG))
 
-#define shlyz_ri(RG, IS)                                                    \
-        shlzz_ri(W(RG), W(IS))
+#define shlyxZri(RG, IS)                                                    \
+        shlzxZri(W(RG), W(IS))
 
-#define shlyz_mi(MG, DG, IS)                                                \
-        shlzz_mi(W(MG), W(DG), W(IS))
+#define shlyxZmi(MG, DG, IS)                                                \
+        shlzxZmi(W(MG), W(DG), W(IS))
 
-#define shlyz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        shlzz_rr(W(RG), W(RS))
+#define shlyxZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        shlzxZrr(W(RG), W(RS))
 
-#define shlyz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        shlzz_ld(W(RG), W(MS), W(DS))
+#define shlyxZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        shlzxZld(W(RG), W(MS), W(DS))
 
-#define shlyz_st(RS, MG, DG)                                                \
-        shlzz_st(W(RS), W(MG), W(DG))
+#define shlyxZst(RS, MG, DG)                                                \
+        shlzxZst(W(RS), W(MG), W(DG))
 
-#define shlyz_mr(MG, DG, RS)                                                \
-        shlzz_mr(W(MG), W(DG), W(RS))
+#define shlyxZmr(MG, DG, RS)                                                \
+        shlzxZmr(W(MG), W(DG), W(RS))
 
 /* shr (G = G >> S)
  * set-flags: undefined (*x), yes (*z)
@@ -12335,29 +12335,29 @@
         shrzx_mr(W(MG), W(DG), W(RS))
 
 
-#define shryz_rx(RG)                     /* reads Recx for shift count */   \
-        shrzz_rx(W(RG))
+#define shryxZrx(RG)                     /* reads Recx for shift count */   \
+        shrzxZrx(W(RG))
 
-#define shryz_mx(MG, DG)                 /* reads Recx for shift count */   \
-        shrzz_mx(W(MG), W(DG))
+#define shryxZmx(MG, DG)                 /* reads Recx for shift count */   \
+        shrzxZmx(W(MG), W(DG))
 
-#define shryz_ri(RG, IS)                                                    \
-        shrzz_ri(W(RG), W(IS))
+#define shryxZri(RG, IS)                                                    \
+        shrzxZri(W(RG), W(IS))
 
-#define shryz_mi(MG, DG, IS)                                                \
-        shrzz_mi(W(MG), W(DG), W(IS))
+#define shryxZmi(MG, DG, IS)                                                \
+        shrzxZmi(W(MG), W(DG), W(IS))
 
-#define shryz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        shrzz_rr(W(RG), W(RS))
+#define shryxZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        shrzxZrr(W(RG), W(RS))
 
-#define shryz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        shrzz_ld(W(RG), W(MS), W(DS))
+#define shryxZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        shrzxZld(W(RG), W(MS), W(DS))
 
-#define shryz_st(RS, MG, DG)                                                \
-        shrzz_st(W(RS), W(MG), W(DG))
+#define shryxZst(RS, MG, DG)                                                \
+        shrzxZst(W(RS), W(MG), W(DG))
 
-#define shryz_mr(MG, DG, RS)                                                \
-        shrzz_mr(W(MG), W(DG), W(RS))
+#define shryxZmr(MG, DG, RS)                                                \
+        shrzxZmr(W(MG), W(DG), W(RS))
 
 
 #define shryn_rx(RG)                     /* reads Recx for shift count */   \
@@ -12413,29 +12413,29 @@
         rorzx_mr(W(MG), W(DG), W(RS))
 
 
-#define roryz_rx(RG)                     /* reads Recx for shift count */   \
-        rorzz_rx(W(RG))
+#define roryxZrx(RG)                     /* reads Recx for shift count */   \
+        rorzxZrx(W(RG))
 
-#define roryz_mx(MG, DG)                 /* reads Recx for shift count */   \
-        rorzz_mx(W(MG), W(DG))
+#define roryxZmx(MG, DG)                 /* reads Recx for shift count */   \
+        rorzxZmx(W(MG), W(DG))
 
-#define roryz_ri(RG, IS)                                                    \
-        rorzz_ri(W(RG), W(IS))
+#define roryxZri(RG, IS)                                                    \
+        rorzxZri(W(RG), W(IS))
 
-#define roryz_mi(MG, DG, IS)                                                \
-        rorzz_mi(W(MG), W(DG), W(IS))
+#define roryxZmi(MG, DG, IS)                                                \
+        rorzxZmi(W(MG), W(DG), W(IS))
 
-#define roryz_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        rorzz_rr(W(RG), W(RS))
+#define roryxZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        rorzxZrr(W(RG), W(RS))
 
-#define roryz_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        rorzz_ld(W(RG), W(MS), W(DS))
+#define roryxZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        rorzxZld(W(RG), W(MS), W(DS))
 
-#define roryz_st(RS, MG, DG)                                                \
-        rorzz_st(W(RS), W(MG), W(DG))
+#define roryxZst(RS, MG, DG)                                                \
+        rorzxZst(W(RS), W(MG), W(DG))
 
-#define roryz_mr(MG, DG, RS)                                                \
-        rorzz_mr(W(MG), W(DG), W(RS))
+#define roryxZmr(MG, DG, RS)                                                \
+        rorzxZmr(W(MG), W(DG), W(RS))
 
 /* mul (G = G * S)
  * set-flags: undefined */
