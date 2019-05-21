@@ -12,8 +12,8 @@
 /******************************************************************************/
 
 /*
- * rtconf.h: Configuration file for instruction subsets mapping.
- * The table of contents is provided below.
+ * rtconf.h: Configuration file for instruction subset mapping.
+ * Table of contents is provided below.
  */
 
 /*----------------------------------------------------------------------------*/
