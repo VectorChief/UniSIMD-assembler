@@ -937,7 +937,7 @@
         EMITW(0xF3B60200 | MXM(TmmM+0,  0x00,    REG(XS)))                  \
         EMITW(0xF3B20200 | MXM(TmmM+0,  0x00,    TmmM))                     \
         EMITW(0xEE100B10 | MXM(Teax,    TmmM+0,  0x00))                     \
-        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask##32_128))                     \
+        addwxZri(Reax, IB(RT_SIMD_MASK_##mask##32_128))                     \
         jezxx_lb(lb)
 
 /*************   packed single-precision floating-point convert   *************/

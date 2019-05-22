@@ -728,7 +728,7 @@
         EMITW(0x04982000 | MXM(TmmM,    REG(XS), 0x00) |                    \
                           RT_SIMD_MASK_##mask##64_SVE << 17)                \
         EMITW(0x0E043C00 | MXM(Teax,    TmmM,    0x00))                     \
-        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask##64_SVE))                     \
+        addwxZri(Reax, IB(RT_SIMD_MASK_##mask##64_SVE))                     \
         jezxx_lb(lb)
 
 /*************   packed double-precision floating-point convert   *************/
