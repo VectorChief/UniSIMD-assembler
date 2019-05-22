@@ -671,6 +671,11 @@
         EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PH(DS)))  \
         EMITW(0x7C000215 | MRM(REG(RG), REG(RG), TMxx))
 
+#define addhnZld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PS(DS)))  \
+        EMITW(0x7C000215 | MRM(REG(RG), REG(RG), TMxx))
+
 #define addhxZst(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), PH(DG)))  \
@@ -701,6 +706,12 @@
 #define addhxZld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PH(DS)))  \
+        EMITW(0x7C000214 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define addhnZld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PS(DS)))  \
         EMITW(0x7C000214 | MRM(REG(RG), REG(RG), TMxx))                     \
         EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
 
@@ -782,6 +793,11 @@
         EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PH(DS)))  \
         EMITW(0x7C000051 | MRM(REG(RG), REG(RG), TMxx))
 
+#define subhnZld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PS(DS)))  \
+        EMITW(0x7C000051 | MRM(REG(RG), REG(RG), TMxx))
+
 #define subhxZst(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), PH(DG)))  \
@@ -814,6 +830,12 @@
 #define subhxZld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PH(DS)))  \
+        EMITW(0x7C000050 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define subhnZld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PS(DS)))  \
         EMITW(0x7C000050 | MRM(REG(RG), REG(RG), TMxx))                     \
         EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
 
@@ -1251,39 +1273,42 @@
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
-     /* Definitions for arj's "op" and "cc" parameters
+#define add_n   add,    n,  EMPTY
+#define sub_n   sub,    n,  EMPTY
+
+     /* Definitions for arj's "OP" and "cc" parameters
       * are provided in 32-bit rtarch_***.h files. */
 
-#define arjhx_rx(RG, op, cc, lb)                                            \
-        AR1(W(RG), op, hxZrx)                                               \
+#define arjhx_rx(RG, OP, cc, lb)                                            \
+        AR1(W(RG), VAL(OP), h, TP1(OP), Zrx)                                \
         CMJ(cc, lb)
 
-#define arjhx_mx(MG, DG, op, cc, lb)                                        \
-        AR2(W(MG), W(DG), op, hxZmx)                                        \
+#define arjhx_mx(MG, DG, OP, cc, lb)                                        \
+        AR2(W(MG), W(DG), VAL(OP), h, TP1(OP), Zmx)                         \
         CMJ(cc, lb)
 
-#define arjhx_ri(RG, IS, op, cc, lb)                                        \
-        AR2(W(RG), W(IS), op, hxZri)                                        \
+#define arjhx_ri(RG, IS, OP, cc, lb)                                        \
+        AR2(W(RG), W(IS), VAL(OP), h, TP1(OP), Zri)                         \
         CMJ(cc, lb)
 
-#define arjhx_mi(MG, DG, IS, op, cc, lb)                                    \
-        AR3(W(MG), W(DG), W(IS), op, hxZmi)                                 \
+#define arjhx_mi(MG, DG, IS, OP, cc, lb)                                    \
+        AR3(W(MG), W(DG), W(IS), VAL(OP), h, TP1(OP), Zmi)                  \
         CMJ(cc, lb)
 
-#define arjhx_rr(RG, RS, op, cc, lb)                                        \
-        AR2(W(RG), W(RS), op, hxZrr)                                        \
+#define arjhx_rr(RG, RS, OP, cc, lb)                                        \
+        AR2(W(RG), W(RS), VAL(OP), h, TP1(OP), Zrr)                         \
         CMJ(cc, lb)
 
-#define arjhx_ld(RG, MS, DS, op, cc, lb)                                    \
-        AR3(W(RG), W(MS), W(DS), op, hxZld)                                 \
+#define arjhx_ld(RG, MS, DS, OP, cc, lb)                                    \
+        AR3(W(RG), W(MS), W(DS), VAL(OP), h, TP1(OP), Zld)                  \
         CMJ(cc, lb)
 
-#define arjhx_st(RS, MG, DG, op, cc, lb)                                    \
-        AR3(W(RS), W(MG), W(DG), op, hxZst)                                 \
+#define arjhx_st(RS, MG, DG, OP, cc, lb)                                    \
+        AR3(W(RS), W(MG), W(DG), VAL(OP), h, TP1(OP), Zst)                  \
         CMJ(cc, lb)
 
-#define arjhx_mr(MG, DG, RS, op, cc, lb)                                    \
-        arjhx_st(W(RS), W(MG), W(DG), op, cc, lb)
+#define arjhx_mr(MG, DG, RS, OP, cc, lb)                                    \
+        arjhx_st(W(RS), W(MG), W(DG), W(OP), cc, lb)
 
 /* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */

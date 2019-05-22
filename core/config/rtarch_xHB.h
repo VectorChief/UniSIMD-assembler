@@ -409,7 +409,7 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF7)                                   \
         addhxZld(W(RG), W(MS), W(DS))
 
 #define addhn_ld(RG, MS, DS)                                                \
-        addhxZld(W(RG), W(MS), W(DS))
+        addhnZld(W(RG), W(MS), W(DS))
 
 #define addhx_st(RS, MG, DG)                                                \
         addhxZst(W(RS), W(MG), W(DG))
@@ -433,6 +433,11 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0x81)                                   \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define addhxZld(RG, MS, DS)                                                \
+ADR ESC REX(RXB(RG), RXB(MS)) EMITB(0x03)                                   \
+        MRM(REG(RG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define addhnZld(RG, MS, DS)                                                \
 ADR ESC REX(RXB(RG), RXB(MS)) EMITB(0x03)                                   \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
@@ -461,7 +466,7 @@ ADR ESC REX(RXB(RS), RXB(MG)) EMITB(0x01)                                   \
         subhxZld(W(RG), W(MS), W(DS))
 
 #define subhn_ld(RG, MS, DS)                                                \
-        subhxZld(W(RG), W(MS), W(DS))
+        subhnZld(W(RG), W(MS), W(DS))
 
 #define subhx_st(RS, MG, DG)                                                \
         subhxZst(W(RS), W(MG), W(DG))
@@ -485,6 +490,11 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0x81)                                   \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define subhxZld(RG, MS, DS)                                                \
+ADR ESC REX(RXB(RG), RXB(MS)) EMITB(0x2B)                                   \
+        MRM(REG(RG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define subhnZld(RG, MS, DS)                                                \
 ADR ESC REX(RXB(RG), RXB(MS)) EMITB(0x2B)                                   \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
@@ -1000,39 +1010,42 @@ ADR ESC REX(0,       RXB(MS)) EMITB(0xF7)                                   \
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
-     /* Definitions for arj's "op" and "cc" parameters
+#define add_n   add,    n,  EMPTY
+#define sub_n   sub,    n,  EMPTY
+
+     /* Definitions for arj's "OP" and "cc" parameters
       * are provided in 32-bit rtarch_***.h files. */
 
-#define arjhx_rx(RG, op, cc, lb)                                            \
-        AR1(W(RG), op, hxZrx)                                               \
+#define arjhx_rx(RG, OP, cc, lb)                                            \
+        AR1(W(RG), VAL(OP), h, TYP(OP), Zrx)                                \
         CMJ(cc, lb)
 
-#define arjhx_mx(MG, DG, op, cc, lb)                                        \
-        AR2(W(MG), W(DG), op, hxZmx)                                        \
+#define arjhx_mx(MG, DG, OP, cc, lb)                                        \
+        AR2(W(MG), W(DG), VAL(OP), h, TYP(OP), Zmx)                         \
         CMJ(cc, lb)
 
-#define arjhx_ri(RG, IS, op, cc, lb)                                        \
-        AR2(W(RG), W(IS), op, hxZri)                                        \
+#define arjhx_ri(RG, IS, OP, cc, lb)                                        \
+        AR2(W(RG), W(IS), VAL(OP), h, TYP(OP), Zri)                         \
         CMJ(cc, lb)
 
-#define arjhx_mi(MG, DG, IS, op, cc, lb)                                    \
-        AR3(W(MG), W(DG), W(IS), op, hxZmi)                                 \
+#define arjhx_mi(MG, DG, IS, OP, cc, lb)                                    \
+        AR3(W(MG), W(DG), W(IS), VAL(OP), h, TYP(OP), Zmi)                  \
         CMJ(cc, lb)
 
-#define arjhx_rr(RG, RS, op, cc, lb)                                        \
-        AR2(W(RG), W(RS), op, hxZrr)                                        \
+#define arjhx_rr(RG, RS, OP, cc, lb)                                        \
+        AR2(W(RG), W(RS), VAL(OP), h, TYP(OP), Zrr)                         \
         CMJ(cc, lb)
 
-#define arjhx_ld(RG, MS, DS, op, cc, lb)                                    \
-        AR3(W(RG), W(MS), W(DS), op, hxZld)                                 \
+#define arjhx_ld(RG, MS, DS, OP, cc, lb)                                    \
+        AR3(W(RG), W(MS), W(DS), VAL(OP), h, TYP(OP), Zld)                  \
         CMJ(cc, lb)
 
-#define arjhx_st(RS, MG, DG, op, cc, lb)                                    \
-        AR3(W(RS), W(MG), W(DG), op, hxZst)                                 \
+#define arjhx_st(RS, MG, DG, OP, cc, lb)                                    \
+        AR3(W(RS), W(MG), W(DG), VAL(OP), h, TYP(OP), Zst)                  \
         CMJ(cc, lb)
 
-#define arjhx_mr(MG, DG, RS, op, cc, lb)                                    \
-        arjhx_st(W(RS), W(MG), W(DG), op, cc, lb)
+#define arjhx_mr(MG, DG, RS, OP, cc, lb)                                    \
+        arjhx_st(W(RS), W(MG), W(DG), W(OP), cc, lb)
 
 /* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */

@@ -535,6 +535,12 @@
         EMITW(0x00000021 | MRM(REG(RG), REG(RG), TMxx))                     \
         EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
 
+#define addhnZld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x84000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
+        EMITW(0x00000021 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
 #define addhxZst(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMITW(0x94000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
@@ -608,6 +614,12 @@
 #define subhxZld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMITW(0x94000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
+        EMITW(0x00000023 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define subhnZld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x84000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
         EMITW(0x00000023 | MRM(REG(RG), REG(RG), TMxx))                     \
         EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
 
@@ -1215,39 +1227,42 @@
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
-     /* Definitions for arj's "op" and "cc" parameters
+#define add_n   add,    n,  EMPTY
+#define sub_n   sub,    n,  EMPTY
+
+     /* Definitions for arj's "OP" and "cc" parameters
       * are provided in 32-bit rtarch_***.h files. */
 
-#define arjhx_rx(RG, op, cc, lb)                                            \
-        AR1(W(RG), op, hx_rx)                                               \
+#define arjhx_rx(RG, OP, cc, lb)                                            \
+        AR1(W(RG), VAL(OP), h, TP1(OP), _rx)                                \
         CMZ(cc, MOD(RG), lb)
 
-#define arjhx_mx(MG, DG, op, cc, lb)                                        \
-        AR2(W(MG), W(DG), op, hxZmx)                                        \
+#define arjhx_mx(MG, DG, OP, cc, lb)                                        \
+        AR2(W(MG), W(DG), VAL(OP), h, TP1(OP), Zmx)                         \
         CMZ(cc, $t8,     lb)
 
-#define arjhx_ri(RG, IS, op, cc, lb)                                        \
-        AR2(W(RG), W(IS), op, hx_ri)                                        \
+#define arjhx_ri(RG, IS, OP, cc, lb)                                        \
+        AR2(W(RG), W(IS), VAL(OP), h, TP1(OP), _ri)                         \
         CMZ(cc, MOD(RG), lb)
 
-#define arjhx_mi(MG, DG, IS, op, cc, lb)                                    \
-        AR3(W(MG), W(DG), W(IS), op, hxZmi)                                 \
+#define arjhx_mi(MG, DG, IS, OP, cc, lb)                                    \
+        AR3(W(MG), W(DG), W(IS), VAL(OP), h, TP1(OP), Zmi)                  \
         CMZ(cc, $t8,     lb)
 
-#define arjhx_rr(RG, RS, op, cc, lb)                                        \
-        AR2(W(RG), W(RS), op, hx_rr)                                        \
+#define arjhx_rr(RG, RS, OP, cc, lb)                                        \
+        AR2(W(RG), W(RS), VAL(OP), h, TP1(OP), _rr)                         \
         CMZ(cc, MOD(RG), lb)
 
-#define arjhx_ld(RG, MS, DS, op, cc, lb)                                    \
-        AR3(W(RG), W(MS), W(DS), op, hx_ld)                                 \
+#define arjhx_ld(RG, MS, DS, OP, cc, lb)                                    \
+        AR3(W(RG), W(MS), W(DS), VAL(OP), h, TP1(OP), _ld)                  \
         CMZ(cc, MOD(RG), lb)
 
-#define arjhx_st(RS, MG, DG, op, cc, lb)                                    \
-        AR3(W(RS), W(MG), W(DG), op, hxZst)                                 \
+#define arjhx_st(RS, MG, DG, OP, cc, lb)                                    \
+        AR3(W(RS), W(MG), W(DG), VAL(OP), h, TP1(OP), Zst)                  \
         CMZ(cc, $t8,     lb)
 
-#define arjhx_mr(MG, DG, RS, op, cc, lb)                                    \
-        arjhx_st(W(RS), W(MG), W(DG), op, cc, lb)
+#define arjhx_mr(MG, DG, RS, OP, cc, lb)                                    \
+        arjhx_st(W(RS), W(MG), W(DG), W(OP), cc, lb)
 
 /* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */
