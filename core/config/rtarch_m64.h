@@ -908,6 +908,51 @@
 #define shrzn_mr(MG, DG, RS)                                                \
         shrzn_st(W(RS), W(MG), W(DG))
 
+
+#define shrznZrx(RG)                     /* reads Recx for shift count */   \
+        EMITW(0x00000017 | MSM(REG(RG), REG(RG), Tecx))                     \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define shrznZmx(MG, DG)                 /* reads Recx for shift count */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
+        EMITW(0x00000017 | MSM(TMxx,    TMxx,    Tecx))                     \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
+
+#define shrznZri(RG, IS)                                                    \
+        EMITW(0x00000000 | MSM(REG(RG), REG(RG), 0x00) |                    \
+        (M(VAL(IS) < 32) & (0x0000003B | (0x1F & VAL(IS)) << 6)) |          \
+        (M(VAL(IS) > 31) & (0x0000003F | (0x1F & VAL(IS)) << 6)))           \
+        /* if true ^ equals to -1 (not 1) */                                \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define shrznZmi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
+        EMITW(0x00000000 | MSM(TMxx,    TMxx,    0x00) |                    \
+        (M(VAL(IS) < 32) & (0x0000003B | (0x1F & VAL(IS)) << 6)) |          \
+        (M(VAL(IS) > 31) & (0x0000003F | (0x1F & VAL(IS)) << 6)))           \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
+
+#define shrznZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        EMITW(0x00000017 | MSM(REG(RG), REG(RG), REG(RS)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define shrznZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
+        EMITW(0x00000017 | MSM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define shrznZst(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
+        EMITW(0x00000017 | MSM(TMxx,    TMxx,    REG(RS)))                  \
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
+
+#define shrznZmr(MG, DG, RS)                                                \
+        shrznZst(W(RS), W(MG), W(DG))
+
 /* ror (G = G >> S | G << 64 - S)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */

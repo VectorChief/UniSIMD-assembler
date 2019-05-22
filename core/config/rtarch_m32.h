@@ -1088,6 +1088,48 @@
 #define shrwn_mr(MG, DG, RS)                                                \
         shrwn_st(W(RS), W(MG), W(DG))
 
+
+#define shrwnZrx(RG)                     /* reads Recx for shift count */   \
+        EMITW(0x00000007 | MSM(REG(RG), REG(RG), Tecx))                     \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define shrwnZmx(MG, DG)                 /* reads Recx for shift count */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
+        EMITW(0x00000007 | MSM(TMxx,    TMxx,    Tecx))                     \
+        EMITW(0xAC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
+
+#define shrwnZri(RG, IS)                                                    \
+        EMITW(0x00000003 | MSM(REG(RG), REG(RG), 0x00) |                    \
+                                                 (0x1F & VAL(IS)) << 6)     \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define shrwnZmi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
+        EMITW(0x00000003 | MSM(TMxx,    TMxx,    0x00) |                    \
+                                                 (0x1F & VAL(IS)) << 6)     \
+        EMITW(0xAC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
+
+#define shrwnZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        EMITW(0x00000007 | MSM(REG(RG), REG(RG), REG(RS)))                  \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define shrwnZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
+        EMITW(0x00000007 | MSM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
+
+#define shrwnZst(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMITW(0x8C000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
+        EMITW(0x00000007 | MSM(TMxx,    TMxx,    REG(RS)))                  \
+        EMITW(0xAC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
+
+#define shrwnZmr(MG, DG, RS)                                                \
+        shrwnZst(W(RS), W(MG), W(DG))
+
 /* ror (G = G >> S | G << 32 - S)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */

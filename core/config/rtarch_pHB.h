@@ -1023,6 +1023,42 @@
 #define shrhn_mr(MG, DG, RS)                                                \
         shrhn_st(W(RS), W(MG), W(DG))
 
+
+#define shrhnZrx(RG)                     /* reads Recx for shift count */   \
+        EMITW(0x7C000631 | MSM(REG(RG), REG(RG), Tecx))
+
+#define shrhnZmx(MG, DG)                 /* reads Recx for shift count */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), PS(DG)))  \
+        EMITW(0x7C000631 | MSM(TMxx,    TMxx,    Tecx))                     \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), OH(DG)))
+
+#define shrhnZri(RG, IS)                                                    \
+        EMITW(0x7C000671 | MSM(REG(RG), REG(RG), VAL(IS) & 0x1F))
+
+#define shrhnZmi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), PS(DG)))  \
+        EMITW(0x7C000671 | MSM(TMxx,    TMxx,    VAL(IS) & 0x1F))           \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), OH(DG)))
+
+#define shrhnZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        EMITW(0x7C000631 | MSM(REG(RG), REG(RG), REG(RS)))
+
+#define shrhnZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PH(DS)))  \
+        EMITW(0x7C000631 | MSM(REG(RG), REG(RG), TMxx))
+
+#define shrhnZst(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), PS(DG)))  \
+        EMITW(0x7C000631 | MSM(TMxx,    TMxx,    REG(RS)))                  \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), OH(DG)))
+
+#define shrhnZmr(MG, DG, RS)                                                \
+        shrhnZst(W(RS), W(MG), W(DG))
+
 /* mul (G = G * S)
  * set-flags: undefined */
 
