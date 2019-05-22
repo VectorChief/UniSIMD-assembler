@@ -116,7 +116,7 @@ ADR ESC REX(RXB(RS), RXB(MD)) EMITB(0x89)                                   \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
 /* and (G = G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define andhx_ri(RG, IS)                                                    \
         andhxZri(W(RG), W(IS))
@@ -165,7 +165,7 @@ ADR ESC REX(RXB(RS), RXB(MG)) EMITB(0x21)                                   \
         andhxZst(W(RS), W(MG), W(DG))
 
 /* ann (G = ~G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define annhx_ri(RG, IS)                                                    \
         annhxZri(W(RG), W(IS))
@@ -220,7 +220,7 @@ ADR ESC REX(RXB(RS), RXB(MG)) EMITB(0x21)                                   \
         annhxZst(W(RS), W(MG), W(DG))
 
 /* orr (G = G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define orrhx_ri(RG, IS)                                                    \
         orrhxZri(W(RG), W(IS))
@@ -269,7 +269,7 @@ ADR ESC REX(RXB(RS), RXB(MG)) EMITB(0x09)                                   \
         orrhxZst(W(RS), W(MG), W(DG))
 
 /* orn (G = ~G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define ornhx_ri(RG, IS)                                                    \
         ornhxZri(W(RG), W(IS))
@@ -314,7 +314,7 @@ ADR ESC REX(RXB(RS), RXB(MG)) EMITB(0x09)                                   \
         ornhxZst(W(RS), W(MG), W(DG))
 
 /* xor (G = G ^ S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define xorhx_ri(RG, IS)                                                    \
         xorhxZri(W(RG), W(IS))
@@ -375,7 +375,7 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF7)                                   \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
 /* neg (G = -G)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define neghx_rx(RG)                                                        \
         neghxZrx(W(RG))
@@ -394,7 +394,7 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF7)                                   \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
 /* add (G = G + S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define addhx_ri(RG, IS)                                                    \
         addhxZri(W(RG), W(IS))
@@ -446,7 +446,7 @@ ADR ESC REX(RXB(RS), RXB(MG)) EMITB(0x01)                                   \
         addhxZst(W(RS), W(MG), W(DG))
 
 /* sub (G = G - S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define subhx_ri(RG, IS)                                                    \
         subhxZri(W(RG), W(IS))
@@ -498,7 +498,7 @@ ADR ESC REX(RXB(RS), RXB(MG)) EMITB(0x29)                                   \
         subhxZst(W(RS), W(MG), W(DG))
 
 /* shl (G = G << S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
@@ -587,7 +587,7 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xC1)                                   \
         shlhxZst(W(RS), W(MG), W(DG))
 
 /* shr (G = G >> S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */

@@ -5440,7 +5440,7 @@ rt_si32 from_mask(rt_si32 mask)
 /****************** fixed-32-bit instruction subset mapping *******************/
 
 /* and (G = G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define andwz_ri(RG, IS)                                                    \
         andwxZri(W(RG), W(IS))
@@ -5461,7 +5461,7 @@ rt_si32 from_mask(rt_si32 mask)
         andwxZmr(W(MG), W(DG), W(RS))
 
 /* ann (G = ~G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define annwz_ri(RG, IS)                                                    \
         annwxZri(W(RG), W(IS))
@@ -5482,7 +5482,7 @@ rt_si32 from_mask(rt_si32 mask)
         annwxZmr(W(MG), W(DG), W(RS))
 
 /* orr (G = G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define orrwz_ri(RG, IS)                                                    \
         orrwxZri(W(RG), W(IS))
@@ -5503,7 +5503,7 @@ rt_si32 from_mask(rt_si32 mask)
         orrwxZmr(W(MG), W(DG), W(RS))
 
 /* orn (G = ~G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define ornwz_ri(RG, IS)                                                    \
         ornwxZri(W(RG), W(IS))
@@ -5524,7 +5524,7 @@ rt_si32 from_mask(rt_si32 mask)
         ornwxZmr(W(MG), W(DG), W(RS))
 
 /* xor (G = G ^ S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define xorwz_ri(RG, IS)                                                    \
         xorwxZri(W(RG), W(IS))
@@ -5545,7 +5545,7 @@ rt_si32 from_mask(rt_si32 mask)
         xorwxZmr(W(MG), W(DG), W(RS))
 
 /* neg (G = -G)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define negwz_rx(RG)                                                        \
         negwxZrx(W(RG))
@@ -5554,7 +5554,7 @@ rt_si32 from_mask(rt_si32 mask)
         negwxZmx(W(MG), W(DG))
 
 /* add (G = G + S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define addwz_ri(RG, IS)                                                    \
         addwxZri(W(RG), W(IS))
@@ -5575,7 +5575,7 @@ rt_si32 from_mask(rt_si32 mask)
         addwxZmr(W(MG), W(DG), W(RS))
 
 /* sub (G = G - S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define subwz_ri(RG, IS)                                                    \
         subwxZri(W(RG), W(IS))
@@ -5596,7 +5596,7 @@ rt_si32 from_mask(rt_si32 mask)
         subwxZmr(W(MG), W(DG), W(RS))
 
 /* shl (G = G << S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlwz_rx(RG)                     /* reads Recx for shift count */   \
@@ -5624,7 +5624,7 @@ rt_si32 from_mask(rt_si32 mask)
         shlwxZmr(W(MG), W(DG), W(RS))
 
 /* shr (G = G >> S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrwz_rx(RG)                     /* reads Recx for shift count */   \
@@ -5652,7 +5652,7 @@ rt_si32 from_mask(rt_si32 mask)
         shrwxZmr(W(MG), W(DG), W(RS))
 
 /* ror (G = G >> S | G << 32 - S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define rorwz_rx(RG)                     /* reads Recx for shift count */   \
@@ -5682,7 +5682,7 @@ rt_si32 from_mask(rt_si32 mask)
 /****************** fixed-64-bit instruction subset mapping *******************/
 
 /* and (G = G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define andzz_ri(RG, IS)                                                    \
         andzxZri(W(RG), W(IS))
@@ -5703,7 +5703,7 @@ rt_si32 from_mask(rt_si32 mask)
         andzxZmr(W(MG), W(DG), W(RS))
 
 /* ann (G = ~G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define annzz_ri(RG, IS)                                                    \
         annzxZri(W(RG), W(IS))
@@ -5724,7 +5724,7 @@ rt_si32 from_mask(rt_si32 mask)
         annzxZmr(W(MG), W(DG), W(RS))
 
 /* orr (G = G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define orrzz_ri(RG, IS)                                                    \
         orrzxZri(W(RG), W(IS))
@@ -5745,7 +5745,7 @@ rt_si32 from_mask(rt_si32 mask)
         orrzxZmr(W(MG), W(DG), W(RS))
 
 /* orn (G = ~G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define ornzz_ri(RG, IS)                                                    \
         ornzxZri(W(RG), W(IS))
@@ -5766,7 +5766,7 @@ rt_si32 from_mask(rt_si32 mask)
         ornzxZmr(W(MG), W(DG), W(RS))
 
 /* xor (G = G ^ S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define xorzz_ri(RG, IS)                                                    \
         xorzxZri(W(RG), W(IS))
@@ -5787,7 +5787,7 @@ rt_si32 from_mask(rt_si32 mask)
         xorzxZmr(W(MG), W(DG), W(RS))
 
 /* neg (G = -G)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define negzz_rx(RG)                                                        \
         negzxZrx(W(RG))
@@ -5796,7 +5796,7 @@ rt_si32 from_mask(rt_si32 mask)
         negzxZmx(W(MG), W(DG))
 
 /* add (G = G + S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define addzz_ri(RG, IS)                                                    \
         addzxZri(W(RG), W(IS))
@@ -5817,7 +5817,7 @@ rt_si32 from_mask(rt_si32 mask)
         addzxZmr(W(MG), W(DG), W(RS))
 
 /* sub (G = G - S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 
 #define subzz_ri(RG, IS)                                                    \
@@ -5839,7 +5839,7 @@ rt_si32 from_mask(rt_si32 mask)
         subzxZmr(W(MG), W(DG), W(RS))
 
 /* shl (G = G << S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlzz_rx(RG)                     /* reads Recx for shift count */   \
@@ -5868,7 +5868,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 
 /* shr (G = G >> S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrzz_rx(RG)                     /* reads Recx for shift count */   \
@@ -5896,7 +5896,7 @@ rt_si32 from_mask(rt_si32 mask)
         shrzxZmr(W(MG), W(DG), W(RS))
 
 /* ror (G = G >> S | G << 32 - S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define rorzz_rx(RG)                     /* reads Recx for shift count */   \
@@ -5926,7 +5926,7 @@ rt_si32 from_mask(rt_si32 mask)
 /****************** address-sized instruction subset mapping ******************/
 
 /* and (G = G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define andxz_ri(RG, IS)                                                    \
         andxxZri(W(RG), W(IS))
@@ -5947,7 +5947,7 @@ rt_si32 from_mask(rt_si32 mask)
         andxxZmr(W(MG), W(DG), W(RS))
 
 /* ann (G = ~G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define annxz_ri(RG, IS)                                                    \
         annxxZri(W(RG), W(IS))
@@ -5968,7 +5968,7 @@ rt_si32 from_mask(rt_si32 mask)
         annxxZmr(W(MG), W(DG), W(RS))
 
 /* orr (G = G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define orrxz_ri(RG, IS)                                                    \
         orrxxZri(W(RG), W(IS))
@@ -5989,7 +5989,7 @@ rt_si32 from_mask(rt_si32 mask)
         orrxxZmr(W(MG), W(DG), W(RS))
 
 /* orn (G = ~G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define ornxz_ri(RG, IS)                                                    \
         ornxxZri(W(RG), W(IS))
@@ -6010,7 +6010,7 @@ rt_si32 from_mask(rt_si32 mask)
         ornxxZmr(W(MG), W(DG), W(RS))
 
 /* xor (G = G ^ S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define xorxz_ri(RG, IS)                                                    \
         xorxxZri(W(RG), W(IS))
@@ -6031,7 +6031,7 @@ rt_si32 from_mask(rt_si32 mask)
         xorxxZmr(W(MG), W(DG), W(RS))
 
 /* neg (G = -G)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define negxz_rx(RG)                                                        \
         negxxZrx(W(RG))
@@ -6040,7 +6040,7 @@ rt_si32 from_mask(rt_si32 mask)
         negxxZmx(W(MG), W(DG))
 
 /* add (G = G + S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define addxz_ri(RG, IS)                                                    \
         addxxZri(W(RG), W(IS))
@@ -6061,7 +6061,7 @@ rt_si32 from_mask(rt_si32 mask)
         addxxZmr(W(MG), W(DG), W(RS))
 
 /* sub (G = G - S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define subxz_ri(RG, IS)                                                    \
         subxxZri(W(RG), W(IS))
@@ -6082,7 +6082,7 @@ rt_si32 from_mask(rt_si32 mask)
         subxxZmr(W(MG), W(DG), W(RS))
 
 /* shl (G = G << S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlxz_rx(RG)                     /* reads Recx for shift count */   \
@@ -6110,7 +6110,7 @@ rt_si32 from_mask(rt_si32 mask)
         shlxxZmr(W(MG), W(DG), W(RS))
 
 /* shr (G = G >> S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrxz_rx(RG)                     /* reads Recx for shift count */   \
@@ -6138,7 +6138,7 @@ rt_si32 from_mask(rt_si32 mask)
         shrxxZmr(W(MG), W(DG), W(RS))
 
 /* ror (G = G >> S | G << 32 - S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define rorxz_rx(RG)                     /* reads Recx for shift count */   \
@@ -6168,7 +6168,7 @@ rt_si32 from_mask(rt_si32 mask)
 /****************** element-sized instruction subset mapping ******************/
 
 /* and (G = G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define andyz_ri(RG, IS)                                                    \
         andyxZri(W(RG), W(IS))
@@ -6189,7 +6189,7 @@ rt_si32 from_mask(rt_si32 mask)
         andyxZmr(W(MG), W(DG), W(RS))
 
 /* ann (G = ~G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define annyz_ri(RG, IS)                                                    \
         annyxZri(W(RG), W(IS))
@@ -6210,7 +6210,7 @@ rt_si32 from_mask(rt_si32 mask)
         annyxZmr(W(MG), W(DG), W(RS))
 
 /* orr (G = G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define orryz_ri(RG, IS)                                                    \
         orryxZri(W(RG), W(IS))
@@ -6231,7 +6231,7 @@ rt_si32 from_mask(rt_si32 mask)
         orryxZmr(W(MG), W(DG), W(RS))
 
 /* orn (G = ~G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define ornyz_ri(RG, IS)                                                    \
         ornyxZri(W(RG), W(IS))
@@ -6252,7 +6252,7 @@ rt_si32 from_mask(rt_si32 mask)
         ornyxZmr(W(MG), W(DG), W(RS))
 
 /* xor (G = G ^ S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define xoryz_ri(RG, IS)                                                    \
         xoryxZri(W(RG), W(IS))
@@ -6273,7 +6273,7 @@ rt_si32 from_mask(rt_si32 mask)
         xoryxZmr(W(MG), W(DG), W(RS))
 
 /* neg (G = -G)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define negyz_rx(RG)                                                        \
         negyxZrx(W(RG))
@@ -6282,7 +6282,7 @@ rt_si32 from_mask(rt_si32 mask)
         negyxZmx(W(MG), W(DG))
 
 /* add (G = G + S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define addyz_ri(RG, IS)                                                    \
         addyxZri(W(RG), W(IS))
@@ -6303,7 +6303,7 @@ rt_si32 from_mask(rt_si32 mask)
         addyxZmr(W(MG), W(DG), W(RS))
 
 /* sub (G = G - S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define subyz_ri(RG, IS)                                                    \
         subyxZri(W(RG), W(IS))
@@ -6324,7 +6324,7 @@ rt_si32 from_mask(rt_si32 mask)
         subyxZmr(W(MG), W(DG), W(RS))
 
 /* shl (G = G << S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlyz_rx(RG)                     /* reads Recx for shift count */   \
@@ -6352,7 +6352,7 @@ rt_si32 from_mask(rt_si32 mask)
         shlyxZmr(W(MG), W(DG), W(RS))
 
 /* shr (G = G >> S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shryz_rx(RG)                     /* reads Recx for shift count */   \
@@ -6380,7 +6380,7 @@ rt_si32 from_mask(rt_si32 mask)
         shryxZmr(W(MG), W(DG), W(RS))
 
 /* ror (G = G >> S | G << 32 - S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define roryz_rx(RG)                     /* reads Recx for shift count */   \

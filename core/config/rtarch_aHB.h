@@ -109,7 +109,7 @@
         EMITW(0x78000000 | MDM(REG(RS), MOD(MD), VHL(DD), B1(DD), P1(DD)))
 
 /* and (G = G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define andhx_ri(RG, IS)                                                    \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IS))   \
@@ -167,7 +167,7 @@
         andhxZst(W(RS), W(MG), W(DG))
 
 /* ann (G = ~G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define annhx_ri(RG, IS)                                                    \
         nothx_rx(W(RG))                                                     \
@@ -227,7 +227,7 @@
         annhxZst(W(RS), W(MG), W(DG))
 
 /* orr (G = G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define orrhx_ri(RG, IS)                                                    \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IS))   \
@@ -290,7 +290,7 @@
         orrhxZst(W(RS), W(MG), W(DG))
 
 /* orn (G = ~G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define ornhx_ri(RG, IS)                                                    \
         nothx_rx(W(RG))                                                     \
@@ -354,7 +354,7 @@
         ornhxZst(W(RS), W(MG), W(DG))
 
 /* xor (G = G ^ S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define xorhx_ri(RG, IS)                                                    \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G2(IS))   \
@@ -429,7 +429,7 @@
         EMITW(0x78000000 | MDM(TMxx,    MOD(MG), VHL(DG), B1(DG), P1(DG)))
 
 /* neg (G = -G)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define neghx_rx(RG)                                                        \
         EMITW(0x4B000000 | MRM(REG(RG), TZxx,    REG(RG)))
@@ -451,7 +451,7 @@
         EMITW(0x78000000 | MDM(TMxx,    MOD(MG), VHL(DG), B1(DG), P1(DG)))
 
 /* add (G = G + S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define addhx_ri(RG, IS)                                                    \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
@@ -514,7 +514,7 @@
         addhxZst(W(RS), W(MG), W(DG))
 
 /* sub (G = G - S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define subhx_ri(RG, IS)                                                    \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
@@ -577,7 +577,7 @@
         subhxZst(W(RS), W(MG), W(DG))
 
 /* shl (G = G << S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlhx_rx(RG)                     /* reads Recx for shift count */   \
@@ -663,7 +663,7 @@
         shlhxZst(W(RS), W(MG), W(DG))
 
 /* shr (G = G >> S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrhx_rx(RG)                     /* reads Recx for shift count */   \

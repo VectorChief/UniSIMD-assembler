@@ -185,7 +185,7 @@
         AUX(SIB(MD), CMD(DD), EMPTY)
 
 /* and (G = G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define andzx_ri(RG, IS)                                                    \
         andzxZri(W(RG), W(IS))
@@ -234,7 +234,7 @@
         andzxZst(W(RS), W(MG), W(DG))
 
 /* ann (G = ~G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define annzx_ri(RG, IS)                                                    \
         annzxZri(W(RG), W(IS))
@@ -294,7 +294,7 @@
         annzxZst(W(RS), W(MG), W(DG))
 
 /* orr (G = G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define orrzx_ri(RG, IS)                                                    \
         orrzxZri(W(RG), W(IS))
@@ -343,7 +343,7 @@
         orrzxZst(W(RS), W(MG), W(DG))
 
 /* orn (G = ~G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define ornzx_ri(RG, IS)                                                    \
         ornzxZri(W(RG), W(IS))
@@ -388,7 +388,7 @@
         ornzxZst(W(RS), W(MG), W(DG))
 
 /* xor (G = G ^ S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define xorzx_ri(RG, IS)                                                    \
         xorzxZri(W(RG), W(IS))
@@ -449,7 +449,7 @@
         AUX(SIB(MG), CMD(DG), EMPTY)
 
 /* neg (G = -G)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define negzx_rx(RG)                                                        \
         negzxZrx(W(RG))
@@ -468,7 +468,7 @@
         AUX(SIB(MG), CMD(DG), EMPTY)
 
 /* add (G = G + S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define addzx_ri(RG, IS)                                                    \
         addzxZri(W(RG), W(IS))
@@ -517,7 +517,7 @@
         addzxZst(W(RS), W(MG), W(DG))
 
 /* sub (G = G - S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define subzx_ri(RG, IS)                                                    \
         subzxZri(W(RG), W(IS))
@@ -566,7 +566,7 @@
         subzxZst(W(RS), W(MG), W(DG))
 
 /* shl (G = G << S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
@@ -670,7 +670,7 @@
         shlzxZst(W(RS), W(MG), W(DG))
 
 /* shr (G = G >> S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
@@ -850,7 +850,7 @@
         shrzn_st(W(RS), W(MG), W(DG))
 
 /* ror (G = G >> S | G << 64 - S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define rorzx_rx(RG)                     /* reads Recx for shift count */   \

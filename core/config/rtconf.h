@@ -9693,7 +9693,7 @@
         movwx_mi(W(MD), W(DD), W(IS))
 
 /* and (G = G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define andxx_ri(RG, IS)                                                    \
         andwx_ri(W(RG), W(IS))
@@ -9733,7 +9733,7 @@
         andwxZmr(W(MG), W(DG), W(RS))
 
 /* ann (G = ~G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define annxx_ri(RG, IS)                                                    \
         annwx_ri(W(RG), W(IS))
@@ -9773,7 +9773,7 @@
         annwxZmr(W(MG), W(DG), W(RS))
 
 /* orr (G = G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define orrxx_ri(RG, IS)                                                    \
         orrwx_ri(W(RG), W(IS))
@@ -9813,7 +9813,7 @@
         orrwxZmr(W(MG), W(DG), W(RS))
 
 /* orn (G = ~G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define ornxx_ri(RG, IS)                                                    \
         ornwx_ri(W(RG), W(IS))
@@ -9853,7 +9853,7 @@
         ornwxZmr(W(MG), W(DG), W(RS))
 
 /* xor (G = G ^ S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define xorxx_ri(RG, IS)                                                    \
         xorwx_ri(W(RG), W(IS))
@@ -9902,7 +9902,7 @@
         notwx_mx(W(MG), W(DG))
 
 /* neg (G = -G)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define negxx_rx(RG)                                                        \
         negwx_rx(W(RG))
@@ -9918,7 +9918,7 @@
         negwxZmx(W(MG), W(DG))
 
 /* add (G = G + S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define addxx_ri(RG, IS)                                                    \
         addwx_ri(W(RG), W(IS))
@@ -9958,7 +9958,7 @@
         addwxZmr(W(MG), W(DG), W(RS))
 
 /* sub (G = G - S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define subxx_ri(RG, IS)                                                    \
         subwx_ri(W(RG), W(IS))
@@ -9998,7 +9998,7 @@
         subwxZmr(W(MG), W(DG), W(RS))
 
 /* shl (G = G << S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlxx_rx(RG)                     /* reads Recx for shift count */   \
@@ -10051,7 +10051,7 @@
         shlwxZmr(W(MG), W(DG), W(RS))
 
 /* shr (G = G >> S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrxx_rx(RG)                     /* reads Recx for shift count */   \
@@ -10129,7 +10129,7 @@
         shrwn_mr(W(MG), W(DG), W(RS))
 
 /* ror (G = G >> S | G << 32 - S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define rorxx_rx(RG)                     /* reads Recx for shift count */   \
@@ -10458,7 +10458,7 @@
         movzx_mi(W(MD), W(DD), W(IS))
 
 /* and (G = G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define andxx_ri(RG, IS)                                                    \
         andzx_ri(W(RG), W(IS))
@@ -10498,7 +10498,7 @@
         andzxZmr(W(MG), W(DG), W(RS))
 
 /* ann (G = ~G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define annxx_ri(RG, IS)                                                    \
         annzx_ri(W(RG), W(IS))
@@ -10538,7 +10538,7 @@
         annzxZmr(W(MG), W(DG), W(RS))
 
 /* orr (G = G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define orrxx_ri(RG, IS)                                                    \
         orrzx_ri(W(RG), W(IS))
@@ -10578,7 +10578,7 @@
         orrzxZmr(W(MG), W(DG), W(RS))
 
 /* orn (G = ~G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define ornxx_ri(RG, IS)                                                    \
         ornzx_ri(W(RG), W(IS))
@@ -10618,7 +10618,7 @@
         ornzxZmr(W(MG), W(DG), W(RS))
 
 /* xor (G = G ^ S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define xorxx_ri(RG, IS)                                                    \
         xorzx_ri(W(RG), W(IS))
@@ -10667,7 +10667,7 @@
         notzx_mx(W(MG), W(DG))
 
 /* neg (G = -G)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define negxx_rx(RG)                                                        \
         negzx_rx(W(RG))
@@ -10683,7 +10683,7 @@
         negzxZmx(W(MG), W(DG))
 
 /* add (G = G + S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define addxx_ri(RG, IS)                                                    \
         addzx_ri(W(RG), W(IS))
@@ -10723,7 +10723,7 @@
         addzxZmr(W(MG), W(DG), W(RS))
 
 /* sub (G = G - S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define subxx_ri(RG, IS)                                                    \
         subzx_ri(W(RG), W(IS))
@@ -10763,7 +10763,7 @@
         subzxZmr(W(MG), W(DG), W(RS))
 
 /* shl (G = G << S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlxx_rx(RG)                     /* reads Recx for shift count */   \
@@ -10816,7 +10816,7 @@
         shlzxZmr(W(MG), W(DG), W(RS))
 
 /* shr (G = G >> S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrxx_rx(RG)                     /* reads Recx for shift count */   \
@@ -10894,7 +10894,7 @@
         shrzn_mr(W(MG), W(DG), W(RS))
 
 /* ror (G = G >> S | G << 64 - S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define rorxx_rx(RG)                     /* reads Recx for shift count */   \
@@ -11225,7 +11225,7 @@
         movwx_mi(W(MD), W(DD), W(IS))
 
 /* and (G = G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define andyx_ri(RG, IS)                                                    \
         andwx_ri(W(RG), W(IS))
@@ -11265,7 +11265,7 @@
         andwxZmr(W(MG), W(DG), W(RS))
 
 /* ann (G = ~G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define annyx_ri(RG, IS)                                                    \
         annwx_ri(W(RG), W(IS))
@@ -11305,7 +11305,7 @@
         annwxZmr(W(MG), W(DG), W(RS))
 
 /* orr (G = G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define orryx_ri(RG, IS)                                                    \
         orrwx_ri(W(RG), W(IS))
@@ -11345,7 +11345,7 @@
         orrwxZmr(W(MG), W(DG), W(RS))
 
 /* orn (G = ~G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define ornyx_ri(RG, IS)                                                    \
         ornwx_ri(W(RG), W(IS))
@@ -11385,7 +11385,7 @@
         ornwxZmr(W(MG), W(DG), W(RS))
 
 /* xor (G = G ^ S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define xoryx_ri(RG, IS)                                                    \
         xorwx_ri(W(RG), W(IS))
@@ -11434,7 +11434,7 @@
         notwx_mx(W(MG), W(DG))
 
 /* neg (G = -G)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define negyx_rx(RG)                                                        \
         negwx_rx(W(RG))
@@ -11450,7 +11450,7 @@
         negwxZmx(W(MG), W(DG))
 
 /* add (G = G + S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define addyx_ri(RG, IS)                                                    \
         addwx_ri(W(RG), W(IS))
@@ -11490,7 +11490,7 @@
         addwxZmr(W(MG), W(DG), W(RS))
 
 /* sub (G = G - S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define subyx_ri(RG, IS)                                                    \
         subwx_ri(W(RG), W(IS))
@@ -11530,7 +11530,7 @@
         subwxZmr(W(MG), W(DG), W(RS))
 
 /* shl (G = G << S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlyx_rx(RG)                     /* reads Recx for shift count */   \
@@ -11583,7 +11583,7 @@
         shlwxZmr(W(MG), W(DG), W(RS))
 
 /* shr (G = G >> S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shryx_rx(RG)                     /* reads Recx for shift count */   \
@@ -11661,7 +11661,7 @@
         shrwn_mr(W(MG), W(DG), W(RS))
 
 /* ror (G = G >> S | G << 32 - S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define roryx_rx(RG)                     /* reads Recx for shift count */   \
@@ -11949,7 +11949,7 @@
         movzx_mi(W(MD), W(DD), W(IS))
 
 /* and (G = G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define andyx_ri(RG, IS)                                                    \
         andzx_ri(W(RG), W(IS))
@@ -11989,7 +11989,7 @@
         andzxZmr(W(MG), W(DG), W(RS))
 
 /* ann (G = ~G & S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define annyx_ri(RG, IS)                                                    \
         annzx_ri(W(RG), W(IS))
@@ -12029,7 +12029,7 @@
         annzxZmr(W(MG), W(DG), W(RS))
 
 /* orr (G = G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define orryx_ri(RG, IS)                                                    \
         orrzx_ri(W(RG), W(IS))
@@ -12069,7 +12069,7 @@
         orrzxZmr(W(MG), W(DG), W(RS))
 
 /* orn (G = ~G | S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define ornyx_ri(RG, IS)                                                    \
         ornzx_ri(W(RG), W(IS))
@@ -12109,7 +12109,7 @@
         ornzxZmr(W(MG), W(DG), W(RS))
 
 /* xor (G = G ^ S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define xoryx_ri(RG, IS)                                                    \
         xorzx_ri(W(RG), W(IS))
@@ -12158,7 +12158,7 @@
         notzx_mx(W(MG), W(DG))
 
 /* neg (G = -G)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define negyx_rx(RG)                                                        \
         negzx_rx(W(RG))
@@ -12174,7 +12174,7 @@
         negzxZmx(W(MG), W(DG))
 
 /* add (G = G + S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define addyx_ri(RG, IS)                                                    \
         addzx_ri(W(RG), W(IS))
@@ -12214,7 +12214,7 @@
         addzxZmr(W(MG), W(DG), W(RS))
 
 /* sub (G = G - S)
- * set-flags: undefined (*x), yes (*z) */
+ * set-flags: undefined (*_*), yes (*Z*) */
 
 #define subyx_ri(RG, IS)                                                    \
         subzx_ri(W(RG), W(IS))
@@ -12254,7 +12254,7 @@
         subzxZmr(W(MG), W(DG), W(RS))
 
 /* shl (G = G << S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlyx_rx(RG)                     /* reads Recx for shift count */   \
@@ -12307,7 +12307,7 @@
         shlzxZmr(W(MG), W(DG), W(RS))
 
 /* shr (G = G >> S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shryx_rx(RG)                     /* reads Recx for shift count */   \
@@ -12385,7 +12385,7 @@
         shrzn_mr(W(MG), W(DG), W(RS))
 
 /* ror (G = G >> S | G << 64 - S)
- * set-flags: undefined (*x), yes (*z)
+ * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define roryx_rx(RG)                     /* reads Recx for shift count */   \
