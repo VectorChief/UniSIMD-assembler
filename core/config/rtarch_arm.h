@@ -910,7 +910,7 @@
 #define shrwx_ri(RG, IS)                                                    \
         EMITW(0xE1A00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000020) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F & VAL(IS)) << 7)
+                                                 (0x1F & VAL(IS)) << 7)
 
 #define shrwx_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
@@ -949,7 +949,7 @@
 #define shrwxZri(RG, IS)                                                    \
         EMITW(0xE1B00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000020) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F & VAL(IS)) << 7)
+                                                 (0x1F & VAL(IS)) << 7)
 
 #define shrwxZmi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
@@ -988,7 +988,7 @@
 #define shrwn_ri(RG, IS)                                                    \
         EMITW(0xE1A00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000040) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F & VAL(IS)) << 7)
+                                                 (0x1F & VAL(IS)) << 7)
 
 #define shrwn_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
@@ -1027,7 +1027,7 @@
 #define shrwnZri(RG, IS)                                                    \
         EMITW(0xE1B00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000040) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F & VAL(IS)) << 7)
+                                                 (0x1F & VAL(IS)) << 7)
 
 #define shrwnZmi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
@@ -2255,7 +2255,7 @@
 #define shrhx_ri(RG, IS)                                                    \
         EMITW(0xE1A00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000020) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F & VAL(IS)) << 7)
+                                                 (0x1F & VAL(IS)) << 7)
 
 #define shrhx_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), AH(DG), EMPTY2)   \
@@ -2294,7 +2294,7 @@
 #define shrhxZri(RG, IS)                                                    \
         EMITW(0xE1B00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000020) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F & VAL(IS)) << 7)
+                                                 (0x1F & VAL(IS)) << 7)
 
 #define shrhxZmi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), AH(DG), EMPTY2)   \
@@ -2333,7 +2333,7 @@
 #define shrhn_ri(RG, IS)                                                    \
         EMITW(0xE1A00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000040) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F & VAL(IS)) << 7)
+                                                 (0x1F & VAL(IS)) << 7)
 
 #define shrhn_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), AH(DG), EMPTY2)   \
@@ -2372,7 +2372,7 @@
 #define shrhnZri(RG, IS)                                                    \
         EMITW(0xE1B00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000040) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F & VAL(IS)) << 7)
+                                                 (0x1F & VAL(IS)) << 7)
 
 #define shrhnZmi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), AH(DG), EMPTY2)   \
