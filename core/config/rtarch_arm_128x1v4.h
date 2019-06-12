@@ -1305,7 +1305,7 @@
 #define shrix3ri(XD, XS, IT)                                                \
         EMITW(0xF2A00050 | MXM(REG(XD), 0x00,    REG(XS)) |                 \
         (M(VAL(IT) == 0) & 0x00000500) | (M(VAL(IT) != 0) & 0x01000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)
+                                                 (0x1F &-VAL(IT)) << 16)
 
 #define shrix3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
@@ -1326,7 +1326,7 @@
 #define shrin3ri(XD, XS, IT)                                                \
         EMITW(0xF2A00050 | MXM(REG(XD), 0x00,    REG(XS)) |                 \
         (M(VAL(IT) == 0) & 0x00000500) | (M(VAL(IT) != 0) & 0x00000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)
+                                                 (0x1F &-VAL(IT)) << 16)
 
 #define shrin3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \

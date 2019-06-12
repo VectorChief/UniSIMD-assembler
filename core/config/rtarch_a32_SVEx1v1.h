@@ -966,7 +966,7 @@
 #define shrox3ri(XD, XS, IT)                                                \
         EMITW(0x04609400 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00000800) | (M(VAL(IT) != 0) & 0x00000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)
+                                                 (0x1F &-VAL(IT)) << 16)
 
 #define shrox3ld(XD, XS, MT, DT)                                            \
         movox_rr(W(XD), W(XS))                                              \
@@ -987,7 +987,7 @@
 #define shron3ri(XD, XS, IT)                                                \
         EMITW(0x04609000 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00000C00) | (M(VAL(IT) != 0) & 0x00000000) |   \
-        /* if true ^ equals to -1 (not 1) */     (0x1F &-VAL(IT)) << 16)
+                                                 (0x1F &-VAL(IT)) << 16)
 
 #define shron3ld(XD, XS, MT, DT)                                            \
         movox_rr(W(XD), W(XS))                                              \
