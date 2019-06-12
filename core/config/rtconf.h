@@ -10338,32 +10338,32 @@
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
-     /* Definitions for arj's "OP" and "cc" parameters
+     /* Definitions for arj's "op" and "cc" parameters
       * are provided in 32-bit rtarch_***.h files. */
 
-#define arjxx_rx(RG, OP, cc, lb)                                            \
-        arjwx_rx(W(RG), W(OP), cc, lb)
+#define arjxx_rx(RG, op, cc, lb)                                            \
+        arjwx_rx(W(RG), op, cc, lb)
 
-#define arjxx_mx(MG, DG, OP, cc, lb)                                        \
-        arjwx_mx(W(MG), W(DG), W(OP), cc, lb)
+#define arjxx_mx(MG, DG, op, cc, lb)                                        \
+        arjwx_mx(W(MG), W(DG), op, cc, lb)
 
-#define arjxx_ri(RG, IS, OP, cc, lb)                                        \
-        arjwx_ri(W(RG), W(IS), W(OP), cc, lb)
+#define arjxx_ri(RG, IS, op, cc, lb)                                        \
+        arjwx_ri(W(RG), W(IS), op, cc, lb)
 
-#define arjxx_mi(MG, DG, IS, OP, cc, lb)                                    \
-        arjwx_mi(W(MG), W(DG), W(IS), W(OP), cc, lb)
+#define arjxx_mi(MG, DG, IS, op, cc, lb)                                    \
+        arjwx_mi(W(MG), W(DG), W(IS), op, cc, lb)
 
-#define arjxx_rr(RG, RS, OP, cc, lb)                                        \
-        arjwx_rr(W(RG), W(RS), W(OP), cc, lb)
+#define arjxx_rr(RG, RS, op, cc, lb)                                        \
+        arjwx_rr(W(RG), W(RS), op, cc, lb)
 
-#define arjxx_ld(RG, MS, DS, OP, cc, lb)                                    \
-        arjwx_ld(W(RG), W(MS), W(DS), W(OP), cc, lb)
+#define arjxx_ld(RG, MS, DS, op, cc, lb)                                    \
+        arjwx_ld(W(RG), W(MS), W(DS), op, cc, lb)
 
-#define arjxx_st(RS, MG, DG, OP, cc, lb)                                    \
-        arjwx_st(W(RS), W(MG), W(DG), W(OP), cc, lb)
+#define arjxx_st(RS, MG, DG, op, cc, lb)                                    \
+        arjwx_st(W(RS), W(MG), W(DG), op, cc, lb)
 
-#define arjxx_mr(MG, DG, RS, OP, cc, lb)                                    \
-        arjwx_mr(W(MG), W(DG), W(RS), W(OP), cc, lb)
+#define arjxx_mr(MG, DG, RS, op, cc, lb)                                    \
+        arjwx_mr(W(MG), W(DG), W(RS), op, cc, lb)
 
 /* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */
@@ -11128,32 +11128,32 @@
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
-     /* Definitions for arj's "OP" and "cc" parameters
+     /* Definitions for arj's "op" and "cc" parameters
       * are provided in 32-bit rtarch_***.h files. */
 
-#define arjxx_rx(RG, OP, cc, lb)                                            \
-        arjzx_rx(W(RG), W(OP), cc, lb)
+#define arjxx_rx(RG, op, cc, lb)                                            \
+        arjzx_rx(W(RG), op, cc, lb)
 
-#define arjxx_mx(MG, DG, OP, cc, lb)                                        \
-        arjzx_mx(W(MG), W(DG), W(OP), cc, lb)
+#define arjxx_mx(MG, DG, op, cc, lb)                                        \
+        arjzx_mx(W(MG), W(DG), op, cc, lb)
 
-#define arjxx_ri(RG, IS, OP, cc, lb)                                        \
-        arjzx_ri(W(RG), W(IS), W(OP), cc, lb)
+#define arjxx_ri(RG, IS, op, cc, lb)                                        \
+        arjzx_ri(W(RG), W(IS), op, cc, lb)
 
-#define arjxx_mi(MG, DG, IS, OP, cc, lb)                                    \
-        arjzx_mi(W(MG), W(DG), W(IS), W(OP), cc, lb)
+#define arjxx_mi(MG, DG, IS, op, cc, lb)                                    \
+        arjzx_mi(W(MG), W(DG), W(IS), op, cc, lb)
 
-#define arjxx_rr(RG, RS, OP, cc, lb)                                        \
-        arjzx_rr(W(RG), W(RS), W(OP), cc, lb)
+#define arjxx_rr(RG, RS, op, cc, lb)                                        \
+        arjzx_rr(W(RG), W(RS), op, cc, lb)
 
-#define arjxx_ld(RG, MS, DS, OP, cc, lb)                                    \
-        arjzx_ld(W(RG), W(MS), W(DS), W(OP), cc, lb)
+#define arjxx_ld(RG, MS, DS, op, cc, lb)                                    \
+        arjzx_ld(W(RG), W(MS), W(DS), op, cc, lb)
 
-#define arjxx_st(RS, MG, DG, OP, cc, lb)                                    \
-        arjzx_st(W(RS), W(MG), W(DG), W(OP), cc, lb)
+#define arjxx_st(RS, MG, DG, op, cc, lb)                                    \
+        arjzx_st(W(RS), W(MG), W(DG), op, cc, lb)
 
-#define arjxx_mr(MG, DG, RS, OP, cc, lb)                                    \
-        arjzx_mr(W(MG), W(DG), W(RS), W(OP), cc, lb)
+#define arjxx_mr(MG, DG, RS, op, cc, lb)                                    \
+        arjzx_mr(W(MG), W(DG), W(RS), op, cc, lb)
 
 /* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */
@@ -11920,32 +11920,32 @@
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
-     /* Definitions for arj's "OP" and "cc" parameters
+     /* Definitions for arj's "op" and "cc" parameters
       * are provided in 32-bit rtarch_***.h files. */
 
-#define arjyx_rx(RG, OP, cc, lb)                                            \
-        arjwx_rx(W(RG), W(OP), cc, lb)
+#define arjyx_rx(RG, op, cc, lb)                                            \
+        arjwx_rx(W(RG), op, cc, lb)
 
-#define arjyx_mx(MG, DG, OP, cc, lb)                                        \
-        arjwx_mx(W(MG), W(DG), W(OP), cc, lb)
+#define arjyx_mx(MG, DG, op, cc, lb)                                        \
+        arjwx_mx(W(MG), W(DG), op, cc, lb)
 
-#define arjyx_ri(RG, IS, OP, cc, lb)                                        \
-        arjwx_ri(W(RG), W(IS), W(OP), cc, lb)
+#define arjyx_ri(RG, IS, op, cc, lb)                                        \
+        arjwx_ri(W(RG), W(IS), op, cc, lb)
 
-#define arjyx_mi(MG, DG, IS, OP, cc, lb)                                    \
-        arjwx_mi(W(MG), W(DG), W(IS), W(OP), cc, lb)
+#define arjyx_mi(MG, DG, IS, op, cc, lb)                                    \
+        arjwx_mi(W(MG), W(DG), W(IS), op, cc, lb)
 
-#define arjyx_rr(RG, RS, OP, cc, lb)                                        \
-        arjwx_rr(W(RG), W(RS), W(OP), cc, lb)
+#define arjyx_rr(RG, RS, op, cc, lb)                                        \
+        arjwx_rr(W(RG), W(RS), op, cc, lb)
 
-#define arjyx_ld(RG, MS, DS, OP, cc, lb)                                    \
-        arjwx_ld(W(RG), W(MS), W(DS), W(OP), cc, lb)
+#define arjyx_ld(RG, MS, DS, op, cc, lb)                                    \
+        arjwx_ld(W(RG), W(MS), W(DS), op, cc, lb)
 
-#define arjyx_st(RS, MG, DG, OP, cc, lb)                                    \
-        arjwx_st(W(RS), W(MG), W(DG), W(OP), cc, lb)
+#define arjyx_st(RS, MG, DG, op, cc, lb)                                    \
+        arjwx_st(W(RS), W(MG), W(DG), op, cc, lb)
 
-#define arjyx_mr(MG, DG, RS, OP, cc, lb)                                    \
-        arjwx_mr(W(MG), W(DG), W(RS), W(OP), cc, lb)
+#define arjyx_mr(MG, DG, RS, op, cc, lb)                                    \
+        arjwx_mr(W(MG), W(DG), W(RS), op, cc, lb)
 
 /* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */
@@ -12669,32 +12669,32 @@
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
-     /* Definitions for arj's "OP" and "cc" parameters
+     /* Definitions for arj's "op" and "cc" parameters
       * are provided in 32-bit rtarch_***.h files. */
 
-#define arjyx_rx(RG, OP, cc, lb)                                            \
-        arjzx_rx(W(RG), W(OP), cc, lb)
+#define arjyx_rx(RG, op, cc, lb)                                            \
+        arjzx_rx(W(RG), op, cc, lb)
 
-#define arjyx_mx(MG, DG, OP, cc, lb)                                        \
-        arjzx_mx(W(MG), W(DG), W(OP), cc, lb)
+#define arjyx_mx(MG, DG, op, cc, lb)                                        \
+        arjzx_mx(W(MG), W(DG), op, cc, lb)
 
-#define arjyx_ri(RG, IS, OP, cc, lb)                                        \
-        arjzx_ri(W(RG), W(IS), W(OP), cc, lb)
+#define arjyx_ri(RG, IS, op, cc, lb)                                        \
+        arjzx_ri(W(RG), W(IS), op, cc, lb)
 
-#define arjyx_mi(MG, DG, IS, OP, cc, lb)                                    \
-        arjzx_mi(W(MG), W(DG), W(IS), W(OP), cc, lb)
+#define arjyx_mi(MG, DG, IS, op, cc, lb)                                    \
+        arjzx_mi(W(MG), W(DG), W(IS), op, cc, lb)
 
-#define arjyx_rr(RG, RS, OP, cc, lb)                                        \
-        arjzx_rr(W(RG), W(RS), W(OP), cc, lb)
+#define arjyx_rr(RG, RS, op, cc, lb)                                        \
+        arjzx_rr(W(RG), W(RS), op, cc, lb)
 
-#define arjyx_ld(RG, MS, DS, OP, cc, lb)                                    \
-        arjzx_ld(W(RG), W(MS), W(DS), W(OP), cc, lb)
+#define arjyx_ld(RG, MS, DS, op, cc, lb)                                    \
+        arjzx_ld(W(RG), W(MS), W(DS), op, cc, lb)
 
-#define arjyx_st(RS, MG, DG, OP, cc, lb)                                    \
-        arjzx_st(W(RS), W(MG), W(DG), W(OP), cc, lb)
+#define arjyx_st(RS, MG, DG, op, cc, lb)                                    \
+        arjzx_st(W(RS), W(MG), W(DG), op, cc, lb)
 
-#define arjyx_mr(MG, DG, RS, OP, cc, lb)                                    \
-        arjzx_mr(W(MG), W(DG), W(RS), W(OP), cc, lb)
+#define arjyx_mr(MG, DG, RS, op, cc, lb)                                    \
+        arjzx_mr(W(MG), W(DG), W(RS), op, cc, lb)
 
 /* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */
