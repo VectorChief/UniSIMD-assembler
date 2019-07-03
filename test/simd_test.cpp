@@ -29,7 +29,7 @@
 /*******************************   DEFINITIONS   ******************************/
 /******************************************************************************/
 
-#define RUN_LEVEL           29
+#define RUN_LEVEL           30
 #define CYC_SIZE            1000000
 
 #define ARR_SIZE            S*3 /* hardcoded in ASM sections, S = SIMD elems */
@@ -138,6 +138,23 @@ struct rt_SIMD_INFOX : public rt_SIMD_INFO
 
     rt_elem*iso2;
 #define inf_ISO2            DP(Q*0x100+0x010+0x02C*P+E)
+
+    /* half-int arrays */
+
+    rt_half*har0;
+#define inf_HAR0            DP(Q*0x100+0x010+0x030*P+E)
+
+    rt_half*hco1;
+#define inf_HCO1            DP(Q*0x100+0x010+0x034*P+E)
+
+    rt_half*hco2;
+#define inf_HCO2            DP(Q*0x100+0x010+0x038*P+E)
+
+    rt_half*hso1;
+#define inf_HSO1            DP(Q*0x100+0x010+0x03C*P+E)
+
+    rt_half*hso2;
+#define inf_HSO2            DP(Q*0x100+0x010+0x040*P+E)
 
 };
 
@@ -4310,6 +4327,178 @@ rt_void p_test29(rt_SIMD_INFOX *info)
 #endif /* RUN_LEVEL 29 */
 
 /******************************************************************************/
+/******************************   RUN LEVEL 30   ******************************/
+/******************************************************************************/
+
+#if RUN_LEVEL >= 30
+
+rt_void c_test30(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            hco1[j] = har0[j] + ((rt_half)+har0[j] << 1);
+            hco2[j] = har0[j] - ((rt_half)-har0[j] >> 2);
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
+ */
+rt_void s_test30(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Resi, Mebp, inf_HAR0)
+        movxx_ld(Redx, Mebp, inf_HSO1)
+        movxx_ld(Rebx, Mebp, inf_HSO2)
+
+        movmx_ld(Xmm0, Mesi, AJ0)
+        movmx_rr(Xmm3, Xmm0)
+        movmx_rr(Xmm2, Xmm0)
+        shlmx_ri(Xmm0, IB(1))
+        addmx_rr(Xmm2, Xmm0)
+        xormx_rr(Xmm0, Xmm0)
+        submx_rr(Xmm0, Xmm3)
+        shrmx_ri(Xmm0, IB(2))
+        submx_rr(Xmm3, Xmm0)
+        movmx_st(Xmm2, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+#ifdef RT_BASE_TEST
+        movhx_ld(Reax, Mesi, AJ0)
+        movhx_rr(Recx, Reax)
+        shlhx_ri(Reax, IB(1))
+        addhx_rr(Reax, Recx)
+        movhx_st(Reax, Medx, AJ0)
+        movhx_rr(Reax, Recx)
+        neghx_rx(Reax)
+        movhx_st(Reax, Mebx, AJ0)
+        movhx_ld(Reax, Mebx, AJ0)
+        shrhx_ri(Reax, IB(2))
+        subhx_rr(Recx, Reax)
+        movhx_st(Recx, Mebx, AJ0)
+#endif /* RT_BASE_TEST */
+
+        movmx_ld(Xmm0, Mesi, AJ1)
+        movmx_rr(Xmm3, Xmm0)
+        movmx_rr(Xmm2, Xmm0)
+        xormx_rr(Xmm1, Xmm1)
+        movmx_st(Xmm1, Medx, AJ1)
+        movhx_mi(Medx, AJ1, IB(1))
+        shlmx_ld(Xmm0, Medx, AJ1)
+        movmx_st(Xmm0, Medx, AJ1)
+        addmx_ld(Xmm2, Medx, AJ1)
+        movmx_st(Xmm0, Mebx, AJ1)
+        xormx_ld(Xmm0, Mebx, AJ1)
+        submx_ld(Xmm0, Mesi, AJ1)
+        movmx_st(Xmm1, Mebx, AJ1)
+        movhx_mi(Mebx, AJ1, IB(2))
+        shrmx_ld(Xmm0, Mebx, AJ1)
+        movmx_st(Xmm0, Mebx, AJ1)
+        submx_ld(Xmm3, Mebx, AJ1)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+#ifdef RT_BASE_TEST
+        movhx_ld(Reax, Mesi, AJ1)
+        movhx_rr(Recx, Reax)
+        movhx_st(Reax, Medx, AJ1)
+        shlhx_mi(Medx, AJ1, IB(1))
+        addhx_st(Recx, Medx, AJ1)
+        movhx_st(Recx, Mebx, AJ1)
+        neghx_mx(Mebx, AJ1)
+        shrhx_mi(Mebx, AJ1, IB(2))
+        movhx_ld(Reax, Mebx, AJ1)
+        movhx_st(Recx, Mebx, AJ1)
+        subhx_st(Reax, Mebx, AJ1)
+#endif /* RT_BASE_TEST */
+
+        movmx_ld(Xmm0, Mesi, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        movmx_rr(Xmm2, Xmm0)
+        shlmx_ri(Xmm0, IB(1))
+        addmx_rr(Xmm2, Xmm0)
+        xormx_rr(Xmm0, Xmm0)
+        submx_rr(Xmm0, Xmm3)
+        shrmx_ri(Xmm0, IB(2))
+        submx_rr(Xmm3, Xmm0)
+        movmx_st(Xmm2, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+#ifdef RT_BASE_TEST
+        movhx_ld(Reax, Mesi, AJ2)
+        movhx_rr(Recx, Reax)
+        shlhx_ri(Reax, IB(1))
+        addhx_ld(Reax, Mesi, AJ2)
+        movhx_st(Reax, Medx, AJ2)
+        movhx_rr(Reax, Recx)
+        neghx_rx(Reax)
+        movhx_st(Reax, Mebx, AJ2)
+        movhx_ld(Reax, Mebx, AJ2)
+        shrhx_ri(Reax, IB(2))
+        movhx_st(Reax, Mebx, AJ2)
+        subhx_ld(Recx, Mebx, AJ2)
+        movhx_st(Recx, Mebx, AJ2)
+#endif /* RT_BASE_TEST */
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test30(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+    rt_half *hso1 = info->hso1;
+    rt_half *hso2 = info->hso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(hco1[j], hso1[j]) && IEQ(hco2[j], hso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("harr[%d] = %d\n",
+                j, (rt_si32)har0[j]);
+
+        RT_LOGI("C harr[%d]+((rt_half)+harr[%d]<<1) = %d, "
+                  "harr[%d]-((rt_half)-harr[%d]>>2) = %d\n",
+                j, j, (rt_si32)hco1[j], j, j, (rt_si32)hco2[j]);
+
+        RT_LOGI("S harr[%d]+((rt_half)+harr[%d]<<1) = %d, "
+                  "harr[%d]-((rt_half)-harr[%d]>>2) = %d\n",
+                j, j, (rt_si32)hso1[j], j, j, (rt_si32)hso2[j]);
+    }
+}
+
+#endif /* RUN_LEVEL 30 */
+
+/******************************************************************************/
 /*********************************   TABLES   *********************************/
 /******************************************************************************/
 
@@ -4432,6 +4621,10 @@ testXX c_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 29
     c_test29,
 #endif /* RUN_LEVEL 29 */
+
+#if RUN_LEVEL >= 30
+    c_test30,
+#endif /* RUN_LEVEL 30 */
 };
 
 testXX s_test[RUN_LEVEL] =
@@ -4551,6 +4744,10 @@ testXX s_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 29
     s_test29,
 #endif /* RUN_LEVEL 29 */
+
+#if RUN_LEVEL >= 30
+    s_test30,
+#endif /* RUN_LEVEL 30 */
 };
 
 testXX p_test[RUN_LEVEL] =
@@ -4670,6 +4867,10 @@ testXX p_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 29
     p_test29,
 #endif /* RUN_LEVEL 29 */
+
+#if RUN_LEVEL >= 30
+    p_test30,
+#endif /* RUN_LEVEL 30 */
 };
 
 /******************************************************************************/
@@ -4798,8 +4999,8 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
         }
     }
 
-    rt_pntr marr = sys_alloc(10 * ARR_SIZE * sizeof(rt_elem) + MASK);
-    memset(marr, 0, 10 * ARR_SIZE * sizeof(rt_elem) + MASK);
+    rt_pntr marr = sys_alloc(15*ARR_SIZE*sizeof(rt_elem) + MASK);
+    memset(marr, 0, 15*ARR_SIZE*sizeof(rt_elem) + MASK);
     rt_pntr mar0 = (rt_pntr)(((rt_full)marr + MASK) & ~MASK);
 
 #if   RT_ELEMENT == 32
@@ -4830,15 +5031,15 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     };
 #endif /* RT_ELEMENT */
 
-    rt_real *far0 = (rt_real *)mar0 + ARR_SIZE * 0;
-    rt_real *fco1 = (rt_real *)mar0 + ARR_SIZE * 1;
-    rt_real *fco2 = (rt_real *)mar0 + ARR_SIZE * 2;
-    rt_real *fso1 = (rt_real *)mar0 + ARR_SIZE * 3;
-    rt_real *fso2 = (rt_real *)mar0 + ARR_SIZE * 4;
+    rt_real *far0 = (rt_real *)mar0 + ARR_SIZE*0x0;
+    rt_real *fco1 = (rt_real *)mar0 + ARR_SIZE*0x1;
+    rt_real *fco2 = (rt_real *)mar0 + ARR_SIZE*0x2;
+    rt_real *fso1 = (rt_real *)mar0 + ARR_SIZE*0x3;
+    rt_real *fso2 = (rt_real *)mar0 + ARR_SIZE*0x4;
 
     for (k = 0; k < Q; k++)
     {
-        memcpy(far0 + RT_ARR_SIZE(farr) * k, farr, sizeof(farr));
+        memcpy(far0 + RT_ARR_SIZE(farr)*k, farr, sizeof(farr));
     }
 
 #if   RT_ELEMENT == 32
@@ -4869,15 +5070,54 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     };
 #endif /* RT_ELEMENT */
 
-    rt_elem *iar0 = (rt_elem *)mar0 + ARR_SIZE * 5;
-    rt_elem *ico1 = (rt_elem *)mar0 + ARR_SIZE * 6;
-    rt_elem *ico2 = (rt_elem *)mar0 + ARR_SIZE * 7;
-    rt_elem *iso1 = (rt_elem *)mar0 + ARR_SIZE * 8;
-    rt_elem *iso2 = (rt_elem *)mar0 + ARR_SIZE * 9;
+    rt_elem *iar0 = (rt_elem *)mar0 + ARR_SIZE*0x5;
+    rt_elem *ico1 = (rt_elem *)mar0 + ARR_SIZE*0x6;
+    rt_elem *ico2 = (rt_elem *)mar0 + ARR_SIZE*0x7;
+    rt_elem *iso1 = (rt_elem *)mar0 + ARR_SIZE*0x8;
+    rt_elem *iso2 = (rt_elem *)mar0 + ARR_SIZE*0x9;
 
     for (k = 0; k < Q; k++)
     {
-        memcpy(iar0 + RT_ARR_SIZE(iarr) * k, iarr, sizeof(iarr));
+        memcpy(iar0 + RT_ARR_SIZE(iarr)*k, iarr, sizeof(iarr));
+    }
+
+    rt_half harr[8*3] =
+    {
+        2,
+        11,
+        651,
+        14,
+        3778,
+        19005,
+        7,
+        57896,
+        2347,
+        876,
+        76,
+        31873,
+        21,
+        113,
+        6514,
+        145,
+        37789,
+        1900,
+        73,
+        5,
+        23,
+        8761,
+        762,
+        31,
+    };
+
+    rt_elem *har0 = (rt_elem *)mar0 + ARR_SIZE*0xA;
+    rt_elem *hco1 = (rt_elem *)mar0 + ARR_SIZE*0xB;
+    rt_elem *hco2 = (rt_elem *)mar0 + ARR_SIZE*0xC;
+    rt_elem *hso1 = (rt_elem *)mar0 + ARR_SIZE*0xD;
+    rt_elem *hso2 = (rt_elem *)mar0 + ARR_SIZE*0xE;
+
+    for (k = 0; k < Q; k++)
+    {
+        memcpy((rt_half *)har0 + RT_ARR_SIZE(harr)*k, harr, sizeof(harr));
     }
 
     rt_pntr info = sys_alloc(sizeof(rt_SIMD_INFOX) + MASK);
@@ -4899,6 +5139,12 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     inf0->ico2 = ico2;
     inf0->iso1 = iso1;
     inf0->iso2 = iso2;
+
+    inf0->har0 = (rt_half *)har0;
+    inf0->hco1 = (rt_half *)hco1;
+    inf0->hco2 = (rt_half *)hco2;
+    inf0->hso1 = (rt_half *)hso1;
+    inf0->hso2 = (rt_half *)hso2;
 
     inf0->cyc  = r_test;
     inf0->size = ARR_SIZE;
