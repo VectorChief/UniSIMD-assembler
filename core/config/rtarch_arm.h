@@ -2326,7 +2326,7 @@
 
 #define shrhn_mx(MG, DG)                 /* reads Recx for shift count */   \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), AH(DG), EMPTY2)   \
-        EMITW(0xE1D000B0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))  \
+        EMITW(0xE1D000F0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))  \
         EMITW(0xE1A00050 | MRM(TMxx,    0x00,    TMxx) | Tecx << 8)         \
         EMITW(0xE1C000B0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))
 
@@ -2337,7 +2337,7 @@
 
 #define shrhn_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), AH(DG), EMPTY2)   \
-        EMITW(0xE1D000B0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))  \
+        EMITW(0xE1D000F0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))  \
         EMITW(0xE1A00040 | MRM(TMxx,    0x00,    TMxx) |                    \
                                                  (0x1F & VAL(IS)) << 7)     \
         EMITW(0xE1C000B0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))
@@ -2352,7 +2352,7 @@
 
 #define shrhn_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), AH(DG), EMPTY2)   \
-        EMITW(0xE1D000B0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))  \
+        EMITW(0xE1D000F0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))  \
         EMITW(0xE1A00050 | MRM(TMxx,    0x00,    TMxx) | REG(RS) << 8)      \
         EMITW(0xE1C000B0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))
 
@@ -2365,7 +2365,7 @@
 
 #define shrhnZmx(MG, DG)                 /* reads Recx for shift count */   \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), AH(DG), EMPTY2)   \
-        EMITW(0xE1D000B0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))  \
+        EMITW(0xE1D000F0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))  \
         EMITW(0xE1B00050 | MRM(TMxx,    0x00,    TMxx) | Tecx << 8)         \
         EMITW(0xE1C000B0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))
 
@@ -2376,7 +2376,7 @@
 
 #define shrhnZmi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), AH(DG), EMPTY2)   \
-        EMITW(0xE1D000B0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))  \
+        EMITW(0xE1D000F0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))  \
         EMITW(0xE1B00040 | MRM(TMxx,    0x00,    TMxx) |                    \
                                                  (0x1F & VAL(IS)) << 7)     \
         EMITW(0xE1C000B0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))
@@ -2391,7 +2391,7 @@
 
 #define shrhnZst(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), AH(DG), EMPTY2)   \
-        EMITW(0xE1D000B0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))  \
+        EMITW(0xE1D000F0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))  \
         EMITW(0xE1B00050 | MRM(TMxx,    0x00,    TMxx) | REG(RS) << 8)      \
         EMITW(0xE1C000B0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))
 
