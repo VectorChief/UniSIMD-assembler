@@ -29,7 +29,7 @@
 /*******************************   DEFINITIONS   ******************************/
 /******************************************************************************/
 
-#define RUN_LEVEL           30
+#define RUN_LEVEL           31
 #define CYC_SIZE            1000000
 
 #define ARR_SIZE            S*3 /* hardcoded in ASM sections, S = SIMD elems */
@@ -4499,6 +4499,168 @@ rt_void p_test30(rt_SIMD_INFOX *info)
 #endif /* RUN_LEVEL 30 */
 
 /******************************************************************************/
+/******************************   RUN LEVEL 31   ******************************/
+/******************************************************************************/
+
+#if RUN_LEVEL >= 31
+
+rt_void c_test31(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            hco1[j] = har0[j] * (har0[j] << 1);
+            hco2[j] = ((rt_shrt)-har0[j] >> 2);
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
+ */
+rt_void s_test31(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Resi, Mebp, inf_HAR0)
+        movxx_ld(Redx, Mebp, inf_HSO1)
+        movxx_ld(Rebx, Mebp, inf_HSO2)
+
+        movmx_ld(Xmm0, Mesi, AJ0)
+        movmx_rr(Xmm3, Xmm0)
+        movmx_rr(Xmm2, Xmm0)
+        shlmx_ri(Xmm0, IB(1))
+        mulmx_rr(Xmm2, Xmm0)
+        movmx_st(Xmm2, Medx, AJ0)
+        xormx_rr(Xmm0, Xmm0)
+        submx_rr(Xmm0, Xmm3)
+        shrmn_ri(Xmm0, IB(2))
+        movmx_st(Xmm0, Mebx, AJ0)
+#ifdef RT_BASE_TEST
+        movhx_ld(Reax, Mesi, AJ0)
+        movhx_rr(Recx, Reax)
+        shlhx_ri(Reax, IB(1))
+        mulhx_rr(Reax, Recx)
+        movhx_st(Reax, Medx, AJ0)
+        movhx_rr(Reax, Recx)
+        neghx_rx(Reax)
+        movhx_st(Reax, Mebx, AJ0)
+        movhn_ld(Reax, Mebx, AJ0)
+        shrhn_ri(Reax, IB(2))
+        movhx_st(Reax, Mebx, AJ0)
+#endif /* RT_BASE_TEST */
+
+        movmx_ld(Xmm0, Mesi, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        xormx_rr(Xmm1, Xmm1)
+        movmx_st(Xmm1, Medx, AJ1)
+        movhx_mi(Medx, AJ1, IB(1))
+        shlmx_ld(Xmm0, Medx, AJ1)
+        movmx_st(Xmm0, Medx, AJ1)
+        mulmx_ld(Xmm2, Medx, AJ1)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm0, Mebx, AJ1)
+        xormx_ld(Xmm0, Mebx, AJ1)
+        submx_ld(Xmm0, Mesi, AJ1)
+        movmx_st(Xmm1, Mebx, AJ1)
+        movhx_mi(Mebx, AJ1, IB(2))
+        shrmn_ld(Xmm0, Mebx, AJ1)
+        movmx_st(Xmm0, Mebx, AJ1)
+#ifdef RT_BASE_TEST
+        movhx_ld(Reax, Mesi, AJ1)
+        movhx_rr(Recx, Reax)
+        movhx_st(Reax, Medx, AJ1)
+        shlhx_mi(Medx, AJ1, IB(1))
+        mulhx_ld(Reax, Medx, AJ1)
+        movhx_st(Reax, Medx, AJ1)
+        movhx_st(Recx, Mebx, AJ1)
+        neghx_mx(Mebx, AJ1)
+        shrhn_mi(Mebx, AJ1, IB(2))
+#endif /* RT_BASE_TEST */
+
+        movmx_ld(Xmm0, Mesi, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        movmx_rr(Xmm2, Xmm0)
+        shlmx_ri(Xmm0, IB(1))
+        mulmx_rr(Xmm2, Xmm0)
+        movmx_st(Xmm2, Medx, AJ2)
+        xormx_rr(Xmm0, Xmm0)
+        submx_rr(Xmm0, Xmm3)
+        shrmn_ri(Xmm0, IB(2))
+        movmx_st(Xmm0, Mebx, AJ2)
+#ifdef RT_BASE_TEST
+        movhx_ld(Reax, Mesi, AJ2)
+        movhx_rr(Recx, Reax)
+        shlhx_ri(Reax, IB(1))
+        mulhx_rr(Reax, Recx)
+        movhx_st(Reax, Medx, AJ2)
+        movhx_rr(Reax, Recx)
+        neghx_rx(Reax)
+        movhx_st(Reax, Mebx, AJ2)
+        movhn_ld(Reax, Mebx, AJ2)
+        shrhn_ri(Reax, IB(2))
+        movhx_st(Reax, Mebx, AJ2)
+#endif /* RT_BASE_TEST */
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test31(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+    rt_half *hso1 = info->hso1;
+    rt_half *hso2 = info->hso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(hco1[j], hso1[j]) && IEQ(hco2[j], hso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("harr[%d] = %d\n",
+                j, (rt_si32)har0[j]);
+
+        RT_LOGI("C harr[%d]*(harr[%d]<<1) = %d, "
+                  "((rt_shrt)-harr[%d]>>2) = %d\n",
+                j, j, (rt_si32)hco1[j], j, (rt_si32)hco2[j]);
+
+        RT_LOGI("S harr[%d]*(harr[%d]<<1) = %d, "
+                  "((rt_shrt)-harr[%d]>>2) = %d\n",
+                j, j, (rt_si32)hso1[j], j, (rt_si32)hso2[j]);
+    }
+}
+
+#endif /* RUN_LEVEL 31 */
+
+/******************************************************************************/
 /*********************************   TABLES   *********************************/
 /******************************************************************************/
 
@@ -4625,6 +4787,10 @@ testXX c_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 30
     c_test30,
 #endif /* RUN_LEVEL 30 */
+
+#if RUN_LEVEL >= 31
+    c_test31,
+#endif /* RUN_LEVEL 31 */
 };
 
 testXX s_test[RUN_LEVEL] =
@@ -4748,6 +4914,10 @@ testXX s_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 30
     s_test30,
 #endif /* RUN_LEVEL 30 */
+
+#if RUN_LEVEL >= 31
+    s_test31,
+#endif /* RUN_LEVEL 31 */
 };
 
 testXX p_test[RUN_LEVEL] =
@@ -4871,6 +5041,10 @@ testXX p_test[RUN_LEVEL] =
 #if RUN_LEVEL >= 30
     p_test30,
 #endif /* RUN_LEVEL 30 */
+
+#if RUN_LEVEL >= 31
+    p_test31,
+#endif /* RUN_LEVEL 31 */
 };
 
 /******************************************************************************/
