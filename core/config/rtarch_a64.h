@@ -1145,39 +1145,39 @@
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
-     /* Definitions for arj's "op" and "cc" parameters
+     /* Definitions for arj's "OP" and "cc" parameters
       * are provided in 32-bit rtarch_***.h files. */
 
-#define arjzx_rx(RG, op, cc, lb)                                            \
-        AR1(W(RG), op, zxZrx)                                               \
+#define arjzx_rx(RG, OP, cc, lb)                                            \
+        AR1(W(RG), VAL(OP), z, TP1(OP), Zrx)                                \
         CMJ(cc, lb)
 
-#define arjzx_mx(MG, DG, op, cc, lb)                                        \
-        AR2(W(MG), W(DG), op, zxZmx)                                        \
+#define arjzx_mx(MG, DG, OP, cc, lb)                                        \
+        AR2(W(MG), W(DG), VAL(OP), z, TP1(OP), Zmx)                         \
         CMJ(cc, lb)
 
-#define arjzx_ri(RG, IS, op, cc, lb)                                        \
-        AR2(W(RG), W(IS), op, zxZri)                                        \
+#define arjzx_ri(RG, IS, OP, cc, lb)                                        \
+        AR2(W(RG), W(IS), VAL(OP), z, TP1(OP), Zri)                         \
         CMJ(cc, lb)
 
-#define arjzx_mi(MG, DG, IS, op, cc, lb)                                    \
-        AR3(W(MG), W(DG), W(IS), op, zxZmi)                                 \
+#define arjzx_mi(MG, DG, IS, OP, cc, lb)                                    \
+        AR3(W(MG), W(DG), W(IS), VAL(OP), z, TP1(OP), Zmi)                  \
         CMJ(cc, lb)
 
-#define arjzx_rr(RG, RS, op, cc, lb)                                        \
-        AR2(W(RG), W(RS), op, zxZrr)                                        \
+#define arjzx_rr(RG, RS, OP, cc, lb)                                        \
+        AR2(W(RG), W(RS), VAL(OP), z, TP1(OP), Zrr)                         \
         CMJ(cc, lb)
 
-#define arjzx_ld(RG, MS, DS, op, cc, lb)                                    \
-        AR3(W(RG), W(MS), W(DS), op, zxZld)                                 \
+#define arjzx_ld(RG, MS, DS, OP, cc, lb)                                    \
+        AR3(W(RG), W(MS), W(DS), VAL(OP), z, TP1(OP), Zld)                  \
         CMJ(cc, lb)
 
-#define arjzx_st(RS, MG, DG, op, cc, lb)                                    \
-        AR3(W(RS), W(MG), W(DG), op, zxZst)                                 \
+#define arjzx_st(RS, MG, DG, OP, cc, lb)                                    \
+        AR3(W(RS), W(MG), W(DG), VAL(OP), z, TP1(OP), Zst)                  \
         CMJ(cc, lb)
 
-#define arjzx_mr(MG, DG, RS, op, cc, lb)                                    \
-        arjzx_st(W(RS), W(MG), W(DG), op, cc, lb)
+#define arjzx_mr(MG, DG, RS, OP, cc, lb)                                    \
+        arjzx_st(W(RS), W(MG), W(DG), W(OP), cc, lb)
 
 /* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */
