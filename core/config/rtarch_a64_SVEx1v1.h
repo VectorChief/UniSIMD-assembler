@@ -928,7 +928,7 @@
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#define shlqx_ri(XG, IS)                                                    \
+#define shlqx_ri(XG, IS)     /* emits shift-right with out-of-range args */ \
         shlqx3ri(W(XG), W(XG), W(IS))
 
 #define shlqx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
@@ -940,7 +940,8 @@
 #define shlqx3ri(XD, XS, IT)                                                \
         EMITW(0x04A09400 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) < 64) & 0x00000800) | (M(VAL(IT) > 63) & 0x00000000) |   \
-                        (0x20 & VAL(IT)) << 17 | (0x1F & VAL(IT)) << 16)
+        (M(VAL(IT) < 64) & ((0x20 & VAL(IT)) << 17 |                        \
+                            (0x1F & VAL(IT)) << 16)))
 
 #define shlqx3ld(XD, XS, MT, DT)                                            \
         movqx_rr(W(XD), W(XS))                                              \
@@ -949,7 +950,7 @@
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#define shrqx_ri(XG, IS)     /* emits shift-left for zero-immediate args */ \
+#define shrqx_ri(XG, IS)     /* emits shift-left for immediate-zero args */ \
         shrqx3ri(W(XG), W(XG), W(IS))
 
 #define shrqx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
@@ -961,7 +962,8 @@
 #define shrqx3ri(XD, XS, IT)                                                \
         EMITW(0x04A09400 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00000800) | (M(VAL(IT) != 0) & 0x00000000) |   \
-                        (0x20 &-VAL(IT)) << 17 | (0x1F &-VAL(IT)) << 16)
+        (M(VAL(IT) < 64) & ((0x20 &-VAL(IT)) << 17 |                        \
+                            (0x1F &-VAL(IT)) << 16)))
 
 #define shrqx3ld(XD, XS, MT, DT)                                            \
         movqx_rr(W(XD), W(XS))                                              \
@@ -970,7 +972,7 @@
 /* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#define shrqn_ri(XG, IS)     /* emits shift-left for zero-immediate args */ \
+#define shrqn_ri(XG, IS)     /* emits shift-left for immediate-zero args */ \
         shrqn3ri(W(XG), W(XG), W(IS))
 
 #define shrqn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
@@ -982,7 +984,8 @@
 #define shrqn3ri(XD, XS, IT)                                                \
         EMITW(0x04A09000 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00000C00) | (M(VAL(IT) != 0) & 0x00000000) |   \
-                        (0x20 &-VAL(IT)) << 17 | (0x1F &-VAL(IT)) << 16)
+        (M(VAL(IT) < 64) & ((0x20 &-VAL(IT)) << 17 |                        \
+                            (0x1F &-VAL(IT)) << 16)))
 
 #define shrqn3ld(XD, XS, MT, DT)                                            \
         movqx_rr(W(XD), W(XS))                                              \
