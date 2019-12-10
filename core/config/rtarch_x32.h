@@ -1055,6 +1055,47 @@
 #define shrwn_mr(MG, DG, RS)                                                \
         shrwn_st(W(RS), W(MG), W(DG))
 
+
+#define shrwnZrx(RG)                     /* reads Recx for shift count */   \
+        REX(0,       RXB(RG)) EMITB(0xD3)                                   \
+        MRM(0x07,    MOD(RG), REG(RG))                                      \
+
+#define shrwnZmx(MG, DG)                 /* reads Recx for shift count */   \
+    ADR REX(0,       RXB(MG)) EMITB(0xD3)                                   \
+        MRM(0x07,    MOD(MG), REG(MG))                                      \
+        AUX(SIB(MG), CMD(DG), EMPTY)
+
+#define shrwnZri(RG, IS)                                                    \
+        REX(0,       RXB(RG)) EMITB(0xC1)                                   \
+        MRM(0x07,    MOD(RG), REG(RG))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
+
+#define shrwnZmi(MG, DG, IS)                                                \
+    ADR REX(0,       RXB(MG)) EMITB(0xC1)                                   \
+        MRM(0x07,    MOD(MG), REG(MG))                                      \
+        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS)))
+
+#define shrwnZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        stack_st(Recx)                                                      \
+        movwx_rr(Recx, W(RS))                                               \
+        shrwnZrx(W(RG))                                                     \
+        stack_ld(Recx)
+
+#define shrwnZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx, W(MS), W(DS))                                        \
+        shrwnZrx(W(RG))                                                     \
+        stack_ld(Recx)
+
+#define shrwnZst(RS, MG, DG)                                                \
+        stack_st(Recx)                                                      \
+        movwx_rr(Recx, W(RS))                                               \
+        shrwnZmx(W(MG), W(DG))                                              \
+        stack_ld(Recx)
+
+#define shrwnZmr(MG, DG, RS)                                                \
+        shrwnZst(W(RS), W(MG), W(DG))
+
 /* ror (G = G >> S | G << 32 - S)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */

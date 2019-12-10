@@ -8856,6 +8856,31 @@
 #define shrxn_mr(MG, DG, RS)                                                \
         shrwn_mr(W(MG), W(DG), W(RS))
 
+
+#define shrxnZrx(RG)                     /* reads Recx for shift count */   \
+        shrwnZrx(W(RG))
+
+#define shrxnZmx(MG, DG)                 /* reads Recx for shift count */   \
+        shrwnZmx(W(MG), W(DG))
+
+#define shrxnZri(RG, IS)                                                    \
+        shrwnZri(W(RG), W(IS))
+
+#define shrxnZmi(MG, DG, IS)                                                \
+        shrwnZmi(W(MG), W(DG), W(IS))
+
+#define shrxnZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        shrwnZrr(W(RG), W(RS))
+
+#define shrxnZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        shrwnZld(W(RG), W(MS), W(DS))
+
+#define shrxnZst(RS, MG, DG)                                                \
+        shrwnZst(W(RS), W(MG), W(DG))
+
+#define shrxnZmr(MG, DG, RS)                                                \
+        shrwnZmr(W(MG), W(DG), W(RS))
+
 /* ror (G = G >> S | G << 32 - S)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -9620,6 +9645,31 @@
 
 #define shrxn_mr(MG, DG, RS)                                                \
         shrzn_mr(W(MG), W(DG), W(RS))
+
+
+#define shrxnZrx(RG)                     /* reads Recx for shift count */   \
+        shrznZrx(W(RG))
+
+#define shrxnZmx(MG, DG)                 /* reads Recx for shift count */   \
+        shrznZmx(W(MG), W(DG))
+
+#define shrxnZri(RG, IS)                                                    \
+        shrznZri(W(RG), W(IS))
+
+#define shrxnZmi(MG, DG, IS)                                                \
+        shrznZmi(W(MG), W(DG), W(IS))
+
+#define shrxnZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        shrznZrr(W(RG), W(RS))
+
+#define shrxnZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        shrznZld(W(RG), W(MS), W(DS))
+
+#define shrxnZst(RS, MG, DG)                                                \
+        shrznZst(W(RS), W(MG), W(DG))
+
+#define shrxnZmr(MG, DG, RS)                                                \
+        shrznZmr(W(MG), W(DG), W(RS))
 
 /* ror (G = G >> S | G << 64 - S)
  * set-flags: undefined (*_*), yes (*Z*)
@@ -10388,6 +10438,31 @@
 #define shryn_mr(MG, DG, RS)                                                \
         shrwn_mr(W(MG), W(DG), W(RS))
 
+
+#define shrynZrx(RG)                     /* reads Recx for shift count */   \
+        shrwnZrx(W(RG))
+
+#define shrynZmx(MG, DG)                 /* reads Recx for shift count */   \
+        shrwnZmx(W(MG), W(DG))
+
+#define shrynZri(RG, IS)                                                    \
+        shrwnZri(W(RG), W(IS))
+
+#define shrynZmi(MG, DG, IS)                                                \
+        shrwnZmi(W(MG), W(DG), W(IS))
+
+#define shrynZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        shrwnZrr(W(RG), W(RS))
+
+#define shrynZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        shrwnZld(W(RG), W(MS), W(DS))
+
+#define shrynZst(RS, MG, DG)                                                \
+        shrwnZst(W(RS), W(MG), W(DG))
+
+#define shrynZmr(MG, DG, RS)                                                \
+        shrwnZmr(W(MG), W(DG), W(RS))
+
 /* ror (G = G >> S | G << 32 - S)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -11111,6 +11186,31 @@
 
 #define shryn_mr(MG, DG, RS)                                                \
         shrzn_mr(W(MG), W(DG), W(RS))
+
+
+#define shrynZrx(RG)                     /* reads Recx for shift count */   \
+        shrznZrx(W(RG))
+
+#define shrynZmx(MG, DG)                 /* reads Recx for shift count */   \
+        shrznZmx(W(MG), W(DG))
+
+#define shrynZri(RG, IS)                                                    \
+        shrznZri(W(RG), W(IS))
+
+#define shrynZmi(MG, DG, IS)                                                \
+        shrznZmi(W(MG), W(DG), W(IS))
+
+#define shrynZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        shrznZrr(W(RG), W(RS))
+
+#define shrynZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        shrznZld(W(RG), W(MS), W(DS))
+
+#define shrynZst(RS, MG, DG)                                                \
+        shrznZst(W(RS), W(MG), W(DG))
+
+#define shrynZmr(MG, DG, RS)                                                \
+        shrznZmr(W(MG), W(DG), W(RS))
 
 /* ror (G = G >> S | G << 64 - S)
  * set-flags: undefined (*_*), yes (*Z*)

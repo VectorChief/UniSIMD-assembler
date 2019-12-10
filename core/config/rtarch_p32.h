@@ -1318,6 +1318,42 @@
 #define shrwn_mr(MG, DG, RS)                                                \
         shrwn_st(W(RS), W(MG), W(DG))
 
+
+#define shrwnZrx(RG)                     /* reads Recx for shift count */   \
+        EMITW(0x7C000631 | MSM(REG(RG), REG(RG), Tecx))
+
+#define shrwnZmx(MG, DG)                 /* reads Recx for shift count */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(0x7C000631 | MSM(TMxx,    TMxx,    Tecx))                     \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), O1(DG)))
+
+#define shrwnZri(RG, IS)                                                    \
+        EMITW(0x7C000671 | MSM(REG(RG), REG(RG), VAL(IS) & 0x1F))
+
+#define shrwnZmi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(0x7C000671 | MSM(TMxx,    TMxx,    VAL(IS) & 0x1F))           \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), O1(DG)))
+
+#define shrwnZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        EMITW(0x7C000631 | MSM(REG(RG), REG(RG), REG(RS)))
+
+#define shrwnZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x7C000631 | MSM(REG(RG), REG(RG), TMxx))
+
+#define shrwnZst(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(0x7C000631 | MSM(TMxx,    TMxx,    REG(RS)))                  \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), O1(DG)))
+
+#define shrwnZmr(MG, DG, RS)                                                \
+        shrwnZst(W(RS), W(MG), W(DG))
+
 /* ror (G = G >> S | G << 32 - S)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */

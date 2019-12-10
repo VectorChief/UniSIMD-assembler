@@ -848,6 +848,47 @@
 #define shrzn_mr(MG, DG, RS)                                                \
         shrzn_st(W(RS), W(MG), W(DG))
 
+
+#define shrznZrx(RG)                     /* reads Recx for shift count */   \
+        REW(0,       RXB(RG)) EMITB(0xD3)                                   \
+        MRM(0x07,    MOD(RG), REG(RG))                                      \
+
+#define shrznZmx(MG, DG)                 /* reads Recx for shift count */   \
+    ADR REW(0,       RXB(MG)) EMITB(0xD3)                                   \
+        MRM(0x07,    MOD(MG), REG(MG))                                      \
+        AUX(SIB(MG), CMD(DG), EMPTY)
+
+#define shrznZri(RG, IS)                                                    \
+        REW(0,       RXB(RG)) EMITB(0xC1)                                   \
+        MRM(0x07,    MOD(RG), REG(RG))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
+
+#define shrznZmi(MG, DG, IS)                                                \
+    ADR REW(0,       RXB(MG)) EMITB(0xC1)                                   \
+        MRM(0x07,    MOD(MG), REG(MG))                                      \
+        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS)))
+
+#define shrznZrr(RG, RS)       /* Recx cannot be used as first operand */   \
+        stack_st(Recx)                                                      \
+        movzx_rr(Recx, W(RS))                                               \
+        shrznZrx(W(RG))                                                     \
+        stack_ld(Recx)
+
+#define shrznZld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx, W(MS), W(DS))                                        \
+        shrznZrx(W(RG))                                                     \
+        stack_ld(Recx)
+
+#define shrznZst(RS, MG, DG)                                                \
+        stack_st(Recx)                                                      \
+        movzx_rr(Recx, W(RS))                                               \
+        shrznZmx(W(MG), W(DG))                                              \
+        stack_ld(Recx)
+
+#define shrznZmr(MG, DG, RS)                                                \
+        shrznZst(W(RS), W(MG), W(DG))
+
 /* ror (G = G >> S | G << 64 - S)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
