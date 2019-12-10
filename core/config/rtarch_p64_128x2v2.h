@@ -974,8 +974,9 @@
         shldx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shldx3ri(XD, XS, IT)                                                \
-        movzx_mi(Mebp, inf_SCR01(0), W(IT))                                 \
-        shldx3ld(W(XD), W(XS), Mebp, inf_SCR01(0))
+        EMITW(0xF00002D1 | TmmM << 21 | (0x3F & VAL(IT)) << 11)             \
+        EMITW(0x100005C4 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x100005C4 | MXM(RYG(XD), RYG(XS), TmmM))
 
 #define shldx3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
@@ -993,8 +994,9 @@
         shrdx3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrdx3ri(XD, XS, IT)                                                \
-        movzx_mi(Mebp, inf_SCR01(0), W(IT))                                 \
-        shrdx3ld(W(XD), W(XS), Mebp, inf_SCR01(0))
+        EMITW(0xF00002D1 | TmmM << 21 | (0x3F & VAL(IT)) << 11)             \
+        EMITW(0x100006C4 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x100006C4 | MXM(RYG(XD), RYG(XS), TmmM))
 
 #define shrdx3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
@@ -1012,8 +1014,9 @@
         shrdn3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrdn3ri(XD, XS, IT)                                                \
-        movzx_mi(Mebp, inf_SCR01(0), W(IT))                                 \
-        shrdn3ld(W(XD), W(XS), Mebp, inf_SCR01(0))
+        EMITW(0xF00002D1 | TmmM << 21 | (0x3F & VAL(IT)) << 11)             \
+        EMITW(0x100003C4 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x100003C4 | MXM(RYG(XD), RYG(XS), TmmM))
 
 #define shrdn3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C3(DT), EMPTY2)   \
