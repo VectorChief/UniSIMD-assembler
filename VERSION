@@ -1,3 +1,13 @@
+  - fix 32-bit BASE compare-to-mem on 64-bit POWER
+  - fix usage of non-persistent temp-register on POWER
+  - update build instructions and makefile notes
+  - add notes about QEMU 3.1.0 for SVE emulation
+  - add SIMD flag to replace VMX targets with VSX (off)
+  - fix and clean up SIMD target selection in headers
+  - fix/add comments for SIMD/BASE shift count value
+  - adjust build instructions for older HW compatibility
+  - adjust Win64 release build script for lower core-count
+
 v1.0.0: UniSIMD assembler, code name "ENsed", base for future SIMD enhancements
   - foundation for QuadRay engine 0.7.0 "GIzmo" with ARM-SVE, POWER9, new scheme
   - renewed directory structure, move BASE and SIMD header files to core/config
