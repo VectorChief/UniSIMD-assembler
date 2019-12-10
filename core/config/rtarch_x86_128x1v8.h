@@ -921,6 +921,23 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define mulix_rr(XG, XS)                                                    \
+        mulix3rr(W(XG), W(XG), W(XS))
+
+#define mulix_ld(XG, MS, DS)                                                \
+        mulix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulix3rr(XD, XS, XT)                                                \
+        VEX(REG(XS), 0, 1, 2) EMITB(0x40)                                   \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define mulix3ld(XD, XS, MT, DT)                                            \
+        VEX(REG(XS), 0, 1, 2) EMITB(0x40)                                   \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 

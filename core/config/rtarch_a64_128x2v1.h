@@ -869,6 +869,53 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x6EE08400 | MXM(RYG(XD), RYG(XS), TmmM))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define muldx_rr(XG, XS)                                                    \
+        muldx3rr(W(XG), W(XG), W(XS))
+
+#define muldx_ld(XG, MS, DS)                                                \
+        muldx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define muldx3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
+        mulzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movzx_st(Recx,  Mebp, inf_SCR01(0x00))                              \
+        movzx_ld(Recx,  Mebp, inf_SCR01(0x08))                              \
+        mulzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        movzx_st(Recx,  Mebp, inf_SCR01(0x08))                              \
+        movzx_ld(Recx,  Mebp, inf_SCR01(0x10))                              \
+        mulzx_ld(Recx,  Mebp, inf_SCR02(0x10))                              \
+        movzx_st(Recx,  Mebp, inf_SCR01(0x10))                              \
+        movzx_ld(Recx,  Mebp, inf_SCR01(0x18))                              \
+        mulzx_ld(Recx,  Mebp, inf_SCR02(0x18))                              \
+        movzx_st(Recx,  Mebp, inf_SCR01(0x18))                              \
+        stack_ld(Recx)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define muldx3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
+        mulzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movzx_st(Recx,  Mebp, inf_SCR01(0x00))                              \
+        movzx_ld(Recx,  Mebp, inf_SCR01(0x08))                              \
+        mulzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        movzx_st(Recx,  Mebp, inf_SCR01(0x08))                              \
+        movzx_ld(Recx,  Mebp, inf_SCR01(0x10))                              \
+        mulzx_ld(Recx,  Mebp, inf_SCR02(0x10))                              \
+        movzx_st(Recx,  Mebp, inf_SCR01(0x10))                              \
+        movzx_ld(Recx,  Mebp, inf_SCR01(0x18))                              \
+        mulzx_ld(Recx,  Mebp, inf_SCR02(0x18))                              \
+        movzx_st(Recx,  Mebp, inf_SCR01(0x18))                              \
+        stack_ld(Recx)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 

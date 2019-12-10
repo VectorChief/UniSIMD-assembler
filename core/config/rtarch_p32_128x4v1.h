@@ -1172,6 +1172,165 @@
         EMITW(0x10000480 | MXM(TmmQ,    TmmQ,    TmmM))                     \
         EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#if (RT_SIMD_COMPAT_PW8 == 0)
+
+#define mulox_rr(XG, XS)                                                    \
+        mulox3rr(W(XG), W(XG), W(XS))
+
+#define mulox_ld(XG, MS, DS)                                                \
+        mulox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulox3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x00))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x04))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x04))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x08))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x08))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x0C))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x0C))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x10))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x10))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x10))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x14))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x14))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x14))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x18))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x18))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x18))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x1C))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x1C))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x1C))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x20))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x20))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x20))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x24))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x24))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x24))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x28))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x28))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x28))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x2C))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x2C))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x2C))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x30))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x30))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x30))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x34))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x34))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x34))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x38))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x38))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x38))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x3C))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x3C))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x3C))                              \
+        stack_ld(Recx)                                                      \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mulox3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x00))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x04))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x04))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x08))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x08))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x0C))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x0C))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x10))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x10))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x10))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x14))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x14))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x14))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x18))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x18))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x18))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x1C))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x1C))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x1C))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x20))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x20))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x20))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x24))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x24))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x24))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x28))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x28))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x28))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x2C))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x2C))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x2C))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x30))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x30))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x30))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x34))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x34))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x34))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x38))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x38))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x38))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x3C))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x3C))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x3C))                              \
+        stack_ld(Recx)                                                      \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#else /* RT_SIMD_COMPAT_PW8 == 1 */
+
+#define mulox_rr(XG, XS)                                                    \
+        mulox3rr(W(XG), W(XG), W(XS))
+
+#define mulox_ld(XG, MS, DS)                                                \
+        mulox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulox3rr(XD, XS, XT)                                                \
+        EMITW(0x10000089 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x10000089 | MXM(RYG(XD), RYG(XS), RYG(XT)))                  \
+        EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
+        EMITW(0xF0000491 | MXM(TmmM,    REG(XT), REG(XT)))                  \
+        EMITW(0x10000089 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XS), RYG(XS)))                  \
+        EMITW(0xF0000491 | MXM(TmmM,    RYG(XT), RYG(XT)))                  \
+        EMITW(0x10000089 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
+
+#define mulox3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000619 | MXM(TmmM,    T0xx,    TPxx))                     \
+        EMITW(0x10000089 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x7C000619 | MXM(TmmM,    T1xx,    TPxx))                     \
+        EMITW(0x10000089 | MXM(RYG(XD), RYG(XS), TmmM))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    REG(XS), REG(XS)))                  \
+        EMITW(0x7C000619 | MXM(TmmM,    T2xx,    TPxx))                     \
+        EMITW(0x10000089 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XS), RYG(XS)))                  \
+        EMITW(0x7C000619 | MXM(TmmM,    T3xx,    TPxx))                     \
+        EMITW(0x10000089 | MXM(TmmQ,    TmmQ,    TmmM))                     \
+        EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
+
+#endif /* RT_SIMD_COMPAT_PW8 == 1 */
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 

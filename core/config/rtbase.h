@@ -54,21 +54,21 @@
 
 /************************   COMMON SIMD INSTRUCTIONS   ************************/
 
-/**** var-len **** (cbr/cbe/cbs/...) with fixed-32-bit-element ****************/
-/**** 256-bit **** (cbr/cbe/cbs/...) with fixed-32-bit-element ****************/
-/**** 128-bit **** (cbr/cbe/cbs/...) with fixed-32-bit-element ****************/
+/**** var-len **** (cbr/cbe/cbs/...) with fixed-32-bit element ****************/
+/**** 256-bit **** (cbr/cbe/cbs/...) with fixed-32-bit element ****************/
+/**** 128-bit **** (cbr/cbe/cbs/...) with fixed-32-bit element ****************/
 
-/**** var-len **** (cbr/cbe/cbs/...) with fixed-64-bit-element ****************/
-/**** 256-bit **** (cbr/cbe/cbs/...) with fixed-64-bit-element ****************/
-/**** 128-bit **** (cbr/cbe/cbs/...) with fixed-64-bit-element ****************/
+/**** var-len **** (cbr/cbe/cbs/...) with fixed-64-bit element ****************/
+/**** 256-bit **** (cbr/cbe/cbs/...) with fixed-64-bit element ****************/
+/**** 128-bit **** (cbr/cbe/cbs/...) with fixed-64-bit element ****************/
 
-/**** var-len **** (horizontal SIMD) with fixed-32-bit-element ****************/
-/**** 256-bit **** (horizontal SIMD) with fixed-32-bit-element ****************/
-/**** 128-bit **** (horizontal SIMD) with fixed-32-bit-element ****************/
+/**** var-len **** (horizontal SIMD) with fixed-32-bit element ****************/
+/**** 256-bit **** (horizontal SIMD) with fixed-32-bit element ****************/
+/**** 128-bit **** (horizontal SIMD) with fixed-32-bit element ****************/
 
-/**** var-len **** (horizontal SIMD) with fixed-64-bit-element ****************/
-/**** 256-bit **** (horizontal SIMD) with fixed-64-bit-element ****************/
-/**** 128-bit **** (horizontal SIMD) with fixed-64-bit-element ****************/
+/**** var-len **** (horizontal SIMD) with fixed-64-bit element ****************/
+/**** 256-bit **** (horizontal SIMD) with fixed-64-bit element ****************/
+/**** 128-bit **** (horizontal SIMD) with fixed-64-bit element ****************/
 
 /************************   COMMON BASE INSTRUCTIONS   ************************/
 
@@ -1216,7 +1216,7 @@ rt_si32 from_mask(rt_si32 mask)
         FCTRL_RESET()
 
 /******************************************************************************/
-/**** var-len **** (cbr/cbe/cbs/...) with fixed-32-bit-element ****************/
+/**** var-len **** (cbr/cbe/cbs/...) with fixed-32-bit element ****************/
 /******************************************************************************/
 
 #if   (RT_SIMD >= 512) || (RT_SIMD == 256 && defined RT_SVEX1)
@@ -1271,7 +1271,7 @@ rt_si32 from_mask(rt_si32 mask)
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
 /******************************************************************************/
-/**** 256-bit **** (cbr/cbe/cbs/...) with fixed-32-bit-element ****************/
+/**** 256-bit **** (cbr/cbe/cbs/...) with fixed-32-bit element ****************/
 /******************************************************************************/
 
 /* cbr (D = cbrt S) */
@@ -1322,7 +1322,7 @@ rt_si32 from_mask(rt_si32 mask)
         subcs_rr(W(XG), W(X2))
 
 /******************************************************************************/
-/**** 128-bit **** (cbr/cbe/cbs/...) with fixed-32-bit-element ****************/
+/**** 128-bit **** (cbr/cbe/cbs/...) with fixed-32-bit element ****************/
 /******************************************************************************/
 
 /* cbr (D = cbrt S) */
@@ -1373,7 +1373,7 @@ rt_si32 from_mask(rt_si32 mask)
         subis_rr(W(XG), W(X2))
 
 /******************************************************************************/
-/**** var-len **** (cbr/cbe/cbs/...) with fixed-64-bit-element ****************/
+/**** var-len **** (cbr/cbe/cbs/...) with fixed-64-bit element ****************/
 /******************************************************************************/
 
 #if   (RT_SIMD >= 512) || (RT_SIMD == 256 && defined RT_SVEX1)
@@ -1428,7 +1428,7 @@ rt_si32 from_mask(rt_si32 mask)
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
 /******************************************************************************/
-/**** 256-bit **** (cbr/cbe/cbs/...) with fixed-64-bit-element ****************/
+/**** 256-bit **** (cbr/cbe/cbs/...) with fixed-64-bit element ****************/
 /******************************************************************************/
 
 /* cbr (D = cbrt S) */
@@ -1479,7 +1479,7 @@ rt_si32 from_mask(rt_si32 mask)
         subds_rr(W(XG), W(X2))
 
 /******************************************************************************/
-/**** 128-bit **** (cbr/cbe/cbs/...) with fixed-64-bit-element ****************/
+/**** 128-bit **** (cbr/cbe/cbs/...) with fixed-64-bit element ****************/
 /******************************************************************************/
 
 /* cbr (D = cbrt S) */
@@ -1530,7 +1530,7 @@ rt_si32 from_mask(rt_si32 mask)
         subjs_rr(W(XG), W(X2))
 
 /******************************************************************************/
-/**** var-len **** (horizontal SIMD) with fixed-32-bit-element ****************/
+/**** var-len **** (horizontal SIMD) with fixed-32-bit element ****************/
 /******************************************************************************/
 
 #if   (RT_SIMD == 2048)
@@ -3378,7 +3378,7 @@ rt_si32 from_mask(rt_si32 mask)
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
 /******************************************************************************/
-/**** 256-bit **** (horizontal SIMD) with fixed-32-bit-element ****************/
+/**** 256-bit **** (horizontal SIMD) with fixed-32-bit element ****************/
 /******************************************************************************/
 
 #define adpcs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
@@ -3612,7 +3612,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x1C))
 
 /******************************************************************************/
-/**** 128-bit **** (horizontal SIMD) with fixed-32-bit-element ****************/
+/**** 128-bit **** (horizontal SIMD) with fixed-32-bit element ****************/
 /******************************************************************************/
 
 #define adpis_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
@@ -3780,7 +3780,7 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x0C))
 
 /******************************************************************************/
-/**** var-len **** (horizontal SIMD) with fixed-64-bit-element ****************/
+/**** var-len **** (horizontal SIMD) with fixed-64-bit element ****************/
 /******************************************************************************/
 
 #if   (RT_SIMD == 2048)
@@ -4944,7 +4944,7 @@ rt_si32 from_mask(rt_si32 mask)
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
 /******************************************************************************/
-/**** 256-bit **** (horizontal SIMD) with fixed-64-bit-element ****************/
+/**** 256-bit **** (horizontal SIMD) with fixed-64-bit element ****************/
 /******************************************************************************/
 
 #define adpds_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
@@ -5126,7 +5126,7 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x18))
 
 /******************************************************************************/
-/**** 128-bit **** (horizontal SIMD) with fixed-64-bit-element ****************/
+/**** 128-bit **** (horizontal SIMD) with fixed-64-bit element ****************/
 /******************************************************************************/
 
 #define adpjs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \

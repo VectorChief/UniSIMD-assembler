@@ -1314,6 +1314,105 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xFA)                       \
         movcx_rr(W(XD), W(XS))                                              \
         subcx_ld(W(XD), W(MT), W(DT))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+#define mulcx_rr(XG, XS)                                                    \
+        mulcx3rr(W(XG), W(XG), W(XS))
+
+#define mulcx_ld(XG, MS, DS)                                                \
+        mulcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulcx3rr(XD, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x00))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x04))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x04))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x08))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x08))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x0C))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x0C))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x10))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x10))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x10))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x14))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x14))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x14))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x18))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x18))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x18))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x1C))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x1C))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x1C))                              \
+        stack_ld(Recx)                                                      \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mulcx3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_ld(W(XD), W(MT), W(DT))                                       \
+        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x00))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x04))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x04))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x08))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x08))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x0C))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x0C))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x10))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x10))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x10))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x14))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x14))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x14))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x18))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x18))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x18))                              \
+        movwx_ld(Recx,  Mebp, inf_SCR01(0x1C))                              \
+        mulwx_ld(Recx,  Mebp, inf_SCR02(0x1C))                              \
+        movwx_st(Recx,  Mebp, inf_SCR01(0x1C))                              \
+        stack_ld(Recx)                                                      \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define mulcx_rr(XG, XS)                                                    \
+    ESC REX(0,             0) EMITB(0x0F) EMITB(0x38) EMITB(0x40)           \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+    ESC REX(1,             1) EMITB(0x0F) EMITB(0x38) EMITB(0x40)           \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define mulcx_ld(XG, MS, DS)                                                \
+ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x40)           \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x40)           \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
+
+#define mulcx3rr(XD, XS, XT)                                                \
+        movcx_rr(W(XD), W(XS))                                              \
+        mulcx_rr(W(XD), W(XT))
+
+#define mulcx3ld(XD, XS, MT, DT)                                            \
+        movcx_rr(W(XD), W(XS))                                              \
+        mulcx_ld(W(XD), W(MT), W(DT))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 

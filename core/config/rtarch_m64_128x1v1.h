@@ -749,6 +749,22 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), P2(DT)))  \
         EMITW(0x78E0000E | MXM(REG(XD), REG(XS), TmmM))
 
+/* mul (G = G * S), (D = S * T) if (#D != #S) */
+
+#define muljx_rr(XG, XS)                                                    \
+        muljx3rr(W(XG), W(XG), W(XS))
+
+#define muljx_ld(XG, MS, DS)                                                \
+        muljx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define muljx3rr(XD, XS, XT)                                                \
+        EMITW(0x78600012 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define muljx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), P2(DT)))  \
+        EMITW(0x78600012 | MXM(REG(XD), REG(XS), TmmM))
+
 /* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
