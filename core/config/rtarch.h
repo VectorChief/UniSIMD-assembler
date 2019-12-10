@@ -1310,7 +1310,7 @@
 /* RT_SIMD_COMPAT_VSX when enabled replaces default VMX targets
  * with regular VSX implementation (RT_128=4+8, RT_256_R8=4) */
 #ifndef RT_SIMD_COMPAT_VSX
-#define RT_SIMD_COMPAT_VSX      0 /* applicable to POWER+VSX */
+#define RT_SIMD_COMPAT_VSX      1 /* applicable to POWER+VSX */
 #endif /* RT_SIMD_COMPAT_VSX */
 
 /* RT_ELEM_COMPAT_VMX when enabled makes scalar SIMD (ELEM) ops
