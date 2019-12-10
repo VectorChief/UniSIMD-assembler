@@ -656,7 +656,7 @@
                                 (0x04 - RT_SIMD_MASK_##mask##32_256) << 21) \
         EMITW(0x4EB1B800 | MXM(TmmM,    TmmM,    0x00))                     \
         EMITW(0x0E043C00 | MXM(Teax,    TmmM,    0x00))                     \
-        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask##32_256))                     \
+        addwxZri(Reax, IB(RT_SIMD_MASK_##mask##32_256))                     \
         jezxx_lb(lb)
 
 /*************   packed single-precision floating-point convert   *************/

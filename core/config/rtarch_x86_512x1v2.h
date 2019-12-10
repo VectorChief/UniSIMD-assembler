@@ -1130,7 +1130,7 @@
         movwx_ri(Recx, IB(0))                                               \
         cpuid_xx()                                                          \
         stack_ld(Reax)                                                      \
-        andwz_ri(Rebx, IV(0x40000000))  /* check AVX512BW extension-bit */  \
+        andwxZri(Rebx, IV(0x40000000))  /* check AVX512BW extension-bit */  \
         EMITB(0x74) EMITB(0x05)                                             \
         VEW(0x00, 0, 0, 1) EMITB(0x91)                                      \
         MRM(0x01,       0x00,    0x00)                                      \
@@ -1167,7 +1167,7 @@
         movwx_ri(Recx, IB(0))                                               \
         cpuid_xx()                                                          \
         stack_ld(Reax)                                                      \
-        andwz_ri(Rebx, IV(0x40000000))  /* check AVX512BW extension-bit */  \
+        andwxZri(Rebx, IV(0x40000000))  /* check AVX512BW extension-bit */  \
         EMITB(0x74) EMITB(0x05)                                             \
         VEW(0x00, 0, 0, 1) EMITB(0x90)                                      \
         MRM(0x01,       0x00,    0x00)                                      \

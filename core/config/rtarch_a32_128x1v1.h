@@ -654,7 +654,7 @@
 #define mkjix_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         EMITW(0x4EB1B800 | MXM(TmmM,    REG(XS), 0x00))                     \
         EMITW(0x0E043C00 | MXM(Teax,    TmmM,    0x00))                     \
-        addwz_ri(Reax, IB(RT_SIMD_MASK_##mask##32_128))                     \
+        addwxZri(Reax, IB(RT_SIMD_MASK_##mask##32_128))                     \
         jezxx_lb(lb)
 
 /*************   packed single-precision floating-point convert   *************/
