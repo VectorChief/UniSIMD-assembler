@@ -1224,7 +1224,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x40)           \
 #define shlix_ri(XG, IS)                                                    \
     ESC REX(0,       RXB(XG)) EMITB(0x0F) EMITB(0x72)                       \
         MRM(0x06,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
 #define shlix_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
 ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xF2)                       \
@@ -1245,7 +1245,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xF2)                       \
 #define shrix_ri(XG, IS)                                                    \
     ESC REX(0,       RXB(XG)) EMITB(0x0F) EMITB(0x72)                       \
         MRM(0x02,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
 #define shrix_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
 ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xD2)                       \
@@ -1266,7 +1266,7 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xD2)                       \
 #define shrin_ri(XG, IS)                                                    \
     ESC REX(0,       RXB(XG)) EMITB(0x0F) EMITB(0x72)                       \
         MRM(0x04,    MOD(XG), REG(XG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & 0x1F))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
 #define shrin_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
 ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
