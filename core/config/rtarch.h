@@ -160,7 +160,7 @@
  * cmdy*_** - elem-size args, BASE ISA (32/64-bit configurable with RT_ELEMENT)
  * cmdz*_** - full-size args, BASE ISA (data element is always fixed at 64-bit)
  *
- * cmd*z_** - usage for setting-flags is implemented orthogonal to data-size
+ * cmd**Z** - setting-flags: [Z] - zero flag, orthogonal to data-size/data-type
  *
  *** The following SIMD instruction namespaces are defined for current use.
  *
@@ -256,7 +256,7 @@
  * Alternatively, data written natively in C/C++ can be worked on from within
  * a given (one) subset if appropriate offset correction is used from rtbase.h.
  *
- * Setting-flags instruction naming scheme may change again in the future for
+ * Setting-flags instruction naming scheme has been changed again recently for
  * better orthogonality with operand size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
