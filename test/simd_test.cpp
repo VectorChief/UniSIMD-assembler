@@ -4772,7 +4772,7 @@ rt_void s_test32(rt_SIMD_INFOX *info)
 
 rt_void p_test32(rt_SIMD_INFOX *info)
 {
-    rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+    rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
     rt_half *har0 = info->har0;
     rt_half *hco1 = info->hco1;
