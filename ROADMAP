@@ -1,4 +1,41 @@
 ================================================================================
+=== >>> === tasks below are planned for the upcoming 1.1.0 milestone === <<< ===
+================================================================================
+
+H) Task title: "implement fp16 backend on ARMv8.2 as tier-2 extension (no SPMD)"
+1) Add fp16 backend on ARMv8.2
+2) Add SIMD/BASE half-int subsets consistent on all targets
+
+================================================================================
+
+Q) Task title: "implement fp128 backend on POWER9 as tier-2 extension (no SPMD)"
+1) Add fp128 backend on POWER9
+
+================================================================================
+=== >>> === tasks below are planned for the upcoming 1.2.0 milestone === <<< ===
+================================================================================
+
+X) Task title: "implement predicated AVX-512/ARM-SVE backends (in *_RX slots)"
+1) add rtarch_***_***x*vP.h header files to core/config for predicated targets
+2) add predicate registers M1..M6 (merging) and Z1..Z6 (zeroing) as triplets
+3) add cmd**P** subset for "two-operand + predicate" instructions
+4) add cmd**4** subset for "three-operand + predicate" instructions
+5) predicate is placed 1st in cmp-ops, and right after dest-SIMD-reg otherwise
+6) predicated targets can be implemented as extension to existing AVX512/ARM-SVE
+
+================================================================================
+=== >>> === tasks below are planned for the upcoming 1.3.0 milestone === <<< ===
+================================================================================
+
+R) Task title: "implement basic run-time generation for existing ASM code-bases"
+1) Rewrite ASM_ENTER macro to allocate temporary buffer with code-exec rights
+2) Rewrite EMITB / EMITW emitters to write into a memory buffer at cur++ offset
+3) Define M to (+/-) depending on static/dynamic code generation (+ llvm switch)
+4) Rewrite j** to encode jump-label distances into binary form, track labels
+5) Rewrite ASM_LEAVE to type-cast the buffer to a function-pointer, then call it
+6) Implement proper buffer management for more advanced versions later
+
+================================================================================
 === >>> === tasks below are planned for the forthcoming 1.x.0 series === <<< ===
 ================================================================================
 
@@ -38,16 +75,6 @@ G) Task title: "consider 64-bit SIMD emulation with FPRs on PowerPC G5/POWER6"
 
 ================================================================================
 
-R) Task title: "implement basic run-time generation for existing ASM code-bases"
-1) Rewrite ASM_ENTER macro to allocate temporary buffer with code-exec rights
-2) Rewrite EMITB / EMITW emitters to write into a memory buffer at cur++ offset
-3) Define M to (+/-) depending on static/dynamic code generation (+ llvm switch)
-4) Rewrite j** to encode jump-label distances into binary form, track labels
-5) Rewrite ASM_LEAVE to type-cast the buffer to a function-pointer, then call it
-6) Implement proper buffer management for more advanced versions later
-
-================================================================================
-
 O) Task title: "use 3-operand SIMD instructions in packed/scalar SIMD tests"
 
 ================================================================================
@@ -75,18 +102,6 @@ I) Task title: "implement integer SIMD compare-to-mask across all targets"
 M) Task title: "add support for trigonometric/randomizer SIMD meta-instructions"
    (consider sleef library as an example of elementary math functions with SIMD)
    (https://github.com/shibatch/sleef)      <- use this code snapshot as a base
-
-================================================================================
-
-X) Task title: "implement predicated AVX-512/ARM-SVE backends (in *_RX slots)"
-
-================================================================================
-
-H) Task title: "implement fp16 backend on ARMv8.2 as tier-2 extension (no SPMD)"
-
-================================================================================
-
-Q) Task title: "implement fp128 backend on POWER9 as tier-2 extension (no SPMD)"
 
 ================================================================================
 
