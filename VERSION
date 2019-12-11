@@ -1,4 +1,12 @@
-  - fix 32-bit BASE compare-to-mem on 64-bit POWER
+  - add SIMD flag to replace VMX targets with VSX (on)
+  - add signed BASE ops to combined-arithmetic-jump
+  - add setting-flags BASE arithmetic shift right
+  - make setting-flags BASE ops orthogonal to size/type
+  - optimize 64-bit SIMD shifts on POWER9, clean up mkj** formatting
+  - improve ARM/x86 compatibility in SIMD shifts
+  - add SIMD integer multiply instruction (for 32/64-bit elements)
+  - update copyright year to 2019
+  - fix 32-bit BASE compare-to-mem on 64-bit POWER (backported down)
   - fix usage of non-persistent temp-register on POWER
   - update build instructions and makefile notes
   - add notes about QEMU 3.1.0 for SVE emulation
