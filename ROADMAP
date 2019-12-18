@@ -23,8 +23,6 @@ N) Task title: "implement new 128/256-bit 30-regs targets on top of current AVX"
 3) Find place in SIMD target mask (RT_128=1/RT_256=4) for custom 30-regs support
 4) Improve mask-jump (mkj*x) instructions for 64-bit SIMD elements (optional)
 5) Target 128-bit version to SSE, RT_SIMD_COMPAT_128=2/4/8/16/32 for 30-regs
-6) Make all scalar compare-to-mask-elem non-destructive on AArch64 (optional)
-7) Clean up RT_512=1/4, RT_1K4=1 for AVX-512 to match AVX512F profile (Zen3?)
 
 ================================================================================
 
@@ -96,7 +94,7 @@ L) Task title: "consider SoftFP library integration for full fp16/fp128 support"
 
 V) Task title: "add support for various new and existing architectures"
 1) Add support for RISC-V architecture with "vector extension proposal"
-   (search the Web for "RISC-V vector extension proposal")
+   (search the Web for "RISC-V vector extension proposal" also standard SIMD)
 2) Add support for Sunway SW26010 with custom Chinese BASE/SIMD ISAs (64-bit)
    (https://en.wikipedia.org/wiki/SW26010)
 3) Add support for Loongson 3 (GS464E) with LoongSIMD ops as well as MIPS64r3
@@ -104,7 +102,7 @@ V) Task title: "add support for various new and existing architectures"
    (https://www.imgtec.com/blog/loongson-mips64-processors-performance-barrier/)
 4) Add support for SPARC64 VIIIfx HPC-ACE SIMD extensions as well as BASE ops
    (http://www.fujitsu.com/downloads/TC/sparc64viiifx-extensions.pdf)
-5) Add support for ELBRUS architecture, emulate SIMD on top of VLIW, have fun!
-   (https://en.wikipedia.org/wiki/Elbrus_2000)
+5) Add support for ELBRUS architecture, emulate SIMD with VLIW (plus Itanium)
+   (https://en.wikipedia.org/wiki/Elbrus_2000), have fun!
 
 ================================================================================
