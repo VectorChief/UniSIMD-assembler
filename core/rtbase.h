@@ -49,6 +49,17 @@
 /*******************************   DEFINITIONS   ******************************/
 /******************************************************************************/
 
+#if   defined (RT_WIN32) /* Win32, MSVC ------------------------------------- */
+
+#pragma warning (disable : 4244) /* VC++ 6.0: conversion from double to float */
+#pragma warning (disable : 4305) /* VC++ 6.0: truncation from double to float */
+#pragma warning (disable : 4291) /* VC++ 6.0: operator new no matching delete */
+#pragma warning (disable : 4731) /* VC++ 9.0: frame ptr modified by assembler */
+#pragma warning (disable : 4838) /* VS 2017:  conversion from double to float */
+#pragma warning (disable : 4996) /* VS 2017:  secure form of string functions */
+
+#endif /* ----------------- OS specific ------------------------------------- */
+
 /*
  * Generic types
  */
@@ -115,7 +126,7 @@ typedef unsigned long long  rt_ui64;
 #define    PR_Z /*printf*/  "ll"
 #define RT_PR64 /*printf*/  PR_Z
 
-#endif /* ------------- OS specific ----------------------------------------- */
+#endif /* ----------------- OS specific ------------------------------------- */
 
 /* adjustable integer types */
 typedef rt_si08             rt_bool;
@@ -196,7 +207,7 @@ typedef unsigned long       rt_word;
 typedef unsigned long       rt_uptr;
 #define    PRuP /*printf*/  "ul"
 
-#endif /* ------------- OS specific ----------------------------------------- */
+#endif /* ----------------- OS specific ------------------------------------- */
 
 typedef void                rt_void;
 typedef void               *rt_pntr;
