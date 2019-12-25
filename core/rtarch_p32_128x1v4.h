@@ -150,7 +150,7 @@
 
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
-#define TmmQ    0x0F  /* v15, internal name for all-ones */
+#define TmmQ    0x0F  /* v15, internal name for all-ones, not persistent */
 #define TmmM    0x1F  /* v31, temp-reg name for mem-args */
 
 /******************************************************************************/
@@ -481,8 +481,7 @@
         EMITW(0xF0000287 | MXM(TmmM,    REG(XG), REG(XG)))                  \
         EMITW(0xF0000285 | MXM(TmmQ,    REG(XG), TmmM))                     \
         EMITW(0xF00006CD | MXM(TmmM,    REG(XS), TmmQ))                     \
-        EMITW(0xF000068F | MXM(REG(XG), TmmM,    TmmQ))                     \
-        EMITW(0x1000038C | MXM(TmmQ,    0x1F,    0x00))
+        EMITW(0xF000068F | MXM(REG(XG), TmmM,    TmmQ))
 
 #endif /* RT_SIMD_COMPAT_RSQ */
 
@@ -678,6 +677,7 @@
         ASM_BEG ASM_OP2(blt, cr6, lb) ASM_END
 
 #define mkjix_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        EMITW(0x1000038C | MXM(TmmQ,    0x1F,    0x00))                     \
         EMITW(0x10000486 | MXM(REG(XS), REG(XS), TmmQ))                     \
         AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb,                                 \
         S0(RT_SIMD_MASK_##mask##32_128), EMPTY2)
