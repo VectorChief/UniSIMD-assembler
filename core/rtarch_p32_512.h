@@ -130,7 +130,7 @@
 /* registers    REG   (check mapping with ASM_ENTER/ASM_LEAVE in rtarch.h) */
 
 #define TmmE    0x0E  /* v14, internal name for XmmE (in sregs) */
-#define TmmQ    0x0F  /* v15, internal name for all-ones */
+#define TmmQ    0x0F  /* v15, internal name for all-ones, not persistent */
 #define TmmM    0x1F  /* v31, temp-reg name for mem-args */
 
 /******************************************************************************/
@@ -1402,19 +1402,19 @@
 #define S1(mask)    S##mask
 
 #define SMN(xs, lb)                                                         \
-        EMITW(0xF0000497 | MXM(TmmM, xs,  xs+16))                           \
-        EMITW(0xF0000491 | MXM(TmmQ, xs,  xs+16))                           \
-        EMITW(0xF0000497 | MXM(TmmM, TmmM, TmmQ))                           \
-        EMITW(0x1000038C | MXM(TmmQ, 0x1F, 0x00))                           \
-        EMITW(0x10000486 | MXM(TmmM, TmmM, TmmQ))                           \
+        EMITW(0xF0000497 | MXM(TmmM,    xs,      xs+16))                    \
+        EMITW(0xF0000491 | MXM(TmmQ,    xs,      xs+16))                    \
+        EMITW(0xF0000497 | MXM(TmmM,    TmmM,    TmmQ))                     \
+        EMITW(0x1000038C | MXM(TmmQ,    0x1F,    0x00))                     \
+        EMITW(0x10000486 | MXM(TmmM,    TmmM,    TmmQ))                     \
         ASM_BEG ASM_OP2(beq, cr6, lb) ASM_END
 
 #define SMF(xs, lb)                                                         \
-        EMITW(0xF0000417 | MXM(TmmM, xs,  xs+16))                           \
-        EMITW(0xF0000411 | MXM(TmmQ, xs,  xs+16))                           \
-        EMITW(0xF0000417 | MXM(TmmM, TmmM, TmmQ))                           \
-        EMITW(0x1000038C | MXM(TmmQ, 0x1F, 0x00))                           \
-        EMITW(0x10000486 | MXM(TmmM, TmmM, TmmQ))                           \
+        EMITW(0xF0000417 | MXM(TmmM,    xs,      xs+16))                    \
+        EMITW(0xF0000411 | MXM(TmmQ,    xs,      xs+16))                    \
+        EMITW(0xF0000417 | MXM(TmmM,    TmmM,    TmmQ))                     \
+        EMITW(0x1000038C | MXM(TmmQ,    0x1F,    0x00))                     \
+        EMITW(0x10000486 | MXM(TmmM,    TmmM,    TmmQ))                     \
         ASM_BEG ASM_OP2(blt, cr6, lb) ASM_END
 
 #define CHECK_MASK(lb, mask, XS) /* destroys Reax, jump lb if mask == S */  \
