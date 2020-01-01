@@ -46,6 +46,12 @@ R) Task title: "implement basic run-time generation for existing ASM code-bases"
 
 ================================================================================
 
+P) Task title: "use RT_REGS to unload SIMD target mask for 256-bit on POWER11"
+   (may require significant redesign of SIMD target mask handling in rtbase.h)
+   (better schedule this task for the next major update, also check rtzero.h)
+
+================================================================================
+
 O) Task title: "use 3-operand SIMD instructions in packed/scalar SIMD tests"
 
 ================================================================================
@@ -103,6 +109,6 @@ V) Task title: "add support for various new and existing architectures"
 4) Add support for SPARC64 VIIIfx HPC-ACE SIMD extensions as well as BASE ops
    (http://www.fujitsu.com/downloads/TC/sparc64viiifx-extensions.pdf)
 5) Add support for ELBRUS architecture, emulate SIMD with VLIW (plus Itanium)
-   (https://en.wikipedia.org/wiki/Elbrus_2000), have fun!
+   (https://en.wikipedia.org/wiki/Elbrus_2000)
 
 ================================================================================
