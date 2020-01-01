@@ -1,3 +1,8 @@
+v1.0.0a: UniSIMD, code name "ENsed+", 2020-edition ("ENsed" + 2019 updates)
+  - all new releases from now on will use *X.Y.Za(bc..) naming scheme
+  - all branches start with letter (b), all tags start with letter (v)
+  - first release (tag) on every new branch will be marked with letter (a)
+  - all subsequent minor updates will have letters (b,c,..), tags aren't moving
   - add SIMD flag to replace VMX targets with VSX (on)
   - add signed BASE ops to combined-arithmetic-jump (arithmetic shift right)
   - add setting-flags BASE arithmetic shift right
