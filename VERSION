@@ -1,9 +1,11 @@
   - add tests for half-int SIMD/BASE ops (run level 30-37)
   - drop extended POWER targets from SIMD testing (no half-int support)
-  - add half-int SIMD arithmetic with saturate
+  - add half-int SIMD arithmetic with saturate (except original SSE1)
+  - add implementation for half-int BASE ops across modern targets
   - add BASE half-int support on legacy ARMv7 and x86
-  - add implementation for half-int BASE ops
   - add SIMD half-int support on legacy ARMv7 and x86
+  - adjust displacement types for BASE half-int on legacy ARMv7 and x86
+  - adjust displacement types for BASE half-int on MIPS and POWER
   - adjust displacement types for BASE half-int on x86_64
   - adjust displacement types for scalar fp16 on ARMv8
   - split SIMD half-int subset from fp16 on ARMv8
@@ -12,9 +14,10 @@
   - add preliminary support for POWER9 fp128 SIMD ops (not tested)
   - add preliminary support for ARMv8.2 fp16 SIMD ops (not tested)
   - add SIMD flag to replace VMX targets with VSX (on)
-  - add signed BASE ops to combined-arithmetic-jump
+  - add signed BASE ops to combined-arithmetic-jump (arithmetic shift right)
   - add setting-flags BASE arithmetic shift right
-  - make setting-flags BASE ops orthogonal to size/type
+  - make setting-flags BASE ops orthogonal to size/type (cmd**Z**)
+  - add -mips64r6 compiler option to makefiles on MIPS
   - optimize 64-bit SIMD shifts on POWER9, clean up mkj** formatting
   - improve ARM/x86 compatibility in SIMD shifts
   - add SIMD integer multiply instruction (for 32/64-bit elements)
