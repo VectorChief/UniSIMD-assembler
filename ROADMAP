@@ -77,6 +77,13 @@ G) Task title: "consider 64-bit SIMD emulation with FPRs on PowerPC G5/POWER6"
 
 ================================================================================
 
+P) Task title: "use RT_REGS to unload SIMD target mask for 256-bit on POWER11"
+   (may require significant redesign of SIMD target mask handling in rtbase.h)
+   (better schedule this task for the next major update, also check rtzero.h)
+   (consider renaming SVE binaries to *.a??armSVE to match *.x??avx512 on x86)
+
+================================================================================
+
 O) Task title: "use 3-operand SIMD instructions in packed/scalar SIMD tests"
 
 ================================================================================
