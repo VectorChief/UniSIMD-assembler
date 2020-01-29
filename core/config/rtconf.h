@@ -222,6 +222,12 @@
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
+#define fmaos3rr(XG, XS, XT)                                                \
+        fmaos_rr(W(XG), W(XS), W(XT))
+
+#define fmaos3ld(XG, XS, MT, DT)                                            \
+        fmaos_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -241,6 +247,12 @@
         movox_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMS */
+
+#define fmsos3rr(XG, XS, XT)                                                \
+        fmsos_rr(W(XG), W(XS), W(XT))
+
+#define fmsos3ld(XG, XS, MT, DT)                                            \
+        fmsos_ld(W(XG), W(XS), W(MT), W(DT))
 
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
@@ -318,6 +330,12 @@
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
+#define fmacs3rr(XG, XS, XT)                                                \
+        fmacs_rr(W(XG), W(XS), W(XT))
+
+#define fmacs3ld(XG, XS, MT, DT)                                            \
+        fmacs_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -337,6 +355,12 @@
         movcx_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMS */
+
+#define fmscs3rr(XG, XS, XT)                                                \
+        fmscs_rr(W(XG), W(XS), W(XT))
+
+#define fmscs3ld(XG, XS, MT, DT)                                            \
+        fmscs_ld(W(XG), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
 /**** 128-bit **** (rcp/rsq/fma/fms) with fixed-32-bit element ****************/
@@ -412,6 +436,12 @@
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
+#define fmais3rr(XG, XS, XT)                                                \
+        fmais_rr(W(XG), W(XS), W(XT))
+
+#define fmais3ld(XG, XS, MT, DT)                                            \
+        fmais_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -431,6 +461,12 @@
         movix_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMS */
+
+#define fmsis3rr(XG, XS, XT)                                                \
+        fmsis_rr(W(XG), W(XS), W(XT))
+
+#define fmsis3ld(XG, XS, MT, DT)                                            \
+        fmsis_ld(W(XG), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
 /**** scalar ***** (rcp/rsq/fma/fms) with fixed-32-bit element ****************/
@@ -506,6 +542,12 @@
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
+#define fmars3rr(XG, XS, XT)                                                \
+        fmars_rr(W(XG), W(XS), W(XT))
+
+#define fmars3ld(XG, XS, MT, DT)                                            \
+        fmars_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -525,6 +567,12 @@
         movrs_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMS */
+
+#define fmsrs3rr(XG, XS, XT)                                                \
+        fmsrs_rr(W(XG), W(XS), W(XT))
+
+#define fmsrs3ld(XG, XS, MT, DT)                                            \
+        fmsrs_ld(W(XG), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
 /**** var-len **** (rcp/rsq/fma/fms) with fixed-64-bit element ****************/
@@ -602,6 +650,12 @@
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
+#define fmaqs3rr(XG, XS, XT)                                                \
+        fmaqs_rr(W(XG), W(XS), W(XT))
+
+#define fmaqs3ld(XG, XS, MT, DT)                                            \
+        fmaqs_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -621,6 +675,12 @@
         movqx_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMS */
+
+#define fmsqs3rr(XG, XS, XT)                                                \
+        fmsqs_rr(W(XG), W(XS), W(XT))
+
+#define fmsqs3ld(XG, XS, MT, DT)                                            \
+        fmsqs_ld(W(XG), W(XS), W(MT), W(DT))
 
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
@@ -698,6 +758,12 @@
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
+#define fmads3rr(XG, XS, XT)                                                \
+        fmads_rr(W(XG), W(XS), W(XT))
+
+#define fmads3ld(XG, XS, MT, DT)                                            \
+        fmads_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -717,6 +783,12 @@
         movdx_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMS */
+
+#define fmsds3rr(XG, XS, XT)                                                \
+        fmsds_rr(W(XG), W(XS), W(XT))
+
+#define fmsds3ld(XG, XS, MT, DT)                                            \
+        fmsds_ld(W(XG), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
 /**** 128-bit **** (rcp/rsq/fma/fms) with fixed-64-bit element ****************/
@@ -792,6 +864,12 @@
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
+#define fmajs3rr(XG, XS, XT)                                                \
+        fmajs_rr(W(XG), W(XS), W(XT))
+
+#define fmajs3ld(XG, XS, MT, DT)                                            \
+        fmajs_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -811,6 +889,12 @@
         movjx_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMS */
+
+#define fmsjs3rr(XG, XS, XT)                                                \
+        fmsjs_rr(W(XG), W(XS), W(XT))
+
+#define fmsjs3ld(XG, XS, MT, DT)                                            \
+        fmsjs_ld(W(XG), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
 /**** scalar ***** (rcp/rsq/fma/fms) with fixed-64-bit element ****************/
@@ -886,6 +970,12 @@
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
+#define fmats3rr(XG, XS, XT)                                                \
+        fmats_rr(W(XG), W(XS), W(XT))
+
+#define fmats3ld(XG, XS, MT, DT)                                            \
+        fmats_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -905,6 +995,12 @@
         movts_ld(W(XS), Mebp, inf_SCR01(0))
 
 #endif /* RT_SIMD_COMPAT_FMS */
+
+#define fmsts3rr(XG, XS, XT)                                                \
+        fmsts_rr(W(XG), W(XS), W(XT))
+
+#define fmsts3ld(XG, XS, MT, DT)                                            \
+        fmsts_ld(W(XG), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
 /**** var-len **** SIMD instructions with fixed-16-bit element **** 256-bit ***/
@@ -1119,6 +1215,24 @@
 #define fmams_ld(XG, XS, MT, DT)                                            \
         fmaas_ld(W(XG), W(XS), W(MT), W(DT))
 
+#define fmams3rr(XG, XS, XT)                                                \
+        fmams_rr(W(XG), W(XS), W(XT))
+
+#define fmams3ld(XG, XS, MT, DT)                                            \
+        fmams_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmaas3rr(XG, XS, XT)                                                \
+        fmaas_rr(W(XG), W(XS), W(XT))
+
+#define fmaas3ld(XG, XS, MT, DT)                                            \
+        fmaas_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmags3rr(XG, XS, XT)                                                \
+        fmags_rr(W(XG), W(XS), W(XT))
+
+#define fmags3ld(XG, XS, MT, DT)                                            \
+        fmags_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T) */
 
 #define fmsms_rr(XG, XS, XT)                                                \
@@ -1126,6 +1240,24 @@
 
 #define fmsms_ld(XG, XS, MT, DT)                                            \
         fmsas_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsms3rr(XG, XS, XT)                                                \
+        fmsms_rr(W(XG), W(XS), W(XT))
+
+#define fmsms3ld(XG, XS, MT, DT)                                            \
+        fmsms_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsas3rr(XG, XS, XT)                                                \
+        fmsas_rr(W(XG), W(XS), W(XT))
+
+#define fmsas3ld(XG, XS, MT, DT)                                            \
+        fmsas_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsgs3rr(XG, XS, XT)                                                \
+        fmsgs_rr(W(XG), W(XS), W(XT))
+
+#define fmsgs3ld(XG, XS, MT, DT)                                            \
+        fmsgs_ld(W(XG), W(XS), W(MT), W(DT))
 
 /**************   packed half-precision floating-point compare   **************/
 
@@ -1753,12 +1885,48 @@
 #define fmams_ld(XG, XS, MT, DT)                                            \
         fmags_ld(W(XG), W(XS), W(MT), W(DT))
 
+#define fmams3rr(XG, XS, XT)                                                \
+        fmams_rr(W(XG), W(XS), W(XT))
+
+#define fmams3ld(XG, XS, MT, DT)                                            \
+        fmams_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmaas3rr(XG, XS, XT)                                                \
+        fmaas_rr(W(XG), W(XS), W(XT))
+
+#define fmaas3ld(XG, XS, MT, DT)                                            \
+        fmaas_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmags3rr(XG, XS, XT)                                                \
+        fmags_rr(W(XG), W(XS), W(XT))
+
+#define fmags3ld(XG, XS, MT, DT)                                            \
+        fmags_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T) */
 
 #define fmsms_rr(XG, XS, XT)                                                \
         fmsgs_rr(W(XG), W(XS), W(XT))
 
 #define fmsms_ld(XG, XS, MT, DT)                                            \
+        fmsgs_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsms3rr(XG, XS, XT)                                                \
+        fmsms_rr(W(XG), W(XS), W(XT))
+
+#define fmsms3ld(XG, XS, MT, DT)                                            \
+        fmsms_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsas3rr(XG, XS, XT)                                                \
+        fmsas_rr(W(XG), W(XS), W(XT))
+
+#define fmsas3ld(XG, XS, MT, DT)                                            \
+        fmsas_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsgs3rr(XG, XS, XT)                                                \
+        fmsgs_rr(W(XG), W(XS), W(XT))
+
+#define fmsgs3ld(XG, XS, MT, DT)                                            \
         fmsgs_ld(W(XG), W(XS), W(MT), W(DT))
 
 /**************   packed half-precision floating-point compare   **************/
@@ -2446,6 +2614,12 @@
 #define fmaos_ld(XG, XS, MT, DT)                                            \
         fmacs_ld(W(XG), W(XS), W(MT), W(DT))
 
+#define fmaos3rr(XG, XS, XT)                                                \
+        fmaos_rr(W(XG), W(XS), W(XT))
+
+#define fmaos3ld(XG, XS, MT, DT)                                            \
+        fmaos_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -2455,6 +2629,12 @@
 
 #define fmsos_ld(XG, XS, MT, DT)                                            \
         fmscs_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsos3rr(XG, XS, XT)                                                \
+        fmsos_rr(W(XG), W(XS), W(XT))
+
+#define fmsos3ld(XG, XS, MT, DT)                                            \
+        fmsos_ld(W(XG), W(XS), W(MT), W(DT))
 
 /*************   packed single-precision floating-point compare   *************/
 
@@ -3135,6 +3315,12 @@
 #define fmaos_ld(XG, XS, MT, DT)                                            \
         fmais_ld(W(XG), W(XS), W(MT), W(DT))
 
+#define fmaos3rr(XG, XS, XT)                                                \
+        fmaos_rr(W(XG), W(XS), W(XT))
+
+#define fmaos3ld(XG, XS, MT, DT)                                            \
+        fmaos_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -3144,6 +3330,12 @@
 
 #define fmsos_ld(XG, XS, MT, DT)                                            \
         fmsis_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsos3rr(XG, XS, XT)                                                \
+        fmsos_rr(W(XG), W(XS), W(XT))
+
+#define fmsos3ld(XG, XS, MT, DT)                                            \
+        fmsos_ld(W(XG), W(XS), W(MT), W(DT))
 
 /*************   packed single-precision floating-point compare   *************/
 
@@ -3826,6 +4018,12 @@
 #define fmaqs_ld(XG, XS, MT, DT)                                            \
         fmads_ld(W(XG), W(XS), W(MT), W(DT))
 
+#define fmaqs3rr(XG, XS, XT)                                                \
+        fmaqs_rr(W(XG), W(XS), W(XT))
+
+#define fmaqs3ld(XG, XS, MT, DT)                                            \
+        fmaqs_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -3835,6 +4033,12 @@
 
 #define fmsqs_ld(XG, XS, MT, DT)                                            \
         fmsds_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsqs3rr(XG, XS, XT)                                                \
+        fmsqs_rr(W(XG), W(XS), W(XT))
+
+#define fmsqs3ld(XG, XS, MT, DT)                                            \
+        fmsqs_ld(W(XG), W(XS), W(MT), W(DT))
 
 /*************   packed double-precision floating-point compare   *************/
 
@@ -4515,6 +4719,12 @@
 #define fmaqs_ld(XG, XS, MT, DT)                                            \
         fmajs_ld(W(XG), W(XS), W(MT), W(DT))
 
+#define fmaqs3rr(XG, XS, XT)                                                \
+        fmaqs_rr(W(XG), W(XS), W(XT))
+
+#define fmaqs3ld(XG, XS, MT, DT)                                            \
+        fmaqs_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -4524,6 +4734,12 @@
 
 #define fmsqs_ld(XG, XS, MT, DT)                                            \
         fmsjs_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsqs3rr(XG, XS, XT)                                                \
+        fmsqs_rr(W(XG), W(XS), W(XT))
+
+#define fmsqs3ld(XG, XS, MT, DT)                                            \
+        fmsqs_ld(W(XG), W(XS), W(MT), W(DT))
 
 /*************   packed double-precision floating-point compare   *************/
 
@@ -5206,6 +5422,12 @@
 #define fmaps_ld(XG, XS, MT, DT)                                            \
         fmaos_ld(W(XG), W(XS), W(MT), W(DT))
 
+#define fmaps3rr(XG, XS, XT)                                                \
+        fmaps_rr(W(XG), W(XS), W(XT))
+
+#define fmaps3ld(XG, XS, MT, DT)                                            \
+        fmaps_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -5215,6 +5437,12 @@
 
 #define fmsps_ld(XG, XS, MT, DT)                                            \
         fmsos_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsps3rr(XG, XS, XT)                                                \
+        fmsps_rr(W(XG), W(XS), W(XT))
+
+#define fmsps3ld(XG, XS, MT, DT)                                            \
+        fmsps_ld(W(XG), W(XS), W(MT), W(DT))
 
 /*************   packed single-precision floating-point compare   *************/
 
@@ -5893,6 +6121,12 @@
 #define fmafs_ld(XG, XS, MT, DT)                                            \
         fmacs_ld(W(XG), W(XS), W(MT), W(DT))
 
+#define fmafs3rr(XG, XS, XT)                                                \
+        fmafs_rr(W(XG), W(XS), W(XT))
+
+#define fmafs3ld(XG, XS, MT, DT)                                            \
+        fmafs_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -5902,6 +6136,12 @@
 
 #define fmsfs_ld(XG, XS, MT, DT)                                            \
         fmscs_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsfs3rr(XG, XS, XT)                                                \
+        fmsfs_rr(W(XG), W(XS), W(XT))
+
+#define fmsfs3ld(XG, XS, MT, DT)                                            \
+        fmsfs_ld(W(XG), W(XS), W(MT), W(DT))
 
 /*************   packed single-precision floating-point compare   *************/
 
@@ -6580,6 +6820,12 @@
 #define fmals_ld(XG, XS, MT, DT)                                            \
         fmais_ld(W(XG), W(XS), W(MT), W(DT))
 
+#define fmals3rr(XG, XS, XT)                                                \
+        fmals_rr(W(XG), W(XS), W(XT))
+
+#define fmals3ld(XG, XS, MT, DT)                                            \
+        fmals_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -6589,6 +6835,12 @@
 
 #define fmsls_ld(XG, XS, MT, DT)                                            \
         fmsis_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsls3rr(XG, XS, XT)                                                \
+        fmsls_rr(W(XG), W(XS), W(XT))
+
+#define fmsls3ld(XG, XS, MT, DT)                                            \
+        fmsls_ld(W(XG), W(XS), W(MT), W(DT))
 
 /*************   packed single-precision floating-point compare   *************/
 
@@ -7114,6 +7366,12 @@
 #define fmass_ld(XG, XS, MT, DT)                                            \
         fmars_ld(W(XG), W(XS), W(MT), W(DT))
 
+#define fmass3rr(XG, XS, XT)                                                \
+        fmass_rr(W(XG), W(XS), W(XT))
+
+#define fmass3ld(XG, XS, MT, DT)                                            \
+        fmass_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -7123,6 +7381,12 @@
 
 #define fmsss_ld(XG, XS, MT, DT)                                            \
         fmsrs_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsss3rr(XG, XS, XT)                                                \
+        fmsss_rr(W(XG), W(XS), W(XT))
+
+#define fmsss3ld(XG, XS, MT, DT)                                            \
+        fmsss_ld(W(XG), W(XS), W(MT), W(DT))
 
 /*************   scalar single-precision floating-point compare   *************/
 
@@ -7508,6 +7772,12 @@
 #define fmaps_ld(XG, XS, MT, DT)                                            \
         fmaqs_ld(W(XG), W(XS), W(MT), W(DT))
 
+#define fmaps3rr(XG, XS, XT)                                                \
+        fmaps_rr(W(XG), W(XS), W(XT))
+
+#define fmaps3ld(XG, XS, MT, DT)                                            \
+        fmaps_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -7517,6 +7787,12 @@
 
 #define fmsps_ld(XG, XS, MT, DT)                                            \
         fmsqs_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsps3rr(XG, XS, XT)                                                \
+        fmsps_rr(W(XG), W(XS), W(XT))
+
+#define fmsps3ld(XG, XS, MT, DT)                                            \
+        fmsps_ld(W(XG), W(XS), W(MT), W(DT))
 
 /*************   packed double-precision floating-point compare   *************/
 
@@ -8195,6 +8471,12 @@
 #define fmafs_ld(XG, XS, MT, DT)                                            \
         fmads_ld(W(XG), W(XS), W(MT), W(DT))
 
+#define fmafs3rr(XG, XS, XT)                                                \
+        fmafs_rr(W(XG), W(XS), W(XT))
+
+#define fmafs3ld(XG, XS, MT, DT)                                            \
+        fmafs_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -8204,6 +8486,12 @@
 
 #define fmsfs_ld(XG, XS, MT, DT)                                            \
         fmsds_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsfs3rr(XG, XS, XT)                                                \
+        fmsfs_rr(W(XG), W(XS), W(XT))
+
+#define fmsfs3ld(XG, XS, MT, DT)                                            \
+        fmsfs_ld(W(XG), W(XS), W(MT), W(DT))
 
 /*************   packed double-precision floating-point compare   *************/
 
@@ -8882,6 +9170,12 @@
 #define fmals_ld(XG, XS, MT, DT)                                            \
         fmajs_ld(W(XG), W(XS), W(MT), W(DT))
 
+#define fmals3rr(XG, XS, XT)                                                \
+        fmals_rr(W(XG), W(XS), W(XT))
+
+#define fmals3ld(XG, XS, MT, DT)                                            \
+        fmals_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -8891,6 +9185,12 @@
 
 #define fmsls_ld(XG, XS, MT, DT)                                            \
         fmsjs_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsls3rr(XG, XS, XT)                                                \
+        fmsls_rr(W(XG), W(XS), W(XT))
+
+#define fmsls3ld(XG, XS, MT, DT)                                            \
+        fmsls_ld(W(XG), W(XS), W(MT), W(DT))
 
 /*************   packed double-precision floating-point compare   *************/
 
@@ -9416,6 +9716,12 @@
 #define fmass_ld(XG, XS, MT, DT)                                            \
         fmats_ld(W(XG), W(XS), W(MT), W(DT))
 
+#define fmass3rr(XG, XS, XT)                                                \
+        fmass_rr(W(XG), W(XS), W(XT))
+
+#define fmass3ld(XG, XS, MT, DT)                                            \
+        fmass_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -9425,6 +9731,12 @@
 
 #define fmsss_ld(XG, XS, MT, DT)                                            \
         fmsts_ld(W(XG), W(XS), W(MT), W(DT))
+
+#define fmsss3rr(XG, XS, XT)                                                \
+        fmsss_rr(W(XG), W(XS), W(XT))
+
+#define fmsss3ld(XG, XS, MT, DT)                                            \
+        fmsss_ld(W(XG), W(XS), W(MT), W(DT))
 
 /*************   scalar double-precision floating-point compare   *************/
 
