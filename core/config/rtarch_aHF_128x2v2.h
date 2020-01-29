@@ -90,7 +90,7 @@
         EMITW(0x6EF8F800 | MXM(REG(XD), REG(XS), 0x00))                     \
         EMITW(0x6EF8F800 | MXM(RYG(XD), RYG(XS), 0x00))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addas_rr(XG, XS)                                                    \
         addas3rr(W(XG), W(XG), W(XS))
@@ -109,7 +109,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x4E401400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subas_rr(XG, XS)                                                    \
         subas3rr(W(XG), W(XG), W(XS))
@@ -128,7 +128,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x4EC01400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulas_rr(XG, XS)                                                    \
         mulas3rr(W(XG), W(XG), W(XS))
@@ -147,7 +147,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x6E401C00 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divas_rr(XG, XS)                                                    \
         divas3rr(W(XG), W(XG), W(XS))
@@ -233,7 +233,7 @@
 
 /**************   packed half-precision floating-point compare   **************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minas_rr(XG, XS)                                                    \
         minas3rr(W(XG), W(XG), W(XS))
@@ -252,7 +252,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x4EC03400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxas_rr(XG, XS)                                                    \
         maxas3rr(W(XG), W(XG), W(XS))
@@ -271,7 +271,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x4E403400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqas_rr(XG, XS)                                                    \
         ceqas3rr(W(XG), W(XG), W(XS))
@@ -290,7 +290,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x4E402400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cneas_rr(XG, XS)                                                    \
         cneas3rr(W(XG), W(XG), W(XS))
@@ -313,7 +313,7 @@
         EMITW(0x4E402400 | MXM(RYG(XD), RYG(XS), TmmM))                     \
         EMITW(0x6E205800 | MXM(RYG(XD), RYG(XD), 0x00))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltas_rr(XG, XS)                                                    \
         cltas3rr(W(XG), W(XG), W(XS))
@@ -332,7 +332,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x6EC02400 | MXM(RYG(XD), TmmM,    RYG(XS)))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define cleas_rr(XG, XS)                                                    \
         cleas3rr(W(XG), W(XG), W(XS))
@@ -351,7 +351,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x6E402400 | MXM(RYG(XD), TmmM,    RYG(XS)))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtas_rr(XG, XS)                                                    \
         cgtas3rr(W(XG), W(XG), W(XS))
@@ -370,7 +370,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x6EC02400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgeas_rr(XG, XS)                                                    \
         cgeas3rr(W(XG), W(XG), W(XS))

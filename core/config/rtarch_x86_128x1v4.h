@@ -200,7 +200,7 @@
         orrix_rr(Xmm0, W(XS))                                               \
         movix_st(Xmm0, W(MG), W(DG))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andix_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0x54)                                             \
@@ -219,7 +219,7 @@
         movix_rr(W(XD), W(XS))                                              \
         andix_ld(W(XD), W(MT), W(DT))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annix_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0x55)                                             \
@@ -238,7 +238,7 @@
         movix_rr(W(XD), W(XS))                                              \
         annix_ld(W(XD), W(MT), W(DT))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrix_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0x56)                                             \
@@ -257,7 +257,7 @@
         movix_rr(W(XD), W(XS))                                              \
         orrix_ld(W(XD), W(MT), W(DT))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define ornix_rr(XG, XS)                                                    \
         notix_rx(W(XG))                                                     \
@@ -275,7 +275,7 @@
         notix_rr(W(XD), W(XS))                                              \
         orrix_ld(W(XD), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorix_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0x57)                                             \
@@ -314,7 +314,7 @@
         movix_rr(W(XD), W(XS))                                              \
         negis_rx(W(XD))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0x58)                                             \
@@ -361,7 +361,7 @@
 
 #endif /* RT_128X1 >= 4 */
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0x5C)                                             \
@@ -380,7 +380,7 @@
         movix_rr(W(XD), W(XS))                                              \
         subis_ld(W(XD), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0x59)                                             \
@@ -402,7 +402,7 @@
         /* mlp, mlh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0x5E)                                             \
@@ -660,7 +660,7 @@
 
 /*************   packed single-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0x5D)                                             \
@@ -682,7 +682,7 @@
         /* mnp, mnh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0x5F)                                             \
@@ -704,7 +704,7 @@
         /* mxp, mxh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0xC2)                                             \
@@ -724,7 +724,7 @@
         movix_rr(W(XD), W(XS))                                              \
         ceqis_ld(W(XD), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cneis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0xC2)                                             \
@@ -744,7 +744,7 @@
         movix_rr(W(XD), W(XS))                                              \
         cneis_ld(W(XD), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0xC2)                                             \
@@ -764,7 +764,7 @@
         movix_rr(W(XD), W(XS))                                              \
         cltis_ld(W(XD), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define cleis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0xC2)                                             \
@@ -784,7 +784,7 @@
         movix_rr(W(XD), W(XS))                                              \
         cleis_ld(W(XD), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0xC2)                                             \
@@ -804,7 +804,7 @@
         movix_rr(W(XD), W(XS))                                              \
         cgtis_ld(W(XD), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgeis_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0xC2)                                             \
@@ -1281,7 +1281,7 @@
 
 #if (RT_128X1 < 2)
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addix_rr(XG, XS)                                                    \
         addix3rr(W(XG), W(XG), W(XS))
@@ -1320,7 +1320,7 @@
         stack_ld(Reax)                                                      \
         movix_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subix_rr(XG, XS)                                                    \
         subix3rr(W(XG), W(XG), W(XS))
@@ -1359,7 +1359,7 @@
         stack_ld(Reax)                                                      \
         movix_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulix_rr(XG, XS)                                                    \
         mulix3rr(W(XG), W(XG), W(XS))
@@ -1406,7 +1406,7 @@
         stack_ld(Recx)                                                      \
         movix_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlix_ri(XG, IS)                                                    \
@@ -1434,7 +1434,7 @@
         stack_ld(Recx)                                                      \
         movix_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrix_ri(XG, IS)                                                    \
@@ -1462,7 +1462,7 @@
         stack_ld(Recx)                                                      \
         movix_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrin_ri(XG, IS)                                                    \
@@ -1492,7 +1492,7 @@
 
 #else /* RT_128X1 >= 2 */
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addix_rr(XG, XS)                                                    \
     ESC EMITB(0x0F) EMITB(0xFE)                                             \
@@ -1511,7 +1511,7 @@
         movix_rr(W(XD), W(XS))                                              \
         addix_ld(W(XD), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subix_rr(XG, XS)                                                    \
     ESC EMITB(0x0F) EMITB(0xFA)                                             \
@@ -1530,7 +1530,7 @@
         movix_rr(W(XD), W(XS))                                              \
         subix_ld(W(XD), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #if (RT_128X1 < 4)
 
@@ -1600,7 +1600,7 @@
 
 #endif /* RT_128X1 >= 4 */
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlix_ri(XG, IS)                                                    \
@@ -1621,7 +1621,7 @@
         movix_rr(W(XD), W(XS))                                              \
         shlix_ld(W(XD), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrix_ri(XG, IS)                                                    \
@@ -1642,7 +1642,7 @@
         movix_rr(W(XD), W(XS))                                              \
         shrix_ld(W(XD), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrin_ri(XG, IS)                                                    \
@@ -1665,7 +1665,7 @@
 
 #endif /* RT_128X1 >= 2 */
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlix_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1705,7 +1705,7 @@
         stack_ld(Recx)                                                      \
         movix_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrix_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1745,7 +1745,7 @@
         stack_ld(Recx)                                                      \
         movix_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrin_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1826,7 +1826,7 @@
 
 #if (RT_128X1 < 2)
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andgx_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0x54)                                             \
@@ -1845,7 +1845,7 @@
         movgx_rr(W(XD), W(XS))                                              \
         andgx_ld(W(XD), W(MT), W(DT))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define anngx_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0x55)                                             \
@@ -1864,7 +1864,7 @@
         movgx_rr(W(XD), W(XS))                                              \
         anngx_ld(W(XD), W(MT), W(DT))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrgx_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0x56)                                             \
@@ -1883,7 +1883,7 @@
         movgx_rr(W(XD), W(XS))                                              \
         orrgx_ld(W(XD), W(MT), W(DT))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define orngx_rr(XG, XS)                                                    \
         notgx_rx(W(XG))                                                     \
@@ -1901,7 +1901,7 @@
         notgx_rr(W(XD), W(XS))                                              \
         orrgx_ld(W(XD), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorgx_rr(XG, XS)                                                    \
         EMITB(0x0F) EMITB(0x57)                                             \
@@ -1922,7 +1922,7 @@
 
 #else /* RT_128X1 >= 2 */
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andgx_rr(XG, XS)                                                    \
     ESC EMITB(0x0F) EMITB(0xDB)                                             \
@@ -1941,7 +1941,7 @@
         movgx_rr(W(XD), W(XS))                                              \
         andgx_ld(W(XD), W(MT), W(DT))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define anngx_rr(XG, XS)                                                    \
     ESC EMITB(0x0F) EMITB(0xDF)                                             \
@@ -1960,7 +1960,7 @@
         movgx_rr(W(XD), W(XS))                                              \
         anngx_ld(W(XD), W(MT), W(DT))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrgx_rr(XG, XS)                                                    \
     ESC EMITB(0x0F) EMITB(0xEB)                                             \
@@ -1979,7 +1979,7 @@
         movgx_rr(W(XD), W(XS))                                              \
         orrgx_ld(W(XD), W(MT), W(DT))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define orngx_rr(XG, XS)                                                    \
         notgx_rx(W(XG))                                                     \
@@ -1997,7 +1997,7 @@
         notgx_rr(W(XD), W(XS))                                              \
         orrgx_ld(W(XD), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorgx_rr(XG, XS)                                                    \
     ESC EMITB(0x0F) EMITB(0xEF)                                             \
@@ -2031,7 +2031,7 @@
 
 #if (RT_128X1 < 2)
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addgx_rr(XG, XS)                                                    \
         addgx3rr(W(XG), W(XG), W(XS))
@@ -2072,7 +2072,7 @@
         addhx_st(Reax,  Mebp, inf_SCR01(0x0E))                              \
         stack_ld(Reax)
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subgx_rr(XG, XS)                                                    \
         subgx3rr(W(XG), W(XG), W(XS))
@@ -2113,7 +2113,7 @@
         subhx_st(Reax,  Mebp, inf_SCR01(0x0E))                              \
         stack_ld(Reax)
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulgx_rr(XG, XS)                                                    \
         mulgx3rr(W(XG), W(XG), W(XS))
@@ -2162,7 +2162,7 @@
         movhx_st(Reax,  Mebp, inf_SCR01(0x0E))                              \
         stack_ld(Reax)
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlgx_ri(XG, IS)                                                    \
@@ -2198,7 +2198,7 @@
         stack_ld(Recx)                                                      \
         movgx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrgx_ri(XG, IS)                                                    \
@@ -2234,7 +2234,7 @@
         stack_ld(Recx)                                                      \
         movgx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrgn_ri(XG, IS)                                                    \
@@ -2272,7 +2272,7 @@
 
 #else /* RT_128X1 >= 2 */
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addgx_rr(XG, XS)                                                    \
     ESC EMITB(0x0F) EMITB(0xFD)                                             \
@@ -2291,7 +2291,7 @@
         movgx_rr(W(XD), W(XS))                                              \
         addgx_ld(W(XD), W(MT), W(DT))
 
-/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, unsigned */
+/* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, unsigned */
 
 #define adsgx_rr(XG, XS)                                                    \
     ESC EMITB(0x0F) EMITB(0xDD)                                             \
@@ -2310,7 +2310,7 @@
         movgx_rr(W(XD), W(XS))                                              \
         adsgx_ld(W(XD), W(MT), W(DT))
 
-/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, signed */
+/* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, signed */
 
 #define adsgn_rr(XG, XS)                                                    \
     ESC EMITB(0x0F) EMITB(0xED)                                             \
@@ -2329,7 +2329,7 @@
         movgx_rr(W(XD), W(XS))                                              \
         adsgn_ld(W(XD), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subgx_rr(XG, XS)                                                    \
     ESC EMITB(0x0F) EMITB(0xF9)                                             \
@@ -2348,7 +2348,7 @@
         movgx_rr(W(XD), W(XS))                                              \
         subgx_ld(W(XD), W(MT), W(DT))
 
-/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, unsigned */
+/* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, unsigned */
 
 #define sbsgx_rr(XG, XS)                                                    \
     ESC EMITB(0x0F) EMITB(0xD9)                                             \
@@ -2367,7 +2367,7 @@
         movgx_rr(W(XD), W(XS))                                              \
         sbsgx_ld(W(XD), W(MT), W(DT))
 
-/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, signed */
+/* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, signed */
 
 #define sbsgn_rr(XG, XS)                                                    \
     ESC EMITB(0x0F) EMITB(0xE9)                                             \
@@ -2386,7 +2386,7 @@
         movgx_rr(W(XD), W(XS))                                              \
         sbsgn_ld(W(XD), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulgx_rr(XG, XS)                                                    \
     ESC EMITB(0x0F) EMITB(0xD5)                                             \
@@ -2405,7 +2405,7 @@
         movgx_rr(W(XD), W(XS))                                              \
         mulgx_ld(W(XD), W(MT), W(DT))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlgx_ri(XG, IS)                                                    \
@@ -2426,7 +2426,7 @@
         movgx_rr(W(XD), W(XS))                                              \
         shlgx_ld(W(XD), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrgx_ri(XG, IS)                                                    \
@@ -2447,7 +2447,7 @@
         movgx_rr(W(XD), W(XS))                                              \
         shrgx_ld(W(XD), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrgn_ri(XG, IS)                                                    \
@@ -2470,7 +2470,7 @@
 
 #endif /* RT_128X1 >= 2 */
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlgx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -2512,7 +2512,7 @@
         shlhx_mx(Mebp,  inf_SCR01(0x0E))                                    \
         stack_ld(Recx)
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrgx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -2554,7 +2554,7 @@
         shrhx_mx(Mebp,  inf_SCR01(0x0E))                                    \
         stack_ld(Recx)
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrgn_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -2618,7 +2618,7 @@
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addrs_rr(XG, XS)                                                    \
     xF3 EMITB(0x0F) EMITB(0x58)                                             \
@@ -2637,7 +2637,7 @@
         movrs_rr(W(XD), W(XS))                                              \
         addrs_ld(W(XD), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subrs_rr(XG, XS)                                                    \
     xF3 EMITB(0x0F) EMITB(0x5C)                                             \
@@ -2656,7 +2656,7 @@
         movrs_rr(W(XD), W(XS))                                              \
         subrs_ld(W(XD), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulrs_rr(XG, XS)                                                    \
     xF3 EMITB(0x0F) EMITB(0x59)                                             \
@@ -2675,7 +2675,7 @@
         movrs_rr(W(XD), W(XS))                                              \
         mulrs_ld(W(XD), W(MT), W(DT))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divrs_rr(XG, XS)                                                    \
     xF3 EMITB(0x0F) EMITB(0x5E)                                             \
@@ -2904,7 +2904,7 @@
 
 /*************   scalar single-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minrs_rr(XG, XS)                                                    \
     xF3 EMITB(0x0F) EMITB(0x5D)                                             \
@@ -2923,7 +2923,7 @@
         movrs_rr(W(XD), W(XS))                                              \
         minrs_ld(W(XD), W(MT), W(DT))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxrs_rr(XG, XS)                                                    \
     xF3 EMITB(0x0F) EMITB(0x5F)                                             \
@@ -2942,7 +2942,7 @@
         movrs_rr(W(XD), W(XS))                                              \
         maxrs_ld(W(XD), W(MT), W(DT))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqrs_rr(XG, XS)                                                    \
     xF3 EMITB(0x0F) EMITB(0xC2)                                             \
@@ -2962,7 +2962,7 @@
         movrs_rr(W(XD), W(XS))                                              \
         ceqrs_ld(W(XD), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cners_rr(XG, XS)                                                    \
     xF3 EMITB(0x0F) EMITB(0xC2)                                             \
@@ -2982,7 +2982,7 @@
         movrs_rr(W(XD), W(XS))                                              \
         cners_ld(W(XD), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltrs_rr(XG, XS)                                                    \
     xF3 EMITB(0x0F) EMITB(0xC2)                                             \
@@ -3002,7 +3002,7 @@
         movrs_rr(W(XD), W(XS))                                              \
         cltrs_ld(W(XD), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define clers_rr(XG, XS)                                                    \
     xF3 EMITB(0x0F) EMITB(0xC2)                                             \
@@ -3022,7 +3022,7 @@
         movrs_rr(W(XD), W(XS))                                              \
         clers_ld(W(XD), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtrs_rr(XG, XS)                                                    \
     xF3 EMITB(0x0F) EMITB(0xC2)                                             \
@@ -3042,7 +3042,7 @@
         movrs_rr(W(XD), W(XS))                                              \
         cgtrs_ld(W(XD), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgers_rr(XG, XS)                                                    \
     xF3 EMITB(0x0F) EMITB(0xC2)                                             \

@@ -174,7 +174,7 @@
         EMITW(0x6EA01C00 | MXM(TmmM,    RYG(XS), Tmm0+16))                  \
         EMITW(0x3D800000 | MPM(TmmM,    MOD(MG), VYL(DG), B4(DG), L2(DG)))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andcx_rr(XG, XS)                                                    \
         andcx3rr(W(XG), W(XG), W(XS))
@@ -193,7 +193,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x4E201C00 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define anncx_rr(XG, XS)                                                    \
         anncx3rr(W(XG), W(XG), W(XS))
@@ -212,7 +212,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x4E601C00 | MXM(RYG(XD), TmmM,    RYG(XS)))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrcx_rr(XG, XS)                                                    \
         orrcx3rr(W(XG), W(XG), W(XS))
@@ -231,7 +231,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x4EA01C00 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define orncx_rr(XG, XS)                                                    \
         orncx3rr(W(XG), W(XG), W(XS))
@@ -250,7 +250,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x4EE01C00 | MXM(RYG(XD), TmmM,    RYG(XS)))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorcx_rr(XG, XS)                                                    \
         xorcx3rr(W(XG), W(XG), W(XS))
@@ -289,7 +289,7 @@
         EMITW(0x6EA0F800 | MXM(REG(XD), REG(XS), 0x00))                     \
         EMITW(0x6EA0F800 | MXM(RYG(XD), RYG(XS), 0x00))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addcs_rr(XG, XS)                                                    \
         addcs3rr(W(XG), W(XG), W(XS))
@@ -324,7 +324,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x6E20D400 | MXM(RYG(XD), RYG(XD), TmmM))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subcs_rr(XG, XS)                                                    \
         subcs3rr(W(XG), W(XG), W(XS))
@@ -343,7 +343,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x4EA0D400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulcs_rr(XG, XS)                                                    \
         mulcs3rr(W(XG), W(XG), W(XS))
@@ -365,7 +365,7 @@
         /* mlp, mlh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divcs_rr(XG, XS)                                                    \
         divcs3rr(W(XG), W(XG), W(XS))
@@ -484,7 +484,7 @@
 
 /*************   packed single-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define mincs_rr(XG, XS)                                                    \
         mincs3rr(W(XG), W(XG), W(XS))
@@ -506,7 +506,7 @@
         /* mnp, mnh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxcs_rr(XG, XS)                                                    \
         maxcs3rr(W(XG), W(XG), W(XS))
@@ -528,7 +528,7 @@
         /* mxp, mxh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqcs_rr(XG, XS)                                                    \
         ceqcs3rr(W(XG), W(XG), W(XS))
@@ -547,7 +547,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x4E20E400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cnecs_rr(XG, XS)                                                    \
         cnecs3rr(W(XG), W(XG), W(XS))
@@ -570,7 +570,7 @@
         EMITW(0x4E20E400 | MXM(RYG(XD), RYG(XS), TmmM))                     \
         EMITW(0x6E205800 | MXM(RYG(XD), RYG(XD), 0x00))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltcs_rr(XG, XS)                                                    \
         cltcs3rr(W(XG), W(XG), W(XS))
@@ -589,7 +589,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x6EA0E400 | MXM(RYG(XD), TmmM,    RYG(XS)))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define clecs_rr(XG, XS)                                                    \
         clecs3rr(W(XG), W(XG), W(XS))
@@ -608,7 +608,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x6E20E400 | MXM(RYG(XD), TmmM,    RYG(XS)))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtcs_rr(XG, XS)                                                    \
         cgtcs3rr(W(XG), W(XG), W(XS))
@@ -627,7 +627,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x6EA0E400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgecs_rr(XG, XS)                                                    \
         cgecs3rr(W(XG), W(XG), W(XS))
@@ -839,7 +839,7 @@
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addcx_rr(XG, XS)                                                    \
         addcx3rr(W(XG), W(XG), W(XS))
@@ -858,7 +858,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x4EA08400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subcx_rr(XG, XS)                                                    \
         subcx3rr(W(XG), W(XG), W(XS))
@@ -877,7 +877,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x6EA08400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulcx_rr(XG, XS)                                                    \
         mulcx3rr(W(XG), W(XG), W(XS))
@@ -896,7 +896,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x4EA09C00 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlcx_ri(XG, IS)     /* emits shift-right with out-of-range args */ \
@@ -920,7 +920,7 @@
         EMITW(0x6EA04400 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x6EA04400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrcx_ri(XG, IS)     /* emits shift-left for immediate-zero args */ \
@@ -945,7 +945,7 @@
         EMITW(0x6EA04400 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x6EA04400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrcn_ri(XG, IS)     /* emits shift-left for immediate-zero args */ \
@@ -970,7 +970,7 @@
         EMITW(0x4EA04400 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x4EA04400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlcx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -990,7 +990,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x6EA04400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrcx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1014,7 +1014,7 @@
         EMITW(0x6EA0B800 | MXM(TmmM,    TmmM,    0x00))                     \
         EMITW(0x6EA04400 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrcn_rr(XG, XS)     /* variable shift with per-elem count */       \

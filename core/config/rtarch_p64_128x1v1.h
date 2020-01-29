@@ -164,7 +164,7 @@
         EMITW(0xF000003F | MXM(TmmM,    TmmM,    REG(XS)))                  \
         EMITW(0x7C000799 | MXM(TmmM,    Teax & M(MOD(MG) == TPxx), TPxx))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andjx_rr(XG, XS)                                                    \
         andjx3rr(W(XG), W(XG), W(XS))
@@ -181,7 +181,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000417 | MXM(REG(XD), REG(XS), TmmM))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annjx_rr(XG, XS)                                                    \
         annjx3rr(W(XG), W(XG), W(XS))
@@ -198,7 +198,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000457 | MXM(REG(XD), TmmM,    REG(XS)))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrjx_rr(XG, XS)                                                    \
         orrjx3rr(W(XG), W(XG), W(XS))
@@ -215,7 +215,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000497 | MXM(REG(XD), REG(XS), TmmM))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #if (RT_SIMD_COMPAT_PW8 == 0)
 
@@ -254,7 +254,7 @@
 
 #endif /* RT_SIMD_COMPAT_PW8 == 1 */
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorjx_rr(XG, XS)                                                    \
         xorjx3rr(W(XG), W(XG), W(XS))
@@ -289,7 +289,7 @@
 #define negjs_rr(XD, XS)                                                    \
         EMITW(0xF00007E7 | MXM(REG(XD), 0x00,    REG(XS)))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addjs_rr(XG, XS)                                                    \
         addjs3rr(W(XG), W(XG), W(XS))
@@ -309,7 +309,7 @@
         /* adp, adh are defined in rtbase.h (first 15-regs only)
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subjs_rr(XG, XS)                                                    \
         subjs3rr(W(XG), W(XG), W(XS))
@@ -326,7 +326,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000347 | MXM(REG(XD), REG(XS), TmmM))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define muljs_rr(XG, XS)                                                    \
         muljs3rr(W(XG), W(XG), W(XS))
@@ -346,7 +346,7 @@
         /* mlp, mlh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divjs_rr(XG, XS)                                                    \
         divjs3rr(W(XG), W(XG), W(XS))
@@ -450,7 +450,7 @@
 
 /*************   packed double-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minjs_rr(XG, XS)                                                    \
         minjs3rr(W(XG), W(XG), W(XS))
@@ -470,7 +470,7 @@
         /* mnp, mnh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxjs_rr(XG, XS)                                                    \
         maxjs3rr(W(XG), W(XG), W(XS))
@@ -490,7 +490,7 @@
         /* mxp, mxh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqjs_rr(XG, XS)                                                    \
         ceqjs3rr(W(XG), W(XG), W(XS))
@@ -507,7 +507,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF000031F | MXM(REG(XD), REG(XS), TmmM))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cnejs_rr(XG, XS)                                                    \
         cnejs3rr(W(XG), W(XG), W(XS))
@@ -526,7 +526,7 @@
         EMITW(0xF000031F | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0xF0000517 | MXM(REG(XD), REG(XD), REG(XD)))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltjs_rr(XG, XS)                                                    \
         cltjs3rr(W(XG), W(XG), W(XS))
@@ -543,7 +543,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF000035F | MXM(REG(XD), TmmM,    REG(XS)))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define clejs_rr(XG, XS)                                                    \
         clejs3rr(W(XG), W(XG), W(XS))
@@ -560,7 +560,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF000039F | MXM(REG(XD), TmmM,    REG(XS)))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtjs_rr(XG, XS)                                                    \
         cgtjs3rr(W(XG), W(XG), W(XS))
@@ -577,7 +577,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF000035F | MXM(REG(XD), REG(XS), TmmM))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgejs_rr(XG, XS)                                                    \
         cgejs3rr(W(XG), W(XG), W(XS))
@@ -770,7 +770,7 @@
 
 #if (RT_SIMD_COMPAT_PW8 == 0)
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addjx_rr(XG, XS)                                                    \
         addjx3rr(W(XG), W(XG), W(XS))
@@ -801,7 +801,7 @@
         stack_ld(Reax)                                                      \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subjx_rr(XG, XS)                                                    \
         subjx3rr(W(XG), W(XG), W(XS))
@@ -832,7 +832,7 @@
         stack_ld(Reax)                                                      \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define muljx_rr(XG, XS)                                                    \
         muljx3rr(W(XG), W(XG), W(XS))
@@ -867,7 +867,7 @@
         stack_ld(Recx)                                                      \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shljx_ri(XG, IS)                                                    \
@@ -891,7 +891,7 @@
         stack_ld(Recx)                                                      \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrjx_ri(XG, IS)                                                    \
@@ -915,7 +915,7 @@
         stack_ld(Recx)                                                      \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrjn_ri(XG, IS)                                                    \
@@ -939,7 +939,7 @@
         stack_ld(Recx)                                                      \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svljx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -971,7 +971,7 @@
         stack_ld(Recx)                                                      \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrjx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1003,7 +1003,7 @@
         stack_ld(Recx)                                                      \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrjn_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1037,7 +1037,7 @@
 
 #else /* RT_SIMD_COMPAT_PW8 == 1 */
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addjx_rr(XG, XS)                                                    \
         addjx3rr(W(XG), W(XG), W(XS))
@@ -1054,7 +1054,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x100000C0 | MXM(REG(XD), REG(XS), TmmM))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subjx_rr(XG, XS)                                                    \
         subjx3rr(W(XG), W(XG), W(XS))
@@ -1071,7 +1071,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x100004C0 | MXM(REG(XD), REG(XS), TmmM))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define muljx_rr(XG, XS)                                                    \
         muljx3rr(W(XG), W(XG), W(XS))
@@ -1106,7 +1106,7 @@
         stack_ld(Recx)                                                      \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shljx_ri(XG, IS)                                                    \
@@ -1125,7 +1125,7 @@
         EMITW(0x7C000299 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x100005C4 | MXM(REG(XD), REG(XS), TmmM))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrjx_ri(XG, IS)                                                    \
@@ -1144,7 +1144,7 @@
         EMITW(0x7C000299 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x100006C4 | MXM(REG(XD), REG(XS), TmmM))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrjn_ri(XG, IS)                                                    \
@@ -1163,7 +1163,7 @@
         EMITW(0x7C000299 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x100003C4 | MXM(REG(XD), REG(XS), TmmM))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svljx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1181,7 +1181,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x100005C4 | MXM(REG(XD), REG(XS), TmmM))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrjx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1199,7 +1199,7 @@
         EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x100006C4 | MXM(REG(XD), REG(XS), TmmM))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrjn_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1240,7 +1240,7 @@
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0x00000000 | MDM(REG(XS), MOD(MD), VAL(DD), B1(DD), V1(DD)))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addts_rr(XG, XS)                                                    \
         addts3rr(W(XG), W(XG), W(XS))
@@ -1256,7 +1256,7 @@
         EMITW(0x00000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), K1(DT)))  \
         EMITW(0xFC00002A | MXM(REG(XD), REG(XS), TmmM))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subts_rr(XG, XS)                                                    \
         subts3rr(W(XG), W(XG), W(XS))
@@ -1272,7 +1272,7 @@
         EMITW(0x00000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), K1(DT)))  \
         EMITW(0xFC000028 | MXM(REG(XD), REG(XS), TmmM))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mults_rr(XG, XS)                                                    \
         mults3rr(W(XG), W(XG), W(XS))
@@ -1288,7 +1288,7 @@
         EMITW(0x00000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), K1(DT)))  \
         EMITW(0xFC000032 | MXM(REG(XD), REG(XS), 0x00) | TmmM << 6)
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divts_rr(XG, XS)                                                    \
         divts3rr(W(XG), W(XG), W(XS))
@@ -1398,7 +1398,7 @@
         EMITW(0x38000000 | MPM(TPxx,    REG(MD), VAL(DD), B2(DD), P2(DD)))  \
         EMITW(0x7C000599 | MXM(REG(XS), Teax & M(MOD(MD) == TPxx), TPxx))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addts_rr(XG, XS)                                                    \
         addts3rr(W(XG), W(XG), W(XS))
@@ -1415,7 +1415,7 @@
         EMITW(0x7C000499 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000107 | MXM(REG(XD), REG(XS), TmmM))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subts_rr(XG, XS)                                                    \
         subts3rr(W(XG), W(XG), W(XS))
@@ -1432,7 +1432,7 @@
         EMITW(0x7C000499 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000147 | MXM(REG(XD), REG(XS), TmmM))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mults_rr(XG, XS)                                                    \
         mults3rr(W(XG), W(XG), W(XS))
@@ -1449,7 +1449,7 @@
         EMITW(0x7C000499 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000187 | MXM(REG(XD), REG(XS), TmmM))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divts_rr(XG, XS)                                                    \
         divts3rr(W(XG), W(XG), W(XS))
@@ -1552,7 +1552,7 @@
 
 #if RT_ELEM_COMPAT_VMX == 0
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define mints_rr(XG, XS)                                                    \
         mints3rr(W(XG), W(XG), W(XS))
@@ -1568,7 +1568,7 @@
         EMITW(0x00000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), K1(DT)))  \
         EMITW(0xF0000540 | MXM(REG(XD), REG(XS), TmmM))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxts_rr(XG, XS)                                                    \
         maxts3rr(W(XG), W(XG), W(XS))
@@ -1584,7 +1584,7 @@
         EMITW(0x00000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), K1(DT)))  \
         EMITW(0xF0000500 | MXM(REG(XD), REG(XS), TmmM))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqts_rr(XG, XS)                                                    \
         ceqts3rr(W(XG), W(XG), W(XS))
@@ -1600,7 +1600,7 @@
         EMITW(0x00000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), K1(DT)))  \
         EMITW(0xF0000318 | MXM(REG(XD), REG(XS), TmmM))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cnets_rr(XG, XS)                                                    \
         cnets3rr(W(XG), W(XG), W(XS))
@@ -1618,7 +1618,7 @@
         EMITW(0xF0000318 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0xF0000510 | MXM(REG(XD), REG(XD), REG(XD)))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltts_rr(XG, XS)                                                    \
         cltts3rr(W(XG), W(XG), W(XS))
@@ -1634,7 +1634,7 @@
         EMITW(0x00000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), K1(DT)))  \
         EMITW(0xF0000358 | MXM(REG(XD), TmmM,    REG(XS)))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define clets_rr(XG, XS)                                                    \
         clets3rr(W(XG), W(XG), W(XS))
@@ -1650,7 +1650,7 @@
         EMITW(0x00000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), K1(DT)))  \
         EMITW(0xF0000398 | MXM(REG(XD), TmmM,    REG(XS)))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtts_rr(XG, XS)                                                    \
         cgtts3rr(W(XG), W(XG), W(XS))
@@ -1666,7 +1666,7 @@
         EMITW(0x00000000 | MDM(TmmM,    MOD(MT), VAL(DT), B1(DT), K1(DT)))  \
         EMITW(0xF0000358 | MXM(REG(XD), REG(XS), TmmM))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgets_rr(XG, XS)                                                    \
         cgets3rr(W(XG), W(XG), W(XS))
@@ -1684,7 +1684,7 @@
 
 #else /* RT_ELEM_COMPAT_VMX == 1 */
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define mints_rr(XG, XS)                                                    \
         mints3rr(W(XG), W(XG), W(XS))
@@ -1701,7 +1701,7 @@
         EMITW(0x7C000499 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000547 | MXM(REG(XD), REG(XS), TmmM))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxts_rr(XG, XS)                                                    \
         maxts3rr(W(XG), W(XG), W(XS))
@@ -1718,7 +1718,7 @@
         EMITW(0x7C000499 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000507 | MXM(REG(XD), REG(XS), TmmM))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqts_rr(XG, XS)                                                    \
         ceqts3rr(W(XG), W(XG), W(XS))
@@ -1735,7 +1735,7 @@
         EMITW(0x7C000499 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF000031F | MXM(REG(XD), REG(XS), TmmM))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cnets_rr(XG, XS)                                                    \
         cnets3rr(W(XG), W(XG), W(XS))
@@ -1754,7 +1754,7 @@
         EMITW(0xF000031F | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0xF0000517 | MXM(REG(XD), REG(XD), REG(XD)))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltts_rr(XG, XS)                                                    \
         cltts3rr(W(XG), W(XG), W(XS))
@@ -1771,7 +1771,7 @@
         EMITW(0x7C000499 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF000035F | MXM(REG(XD), TmmM,    REG(XS)))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define clets_rr(XG, XS)                                                    \
         clets3rr(W(XG), W(XG), W(XS))
@@ -1788,7 +1788,7 @@
         EMITW(0x7C000499 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF000039F | MXM(REG(XD), TmmM,    REG(XS)))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtts_rr(XG, XS)                                                    \
         cgtts3rr(W(XG), W(XG), W(XS))
@@ -1805,7 +1805,7 @@
         EMITW(0x7C000499 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF000035F | MXM(REG(XD), REG(XS), TmmM))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgets_rr(XG, XS)                                                    \
         cgets3rr(W(XG), W(XG), W(XS))

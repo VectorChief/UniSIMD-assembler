@@ -118,7 +118,7 @@
         orrmx_rr(Xmm0, W(XS))                                               \
         movmx_st(Xmm0, W(MG), W(DG))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andmx_rr(XG, XS)                                                    \
         andmx3rr(W(XG), W(XG), W(XS))
@@ -140,7 +140,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annmx_rr(XG, XS)                                                    \
         annmx3rr(W(XG), W(XG), W(XS))
@@ -162,7 +162,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrmx_rr(XG, XS)                                                    \
         orrmx3rr(W(XG), W(XG), W(XS))
@@ -184,7 +184,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define ornmx_rr(XG, XS)                                                    \
         notmx_rx(W(XG))                                                     \
@@ -202,7 +202,7 @@
         notmx_rr(W(XD), W(XS))                                              \
         orrmx_ld(W(XD), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xormx_rr(XG, XS)                                                    \
         xormx3rr(W(XG), W(XG), W(XS))
@@ -236,7 +236,7 @@
 
 #if (RT_256X2 < 2)
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addmx_rr(XG, XS)                                                    \
         addmx3rr(W(XG), W(XG), W(XS))
@@ -271,7 +271,7 @@
         addgx_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
         movgx_st(W(XD), Mebp, inf_SCR01(0x30))
 
-/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, unsigned */
+/* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, unsigned */
 
 #define adsmx_rr(XG, XS)                                                    \
         adsmx3rr(W(XG), W(XG), W(XS))
@@ -306,7 +306,7 @@
         adsgx_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
         movgx_st(W(XD), Mebp, inf_SCR01(0x30))
 
-/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, signed */
+/* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, signed */
 
 #define adsmn_rr(XG, XS)                                                    \
         adsmn3rr(W(XG), W(XG), W(XS))
@@ -341,7 +341,7 @@
         adsgn_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
         movgx_st(W(XD), Mebp, inf_SCR01(0x30))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define submx_rr(XG, XS)                                                    \
         submx3rr(W(XG), W(XG), W(XS))
@@ -376,7 +376,7 @@
         subgx_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
         movgx_st(W(XD), Mebp, inf_SCR01(0x30))
 
-/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, unsigned */
+/* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, unsigned */
 
 #define sbsmx_rr(XG, XS)                                                    \
         sbsmx3rr(W(XG), W(XG), W(XS))
@@ -411,7 +411,7 @@
         sbsgx_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
         movgx_st(W(XD), Mebp, inf_SCR01(0x30))
 
-/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, signed */
+/* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, signed */
 
 #define sbsmn_rr(XG, XS)                                                    \
         sbsmn3rr(W(XG), W(XG), W(XS))
@@ -446,7 +446,7 @@
         sbsgn_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
         movgx_st(W(XD), Mebp, inf_SCR01(0x30))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulmx_rr(XG, XS)                                                    \
         mulmx3rr(W(XG), W(XG), W(XS))
@@ -481,7 +481,7 @@
         mulgx_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
         movgx_st(W(XD), Mebp, inf_SCR01(0x30))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlmx_ri(XG, IS)                                                    \
@@ -520,7 +520,7 @@
         movgx_st(W(XD), Mebp, inf_SCR01(0x30))                              \
         movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrmx_ri(XG, IS)                                                    \
@@ -559,7 +559,7 @@
         movgx_st(W(XD), Mebp, inf_SCR01(0x30))                              \
         movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrmn_ri(XG, IS)                                                    \
@@ -600,7 +600,7 @@
 
 #else /* RT_256X2 >= 2, AVX2 */
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addmx_rr(XG, XS)                                                    \
         addmx3rr(W(XG), W(XG), W(XS))
@@ -622,7 +622,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, unsigned */
+/* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, unsigned */
 
 #define adsmx_rr(XG, XS)                                                    \
         adsmx3rr(W(XG), W(XG), W(XS))
@@ -644,7 +644,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, signed */
+/* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, signed */
 
 #define adsmn_rr(XG, XS)                                                    \
         adsmn3rr(W(XG), W(XG), W(XS))
@@ -666,7 +666,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define submx_rr(XG, XS)                                                    \
         submx3rr(W(XG), W(XG), W(XS))
@@ -688,7 +688,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, unsigned */
+/* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, unsigned */
 
 #define sbsmx_rr(XG, XS)                                                    \
         sbsmx3rr(W(XG), W(XG), W(XS))
@@ -710,7 +710,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, signed */
+/* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, signed */
 
 #define sbsmn_rr(XG, XS)                                                    \
         sbsmn3rr(W(XG), W(XG), W(XS))
@@ -732,7 +732,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulmx_rr(XG, XS)                                                    \
         mulmx3rr(W(XG), W(XG), W(XS))
@@ -754,7 +754,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlmx_ri(XG, IS)                                                    \
@@ -779,7 +779,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrmx_ri(XG, IS)                                                    \
@@ -804,7 +804,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrmn_ri(XG, IS)                                                    \
@@ -831,7 +831,7 @@
 
 #endif /* RT_256X2 >= 2, AVX2 */
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlmx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -921,7 +921,7 @@
         shlhx_mx(Mebp,  inf_SCR01(0x3E))                                    \
         stack_ld(Recx)
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrmx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1011,7 +1011,7 @@
         shrhx_mx(Mebp,  inf_SCR01(0x3E))                                    \
         stack_ld(Recx)
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrmn_rr(XG, XS)     /* variable shift with per-elem count */       \

@@ -1039,7 +1039,7 @@
 #define mmvmx_st(XS, MG, DG)                                                \
         mmvax_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andmx_rr(XG, XS)                                                    \
         andax_rr(W(XG), W(XS))
@@ -1053,7 +1053,7 @@
 #define andmx3ld(XD, XS, MT, DT)                                            \
         andax3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annmx_rr(XG, XS)                                                    \
         annax_rr(W(XG), W(XS))
@@ -1067,7 +1067,7 @@
 #define annmx3ld(XD, XS, MT, DT)                                            \
         annax3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrmx_rr(XG, XS)                                                    \
         orrax_rr(W(XG), W(XS))
@@ -1081,7 +1081,7 @@
 #define orrmx3ld(XD, XS, MT, DT)                                            \
         orrax3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define ornmx_rr(XG, XS)                                                    \
         ornax_rr(W(XG), W(XS))
@@ -1095,7 +1095,7 @@
 #define ornmx3ld(XD, XS, MT, DT)                                            \
         ornax3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xormx_rr(XG, XS)                                                    \
         xorax_rr(W(XG), W(XS))
@@ -1127,7 +1127,7 @@
 #define negms_rr(XD, XS)                                                    \
         negas_rr(W(XD), W(XS))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addms_rr(XG, XS)                                                    \
         addas_rr(W(XG), W(XS))
@@ -1141,7 +1141,7 @@
 #define addms3ld(XD, XS, MT, DT)                                            \
         addas3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subms_rr(XG, XS)                                                    \
         subas_rr(W(XG), W(XS))
@@ -1155,7 +1155,7 @@
 #define subms3ld(XD, XS, MT, DT)                                            \
         subas3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulms_rr(XG, XS)                                                    \
         mulas_rr(W(XG), W(XS))
@@ -1169,7 +1169,7 @@
 #define mulms3ld(XD, XS, MT, DT)                                            \
         mulas3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divms_rr(XG, XS)                                                    \
         divas_rr(W(XG), W(XS))
@@ -1261,7 +1261,7 @@
 
 /**************   packed half-precision floating-point compare   **************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minms_rr(XG, XS)                                                    \
         minas_rr(W(XG), W(XS))
@@ -1275,7 +1275,7 @@
 #define minms3ld(XD, XS, MT, DT)                                            \
         minas3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxms_rr(XG, XS)                                                    \
         maxas_rr(W(XG), W(XS))
@@ -1289,7 +1289,7 @@
 #define maxms3ld(XD, XS, MT, DT)                                            \
         maxas3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqms_rr(XG, XS)                                                    \
         ceqas_rr(W(XG), W(XS))
@@ -1303,7 +1303,7 @@
 #define ceqms3ld(XD, XS, MT, DT)                                            \
         ceqas3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cnems_rr(XG, XS)                                                    \
         cneas_rr(W(XG), W(XS))
@@ -1317,7 +1317,7 @@
 #define cnems3ld(XD, XS, MT, DT)                                            \
         cneas3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltms_rr(XG, XS)                                                    \
         cltas_rr(W(XG), W(XS))
@@ -1331,7 +1331,7 @@
 #define cltms3ld(XD, XS, MT, DT)                                            \
         cltas3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define clems_rr(XG, XS)                                                    \
         cleas_rr(W(XG), W(XS))
@@ -1345,7 +1345,7 @@
 #define clems3ld(XD, XS, MT, DT)                                            \
         cleas3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtms_rr(XG, XS)                                                    \
         cgtas_rr(W(XG), W(XS))
@@ -1359,7 +1359,7 @@
 #define cgtms3ld(XD, XS, MT, DT)                                            \
         cgtas3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgems_rr(XG, XS)                                                    \
         cgeas_rr(W(XG), W(XS))
@@ -1484,7 +1484,7 @@
 
 /*************   packed half-precision integer arithmetic/shifts   ************/
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addmx_rr(XG, XS)                                                    \
         addax_rr(W(XG), W(XS))
@@ -1498,7 +1498,7 @@
 #define addmx3ld(XD, XS, MT, DT)                                            \
         addax3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, unsigned */
+/* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, unsigned */
 
 #define adsmx_rr(XG, XS)                                                    \
         adsax_rr(W(XG), W(XS))
@@ -1512,7 +1512,7 @@
 #define adsmx3ld(XD, XS, MT, DT)                                            \
         adsax3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, signed */
+/* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, signed */
 
 #define adsmn_rr(XG, XS)                                                    \
         adsan_rr(W(XG), W(XS))
@@ -1526,7 +1526,7 @@
 #define adsmn3ld(XD, XS, MT, DT)                                            \
         adsan3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define submx_rr(XG, XS)                                                    \
         subax_rr(W(XG), W(XS))
@@ -1540,7 +1540,7 @@
 #define submx3ld(XD, XS, MT, DT)                                            \
         subax3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, unsigned */
+/* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, unsigned */
 
 #define sbsmx_rr(XG, XS)                                                    \
         sbsax_rr(W(XG), W(XS))
@@ -1554,7 +1554,7 @@
 #define sbsmx3ld(XD, XS, MT, DT)                                            \
         sbsax3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, signed */
+/* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, signed */
 
 #define sbsmn_rr(XG, XS)                                                    \
         sbsan_rr(W(XG), W(XS))
@@ -1568,7 +1568,7 @@
 #define sbsmn3ld(XD, XS, MT, DT)                                            \
         sbsan3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulmx_rr(XG, XS)                                                    \
         mulax_rr(W(XG), W(XS))
@@ -1582,7 +1582,7 @@
 #define mulmx3ld(XD, XS, MT, DT)                                            \
         mulax3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlmx_ri(XG, IS)                                                    \
@@ -1597,7 +1597,7 @@
 #define shlmx3ld(XD, XS, MT, DT)                                            \
         shlax3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrmx_ri(XG, IS)                                                    \
@@ -1612,7 +1612,7 @@
 #define shrmx3ld(XD, XS, MT, DT)                                            \
         shrax3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrmn_ri(XG, IS)                                                    \
@@ -1627,7 +1627,7 @@
 #define shrmn3ld(XD, XS, MT, DT)                                            \
         shran3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlmx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1642,7 +1642,7 @@
 #define svlmx3ld(XD, XS, MT, DT)                                            \
         svlax3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrmx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1657,7 +1657,7 @@
 #define svrmx3ld(XD, XS, MT, DT)                                            \
         svrax3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrmn_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -1709,7 +1709,7 @@
 #define mmvmx_st(XS, MG, DG)                                                \
         mmvgx_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andmx_rr(XG, XS)                                                    \
         andgx_rr(W(XG), W(XS))
@@ -1723,7 +1723,7 @@
 #define andmx3ld(XD, XS, MT, DT)                                            \
         andgx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annmx_rr(XG, XS)                                                    \
         anngx_rr(W(XG), W(XS))
@@ -1737,7 +1737,7 @@
 #define annmx3ld(XD, XS, MT, DT)                                            \
         anngx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrmx_rr(XG, XS)                                                    \
         orrgx_rr(W(XG), W(XS))
@@ -1751,7 +1751,7 @@
 #define orrmx3ld(XD, XS, MT, DT)                                            \
         orrgx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define ornmx_rr(XG, XS)                                                    \
         orngx_rr(W(XG), W(XS))
@@ -1765,7 +1765,7 @@
 #define ornmx3ld(XD, XS, MT, DT)                                            \
         orngx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xormx_rr(XG, XS)                                                    \
         xorgx_rr(W(XG), W(XS))
@@ -1797,7 +1797,7 @@
 #define negms_rr(XD, XS)                                                    \
         neggs_rr(W(XD), W(XS))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addms_rr(XG, XS)                                                    \
         addgs_rr(W(XG), W(XS))
@@ -1811,7 +1811,7 @@
 #define addms3ld(XD, XS, MT, DT)                                            \
         addgs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subms_rr(XG, XS)                                                    \
         subgs_rr(W(XG), W(XS))
@@ -1825,7 +1825,7 @@
 #define subms3ld(XD, XS, MT, DT)                                            \
         subgs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulms_rr(XG, XS)                                                    \
         mulgs_rr(W(XG), W(XS))
@@ -1839,7 +1839,7 @@
 #define mulms3ld(XD, XS, MT, DT)                                            \
         mulgs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divms_rr(XG, XS)                                                    \
         divgs_rr(W(XG), W(XS))
@@ -1931,7 +1931,7 @@
 
 /**************   packed half-precision floating-point compare   **************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minms_rr(XG, XS)                                                    \
         mings_rr(W(XG), W(XS))
@@ -1945,7 +1945,7 @@
 #define minms3ld(XD, XS, MT, DT)                                            \
         mings3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxms_rr(XG, XS)                                                    \
         maxgs_rr(W(XG), W(XS))
@@ -1959,7 +1959,7 @@
 #define maxms3ld(XD, XS, MT, DT)                                            \
         maxgs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqms_rr(XG, XS)                                                    \
         ceqgs_rr(W(XG), W(XS))
@@ -1973,7 +1973,7 @@
 #define ceqms3ld(XD, XS, MT, DT)                                            \
         ceqgs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cnems_rr(XG, XS)                                                    \
         cnegs_rr(W(XG), W(XS))
@@ -1987,7 +1987,7 @@
 #define cnems3ld(XD, XS, MT, DT)                                            \
         cnegs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltms_rr(XG, XS)                                                    \
         cltgs_rr(W(XG), W(XS))
@@ -2001,7 +2001,7 @@
 #define cltms3ld(XD, XS, MT, DT)                                            \
         cltgs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define clems_rr(XG, XS)                                                    \
         clegs_rr(W(XG), W(XS))
@@ -2015,7 +2015,7 @@
 #define clems3ld(XD, XS, MT, DT)                                            \
         clegs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtms_rr(XG, XS)                                                    \
         cgtgs_rr(W(XG), W(XS))
@@ -2029,7 +2029,7 @@
 #define cgtms3ld(XD, XS, MT, DT)                                            \
         cgtgs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgems_rr(XG, XS)                                                    \
         cgegs_rr(W(XG), W(XS))
@@ -2154,7 +2154,7 @@
 
 /*************   packed half-precision integer arithmetic/shifts   ************/
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addmx_rr(XG, XS)                                                    \
         addgx_rr(W(XG), W(XS))
@@ -2168,7 +2168,7 @@
 #define addmx3ld(XD, XS, MT, DT)                                            \
         addgx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, unsigned */
+/* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, unsigned */
 
 #define adsmx_rr(XG, XS)                                                    \
         adsgx_rr(W(XG), W(XS))
@@ -2182,7 +2182,7 @@
 #define adsmx3ld(XD, XS, MT, DT)                                            \
         adsgx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, signed */
+/* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, signed */
 
 #define adsmn_rr(XG, XS)                                                    \
         adsgn_rr(W(XG), W(XS))
@@ -2196,7 +2196,7 @@
 #define adsmn3ld(XD, XS, MT, DT)                                            \
         adsgn3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define submx_rr(XG, XS)                                                    \
         subgx_rr(W(XG), W(XS))
@@ -2210,7 +2210,7 @@
 #define submx3ld(XD, XS, MT, DT)                                            \
         subgx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, unsigned */
+/* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, unsigned */
 
 #define sbsmx_rr(XG, XS)                                                    \
         sbsgx_rr(W(XG), W(XS))
@@ -2224,7 +2224,7 @@
 #define sbsmx3ld(XD, XS, MT, DT)                                            \
         sbsgx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, signed */
+/* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, signed */
 
 #define sbsmn_rr(XG, XS)                                                    \
         sbsgn_rr(W(XG), W(XS))
@@ -2238,7 +2238,7 @@
 #define sbsmn3ld(XD, XS, MT, DT)                                            \
         sbsgn3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulmx_rr(XG, XS)                                                    \
         mulgx_rr(W(XG), W(XS))
@@ -2252,7 +2252,7 @@
 #define mulmx3ld(XD, XS, MT, DT)                                            \
         mulgx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlmx_ri(XG, IS)                                                    \
@@ -2267,7 +2267,7 @@
 #define shlmx3ld(XD, XS, MT, DT)                                            \
         shlgx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrmx_ri(XG, IS)                                                    \
@@ -2282,7 +2282,7 @@
 #define shrmx3ld(XD, XS, MT, DT)                                            \
         shrgx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrmn_ri(XG, IS)                                                    \
@@ -2297,7 +2297,7 @@
 #define shrmn3ld(XD, XS, MT, DT)                                            \
         shrgn3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlmx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -2312,7 +2312,7 @@
 #define svlmx3ld(XD, XS, MT, DT)                                            \
         svlgx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrmx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -2327,7 +2327,7 @@
 #define svrmx3ld(XD, XS, MT, DT)                                            \
         svrgx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrmn_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -2381,7 +2381,7 @@
 #define mmvox_st(XS, MG, DG)                                                \
         mmvcx_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andox_rr(XG, XS)                                                    \
         andcx_rr(W(XG), W(XS))
@@ -2395,7 +2395,7 @@
 #define andox3ld(XD, XS, MT, DT)                                            \
         andcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annox_rr(XG, XS)                                                    \
         anncx_rr(W(XG), W(XS))
@@ -2409,7 +2409,7 @@
 #define annox3ld(XD, XS, MT, DT)                                            \
         anncx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrox_rr(XG, XS)                                                    \
         orrcx_rr(W(XG), W(XS))
@@ -2423,7 +2423,7 @@
 #define orrox3ld(XD, XS, MT, DT)                                            \
         orrcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define ornox_rr(XG, XS)                                                    \
         orncx_rr(W(XG), W(XS))
@@ -2437,7 +2437,7 @@
 #define ornox3ld(XD, XS, MT, DT)                                            \
         orncx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorox_rr(XG, XS)                                                    \
         xorcx_rr(W(XG), W(XS))
@@ -2469,7 +2469,7 @@
 #define negos_rr(XD, XS)                                                    \
         negcs_rr(W(XD), W(XS))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addos_rr(XG, XS)                                                    \
         addcs_rr(W(XG), W(XS))
@@ -2501,7 +2501,7 @@
 #define adhos_ld(XG, MS, DS)                                                \
         adhcs_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subos_rr(XG, XS)                                                    \
         subcs_rr(W(XG), W(XS))
@@ -2515,7 +2515,7 @@
 #define subos3ld(XD, XS, MT, DT)                                            \
         subcs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulos_rr(XG, XS)                                                    \
         mulcs_rr(W(XG), W(XS))
@@ -2547,7 +2547,7 @@
 #define mlhos_ld(XD, MS, DS)                                                \
         mlhcs_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divos_rr(XG, XS)                                                    \
         divcs_rr(W(XG), W(XS))
@@ -2638,7 +2638,7 @@
 
 /*************   packed single-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minos_rr(XG, XS)                                                    \
         mincs_rr(W(XG), W(XS))
@@ -2670,7 +2670,7 @@
 #define mnhos_ld(XD, MS, DS)                                                \
         mnhcs_ld(W(XD), W(MS), W(DS))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxos_rr(XG, XS)                                                    \
         maxcs_rr(W(XG), W(XS))
@@ -2702,7 +2702,7 @@
 #define mxhos_ld(XD, MS, DS)                                                \
         mxhcs_ld(W(XD), W(MS), W(DS))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqos_rr(XG, XS)                                                    \
         ceqcs_rr(W(XG), W(XS))
@@ -2716,7 +2716,7 @@
 #define ceqos3ld(XD, XS, MT, DT)                                            \
         ceqcs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cneos_rr(XG, XS)                                                    \
         cnecs_rr(W(XG), W(XS))
@@ -2730,7 +2730,7 @@
 #define cneos3ld(XD, XS, MT, DT)                                            \
         cnecs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltos_rr(XG, XS)                                                    \
         cltcs_rr(W(XG), W(XS))
@@ -2744,7 +2744,7 @@
 #define cltos3ld(XD, XS, MT, DT)                                            \
         cltcs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define cleos_rr(XG, XS)                                                    \
         clecs_rr(W(XG), W(XS))
@@ -2758,7 +2758,7 @@
 #define cleos3ld(XD, XS, MT, DT)                                            \
         clecs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtos_rr(XG, XS)                                                    \
         cgtcs_rr(W(XG), W(XS))
@@ -2772,7 +2772,7 @@
 #define cgtos3ld(XD, XS, MT, DT)                                            \
         cgtcs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgeos_rr(XG, XS)                                                    \
         cgecs_rr(W(XG), W(XS))
@@ -2913,7 +2913,7 @@
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addox_rr(XG, XS)                                                    \
         addcx_rr(W(XG), W(XS))
@@ -2927,7 +2927,7 @@
 #define addox3ld(XD, XS, MT, DT)                                            \
         addcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subox_rr(XG, XS)                                                    \
         subcx_rr(W(XG), W(XS))
@@ -2941,7 +2941,7 @@
 #define subox3ld(XD, XS, MT, DT)                                            \
         subcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulox_rr(XG, XS)                                                    \
         mulcx_rr(W(XG), W(XS))
@@ -2955,7 +2955,7 @@
 #define mulox3ld(XD, XS, MT, DT)                                            \
         mulcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlox_ri(XG, IS)                                                    \
@@ -2970,7 +2970,7 @@
 #define shlox3ld(XD, XS, MT, DT)                                            \
         shlcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrox_ri(XG, IS)                                                    \
@@ -2985,7 +2985,7 @@
 #define shrox3ld(XD, XS, MT, DT)                                            \
         shrcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shron_ri(XG, IS)                                                    \
@@ -3000,7 +3000,7 @@
 #define shron3ld(XD, XS, MT, DT)                                            \
         shrcn3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -3015,7 +3015,7 @@
 #define svlox3ld(XD, XS, MT, DT)                                            \
         svlcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -3030,7 +3030,7 @@
 #define svrox3ld(XD, XS, MT, DT)                                            \
         svrcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svron_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -3082,7 +3082,7 @@
 #define mmvox_st(XS, MG, DG)                                                \
         mmvix_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andox_rr(XG, XS)                                                    \
         andix_rr(W(XG), W(XS))
@@ -3096,7 +3096,7 @@
 #define andox3ld(XD, XS, MT, DT)                                            \
         andix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annox_rr(XG, XS)                                                    \
         annix_rr(W(XG), W(XS))
@@ -3110,7 +3110,7 @@
 #define annox3ld(XD, XS, MT, DT)                                            \
         annix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrox_rr(XG, XS)                                                    \
         orrix_rr(W(XG), W(XS))
@@ -3124,7 +3124,7 @@
 #define orrox3ld(XD, XS, MT, DT)                                            \
         orrix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define ornox_rr(XG, XS)                                                    \
         ornix_rr(W(XG), W(XS))
@@ -3138,7 +3138,7 @@
 #define ornox3ld(XD, XS, MT, DT)                                            \
         ornix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorox_rr(XG, XS)                                                    \
         xorix_rr(W(XG), W(XS))
@@ -3170,7 +3170,7 @@
 #define negos_rr(XD, XS)                                                    \
         negis_rr(W(XD), W(XS))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addos_rr(XG, XS)                                                    \
         addis_rr(W(XG), W(XS))
@@ -3202,7 +3202,7 @@
 #define adhos_ld(XG, MS, DS)                                                \
         adhis_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subos_rr(XG, XS)                                                    \
         subis_rr(W(XG), W(XS))
@@ -3216,7 +3216,7 @@
 #define subos3ld(XD, XS, MT, DT)                                            \
         subis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulos_rr(XG, XS)                                                    \
         mulis_rr(W(XG), W(XS))
@@ -3248,7 +3248,7 @@
 #define mlhos_ld(XD, MS, DS)                                                \
         mlhis_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divos_rr(XG, XS)                                                    \
         divis_rr(W(XG), W(XS))
@@ -3339,7 +3339,7 @@
 
 /*************   packed single-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minos_rr(XG, XS)                                                    \
         minis_rr(W(XG), W(XS))
@@ -3371,7 +3371,7 @@
 #define mnhos_ld(XD, MS, DS)                                                \
         mnhis_ld(W(XD), W(MS), W(DS))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxos_rr(XG, XS)                                                    \
         maxis_rr(W(XG), W(XS))
@@ -3403,7 +3403,7 @@
 #define mxhos_ld(XD, MS, DS)                                                \
         mxhis_ld(W(XD), W(MS), W(DS))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqos_rr(XG, XS)                                                    \
         ceqis_rr(W(XG), W(XS))
@@ -3417,7 +3417,7 @@
 #define ceqos3ld(XD, XS, MT, DT)                                            \
         ceqis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cneos_rr(XG, XS)                                                    \
         cneis_rr(W(XG), W(XS))
@@ -3431,7 +3431,7 @@
 #define cneos3ld(XD, XS, MT, DT)                                            \
         cneis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltos_rr(XG, XS)                                                    \
         cltis_rr(W(XG), W(XS))
@@ -3445,7 +3445,7 @@
 #define cltos3ld(XD, XS, MT, DT)                                            \
         cltis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define cleos_rr(XG, XS)                                                    \
         cleis_rr(W(XG), W(XS))
@@ -3459,7 +3459,7 @@
 #define cleos3ld(XD, XS, MT, DT)                                            \
         cleis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtos_rr(XG, XS)                                                    \
         cgtis_rr(W(XG), W(XS))
@@ -3473,7 +3473,7 @@
 #define cgtos3ld(XD, XS, MT, DT)                                            \
         cgtis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgeos_rr(XG, XS)                                                    \
         cgeis_rr(W(XG), W(XS))
@@ -3614,7 +3614,7 @@
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addox_rr(XG, XS)                                                    \
         addix_rr(W(XG), W(XS))
@@ -3628,7 +3628,7 @@
 #define addox3ld(XD, XS, MT, DT)                                            \
         addix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subox_rr(XG, XS)                                                    \
         subix_rr(W(XG), W(XS))
@@ -3642,7 +3642,7 @@
 #define subox3ld(XD, XS, MT, DT)                                            \
         subix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulox_rr(XG, XS)                                                    \
         mulix_rr(W(XG), W(XS))
@@ -3656,7 +3656,7 @@
 #define mulox3ld(XD, XS, MT, DT)                                            \
         mulix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlox_ri(XG, IS)                                                    \
@@ -3671,7 +3671,7 @@
 #define shlox3ld(XD, XS, MT, DT)                                            \
         shlix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrox_ri(XG, IS)                                                    \
@@ -3686,7 +3686,7 @@
 #define shrox3ld(XD, XS, MT, DT)                                            \
         shrix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shron_ri(XG, IS)                                                    \
@@ -3701,7 +3701,7 @@
 #define shron3ld(XD, XS, MT, DT)                                            \
         shrin3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlox_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -3716,7 +3716,7 @@
 #define svlox3ld(XD, XS, MT, DT)                                            \
         svlix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrox_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -3731,7 +3731,7 @@
 #define svrox3ld(XD, XS, MT, DT)                                            \
         svrix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svron_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -3785,7 +3785,7 @@
 #define mmvqx_st(XS, MG, DG)                                                \
         mmvdx_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andqx_rr(XG, XS)                                                    \
         anddx_rr(W(XG), W(XS))
@@ -3799,7 +3799,7 @@
 #define andqx3ld(XD, XS, MT, DT)                                            \
         anddx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annqx_rr(XG, XS)                                                    \
         anndx_rr(W(XG), W(XS))
@@ -3813,7 +3813,7 @@
 #define annqx3ld(XD, XS, MT, DT)                                            \
         anndx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrqx_rr(XG, XS)                                                    \
         orrdx_rr(W(XG), W(XS))
@@ -3827,7 +3827,7 @@
 #define orrqx3ld(XD, XS, MT, DT)                                            \
         orrdx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define ornqx_rr(XG, XS)                                                    \
         orndx_rr(W(XG), W(XS))
@@ -3841,7 +3841,7 @@
 #define ornqx3ld(XD, XS, MT, DT)                                            \
         orndx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorqx_rr(XG, XS)                                                    \
         xordx_rr(W(XG), W(XS))
@@ -3873,7 +3873,7 @@
 #define negqs_rr(XD, XS)                                                    \
         negds_rr(W(XD), W(XS))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addqs_rr(XG, XS)                                                    \
         addds_rr(W(XG), W(XS))
@@ -3905,7 +3905,7 @@
 #define adhqs_ld(XG, MS, DS)                                                \
         adhds_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subqs_rr(XG, XS)                                                    \
         subds_rr(W(XG), W(XS))
@@ -3919,7 +3919,7 @@
 #define subqs3ld(XD, XS, MT, DT)                                            \
         subds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulqs_rr(XG, XS)                                                    \
         mulds_rr(W(XG), W(XS))
@@ -3951,7 +3951,7 @@
 #define mlhqs_ld(XD, MS, DS)                                                \
         mlhds_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divqs_rr(XG, XS)                                                    \
         divds_rr(W(XG), W(XS))
@@ -4042,7 +4042,7 @@
 
 /*************   packed double-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minqs_rr(XG, XS)                                                    \
         minds_rr(W(XG), W(XS))
@@ -4074,7 +4074,7 @@
 #define mnhqs_ld(XD, MS, DS)                                                \
         mnhds_ld(W(XD), W(MS), W(DS))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxqs_rr(XG, XS)                                                    \
         maxds_rr(W(XG), W(XS))
@@ -4106,7 +4106,7 @@
 #define mxhqs_ld(XD, MS, DS)                                                \
         mxhds_ld(W(XD), W(MS), W(DS))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqqs_rr(XG, XS)                                                    \
         ceqds_rr(W(XG), W(XS))
@@ -4120,7 +4120,7 @@
 #define ceqqs3ld(XD, XS, MT, DT)                                            \
         ceqds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cneqs_rr(XG, XS)                                                    \
         cneds_rr(W(XG), W(XS))
@@ -4134,7 +4134,7 @@
 #define cneqs3ld(XD, XS, MT, DT)                                            \
         cneds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltqs_rr(XG, XS)                                                    \
         cltds_rr(W(XG), W(XS))
@@ -4148,7 +4148,7 @@
 #define cltqs3ld(XD, XS, MT, DT)                                            \
         cltds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define cleqs_rr(XG, XS)                                                    \
         cleds_rr(W(XG), W(XS))
@@ -4162,7 +4162,7 @@
 #define cleqs3ld(XD, XS, MT, DT)                                            \
         cleds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtqs_rr(XG, XS)                                                    \
         cgtds_rr(W(XG), W(XS))
@@ -4176,7 +4176,7 @@
 #define cgtqs3ld(XD, XS, MT, DT)                                            \
         cgtds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgeqs_rr(XG, XS)                                                    \
         cgeds_rr(W(XG), W(XS))
@@ -4317,7 +4317,7 @@
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addqx_rr(XG, XS)                                                    \
         adddx_rr(W(XG), W(XS))
@@ -4331,7 +4331,7 @@
 #define addqx3ld(XD, XS, MT, DT)                                            \
         adddx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subqx_rr(XG, XS)                                                    \
         subdx_rr(W(XG), W(XS))
@@ -4345,7 +4345,7 @@
 #define subqx3ld(XD, XS, MT, DT)                                            \
         subdx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulqx_rr(XG, XS)                                                    \
         muldx_rr(W(XG), W(XS))
@@ -4359,7 +4359,7 @@
 #define mulqx3ld(XD, XS, MT, DT)                                            \
         muldx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlqx_ri(XG, IS)                                                    \
@@ -4374,7 +4374,7 @@
 #define shlqx3ld(XD, XS, MT, DT)                                            \
         shldx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrqx_ri(XG, IS)                                                    \
@@ -4389,7 +4389,7 @@
 #define shrqx3ld(XD, XS, MT, DT)                                            \
         shrdx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrqn_ri(XG, IS)                                                    \
@@ -4404,7 +4404,7 @@
 #define shrqn3ld(XD, XS, MT, DT)                                            \
         shrdn3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlqx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -4419,7 +4419,7 @@
 #define svlqx3ld(XD, XS, MT, DT)                                            \
         svldx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrqx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -4434,7 +4434,7 @@
 #define svrqx3ld(XD, XS, MT, DT)                                            \
         svrdx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrqn_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -4486,7 +4486,7 @@
 #define mmvqx_st(XS, MG, DG)                                                \
         mmvjx_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andqx_rr(XG, XS)                                                    \
         andjx_rr(W(XG), W(XS))
@@ -4500,7 +4500,7 @@
 #define andqx3ld(XD, XS, MT, DT)                                            \
         andjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annqx_rr(XG, XS)                                                    \
         annjx_rr(W(XG), W(XS))
@@ -4514,7 +4514,7 @@
 #define annqx3ld(XD, XS, MT, DT)                                            \
         annjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrqx_rr(XG, XS)                                                    \
         orrjx_rr(W(XG), W(XS))
@@ -4528,7 +4528,7 @@
 #define orrqx3ld(XD, XS, MT, DT)                                            \
         orrjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define ornqx_rr(XG, XS)                                                    \
         ornjx_rr(W(XG), W(XS))
@@ -4542,7 +4542,7 @@
 #define ornqx3ld(XD, XS, MT, DT)                                            \
         ornjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorqx_rr(XG, XS)                                                    \
         xorjx_rr(W(XG), W(XS))
@@ -4574,7 +4574,7 @@
 #define negqs_rr(XD, XS)                                                    \
         negjs_rr(W(XD), W(XS))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addqs_rr(XG, XS)                                                    \
         addjs_rr(W(XG), W(XS))
@@ -4606,7 +4606,7 @@
 #define adhqs_ld(XG, MS, DS)                                                \
         adhjs_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subqs_rr(XG, XS)                                                    \
         subjs_rr(W(XG), W(XS))
@@ -4620,7 +4620,7 @@
 #define subqs3ld(XD, XS, MT, DT)                                            \
         subjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulqs_rr(XG, XS)                                                    \
         muljs_rr(W(XG), W(XS))
@@ -4652,7 +4652,7 @@
 #define mlhqs_ld(XD, MS, DS)                                                \
         mlhjs_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divqs_rr(XG, XS)                                                    \
         divjs_rr(W(XG), W(XS))
@@ -4743,7 +4743,7 @@
 
 /*************   packed double-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minqs_rr(XG, XS)                                                    \
         minjs_rr(W(XG), W(XS))
@@ -4775,7 +4775,7 @@
 #define mnhqs_ld(XD, MS, DS)                                                \
         mnhjs_ld(W(XD), W(MS), W(DS))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxqs_rr(XG, XS)                                                    \
         maxjs_rr(W(XG), W(XS))
@@ -4807,7 +4807,7 @@
 #define mxhqs_ld(XD, MS, DS)                                                \
         mxhjs_ld(W(XD), W(MS), W(DS))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqqs_rr(XG, XS)                                                    \
         ceqjs_rr(W(XG), W(XS))
@@ -4821,7 +4821,7 @@
 #define ceqqs3ld(XD, XS, MT, DT)                                            \
         ceqjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cneqs_rr(XG, XS)                                                    \
         cnejs_rr(W(XG), W(XS))
@@ -4835,7 +4835,7 @@
 #define cneqs3ld(XD, XS, MT, DT)                                            \
         cnejs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltqs_rr(XG, XS)                                                    \
         cltjs_rr(W(XG), W(XS))
@@ -4849,7 +4849,7 @@
 #define cltqs3ld(XD, XS, MT, DT)                                            \
         cltjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define cleqs_rr(XG, XS)                                                    \
         clejs_rr(W(XG), W(XS))
@@ -4863,7 +4863,7 @@
 #define cleqs3ld(XD, XS, MT, DT)                                            \
         clejs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtqs_rr(XG, XS)                                                    \
         cgtjs_rr(W(XG), W(XS))
@@ -4877,7 +4877,7 @@
 #define cgtqs3ld(XD, XS, MT, DT)                                            \
         cgtjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgeqs_rr(XG, XS)                                                    \
         cgejs_rr(W(XG), W(XS))
@@ -5018,7 +5018,7 @@
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addqx_rr(XG, XS)                                                    \
         addjx_rr(W(XG), W(XS))
@@ -5032,7 +5032,7 @@
 #define addqx3ld(XD, XS, MT, DT)                                            \
         addjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subqx_rr(XG, XS)                                                    \
         subjx_rr(W(XG), W(XS))
@@ -5046,7 +5046,7 @@
 #define subqx3ld(XD, XS, MT, DT)                                            \
         subjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulqx_rr(XG, XS)                                                    \
         muljx_rr(W(XG), W(XS))
@@ -5060,7 +5060,7 @@
 #define mulqx3ld(XD, XS, MT, DT)                                            \
         muljx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlqx_ri(XG, IS)                                                    \
@@ -5075,7 +5075,7 @@
 #define shlqx3ld(XD, XS, MT, DT)                                            \
         shljx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrqx_ri(XG, IS)                                                    \
@@ -5090,7 +5090,7 @@
 #define shrqx3ld(XD, XS, MT, DT)                                            \
         shrjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrqn_ri(XG, IS)                                                    \
@@ -5105,7 +5105,7 @@
 #define shrqn3ld(XD, XS, MT, DT)                                            \
         shrjn3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlqx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -5120,7 +5120,7 @@
 #define svlqx3ld(XD, XS, MT, DT)                                            \
         svljx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrqx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -5135,7 +5135,7 @@
 #define svrqx3ld(XD, XS, MT, DT)                                            \
         svrjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrqn_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -5189,7 +5189,7 @@
 #define mmvpx_st(XS, MG, DG)                                                \
         mmvox_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andpx_rr(XG, XS)                                                    \
         andox_rr(W(XG), W(XS))
@@ -5203,7 +5203,7 @@
 #define andpx3ld(XD, XS, MT, DT)                                            \
         andox3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annpx_rr(XG, XS)                                                    \
         annox_rr(W(XG), W(XS))
@@ -5217,7 +5217,7 @@
 #define annpx3ld(XD, XS, MT, DT)                                            \
         annox3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrpx_rr(XG, XS)                                                    \
         orrox_rr(W(XG), W(XS))
@@ -5231,7 +5231,7 @@
 #define orrpx3ld(XD, XS, MT, DT)                                            \
         orrox3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define ornpx_rr(XG, XS)                                                    \
         ornox_rr(W(XG), W(XS))
@@ -5245,7 +5245,7 @@
 #define ornpx3ld(XD, XS, MT, DT)                                            \
         ornox3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorpx_rr(XG, XS)                                                    \
         xorox_rr(W(XG), W(XS))
@@ -5277,7 +5277,7 @@
 #define negps_rr(XD, XS)                                                    \
         negos_rr(W(XD), W(XS))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addps_rr(XG, XS)                                                    \
         addos_rr(W(XG), W(XS))
@@ -5309,7 +5309,7 @@
 #define adhps_ld(XG, MS, DS)                                                \
         adhos_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subps_rr(XG, XS)                                                    \
         subos_rr(W(XG), W(XS))
@@ -5323,7 +5323,7 @@
 #define subps3ld(XD, XS, MT, DT)                                            \
         subos3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulps_rr(XG, XS)                                                    \
         mulos_rr(W(XG), W(XS))
@@ -5355,7 +5355,7 @@
 #define mlhps_ld(XD, MS, DS)                                                \
         mlhos_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divps_rr(XG, XS)                                                    \
         divos_rr(W(XG), W(XS))
@@ -5446,7 +5446,7 @@
 
 /*************   packed single-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minps_rr(XG, XS)                                                    \
         minos_rr(W(XG), W(XS))
@@ -5478,7 +5478,7 @@
 #define mnhps_ld(XD, MS, DS)                                                \
         mnhos_ld(W(XD), W(MS), W(DS))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxps_rr(XG, XS)                                                    \
         maxos_rr(W(XG), W(XS))
@@ -5510,7 +5510,7 @@
 #define mxhps_ld(XD, MS, DS)                                                \
         mxhos_ld(W(XD), W(MS), W(DS))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqps_rr(XG, XS)                                                    \
         ceqos_rr(W(XG), W(XS))
@@ -5524,7 +5524,7 @@
 #define ceqps3ld(XD, XS, MT, DT)                                            \
         ceqos3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cneps_rr(XG, XS)                                                    \
         cneos_rr(W(XG), W(XS))
@@ -5538,7 +5538,7 @@
 #define cneps3ld(XD, XS, MT, DT)                                            \
         cneos3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltps_rr(XG, XS)                                                    \
         cltos_rr(W(XG), W(XS))
@@ -5552,7 +5552,7 @@
 #define cltps3ld(XD, XS, MT, DT)                                            \
         cltos3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define cleps_rr(XG, XS)                                                    \
         cleos_rr(W(XG), W(XS))
@@ -5566,7 +5566,7 @@
 #define cleps3ld(XD, XS, MT, DT)                                            \
         cleos3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtps_rr(XG, XS)                                                    \
         cgtos_rr(W(XG), W(XS))
@@ -5580,7 +5580,7 @@
 #define cgtps3ld(XD, XS, MT, DT)                                            \
         cgtos3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgeps_rr(XG, XS)                                                    \
         cgeos_rr(W(XG), W(XS))
@@ -5721,7 +5721,7 @@
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addpx_rr(XG, XS)                                                    \
         addox_rr(W(XG), W(XS))
@@ -5735,7 +5735,7 @@
 #define addpx3ld(XD, XS, MT, DT)                                            \
         addox3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subpx_rr(XG, XS)                                                    \
         subox_rr(W(XG), W(XS))
@@ -5749,7 +5749,7 @@
 #define subpx3ld(XD, XS, MT, DT)                                            \
         subox3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulpx_rr(XG, XS)                                                    \
         mulox_rr(W(XG), W(XS))
@@ -5763,7 +5763,7 @@
 #define mulpx3ld(XD, XS, MT, DT)                                            \
         mulox3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlpx_ri(XG, IS)                                                    \
@@ -5778,7 +5778,7 @@
 #define shlpx3ld(XD, XS, MT, DT)                                            \
         shlox3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrpx_ri(XG, IS)                                                    \
@@ -5793,7 +5793,7 @@
 #define shrpx3ld(XD, XS, MT, DT)                                            \
         shrox3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrpn_ri(XG, IS)                                                    \
@@ -5808,7 +5808,7 @@
 #define shrpn3ld(XD, XS, MT, DT)                                            \
         shron3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlpx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -5823,7 +5823,7 @@
 #define svlpx3ld(XD, XS, MT, DT)                                            \
         svlox3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrpx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -5838,7 +5838,7 @@
 #define svrpx3ld(XD, XS, MT, DT)                                            \
         svrox3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrpn_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -5888,7 +5888,7 @@
 #define mmvfx_st(XS, MG, DG)                                                \
         mmvcx_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andfx_rr(XG, XS)                                                    \
         andcx_rr(W(XG), W(XS))
@@ -5902,7 +5902,7 @@
 #define andfx3ld(XD, XS, MT, DT)                                            \
         andcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annfx_rr(XG, XS)                                                    \
         anncx_rr(W(XG), W(XS))
@@ -5916,7 +5916,7 @@
 #define annfx3ld(XD, XS, MT, DT)                                            \
         anncx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrfx_rr(XG, XS)                                                    \
         orrcx_rr(W(XG), W(XS))
@@ -5930,7 +5930,7 @@
 #define orrfx3ld(XD, XS, MT, DT)                                            \
         orrcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define ornfx_rr(XG, XS)                                                    \
         orncx_rr(W(XG), W(XS))
@@ -5944,7 +5944,7 @@
 #define ornfx3ld(XD, XS, MT, DT)                                            \
         orncx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorfx_rr(XG, XS)                                                    \
         xorcx_rr(W(XG), W(XS))
@@ -5976,7 +5976,7 @@
 #define negfs_rr(XD, XS)                                                    \
         negcs_rr(W(XD), W(XS))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addfs_rr(XG, XS)                                                    \
         addcs_rr(W(XG), W(XS))
@@ -6008,7 +6008,7 @@
 #define adhfs_ld(XD, MS, DS)                                                \
         adhcs_ld(W(XD), W(MS), W(DS))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subfs_rr(XG, XS)                                                    \
         subcs_rr(W(XG), W(XS))
@@ -6022,7 +6022,7 @@
 #define subfs3ld(XD, XS, MT, DT)                                            \
         subcs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulfs_rr(XG, XS)                                                    \
         mulcs_rr(W(XG), W(XS))
@@ -6054,7 +6054,7 @@
 #define mlhfs_ld(XD, MS, DS)                                                \
         mlhcs_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divfs_rr(XG, XS)                                                    \
         divcs_rr(W(XG), W(XS))
@@ -6145,7 +6145,7 @@
 
 /*************   packed single-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minfs_rr(XG, XS)                                                    \
         mincs_rr(W(XG), W(XS))
@@ -6177,7 +6177,7 @@
 #define mnhfs_ld(XD, MS, DS)                                                \
         mnhcs_ld(W(XD), W(MS), W(DS))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxfs_rr(XG, XS)                                                    \
         maxcs_rr(W(XG), W(XS))
@@ -6209,7 +6209,7 @@
 #define mxhfs_ld(XD, MS, DS)                                                \
         mxhcs_ld(W(XD), W(MS), W(DS))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqfs_rr(XG, XS)                                                    \
         ceqcs_rr(W(XG), W(XS))
@@ -6223,7 +6223,7 @@
 #define ceqfs3ld(XD, XS, MT, DT)                                            \
         ceqcs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cnefs_rr(XG, XS)                                                    \
         cnecs_rr(W(XG), W(XS))
@@ -6237,7 +6237,7 @@
 #define cnefs3ld(XD, XS, MT, DT)                                            \
         cnecs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltfs_rr(XG, XS)                                                    \
         cltcs_rr(W(XG), W(XS))
@@ -6251,7 +6251,7 @@
 #define cltfs3ld(XD, XS, MT, DT)                                            \
         cltcs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define clefs_rr(XG, XS)                                                    \
         clecs_rr(W(XG), W(XS))
@@ -6265,7 +6265,7 @@
 #define clefs3ld(XD, XS, MT, DT)                                            \
         clecs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtfs_rr(XG, XS)                                                    \
         cgtcs_rr(W(XG), W(XS))
@@ -6279,7 +6279,7 @@
 #define cgtfs3ld(XD, XS, MT, DT)                                            \
         cgtcs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgefs_rr(XG, XS)                                                    \
         cgecs_rr(W(XG), W(XS))
@@ -6420,7 +6420,7 @@
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addfx_rr(XG, XS)                                                    \
         addcx_rr(W(XG), W(XS))
@@ -6434,7 +6434,7 @@
 #define addfx3ld(XD, XS, MT, DT)                                            \
         addcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subfx_rr(XG, XS)                                                    \
         subcx_rr(W(XG), W(XS))
@@ -6448,7 +6448,7 @@
 #define subfx3ld(XD, XS, MT, DT)                                            \
         subcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulfx_rr(XG, XS)                                                    \
         mulcx_rr(W(XG), W(XS))
@@ -6462,7 +6462,7 @@
 #define mulfx3ld(XD, XS, MT, DT)                                            \
         mulcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlfx_ri(XG, IS)                                                    \
@@ -6477,7 +6477,7 @@
 #define shlfx3ld(XD, XS, MT, DT)                                            \
         shlcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrfx_ri(XG, IS)                                                    \
@@ -6492,7 +6492,7 @@
 #define shrfx3ld(XD, XS, MT, DT)                                            \
         shrcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrfn_ri(XG, IS)                                                    \
@@ -6507,7 +6507,7 @@
 #define shrfn3ld(XD, XS, MT, DT)                                            \
         shrcn3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlfx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -6522,7 +6522,7 @@
 #define svlfx3ld(XD, XS, MT, DT)                                            \
         svlcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrfx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -6537,7 +6537,7 @@
 #define svrfx3ld(XD, XS, MT, DT)                                            \
         svrcx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrfn_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -6587,7 +6587,7 @@
 #define mmvlx_st(XS, MG, DG)                                                \
         mmvix_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andlx_rr(XG, XS)                                                    \
         andix_rr(W(XG), W(XS))
@@ -6601,7 +6601,7 @@
 #define andlx3ld(XD, XS, MT, DT)                                            \
         andix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annlx_rr(XG, XS)                                                    \
         annix_rr(W(XG), W(XS))
@@ -6615,7 +6615,7 @@
 #define annlx3ld(XD, XS, MT, DT)                                            \
         annix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrlx_rr(XG, XS)                                                    \
         orrix_rr(W(XG), W(XS))
@@ -6629,7 +6629,7 @@
 #define orrlx3ld(XD, XS, MT, DT)                                            \
         orrix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define ornlx_rr(XG, XS)                                                    \
         ornix_rr(W(XG), W(XS))
@@ -6643,7 +6643,7 @@
 #define ornlx3ld(XD, XS, MT, DT)                                            \
         ornix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorlx_rr(XG, XS)                                                    \
         xorix_rr(W(XG), W(XS))
@@ -6675,7 +6675,7 @@
 #define negls_rr(XD, XS)                                                    \
         negis_rr(W(XD), W(XS))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addls_rr(XG, XS)                                                    \
         addis_rr(W(XG), W(XS))
@@ -6707,7 +6707,7 @@
 #define adhls_ld(XD, MS, DS)                                                \
         adhis_ld(W(XD), W(MS), W(DS))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subls_rr(XG, XS)                                                    \
         subis_rr(W(XG), W(XS))
@@ -6721,7 +6721,7 @@
 #define subls3ld(XD, XS, MT, DT)                                            \
         subis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulls_rr(XG, XS)                                                    \
         mulis_rr(W(XG), W(XS))
@@ -6753,7 +6753,7 @@
 #define mlhls_ld(XD, MS, DS)                                                \
         mlhis_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divls_rr(XG, XS)                                                    \
         divis_rr(W(XG), W(XS))
@@ -6844,7 +6844,7 @@
 
 /*************   packed single-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minls_rr(XG, XS)                                                    \
         minis_rr(W(XG), W(XS))
@@ -6876,7 +6876,7 @@
 #define mnhls_ld(XD, MS, DS)                                                \
         mnhis_ld(W(XD), W(MS), W(DS))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxls_rr(XG, XS)                                                    \
         maxis_rr(W(XG), W(XS))
@@ -6908,7 +6908,7 @@
 #define mxhls_ld(XD, MS, DS)                                                \
         mxhis_ld(W(XD), W(MS), W(DS))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqls_rr(XG, XS)                                                    \
         ceqis_rr(W(XG), W(XS))
@@ -6922,7 +6922,7 @@
 #define ceqls3ld(XD, XS, MT, DT)                                            \
         ceqis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cnels_rr(XG, XS)                                                    \
         cneis_rr(W(XG), W(XS))
@@ -6936,7 +6936,7 @@
 #define cnels3ld(XD, XS, MT, DT)                                            \
         cneis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltls_rr(XG, XS)                                                    \
         cltis_rr(W(XG), W(XS))
@@ -6950,7 +6950,7 @@
 #define cltls3ld(XD, XS, MT, DT)                                            \
         cltis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define clels_rr(XG, XS)                                                    \
         cleis_rr(W(XG), W(XS))
@@ -6964,7 +6964,7 @@
 #define clels3ld(XD, XS, MT, DT)                                            \
         cleis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtls_rr(XG, XS)                                                    \
         cgtis_rr(W(XG), W(XS))
@@ -6978,7 +6978,7 @@
 #define cgtls3ld(XD, XS, MT, DT)                                            \
         cgtis3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgels_rr(XG, XS)                                                    \
         cgeis_rr(W(XG), W(XS))
@@ -7119,7 +7119,7 @@
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addlx_rr(XG, XS)                                                    \
         addix_rr(W(XG), W(XS))
@@ -7133,7 +7133,7 @@
 #define addlx3ld(XD, XS, MT, DT)                                            \
         addix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define sublx_rr(XG, XS)                                                    \
         subix_rr(W(XG), W(XS))
@@ -7147,7 +7147,7 @@
 #define sublx3ld(XD, XS, MT, DT)                                            \
         subix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mullx_rr(XG, XS)                                                    \
         mulix_rr(W(XG), W(XS))
@@ -7161,7 +7161,7 @@
 #define mullx3ld(XD, XS, MT, DT)                                            \
         mulix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shllx_ri(XG, IS)                                                    \
@@ -7176,7 +7176,7 @@
 #define shllx3ld(XD, XS, MT, DT)                                            \
         shlix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrlx_ri(XG, IS)                                                    \
@@ -7191,7 +7191,7 @@
 #define shrlx3ld(XD, XS, MT, DT)                                            \
         shrix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrln_ri(XG, IS)                                                    \
@@ -7206,7 +7206,7 @@
 #define shrln3ld(XD, XS, MT, DT)                                            \
         shrin3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svllx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -7221,7 +7221,7 @@
 #define svllx3ld(XD, XS, MT, DT)                                            \
         svlix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrlx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -7236,7 +7236,7 @@
 #define svrlx3ld(XD, XS, MT, DT)                                            \
         svrix3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrln_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -7268,7 +7268,7 @@
 #define movss_st(XS, MD, DD)                                                \
         movrs_st(W(XS), W(MD), W(DD))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addss_rr(XG, XS)                                                    \
         addrs_rr(W(XG), W(XS))
@@ -7282,7 +7282,7 @@
 #define addss3ld(XD, XS, MT, DT)                                            \
         addrs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subss_rr(XG, XS)                                                    \
         subrs_rr(W(XG), W(XS))
@@ -7296,7 +7296,7 @@
 #define subss3ld(XD, XS, MT, DT)                                            \
         subrs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulss_rr(XG, XS)                                                    \
         mulrs_rr(W(XG), W(XS))
@@ -7310,7 +7310,7 @@
 #define mulss3ld(XD, XS, MT, DT)                                            \
         mulrs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divss_rr(XG, XS)                                                    \
         divrs_rr(W(XG), W(XS))
@@ -7390,7 +7390,7 @@
 
 /*************   scalar single-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minss_rr(XG, XS)                                                    \
         minrs_rr(W(XG), W(XS))
@@ -7404,7 +7404,7 @@
 #define minss3ld(XD, XS, MT, DT)                                            \
         minrs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxss_rr(XG, XS)                                                    \
         maxrs_rr(W(XG), W(XS))
@@ -7418,7 +7418,7 @@
 #define maxss3ld(XD, XS, MT, DT)                                            \
         maxrs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqss_rr(XG, XS)                                                    \
         ceqrs_rr(W(XG), W(XS))
@@ -7432,7 +7432,7 @@
 #define ceqss3ld(XD, XS, MT, DT)                                            \
         ceqrs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cness_rr(XG, XS)                                                    \
         cners_rr(W(XG), W(XS))
@@ -7446,7 +7446,7 @@
 #define cness3ld(XD, XS, MT, DT)                                            \
         cners3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltss_rr(XG, XS)                                                    \
         cltrs_rr(W(XG), W(XS))
@@ -7460,7 +7460,7 @@
 #define cltss3ld(XD, XS, MT, DT)                                            \
         cltrs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define cless_rr(XG, XS)                                                    \
         clers_rr(W(XG), W(XS))
@@ -7474,7 +7474,7 @@
 #define cless3ld(XD, XS, MT, DT)                                            \
         clers3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtss_rr(XG, XS)                                                    \
         cgtrs_rr(W(XG), W(XS))
@@ -7488,7 +7488,7 @@
 #define cgtss3ld(XD, XS, MT, DT)                                            \
         cgtrs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgess_rr(XG, XS)                                                    \
         cgers_rr(W(XG), W(XS))
@@ -7539,7 +7539,7 @@
 #define mmvpx_st(XS, MG, DG)                                                \
         mmvqx_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andpx_rr(XG, XS)                                                    \
         andqx_rr(W(XG), W(XS))
@@ -7553,7 +7553,7 @@
 #define andpx3ld(XD, XS, MT, DT)                                            \
         andqx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annpx_rr(XG, XS)                                                    \
         annqx_rr(W(XG), W(XS))
@@ -7567,7 +7567,7 @@
 #define annpx3ld(XD, XS, MT, DT)                                            \
         annqx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrpx_rr(XG, XS)                                                    \
         orrqx_rr(W(XG), W(XS))
@@ -7581,7 +7581,7 @@
 #define orrpx3ld(XD, XS, MT, DT)                                            \
         orrqx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define ornpx_rr(XG, XS)                                                    \
         ornqx_rr(W(XG), W(XS))
@@ -7595,7 +7595,7 @@
 #define ornpx3ld(XD, XS, MT, DT)                                            \
         ornqx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorpx_rr(XG, XS)                                                    \
         xorqx_rr(W(XG), W(XS))
@@ -7627,7 +7627,7 @@
 #define negps_rr(XD, XS)                                                    \
         negqs_rr(W(XD), W(XS))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addps_rr(XG, XS)                                                    \
         addqs_rr(W(XG), W(XS))
@@ -7659,7 +7659,7 @@
 #define adhps_ld(XG, MS, DS)                                                \
         adhqs_ld(W(XG), W(MS), W(DS))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subps_rr(XG, XS)                                                    \
         subqs_rr(W(XG), W(XS))
@@ -7673,7 +7673,7 @@
 #define subps3ld(XD, XS, MT, DT)                                            \
         subqs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulps_rr(XG, XS)                                                    \
         mulqs_rr(W(XG), W(XS))
@@ -7705,7 +7705,7 @@
 #define mlhps_ld(XD, MS, DS)                                                \
         mlhqs_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divps_rr(XG, XS)                                                    \
         divqs_rr(W(XG), W(XS))
@@ -7796,7 +7796,7 @@
 
 /*************   packed double-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minps_rr(XG, XS)                                                    \
         minqs_rr(W(XG), W(XS))
@@ -7828,7 +7828,7 @@
 #define mnhps_ld(XD, MS, DS)                                                \
         mnhqs_ld(W(XD), W(MS), W(DS))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxps_rr(XG, XS)                                                    \
         maxqs_rr(W(XG), W(XS))
@@ -7860,7 +7860,7 @@
 #define mxhps_ld(XD, MS, DS)                                                \
         mxhqs_ld(W(XD), W(MS), W(DS))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqps_rr(XG, XS)                                                    \
         ceqqs_rr(W(XG), W(XS))
@@ -7874,7 +7874,7 @@
 #define ceqps3ld(XD, XS, MT, DT)                                            \
         ceqqs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cneps_rr(XG, XS)                                                    \
         cneqs_rr(W(XG), W(XS))
@@ -7888,7 +7888,7 @@
 #define cneps3ld(XD, XS, MT, DT)                                            \
         cneqs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltps_rr(XG, XS)                                                    \
         cltqs_rr(W(XG), W(XS))
@@ -7902,7 +7902,7 @@
 #define cltps3ld(XD, XS, MT, DT)                                            \
         cltqs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define cleps_rr(XG, XS)                                                    \
         cleqs_rr(W(XG), W(XS))
@@ -7916,7 +7916,7 @@
 #define cleps3ld(XD, XS, MT, DT)                                            \
         cleqs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtps_rr(XG, XS)                                                    \
         cgtqs_rr(W(XG), W(XS))
@@ -7930,7 +7930,7 @@
 #define cgtps3ld(XD, XS, MT, DT)                                            \
         cgtqs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgeps_rr(XG, XS)                                                    \
         cgeqs_rr(W(XG), W(XS))
@@ -8071,7 +8071,7 @@
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addpx_rr(XG, XS)                                                    \
         addqx_rr(W(XG), W(XS))
@@ -8085,7 +8085,7 @@
 #define addpx3ld(XD, XS, MT, DT)                                            \
         addqx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subpx_rr(XG, XS)                                                    \
         subqx_rr(W(XG), W(XS))
@@ -8099,7 +8099,7 @@
 #define subpx3ld(XD, XS, MT, DT)                                            \
         subqx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulpx_rr(XG, XS)                                                    \
         mulqx_rr(W(XG), W(XS))
@@ -8113,7 +8113,7 @@
 #define mulpx3ld(XD, XS, MT, DT)                                            \
         mulqx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlpx_ri(XG, IS)                                                    \
@@ -8128,7 +8128,7 @@
 #define shlpx3ld(XD, XS, MT, DT)                                            \
         shlqx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrpx_ri(XG, IS)                                                    \
@@ -8143,7 +8143,7 @@
 #define shrpx3ld(XD, XS, MT, DT)                                            \
         shrqx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrpn_ri(XG, IS)                                                    \
@@ -8158,7 +8158,7 @@
 #define shrpn3ld(XD, XS, MT, DT)                                            \
         shrqn3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlpx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -8173,7 +8173,7 @@
 #define svlpx3ld(XD, XS, MT, DT)                                            \
         svlqx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrpx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -8188,7 +8188,7 @@
 #define svrpx3ld(XD, XS, MT, DT)                                            \
         svrqx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrpn_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -8238,7 +8238,7 @@
 #define mmvfx_st(XS, MG, DG)                                                \
         mmvdx_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andfx_rr(XG, XS)                                                    \
         anddx_rr(W(XG), W(XS))
@@ -8252,7 +8252,7 @@
 #define andfx3ld(XD, XS, MT, DT)                                            \
         anddx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annfx_rr(XG, XS)                                                    \
         anndx_rr(W(XG), W(XS))
@@ -8266,7 +8266,7 @@
 #define annfx3ld(XD, XS, MT, DT)                                            \
         anndx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrfx_rr(XG, XS)                                                    \
         orrdx_rr(W(XG), W(XS))
@@ -8280,7 +8280,7 @@
 #define orrfx3ld(XD, XS, MT, DT)                                            \
         orrdx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define ornfx_rr(XG, XS)                                                    \
         orndx_rr(W(XG), W(XS))
@@ -8294,7 +8294,7 @@
 #define ornfx3ld(XD, XS, MT, DT)                                            \
         orndx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorfx_rr(XG, XS)                                                    \
         xordx_rr(W(XG), W(XS))
@@ -8326,7 +8326,7 @@
 #define negfs_rr(XD, XS)                                                    \
         negds_rr(W(XD), W(XS))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addfs_rr(XG, XS)                                                    \
         addds_rr(W(XG), W(XS))
@@ -8358,7 +8358,7 @@
 #define adhfs_ld(XD, MS, DS)                                                \
         adhds_ld(W(XD), W(MS), W(DS))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subfs_rr(XG, XS)                                                    \
         subds_rr(W(XG), W(XS))
@@ -8372,7 +8372,7 @@
 #define subfs3ld(XD, XS, MT, DT)                                            \
         subds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulfs_rr(XG, XS)                                                    \
         mulds_rr(W(XG), W(XS))
@@ -8404,7 +8404,7 @@
 #define mlhfs_ld(XD, MS, DS)                                                \
         mlhds_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divfs_rr(XG, XS)                                                    \
         divds_rr(W(XG), W(XS))
@@ -8495,7 +8495,7 @@
 
 /*************   packed double-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minfs_rr(XG, XS)                                                    \
         minds_rr(W(XG), W(XS))
@@ -8527,7 +8527,7 @@
 #define mnhfs_ld(XD, MS, DS)                                                \
         mnhds_ld(W(XD), W(MS), W(DS))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxfs_rr(XG, XS)                                                    \
         maxds_rr(W(XG), W(XS))
@@ -8559,7 +8559,7 @@
 #define mxhfs_ld(XD, MS, DS)                                                \
         mxhds_ld(W(XD), W(MS), W(DS))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqfs_rr(XG, XS)                                                    \
         ceqds_rr(W(XG), W(XS))
@@ -8573,7 +8573,7 @@
 #define ceqfs3ld(XD, XS, MT, DT)                                            \
         ceqds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cnefs_rr(XG, XS)                                                    \
         cneds_rr(W(XG), W(XS))
@@ -8587,7 +8587,7 @@
 #define cnefs3ld(XD, XS, MT, DT)                                            \
         cneds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltfs_rr(XG, XS)                                                    \
         cltds_rr(W(XG), W(XS))
@@ -8601,7 +8601,7 @@
 #define cltfs3ld(XD, XS, MT, DT)                                            \
         cltds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define clefs_rr(XG, XS)                                                    \
         cleds_rr(W(XG), W(XS))
@@ -8615,7 +8615,7 @@
 #define clefs3ld(XD, XS, MT, DT)                                            \
         cleds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtfs_rr(XG, XS)                                                    \
         cgtds_rr(W(XG), W(XS))
@@ -8629,7 +8629,7 @@
 #define cgtfs3ld(XD, XS, MT, DT)                                            \
         cgtds3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgefs_rr(XG, XS)                                                    \
         cgeds_rr(W(XG), W(XS))
@@ -8770,7 +8770,7 @@
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addfx_rr(XG, XS)                                                    \
         adddx_rr(W(XG), W(XS))
@@ -8784,7 +8784,7 @@
 #define addfx3ld(XD, XS, MT, DT)                                            \
         adddx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subfx_rr(XG, XS)                                                    \
         subdx_rr(W(XG), W(XS))
@@ -8798,7 +8798,7 @@
 #define subfx3ld(XD, XS, MT, DT)                                            \
         subdx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulfx_rr(XG, XS)                                                    \
         muldx_rr(W(XG), W(XS))
@@ -8812,7 +8812,7 @@
 #define mulfx3ld(XD, XS, MT, DT)                                            \
         muldx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlfx_ri(XG, IS)                                                    \
@@ -8827,7 +8827,7 @@
 #define shlfx3ld(XD, XS, MT, DT)                                            \
         shldx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrfx_ri(XG, IS)                                                    \
@@ -8842,7 +8842,7 @@
 #define shrfx3ld(XD, XS, MT, DT)                                            \
         shrdx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrfn_ri(XG, IS)                                                    \
@@ -8857,7 +8857,7 @@
 #define shrfn3ld(XD, XS, MT, DT)                                            \
         shrdn3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlfx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -8872,7 +8872,7 @@
 #define svlfx3ld(XD, XS, MT, DT)                                            \
         svldx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrfx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -8887,7 +8887,7 @@
 #define svrfx3ld(XD, XS, MT, DT)                                            \
         svrdx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrfn_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -8937,7 +8937,7 @@
 #define mmvlx_st(XS, MG, DG)                                                \
         mmvjx_st(W(XS), W(MG), W(DG))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andlx_rr(XG, XS)                                                    \
         andjx_rr(W(XG), W(XS))
@@ -8951,7 +8951,7 @@
 #define andlx3ld(XD, XS, MT, DT)                                            \
         andjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annlx_rr(XG, XS)                                                    \
         annjx_rr(W(XG), W(XS))
@@ -8965,7 +8965,7 @@
 #define annlx3ld(XD, XS, MT, DT)                                            \
         annjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrlx_rr(XG, XS)                                                    \
         orrjx_rr(W(XG), W(XS))
@@ -8979,7 +8979,7 @@
 #define orrlx3ld(XD, XS, MT, DT)                                            \
         orrjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define ornlx_rr(XG, XS)                                                    \
         ornjx_rr(W(XG), W(XS))
@@ -8993,7 +8993,7 @@
 #define ornlx3ld(XD, XS, MT, DT)                                            \
         ornjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorlx_rr(XG, XS)                                                    \
         xorjx_rr(W(XG), W(XS))
@@ -9025,7 +9025,7 @@
 #define negls_rr(XD, XS)                                                    \
         negjs_rr(W(XD), W(XS))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addls_rr(XG, XS)                                                    \
         addjs_rr(W(XG), W(XS))
@@ -9057,7 +9057,7 @@
 #define adhls_ld(XD, MS, DS)                                                \
         adhjs_ld(W(XD), W(MS), W(DS))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subls_rr(XG, XS)                                                    \
         subjs_rr(W(XG), W(XS))
@@ -9071,7 +9071,7 @@
 #define subls3ld(XD, XS, MT, DT)                                            \
         subjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulls_rr(XG, XS)                                                    \
         muljs_rr(W(XG), W(XS))
@@ -9103,7 +9103,7 @@
 #define mlhls_ld(XD, MS, DS)                                                \
         mlhjs_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divls_rr(XG, XS)                                                    \
         divjs_rr(W(XG), W(XS))
@@ -9194,7 +9194,7 @@
 
 /*************   packed double-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minls_rr(XG, XS)                                                    \
         minjs_rr(W(XG), W(XS))
@@ -9226,7 +9226,7 @@
 #define mnhls_ld(XD, MS, DS)                                                \
         mnhjs_ld(W(XD), W(MS), W(DS))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxls_rr(XG, XS)                                                    \
         maxjs_rr(W(XG), W(XS))
@@ -9258,7 +9258,7 @@
 #define mxhls_ld(XD, MS, DS)                                                \
         mxhjs_ld(W(XD), W(MS), W(DS))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqls_rr(XG, XS)                                                    \
         ceqjs_rr(W(XG), W(XS))
@@ -9272,7 +9272,7 @@
 #define ceqls3ld(XD, XS, MT, DT)                                            \
         ceqjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cnels_rr(XG, XS)                                                    \
         cnejs_rr(W(XG), W(XS))
@@ -9286,7 +9286,7 @@
 #define cnels3ld(XD, XS, MT, DT)                                            \
         cnejs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltls_rr(XG, XS)                                                    \
         cltjs_rr(W(XG), W(XS))
@@ -9300,7 +9300,7 @@
 #define cltls3ld(XD, XS, MT, DT)                                            \
         cltjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define clels_rr(XG, XS)                                                    \
         clejs_rr(W(XG), W(XS))
@@ -9314,7 +9314,7 @@
 #define clels3ld(XD, XS, MT, DT)                                            \
         clejs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtls_rr(XG, XS)                                                    \
         cgtjs_rr(W(XG), W(XS))
@@ -9328,7 +9328,7 @@
 #define cgtls3ld(XD, XS, MT, DT)                                            \
         cgtjs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgels_rr(XG, XS)                                                    \
         cgejs_rr(W(XG), W(XS))
@@ -9469,7 +9469,7 @@
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addlx_rr(XG, XS)                                                    \
         addjx_rr(W(XG), W(XS))
@@ -9483,7 +9483,7 @@
 #define addlx3ld(XD, XS, MT, DT)                                            \
         addjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define sublx_rr(XG, XS)                                                    \
         subjx_rr(W(XG), W(XS))
@@ -9497,7 +9497,7 @@
 #define sublx3ld(XD, XS, MT, DT)                                            \
         subjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mullx_rr(XG, XS)                                                    \
         muljx_rr(W(XG), W(XS))
@@ -9511,7 +9511,7 @@
 #define mullx3ld(XD, XS, MT, DT)                                            \
         muljx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shllx_ri(XG, IS)                                                    \
@@ -9526,7 +9526,7 @@
 #define shllx3ld(XD, XS, MT, DT)                                            \
         shljx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrlx_ri(XG, IS)                                                    \
@@ -9541,7 +9541,7 @@
 #define shrlx3ld(XD, XS, MT, DT)                                            \
         shrjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrln_ri(XG, IS)                                                    \
@@ -9556,7 +9556,7 @@
 #define shrln3ld(XD, XS, MT, DT)                                            \
         shrjn3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svllx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -9571,7 +9571,7 @@
 #define svllx3ld(XD, XS, MT, DT)                                            \
         svljx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrlx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -9586,7 +9586,7 @@
 #define svrlx3ld(XD, XS, MT, DT)                                            \
         svrjx3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrln_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -9618,7 +9618,7 @@
 #define movss_st(XS, MD, DD)                                                \
         movts_st(W(XS), W(MD), W(DD))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addss_rr(XG, XS)                                                    \
         addts_rr(W(XG), W(XS))
@@ -9632,7 +9632,7 @@
 #define addss3ld(XD, XS, MT, DT)                                            \
         addts3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subss_rr(XG, XS)                                                    \
         subts_rr(W(XG), W(XS))
@@ -9646,7 +9646,7 @@
 #define subss3ld(XD, XS, MT, DT)                                            \
         subts3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulss_rr(XG, XS)                                                    \
         mults_rr(W(XG), W(XS))
@@ -9660,7 +9660,7 @@
 #define mulss3ld(XD, XS, MT, DT)                                            \
         mults3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divss_rr(XG, XS)                                                    \
         divts_rr(W(XG), W(XS))
@@ -9740,7 +9740,7 @@
 
 /*************   scalar double-precision floating-point compare   *************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minss_rr(XG, XS)                                                    \
         mints_rr(W(XG), W(XS))
@@ -9754,7 +9754,7 @@
 #define minss3ld(XD, XS, MT, DT)                                            \
         mints3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxss_rr(XG, XS)                                                    \
         maxts_rr(W(XG), W(XS))
@@ -9768,7 +9768,7 @@
 #define maxss3ld(XD, XS, MT, DT)                                            \
         maxts3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqss_rr(XG, XS)                                                    \
         ceqts_rr(W(XG), W(XS))
@@ -9782,7 +9782,7 @@
 #define ceqss3ld(XD, XS, MT, DT)                                            \
         ceqts3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cness_rr(XG, XS)                                                    \
         cnets_rr(W(XG), W(XS))
@@ -9796,7 +9796,7 @@
 #define cness3ld(XD, XS, MT, DT)                                            \
         cnets3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltss_rr(XG, XS)                                                    \
         cltts_rr(W(XG), W(XS))
@@ -9810,7 +9810,7 @@
 #define cltss3ld(XD, XS, MT, DT)                                            \
         cltts3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define cless_rr(XG, XS)                                                    \
         clets_rr(W(XG), W(XS))
@@ -9824,7 +9824,7 @@
 #define cless3ld(XD, XS, MT, DT)                                            \
         clets3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtss_rr(XG, XS)                                                    \
         cgtts_rr(W(XG), W(XS))
@@ -9838,7 +9838,7 @@
 #define cgtss3ld(XD, XS, MT, DT)                                            \
         cgtts3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgess_rr(XG, XS)                                                    \
         cgets_rr(W(XG), W(XS))

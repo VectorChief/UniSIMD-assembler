@@ -107,7 +107,7 @@
         EMITW(0xF000003F | MXM(TmmM,    TmmM,    REG(XS)))                  \
         EMITW(0x7C000719 | MXM(TmmM,    Teax & M(MOD(MG) == TPxx), TPxx))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andgx_rr(XG, XS)                                                    \
         andgx3rr(W(XG), W(XG), W(XS))
@@ -124,7 +124,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000417 | MXM(REG(XD), REG(XS), TmmM))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define anngx_rr(XG, XS)                                                    \
         anngx3rr(W(XG), W(XG), W(XS))
@@ -141,7 +141,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000457 | MXM(REG(XD), TmmM,    REG(XS)))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrgx_rr(XG, XS)                                                    \
         orrgx3rr(W(XG), W(XG), W(XS))
@@ -158,7 +158,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0xF0000497 | MXM(REG(XD), REG(XS), TmmM))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #if (RT_SIMD_COMPAT_PW8 == 0)
 
@@ -197,7 +197,7 @@
 
 #endif /* RT_SIMD_COMPAT_PW8 == 1 */
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorgx_rr(XG, XS)                                                    \
         xorgx3rr(W(XG), W(XG), W(XS))
@@ -224,7 +224,7 @@
 
 /*************   packed half-precision integer arithmetic/shifts   ************/
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addgx_rr(XG, XS)                                                    \
         addgx3rr(W(XG), W(XG), W(XS))
@@ -241,7 +241,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x10000040 | MXM(REG(XD), REG(XS), TmmM))
 
-/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, unsigned */
+/* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, unsigned */
 
 #define adsgx_rr(XG, XS)                                                    \
         adsgx3rr(W(XG), W(XG), W(XS))
@@ -258,7 +258,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x10000240 | MXM(REG(XD), REG(XS), TmmM))
 
-/* ads (G = G + S), (D = S + T) if (#D != #S) - saturate, signed */
+/* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, signed */
 
 #define adsgn_rr(XG, XS)                                                    \
         adsgn3rr(W(XG), W(XG), W(XS))
@@ -275,7 +275,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x10000340 | MXM(REG(XD), REG(XS), TmmM))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subgx_rr(XG, XS)                                                    \
         subgx3rr(W(XG), W(XG), W(XS))
@@ -292,7 +292,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x10000440 | MXM(REG(XD), REG(XS), TmmM))
 
-/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, unsigned */
+/* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, unsigned */
 
 #define sbsgx_rr(XG, XS)                                                    \
         sbsgx3rr(W(XG), W(XG), W(XS))
@@ -309,7 +309,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x10000640 | MXM(REG(XD), REG(XS), TmmM))
 
-/* sbs (G = G - S), (D = S - T) if (#D != #S) - saturate, signed */
+/* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, signed */
 
 #define sbsgn_rr(XG, XS)                                                    \
         sbsgn3rr(W(XG), W(XG), W(XS))
@@ -326,7 +326,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x10000740 | MXM(REG(XD), REG(XS), TmmM))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulgx_rr(XG, XS)                                                    \
         mulgx3rr(W(XG), W(XG), W(XS))
@@ -345,7 +345,7 @@
         EMITW(0x100004C4 | MXM(TmmQ,    TmmQ,    TmmQ))                     \
         EMITW(0x10000022 | MXM(REG(XD), REG(XS), TmmM) | TmmQ << 6)
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlgx_ri(XG, IS)                                                    \
@@ -365,7 +365,7 @@
         EMITW(0x1000024C | MXM(TmmM,    SP16,    TmmM))                     \
         EMITW(0x10000144 | MXM(REG(XD), REG(XS), TmmM))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrgx_ri(XG, IS)                                                    \
@@ -385,7 +385,7 @@
         EMITW(0x1000024C | MXM(TmmM,    SP16,    TmmM))                     \
         EMITW(0x10000244 | MXM(REG(XD), REG(XS), TmmM))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, signed
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrgn_ri(XG, IS)                                                    \
@@ -405,7 +405,7 @@
         EMITW(0x1000024C | MXM(TmmM,    SP16,    TmmM))                     \
         EMITW(0x10000344 | MXM(REG(XD), REG(XS), TmmM))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlgx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -423,7 +423,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x10000144 | MXM(REG(XD), REG(XS), TmmM))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrgx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -441,7 +441,7 @@
         EMITW(0x7C000619 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x10000244 | MXM(REG(XD), REG(XS), TmmM))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, signed
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrgn_rr(XG, XS)     /* variable shift with per-elem count */       \

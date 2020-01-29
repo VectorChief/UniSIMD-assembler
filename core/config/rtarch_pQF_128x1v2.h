@@ -103,7 +103,7 @@
         EMITW(0xF000003F | MXM(TmmM,    TmmM,    REG(XS)))                  \
         EMITW(0x00000000 | MPM(TmmM,    MOD(MG), VAL(DG), B2(DG), O2(DG)))
 
-/* and (G = G & S), (D = S & T) if (#D != #S) */
+/* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andvx_rr(XG, XS)                                                    \
         andvx3rr(W(XG), W(XG), W(XS))
@@ -119,7 +119,7 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF0000417 | MXM(REG(XD), REG(XS), TmmM))
 
-/* ann (G = ~G & S), (D = ~S & T) if (#D != #S) */
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annvx_rr(XG, XS)                                                    \
         annvx3rr(W(XG), W(XG), W(XS))
@@ -135,7 +135,7 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF0000457 | MXM(REG(XD), TmmM,    REG(XS)))
 
-/* orr (G = G | S), (D = S | T) if (#D != #S) */
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrvx_rr(XG, XS)                                                    \
         orrvx3rr(W(XG), W(XG), W(XS))
@@ -151,7 +151,7 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF0000497 | MXM(REG(XD), REG(XS), TmmM))
 
-/* orn (G = ~G | S), (D = ~S | T) if (#D != #S) */
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
 #define ornvx_rr(XG, XS)                                                    \
         ornvx3rr(W(XG), W(XG), W(XS))
@@ -167,7 +167,7 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xF0000557 | MXM(REG(XD), TmmM,    REG(XS)))
 
-/* xor (G = G ^ S), (D = S ^ T) if (#D != #S) */
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorvx_rr(XG, XS)                                                    \
         xorvx3rr(W(XG), W(XG), W(XS))
@@ -201,7 +201,7 @@
 #define negvs_rr(XD, XS)                                                    \
         EMITW(0xFC000648 | MXM(REG(XD), 0x10,    REG(XS)))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addvs_rr(XG, XS)                                                    \
         addvs3rr(W(XG), W(XG), W(XS))
@@ -217,7 +217,7 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xFC000008 | MXM(REG(XD), REG(XS), TmmM))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subvs_rr(XG, XS)                                                    \
         subvs3rr(W(XG), W(XG), W(XS))
@@ -233,7 +233,7 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xFC000408 | MXM(REG(XD), REG(XS), TmmM))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulvs_rr(XG, XS)                                                    \
         mulvs3rr(W(XG), W(XG), W(XS))
@@ -249,7 +249,7 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xFC000048 | MXM(REG(XD), REG(XS), TmmM))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divvs_rr(XG, XS)                                                    \
         divvs3rr(W(XG), W(XG), W(XS))
@@ -297,7 +297,7 @@
 
 /*************   scalar quad-precision integer arithmetic/shifts   ************/
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addvx_rr(XG, XS)                                                    \
         addvx3rr(W(XG), W(XG), W(XS))
@@ -313,7 +313,7 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x10000100 | MXM(REG(XD), REG(XS), TmmM))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subvx_rr(XG, XS)                                                    \
         subvx3rr(W(XG), W(XG), W(XS))
@@ -329,7 +329,7 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x10000500 | MXM(REG(XD), REG(XS), TmmM))
 
-/* shl (G = G << S), (D = S << T) if (#D != #S) - plain, unsigned
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlvx_ri(XG, IS)                                                    \
@@ -350,7 +350,7 @@
         EMITW(0x1000040C | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x100001C4 | MXM(REG(XD), REG(XS), TmmM))
 
-/* shr (G = G >> S), (D = S >> T) if (#D != #S) - plain, unsigned
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrvx_ri(XG, IS)                                                    \
@@ -371,7 +371,7 @@
         EMITW(0x1000044C | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x100002C4 | MXM(REG(XD), REG(XS), TmmM))
 
-/* svl (G = G << S), (D = S << T) if (#D != #S) - variable, unsigned
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svlvx_rr(XG, XS)     /* variable shift with per-elem count */       \
@@ -392,7 +392,7 @@
         EMITW(0x1000040C | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x100001C4 | MXM(REG(XD), REG(XS), TmmM))
 
-/* svr (G = G >> S), (D = S >> T) if (#D != #S) - variable, unsigned
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define svrvx_rr(XG, XS)     /* variable shift with per-elem count */       \

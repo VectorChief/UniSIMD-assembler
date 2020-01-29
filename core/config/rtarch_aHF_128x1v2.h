@@ -89,7 +89,7 @@
 #define neggs_rr(XD, XS)                                                    \
         EMITW(0x6EF8F800 | MXM(REG(XD), REG(XS), 0x00))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addgs_rr(XG, XS)                                                    \
         addgs3rr(W(XG), W(XG), W(XS))
@@ -105,7 +105,7 @@
         EMITW(0x3CC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4E401400 | MXM(REG(XD), REG(XS), TmmM))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subgs_rr(XG, XS)                                                    \
         subgs3rr(W(XG), W(XG), W(XS))
@@ -121,7 +121,7 @@
         EMITW(0x3CC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4EC01400 | MXM(REG(XD), REG(XS), TmmM))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulgs_rr(XG, XS)                                                    \
         mulgs3rr(W(XG), W(XG), W(XS))
@@ -137,7 +137,7 @@
         EMITW(0x3CC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x6E401C00 | MXM(REG(XD), REG(XS), TmmM))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divgs_rr(XG, XS)                                                    \
         divgs3rr(W(XG), W(XG), W(XS))
@@ -204,7 +204,7 @@
 
 /**************   packed half-precision floating-point compare   **************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define mings_rr(XG, XS)                                                    \
         mings3rr(W(XG), W(XG), W(XS))
@@ -220,7 +220,7 @@
         EMITW(0x3CC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4EC03400 | MXM(REG(XD), REG(XS), TmmM))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxgs_rr(XG, XS)                                                    \
         maxgs3rr(W(XG), W(XG), W(XS))
@@ -236,7 +236,7 @@
         EMITW(0x3CC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4E403400 | MXM(REG(XD), REG(XS), TmmM))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqgs_rr(XG, XS)                                                    \
         ceqgs3rr(W(XG), W(XG), W(XS))
@@ -252,7 +252,7 @@
         EMITW(0x3CC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x4E402400 | MXM(REG(XD), REG(XS), TmmM))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cnegs_rr(XG, XS)                                                    \
         cnegs3rr(W(XG), W(XG), W(XS))
@@ -270,7 +270,7 @@
         EMITW(0x4E402400 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x6E205800 | MXM(REG(XD), REG(XD), 0x00))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltgs_rr(XG, XS)                                                    \
         cltgs3rr(W(XG), W(XG), W(XS))
@@ -286,7 +286,7 @@
         EMITW(0x3CC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x6EC02400 | MXM(REG(XD), TmmM,    REG(XS)))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define clegs_rr(XG, XS)                                                    \
         clegs3rr(W(XG), W(XG), W(XS))
@@ -302,7 +302,7 @@
         EMITW(0x3CC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x6E402400 | MXM(REG(XD), TmmM,    REG(XS)))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtgs_rr(XG, XS)                                                    \
         cgtgs3rr(W(XG), W(XG), W(XS))
@@ -318,7 +318,7 @@
         EMITW(0x3CC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x6EC02400 | MXM(REG(XD), REG(XS), TmmM))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgegs_rr(XG, XS)                                                    \
         cgegs3rr(W(XG), W(XG), W(XS))
@@ -494,7 +494,7 @@
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
         EMITW(0x7C000000 | MPM(REG(XS), MOD(MD), VHL(DD), B1(DD), P1(DD)))
 
-/* add (G = G + S), (D = S + T) if (#D != #S) */
+/* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addns_rr(XG, XS)                                                    \
         addns3rr(W(XG), W(XG), W(XS))
@@ -510,7 +510,7 @@
         EMITW(0x7C400000 | MPM(TmmM,    MOD(MT), VHL(DT), B1(DT), P1(DT)))  \
         EMITW(0x1EE02800 | MXM(REG(XD), REG(XS), TmmM))
 
-/* sub (G = G - S), (D = S - T) if (#D != #S) */
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subns_rr(XG, XS)                                                    \
         subns3rr(W(XG), W(XG), W(XS))
@@ -526,7 +526,7 @@
         EMITW(0x7C400000 | MPM(TmmM,    MOD(MT), VHL(DT), B1(DT), P1(DT)))  \
         EMITW(0x1EE03800 | MXM(REG(XD), REG(XS), TmmM))
 
-/* mul (G = G * S), (D = S * T) if (#D != #S) */
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulns_rr(XG, XS)                                                    \
         mulns3rr(W(XG), W(XG), W(XS))
@@ -542,7 +542,7 @@
         EMITW(0x7C400000 | MPM(TmmM,    MOD(MT), VHL(DT), B1(DT), P1(DT)))  \
         EMITW(0x1EE00800 | MXM(REG(XD), REG(XS), TmmM))
 
-/* div (G = G / S), (D = S / T) if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divns_rr(XG, XS)                                                    \
         divns3rr(W(XG), W(XG), W(XS))
@@ -609,7 +609,7 @@
 
 /**************   scalar half-precision floating-point compare   **************/
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #S) */
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minns_rr(XG, XS)                                                    \
         minns3rr(W(XG), W(XG), W(XS))
@@ -625,7 +625,7 @@
         EMITW(0x7C400000 | MPM(TmmM,    MOD(MT), VHL(DT), B1(DT), P1(DT)))  \
         EMITW(0x1EE05800 | MXM(REG(XD), REG(XS), TmmM))
 
-/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #S) */
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxns_rr(XG, XS)                                                    \
         maxns3rr(W(XG), W(XG), W(XS))
@@ -641,7 +641,7 @@
         EMITW(0x7C400000 | MPM(TmmM,    MOD(MT), VHL(DT), B1(DT), P1(DT)))  \
         EMITW(0x1EE04800 | MXM(REG(XD), REG(XS), TmmM))
 
-/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #S) */
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqns_rr(XG, XS)                                                    \
         ceqns3rr(W(XG), W(XG), W(XS))
@@ -657,7 +657,7 @@
         EMITW(0x7C400000 | MPM(TmmM,    MOD(MT), VHL(DT), B1(DT), P1(DT)))  \
         EMITW(0x5E402400 | MXM(REG(XD), REG(XS), TmmM))
 
-/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #S) */
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cnens_rr(XG, XS)                                                    \
         cnens3rr(W(XG), W(XG), W(XS))
@@ -675,7 +675,7 @@
         EMITW(0x5E402400 | MXM(REG(XD), REG(XS), TmmM))                     \
         EMITW(0x6E205800 | MXM(REG(XD), REG(XD), 0x00))
 
-/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #S) */
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltns_rr(XG, XS)                                                    \
         cltns3rr(W(XG), W(XG), W(XS))
@@ -691,7 +691,7 @@
         EMITW(0x7C400000 | MPM(TmmM,    MOD(MT), VHL(DT), B1(DT), P1(DT)))  \
         EMITW(0x7EC02400 | MXM(REG(XD), TmmM,    REG(XS)))
 
-/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #S) */
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define clens_rr(XG, XS)                                                    \
         clens3rr(W(XG), W(XG), W(XS))
@@ -707,7 +707,7 @@
         EMITW(0x7C400000 | MPM(TmmM,    MOD(MT), VHL(DT), B1(DT), P1(DT)))  \
         EMITW(0x7E402400 | MXM(REG(XD), TmmM,    REG(XS)))
 
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #S) */
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtns_rr(XG, XS)                                                    \
         cgtns3rr(W(XG), W(XG), W(XS))
@@ -723,7 +723,7 @@
         EMITW(0x7C400000 | MPM(TmmM,    MOD(MT), VHL(DT), B1(DT), P1(DT)))  \
         EMITW(0x7EC02400 | MXM(REG(XD), REG(XS), TmmM))
 
-/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #S) */
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgens_rr(XG, XS)                                                    \
         cgens3rr(W(XG), W(XG), W(XS))
