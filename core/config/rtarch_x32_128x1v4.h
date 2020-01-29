@@ -414,7 +414,7 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x7C)                       \
         /* mlp, mlh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divis_rr(XG, XS)                                                    \
         REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5E)                       \
@@ -1480,7 +1480,7 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
         movrs_rr(W(XD), W(XS))                                              \
         mulrs_ld(W(XD), W(MT), W(DT))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divrs_rr(XG, XS)                                                    \
     xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5E)                       \

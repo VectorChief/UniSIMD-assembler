@@ -1203,7 +1203,7 @@
 #define mlhos_ld(XD, MS, DS)                                                \
         mlhcs_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divos_rr(XG, XS)                                                    \
         divcs_rr(W(XG), W(XS))
@@ -1904,7 +1904,7 @@
 #define mlhos_ld(XD, MS, DS)                                                \
         mlhis_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divos_rr(XG, XS)                                                    \
         divis_rr(W(XG), W(XS))
@@ -2607,7 +2607,7 @@
 #define mlhqs_ld(XD, MS, DS)                                                \
         mlhds_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divqs_rr(XG, XS)                                                    \
         divds_rr(W(XG), W(XS))
@@ -3308,7 +3308,7 @@
 #define mlhqs_ld(XD, MS, DS)                                                \
         mlhjs_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divqs_rr(XG, XS)                                                    \
         divjs_rr(W(XG), W(XS))
@@ -4011,7 +4011,7 @@
 #define mlhps_ld(XD, MS, DS)                                                \
         mlhos_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divps_rr(XG, XS)                                                    \
         divos_rr(W(XG), W(XS))
@@ -4710,7 +4710,7 @@
 #define mlhfs_ld(XD, MS, DS)                                                \
         mlhcs_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divfs_rr(XG, XS)                                                    \
         divcs_rr(W(XG), W(XS))
@@ -5409,7 +5409,7 @@
 #define mlhls_ld(XD, MS, DS)                                                \
         mlhis_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divls_rr(XG, XS)                                                    \
         divis_rr(W(XG), W(XS))
@@ -5966,7 +5966,7 @@
 #define mulss3ld(XD, XS, MT, DT)                                            \
         mulrs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divss_rr(XG, XS)                                                    \
         divrs_rr(W(XG), W(XS))
@@ -6361,7 +6361,7 @@
 #define mlhps_ld(XD, MS, DS)                                                \
         mlhqs_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divps_rr(XG, XS)                                                    \
         divqs_rr(W(XG), W(XS))
@@ -7060,7 +7060,7 @@
 #define mlhfs_ld(XD, MS, DS)                                                \
         mlhds_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divfs_rr(XG, XS)                                                    \
         divds_rr(W(XG), W(XS))
@@ -7759,7 +7759,7 @@
 #define mlhls_ld(XD, MS, DS)                                                \
         mlhjs_ld(W(XD), W(MS), W(DS))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divls_rr(XG, XS)                                                    \
         divjs_rr(W(XG), W(XS))
@@ -8316,7 +8316,7 @@
 #define mulss3ld(XD, XS, MT, DT)                                            \
         mults3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divss_rr(XG, XS)                                                    \
         divts_rr(W(XG), W(XS))
