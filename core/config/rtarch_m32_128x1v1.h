@@ -461,7 +461,7 @@
         /* mlp, mlh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divis_rr(XG, XS)                                                    \
         divis3rr(W(XG), W(XG), W(XS))
@@ -1105,7 +1105,7 @@
         EMITW(0xC4000000 | MDM(TmmM,    MOD(MT), VAL(DT), B3(DT), P1(DT)))  \
         EMITW(0x46000002 | MXM(REG(XD), REG(XS), TmmM))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divrs_rr(XG, XS)                                                    \
         divrs3rr(W(XG), W(XG), W(XS))

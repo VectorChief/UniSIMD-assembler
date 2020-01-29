@@ -135,7 +135,7 @@
         EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
         EMITW(0x65400800 | MXM(REG(XD), REG(XS), TmmM))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) */
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divms_rr(XG, XS)                                                    \
         EMITW(0x654D8000 | MXM(REG(XG), REG(XS), 0x00))
