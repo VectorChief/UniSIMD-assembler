@@ -83,7 +83,7 @@ simd_test_arm_rpi3:
 # recent QEMU(-2.5) is installed or built from source and in the PATH variable.
 # sudo apt-get install qemu-user
 #
-# Building/running SIMD test:
+# Compiling/running SIMD test:
 # make -f simd_make_arm.mk
 # qemu-arm -cpu cortex-a8  simd_test.arm_v1 -c 1
 # qemu-arm -cpu cortex-a15 simd_test.arm_v2 -c 1

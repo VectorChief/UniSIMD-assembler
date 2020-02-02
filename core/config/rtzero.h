@@ -51,7 +51,7 @@
  */
 
 /*
- * Alphabetical view of current/future instruction namespaces is in rtzero.h.
+ * Alphabetical view of current/future instruction namespaces is given above.
  * Configurable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtconf.h.
  * Mixing of 64/32-bit fields in backend structures may lead to misalignment
  * of 64-bit fields to 4-byte boundary, which is not supported on some targets.
@@ -256,7 +256,7 @@
 /*****************   SIMD FLAGS EXTENDED COMPATIBILITY LAYER   ****************/
 /******************************************************************************/
 
-/* Interpretation of a 32-bit SIMD-version field (ver) in rt_SIMD_INFO struct:
+/* Interpretation of 32-bit SIMD-version field (ver) in rt_SIMD_INFO struct:
  *
  * |RT_128 |256_R8 |RT_256 |512_R8 |RT_512 |1K4_R8 |RT_1K4 |2K8_R8 | - SIMD-flag
  * |1 2 4 8|- - 4|*|1 2 4 8|1 2 -|*|1 2 4 8|1 2 -|*|1 2 4 8|1 2 -|*| - cur-value

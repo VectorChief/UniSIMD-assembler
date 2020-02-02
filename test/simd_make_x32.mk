@@ -33,7 +33,7 @@ simd_test_x32:
 # sudo apt-get install make g++-multilib
 # (installation of g++-multilib removes any g++ cross-compilers)
 #
-# Building/running SIMD test:
+# Compiling/running SIMD test:
 # make -f simd_make_x32.mk
 # ./simd_test.x32
 

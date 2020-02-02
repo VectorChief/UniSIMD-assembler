@@ -33,7 +33,7 @@ simd_test_m32Br5:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m32Br5
 
 
-# The up-to-date MIPS toolchain (g++) can be found here:
+# On Ubuntu (MATE) 16.04/18.04 download MIPS toolchain:
 # https://www.mips.com/develop/tools/codescape-mips-sdk/
 # https://codescape.mips.com/components/toolchain/2017.10-08/downloads.html
 #
@@ -44,11 +44,19 @@ simd_test_m32Br5:
 # PATH=/home/ubuntu/Downloads/mips-mti-linux-gnu/2017.10-08/bin:$PATH
 # PATH=/home/ubuntu-mate/Downloads/mips-mti-linux-gnu/2017.10-08/bin:$PATH
 #
+# Starting from 2019.09-01 toolchains MTI (r5) and IMG (r6) merged into one.
+# https://codescape.mips.com/components/toolchain/2019.09-01/downloads.html
+# Codescape.GNU.Tools.Package.2019.09-01.for.MIPS.MTI.Linux.CentOS-6.x86_64
+# is unpacked and folder mips-mti-linux-gnu/2019.09-01/bin is added to PATH:
+# PATH=/home/ubuntu/Downloads/mips-mti-linux-gnu/2019.09-01/bin:$PATH
+# PATH=/home/ubuntu-mate/Downloads/mips-mti-linux-gnu/2019.09-01/bin:$PATH
+#
 # Prerequisites for emulation:
 # recent QEMU(-2.5) is installed or built from source and in the PATH variable.
+# standalone toolchain from 2019.09-01 comes with QEMU 4.1.0 for MIPS in PATH.
 # sudo apt-get install qemu-user make
 #
-# Building/running SIMD test:
+# Compiling/running SIMD test:
 # make -f simd_make_m32.mk
 # qemu-mipsel -cpu P5600 simd_test.m32Lr5 -c 1
 # qemu-mips   -cpu P5600 simd_test.m32Br5 -c 1
