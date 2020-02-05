@@ -55,10 +55,11 @@ simd_test_p32Bp9:
 #
 # Prerequisites for emulation:
 # recent QEMU(-2.5) is installed or built from source and in the PATH variable.
-# POWER9 target requires more recent QEMU, tested with 3.0.0 and 3.1.0.
+# POWER9 target requires more recent QEMU, tested with 3.x.y series and 4.2.0.
+# QEMU versions 4.x.y prior to 4.2.0 show issues with POWER8/9 fp32 LE targets.
 # sudo apt-get install qemu-user
 #
-# Building/running SIMD test:
+# Compiling/running SIMD test:
 # make -f simd_make_p32.mk
 # qemu-ppc        -cpu G4     simd_test.p32Bg4 -c 1
 # qemu-ppc64abi32 -cpu POWER7 simd_test.p32Bp7 -c 1

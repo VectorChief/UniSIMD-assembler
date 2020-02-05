@@ -64,7 +64,7 @@ simd_test_x86avx512:
 # http://software.intel.com/en-us/articles/intel-software-development-emulator
 # Intel SDE is downloaded, unpacked and in the PATH variable.
 #
-# Building/running SIMD test:
+# Compiling/running SIMD test:
 # make -f simd_make_x86.mk
 # ./simd_test.x86
 # ./simd_test.x86avx

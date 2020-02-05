@@ -76,7 +76,7 @@ simd_test_m64f64Br6:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64f64Br6
 
 
-# The up-to-date MIPS toolchain (g++) can be found here:
+# On Ubuntu (MATE) 16.04/18.04 download MIPS toolchain:
 # https://www.mips.com/develop/tools/codescape-mips-sdk/
 # https://codescape.mips.com/components/toolchain/2017.10-08/downloads.html
 #
@@ -87,11 +87,26 @@ simd_test_m64f64Br6:
 # PATH=/home/ubuntu/Downloads/mips-img-linux-gnu/2017.10-08/bin:$PATH
 # PATH=/home/ubuntu-mate/Downloads/mips-img-linux-gnu/2017.10-08/bin:$PATH
 #
+# Starting from 2019.09-01 toolchains MTI (r5) and IMG (r6) merged into one.
+# https://codescape.mips.com/components/toolchain/2019.09-01/downloads.html
+# Codescape.GNU.Tools.Package.2019.09-01.for.MIPS.MTI.Linux.CentOS-6.x86_64
+# is unpacked and folder mips-mti-linux-gnu/2019.09-01/bin is added to PATH:
+# PATH=/home/ubuntu/Downloads/mips-mti-linux-gnu/2019.09-01/bin:$PATH
+# PATH=/home/ubuntu-mate/Downloads/mips-mti-linux-gnu/2019.09-01/bin:$PATH
+#
+# Starting from Ubuntu (MATE) 19.10 upstream (cross-)compiler supports MSA.
+# sudo apt-get install make g++-mipsisa64r6el-linux-gnuabi64
+# sudo apt-get install make g++-mipsisa64r6-linux-gnuabi64
+# (replace mips-img-linux-gnu-g++ with mipsisa64r6el-linux-gnuabi64-g++ for LE)
+# (replace mips-img-linux-gnu-g++ with mipsisa64r6-linux-gnuabi64-g++ for BE)
+# (replace -img- with -mti- to use single standalone toolchain from 2019.09-01)
+#
 # Prerequisites for emulation:
 # recent QEMU(-2.7) is installed or built from source and in the PATH variable.
+# standalone toolchain from 2019.09-01 comes with QEMU 4.1.0 for MIPS in PATH.
 # sudo apt-get install qemu-user make
 #
-# Building/running SIMD test:
+# Compiling/running SIMD test:
 # make -f simd_make_m64.mk
 # qemu-mips64el -cpu I6400 simd_test.m64_32Lr6 -c 1
 # qemu-mips64el -cpu I6400 simd_test.m64_64Lr6 -c 1

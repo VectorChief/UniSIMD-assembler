@@ -37,11 +37,12 @@ go to UniSIMD's "test" subfolder and open (in Visual C++ 6.0 or later):
 In newer versions of VC++ agree to convert workspace files.
 Exit and open newly created solution file for development.
 Select "Release" build target in drop-down list/menus, then press F5.
-More recent versions (2017) need a few extra steps to complete the build.
+More recent versions (VS2017) need a few extra steps to complete the build.
 Right-click on the Solution in the Solution Explorer window on the left
 and select "Retarget solution", choose Windows SDK Version "10.0.15063.0",
 then select "Build" -> "Rebuild Solution" from the top-level menu, not F5.
 Run produced binary simd_test.exe in "test" subfolder from Windows Explorer.
+VS2019 automatically retargets solution to the latest installed Windows SDK.
 
 To build SIMD test framework for 64-bit Windows,
 download and install TDM64-GCC toolchain (tdm64-gcc-5.1.0-2.exe),
@@ -78,13 +79,16 @@ run multithreaded make (use -j8 or -j16 on machines with higher core count):
 run installation script:
     sudo make install
 
-When building QEMU from source isn't necessary install a full binary package:
+When building QEMU from source isn't necessary install full binary package:
     sudo apt-get install qemu-user
 on RPM-based systems like openSUSE:
     sudo zypper install qemu
 
-To test SVE targets with QEMU 3.1.0 or patched version of QEMU 3.0.0 run:
+To test SVE targets with QEMU 3.x.y or patched version of QEMU 3.0.0 run:
     qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f32sve -c 1
+
+The most recent QEMU 4.2.0 has been the most stable and feature complete so far,
+while versions 4.x.y prior to 4.2.0 showed issues with POWER8/9 fp32 LE targets.
 
 Use "-c 1" option to reduce test time when emulating with QEMU.
 

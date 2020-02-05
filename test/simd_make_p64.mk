@@ -142,14 +142,14 @@ simd_test_p64f64Bp7:
 # sudo apt-get install make g++-powerpc64le-linux-gnu
 # sudo apt-get install make g++-powerpc64-linux-gnu
 # (recent g++-5-powerpc64le series target POWER8 and don't work well with -O3)
-# (recent g++-8-powerpc64le series show issues with powf in QEMU, but not on HW)
 #
 # Prerequisites for emulation:
 # recent QEMU(-2.5) is installed or built from source and in the PATH variable.
-# POWER9 target requires more recent QEMU, tested with 3.0.0 and 3.1.0.
+# POWER9 target requires more recent QEMU, tested with 3.x.y series and 4.2.0.
+# QEMU versions 4.x.y prior to 4.2.0 show issues with POWER8/9 fp32 LE targets.
 # sudo apt-get install qemu-user
 #
-# Building/running SIMD test:
+# Compiling/running SIMD test:
 # make -f simd_make_p64.mk
 # qemu-ppc64le -cpu POWER9 simd_test.p64_32Lp9 -c 1
 # qemu-ppc64le -cpu POWER9 simd_test.p64_64Lp9 -c 1
