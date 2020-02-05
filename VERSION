@@ -14,6 +14,16 @@
   - add preliminary support for POWER9 fp128 SIMD ops (not tested)
   - add preliminary support for ARMv8.2 fp16 SIMD ops (not tested)
 
+v1.0.0b: UniSIMD, code name "ENsed+b", 2020-02-02 archive edition
+  - all releases after 2020-01-01 have 2nd naming from their baseline: (ENsed)
+  - letter from the update (b,c,..) appears concatenated after (+) in the name
+  - future minor releases (v1.X.0a) will have digit and letter (+1a, +2a, +3a)
+  - future major releases (v2.X.0a) will have the form: (2+, 2+1a, 2+2a, 2+3a)
+  - clean up and update comments related to recent compiler and QEMU versions
+  - fix comments for SIMD instructions in 3-operand forms, clarify for SIMD div
+  - add SIMD fma3 aliases as 3-operand forms: fma**3**
+  - fix SIMD fma3 emulation with fp32 elements on AVX1
+
 v1.0.0a: UniSIMD, code name "ENsed+", 2020-edition ("ENsed" + 2019 updates)
   - all new releases from now on will use *X.Y.Za(bc..) naming scheme
   - all branches start with letter (b), all tags start with letter (v)
