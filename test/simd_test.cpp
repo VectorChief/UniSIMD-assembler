@@ -1,5 +1,5 @@
 /******************************************************************************/
-/* Copyright (c) 2013-2019 VectorChief (at github, bitbucket, sourceforge)    */
+/* Copyright (c) 2013-2020 VectorChief (at github, bitbucket, sourceforge)    */
 /* Distributed under the MIT software license, see the accompanying           */
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
@@ -5167,7 +5167,7 @@ rt_void c_test36(rt_SIMD_INFOX *info)
         while (j-->0)
         {
             hco1[j] = har0[j] + har0[j] > 65535 ? 65535 : har0[j] + har0[j];
-            hco2[j] = (rt_shrt)har0[j] + (rt_shrt)har0[j] > +32767 ? +32767 : 
+            hco2[j] = (rt_shrt)har0[j] + (rt_shrt)har0[j] > +32767 ? +32767 :
                       (rt_shrt)har0[j] + (rt_shrt)har0[j] < -32768 ? -32768 :
                       (rt_shrt)har0[j] + (rt_shrt)har0[j];
         }
