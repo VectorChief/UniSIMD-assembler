@@ -303,9 +303,9 @@
  * The result of the condition evaluation is used as a mask for selection:
  * ((A == B) & C) | ((A != B) & D), therefore it needs to be (-1) if true.
  */
-#if __llvm__
+#if __clang__ && __clang_major__ <= 6
 #define M   -
-#else /* GAS */
+#else /* gcc or clang-7 and beyond */
 #define M   +
 #endif /* M */
 
