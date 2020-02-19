@@ -477,17 +477,6 @@
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IT)))
 
-#define addzm_ri(MG, IS)     /* not portable, do not use outside */         \
-        REW(0,       RXB(MG) & (REG(MG) != 4)) EMITB(0x81 | TYP(IS))        \
-        MRM(0x00,    0x03,    REG(MG) & (REG(MG) != 4))                     \
-        AUX(EMPTY,   EMPTY,   CMD(IS))
-
-#define subzm_ri(MG, IS)     /* not portable, do not use outside */         \
-        REW(0,       RXB(MG) & (REG(MG) != 4)) EMITB(0x81 | TYP(IS))        \
-        MRM(0x05,    0x03,    REG(MG) & (REG(MG) != 4))                     \
-        AUX(EMPTY,   EMPTY,   CMD(IS))
-
-
 #define mivox_st(XS, MD, DD) /* not portable, do not use outside */         \
     ADR VEX(0,       RXB(MD),    0x00, 0, 0, 1) EMITB(0x29)                 \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
@@ -572,16 +561,14 @@
         cvyos_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
         addqs_rr(W(XG), W(XS))                                              \
         cvxqs_rr(W(XG), W(XG))                                              \
-        mivox_st(W(XG), Mebp, inf_SCR02(0x00))                              \
-        addzm_ri(W(MT), IC(0x10))                  /* 1st-pass <- */        \
+        mivox_st(W(XG), Mebp, inf_SCR02(0x00))     /* 1st-pass <- */        \
         cvyos_ld(W(XG), Mebp, inf_SCR01(0x10))     /* 2nd-pass -> */        \
-        cvyos_ld(W(XS), W(MT), W(DT))                                       \
+        cvyos_ld(W(XS), W(MT), X(DT))                                       \
         mulqs_rr(W(XS), W(XG))                                              \
         cvyos_ld(W(XG), Mebp, inf_SCR02(0x10))                              \
         addqs_rr(W(XG), W(XS))                                              \
         cvxqs_rr(W(XG), W(XG))                                              \
-        mivox_st(W(XG), Mebp, inf_SCR02(0x10))                              \
-        subzm_ri(W(MT), IC(0x10))                  /* 2nd-pass <- */        \
+        mivox_st(W(XG), Mebp, inf_SCR02(0x10))     /* 2nd-pass <- */        \
         movox_ld(W(XG), Mebp, inf_SCR02(0))                                 \
         movox_ld(W(XS), Mebp, inf_SCR01(0))
 
@@ -643,16 +630,14 @@
         cvyos_ld(W(XG), Mebp, inf_SCR02(0x00))                              \
         subqs_rr(W(XG), W(XS))                                              \
         cvxqs_rr(W(XG), W(XG))                                              \
-        mivox_st(W(XG), Mebp, inf_SCR02(0x00))                              \
-        addzm_ri(W(MT), IC(0x10))                  /* 1st-pass <- */        \
+        mivox_st(W(XG), Mebp, inf_SCR02(0x00))     /* 1st-pass <- */        \
         cvyos_ld(W(XG), Mebp, inf_SCR01(0x10))     /* 2nd-pass -> */        \
-        cvyos_ld(W(XS), W(MT), W(DT))                                       \
+        cvyos_ld(W(XS), W(MT), X(DT))                                       \
         mulqs_rr(W(XS), W(XG))                                              \
         cvyos_ld(W(XG), Mebp, inf_SCR02(0x10))                              \
         subqs_rr(W(XG), W(XS))                                              \
         cvxqs_rr(W(XG), W(XG))                                              \
-        mivox_st(W(XG), Mebp, inf_SCR02(0x10))                              \
-        subzm_ri(W(MT), IC(0x10))                  /* 2nd-pass <- */        \
+        mivox_st(W(XG), Mebp, inf_SCR02(0x10))     /* 2nd-pass <- */        \
         movox_ld(W(XG), Mebp, inf_SCR02(0))                                 \
         movox_ld(W(XS), Mebp, inf_SCR01(0))
 
