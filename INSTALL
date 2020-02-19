@@ -236,3 +236,60 @@ g++ 7.3.1, clang 5.0.1 (openSUSE Leap15.0)
 fresh Firefox 60.2.2esr browser and a 32bpp display output.
 
 ================================================================================
+
+To experiment with Ubuntu Server on Raspberry Pi 4 consider:
+
+1) Ubuntu Server 19.10.1 preinstalled (arm64 raspi3) image from 03-Dec-2019:
+    http://cdimage.ubuntu.com/releases/19.10.1/release/
+    ubuntu-19.10.1-preinstalled-server-arm64+raspi3.img.xz
+image boot credentials:
+    login: ubuntu
+    password: ubuntu
+
+Flash image to an SD card using "Disks -> Restore Disk Image" utility with GUI
+from a regular Ubuntu desktop. It will unpack *.xz internally in the process.
+
+Once booted the image will automatically resize the root partition to fully
+utilize all space available on an SD card and request to change the password.
+
+To setup networking on a freshly installed Ubuntu Server without ethernet cable
+consider using "USB tethering" from an Android phone or an iPhone.
+
+Plug in phone's USB cable to Raspberry Pi 4's USB slot and select
+"USB tethering" option from phone's menu or in "Settings -> Personal Hotspot".
+
+On Raspberry Pi 4 run the following command in the terminal:
+    ip -c a
+to list all the network interfaces. USB tethered option should be called:
+    usb0
+or
+    eth1
+In any case it shows up on the list once tethering is activated on the phone.
+
+To complete setting up USB networking add interface names to the netplan:
+    sudo nano /etc/netplan/50-cloud-init.yaml
+Edit the file above so that it looks like this:
+network:
+    ethernets:
+        eth0:
+            dhcp4: true
+            optional: true
+        eth1:
+            dhcp4: true
+        usb0:
+            dhcp4: true
+    version: 2
+Press Ctrl-O to write-out the changes and Ctrl-X to exit from the editor.
+
+Apply the changes by typing:
+    sudo netplan apply
+Check the connection with:
+    ping google.com
+Press Ctrl-C to stop.
+
+Once the networking is set up (only needs to be done once) install the desktop:
+    sudo apt-get update
+    sudo apt-get install ubuntu-mate-desktop
+    reboot
+
+================================================================================
