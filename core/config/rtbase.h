@@ -377,7 +377,7 @@ typedef unsigned int        rt_ui32;
 #pragma warning (disable : 4305) /* VC++ 6.0: truncation from double to float */
 #pragma warning (disable : 4291) /* VC++ 6.0: operator new no matching delete */
 #pragma warning (disable : 4731) /* VC++ 9.0: frame ptr modified by assembler */
-#pragma warning (disable : 4838) /* VC++ 9.0: conversion from double to float */
+#pragma warning (disable : 4838) /* VC++ X.0: conversion from double to float */
 #pragma warning (disable : 4996) /* VC++ 9.0: secure form of string functions */
 
 typedef __int64             rt_si64;
