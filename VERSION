@@ -14,6 +14,13 @@
   - add preliminary support for POWER9 fp128 SIMD ops (not tested)
   - add preliminary support for ARMv8.2 fp16 SIMD ops (not tested)
 
+v1.0.0c: UniSIMD, code name "ENsed++", celebration edition
+  - celebrating C++ and its various compilers
+  - add notes for Ubuntu Server on Raspberry Pi 4
+  - add -mcpu=power8 compiler option to makefiles on POWER
+  - fix RISC targets with clang after version 6.0
+  - update copyright year to 2020
+
 v1.0.0b: UniSIMD, code name "ENsed+b", 2020-02-02 archive edition
   - all releases after 2020-01-01 have 2nd naming from their baseline: (ENsed)
   - letter from the update (b,c,..) appears concatenated after (+) in the name
