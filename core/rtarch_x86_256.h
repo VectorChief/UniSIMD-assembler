@@ -338,17 +338,6 @@
 #if defined (RT_256) && (RT_256 < 2) || \
     defined (RT_128) && (RT_SIMD_COMPAT_128 == 1)
 
-#define addwm_ri(MG, IS)     /* not portable, do not use outside */         \
-        EMITB(0x81 | TYP(IS))                                               \
-        MRM(0x00,    0x03,    REG(MG) & (REG(MG) != 4))                     \
-        AUX(EMPTY,   EMPTY,   CMD(IS))
-
-#define subwm_ri(MG, IS)     /* not portable, do not use outside */         \
-        EMITB(0x81 | TYP(IS))                                               \
-        MRM(0x05,    0x03,    REG(MG) & (REG(MG) != 4))                     \
-        AUX(EMPTY,   EMPTY,   CMD(IS))
-
-
 #define cvycs_rr(XD, XS)     /* not portable, do not use outside */         \
         V2X(0x00,    1, 0) EMITB(0x5A)                                      \
         MRM(REG(XD), MOD(XS), REG(XS))
@@ -356,12 +345,13 @@
 #define cvycs_ld(XD, MS, DS) /* not portable, do not use outside */         \
         V2X(0x00,    1, 0) EMITB(0x5A)                                      \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)
 
 #define cvxds_rr(XD, XS)     /* not portable, do not use outside */         \
         V2X(0x00,    1, 1) EMITB(0x5A)                                      \
         MRM(REG(XD), MOD(XS), REG(XS))
 
+#define X(val, typ, cmd)  (val+16), typ, cmd
 
 #define addds_rr(XG, XS)     /* not portable, do not use outside */         \
         V2X(REG(XG), 1, 1) EMITB(0x58)                                      \
@@ -374,7 +364,6 @@
 #define mulds_rr(XG, XS)     /* not portable, do not use outside */         \
         V2X(REG(XG), 1, 1) EMITB(0x59)                                      \
         MRM(REG(XG), MOD(XS), REG(XS))
-
 
 #define addds_ld(XG, MS, DS) /* not portable, do not use outside */         \
         V2X(REG(XG), 1, 1) EMITB(0x58)                                      \
@@ -454,9 +443,8 @@
         addds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
         cvxds_rr(W(XG), W(XG))                                              \
         movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        prmox_rr(W(XS), W(XS), IB(1))                                       \
-        addwm_ri(W(MT), IC(0x10))                  /* 1st-pass <- */        \
-        cvycs_ld(W(XG), W(MT), W(DT))              /* 2st-pass -> */        \
+        prmox_rr(W(XS), W(XS), IB(1))              /* 1st-pass <- */        \
+        cvycs_ld(W(XG), W(MT), X(DT))              /* 2st-pass -> */        \
         movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
         cvycs_rr(W(XG), W(XS))                                              \
         mulds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
@@ -465,8 +453,7 @@
         addds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
         cvxds_rr(W(XG), W(XG))                                              \
         movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
-        prmox_rr(W(XS), W(XS), IB(1))                                       \
-        subwm_ri(W(MT), IC(0x10))                  /* 2st-pass <- */        \
+        prmox_rr(W(XS), W(XS), IB(1))              /* 2st-pass <- */        \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 #else /* RT_128 >= 8 */ /* NOTE: 1-pass fp32<->fp64 SIMD FMA (128-bit AVX1) */
@@ -564,9 +551,8 @@
         subds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
         cvxds_rr(W(XG), W(XG))                                              \
         movix_st(W(XG), Mebp, inf_SCR01(0x00))                              \
-        prmox_rr(W(XS), W(XS), IB(1))                                       \
-        addwm_ri(W(MT), IC(0x10))                  /* 1st-pass <- */        \
-        cvycs_ld(W(XG), W(MT), W(DT))              /* 2st-pass -> */        \
+        prmox_rr(W(XS), W(XS), IB(1))              /* 1st-pass <- */        \
+        cvycs_ld(W(XG), W(MT), X(DT))              /* 2st-pass -> */        \
         movox_st(W(XG), Mebp, inf_SCR02(0))                                 \
         cvycs_rr(W(XG), W(XS))                                              \
         mulds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
@@ -575,8 +561,7 @@
         subds_ld(W(XG), Mebp, inf_SCR02(0))                                 \
         cvxds_rr(W(XG), W(XG))                                              \
         movix_st(W(XG), Mebp, inf_SCR01(0x10))                              \
-        prmox_rr(W(XS), W(XS), IB(1))                                       \
-        subwm_ri(W(MT), IC(0x10))                  /* 2st-pass <- */        \
+        prmox_rr(W(XS), W(XS), IB(1))              /* 2st-pass <- */        \
         movox_ld(W(XG), Mebp, inf_SCR01(0))
 
 #else /* RT_128 >= 8 */ /* NOTE: 1-pass fp32<->fp64 SIMD FMS (128-bit AVX1) */
