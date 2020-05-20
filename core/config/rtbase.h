@@ -573,6 +573,10 @@ typedef const char         *rt_pstr;
 #define RT_SQRT32(a)        ((a)  <=   0.0f ?  0.0f :                       \
                              sqrtf(a))
 
+#define RT_SIN32(a)         (sinf(a))
+
+#define RT_COS32(a)         (cosf(a))
+
 #define RT_ASIN32(a)        ((a)  <=  -1.0f ? -(rt_fp32)RT_PI_2 :           \
                              (a)  >=  +1.0f ? +(rt_fp32)RT_PI_2 :           \
                              asinf(a))
@@ -619,6 +623,10 @@ typedef const char         *rt_pstr;
 #define RT_SQRT64(a)        ((a)  <=   0.0 ?  0.0 :                         \
                              sqrt(a))
 
+#define RT_SIN64(a)         (sin(a))
+
+#define RT_COS64(a)         (cos(a))
+
 #define RT_ASIN64(a)        ((a)  <=  -1.0 ? -(rt_fp64)RT_PI_2 :            \
                              (a)  >=  +1.0 ? +(rt_fp64)RT_PI_2 :            \
                              asin(a))
@@ -655,6 +663,8 @@ typedef const char         *rt_pstr;
 #define RT_SIGN(a)          RT_SIGN32(a)
 #define RT_POW(a, b)        RT_POW32(a, b)
 #define RT_SQRT(a)          RT_SQRT32(a)
+#define RT_SIN(a)           RT_SIN32(a)
+#define RT_COS(a)           RT_COS32(a)
 #define RT_ASIN(a)          RT_ASIN32(a)
 #define RT_ACOS(a)          RT_ACOS32(a)
 #define RT_SINA(a)          RT_SINA32(a)
@@ -670,6 +680,8 @@ typedef const char         *rt_pstr;
 #define RT_SIGN(a)          RT_SIGN64(a)
 #define RT_POW(a, b)        RT_POW64(a, b)
 #define RT_SQRT(a)          RT_SQRT64(a)
+#define RT_SIN(a)           RT_SIN64(a)
+#define RT_COS(a)           RT_COS64(a)
 #define RT_ASIN(a)          RT_ASIN64(a)
 #define RT_ACOS(a)          RT_ACOS64(a)
 #define RT_SINA(a)          RT_SINA64(a)
