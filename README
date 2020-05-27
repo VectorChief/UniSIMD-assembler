@@ -5,6 +5,8 @@ can be written and maintained in one place without code replication.
 The assembler itself isn't a separate tool, but rather a collection of C/C++
 header files, which applications need to include directly in order to use.
 
+Initial documentation for the assembler is provided in core/config/rtdocs.h.
+
 At present, Intel SSE/SSE2/SSE4 and AVX/AVX2/AVX-512 (32/64-bit x86 ISAs),
 ARMv7 NEON/NEONv2, ARMv8 AArch32 and AArch64 NEON, SVE (32/64-bit ARM ISAs),
 MIPS 32/64-bit r5/r6 MSA and POWER 32/64-bit VMX/VSX (little/big-endian ISAs)
