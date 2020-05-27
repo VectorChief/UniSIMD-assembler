@@ -568,6 +568,10 @@ typedef const char         *rt_pstr;
                              (a)  >    0.0f ? +1 :                          \
                               0)
 
+#define RT_LOG32(a)         (logf(a))
+
+#define RT_EXP32(a)         (expf(a))
+
 #define RT_POW32(a, b)      (powf(a, b))
 
 #define RT_SQRT32(a)        ((a)  <=   0.0f ?  0.0f :                       \
@@ -618,6 +622,10 @@ typedef const char         *rt_pstr;
                              (a)  >    0.0 ? +1 :                           \
                               0)
 
+#define RT_LOG64(a)         (log(a))
+
+#define RT_EXP64(a)         (exp(a))
+
 #define RT_POW64(a, b)      (pow(a, b))
 
 #define RT_SQRT64(a)        ((a)  <=   0.0 ?  0.0 :                         \
@@ -661,6 +669,8 @@ typedef const char         *rt_pstr;
 #define RT_FLOOR(a)         RT_FLOOR32(a)
 #define RT_CEIL(a)          RT_CEIL32(a)
 #define RT_SIGN(a)          RT_SIGN32(a)
+#define RT_LOG(a)           RT_LOG32(a)
+#define RT_EXP(a)           RT_EXP32(a)
 #define RT_POW(a, b)        RT_POW32(a, b)
 #define RT_SQRT(a)          RT_SQRT32(a)
 #define RT_SIN(a)           RT_SIN32(a)
@@ -678,6 +688,8 @@ typedef const char         *rt_pstr;
 #define RT_FLOOR(a)         RT_FLOOR64(a)
 #define RT_CEIL(a)          RT_CEIL64(a)
 #define RT_SIGN(a)          RT_SIGN64(a)
+#define RT_LOG(a)           RT_LOG64(a)
+#define RT_EXP(a)           RT_EXP64(a)
 #define RT_POW(a, b)        RT_POW64(a, b)
 #define RT_SQRT(a)          RT_SQRT64(a)
 #define RT_SIN(a)           RT_SIN64(a)
