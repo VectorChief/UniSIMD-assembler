@@ -77,7 +77,7 @@ simd_test_m64f64Br6:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64f64Br6
 
 
-# On Ubuntu (MATE) 16.04/18.04 download MIPS toolchain:
+# On Ubuntu (MATE) 16.04-20.04 download MIPS toolchain:
 # https://www.mips.com/develop/tools/codescape-mips-sdk/
 # https://codescape.mips.com/components/toolchain/2020.06-01/downloads.html
 #

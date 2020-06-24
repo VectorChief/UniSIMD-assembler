@@ -19,17 +19,6 @@ strip:
 clean:
 	rm simd_test.x86*
 
-macOS:
-	mv simd_test.x86 simd_test.o86
-	mv simd_test.x86avx simd_test.o86avx
-	mv simd_test.x86avx512 simd_test.o86avx512
-
-macRD:
-	rm -fr simd_test.x86*.dSYM/
-
-macRM:
-	rm simd_test.o86*
-
 
 simd_test_x86:
 	g++ -O3 -g -m32 \
@@ -50,15 +39,15 @@ simd_test_x86avx512:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x86avx512
 
 
+# On Ubuntu (MATE) 16.04-20.04 add "universe multiverse" to "main restricted"
+# in /etc/apt/sources.list (sudo nano /etc/apt/sources.list) then run:
+# sudo apt-get update
+#
 # Prerequisites for the build:
 # native/multilib-compiler for x86/x86_64 is installed and in the PATH variable.
-# sudo apt-get update
 # sudo apt-get install make g++ (for x86 host)
 # sudo apt-get install make g++-multilib (for x86_64 host)
 # (installation of g++-multilib removes any g++ cross-compilers)
-#
-# When building on macOS install Command Line Tools first.
-# http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/
 #
 # Prerequisites for emulation:
 # http://software.intel.com/en-us/articles/intel-software-development-emulator
@@ -74,8 +63,7 @@ simd_test_x86avx512:
 # Use "-c 1" option to reduce test time when emulating with Intel SDE
 
 # Clang native build works too (takes much longer prior to 3.8), use (replace):
-# clang++ -O0 (in place of g++ -O3) add "universe" to /etc/apt/sources.list
-# sudo apt-get update
+# clang++ -O0 (in place of g++ -O3)
 # sudo apt-get install clang (requires g++-multilib for non-native ABI)
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h.
