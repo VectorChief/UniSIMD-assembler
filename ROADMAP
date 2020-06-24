@@ -22,7 +22,7 @@ X) Task title: "implement predicated AVX-512/ARM-SVE backends (in *_RX slots)"
 3) Add cmd**P** subset for "two-operand + predicate" instructions
 4) Add cmd**4** subset for "three-operand + predicate" instructions
 5) Predicate is placed 1st in cmp-ops, and right after dest-SIMD-reg otherwise
-6) Predicated targets can be implemented as extension to existing AVX512/ARM-SVE
+6) Predicated targets can be implemented as extension to current AVX-512/ARM-SVE
 7) Define predicate registers P1..P6 where merging/zeroing is not applicable
 8) Emulate zeroing and three-operand ops on ARM-SVE from fields in triplets
 9) Paired predicated backends should expose half the predicates (and registers)
@@ -34,7 +34,7 @@ X) Task title: "implement predicated AVX-512/ARM-SVE backends (in *_RX slots)"
 R) Task title: "implement basic runtime generation for existing ASM code-bases"
 1) Rewrite ASM_ENTER macro to allocate temporary buffer with code-exec rights
 2) Rewrite EMITB / EMITW emitters to write into a memory buffer at cur++ offset
-3) Define M to (+/-) depending on static/dynamic code generation (+ llvm switch)
+3) Define M to (+/-) depending on static/dynamic code generation (+ clang check)
 4) Rewrite j** to encode jump-label distances into binary form, track labels
 5) Rewrite ASM_LEAVE to type-cast the buffer to a function-pointer, then call it
 6) Implement proper buffer management for more advanced versions later
@@ -80,7 +80,7 @@ G) Task title: "consider 64-bit SIMD emulation with FPRs on PowerPC G5/POWER6"
 P) Task title: "use RT_REGS to unload SIMD target mask for 256-bit on POWER11"
    (may require significant redesign of SIMD target mask handling in rtbase.h)
    (better schedule this task for the next major update, also check rtzero.h)
-   (consider renaming SVE binaries to *.a??armSVE to match *.x??avx512 on x86)
+   (consider renaming SVE binaries to *.a*armSVE to match *.x*avx512 on x86)
 
 ================================================================================
 
