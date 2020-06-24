@@ -709,8 +709,8 @@ typedef const char         *rt_pstr;
  * SIMD info structure for ASM_ENTER/ASM_LEAVE contains internal variables
  * and general purpose constants used internally by some instructions.
  * Note that DP offsets below accept only 12-bit values (0xFFF),
- * use DF, DG, DH and DV for 14, 15, 16 and 31-bit offsets respectively.
- * SIMD width is taken into account via S and Q defined in rtarch.h.
+ * use DE, DF, DG, DH and DV for 13, 14, 15, 16 and 31-bit offsets respectively.
+ * SIMD width is taken into account via R, T, S and Q from rtbase.h
  * Structure is read-write in backend.
  */
 struct rt_SIMD_INFO
