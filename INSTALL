@@ -89,6 +89,10 @@ To test SVE targets with QEMU 3.x.y or patched version of QEMU 3.0.0 run:
 
 The most recent QEMU 4.2.0 has been the most stable and feature complete so far,
 while versions 4.x.y prior to 4.2.0 showed issues with POWER8/9 fp32 LE targets.
+QEMU 4.2.0 is now part of Ubuntu 20.04, QEMU 5.0.0 proves to be just as good.
+
+Ubuntu 20.04 is the first release where MIPS cross-compilers have caught up
+with the rest of the pack (standalone 2020.06-01 and mipsisa64r6* are 9.3.0).
 
 Use "-c 1" option to reduce test time when emulating with QEMU.
 
