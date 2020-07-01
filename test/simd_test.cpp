@@ -10,7 +10,7 @@
 
 #define RT_SIMD_CODE /* enable SIMD instruction definitions */
 #define RT_BASE_TEST /* enable BASE instruction sub-tests */
-#define RT_ELEM_TEST /* enable scalar SIMD instruction sub-tests */
+#define RT_ELEM_TEST /* enable ELEM instruction sub-tests (scalar SIMD) */
 
 /*
  * RT_DATA determines the maximum load-level for data structures in code-base.
@@ -29,7 +29,7 @@
 /*******************************   DEFINITIONS   ******************************/
 /******************************************************************************/
 
-#define RUN_LEVEL           29
+#define SUB_TEST            29
 #define CYC_SIZE            1000000
 
 #define ARR_SIZE            S*3 /* hardcoded in ASM sections, S = SIMD elems */
@@ -57,7 +57,7 @@
 /******************************************************************************/
 
 rt_si32     n_init      = 0;            /* subtest-init (from command-line) */
-rt_si32     n_done      = RUN_LEVEL-1;  /* subtest-done (from command-line) */
+rt_si32     n_done      = SUB_TEST-1;   /* subtest-done (from command-line) */
 rt_si32     t_diff      = 2;          /* diff-threshold (from command-line) */
 rt_si32     r_test      = CYC_SIZE;   /* test-redundant (from command-line) */
 rt_bool     v_mode      = RT_FALSE;     /* verbose mode (from command-line) */
@@ -149,10 +149,10 @@ struct rt_SIMD_INFOX : public rt_SIMD_INFO
 #define AJ2                 DP(Q*0x020)
 
 /******************************************************************************/
-/******************************   RUN LEVEL  1   ******************************/
+/*******************************   SUB TEST  1   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >=  1
+#if SUB_TEST >=  1
 
 rt_void c_test01(rt_SIMD_INFOX *info)
 {
@@ -285,13 +285,13 @@ rt_void p_test01(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL  1 */
+#endif /* SUB_TEST  1 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL  2   ******************************/
+/*******************************   SUB TEST  2   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >=  2
+#if SUB_TEST >=  2
 
 rt_void c_test02(rt_SIMD_INFOX *info)
 {
@@ -424,13 +424,13 @@ rt_void p_test02(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL  2 */
+#endif /* SUB_TEST  2 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL  3   ******************************/
+/*******************************   SUB TEST  3   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >=  3
+#if SUB_TEST >=  3
 
 rt_void c_test03(rt_SIMD_INFOX *info)
 {
@@ -565,13 +565,13 @@ rt_void p_test03(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL  3 */
+#endif /* SUB_TEST  3 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL  4   ******************************/
+/*******************************   SUB TEST  4   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >=  4
+#if SUB_TEST >=  4
 
 rt_void c_test04(rt_SIMD_INFOX *info)
 {
@@ -706,13 +706,13 @@ rt_void p_test04(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL  4 */
+#endif /* SUB_TEST  4 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL  5   ******************************/
+/*******************************   SUB TEST  5   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >=  5
+#if SUB_TEST >=  5
 
 rt_void c_test05(rt_SIMD_INFOX *info)
 {
@@ -847,13 +847,13 @@ rt_void p_test05(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL  5 */
+#endif /* SUB_TEST  5 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL  6   ******************************/
+/*******************************   SUB TEST  6   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >=  6
+#if SUB_TEST >=  6
 
 rt_void c_test06(rt_SIMD_INFOX *info)
 {
@@ -953,13 +953,13 @@ rt_void p_test06(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL  6 */
+#endif /* SUB_TEST  6 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL  7   ******************************/
+/*******************************   SUB TEST  7   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >=  7
+#if SUB_TEST >=  7
 
 rt_void c_test07(rt_SIMD_INFOX *info)
 {
@@ -1076,13 +1076,13 @@ rt_void p_test07(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL  7 */
+#endif /* SUB_TEST  7 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL  8   ******************************/
+/*******************************   SUB TEST  8   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >=  8
+#if SUB_TEST >=  8
 
 rt_void c_test08(rt_SIMD_INFOX *info)
 {
@@ -1244,13 +1244,13 @@ rt_void p_test08(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL  8 */
+#endif /* SUB_TEST  8 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL  9   ******************************/
+/*******************************   SUB TEST  9   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >=  9
+#if SUB_TEST >=  9
 
 rt_void c_test09(rt_SIMD_INFOX *info)
 {
@@ -1376,13 +1376,13 @@ rt_void p_test09(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL  9 */
+#endif /* SUB_TEST  9 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 10   ******************************/
+/*******************************   SUB TEST 10   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 10
+#if SUB_TEST >= 10
 
 rt_void c_test10(rt_SIMD_INFOX *info)
 {
@@ -1515,13 +1515,13 @@ rt_void p_test10(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 10 */
+#endif /* SUB_TEST 10 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 11   ******************************/
+/*******************************   SUB TEST 11   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 11
+#if SUB_TEST >= 11
 
 rt_void c_test11(rt_SIMD_INFOX *info)
 {
@@ -1670,13 +1670,13 @@ rt_void p_test11(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 11 */
+#endif /* SUB_TEST 11 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 12   ******************************/
+/*******************************   SUB TEST 12   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 12
+#if SUB_TEST >= 12
 
 rt_void c_test12(rt_SIMD_INFOX *info)
 {
@@ -1826,13 +1826,13 @@ rt_void p_test12(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 12 */
+#endif /* SUB_TEST 12 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 13   ******************************/
+/*******************************   SUB TEST 13   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 13
+#if SUB_TEST >= 13
 
 rt_void c_test13(rt_SIMD_INFOX *info)
 {
@@ -1933,13 +1933,13 @@ rt_void p_test13(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 13 */
+#endif /* SUB_TEST 13 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 14   ******************************/
+/*******************************   SUB TEST 14   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 14
+#if SUB_TEST >= 14
 
 rt_void c_test14(rt_SIMD_INFOX *info)
 {
@@ -2130,13 +2130,13 @@ rt_void p_test14(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 14 */
+#endif /* SUB_TEST 14 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 15   ******************************/
+/*******************************   SUB TEST 15   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 15
+#if SUB_TEST >= 15
 
 rt_void c_test15(rt_SIMD_INFOX *info)
 {
@@ -2265,13 +2265,13 @@ rt_void p_test15(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 15 */
+#endif /* SUB_TEST 15 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 16   ******************************/
+/*******************************   SUB TEST 16   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 16
+#if SUB_TEST >= 16
 
 rt_void c_test16(rt_SIMD_INFOX *info)
 {
@@ -2417,13 +2417,13 @@ rt_void p_test16(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 16 */
+#endif /* SUB_TEST 16 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 17   ******************************/
+/*******************************   SUB TEST 17   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 17
+#if SUB_TEST >= 17
 
 rt_void c_test17(rt_SIMD_INFOX *info)
 {
@@ -2518,13 +2518,13 @@ rt_void p_test17(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 17 */
+#endif /* SUB_TEST 17 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 18   ******************************/
+/*******************************   SUB TEST 18   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 18
+#if SUB_TEST >= 18
 
 rt_void c_test18(rt_SIMD_INFOX *info)
 {
@@ -2654,13 +2654,13 @@ rt_void p_test18(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 18 */
+#endif /* SUB_TEST 18 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 19   ******************************/
+/*******************************   SUB TEST 19   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 19
+#if SUB_TEST >= 19
 
 rt_void c_test19(rt_SIMD_INFOX *info)
 {
@@ -2799,13 +2799,13 @@ rt_void p_test19(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 19 */
+#endif /* SUB_TEST 19 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 20   ******************************/
+/*******************************   SUB TEST 20   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 20
+#if SUB_TEST >= 20
 
 rt_void c_test20(rt_SIMD_INFOX *info)
 {
@@ -2943,13 +2943,13 @@ rt_void p_test20(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 20 */
+#endif /* SUB_TEST 20 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 21   ******************************/
+/*******************************   SUB TEST 21   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 21
+#if SUB_TEST >= 21
 
 rt_void c_test21(rt_SIMD_INFOX *info)
 {
@@ -3072,13 +3072,13 @@ rt_void p_test21(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 21 */
+#endif /* SUB_TEST 21 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 22   ******************************/
+/*******************************   SUB TEST 22   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 22
+#if SUB_TEST >= 22
 
 rt_void c_test22(rt_SIMD_INFOX *info)
 {
@@ -3201,13 +3201,13 @@ rt_void p_test22(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 22 */
+#endif /* SUB_TEST 22 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 23   ******************************/
+/*******************************   SUB TEST 23   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 23
+#if SUB_TEST >= 23
 
 rt_void c_test23(rt_SIMD_INFOX *info)
 {
@@ -3324,13 +3324,13 @@ rt_void p_test23(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 23 */
+#endif /* SUB_TEST 23 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 24   ******************************/
+/*******************************   SUB TEST 24   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 24
+#if SUB_TEST >= 24
 
 rt_void c_test24(rt_SIMD_INFOX *info)
 {
@@ -3441,13 +3441,13 @@ rt_void p_test24(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 24 */
+#endif /* SUB_TEST 24 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 25   ******************************/
+/*******************************   SUB TEST 25   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 25
+#if SUB_TEST >= 25
 
 rt_void c_test25(rt_SIMD_INFOX *info)
 {
@@ -3620,13 +3620,13 @@ rt_void p_test25(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 25 */
+#endif /* SUB_TEST 25 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 26   ******************************/
+/*******************************   SUB TEST 26   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 26
+#if SUB_TEST >= 26
 
 rt_void c_test26(rt_SIMD_INFOX *info)
 {
@@ -3786,13 +3786,13 @@ rt_void p_test26(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 26 */
+#endif /* SUB_TEST 26 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 27   ******************************/
+/*******************************   SUB TEST 27   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 27
+#if SUB_TEST >= 27
 
 rt_void c_test27(rt_SIMD_INFOX *info)
 {
@@ -3914,13 +3914,13 @@ rt_void p_test27(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 27 */
+#endif /* SUB_TEST 27 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 28   ******************************/
+/*******************************   SUB TEST 28   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 28
+#if SUB_TEST >= 28
 
 rt_void c_test28(rt_SIMD_INFOX *info)
 {
@@ -4197,13 +4197,13 @@ rt_void p_test28(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 28 */
+#endif /* SUB_TEST 28 */
 
 /******************************************************************************/
-/******************************   RUN LEVEL 29   ******************************/
+/*******************************   SUB TEST 29   ******************************/
 /******************************************************************************/
 
-#if RUN_LEVEL >= 29
+#if SUB_TEST >= 29
 
 rt_void c_test29(rt_SIMD_INFOX *info)
 {
@@ -4307,7 +4307,7 @@ rt_void p_test29(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* RUN_LEVEL 29 */
+#endif /* SUB_TEST 29 */
 
 /******************************************************************************/
 /*********************************   TABLES   *********************************/
@@ -4315,361 +4315,361 @@ rt_void p_test29(rt_SIMD_INFOX *info)
 
 typedef rt_void (*testXX)(rt_SIMD_INFOX *);
 
-testXX c_test[RUN_LEVEL] =
+testXX c_test[SUB_TEST] =
 {
-#if RUN_LEVEL >=  1
+#if SUB_TEST >=  1
     c_test01,
-#endif /* RUN_LEVEL  1 */
+#endif /* SUB_TEST  1 */
 
-#if RUN_LEVEL >=  2
+#if SUB_TEST >=  2
     c_test02,
-#endif /* RUN_LEVEL  2 */
+#endif /* SUB_TEST  2 */
 
-#if RUN_LEVEL >=  3
+#if SUB_TEST >=  3
     c_test03,
-#endif /* RUN_LEVEL  3 */
+#endif /* SUB_TEST  3 */
 
-#if RUN_LEVEL >=  4
+#if SUB_TEST >=  4
     c_test04,
-#endif /* RUN_LEVEL  4 */
+#endif /* SUB_TEST  4 */
 
-#if RUN_LEVEL >=  5
+#if SUB_TEST >=  5
     c_test05,
-#endif /* RUN_LEVEL  5 */
+#endif /* SUB_TEST  5 */
 
-#if RUN_LEVEL >=  6
+#if SUB_TEST >=  6
     c_test06,
-#endif /* RUN_LEVEL  6 */
+#endif /* SUB_TEST  6 */
 
-#if RUN_LEVEL >=  7
+#if SUB_TEST >=  7
     c_test07,
-#endif /* RUN_LEVEL  7 */
+#endif /* SUB_TEST  7 */
 
-#if RUN_LEVEL >=  8
+#if SUB_TEST >=  8
     c_test08,
-#endif /* RUN_LEVEL  8 */
+#endif /* SUB_TEST  8 */
 
-#if RUN_LEVEL >=  9
+#if SUB_TEST >=  9
     c_test09,
-#endif /* RUN_LEVEL  9 */
+#endif /* SUB_TEST  9 */
 
-#if RUN_LEVEL >= 10
+#if SUB_TEST >= 10
     c_test10,
-#endif /* RUN_LEVEL 10 */
+#endif /* SUB_TEST 10 */
 
-#if RUN_LEVEL >= 11
+#if SUB_TEST >= 11
     c_test11,
-#endif /* RUN_LEVEL 11 */
+#endif /* SUB_TEST 11 */
 
-#if RUN_LEVEL >= 12
+#if SUB_TEST >= 12
     c_test12,
-#endif /* RUN_LEVEL 12 */
+#endif /* SUB_TEST 12 */
 
-#if RUN_LEVEL >= 13
+#if SUB_TEST >= 13
     c_test13,
-#endif /* RUN_LEVEL 13 */
+#endif /* SUB_TEST 13 */
 
-#if RUN_LEVEL >= 14
+#if SUB_TEST >= 14
     c_test14,
-#endif /* RUN_LEVEL 14 */
+#endif /* SUB_TEST 14 */
 
-#if RUN_LEVEL >= 15
+#if SUB_TEST >= 15
     c_test15,
-#endif /* RUN_LEVEL 15 */
+#endif /* SUB_TEST 15 */
 
-#if RUN_LEVEL >= 16
+#if SUB_TEST >= 16
     c_test16,
-#endif /* RUN_LEVEL 16 */
+#endif /* SUB_TEST 16 */
 
-#if RUN_LEVEL >= 17
+#if SUB_TEST >= 17
     c_test17,
-#endif /* RUN_LEVEL 17 */
+#endif /* SUB_TEST 17 */
 
-#if RUN_LEVEL >= 18
+#if SUB_TEST >= 18
     c_test18,
-#endif /* RUN_LEVEL 18 */
+#endif /* SUB_TEST 18 */
 
-#if RUN_LEVEL >= 19
+#if SUB_TEST >= 19
     c_test19,
-#endif /* RUN_LEVEL 19 */
+#endif /* SUB_TEST 19 */
 
-#if RUN_LEVEL >= 20
+#if SUB_TEST >= 20
     c_test20,
-#endif /* RUN_LEVEL 20 */
+#endif /* SUB_TEST 20 */
 
-#if RUN_LEVEL >= 21
+#if SUB_TEST >= 21
     c_test21,
-#endif /* RUN_LEVEL 21 */
+#endif /* SUB_TEST 21 */
 
-#if RUN_LEVEL >= 22
+#if SUB_TEST >= 22
     c_test22,
-#endif /* RUN_LEVEL 22 */
+#endif /* SUB_TEST 22 */
 
-#if RUN_LEVEL >= 23
+#if SUB_TEST >= 23
     c_test23,
-#endif /* RUN_LEVEL 23 */
+#endif /* SUB_TEST 23 */
 
-#if RUN_LEVEL >= 24
+#if SUB_TEST >= 24
     c_test24,
-#endif /* RUN_LEVEL 24 */
+#endif /* SUB_TEST 24 */
 
-#if RUN_LEVEL >= 25
+#if SUB_TEST >= 25
     c_test25,
-#endif /* RUN_LEVEL 25 */
+#endif /* SUB_TEST 25 */
 
-#if RUN_LEVEL >= 26
+#if SUB_TEST >= 26
     c_test26,
-#endif /* RUN_LEVEL 26 */
+#endif /* SUB_TEST 26 */
 
-#if RUN_LEVEL >= 27
+#if SUB_TEST >= 27
     c_test27,
-#endif /* RUN_LEVEL 27 */
+#endif /* SUB_TEST 27 */
 
-#if RUN_LEVEL >= 28
+#if SUB_TEST >= 28
     c_test28,
-#endif /* RUN_LEVEL 28 */
+#endif /* SUB_TEST 28 */
 
-#if RUN_LEVEL >= 29
+#if SUB_TEST >= 29
     c_test29,
-#endif /* RUN_LEVEL 29 */
+#endif /* SUB_TEST 29 */
 };
 
-testXX s_test[RUN_LEVEL] =
+testXX s_test[SUB_TEST] =
 {
-#if RUN_LEVEL >=  1
+#if SUB_TEST >=  1
     s_test01,
-#endif /* RUN_LEVEL  1 */
+#endif /* SUB_TEST  1 */
 
-#if RUN_LEVEL >=  2
+#if SUB_TEST >=  2
     s_test02,
-#endif /* RUN_LEVEL  2 */
+#endif /* SUB_TEST  2 */
 
-#if RUN_LEVEL >=  3
+#if SUB_TEST >=  3
     s_test03,
-#endif /* RUN_LEVEL  3 */
+#endif /* SUB_TEST  3 */
 
-#if RUN_LEVEL >=  4
+#if SUB_TEST >=  4
     s_test04,
-#endif /* RUN_LEVEL  4 */
+#endif /* SUB_TEST  4 */
 
-#if RUN_LEVEL >=  5
+#if SUB_TEST >=  5
     s_test05,
-#endif /* RUN_LEVEL  5 */
+#endif /* SUB_TEST  5 */
 
-#if RUN_LEVEL >=  6
+#if SUB_TEST >=  6
     s_test06,
-#endif /* RUN_LEVEL  6 */
+#endif /* SUB_TEST  6 */
 
-#if RUN_LEVEL >=  7
+#if SUB_TEST >=  7
     s_test07,
-#endif /* RUN_LEVEL  7 */
+#endif /* SUB_TEST  7 */
 
-#if RUN_LEVEL >=  8
+#if SUB_TEST >=  8
     s_test08,
-#endif /* RUN_LEVEL  8 */
+#endif /* SUB_TEST  8 */
 
-#if RUN_LEVEL >=  9
+#if SUB_TEST >=  9
     s_test09,
-#endif /* RUN_LEVEL  9 */
+#endif /* SUB_TEST  9 */
 
-#if RUN_LEVEL >= 10
+#if SUB_TEST >= 10
     s_test10,
-#endif /* RUN_LEVEL 10 */
+#endif /* SUB_TEST 10 */
 
-#if RUN_LEVEL >= 11
+#if SUB_TEST >= 11
     s_test11,
-#endif /* RUN_LEVEL 11 */
+#endif /* SUB_TEST 11 */
 
-#if RUN_LEVEL >= 12
+#if SUB_TEST >= 12
     s_test12,
-#endif /* RUN_LEVEL 12 */
+#endif /* SUB_TEST 12 */
 
-#if RUN_LEVEL >= 13
+#if SUB_TEST >= 13
     s_test13,
-#endif /* RUN_LEVEL 13 */
+#endif /* SUB_TEST 13 */
 
-#if RUN_LEVEL >= 14
+#if SUB_TEST >= 14
     s_test14,
-#endif /* RUN_LEVEL 14 */
+#endif /* SUB_TEST 14 */
 
-#if RUN_LEVEL >= 15
+#if SUB_TEST >= 15
     s_test15,
-#endif /* RUN_LEVEL 15 */
+#endif /* SUB_TEST 15 */
 
-#if RUN_LEVEL >= 16
+#if SUB_TEST >= 16
     s_test16,
-#endif /* RUN_LEVEL 16 */
+#endif /* SUB_TEST 16 */
 
-#if RUN_LEVEL >= 17
+#if SUB_TEST >= 17
     s_test17,
-#endif /* RUN_LEVEL 17 */
+#endif /* SUB_TEST 17 */
 
-#if RUN_LEVEL >= 18
+#if SUB_TEST >= 18
     s_test18,
-#endif /* RUN_LEVEL 18 */
+#endif /* SUB_TEST 18 */
 
-#if RUN_LEVEL >= 19
+#if SUB_TEST >= 19
     s_test19,
-#endif /* RUN_LEVEL 19 */
+#endif /* SUB_TEST 19 */
 
-#if RUN_LEVEL >= 20
+#if SUB_TEST >= 20
     s_test20,
-#endif /* RUN_LEVEL 20 */
+#endif /* SUB_TEST 20 */
 
-#if RUN_LEVEL >= 21
+#if SUB_TEST >= 21
     s_test21,
-#endif /* RUN_LEVEL 21 */
+#endif /* SUB_TEST 21 */
 
-#if RUN_LEVEL >= 22
+#if SUB_TEST >= 22
     s_test22,
-#endif /* RUN_LEVEL 22 */
+#endif /* SUB_TEST 22 */
 
-#if RUN_LEVEL >= 23
+#if SUB_TEST >= 23
     s_test23,
-#endif /* RUN_LEVEL 23 */
+#endif /* SUB_TEST 23 */
 
-#if RUN_LEVEL >= 24
+#if SUB_TEST >= 24
     s_test24,
-#endif /* RUN_LEVEL 24 */
+#endif /* SUB_TEST 24 */
 
-#if RUN_LEVEL >= 25
+#if SUB_TEST >= 25
     s_test25,
-#endif /* RUN_LEVEL 25 */
+#endif /* SUB_TEST 25 */
 
-#if RUN_LEVEL >= 26
+#if SUB_TEST >= 26
     s_test26,
-#endif /* RUN_LEVEL 26 */
+#endif /* SUB_TEST 26 */
 
-#if RUN_LEVEL >= 27
+#if SUB_TEST >= 27
     s_test27,
-#endif /* RUN_LEVEL 27 */
+#endif /* SUB_TEST 27 */
 
-#if RUN_LEVEL >= 28
+#if SUB_TEST >= 28
     s_test28,
-#endif /* RUN_LEVEL 28 */
+#endif /* SUB_TEST 28 */
 
-#if RUN_LEVEL >= 29
+#if SUB_TEST >= 29
     s_test29,
-#endif /* RUN_LEVEL 29 */
+#endif /* SUB_TEST 29 */
 };
 
-testXX p_test[RUN_LEVEL] =
+testXX p_test[SUB_TEST] =
 {
-#if RUN_LEVEL >=  1
+#if SUB_TEST >=  1
     p_test01,
-#endif /* RUN_LEVEL  1 */
+#endif /* SUB_TEST  1 */
 
-#if RUN_LEVEL >=  2
+#if SUB_TEST >=  2
     p_test02,
-#endif /* RUN_LEVEL  2 */
+#endif /* SUB_TEST  2 */
 
-#if RUN_LEVEL >=  3
+#if SUB_TEST >=  3
     p_test03,
-#endif /* RUN_LEVEL  3 */
+#endif /* SUB_TEST  3 */
 
-#if RUN_LEVEL >=  4
+#if SUB_TEST >=  4
     p_test04,
-#endif /* RUN_LEVEL  4 */
+#endif /* SUB_TEST  4 */
 
-#if RUN_LEVEL >=  5
+#if SUB_TEST >=  5
     p_test05,
-#endif /* RUN_LEVEL  5 */
+#endif /* SUB_TEST  5 */
 
-#if RUN_LEVEL >=  6
+#if SUB_TEST >=  6
     p_test06,
-#endif /* RUN_LEVEL  6 */
+#endif /* SUB_TEST  6 */
 
-#if RUN_LEVEL >=  7
+#if SUB_TEST >=  7
     p_test07,
-#endif /* RUN_LEVEL  7 */
+#endif /* SUB_TEST  7 */
 
-#if RUN_LEVEL >=  8
+#if SUB_TEST >=  8
     p_test08,
-#endif /* RUN_LEVEL  8 */
+#endif /* SUB_TEST  8 */
 
-#if RUN_LEVEL >=  9
+#if SUB_TEST >=  9
     p_test09,
-#endif /* RUN_LEVEL  9 */
+#endif /* SUB_TEST  9 */
 
-#if RUN_LEVEL >= 10
+#if SUB_TEST >= 10
     p_test10,
-#endif /* RUN_LEVEL 10 */
+#endif /* SUB_TEST 10 */
 
-#if RUN_LEVEL >= 11
+#if SUB_TEST >= 11
     p_test11,
-#endif /* RUN_LEVEL 11 */
+#endif /* SUB_TEST 11 */
 
-#if RUN_LEVEL >= 12
+#if SUB_TEST >= 12
     p_test12,
-#endif /* RUN_LEVEL 12 */
+#endif /* SUB_TEST 12 */
 
-#if RUN_LEVEL >= 13
+#if SUB_TEST >= 13
     p_test13,
-#endif /* RUN_LEVEL 13 */
+#endif /* SUB_TEST 13 */
 
-#if RUN_LEVEL >= 14
+#if SUB_TEST >= 14
     p_test14,
-#endif /* RUN_LEVEL 14 */
+#endif /* SUB_TEST 14 */
 
-#if RUN_LEVEL >= 15
+#if SUB_TEST >= 15
     p_test15,
-#endif /* RUN_LEVEL 15 */
+#endif /* SUB_TEST 15 */
 
-#if RUN_LEVEL >= 16
+#if SUB_TEST >= 16
     p_test16,
-#endif /* RUN_LEVEL 16 */
+#endif /* SUB_TEST 16 */
 
-#if RUN_LEVEL >= 17
+#if SUB_TEST >= 17
     p_test17,
-#endif /* RUN_LEVEL 17 */
+#endif /* SUB_TEST 17 */
 
-#if RUN_LEVEL >= 18
+#if SUB_TEST >= 18
     p_test18,
-#endif /* RUN_LEVEL 18 */
+#endif /* SUB_TEST 18 */
 
-#if RUN_LEVEL >= 19
+#if SUB_TEST >= 19
     p_test19,
-#endif /* RUN_LEVEL 19 */
+#endif /* SUB_TEST 19 */
 
-#if RUN_LEVEL >= 20
+#if SUB_TEST >= 20
     p_test20,
-#endif /* RUN_LEVEL 20 */
+#endif /* SUB_TEST 20 */
 
-#if RUN_LEVEL >= 21
+#if SUB_TEST >= 21
     p_test21,
-#endif /* RUN_LEVEL 21 */
+#endif /* SUB_TEST 21 */
 
-#if RUN_LEVEL >= 22
+#if SUB_TEST >= 22
     p_test22,
-#endif /* RUN_LEVEL 22 */
+#endif /* SUB_TEST 22 */
 
-#if RUN_LEVEL >= 23
+#if SUB_TEST >= 23
     p_test23,
-#endif /* RUN_LEVEL 23 */
+#endif /* SUB_TEST 23 */
 
-#if RUN_LEVEL >= 24
+#if SUB_TEST >= 24
     p_test24,
-#endif /* RUN_LEVEL 24 */
+#endif /* SUB_TEST 24 */
 
-#if RUN_LEVEL >= 25
+#if SUB_TEST >= 25
     p_test25,
-#endif /* RUN_LEVEL 25 */
+#endif /* SUB_TEST 25 */
 
-#if RUN_LEVEL >= 26
+#if SUB_TEST >= 26
     p_test26,
-#endif /* RUN_LEVEL 26 */
+#endif /* SUB_TEST 26 */
 
-#if RUN_LEVEL >= 27
+#if SUB_TEST >= 27
     p_test27,
-#endif /* RUN_LEVEL 27 */
+#endif /* SUB_TEST 27 */
 
-#if RUN_LEVEL >= 28
+#if SUB_TEST >= 28
     p_test28,
-#endif /* RUN_LEVEL 28 */
+#endif /* SUB_TEST 28 */
 
-#if RUN_LEVEL >= 29
+#if SUB_TEST >= 29
     p_test29,
-#endif /* RUN_LEVEL 29 */
+#endif /* SUB_TEST 29 */
 };
 
 /******************************************************************************/
@@ -4729,7 +4729,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
             {
                 t += (argv[k][l-1] - '0') * r;
             }
-            if (t >= 1 && t <= RUN_LEVEL)
+            if (t >= 1 && t <= SUB_TEST)
             {
                 RT_LOGI("Subtest-index-init overridden: %d\n", t);
                 n_init = t-1;
@@ -4746,7 +4746,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
             {
                 t += (argv[k][l-1] - '0') * r;
             }
-            if (t >= 1 && t <= RUN_LEVEL)
+            if (t >= 1 && t <= SUB_TEST)
             {
                 RT_LOGI("Subtest-index-done overridden: %d\n", t);
                 n_done = t-1;
@@ -4967,7 +4967,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 
     for (i = n_init; i <= n_done; i++)
     {
-        RT_LOGI("-------------------  RUN LEVEL = %2d  - ptr/fp = %d%s%d --\n",
+        RT_LOGI("--------------------  SUB TEST = %2d  - ptr/fp = %d%s%d --\n",
                     i+1, RT_POINTER, RT_ADDRESS == 32 ? "_" : "f", RT_ELEMENT);
 
         time1 = get_time();
