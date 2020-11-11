@@ -222,12 +222,33 @@
 #define Mesi    0x06, 0x02, EMPTY       /* [esi + DP] */
 #define Medi    0x07, 0x02, EMPTY       /* [edi + DP] */
 
-#define Iecx    0x04, 0x02, EMITB(0x01) /* [ecx + eax + DP] */
-#define Iedx    0x04, 0x02, EMITB(0x02) /* [edx + eax + DP] */
-#define Iebx    0x04, 0x02, EMITB(0x03) /* [ebx + eax + DP] */
-#define Iebp    0x04, 0x02, EMITB(0x05) /* [ebp + eax + DP] */
-#define Iesi    0x04, 0x02, EMITB(0x06) /* [esi + eax + DP] */
-#define Iedi    0x04, 0x02, EMITB(0x07) /* [edi + eax + DP] */
+#define Iecx    0x04, 0x02, EMITB(0x01) /* [ecx + eax*1 + DP] */
+#define Iedx    0x04, 0x02, EMITB(0x02) /* [edx + eax*1 + DP] */
+#define Iebx    0x04, 0x02, EMITB(0x03) /* [ebx + eax*1 + DP] */
+#define Iebp    0x04, 0x02, EMITB(0x05) /* [ebp + eax*1 + DP] */
+#define Iesi    0x04, 0x02, EMITB(0x06) /* [esi + eax*1 + DP] */
+#define Iedi    0x04, 0x02, EMITB(0x07) /* [edi + eax*1 + DP] */
+
+#define Jecx    0x04, 0x02, EMITB(0x41) /* [ecx + eax*2 + DP] */
+#define Jedx    0x04, 0x02, EMITB(0x42) /* [edx + eax*2 + DP] */
+#define Jebx    0x04, 0x02, EMITB(0x43) /* [ebx + eax*2 + DP] */
+#define Jebp    0x04, 0x02, EMITB(0x45) /* [ebp + eax*2 + DP] */
+#define Jesi    0x04, 0x02, EMITB(0x46) /* [esi + eax*2 + DP] */
+#define Jedi    0x04, 0x02, EMITB(0x47) /* [edi + eax*2 + DP] */
+
+#define Kecx    0x04, 0x02, EMITB(0x81) /* [ecx + eax*4 + DP] */
+#define Kedx    0x04, 0x02, EMITB(0x82) /* [edx + eax*4 + DP] */
+#define Kebx    0x04, 0x02, EMITB(0x83) /* [ebx + eax*4 + DP] */
+#define Kebp    0x04, 0x02, EMITB(0x85) /* [ebp + eax*4 + DP] */
+#define Kesi    0x04, 0x02, EMITB(0x86) /* [esi + eax*4 + DP] */
+#define Kedi    0x04, 0x02, EMITB(0x87) /* [edi + eax*4 + DP] */
+
+#define Lecx    0x04, 0x02, EMITB(0xC1) /* [ecx + eax*8 + DP] */
+#define Ledx    0x04, 0x02, EMITB(0xC2) /* [edx + eax*8 + DP] */
+#define Lebx    0x04, 0x02, EMITB(0xC3) /* [ebx + eax*8 + DP] */
+#define Lebp    0x04, 0x02, EMITB(0xC5) /* [ebp + eax*8 + DP] */
+#define Lesi    0x04, 0x02, EMITB(0xC6) /* [esi + eax*8 + DP] */
+#define Ledi    0x04, 0x02, EMITB(0xC7) /* [edi + eax*8 + DP] */
 
 /* immediate    VAL,  TYP,  CMD            (all immediate types are unsigned) */
 

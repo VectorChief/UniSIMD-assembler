@@ -313,19 +313,61 @@
 #define MegD    0x0D, 0x02, EMPTY       /* [r13d + DP] */
 #define MegE    0x0E, 0x02, EMPTY       /* [r14d + DP] */
 
-#define Iecx    0x04, 0x02, EMITB(0x01) /* [ecx + eax + DP] */
-#define Iedx    0x04, 0x02, EMITB(0x02) /* [edx + eax + DP] */
-#define Iebx    0x04, 0x02, EMITB(0x03) /* [ebx + eax + DP] */
-#define Iebp    0x04, 0x02, EMITB(0x05) /* [ebp + eax + DP] */
-#define Iesi    0x04, 0x02, EMITB(0x06) /* [esi + eax + DP] */
-#define Iedi    0x04, 0x02, EMITB(0x07) /* [edi + eax + DP] */
-#define Ieg8    0x0C, 0x02, EMITB(0x00) /* [r8d + eax + DP] */
-#define Ieg9    0x0C, 0x02, EMITB(0x01) /* [r9d + eax + DP] */
-#define IegA    0x0C, 0x02, EMITB(0x02) /* [r10d + eax + DP] */
-#define IegB    0x0C, 0x02, EMITB(0x03) /* [r11d + eax + DP] */
-#define IegC    0x0C, 0x02, EMITB(0x04) /* [r12d + eax + DP] */
-#define IegD    0x0C, 0x02, EMITB(0x05) /* [r13d + eax + DP] */
-#define IegE    0x0C, 0x02, EMITB(0x06) /* [r14d + eax + DP] */
+#define Iecx    0x04, 0x02, EMITB(0x01) /* [ecx + eax*1 + DP] */
+#define Iedx    0x04, 0x02, EMITB(0x02) /* [edx + eax*1 + DP] */
+#define Iebx    0x04, 0x02, EMITB(0x03) /* [ebx + eax*1 + DP] */
+#define Iebp    0x04, 0x02, EMITB(0x05) /* [ebp + eax*1 + DP] */
+#define Iesi    0x04, 0x02, EMITB(0x06) /* [esi + eax*1 + DP] */
+#define Iedi    0x04, 0x02, EMITB(0x07) /* [edi + eax*1 + DP] */
+#define Ieg8    0x0C, 0x02, EMITB(0x00) /* [r8d + eax*1 + DP] */
+#define Ieg9    0x0C, 0x02, EMITB(0x01) /* [r9d + eax*1 + DP] */
+#define IegA    0x0C, 0x02, EMITB(0x02) /* [r10d + eax*1 + DP] */
+#define IegB    0x0C, 0x02, EMITB(0x03) /* [r11d + eax*1 + DP] */
+#define IegC    0x0C, 0x02, EMITB(0x04) /* [r12d + eax*1 + DP] */
+#define IegD    0x0C, 0x02, EMITB(0x05) /* [r13d + eax*1 + DP] */
+#define IegE    0x0C, 0x02, EMITB(0x06) /* [r14d + eax*1 + DP] */
+
+#define Jecx    0x04, 0x02, EMITB(0x41) /* [ecx + eax*2 + DP] */
+#define Jedx    0x04, 0x02, EMITB(0x42) /* [edx + eax*2 + DP] */
+#define Jebx    0x04, 0x02, EMITB(0x43) /* [ebx + eax*2 + DP] */
+#define Jebp    0x04, 0x02, EMITB(0x45) /* [ebp + eax*2 + DP] */
+#define Jesi    0x04, 0x02, EMITB(0x46) /* [esi + eax*2 + DP] */
+#define Jedi    0x04, 0x02, EMITB(0x47) /* [edi + eax*2 + DP] */
+#define Jeg8    0x0C, 0x02, EMITB(0x40) /* [r8d + eax*2 + DP] */
+#define Jeg9    0x0C, 0x02, EMITB(0x41) /* [r9d + eax*2 + DP] */
+#define JegA    0x0C, 0x02, EMITB(0x42) /* [r10d + eax*2 + DP] */
+#define JegB    0x0C, 0x02, EMITB(0x43) /* [r11d + eax*2 + DP] */
+#define JegC    0x0C, 0x02, EMITB(0x44) /* [r12d + eax*2 + DP] */
+#define JegD    0x0C, 0x02, EMITB(0x45) /* [r13d + eax*2 + DP] */
+#define JegE    0x0C, 0x02, EMITB(0x46) /* [r14d + eax*2 + DP] */
+
+#define Kecx    0x04, 0x02, EMITB(0x81) /* [ecx + eax*4 + DP] */
+#define Kedx    0x04, 0x02, EMITB(0x82) /* [edx + eax*4 + DP] */
+#define Kebx    0x04, 0x02, EMITB(0x83) /* [ebx + eax*4 + DP] */
+#define Kebp    0x04, 0x02, EMITB(0x85) /* [ebp + eax*4 + DP] */
+#define Kesi    0x04, 0x02, EMITB(0x86) /* [esi + eax*4 + DP] */
+#define Kedi    0x04, 0x02, EMITB(0x87) /* [edi + eax*4 + DP] */
+#define Keg8    0x0C, 0x02, EMITB(0x80) /* [r8d + eax*4 + DP] */
+#define Keg9    0x0C, 0x02, EMITB(0x81) /* [r9d + eax*4 + DP] */
+#define KegA    0x0C, 0x02, EMITB(0x82) /* [r10d + eax*4 + DP] */
+#define KegB    0x0C, 0x02, EMITB(0x83) /* [r11d + eax*4 + DP] */
+#define KegC    0x0C, 0x02, EMITB(0x84) /* [r12d + eax*4 + DP] */
+#define KegD    0x0C, 0x02, EMITB(0x85) /* [r13d + eax*4 + DP] */
+#define KegE    0x0C, 0x02, EMITB(0x86) /* [r14d + eax*4 + DP] */
+
+#define Lecx    0x04, 0x02, EMITB(0xC1) /* [ecx + eax*8 + DP] */
+#define Ledx    0x04, 0x02, EMITB(0xC2) /* [edx + eax*8 + DP] */
+#define Lebx    0x04, 0x02, EMITB(0xC3) /* [ebx + eax*8 + DP] */
+#define Lebp    0x04, 0x02, EMITB(0xC5) /* [ebp + eax*8 + DP] */
+#define Lesi    0x04, 0x02, EMITB(0xC6) /* [esi + eax*8 + DP] */
+#define Ledi    0x04, 0x02, EMITB(0xC7) /* [edi + eax*8 + DP] */
+#define Leg8    0x0C, 0x02, EMITB(0xC0) /* [r8d + eax*8 + DP] */
+#define Leg9    0x0C, 0x02, EMITB(0xC1) /* [r9d + eax*8 + DP] */
+#define LegA    0x0C, 0x02, EMITB(0xC2) /* [r10d + eax*8 + DP] */
+#define LegB    0x0C, 0x02, EMITB(0xC3) /* [r11d + eax*8 + DP] */
+#define LegC    0x0C, 0x02, EMITB(0xC4) /* [r12d + eax*8 + DP] */
+#define LegD    0x0C, 0x02, EMITB(0xC5) /* [r13d + eax*8 + DP] */
+#define LegE    0x0C, 0x02, EMITB(0xC6) /* [r14d + eax*8 + DP] */
 
 /* immediate    VAL,  TYP,  CMD            (all immediate types are unsigned) */
 

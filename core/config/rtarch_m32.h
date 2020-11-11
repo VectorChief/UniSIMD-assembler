@@ -154,6 +154,8 @@
             sib  cdp(brm, vdp)  cim(reg, vim)
 
 #define ADR ((A-1)*0x0000000C)
+#define SLL ((A-1)*0x00000038)
+#define LSA ((A-1)*0x00000010)
 
 #define EMPTY1(em1) em1
 #define EMPTY2(em1, em2) em1 em2
@@ -324,6 +326,135 @@
 #define IegC    TegC, TPxx, EMITW(0x00000021 | MRM(TPxx, TegC, Teax) | ADR)
 #define IegD    TegD, TPxx, EMITW(0x00000021 | MRM(TPxx, TegD, Teax) | ADR)
 #define IegE    TegE, TPxx, EMITW(0x00000021 | MRM(TPxx, TegE, Teax) | ADR)
+
+#if (RT_BASE_COMPAT_REV < 6) /* pre-r6 */
+
+#define Jecx    Tecx, TPxx, EMITW(0x00000040 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tecx, TPxx) | ADR)
+#define Jedx    Tedx, TPxx, EMITW(0x00000040 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tedx, TPxx) | ADR)
+#define Jebx    Tebx, TPxx, EMITW(0x00000040 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tebx, TPxx) | ADR)
+#define Jebp    Tebp, TPxx, EMITW(0x00000040 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tebp, TPxx) | ADR)
+#define Jesi    Tesi, TPxx, EMITW(0x00000040 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tesi, TPxx) | ADR)
+#define Jedi    Tedi, TPxx, EMITW(0x00000040 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tedi, TPxx) | ADR)
+#define Jeg8    Teg8, TPxx, EMITW(0x00000040 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Teg8, TPxx) | ADR)
+#define Jeg9    Teg9, TPxx, EMITW(0x00000040 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Teg9, TPxx) | ADR)
+#define JegA    TegA, TPxx, EMITW(0x00000040 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, TegA, TPxx) | ADR)
+#define JegB    TegB, TPxx, EMITW(0x00000040 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, TegB, TPxx) | ADR)
+#define JegC    TegC, TPxx, EMITW(0x00000040 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, TegC, TPxx) | ADR)
+#define JegD    TegD, TPxx, EMITW(0x00000040 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, TegD, TPxx) | ADR)
+#define JegE    TegE, TPxx, EMITW(0x00000040 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, TegE, TPxx) | ADR)
+
+#define Kecx    Tecx, TPxx, EMITW(0x00000080 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tecx, TPxx) | ADR)
+#define Kedx    Tedx, TPxx, EMITW(0x00000080 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tedx, TPxx) | ADR)
+#define Kebx    Tebx, TPxx, EMITW(0x00000080 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tebx, TPxx) | ADR)
+#define Kebp    Tebp, TPxx, EMITW(0x00000080 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tebp, TPxx) | ADR)
+#define Kesi    Tesi, TPxx, EMITW(0x00000080 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tesi, TPxx) | ADR)
+#define Kedi    Tedi, TPxx, EMITW(0x00000080 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tedi, TPxx) | ADR)
+#define Keg8    Teg8, TPxx, EMITW(0x00000080 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Teg8, TPxx) | ADR)
+#define Keg9    Teg9, TPxx, EMITW(0x00000080 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Teg9, TPxx) | ADR)
+#define KegA    TegA, TPxx, EMITW(0x00000080 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, TegA, TPxx) | ADR)
+#define KegB    TegB, TPxx, EMITW(0x00000080 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, TegB, TPxx) | ADR)
+#define KegC    TegC, TPxx, EMITW(0x00000080 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, TegC, TPxx) | ADR)
+#define KegD    TegD, TPxx, EMITW(0x00000080 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, TegD, TPxx) | ADR)
+#define KegE    TegE, TPxx, EMITW(0x00000080 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, TegE, TPxx) | ADR)
+
+#define Lecx    Tecx, TPxx, EMITW(0x000000C0 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tecx, TPxx) | ADR)
+#define Ledx    Tedx, TPxx, EMITW(0x000000C0 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tedx, TPxx) | ADR)
+#define Lebx    Tebx, TPxx, EMITW(0x000000C0 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tebx, TPxx) | ADR)
+#define Lebp    Tebp, TPxx, EMITW(0x000000C0 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tebp, TPxx) | ADR)
+#define Lesi    Tesi, TPxx, EMITW(0x000000C0 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tesi, TPxx) | ADR)
+#define Ledi    Tedi, TPxx, EMITW(0x000000C0 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Tedi, TPxx) | ADR)
+#define Leg8    Teg8, TPxx, EMITW(0x000000C0 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Teg8, TPxx) | ADR)
+#define Leg9    Teg9, TPxx, EMITW(0x000000C0 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, Teg9, TPxx) | ADR)
+#define LegA    TegA, TPxx, EMITW(0x000000C0 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, TegA, TPxx) | ADR)
+#define LegB    TegB, TPxx, EMITW(0x000000C0 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, TegB, TPxx) | ADR)
+#define LegC    TegC, TPxx, EMITW(0x000000C0 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, TegC, TPxx) | ADR)
+#define LegD    TegD, TPxx, EMITW(0x000000C0 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, TegD, TPxx) | ADR)
+#define LegE    TegE, TPxx, EMITW(0x000000C0 | MSM(TPxx, Teax, 0x00) | SLL) \
+                            EMITW(0x00000021 | MRM(TPxx, TegE, TPxx) | ADR)
+
+#else /* RT_BASE_COMPAT_REV >= 6 : r6 */
+
+#define Jecx    Tecx, TPxx, EMITW(0x00000005 | MSM(TPxx, Tecx, Teax) | LSA)
+#define Jedx    Tedx, TPxx, EMITW(0x00000005 | MSM(TPxx, Tedx, Teax) | LSA)
+#define Jebx    Tebx, TPxx, EMITW(0x00000005 | MSM(TPxx, Tebx, Teax) | LSA)
+#define Jebp    Tebp, TPxx, EMITW(0x00000005 | MSM(TPxx, Tebp, Teax) | LSA)
+#define Jesi    Tesi, TPxx, EMITW(0x00000005 | MSM(TPxx, Tesi, Teax) | LSA)
+#define Jedi    Tedi, TPxx, EMITW(0x00000005 | MSM(TPxx, Tedi, Teax) | LSA)
+#define Jeg8    Teg8, TPxx, EMITW(0x00000005 | MSM(TPxx, Teg8, Teax) | LSA)
+#define Jeg9    Teg9, TPxx, EMITW(0x00000005 | MSM(TPxx, Teg9, Teax) | LSA)
+#define JegA    TegA, TPxx, EMITW(0x00000005 | MSM(TPxx, TegA, Teax) | LSA)
+#define JegB    TegB, TPxx, EMITW(0x00000005 | MSM(TPxx, TegB, Teax) | LSA)
+#define JegC    TegC, TPxx, EMITW(0x00000005 | MSM(TPxx, TegC, Teax) | LSA)
+#define JegD    TegD, TPxx, EMITW(0x00000005 | MSM(TPxx, TegD, Teax) | LSA)
+#define JegE    TegE, TPxx, EMITW(0x00000005 | MSM(TPxx, TegE, Teax) | LSA)
+
+#define Kecx    Tecx, TPxx, EMITW(0x00000045 | MSM(TPxx, Tecx, Teax) | LSA)
+#define Kedx    Tedx, TPxx, EMITW(0x00000045 | MSM(TPxx, Tedx, Teax) | LSA)
+#define Kebx    Tebx, TPxx, EMITW(0x00000045 | MSM(TPxx, Tebx, Teax) | LSA)
+#define Kebp    Tebp, TPxx, EMITW(0x00000045 | MSM(TPxx, Tebp, Teax) | LSA)
+#define Kesi    Tesi, TPxx, EMITW(0x00000045 | MSM(TPxx, Tesi, Teax) | LSA)
+#define Kedi    Tedi, TPxx, EMITW(0x00000045 | MSM(TPxx, Tedi, Teax) | LSA)
+#define Keg8    Teg8, TPxx, EMITW(0x00000045 | MSM(TPxx, Teg8, Teax) | LSA)
+#define Keg9    Teg9, TPxx, EMITW(0x00000045 | MSM(TPxx, Teg9, Teax) | LSA)
+#define KegA    TegA, TPxx, EMITW(0x00000045 | MSM(TPxx, TegA, Teax) | LSA)
+#define KegB    TegB, TPxx, EMITW(0x00000045 | MSM(TPxx, TegB, Teax) | LSA)
+#define KegC    TegC, TPxx, EMITW(0x00000045 | MSM(TPxx, TegC, Teax) | LSA)
+#define KegD    TegD, TPxx, EMITW(0x00000045 | MSM(TPxx, TegD, Teax) | LSA)
+#define KegE    TegE, TPxx, EMITW(0x00000045 | MSM(TPxx, TegE, Teax) | LSA)
+
+#define Lecx    Tecx, TPxx, EMITW(0x00000085 | MSM(TPxx, Tecx, Teax) | LSA)
+#define Ledx    Tedx, TPxx, EMITW(0x00000085 | MSM(TPxx, Tedx, Teax) | LSA)
+#define Lebx    Tebx, TPxx, EMITW(0x00000085 | MSM(TPxx, Tebx, Teax) | LSA)
+#define Lebp    Tebp, TPxx, EMITW(0x00000085 | MSM(TPxx, Tebp, Teax) | LSA)
+#define Lesi    Tesi, TPxx, EMITW(0x00000085 | MSM(TPxx, Tesi, Teax) | LSA)
+#define Ledi    Tedi, TPxx, EMITW(0x00000085 | MSM(TPxx, Tedi, Teax) | LSA)
+#define Leg8    Teg8, TPxx, EMITW(0x00000085 | MSM(TPxx, Teg8, Teax) | LSA)
+#define Leg9    Teg9, TPxx, EMITW(0x00000085 | MSM(TPxx, Teg9, Teax) | LSA)
+#define LegA    TegA, TPxx, EMITW(0x00000085 | MSM(TPxx, TegA, Teax) | LSA)
+#define LegB    TegB, TPxx, EMITW(0x00000085 | MSM(TPxx, TegB, Teax) | LSA)
+#define LegC    TegC, TPxx, EMITW(0x00000085 | MSM(TPxx, TegC, Teax) | LSA)
+#define LegD    TegD, TPxx, EMITW(0x00000085 | MSM(TPxx, TegD, Teax) | LSA)
+#define LegE    TegE, TPxx, EMITW(0x00000085 | MSM(TPxx, TegE, Teax) | LSA)
+
+#endif /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
 /* immediate    VAL,  TP1,  TP2            (all immediate types are unsigned) */
 
