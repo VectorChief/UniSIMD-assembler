@@ -1089,6 +1089,8 @@
 /* rem (G = G % S)
  * set-flags: undefined */
 
+#if RT_BASE_COMPAT_REM == 0
+
 #define remzx_ri(RG, IS)       /* Redx cannot be used as first operand */   \
         stack_st(Redx)                                                      \
         movzx_rr(Redx, W(RG))                                               \
@@ -1161,6 +1163,55 @@
 #define remzn_xm(MS, DS)    /* to be placed immediately after divzn_xm */   \
         EMITW(0x7C0001D2 | MRM(TMxx,    Teax,    TMxx))                     \
         EMITW(0x7C000050 | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
+
+#else /* RT_BASE_COMPAT_REM != 0 */
+
+#define remzx_ri(RG, IS)       /* Redx cannot be used as first operand */   \
+        AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IS))   \
+        EMITW(0x7C000212 | MTM(REG(RG), REG(RG), TIxx))
+
+#define remzx_rr(RG, RS)                /* RG no Redx, RS no Reax/Redx */   \
+        EMITW(0x7C000212 | MTM(REG(RG), REG(RG), REG(RS)))
+
+#define remzx_ld(RG, MS, DS)            /* RG no Redx, MS no Oeax/Medx */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), F1(DS)))  \
+        EMITW(0x7C000212 | MTM(REG(RG), REG(RG), TMxx))
+
+
+#define remzn_ri(RG, IS)       /* Redx cannot be used as first operand */   \
+        AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IS))   \
+        EMITW(0x7C000612 | MTM(REG(RG), REG(RG), TIxx))
+
+#define remzn_rr(RG, RS)                /* RG no Redx, RS no Reax/Redx */   \
+        EMITW(0x7C000612 | MTM(REG(RG), REG(RG), REG(RS)))
+
+#define remzn_ld(RG, MS, DS)            /* RG no Redx, MS no Oeax/Medx */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), F1(DS)))  \
+        EMITW(0x7C000612 | MTM(REG(RG), REG(RG), TMxx))
+
+
+#define remzx_xx()          /* to be placed immediately prior divzx_x* */   \
+        movzx_rr(Redx, Reax)         /* to prepare for rem calculation */
+
+#define remzx_xr(RS)        /* to be placed immediately after divzx_xr */   \
+        EMITW(0x7C000212 | MTM(Tedx,    Tedx,    REG(RS)))/* Redx<-rem */
+
+#define remzx_xm(MS, DS)    /* to be placed immediately after divzx_xm */   \
+        EMITW(0x7C000212 | MTM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
+
+
+#define remzn_xx()          /* to be placed immediately prior divzn_x* */   \
+        movzx_rr(Redx, Reax)         /* to prepare for rem calculation */
+
+#define remzn_xr(RS)        /* to be placed immediately after divzn_xr */   \
+        EMITW(0x7C000612 | MTM(Tedx,    Tedx,    REG(RS)))/* Redx<-rem */
+
+#define remzn_xm(MS, DS)    /* to be placed immediately after divzn_xm */   \
+        EMITW(0x7C000612 | MTM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
+
+#endif /* RT_BASE_COMPAT_REM != 0 */
 
 /* arj (G = G op S, if cc G then jump lb)
  * set-flags: undefined
