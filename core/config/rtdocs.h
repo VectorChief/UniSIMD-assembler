@@ -200,7 +200,8 @@
  * The use of Reax is reserved for indexed addressing mode in the form of I***
  * (like Iebx, Iecx, Iedx, ...) in which case the address is calculated as a sum
  * of R*** + Reax + displacement, where R*** is the BASE register encoded in the
- * addressing mode. Reax is also used for plain addressing mode (Oeax) without
+ * addressing mode. Scaled indexed addressing modes are supported as J***, K***,
+ * L*** definitions. Reax is also used for plain addressing mode (Oeax) without
  * displacement in which case PLAIN is passed as a displacement to cmd**_ld/st
  * instructions.
  */
