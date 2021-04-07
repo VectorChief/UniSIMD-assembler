@@ -106,6 +106,7 @@ simd_test_w64f64avx512:
 # Prerequisites for the build:
 # TDM64-GCC compiler for Win32/64 is installed and in the PATH variable.
 # Download tdm64-gcc-5.1.0-2.exe from sourceforge and run the installer.
+# Alternatively download and install tdm64-gcc-9.2.0.exe from github.
 #
 # Compiling/running SIMD test:
 # run simd_make_w64.bat from Windows Explorer or
