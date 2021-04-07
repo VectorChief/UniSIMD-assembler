@@ -21,18 +21,24 @@
  * Alphabetical view of current/future instruction namespaces:
  *
  * cmda*_** - SIMD-data args, SIMD ISA (data element is 16-bit, packed-256-bit)
+ * cmdab_** - SIMD-data args, uint ISA (packed byte-int subset, packed-256-bit)
+ * cmdac_** - SIMD-data args, sint ISA (packed char-int subset, packed-256-bit)
  * cmdb*_** - byte-size args, BASE ISA (displacement/alignment may differ)
  * cmdc*_** - SIMD-data args, SIMD ISA (data element is 32-bit, packed-256-bit)
  * cmdd*_** - SIMD-data args, SIMD ISA (data element is 64-bit, packed-256-bit)
  * cmde*_** - extd-size args, extd ISA (for 80-bit extended double, x87)
  * cmdf*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed-256-bit)
  * cmdg*_** - SIMD-data args, SIMD ISA (data element is 16-bit, packed-128-bit)
+ * cmdgb_** - SIMD-data args, uint ISA (packed byte-int subset, packed-128-bit)
+ * cmdgc_** - SIMD-data args, sint ISA (packed char-int subset, packed-128-bit)
  * cmdh*_** - half-size args, BASE ISA (displacement/alignment may differ)
  * cmdi*_** - SIMD-data args, SIMD ISA (data element is 32-bit, packed-128-bit)
  * cmdj*_** - SIMD-data args, SIMD ISA (data element is 64-bit, packed-128-bit)
  * cmdk*_** - king-kong args, BASE ISA (for 128-bit BASE subset, RISC-V)
  * cmdl*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed-128-bit)
  * cmdm*_** - SIMD-data args, SIMD ISA (packed fp16/int subset, half-precision)
+ * cmdmb_** - SIMD-data args, uint ISA (packed byte-int subset, unsigned 8-bit)
+ * cmdmc_** - SIMD-data args, sint ISA (packed char-int subset,   signed 8-bit)
  * cmdn*_** - SIMD-elem args, ELEM ISA (scalar fp16/int subset, half-precision)
  * cmdo*_** - SIMD-data args, SIMD ISA (data element is 32-bit, packed)
  * cmdp*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed)
@@ -46,6 +52,21 @@
  * cmdx*_** - addr-size args, BASE ISA (32/64-bit configurable with RT_ADDRESS)
  * cmdy*_** - elem-size args, BASE ISA (32/64-bit configurable with RT_ELEMENT)
  * cmdz*_** - full-size args, BASE ISA (data element is always fixed at 64-bit)
+ *
+ * cmd*x_** - default (unsigned int) args independent of size configuration
+ * cmd*n_** - negatable (signed int) args independent of size configuration
+ * cmd*s_** - scalable (floating point) args independent of size configuration
+ * cmd*b_** - default (unsigned int) byte args as extension to 16-bit SIMD ISA
+ * cmd*c_** - negatable (signed int) char args as extension to 16-bit SIMD ISA
+ *
+ * cmd**_rr - reg-reg args list (1st reg is modified)
+ * cmd**_ri - reg-imm args list (accepts I* imm args)
+ * cmd**_rm - reg-mem args list (used for compare ops)
+ * cmd**_ld - reg-mem args list (friendly alias to rm, when reg is modified)
+ * cmd**_mr - mem-reg args list (used for compare ops)
+ * cmd**_st - reg-mem args list (friendly alias to mr, when mem is modified)
+ * cmd**_xr - fix-reg args list (1st reg is fixed)
+ * cmd**_rx - reg-fix args list (2nd reg is fixed)
  *
  * More detailed description of the above is given in rtarch.h.
  */
