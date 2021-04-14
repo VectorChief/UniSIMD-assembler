@@ -14,7 +14,18 @@
   - add preliminary support for POWER9 fp128 SIMD ops (not tested)
   - add preliminary support for ARMv8.2 fp16 SIMD ops (not tested)
 
-v1.0.0d: UniSIMD, code name "ENsed+d"
+v1.0.0e: UniSIMD, code name "ENsed+e", 2021 extended support
+  - clarify instructions for POWER8 server, Raspberry Pi 3/4
+  - update links and comments in project files
+  - make comment for compiler swapping on MIPS more generic
+  - update mappings for byte/char SIMD ops
+  - update TDM64-GCC compiler reference to version 9.2.0
+  - update copyright year to 2021
+  - update comments for remainders and scaled addressing
+  - optimize remainder ops on POWER9
+  - add scaled-indexed addressing modes
+
+v1.0.0d: UniSIMD, code name "ENsed+d", documentation edition
   - clean up task descriptions in roadmap
   - add notes for Ubuntu, QEMU, MIPS cross-compilers
   - add Ubuntu (MATE) 20.04 LTS to makefile notes
