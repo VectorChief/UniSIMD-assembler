@@ -125,7 +125,6 @@ V) Task title: "add support for various new and existing architectures"
    (https://en.wikipedia.org/wiki/SW26010)
 3) Add support for Loongson 3 (GS464E) with LoongSIMD ops as well as MIPS64r3
    (https://en.wikipedia.org/wiki/Loongson)
-   (https://www.imgtec.com/blog/loongson-mips64-processors-performance-barrier/)
 4) Add support for SPARC64 VIIIfx HPC-ACE SIMD extensions as well as BASE ops
    (http://www.fujitsu.com/downloads/TC/sparc64viiifx-extensions.pdf)
 5) Add support for ELBRUS architecture, emulate SIMD with VLIW (plus Itanium)
