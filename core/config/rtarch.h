@@ -1325,6 +1325,23 @@
 #define RT_BASE_COMPAT_ZFL      1 /* only necessary on POWER */
 #endif /* RT_BASE_COMPAT_ZFL */
 
+/* RT_BASE_COMPAT_REM when enabled changes the default behavior
+ * of remainder instructions to their ISA 3.0 implementation */
+#ifdef  RT_SIMD_CODE
+#undef  RT_BASE_COMPAT_REM
+#define RT_BASE_COMPAT_REM 0 /* no int-rem for pre-POWER9 pre-ISA3.0 CPUs */
+#if   (RT_128X1 == 2 || RT_128X1 == 8) && (RT_SIMD == 128)
+#undef  RT_BASE_COMPAT_REM
+#define RT_BASE_COMPAT_REM 9 /* enable int-rem when SIMD target is chosen */
+#elif (RT_128X2 == 2 || RT_128X2 == 8) && (RT_SIMD == 256)
+#undef  RT_BASE_COMPAT_REM
+#define RT_BASE_COMPAT_REM 9 /* enable int-rem when SIMD target is chosen */
+#elif (RT_128X4 == 2) && (RT_SIMD == 512)
+#undef  RT_BASE_COMPAT_REM
+#define RT_BASE_COMPAT_REM 9 /* enable int-rem when SIMD target is chosen */
+#endif /* RT_SIMD: 128, 256, 512 */
+#endif /* RT_SIMD_CODE */
+
 #if   (RT_2K8X1 != 0) && (RT_SIMD == 2048)
 #error "PowerPC doesn't support SIMD wider than 128-bit, check build flags"
 #elif (RT_1K4X2 != 0) && (RT_SIMD == 2048)

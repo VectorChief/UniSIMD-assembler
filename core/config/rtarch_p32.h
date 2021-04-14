@@ -156,6 +156,22 @@
 #define AUW(sib, vim, reg, brm, vdp, cdp, cim)                              \
             sib  cdp(brm, vdp)  cim(reg, vim)
 
+#if   (defined RT_P32)
+
+#ifdef RT_BASE_COMPAT_REM
+#undef  RT_P32
+#define RT_P32 RT_BASE_COMPAT_REM /* 0-8 - generic, 9 - POWER9 (ISA 3.0) */
+#endif /* RT_BASE_COMPAT_REM */
+
+#elif (defined RT_P64)
+
+#ifdef RT_BASE_COMPAT_REM
+#undef  RT_P64
+#define RT_P64 RT_BASE_COMPAT_REM /* 0-8 - generic, 9 - POWER9 (ISA 3.0) */
+#endif /* RT_BASE_COMPAT_REM */
+
+#endif /* defined (RT_P32, RT_P64) */
+
 #define EMPTY1(em1) em1
 #define EMPTY2(em1, em2) em1 em2
 
@@ -1716,6 +1732,8 @@
 /* rem (G = G % S)
  * set-flags: undefined */
 
+#if RT_BASE_COMPAT_REM == 0
+
 #define remwx_ri(RG, IS)       /* Redx cannot be used as first operand */   \
         stack_st(Redx)                                                      \
         movwx_rr(Redx, W(RG))                                               \
@@ -1788,6 +1806,55 @@
 #define remwn_xm(MS, DS)    /* to be placed immediately after divwn_xm */   \
         EMITW(0x7C0001D6 | MRM(TMxx,    Teax,    TMxx))                     \
         EMITW(0x7C000050 | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
+
+#else /* RT_BASE_COMPAT_REM != 0 */
+
+#define remwx_ri(RG, IS)       /* Redx cannot be used as first operand */   \
+        AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IS))   \
+        EMITW(0x7C000216 | MTM(REG(RG), REG(RG), TIxx))
+
+#define remwx_rr(RG, RS)                /* RG no Redx, RS no Reax/Redx */   \
+        EMITW(0x7C000216 | MTM(REG(RG), REG(RG), REG(RS)))
+
+#define remwx_ld(RG, MS, DS)            /* RG no Redx, MS no Oeax/Medx */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x7C000216 | MTM(REG(RG), REG(RG), TMxx))
+
+
+#define remwn_ri(RG, IS)       /* Redx cannot be used as first operand */   \
+        AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G3(IS))   \
+        EMITW(0x7C000616 | MTM(REG(RG), REG(RG), TIxx))
+
+#define remwn_rr(RG, RS)                /* RG no Redx, RS no Reax/Redx */   \
+        EMITW(0x7C000616 | MTM(REG(RG), REG(RG), REG(RS)))
+
+#define remwn_ld(RG, MS, DS)            /* RG no Redx, MS no Oeax/Medx */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x7C000616 | MTM(REG(RG), REG(RG), TMxx))
+
+
+#define remwx_xx()          /* to be placed immediately prior divwx_x* */   \
+        movwx_rr(Redx, Reax)         /* to prepare for rem calculation */
+
+#define remwx_xr(RS)        /* to be placed immediately after divwx_xr */   \
+        EMITW(0x7C000216 | MTM(Tedx,    Tedx,    REG(RS)))/* Redx<-rem */
+
+#define remwx_xm(MS, DS)    /* to be placed immediately after divwx_xm */   \
+        EMITW(0x7C000216 | MTM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
+
+
+#define remwn_xx()          /* to be placed immediately prior divwn_x* */   \
+        movwx_rr(Redx, Reax)         /* to prepare for rem calculation */
+
+#define remwn_xr(RS)        /* to be placed immediately after divwn_xr */   \
+        EMITW(0x7C000616 | MTM(Tedx,    Tedx,    REG(RS)))/* Redx<-rem */
+
+#define remwn_xm(MS, DS)    /* to be placed immediately after divwn_xm */   \
+        EMITW(0x7C000616 | MTM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
+
+#endif /* RT_BASE_COMPAT_REM != 0 */
 
 /* arj (G = G op S, if cc G then jump lb)
  * set-flags: undefined
