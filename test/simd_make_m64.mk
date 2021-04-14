@@ -91,8 +91,8 @@ simd_test_m64f64Br6:
 # Starting from Ubuntu (MATE) 19.10 upstream (cross-)compiler supports MSA.
 # sudo apt-get install make g++-mipsisa64r6el-linux-gnuabi64
 # sudo apt-get install make g++-mipsisa64r6-linux-gnuabi64
-# (replace mips-mti-linux-gnu-g++ with mipsisa64r6el-linux-gnuabi64-g++ for LE)
-# (replace mips-mti-linux-gnu-g++ with mipsisa64r6-linux-gnuabi64-g++ for BE)
+# (replace mips-mti-linux-gnu with mipsisa64r6el-linux-gnuabi64 for LE)
+# (replace mips-mti-linux-gnu with mipsisa64r6-linux-gnuabi64 for BE)
 #
 # Prerequisites for emulation:
 # recent QEMU(-2.7) is installed or built from source and in the PATH variable.
