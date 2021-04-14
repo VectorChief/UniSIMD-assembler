@@ -8621,7 +8621,7 @@
  * of higher performance on MIPS and POWER use combined-compare-jump (cmj).
  * Not all canonical forms of BASE instructions have efficient implementation.
  * For example, some forms of shifts and division use stack ops on x86 targets,
- * while standalone remainder operations can only be done natively on MIPS.
+ * while standalone remainders can only be done natively on MIPSr6 and POWER9.
  * Consider using special fixed-register forms for maximum performance.
  *
  * Argument x-register (implied) is fixed by the implementation.
