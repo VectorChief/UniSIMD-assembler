@@ -117,6 +117,53 @@ Use "-c 1" option to reduce test time when emulating with Intel SDE.
 
 ================================================================================
 
+To experiment with Linux in little-endian mode on POWER8 server consider:
+
+1) Ubuntu Server 16.04.06 Xenial Xerus (ppc64el) from 27-Feb-2019:
+    https://cdimage.ubuntu.com/releases/16.04/release/
+    ubuntu-16.04.6-server-ppc64el.iso
+
+2) Ubuntu Server 18.04.05 Bionic Beaver (ppc64el) from 10-Aug-2020:
+    https://cdimage.ubuntu.com/releases/18.04/release/
+    ubuntu-18.04.5-server-ppc64el.iso
+
+3) Ubuntu Server 20.04.02 Focal Fossa (ppc64el) from 01-Feb-2021:
+    https://cdimage.ubuntu.com/releases/20.04/release/
+    ubuntu-20.04.2-live-server-ppc64el.iso
+
+The images were tested on Tyan Habanero TN71-BP012 10-core POWER8 server
+with installation instructions described here:
+https://www.phoronix.com/scan.php?page=article&item=tyan-power8-server&num=1
+
+Before an installation can proceed the following steps may need to be performed
+on the first boot. Switch to tty2 with Alt-F2, activate the tty as the message
+requests by pressing <enter>, run /sbin/debian-installer.
+
+When booting Ubuntu Server offline for the first time the login prompt
+is often presented too early in the process and a few minutes time
+needs to be taken before SSH authorization becomes workable.
+
+When online Ubuntu may start unattended-upgr process which holds the lock
+preventing installation of other packages for a few minutes until the process
+is complete and the lock is released (run top to monitor, q to quit monitoring).
+
+To install XFCE once the system is up and running:
+    sudo apt-get update
+    sudo apt-get install xfce4 (choose keyboard layout)
+    reboot (for XFCE to honour chosen keyboard layout)
+    startx (choose "Use default config" on first start)
+    (launch terminal window in XFCE from the bottom panel)
+    sudo apt-get install firefox-esr unzip
+    reboot (login again and "startx" into XFCE)
+    (firefox is now available under "Internet" section of the main menu)
+    sudo apt-get install make g++
+    (add "universe multiverse" to "main restricted" in /etc/apt/sources.list)
+    (sudo nano /etc/apt/sources.list, Ctrl-O to save, Ctrl-X to exit), then run:
+    sudo apt-get update
+    sudo apt-get install clang
+
+================================================================================
+
 To experiment with Linux in AArch64 mode on Raspberry Pi 3 consider:
 
 1) Devuan ASCII 2.0.0 plain (arm64 raspi3) image from 06-Jun-2018:
@@ -194,7 +241,7 @@ to setup ARM Instruction Emulator for SVE on AArch64 hosts, install modules:
 adjust UniSIMD's makefiles to use g++ instead of triplet name, remove -static
     leafpad simd_make_a64.mk & (once archive is downloaded as shown below)
 
-Download the archive from github.com and unpack it (in terminal window):
+Download the archive from github and unpack it (in terminal window):
     cd Downloads
     (alternatively to using a browser for downloading, use wget from terminal)
     (wget https://github.com/VectorChief/UniSIMD-assembler/archive/master.zip)
@@ -204,7 +251,7 @@ Download the archive from github.com and unpack it (in terminal window):
     make -f simd_make_a64.mk -j4
     ./simd_test.a64f32
 
-Download the ARM IE and install it (Ubuntu16.04 for Devuan, SUSE12 for SUSE):
+Download the ARM IE and install it (Ubuntu_16.04 for Devuan, SUSE_12 for SUSE):
 https://developer.arm.com/tools-and-software/server-and-hpc/
                        /compile/arm-instruction-emulator/get-software/download
     cd Downloads
@@ -255,6 +302,10 @@ from a regular Ubuntu desktop. It will unpack *.xz internally in the process.
 Once booted the image will automatically resize the root partition to fully
 utilize all space available on an SD card and proceed to install the system.
 
+When online Ubuntu may start unattended-upgr process which holds the lock
+preventing installation of other packages potentially for a few hours.
+Install the system offline to postpone this process for a later time.
+
 To emulate SVE instruction subset install QEMU 4.2.1 from the repository:
     sudo apt-get update
     sudo apt-get install qemu-user
@@ -273,8 +324,28 @@ image boot credentials:
 Flash image to an SD card using "Disks -> Restore Disk Image" utility with GUI
 from a regular Ubuntu desktop. It will unpack *.xz internally in the process.
 
+When booting Ubuntu Server offline for the first time the login prompt
+is often presented too early in the process and a few minutes time
+needs to be taken before SSH authorization becomes workable.
+
 Once booted the image will automatically resize the root partition to fully
 utilize all space available on an SD card and request to change the password.
+
+When online Ubuntu may start unattended-upgr process which holds the lock
+preventing installation of other packages for a few minutes until the process
+is complete and the lock is released (run top to monitor, q to quit monitoring).
+
+To test SVE targets with ARM Instruction Emulator run:
+    sudo apt-get update
+    sudo apt-get install environment-modules
+    reboot
+Download ARM-Instruction-Emulator_21.0_AArch64_Ubuntu-18.04_aarch64.tar.gz from:
+https://developer.arm.com/tools-and-software/server-and-hpc/
+                       /compile/arm-instruction-emulator/get-software/download
+and follow installation instructions as presented here:
+https://developer.arm.com/documentation/102190/2100/Get-started/
+                                             /Install-Arm-Instruction-Emulator
+Note that module command is only available before installing the desktop.
 
 To setup networking on a freshly installed Ubuntu Server without ethernet cable
 consider using "USB tethering" from an Android phone or an iPhone.
@@ -314,6 +385,8 @@ Press Ctrl-C to stop.
 Once the networking is set up (only needs to be done once) install the desktop:
     sudo apt-get update
     sudo apt-get install ubuntu-mate-desktop
+    (select lightdm when prompted for more familiar MATE-themed login screen)
+    (if MATE is not yet available the command installs GNOME 3 desktop instead)
     reboot
 
 ================================================================================
