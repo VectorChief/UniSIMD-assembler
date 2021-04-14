@@ -20,7 +20,7 @@ run for non-x86 architectures:
 Prerequisites for building/emulating guest non-x86 architectures as well as
 configurations for particular hardware platforms are given in the makefiles.
 By default, DEB-based distributions (Mint, Ubuntu, Debian) are implied,
-refer to the AArch64 Linux section at the bottom for RPM-based options.
+refer to the AArch64 Linux on RPi3 section down below for RPM-based options.
 
 To build SIMD test framework on macOS, open terminal window,
 go to UniSIMD's "test" subfolder,
@@ -99,7 +99,8 @@ Use "-c 1" option to reduce test time when emulating with QEMU.
 ================================================================================
 
 To emulate future x86 targets (AVX-512) on modern x86 Linux hosts use Intel SDE:
-    http://software.intel.com/en-us/articles/intel-software-development-emulator
+    https://software.intel.com/content/www/us/en/develop/articles/
+                                       /intel-software-development-emulator.html
 download and unpack the archive.
 
 In terminal window for 32-bit x86 run:
@@ -180,7 +181,7 @@ to setup ARM Instruction Emulator for SVE on AArch64 hosts install modules:
     (modules only work outside of XFCE, use "Log Out" to configure modules)
     (once armie module is loaded, use startx again to work with it in XFCE)
 
-openSUSE image is RPM based & boots directly to XFCE (credentials above):
+openSUSE image is RPM-based & boots directly to XFCE (credentials above):
     (commands below are not prefixed with "sudo" as image is booted into "root")
     (Raspberry Pi 3 Model B+ doesn't have networking with openSUSE, use old one)
     zypper install MozillaFirefox
@@ -204,17 +205,17 @@ Download the archive from github.com and unpack it (in terminal window):
     ./simd_test.a64f32
 
 Download the ARM IE and install it (Ubuntu16.04 for Devuan, SUSE12 for SUSE):
-https://developer.arm.com/products/software-development-tools/
-                                        /hpc/arm-instruction-emulator/download
+https://developer.arm.com/tools-and-software/server-and-hpc/
+                       /compile/arm-instruction-emulator/get-software/download
     cd Downloads
-    tar -xvf ARM-Instruction-Emulator_18.3_AArch64_***_aarch64.tar.gz
-    cd ARM-Instruction-Emulator_18.3_AArch64_***_aarch64
-    ./arm-instruction-emulator-18.3_Generic-AArch64_***_aarch64-linux-***.sh
+    tar -xvzf ARM-Instruction-Emulator_20.1_AArch64_***_aarch64.tar.gz
+    cd ARM-Instruction-Emulator_20.1_AArch64_***_aarch64
+    ./arm-instruction-emulator-20.1_Generic-AArch64_***_aarch64-linux-***.sh
     (scroll down and type: yes <enter>, when license shows up on the screen)
     reboot (and login again)
     module use /opt/arm/modulefiles
     module avail
-    module load Generic-AArch64/***/arm-instruction-emulator/18.3
+    module load Generic-AArch64/***/arm-instruction-emulator/20.1
     (armie should now be available in the PATH variable, check vector lengths)
     armie -mlist-vector-lengths
 
@@ -241,11 +242,30 @@ fresh Firefox 60.2.2esr browser and a 32bpp display output.
 
 ================================================================================
 
+To install Ubuntu MATE 20.04 LTS on Raspberry Pi 4 consider:
+
+1) Ubuntu MATE 20.04.1 desktop (arm64 raspi) image from 29-Oct-2020:
+    https://ubuntu-mate.org/download/arm64/focal/
+    https://releases.ubuntu-mate.org/focal/arm64/
+    ubuntu-mate-20.04.1-desktop-arm64+raspi.img.xz
+
+Flash image to an SD card using "Disks -> Restore Disk Image" utility with GUI
+from a regular Ubuntu desktop. It will unpack *.xz internally in the process.
+
+Once booted the image will automatically resize the root partition to fully
+utilize all space available on an SD card and proceed to install the system.
+
+To emulate SVE instruction subset install QEMU 4.2.1 from the repository:
+    sudo apt-get update
+    sudo apt-get install qemu-user
+
+================================================================================
+
 To experiment with Ubuntu Server on Raspberry Pi 4 consider:
 
-1) Ubuntu Server 19.10.1 preinstalled (arm64 raspi3) image from 03-Dec-2019:
-    http://cdimage.ubuntu.com/releases/19.10.1/release/
-    ubuntu-19.10.1-preinstalled-server-arm64+raspi3.img.xz
+1) Ubuntu Server 20.04.2 preinstalled (arm64 raspi) image from 01-Feb-2021:
+    http://cdimage.ubuntu.com/releases/20.04/release/
+    ubuntu-20.04.2-preinstalled-server-arm64+raspi.img.xz
 image boot credentials:
     login: ubuntu
     password: ubuntu
