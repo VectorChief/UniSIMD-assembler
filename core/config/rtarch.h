@@ -219,13 +219,19 @@
  * cmdu*_** - SIMD-data args, SIMD ISA (packed f128/int subset, quad-precision)
  * cmdv*_** - SIMD-elem args, ELEM ISA (scalar f128/int subset, quad-precision)
  *
- * cmdpb_** - SIMD-data args, uint ISA (packed byte-int subset)
- * cmdph_** - SIMD-data args, uint ISA (packed half-int subset)
+ * cmdmb_** - SIMD-data args, uint ISA (packed byte-int subset, unsigned 8-bit)
+ * cmdmc_** - SIMD-data args, sint ISA (packed char-int subset,   signed 8-bit)
  *
  * packed SIMD instructions above are vector-length-agnostic: 128-bit multiples
  *
  * cmdg*_** - SIMD-data args, SIMD ISA (data element is 16-bit, packed-128-bit)
  * cmda*_** - SIMD-data args, SIMD ISA (data element is 16-bit, packed-256-bit)
+ *
+ * cmdgb_** - SIMD-data args, uint ISA (packed byte-int subset, packed-128-bit)
+ * cmdgc_** - SIMD-data args, sint ISA (packed char-int subset, packed-128-bit)
+ *
+ * cmdab_** - SIMD-data args, uint ISA (packed byte-int subset, packed-256-bit)
+ * cmdac_** - SIMD-data args, sint ISA (packed char-int subset, packed-256-bit)
  *
  * Alphabetical view of current/future instruction namespaces is in rtzero.h.
  * Configurable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtconf.h.
