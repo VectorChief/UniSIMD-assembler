@@ -299,6 +299,27 @@
 #define Iesi    Tesi, TPxx, EMITW(0xE0800000 | MRM(TPxx,    Tesi,    Teax))
 #define Iedi    Tedi, TPxx, EMITW(0xE0800000 | MRM(TPxx,    Tedi,    Teax))
 
+#define Jecx    Tecx, TPxx, EMITW(0xE0800080 | MRM(TPxx,    Tecx,    Teax))
+#define Jedx    Tedx, TPxx, EMITW(0xE0800080 | MRM(TPxx,    Tedx,    Teax))
+#define Jebx    Tebx, TPxx, EMITW(0xE0800080 | MRM(TPxx,    Tebx,    Teax))
+#define Jebp    Tebp, TPxx, EMITW(0xE0800080 | MRM(TPxx,    Tebp,    Teax))
+#define Jesi    Tesi, TPxx, EMITW(0xE0800080 | MRM(TPxx,    Tesi,    Teax))
+#define Jedi    Tedi, TPxx, EMITW(0xE0800080 | MRM(TPxx,    Tedi,    Teax))
+
+#define Kecx    Tecx, TPxx, EMITW(0xE0800100 | MRM(TPxx,    Tecx,    Teax))
+#define Kedx    Tedx, TPxx, EMITW(0xE0800100 | MRM(TPxx,    Tedx,    Teax))
+#define Kebx    Tebx, TPxx, EMITW(0xE0800100 | MRM(TPxx,    Tebx,    Teax))
+#define Kebp    Tebp, TPxx, EMITW(0xE0800100 | MRM(TPxx,    Tebp,    Teax))
+#define Kesi    Tesi, TPxx, EMITW(0xE0800100 | MRM(TPxx,    Tesi,    Teax))
+#define Kedi    Tedi, TPxx, EMITW(0xE0800100 | MRM(TPxx,    Tedi,    Teax))
+
+#define Lecx    Tecx, TPxx, EMITW(0xE0800180 | MRM(TPxx,    Tecx,    Teax))
+#define Ledx    Tedx, TPxx, EMITW(0xE0800180 | MRM(TPxx,    Tedx,    Teax))
+#define Lebx    Tebx, TPxx, EMITW(0xE0800180 | MRM(TPxx,    Tebx,    Teax))
+#define Lebp    Tebp, TPxx, EMITW(0xE0800180 | MRM(TPxx,    Tebp,    Teax))
+#define Lesi    Tesi, TPxx, EMITW(0xE0800180 | MRM(TPxx,    Tesi,    Teax))
+#define Ledi    Tedi, TPxx, EMITW(0xE0800180 | MRM(TPxx,    Tedi,    Teax))
+
 /* immediate    VAL,  TP1,  TP2            (all immediate types are unsigned) */
 
 #define  IC(im) ((im) & 0x7F),          0, 0        /* drop sign-ext (on x86) */
