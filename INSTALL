@@ -45,7 +45,7 @@ Run produced binary simd_test.exe in "test" subfolder from Windows Explorer.
 VS2019 automatically retargets solution to the latest installed Windows SDK.
 
 To build SIMD test framework for 64-bit Windows,
-download and install TDM64-GCC toolchain (tdm64-gcc-5.1.0-2.exe),
+download and install TDM64-GCC toolchain (tdm64-gcc-9.2.0.exe) from github,
 then open UniSIMD's "test" subfolder and run from "cmd" or Windows Explorer:
     simd_make_w64.bat
 produced simd_test_w64f32.exe binary file will launch upon build completion.
