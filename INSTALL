@@ -122,45 +122,75 @@ To experiment with Linux in little-endian mode on POWER8 server consider:
 1) Ubuntu Server 16.04.06 Xenial Xerus (ppc64el) from 27-Feb-2019:
     https://cdimage.ubuntu.com/releases/16.04/release/
     ubuntu-16.04.6-server-ppc64el.iso
+    (install most recent HWE kernel version)
 
 2) Ubuntu Server 18.04.05 Bionic Beaver (ppc64el) from 10-Aug-2020:
     https://cdimage.ubuntu.com/releases/18.04/release/
     ubuntu-18.04.5-server-ppc64el.iso
+    (install the original kernel version, no HWE)
 
 3) Ubuntu Server 20.04.02 Focal Fossa (ppc64el) from 01-Feb-2021:
     https://cdimage.ubuntu.com/releases/20.04/release/
     ubuntu-20.04.2-live-server-ppc64el.iso
+    (system installs, but won't boot, features new installer)
 
 The images were tested on Tyan Habanero TN71-BP012 10-core POWER8 server
 with installation instructions described here:
 https://www.phoronix.com/scan.php?page=article&item=tyan-power8-server&num=1
 
+Boot the system from USB flash drive without any ethernet cables attached,
+otherwise the boot menu won't allow any boot options to be activated properly.
+When presented with a blank screen and a cursor, read the next paragraph.
+
 Before an installation can proceed the following steps may need to be performed
 on the first boot. Switch to tty2 with Alt-F2, activate the tty as the message
-requests by pressing <enter>, run /sbin/debian-installer.
+requests by pressing <enter>, run /sbin/debian-installer (first two images).
 
-When booting Ubuntu Server offline for the first time the login prompt
-is often presented too early in the process and a few minutes time
+To setup networking on a freshly installed Ubuntu Server with ethernet cable
+use the farmost ethernet socket among the main four as seen from the PSU.
+
+On Ubuntu Server 16.04 use ifconfig to configure the network:
+    sudo nano /etc/network/interfaces
+Edit the file above to add the next two lines at the bottom:
+    auto enP1p3s0
+    iface enP1p3s0 inet dhcp
+Press Ctrl-O <enter> to save the changes and Ctrl-X to exit from the editor.
+    sudo /etc/init.d/networking restart
+or
+    sudo systemctl restart networking.service
+
+On Ubuntu Server 18.04 use netplan to configure the network:
+    sudo nano /etc/netplan/01-netcfg.yaml
+Edit the file above so that it looks like this:
+network:
+    ethernets:
+        enP1p3s0:
+            dhcp4: yes
+    version: 2
+    renderer: networkd
+Press Ctrl-O <enter> to save the changes and Ctrl-X to exit from the editor.
+    sudo netplan apply
+
+When booting Ubuntu Server offline after the networking has been set up
+the login prompt is not immediately shown and a few minutes time
 needs to be taken before SSH authorization becomes workable.
-
-When online Ubuntu may start unattended-upgr process which holds the lock
-preventing installation of other packages for a few minutes until the process
-is complete and the lock is released (run top to monitor, q to quit monitoring).
 
 To install XFCE once the system is up and running:
     sudo apt-get update
-    sudo apt-get install xfce4 (choose keyboard layout)
-    reboot (for XFCE to honour chosen keyboard layout)
+    sudo apt-get install xfce4
     startx (choose "Use default config" on first start)
     (launch terminal window in XFCE from the bottom panel)
-    sudo apt-get install firefox-esr unzip
-    reboot (login again and "startx" into XFCE)
-    (firefox is now available under "Internet" section of the main menu)
-    sudo apt-get install make g++
-    (add "universe multiverse" to "main restricted" in /etc/apt/sources.list)
-    (sudo nano /etc/apt/sources.list, Ctrl-O to save, Ctrl-X to exit), then run:
+    sudo apt-get install firefox unzip leafpad
+    sudo apt-get install make g++ clang
+Alternatively install Xubuntu desktop for more integrated experience:
     sudo apt-get update
-    sudo apt-get install clang
+    sudo apt-get install xubuntu-desktop
+    sudo apt-get install make g++ clang
+    reboot
+
+After installing XFCE Ubuntu may start ureadahead process which loads the CPU
+preventing normal user workflow for a few minutes until the process
+is complete and the system is back to normal (use top command to monitor).
 
 ================================================================================
 
@@ -374,7 +404,7 @@ network:
         usb0:
             dhcp4: true
     version: 2
-Press Ctrl-O to write-out the changes and Ctrl-X to exit from the editor.
+Press Ctrl-O <enter> to save the changes and Ctrl-X to exit from the editor.
 
 Apply the changes by typing:
     sudo netplan apply
@@ -385,8 +415,14 @@ Press Ctrl-C to stop.
 Once the networking is set up (only needs to be done once) install the desktop:
     sudo apt-get update
     sudo apt-get install ubuntu-mate-desktop
-    (select lightdm when prompted for more familiar MATE-themed login screen)
     (if MATE is not yet available the command installs GNOME 3 desktop instead)
+    (select lightdm when prompted for more familiar MATE-themed login screen)
+    reboot
+Alternatively install Xubuntu desktop on a clean system:
+    sudo apt-get update
+    sudo apt-get install xubuntu-desktop
+    (if XFCE is not yet available the command installs GNOME 3 desktop instead)
+    (select lightdm when prompted for more familiar XFCE-themed login screen)
     reboot
 
 ================================================================================
