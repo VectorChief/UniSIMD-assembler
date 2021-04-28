@@ -1,18 +1,4 @@
 ================================================================================
-=== >>> === tasks below are planned for the upcoming 1.1.0 milestone === <<< ===
-================================================================================
-
-H) Task title: "implement fp16 backend on ARMv8.2 as tier-2 extension (no SPMD)"
-1) Add fp16 backend on ARMv8.2 (proper testing can be done later)
-2) Add SIMD/BASE half-int subsets consistent on all targets (not ARMv8-specific)
-
-================================================================================
-
-Q) Task title: "implement fp128 backend on POWER9 as tier-2 extension (no SPMD)"
-1) Add fp128 backend on POWER9 (proper testing can be done later)
-2) Add tests to check defined immediate/displacement limits (not POWER-specific)
-
-================================================================================
 === >>> === tasks below are planned for the upcoming 1.2.0 milestone === <<< ===
 ================================================================================
 
@@ -64,6 +50,7 @@ N) Task title: "implement new 128/256-bit 30-regs targets on top of current AVX"
 3) Find place in SIMD target mask (RT_128=1/RT_256=4) for custom 30-regs support
 4) Improve mask-jump (mkj*x) instructions for 64-bit SIMD elements (optional)
 5) Target 128-bit version to SSE, RT_SIMD_COMPAT_128=2/4/8/16/32 for 30-regs
+6) Add tests to check defined immediate/displacement limits (for BASE/SIMD ops)
 
 ================================================================================
 
