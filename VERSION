@@ -1,3 +1,4 @@
+v1.1.0a: UniSIMD, code name "ENsed+1a", first development release
   - add tests for half-int SIMD/BASE ops (run level 30-37)
   - drop extended POWER targets from SIMD testing (no half-int support)
   - add half-int SIMD arithmetic with saturate (except original SSE1)
