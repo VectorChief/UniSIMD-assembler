@@ -1069,6 +1069,280 @@
         movox_rr(W(XD), W(XS))                                              \
         svron_ld(W(XD), W(MT), W(DT))
 
+/****************   packed single-precision integer compare   *****************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minox_rr(XG, XS)                                                    \
+        EMITW(0x048B0000 | MXM(REG(XG), REG(XS), 0x00))
+
+#define minox_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
+        EMITW(0x048B0000 | MXM(REG(XG), TmmM,    0x00))
+
+#define minox3rr(XD, XS, XT)                                                \
+        movox_rr(W(XD), W(XS))                                              \
+        minox_rr(W(XD), W(XT))
+
+#define minox3ld(XD, XS, MT, DT)                                            \
+        movox_rr(W(XD), W(XS))                                              \
+        minox_ld(W(XD), W(MT), W(DT))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minon_rr(XG, XS)                                                    \
+        EMITW(0x048A0000 | MXM(REG(XG), REG(XS), 0x00))
+
+#define minon_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
+        EMITW(0x048A0000 | MXM(REG(XG), TmmM,    0x00))
+
+#define minon3rr(XD, XS, XT)                                                \
+        movox_rr(W(XD), W(XS))                                              \
+        minon_rr(W(XD), W(XT))
+
+#define minon3ld(XD, XS, MT, DT)                                            \
+        movox_rr(W(XD), W(XS))                                              \
+        minon_ld(W(XD), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxox_rr(XG, XS)                                                    \
+        EMITW(0x04890000 | MXM(REG(XG), REG(XS), 0x00))
+
+#define maxox_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
+        EMITW(0x04890000 | MXM(REG(XG), TmmM,    0x00))
+
+#define maxox3rr(XD, XS, XT)                                                \
+        movox_rr(W(XD), W(XS))                                              \
+        maxox_rr(W(XD), W(XT))
+
+#define maxox3ld(XD, XS, MT, DT)                                            \
+        movox_rr(W(XD), W(XS))                                              \
+        maxox_ld(W(XD), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxon_rr(XG, XS)                                                    \
+        EMITW(0x04880000 | MXM(REG(XG), REG(XS), 0x00))
+
+#define maxon_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
+        EMITW(0x04880000 | MXM(REG(XG), TmmM,    0x00))
+
+#define maxon3rr(XD, XS, XT)                                                \
+        movox_rr(W(XD), W(XS))                                              \
+        maxon_rr(W(XD), W(XT))
+
+#define maxon3ld(XD, XS, MT, DT)                                            \
+        movox_rr(W(XD), W(XS))                                              \
+        maxon_ld(W(XD), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqox_rr(XG, XS)                                                    \
+        ceqox3rr(W(XG), W(XG), W(XS))
+
+#define ceqox_ld(XG, MS, DS)                                                \
+        ceqox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqox3rr(XD, XS, XT)                                                \
+        EMITW(0x2480A000 | MXM(0x01,    REG(XS), REG(XT)))                  \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+#define ceqox3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x2480A000 | MXM(0x01,    REG(XS), TmmM))                     \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cneox_rr(XG, XS)                                                    \
+        cneox3rr(W(XG), W(XG), W(XS))
+
+#define cneox_ld(XG, MS, DS)                                                \
+        cneox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cneox3rr(XD, XS, XT)                                                \
+        EMITW(0x2480A010 | MXM(0x01,    REG(XS), REG(XT)))                  \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+#define cneox3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x2480A010 | MXM(0x01,    REG(XS), TmmM))                     \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltox_rr(XG, XS)                                                    \
+        cltox3rr(W(XG), W(XG), W(XS))
+
+#define cltox_ld(XG, MS, DS)                                                \
+        cltox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltox3rr(XD, XS, XT)                                                \
+        EMITW(0x24800010 | MXM(0x01,    REG(XT), REG(XS)))                  \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+#define cltox3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x24800010 | MXM(0x01,    TmmM,    REG(XS)))                  \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define clton_rr(XG, XS)                                                    \
+        clton3rr(W(XG), W(XG), W(XS))
+
+#define clton_ld(XG, MS, DS)                                                \
+        clton3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clton3rr(XD, XS, XT)                                                \
+        EMITW(0x24808010 | MXM(0x01,    REG(XT), REG(XS)))                  \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+#define clton3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x24808010 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x65804010 | MXM(0x01,    TmmM,    REG(XS)))                  \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cleox_rr(XG, XS)                                                    \
+        cleox3rr(W(XG), W(XG), W(XS))
+
+#define cleox_ld(XG, MS, DS)                                                \
+        cleox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cleox3rr(XD, XS, XT)                                                \
+        EMITW(0x24800000 | MXM(0x01,    REG(XT), REG(XS)))                  \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+#define cleox3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x24800000 | MXM(0x01,    TmmM,    REG(XS)))                  \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define cleon_rr(XG, XS)                                                    \
+        cleon3rr(W(XG), W(XG), W(XS))
+
+#define cleon_ld(XG, MS, DS)                                                \
+        cleon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cleon3rr(XD, XS, XT)                                                \
+        EMITW(0x24808000 | MXM(0x01,    REG(XT), REG(XS)))                  \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+#define cleon3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x24808000 | MXM(0x01,    TmmM,    REG(XS)))                  \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtox_rr(XG, XS)                                                    \
+        cgtox3rr(W(XG), W(XG), W(XS))
+
+#define cgtox_ld(XG, MS, DS)                                                \
+        cgtox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtox3rr(XD, XS, XT)                                                \
+        EMITW(0x24800010 | MXM(0x01,    REG(XS), REG(XT)))                  \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+#define cgtox3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x24800010 | MXM(0x01,    REG(XS), TmmM))                     \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgton_rr(XG, XS)                                                    \
+        cgton3rr(W(XG), W(XG), W(XS))
+
+#define cgton_ld(XG, MS, DS)                                                \
+        cgton3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgton3rr(XD, XS, XT)                                                \
+        EMITW(0x24808010 | MXM(0x01,    REG(XS), REG(XT)))                  \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+#define cgton3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x24808010 | MXM(0x01,    REG(XS), TmmM))                     \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgeox_rr(XG, XS)                                                    \
+        cgeox3rr(W(XG), W(XG), W(XS))
+
+#define cgeox_ld(XG, MS, DS)                                                \
+        cgeox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgeox3rr(XD, XS, XT)                                                \
+        EMITW(0x24800000 | MXM(0x01,    REG(XS), REG(XT)))                  \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+#define cgeox3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x24800000 | MXM(0x01,    REG(XS), TmmM))                     \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgeon_rr(XG, XS)                                                    \
+        cgeon3rr(W(XG), W(XG), W(XS))
+
+#define cgeon_ld(XG, MS, DS)                                                \
+        cgeon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgeon3rr(XD, XS, XT)                                                \
+        EMITW(0x24808000 | MXM(0x01,    REG(XS), REG(XT)))                  \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
+#define cgeon3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x24808000 | MXM(0x01,    REG(XS), TmmM))                     \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/

@@ -1060,6 +1060,422 @@
         EMITW(0x6EE0B800 | MXM(TmmM,    TmmM,    0x00))                     \
         EMITW(0x4EE04400 | MXM(RYG(XD), RYG(XS), TmmM))
 
+/****************   packed double-precision integer compare   *****************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define mindx_rr(XG, XS)                                                    \
+        mindx3rr(W(XG), W(XG), W(XS))
+
+#define mindx_ld(XG, MS, DS)                                                \
+        mindx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mindx3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        EMITW(0x54000042)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        EMITW(0x54000042)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
+        EMITW(0x54000042)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
+        EMITW(0x54000042)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
+        stack_ld(Reax)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define mindx3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        EMITW(0x54000042)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        EMITW(0x54000042)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
+        EMITW(0x54000042)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
+        EMITW(0x54000042)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
+        stack_ld(Reax)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define mindn_rr(XG, XS)                                                    \
+        mindn3rr(W(XG), W(XG), W(XS))
+
+#define mindn_ld(XG, MS, DS)                                                \
+        mindn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mindn3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        EMITW(0x5400004A)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        EMITW(0x5400004A)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
+        EMITW(0x5400004A)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
+        EMITW(0x5400004A)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
+        stack_ld(Reax)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define mindn3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        EMITW(0x5400004A)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        EMITW(0x5400004A)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
+        EMITW(0x5400004A)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
+        EMITW(0x5400004A)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
+        stack_ld(Reax)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxdx_rr(XG, XS)                                                    \
+        maxdx3rr(W(XG), W(XG), W(XS))
+
+#define maxdx_ld(XG, MS, DS)                                                \
+        maxdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxdx3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        EMITW(0x54000049)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        EMITW(0x54000049)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
+        EMITW(0x54000049)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
+        EMITW(0x54000049)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
+        stack_ld(Reax)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define maxdx3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        EMITW(0x54000049)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        EMITW(0x54000049)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
+        EMITW(0x54000049)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
+        EMITW(0x54000049)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
+        stack_ld(Reax)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxdn_rr(XG, XS)                                                    \
+        maxdn3rr(W(XG), W(XG), W(XS))
+
+#define maxdn_ld(XG, MS, DS)                                                \
+        maxdn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxdn3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        EMITW(0x5400004D)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        EMITW(0x5400004D)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
+        EMITW(0x5400004D)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
+        EMITW(0x5400004D)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
+        stack_ld(Reax)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR02(0))
+
+#define maxdn3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        stack_st(Reax)                                                      \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        EMITW(0x5400004D)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        EMITW(0x5400004D)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
+        EMITW(0x5400004D)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
+        EMITW(0x5400004D)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
+        stack_ld(Reax)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqdx_rr(XG, XS)                                                    \
+        ceqdx3rr(W(XG), W(XG), W(XS))
+
+#define ceqdx_ld(XG, MS, DS)                                                \
+        ceqdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqdx3rr(XD, XS, XT)                                                \
+        EMITW(0x6EE08C00 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x6EE08C00 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define ceqdx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x6EE08C00 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x6EE08C00 | MXM(RYG(XD), RYG(XS), TmmM))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cnedx_rr(XG, XS)                                                    \
+        cnedx3rr(W(XG), W(XG), W(XS))
+
+#define cnedx_ld(XG, MS, DS)                                                \
+        cnedx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cnedx3rr(XD, XS, XT)                                                \
+        EMITW(0x6EE08C00 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x6E205800 | MXM(REG(XD), REG(XD), 0x00))                     \
+        EMITW(0x6EE08C00 | MXM(RYG(XD), RYG(XS), RYG(XT)))                  \
+        EMITW(0x6E205800 | MXM(RYG(XD), RYG(XD), 0x00))
+
+#define cnedx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x6EE08C00 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x6E205800 | MXM(REG(XD), REG(XD), 0x00))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x6EE08C00 | MXM(RYG(XD), RYG(XS), TmmM))                     \
+        EMITW(0x6E205800 | MXM(RYG(XD), RYG(XD), 0x00))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltdx_rr(XG, XS)                                                    \
+        cltdx3rr(W(XG), W(XG), W(XS))
+
+#define cltdx_ld(XG, MS, DS)                                                \
+        cltdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltdx3rr(XD, XS, XT)                                                \
+        EMITW(0x6EE03400 | MXM(REG(XD), REG(XT), REG(XS)))                  \
+        EMITW(0x6EE03400 | MXM(RYG(XD), RYG(XT), RYG(XS)))
+
+#define cltdx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x6EE03400 | MXM(REG(XD), TmmM,    REG(XS)))                  \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x6EE03400 | MXM(RYG(XD), TmmM,    RYG(XS)))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltdn_rr(XG, XS)                                                    \
+        cltdn3rr(W(XG), W(XG), W(XS))
+
+#define cltdn_ld(XG, MS, DS)                                                \
+        cltdn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltdn3rr(XD, XS, XT)                                                \
+        EMITW(0x4EE03400 | MXM(REG(XD), REG(XT), REG(XS)))                  \
+        EMITW(0x4EE03400 | MXM(RYG(XD), RYG(XT), RYG(XS)))
+
+#define cltdn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x4EE03400 | MXM(REG(XD), TmmM,    REG(XS)))                  \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x4EE03400 | MXM(RYG(XD), TmmM,    RYG(XS)))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cledx_rr(XG, XS)                                                    \
+        cledx3rr(W(XG), W(XG), W(XS))
+
+#define cledx_ld(XG, MS, DS)                                                \
+        cledx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cledx3rr(XD, XS, XT)                                                \
+        EMITW(0x6EE03C00 | MXM(REG(XD), REG(XT), REG(XS)))                  \
+        EMITW(0x6EE03C00 | MXM(RYG(XD), RYG(XT), RYG(XS)))
+
+#define cledx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x6EE03C00 | MXM(REG(XD), TmmM,    REG(XS)))                  \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x6EE03C00 | MXM(RYG(XD), TmmM,    RYG(XS)))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define cledn_rr(XG, XS)                                                    \
+        cledn3rr(W(XG), W(XG), W(XS))
+
+#define cledn_ld(XG, MS, DS)                                                \
+        cledn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cledn3rr(XD, XS, XT)                                                \
+        EMITW(0x4EE03C00 | MXM(REG(XD), REG(XT), REG(XS)))                  \
+        EMITW(0x4EE03C00 | MXM(RYG(XD), RYG(XT), RYG(XS)))
+
+#define cledn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x4EE03C00 | MXM(REG(XD), TmmM,    REG(XS)))                  \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x4EE03C00 | MXM(RYG(XD), TmmM,    RYG(XS)))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtdx_rr(XG, XS)                                                    \
+        cgtdx3rr(W(XG), W(XG), W(XS))
+
+#define cgtdx_ld(XG, MS, DS)                                                \
+        cgtdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtdx3rr(XD, XS, XT)                                                \
+        EMITW(0x6EE03400 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x6EE03400 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define cgtdx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x6EE03400 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x6EE03400 | MXM(RYG(XD), RYG(XS), TmmM))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtdn_rr(XG, XS)                                                    \
+        cgtdn3rr(W(XG), W(XG), W(XS))
+
+#define cgtdn_ld(XG, MS, DS)                                                \
+        cgtdn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtdn3rr(XD, XS, XT)                                                \
+        EMITW(0x4EE03400 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x4EE03400 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define cgtdn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x4EE03400 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x4EE03400 | MXM(RYG(XD), RYG(XS), TmmM))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgedx_rr(XG, XS)                                                    \
+        cgedx3rr(W(XG), W(XG), W(XS))
+
+#define cgedx_ld(XG, MS, DS)                                                \
+        cgedx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgedx3rr(XD, XS, XT)                                                \
+        EMITW(0x6EE03C00 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x6EE03C00 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define cgedx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x6EE03C00 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x6EE03C00 | MXM(RYG(XD), RYG(XS), TmmM))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgedn_rr(XG, XS)                                                    \
+        cgedn3rr(W(XG), W(XG), W(XS))
+
+#define cgedn_ld(XG, MS, DS)                                                \
+        cgedn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgedn3rr(XD, XS, XT)                                                \
+        EMITW(0x4EE03C00 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x4EE03C00 | MXM(RYG(XD), RYG(XS), RYG(XT)))
+
+#define cgedn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x4EE03C00 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
+        EMITW(0x4EE03C00 | MXM(RYG(XD), RYG(XS), TmmM))
+
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
