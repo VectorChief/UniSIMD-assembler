@@ -1401,6 +1401,266 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
         stack_ld(Recx)                                                      \
         movix_ld(W(XD), Mebp, inf_SCR01(0))
 
+/****************   packed single-precision integer compare   *****************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minix_rr(XG, XS)                                                    \
+    ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x38) EMITB(0x3B)           \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define minix_ld(XG, MS, DS)                                                \
+ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x3B)           \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define minix3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        minix_rr(W(XD), W(XT))
+
+#define minix3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        minix_ld(W(XD), W(MT), W(DT))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minin_rr(XG, XS)                                                    \
+    ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x38) EMITB(0x39)           \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define minin_ld(XG, MS, DS)                                                \
+ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x39)           \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define minin3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        minin_rr(W(XD), W(XT))
+
+#define minin3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        minin_ld(W(XD), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxix_rr(XG, XS)                                                    \
+    ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x38) EMITB(0x3F)           \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define maxix_ld(XG, MS, DS)                                                \
+ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x3F)           \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define maxix3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        maxix_rr(W(XD), W(XT))
+
+#define maxix3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        maxix_ld(W(XD), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxin_rr(XG, XS)                                                    \
+    ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x38) EMITB(0x3D)           \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define maxin_ld(XG, MS, DS)                                                \
+ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x3D)           \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define maxin3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        maxin_rr(W(XD), W(XT))
+
+#define maxin3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        maxin_ld(W(XD), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqix_rr(XG, XS)                                                    \
+    ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x76)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define ceqix_ld(XG, MS, DS)                                                \
+ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x76)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define ceqix3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        ceqix_rr(W(XD), W(XT))
+
+#define ceqix3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        ceqix_ld(W(XD), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cneix_rr(XG, XS)                                                    \
+        ceqix_rr(W(XG), W(XS))                                              \
+        notix_rx(W(XG))
+
+#define cneix_ld(XG, MS, DS)                                                \
+        ceqix_ld(W(XG), W(MS), W(DS))                                       \
+        notix_rx(W(XG))
+
+#define cneix3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        cneix_rr(W(XD), W(XT))
+
+#define cneix3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        cneix_ld(W(XD), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltix_rr(XG, XS)                                                    \
+        minix_rr(W(XG), W(XS))                                              \
+        cneix_rr(W(XG), W(XS))
+
+#define cltix_ld(XG, MS, DS)                                                \
+        minix_ld(W(XG), W(MS), W(DS))                                       \
+        cneix_ld(W(XG), W(MS), W(DS))
+
+#define cltix3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        cltix_rr(W(XD), W(XT))
+
+#define cltix3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        cltix_ld(W(XD), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltin_rr(XG, XS)                                                    \
+        minin_rr(W(XG), W(XS))                                              \
+        cneix_rr(W(XG), W(XS))
+
+#define cltin_ld(XG, MS, DS)                                                \
+        minin_ld(W(XG), W(MS), W(DS))                                       \
+        cneix_ld(W(XG), W(MS), W(DS))
+
+#define cltin3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        cltin_rr(W(XD), W(XT))
+
+#define cltin3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        cltin_ld(W(XD), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cleix_rr(XG, XS)                                                    \
+        maxix_rr(W(XG), W(XS))                                              \
+        ceqix_rr(W(XG), W(XS))
+
+#define cleix_ld(XG, MS, DS)                                                \
+        maxix_ld(W(XG), W(MS), W(DS))                                       \
+        ceqix_ld(W(XG), W(MS), W(DS))
+
+#define cleix3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        cleix_rr(W(XD), W(XT))
+
+#define cleix3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        cleix_ld(W(XD), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define clein_rr(XG, XS)                                                    \
+        cgtin_rr(W(XG), W(XS))                                              \
+        notix_rx(W(XG))
+
+#define clein_ld(XG, MS, DS)                                                \
+        cgtin_ld(W(XG), W(MS), W(DS))                                       \
+        notix_rx(W(XG))
+
+#define clein3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        clein_rr(W(XD), W(XT))
+
+#define clein3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        clein_ld(W(XD), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtix_rr(XG, XS)                                                    \
+        maxix_rr(W(XG), W(XS))                                              \
+        cneix_rr(W(XG), W(XS))
+
+#define cgtix_ld(XG, MS, DS)                                                \
+        maxix_ld(W(XG), W(MS), W(DS))                                       \
+        cneix_ld(W(XG), W(MS), W(DS))
+
+#define cgtix3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        cgtix_rr(W(XD), W(XT))
+
+#define cgtix3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        cgtix_ld(W(XD), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtin_rr(XG, XS)                                                    \
+    ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x66)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define cgtin_ld(XG, MS, DS)                                                \
+ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x66)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define cgtin3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        cgtin_rr(W(XD), W(XT))
+
+#define cgtin3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        cgtin_ld(W(XD), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgeix_rr(XG, XS)                                                    \
+        minix_rr(W(XG), W(XS))                                              \
+        ceqix_rr(W(XG), W(XS))
+
+#define cgeix_ld(XG, MS, DS)                                                \
+        minix_ld(W(XG), W(MS), W(DS))                                       \
+        ceqix_ld(W(XG), W(MS), W(DS))
+
+#define cgeix3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        cgeix_rr(W(XD), W(XT))
+
+#define cgeix3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        cgeix_ld(W(XD), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgein_rr(XG, XS)                                                    \
+        minin_rr(W(XG), W(XS))                                              \
+        ceqix_rr(W(XG), W(XS))
+
+#define cgein_ld(XG, MS, DS)                                                \
+        minin_ld(W(XG), W(MS), W(DS))                                       \
+        ceqix_ld(W(XG), W(MS), W(DS))
+
+#define cgein3rr(XD, XS, XT)                                                \
+        movix_rr(W(XD), W(XS))                                              \
+        cgein_rr(W(XD), W(XT))
+
+#define cgein3ld(XD, XS, MT, DT)                                            \
+        movix_rr(W(XD), W(XS))                                              \
+        cgein_ld(W(XD), W(MT), W(DT))
+
 /******************************************************************************/
 /**********************************   ELEM   **********************************/
 /******************************************************************************/
