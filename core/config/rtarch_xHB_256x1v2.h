@@ -846,6 +846,237 @@
         shrhn_mx(Mebp,  inf_SCR01(0x1E))                                    \
         stack_ld(Recx)
 
+/*****************   packed half-precision integer compare   ******************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minax_rr(XG, XS)                                                    \
+        minax3rr(W(XG), W(XG), W(XS))
+
+#define minax_ld(XG, MS, DS)                                                \
+        minax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minax3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 1, 2) EMITB(0x3A)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define minax3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 1, 2) EMITB(0x3A)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minan_rr(XG, XS)                                                    \
+        minan3rr(W(XG), W(XG), W(XS))
+
+#define minan_ld(XG, MS, DS)                                                \
+        minan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minan3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 1, 1) EMITB(0xEA)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define minan3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xEA)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxax_rr(XG, XS)                                                    \
+        maxax3rr(W(XG), W(XG), W(XS))
+
+#define maxax_ld(XG, MS, DS)                                                \
+        maxax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxax3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 1, 2) EMITB(0x3E)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define maxax3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 1, 2) EMITB(0x3E)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxan_rr(XG, XS)                                                    \
+        maxan3rr(W(XG), W(XG), W(XS))
+
+#define maxan_ld(XG, MS, DS)                                                \
+        maxan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxan3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 1, 1) EMITB(0xEE)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define maxan3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xEE)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqax_rr(XG, XS)                                                    \
+        ceqax3rr(W(XG), W(XG), W(XS))
+
+#define ceqax_ld(XG, MS, DS)                                                \
+        ceqax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqax3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 1, 1) EMITB(0x75)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define ceqax3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0x75)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cneax_rr(XG, XS)                                                    \
+        cneax3rr(W(XG), W(XG), W(XS))
+
+#define cneax_ld(XG, MS, DS)                                                \
+        cneax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cneax3rr(XD, XS, XT)                                                \
+        ceqax3rr(W(XD), W(XS), W(XT))                                       \
+        notax_rx(W(XD))
+
+#define cneax3ld(XD, XS, MT, DT)                                            \
+        ceqax3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notax_rx(W(XD))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltax_rr(XG, XS)                                                    \
+        cltax3rr(W(XG), W(XG), W(XS))
+
+#define cltax_ld(XG, MS, DS)                                                \
+        cltax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltax3rr(XD, XS, XT)                                                \
+        minax3rr(W(XD), W(XS), W(XT))                                       \
+        cneax_rr(W(XD), W(XT))
+
+#define cltax3ld(XD, XS, MT, DT)                                            \
+        minax3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        cneax_ld(W(XD), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltan_rr(XG, XS)                                                    \
+        cltan3rr(W(XG), W(XG), W(XS))
+
+#define cltan_ld(XG, MS, DS)                                                \
+        cltan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltan3rr(XD, XS, XT)                                                \
+        cgtan3rr(W(XD), W(XT), W(XS))
+
+#define cltan3ld(XD, XS, MT, DT)                                            \
+        minan3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        cneax_ld(W(XD), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cleax_rr(XG, XS)                                                    \
+        cleax3rr(W(XG), W(XG), W(XS))
+
+#define cleax_ld(XG, MS, DS)                                                \
+        cleax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cleax3rr(XD, XS, XT)                                                \
+        maxax3rr(W(XD), W(XS), W(XT))                                       \
+        ceqax_rr(W(XD), W(XT))
+
+#define cleax3ld(XD, XS, MT, DT)                                            \
+        maxax3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        ceqax_ld(W(XD), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define clean_rr(XG, XS)                                                    \
+        clean3rr(W(XG), W(XG), W(XS))
+
+#define clean_ld(XG, MS, DS)                                                \
+        clean3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clean3rr(XD, XS, XT)                                                \
+        cgtan3rr(W(XD), W(XS), W(XT))                                       \
+        notax_rx(W(XD))
+
+#define clean3ld(XD, XS, MT, DT)                                            \
+        cgtan3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notax_rx(W(XD))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtax_rr(XG, XS)                                                    \
+        cgtax3rr(W(XG), W(XG), W(XS))
+
+#define cgtax_ld(XG, MS, DS)                                                \
+        cgtax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtax3rr(XD, XS, XT)                                                \
+        maxax3rr(W(XD), W(XS), W(XT))                                       \
+        cneax_rr(W(XD), W(XT))
+
+#define cgtax3ld(XD, XS, MT, DT)                                            \
+        maxax3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        cneax_ld(W(XD), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtan_rr(XG, XS)                                                    \
+        cgtan3rr(W(XG), W(XG), W(XS))
+
+#define cgtan_ld(XG, MS, DS)                                                \
+        cgtan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtan3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 1, 1) EMITB(0x65)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define cgtan3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0x65)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgeax_rr(XG, XS)                                                    \
+        cgeax3rr(W(XG), W(XG), W(XS))
+
+#define cgeax_ld(XG, MS, DS)                                                \
+        cgeax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgeax3rr(XD, XS, XT)                                                \
+        minax3rr(W(XD), W(XS), W(XT))                                       \
+        ceqax_rr(W(XD), W(XT))
+
+#define cgeax3ld(XD, XS, MT, DT)                                            \
+        minax3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        ceqax_ld(W(XD), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgean_rr(XG, XS)                                                    \
+        cgean3rr(W(XG), W(XG), W(XS))
+
+#define cgean_ld(XG, MS, DS)                                                \
+        cgean3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgean3rr(XD, XS, XT)                                                \
+        minan3rr(W(XD), W(XS), W(XT))                                       \
+        ceqax_rr(W(XD), W(XT))
+
+#define cgean3ld(XD, XS, MT, DT)                                            \
+        minan3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        ceqax_ld(W(XD), W(MT), W(DT))
+
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
