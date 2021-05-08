@@ -440,6 +440,282 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+/*****************   packed half-precision integer compare   ******************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minax_rr(XG, XS)                                                    \
+        minax3rr(W(XG), W(XG), W(XS))
+
+#define minax_ld(XG, MS, DS)                                                \
+        minax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minax3rr(XD, XS, XT)                                                \
+        EVX(RXB(XD), RXB(XT), REN(XS), 1, 1, 2) EMITB(0x3A)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define minax3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(RXB(XD), RXB(MT), REN(XS), 1, 1, 2) EMITB(0x3A)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minan_rr(XG, XS)                                                    \
+        minan3rr(W(XG), W(XG), W(XS))
+
+#define minan_ld(XG, MS, DS)                                                \
+        minan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minan3rr(XD, XS, XT)                                                \
+        EVX(RXB(XD), RXB(XT), REN(XS), 1, 1, 1) EMITB(0xEA)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define minan3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xEA)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxax_rr(XG, XS)                                                    \
+        maxax3rr(W(XG), W(XG), W(XS))
+
+#define maxax_ld(XG, MS, DS)                                                \
+        maxax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxax3rr(XD, XS, XT)                                                \
+        EVX(RXB(XD), RXB(XT), REN(XS), 1, 1, 2) EMITB(0x3E)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define maxax3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(RXB(XD), RXB(MT), REN(XS), 1, 1, 2) EMITB(0x3E)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxan_rr(XG, XS)                                                    \
+        maxan3rr(W(XG), W(XG), W(XS))
+
+#define maxan_ld(XG, MS, DS)                                                \
+        maxan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxan3rr(XD, XS, XT)                                                \
+        EVX(RXB(XD), RXB(XT), REN(XS), 1, 1, 1) EMITB(0xEE)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define maxan3ld(XD, XS, MT, DT)                                            \
+    ADR EVX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xEE)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqax_rr(XG, XS)                                                    \
+        ceqax3rr(W(XG), W(XG), W(XS))
+
+#define ceqax_ld(XG, MS, DS)                                                \
+        ceqax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqax3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 1, 1, 3) EMITB(0x3E)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+#define ceqax3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 1, 1, 3) EMITB(0x3E)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x00))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cneax_rr(XG, XS)                                                    \
+        cneax3rr(W(XG), W(XG), W(XS))
+
+#define cneax_ld(XG, MS, DS)                                                \
+        cneax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cneax3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 1, 1, 3) EMITB(0x3E)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+#define cneax3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 1, 1, 3) EMITB(0x3E)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x04))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltax_rr(XG, XS)                                                    \
+        cltax3rr(W(XG), W(XG), W(XS))
+
+#define cltax_ld(XG, MS, DS)                                                \
+        cltax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltax3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 1, 1, 3) EMITB(0x3E)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+#define cltax3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 1, 1, 3) EMITB(0x3E)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x01))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltan_rr(XG, XS)                                                    \
+        cltan3rr(W(XG), W(XG), W(XS))
+
+#define cltan_ld(XG, MS, DS)                                                \
+        cltan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltan3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 1, 1, 3) EMITB(0x3F)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+#define cltan3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 1, 1, 3) EMITB(0x3F)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x01))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cleax_rr(XG, XS)                                                    \
+        cleax3rr(W(XG), W(XG), W(XS))
+
+#define cleax_ld(XG, MS, DS)                                                \
+        cleax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cleax3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 1, 1, 3) EMITB(0x3E)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+#define cleax3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 1, 1, 3) EMITB(0x3E)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x02))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define clean_rr(XG, XS)                                                    \
+        clean3rr(W(XG), W(XG), W(XS))
+
+#define clean_ld(XG, MS, DS)                                                \
+        clean3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clean3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 1, 1, 3) EMITB(0x3F)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+#define clean3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 1, 1, 3) EMITB(0x3F)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x02))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtax_rr(XG, XS)                                                    \
+        cgtax3rr(W(XG), W(XG), W(XS))
+
+#define cgtax_ld(XG, MS, DS)                                                \
+        cgtax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtax3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 1, 1, 3) EMITB(0x3E)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+#define cgtax3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 1, 1, 3) EMITB(0x3E)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x06))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtan_rr(XG, XS)                                                    \
+        cgtan3rr(W(XG), W(XG), W(XS))
+
+#define cgtan_ld(XG, MS, DS)                                                \
+        cgtan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtan3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 1, 1, 3) EMITB(0x3F)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+#define cgtan3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 1, 1, 3) EMITB(0x3F)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x06))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgeax_rr(XG, XS)                                                    \
+        cgeax3rr(W(XG), W(XG), W(XS))
+
+#define cgeax_ld(XG, MS, DS)                                                \
+        cgeax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgeax3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 1, 1, 3) EMITB(0x3E)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+#define cgeax3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 1, 1, 3) EMITB(0x3E)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgean_rr(XG, XS)                                                    \
+        cgean3rr(W(XG), W(XG), W(XS))
+
+#define cgean_ld(XG, MS, DS)                                                \
+        cgean3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgean3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 1, 1, 3) EMITB(0x3F)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+#define cgean3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 1, 1, 3) EMITB(0x3F)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
+        mz1ax_ld(W(XD), Mebp, inf_GPC07)
+
+
+#define mz1ax_ld(XG, MS, DS) /* not portable, do not use outside */         \
+    ADR EZW(RXB(XG), RXB(MS), REN(XG), 1, 1, 2) EMITB(0x66)                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
