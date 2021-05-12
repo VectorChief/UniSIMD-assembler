@@ -838,6 +838,178 @@
 
 /*****************   packed half-precision integer compare   ******************/
 
+#if (RT_256X1 < 2)
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minax_rr(XG, XS)                                                    \
+        minax3rr(W(XG), W(XG), W(XS))
+
+#define minax_ld(XG, MS, DS)                                                \
+        minax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minax3rr(XD, XS, XT)                                                \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        minax_rx(W(XD))
+
+#define minax3ld(XD, XS, MT, DT)                                            \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        minax_rx(W(XD))
+
+#define minax_rx(XD) /* not portable, do not use outside */                 \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        mingx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        mingx_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minan_rr(XG, XS)                                                    \
+        minan3rr(W(XG), W(XG), W(XS))
+
+#define minan_ld(XG, MS, DS)                                                \
+        minan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minan3rr(XD, XS, XT)                                                \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        minan_rx(W(XD))
+
+#define minan3ld(XD, XS, MT, DT)                                            \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        minan_rx(W(XD))
+
+#define minan_rx(XD) /* not portable, do not use outside */                 \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        mingn_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        mingn_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxax_rr(XG, XS)                                                    \
+        maxax3rr(W(XG), W(XG), W(XS))
+
+#define maxax_ld(XG, MS, DS)                                                \
+        maxax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxax3rr(XD, XS, XT)                                                \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        maxax_rx(W(XD))
+
+#define maxax3ld(XD, XS, MT, DT)                                            \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        maxax_rx(W(XD))
+
+#define maxax_rx(XD) /* not portable, do not use outside */                 \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        maxgx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        maxgx_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxan_rr(XG, XS)                                                    \
+        maxan3rr(W(XG), W(XG), W(XS))
+
+#define maxan_ld(XG, MS, DS)                                                \
+        maxan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxan3rr(XD, XS, XT)                                                \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        maxan_rx(W(XD))
+
+#define maxan3ld(XD, XS, MT, DT)                                            \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        maxan_rx(W(XD))
+
+#define maxan_rx(XD) /* not portable, do not use outside */                 \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        maxgn_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        maxgn_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqax_rr(XG, XS)                                                    \
+        ceqax3rr(W(XG), W(XG), W(XS))
+
+#define ceqax_ld(XG, MS, DS)                                                \
+        ceqax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqax3rr(XD, XS, XT)                                                \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        ceqax_rx(W(XD))
+
+#define ceqax3ld(XD, XS, MT, DT)                                            \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        ceqax_rx(W(XD))
+
+#define ceqax_rx(XD) /* not portable, do not use outside */                 \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        ceqgx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        ceqgx_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtan_rr(XG, XS)                                                    \
+        cgtan3rr(W(XG), W(XG), W(XS))
+
+#define cgtan_ld(XG, MS, DS)                                                \
+        cgtan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtan3rr(XD, XS, XT)                                                \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        cgtan_rx(W(XD))
+
+#define cgtan3ld(XD, XS, MT, DT)                                            \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        cgtan_rx(W(XD))
+
+#define cgtan_rx(XD) /* not portable, do not use outside */                 \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        cgtgn_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movgx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        cgtgn_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movgx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
+
+#else /* RT_256X1 >= 2, AVX2 */
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
 
 #define minax_rr(XG, XS)                                                    \
@@ -922,6 +1094,25 @@
     ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0x75)                 \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtan_rr(XG, XS)                                                    \
+        cgtan3rr(W(XG), W(XG), W(XS))
+
+#define cgtan_ld(XG, MS, DS)                                                \
+        cgtan3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtan3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 1, 1) EMITB(0x65)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define cgtan3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0x65)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+#endif /* RT_256X1 >= 2, AVX2 */
 
 /* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
@@ -1017,23 +1208,6 @@
 #define cgtax3ld(XD, XS, MT, DT)                                            \
         maxax3ld(W(XD), W(XS), W(MT), W(DT))                                \
         cneax_ld(W(XD), W(MT), W(DT))
-
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
-
-#define cgtan_rr(XG, XS)                                                    \
-        cgtan3rr(W(XG), W(XG), W(XS))
-
-#define cgtan_ld(XG, MS, DS)                                                \
-        cgtan3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define cgtan3rr(XD, XS, XT)                                                \
-        VEX(RXB(XD), RXB(XT), REN(XS), 1, 1, 1) EMITB(0x65)                 \
-        MRM(REG(XD), MOD(XT), REG(XT))
-
-#define cgtan3ld(XD, XS, MT, DT)                                            \
-    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0x65)                 \
-        MRM(REG(XD), MOD(MT), REG(MT))                                      \
-        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
 
