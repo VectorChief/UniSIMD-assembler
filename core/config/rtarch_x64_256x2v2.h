@@ -1900,6 +1900,78 @@
         stack_ld(Reax)                                                      \
         movqx_ld(W(XD), Mebp, inf_SCR02(0))
 
+#if (RT_256X2 < 2)
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqqx_rr(XG, XS)                                                    \
+        ceqqx3rr(W(XG), W(XG), W(XS))
+
+#define ceqqx_ld(XG, MS, DS)                                                \
+        ceqqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqqx3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        ceqqx_rx(W(XD))
+
+#define ceqqx3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        ceqqx_rx(W(XD))
+
+#define ceqqx_rx(XD) /* not portable, do not use outside */                 \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        ceqjx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        ceqjx_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        ceqjx_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        ceqjx_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x30))                              \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtqn_rr(XG, XS)                                                    \
+        cgtqn3rr(W(XG), W(XG), W(XS))
+
+#define cgtqn_ld(XG, MS, DS)                                                \
+        cgtqn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtqn3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        cgtqn_rx(W(XD))
+
+#define cgtqn3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        cgtqn_rx(W(XD))
+
+#define cgtqn_rx(XD) /* not portable, do not use outside */                 \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        cgtjn_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        cgtjn_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        cgtjn_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        cgtjn_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x30))                              \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#else /* RT_256X2 >= 2, AVX2 */
+
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqqx_rr(XG, XS)                                                    \
@@ -1921,6 +1993,30 @@
     ADR VEX(1,       RXB(MT), REH(XS), 1, 1, 2) EMITB(0x29)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtqn_rr(XG, XS)                                                    \
+        cgtqn3rr(W(XG), W(XG), W(XS))
+
+#define cgtqn_ld(XG, MS, DS)                                                \
+        cgtqn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtqn3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 1, 2) EMITB(0x37)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 1, 2) EMITB(0x37)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define cgtqn3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 1, 2) EMITB(0x37)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 1, 2) EMITB(0x37)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+#endif /* RT_256X2 >= 2, AVX2 */
 
 /* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
@@ -2031,28 +2127,6 @@
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         movqx_ld(W(XD), Mebp, inf_SCR01(0))                                 \
         cgtqn_ld(W(XD), Mebp, inf_SCR02(0))
-
-/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
-
-#define cgtqn_rr(XG, XS)                                                    \
-        cgtqn3rr(W(XG), W(XG), W(XS))
-
-#define cgtqn_ld(XG, MS, DS)                                                \
-        cgtqn3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define cgtqn3rr(XD, XS, XT)                                                \
-        VEX(0,             0, REG(XS), 1, 1, 2) EMITB(0x37)                 \
-        MRM(REG(XD), MOD(XT), REG(XT))                                      \
-        VEX(1,             1, REH(XS), 1, 1, 2) EMITB(0x37)                 \
-        MRM(REG(XD), MOD(XT), REG(XT))
-
-#define cgtqn3ld(XD, XS, MT, DT)                                            \
-    ADR VEX(0,       RXB(MT), REG(XS), 1, 1, 2) EMITB(0x37)                 \
-        MRM(REG(XD),    0x02, REG(MT))                                      \
-        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
-    ADR VEX(1,       RXB(MT), REH(XS), 1, 1, 2) EMITB(0x37)                 \
-        MRM(REG(XD),    0x02, REG(MT))                                      \
-        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
 
 /* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
 
