@@ -504,17 +504,15 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE1)                       \
 #define svlax3rr(XD, XS, XT)                                                \
         movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        svlax_xx()                                                          \
-        movax_ld(W(XD), Mebp, inf_SCR01(0))
+        svlax_rx(W(XD))
 
 #define svlax3ld(XD, XS, MT, DT)                                            \
         movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movax_ld(W(XD), W(MT), W(DT))                                       \
         movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        svlax_xx()                                                          \
-        movax_ld(W(XD), Mebp, inf_SCR01(0))
+        svlax_rx(W(XD))
 
-#define svlax_xx() /* not portable, do not use outside */                   \
+#define svlax_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movhx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
         shlhx_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -548,7 +546,8 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE1)                       \
         shlhx_mx(Mebp,  inf_SCR01(0x1C))                                    \
         movhx_ld(Recx,  Mebp, inf_SCR02(0x1E))                              \
         shlhx_mx(Mebp,  inf_SCR01(0x1E))                                    \
-        stack_ld(Recx)
+        stack_ld(Recx)                                                      \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -562,17 +561,15 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE1)                       \
 #define svrax3rr(XD, XS, XT)                                                \
         movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        svrax_xx()                                                          \
-        movax_ld(W(XD), Mebp, inf_SCR01(0))
+        svrax_rx(W(XD))
 
 #define svrax3ld(XD, XS, MT, DT)                                            \
         movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movax_ld(W(XD), W(MT), W(DT))                                       \
         movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        svrax_xx()                                                          \
-        movax_ld(W(XD), Mebp, inf_SCR01(0))
+        svrax_rx(W(XD))
 
-#define svrax_xx() /* not portable, do not use outside */                   \
+#define svrax_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movhx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
         shrhx_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -606,7 +603,8 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE1)                       \
         shrhx_mx(Mebp,  inf_SCR01(0x1C))                                    \
         movhx_ld(Recx,  Mebp, inf_SCR02(0x1E))                              \
         shrhx_mx(Mebp,  inf_SCR01(0x1E))                                    \
-        stack_ld(Recx)
+        stack_ld(Recx)                                                      \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -620,17 +618,15 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE1)                       \
 #define svran3rr(XD, XS, XT)                                                \
         movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        svran_xx()                                                          \
-        movax_ld(W(XD), Mebp, inf_SCR01(0))
+        svran_rx(W(XD))
 
 #define svran3ld(XD, XS, MT, DT)                                            \
         movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movax_ld(W(XD), W(MT), W(DT))                                       \
         movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        svran_xx()                                                          \
-        movax_ld(W(XD), Mebp, inf_SCR01(0))
+        svran_rx(W(XD))
 
-#define svran_xx() /* not portable, do not use outside */                   \
+#define svran_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movhx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
         shrhn_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -664,7 +660,8 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE1)                       \
         shrhn_mx(Mebp,  inf_SCR01(0x1C))                                    \
         movhx_ld(Recx,  Mebp, inf_SCR02(0x1E))                              \
         shrhn_mx(Mebp,  inf_SCR01(0x1E))                                    \
-        stack_ld(Recx)
+        stack_ld(Recx)                                                      \
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
 
 /*****************   packed half-precision integer compare   ******************/
 
