@@ -1548,15 +1548,13 @@
 #define addmx3rr(XD, XS, XT)                                                \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        addmx_rx(W(XD))                                                     \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        addmx_rx(W(XD))
 
 #define addmx3ld(XD, XS, MT, DT)                                            \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_ld(W(XD), W(MT), W(DT))                                       \
         movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        addmx_rx(W(XD))                                                     \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        addmx_rx(W(XD))
 
 #define addmx_rx(XD) /* not portable, do not use outside */                 \
         movax_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -1564,7 +1562,8 @@
         movax_st(W(XD), Mebp, inf_SCR01(0x00))                              \
         movax_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
         addax_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        movax_st(W(XD), Mebp, inf_SCR01(0x20))
+        movax_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, unsigned */
 
@@ -1577,15 +1576,13 @@
 #define adsmx3rr(XD, XS, XT)                                                \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adsmx_rx(W(XD))                                                     \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        adsmx_rx(W(XD))
 
 #define adsmx3ld(XD, XS, MT, DT)                                            \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_ld(W(XD), W(MT), W(DT))                                       \
         movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adsmx_rx(W(XD))                                                     \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        adsmx_rx(W(XD))
 
 #define adsmx_rx(XD) /* not portable, do not use outside */                 \
         movax_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -1593,7 +1590,8 @@
         movax_st(W(XD), Mebp, inf_SCR01(0x00))                              \
         movax_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
         adsax_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        movax_st(W(XD), Mebp, inf_SCR01(0x20))
+        movax_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, signed */
 
@@ -1606,15 +1604,13 @@
 #define adsmn3rr(XD, XS, XT)                                                \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adsmn_rx(W(XD))                                                     \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        adsmn_rx(W(XD))
 
 #define adsmn3ld(XD, XS, MT, DT)                                            \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_ld(W(XD), W(MT), W(DT))                                       \
         movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adsmn_rx(W(XD))                                                     \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        adsmn_rx(W(XD))
 
 #define adsmn_rx(XD) /* not portable, do not use outside */                 \
         movax_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -1622,7 +1618,8 @@
         movax_st(W(XD), Mebp, inf_SCR01(0x00))                              \
         movax_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
         adsan_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        movax_st(W(XD), Mebp, inf_SCR01(0x20))
+        movax_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* sub (G = G - S), (D = S - T) if (#D != #T) */
 
@@ -1635,15 +1632,13 @@
 #define submx3rr(XD, XS, XT)                                                \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        submx_rx(W(XD))                                                     \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        submx_rx(W(XD))
 
 #define submx3ld(XD, XS, MT, DT)                                            \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_ld(W(XD), W(MT), W(DT))                                       \
         movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        submx_rx(W(XD))                                                     \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        submx_rx(W(XD))
 
 #define submx_rx(XD) /* not portable, do not use outside */                 \
         movax_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -1651,7 +1646,8 @@
         movax_st(W(XD), Mebp, inf_SCR01(0x00))                              \
         movax_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
         subax_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        movax_st(W(XD), Mebp, inf_SCR01(0x20))
+        movax_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, unsigned */
 
@@ -1664,15 +1660,13 @@
 #define sbsmx3rr(XD, XS, XT)                                                \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        sbsmx_rx(W(XD))                                                     \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        sbsmx_rx(W(XD))
 
 #define sbsmx3ld(XD, XS, MT, DT)                                            \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_ld(W(XD), W(MT), W(DT))                                       \
         movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        sbsmx_rx(W(XD))                                                     \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        sbsmx_rx(W(XD))
 
 #define sbsmx_rx(XD) /* not portable, do not use outside */                 \
         movax_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -1680,7 +1674,8 @@
         movax_st(W(XD), Mebp, inf_SCR01(0x00))                              \
         movax_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
         sbsax_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        movax_st(W(XD), Mebp, inf_SCR01(0x20))
+        movax_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, signed */
 
@@ -1693,15 +1688,13 @@
 #define sbsmn3rr(XD, XS, XT)                                                \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        sbsmn_rx(W(XD))                                                     \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        sbsmn_rx(W(XD))
 
 #define sbsmn3ld(XD, XS, MT, DT)                                            \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_ld(W(XD), W(MT), W(DT))                                       \
         movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        sbsmn_rx(W(XD))                                                     \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        sbsmn_rx(W(XD))
 
 #define sbsmn_rx(XD) /* not portable, do not use outside */                 \
         movax_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -1709,7 +1702,8 @@
         movax_st(W(XD), Mebp, inf_SCR01(0x00))                              \
         movax_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
         sbsan_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        movax_st(W(XD), Mebp, inf_SCR01(0x20))
+        movax_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
 
@@ -1722,15 +1716,13 @@
 #define mulmx3rr(XD, XS, XT)                                                \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mulmx_rx(W(XD))                                                     \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        mulmx_rx(W(XD))
 
 #define mulmx3ld(XD, XS, MT, DT)                                            \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_ld(W(XD), W(MT), W(DT))                                       \
         movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mulmx_rx(W(XD))                                                     \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        mulmx_rx(W(XD))
 
 #define mulmx_rx(XD) /* not portable, do not use outside */                 \
         movax_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
@@ -1738,7 +1730,8 @@
         movax_st(W(XD), Mebp, inf_SCR01(0x00))                              \
         movax_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
         mulax_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
-        movax_st(W(XD), Mebp, inf_SCR01(0x20))
+        movax_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -1833,17 +1826,15 @@
 #define svlmx3rr(XD, XS, XT)                                                \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        svlmx_xx()                                                          \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        svlmx_rx(W(XD))
 
 #define svlmx3ld(XD, XS, MT, DT)                                            \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_ld(W(XD), W(MT), W(DT))                                       \
         movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        svlmx_xx()                                                          \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        svlmx_rx(W(XD))
 
-#define svlmx_xx() /* not portable, do not use outside */                   \
+#define svlmx_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movhx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
         shlhx_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -1909,7 +1900,8 @@
         shlhx_mx(Mebp,  inf_SCR01(0x3C))                                    \
         movhx_ld(Recx,  Mebp, inf_SCR02(0x3E))                              \
         shlhx_mx(Mebp,  inf_SCR01(0x3E))                                    \
-        stack_ld(Recx)
+        stack_ld(Recx)                                                      \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -1923,17 +1915,15 @@
 #define svrmx3rr(XD, XS, XT)                                                \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        svrmx_xx()                                                          \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        svrmx_rx(W(XD))
 
 #define svrmx3ld(XD, XS, MT, DT)                                            \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_ld(W(XD), W(MT), W(DT))                                       \
         movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        svrmx_xx()                                                          \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        svrmx_rx(W(XD))
 
-#define svrmx_xx() /* not portable, do not use outside */                   \
+#define svrmx_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movhx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
         shrhx_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -1999,7 +1989,8 @@
         shrhx_mx(Mebp,  inf_SCR01(0x3C))                                    \
         movhx_ld(Recx,  Mebp, inf_SCR02(0x3E))                              \
         shrhx_mx(Mebp,  inf_SCR01(0x3E))                                    \
-        stack_ld(Recx)
+        stack_ld(Recx)                                                      \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -2013,17 +2004,15 @@
 #define svrmn3rr(XD, XS, XT)                                                \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        svrmn_xx()                                                          \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        svrmn_rx(W(XD))
 
 #define svrmn3ld(XD, XS, MT, DT)                                            \
         movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmx_ld(W(XD), W(MT), W(DT))                                       \
         movmx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        svrmn_xx()                                                          \
-        movmx_ld(W(XD), Mebp, inf_SCR01(0))
+        svrmn_rx(W(XD))
 
-#define svrmn_xx() /* not portable, do not use outside */                   \
+#define svrmn_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movhx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
         shrhn_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -2089,7 +2078,8 @@
         shrhn_mx(Mebp,  inf_SCR01(0x3C))                                    \
         movhx_ld(Recx,  Mebp, inf_SCR02(0x3E))                              \
         shrhn_mx(Mebp,  inf_SCR01(0x3E))                                    \
-        stack_ld(Recx)
+        stack_ld(Recx)                                                      \
+        movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #else /* RT_512X1 >= 2 */
 
