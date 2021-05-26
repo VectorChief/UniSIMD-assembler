@@ -536,6 +536,122 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xE1)                       \
 
 /*****************   packed half-precision integer compare   ******************/
 
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define mingx_rr(XG, XS)                                                    \
+        mingx3rr(W(XG), W(XG), W(XS))
+
+#define mingx_ld(XG, MS, DS)                                                \
+        mingx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mingx3rr(XD, XS, XT)                                                \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mingx_rx(W(XD))
+
+#define mingx3ld(XD, XS, MT, DT)                                            \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_ld(W(XD), W(MT), W(DT))                                       \
+        movgx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mingx_rx(W(XD))
+
+#define mingx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x02))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x02))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x02))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x04))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x04))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x04))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x06))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x06))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x06))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x0A))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x0A))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x0A))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x0C))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x0E))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x0E))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x0E))                              \
+        stack_ld(Reax)                                                      \
+        movgx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxgx_rr(XG, XS)                                                    \
+        maxgx3rr(W(XG), W(XG), W(XS))
+
+#define maxgx_ld(XG, MS, DS)                                                \
+        maxgx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxgx3rr(XD, XS, XT)                                                \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        maxgx_rx(W(XD))
+
+#define maxgx3ld(XD, XS, MT, DT)                                            \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_ld(W(XD), W(MT), W(DT))                                       \
+        movgx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        maxgx_rx(W(XD))
+
+#define maxgx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x02))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x02))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x02))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x04))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x04))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x04))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x06))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x06))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x06))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x0A))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x0A))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x0A))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x0C))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x0E))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x0E))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x0E))                              \
+        stack_ld(Reax)                                                      \
+        movgx_ld(W(XD), Mebp, inf_SCR02(0))
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
 
 #define mingx_rr(XG, XS)                                                    \
@@ -555,25 +671,6 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x3A)           \
         movgx_rr(W(XD), W(XS))                                              \
         mingx_ld(W(XD), W(MT), W(DT))
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
-
-#define mingn_rr(XG, XS)                                                    \
-    ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xEA)                       \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define mingn_ld(XG, MS, DS)                                                \
-ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xEA)                       \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define mingn3rr(XD, XS, XT)                                                \
-        movgx_rr(W(XD), W(XS))                                              \
-        mingn_rr(W(XD), W(XT))
-
-#define mingn3ld(XD, XS, MT, DT)                                            \
-        movgx_rr(W(XD), W(XS))                                              \
-        mingn_ld(W(XD), W(MT), W(DT))
-
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
 
 #define maxgx_rr(XG, XS)                                                    \
@@ -592,6 +689,27 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x3E)           \
 #define maxgx3ld(XD, XS, MT, DT)                                            \
         movgx_rr(W(XD), W(XS))                                              \
         maxgx_ld(W(XD), W(MT), W(DT))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define mingn_rr(XG, XS)                                                    \
+    ESC REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xEA)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define mingn_ld(XG, MS, DS)                                                \
+ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xEA)                       \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define mingn3rr(XD, XS, XT)                                                \
+        movgx_rr(W(XD), W(XS))                                              \
+        mingn_rr(W(XD), W(XT))
+
+#define mingn3ld(XD, XS, MT, DT)                                            \
+        movgx_rr(W(XD), W(XS))                                              \
+        mingn_ld(W(XD), W(MT), W(DT))
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
 

@@ -665,6 +665,186 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE1)                       \
 
 /*****************   packed half-precision integer compare   ******************/
 
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minax_rr(XG, XS)                                                    \
+        minax3rr(W(XG), W(XG), W(XS))
+
+#define minax_ld(XG, MS, DS)                                                \
+        minax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minax3rr(XD, XS, XT)                                                \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        minax_rx(W(XD))
+
+#define minax3ld(XD, XS, MT, DT)                                            \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        minax_rx(W(XD))
+
+#define minax_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x02))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x02))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x02))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x04))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x04))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x04))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x06))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x06))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x06))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x0A))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x0A))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x0A))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x0C))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x0E))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x0E))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x0E))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x12))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x12))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x12))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x14))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x14))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x14))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x16))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x16))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x16))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x1A))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x1A))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x1A))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x1C))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x1C))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x1C))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x1E))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x1E))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x1E))                              \
+        stack_ld(Reax)                                                      \
+        movax_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxax_rr(XG, XS)                                                    \
+        maxax3rr(W(XG), W(XG), W(XS))
+
+#define maxax_ld(XG, MS, DS)                                                \
+        maxax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxax3rr(XD, XS, XT)                                                \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        maxax_rx(W(XD))
+
+#define maxax3ld(XD, XS, MT, DT)                                            \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        maxax_rx(W(XD))
+
+#define maxax_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x02))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x02))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x02))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x04))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x04))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x04))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x06))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x06))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x06))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x0A))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x0A))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x0A))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x0C))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x0E))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x0E))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x0E))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x12))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x12))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x12))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x14))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x14))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x14))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x16))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x16))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x16))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x1A))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x1A))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x1A))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x1C))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x1C))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x1C))                              \
+        movhx_ld(Reax,  Mebp, inf_SCR01(0x1E))                              \
+        cmphx_rm(Reax,  Mebp, inf_SCR02(0x1E))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movhx_st(Reax,  Mebp, inf_SCR02(0x1E))                              \
+        stack_ld(Reax)                                                      \
+        movax_ld(W(XD), Mebp, inf_SCR02(0))
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
 
 #define minax_rr(XG, XS)                                                    \
@@ -689,30 +869,6 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x3A)           \
         movax_rr(W(XD), W(XS))                                              \
         minax_ld(W(XD), W(MT), W(DT))
 
-/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
-
-#define minan_rr(XG, XS)                                                    \
-    ESC REX(0,             0) EMITB(0x0F) EMITB(0xEA)                       \
-        MRM(REG(XG), MOD(XS), REG(XS))                                      \
-    ESC REX(1,             1) EMITB(0x0F) EMITB(0xEA)                       \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define minan_ld(XG, MS, DS)                                                \
-ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0xEA)                       \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xEA)                       \
-        MRM(REG(XG),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
-
-#define minan3rr(XD, XS, XT)                                                \
-        movax_rr(W(XD), W(XS))                                              \
-        minan_rr(W(XD), W(XT))
-
-#define minan3ld(XD, XS, MT, DT)                                            \
-        movax_rr(W(XD), W(XS))                                              \
-        minan_ld(W(XD), W(MT), W(DT))
-
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
 
 #define maxax_rr(XG, XS)                                                    \
@@ -736,6 +892,32 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x3E)           \
 #define maxax3ld(XD, XS, MT, DT)                                            \
         movax_rr(W(XD), W(XS))                                              \
         maxax_ld(W(XD), W(MT), W(DT))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minan_rr(XG, XS)                                                    \
+    ESC REX(0,             0) EMITB(0x0F) EMITB(0xEA)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+    ESC REX(1,             1) EMITB(0x0F) EMITB(0xEA)                       \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define minan_ld(XG, MS, DS)                                                \
+ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0xEA)                       \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xEA)                       \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
+
+#define minan3rr(XD, XS, XT)                                                \
+        movax_rr(W(XD), W(XS))                                              \
+        minan_rr(W(XD), W(XT))
+
+#define minan3ld(XD, XS, MT, DT)                                            \
+        movax_rr(W(XD), W(XS))                                              \
+        minan_ld(W(XD), W(MT), W(DT))
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
 

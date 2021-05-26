@@ -1596,6 +1596,234 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
 
 /****************   packed single-precision integer compare   *****************/
 
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define mincx_rr(XG, XS)                                                    \
+        mincx3rr(W(XG), W(XG), W(XS))
+
+#define mincx_ld(XG, MS, DS)                                                \
+        mincx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mincx3rr(XD, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mincx_rx(W(XD))
+
+#define mincx3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_ld(W(XD), W(MT), W(DT))                                       \
+        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mincx_rx(W(XD))
+
+#define mincx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x04))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x04))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x04))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x0C))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x14))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x14))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x14))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x1C))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x1C))                              \
+        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x1C))                              \
+        stack_ld(Reax)                                                      \
+        movcx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define mincn_rr(XG, XS)                                                    \
+        mincn3rr(W(XG), W(XG), W(XS))
+
+#define mincn_ld(XG, MS, DS)                                                \
+        mincn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mincn3rr(XD, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mincn_rx(W(XD))
+
+#define mincn3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_ld(W(XD), W(MT), W(DT))                                       \
+        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mincn_rx(W(XD))
+
+#define mincn_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        EMITB(0x7D) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x04))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x04))                              \
+        EMITB(0x7D) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x04))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        EMITB(0x7D) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x0C))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        EMITB(0x7D) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
+        EMITB(0x7D) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x14))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x14))                              \
+        EMITB(0x7D) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x14))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
+        EMITB(0x7D) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x1C))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x1C))                              \
+        EMITB(0x7D) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x1C))                              \
+        stack_ld(Reax)                                                      \
+        movcx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxcx_rr(XG, XS)                                                    \
+        maxcx3rr(W(XG), W(XG), W(XS))
+
+#define maxcx_ld(XG, MS, DS)                                                \
+        maxcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxcx3rr(XD, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        maxcx_rx(W(XD))
+
+#define maxcx3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_ld(W(XD), W(MT), W(DT))                                       \
+        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        maxcx_rx(W(XD))
+
+#define maxcx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x04))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x04))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x04))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x0C))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x14))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x14))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x14))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x1C))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x1C))                              \
+        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x1C))                              \
+        stack_ld(Reax)                                                      \
+        movcx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxcn_rr(XG, XS)                                                    \
+        maxcn3rr(W(XG), W(XG), W(XS))
+
+#define maxcn_ld(XG, MS, DS)                                                \
+        maxcn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxcn3rr(XD, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        maxcn_rx(W(XD))
+
+#define maxcn3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_ld(W(XD), W(MT), W(DT))                                       \
+        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        maxcn_rx(W(XD))
+
+#define maxcn_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        EMITB(0x7E) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x04))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x04))                              \
+        EMITB(0x7E) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x04))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        EMITB(0x7E) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x0C))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        EMITB(0x7E) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x0C))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
+        EMITB(0x7E) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x14))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x14))                              \
+        EMITB(0x7E) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x14))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
+        EMITB(0x7E) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
+        movwx_ld(Reax,  Mebp, inf_SCR01(0x1C))                              \
+        cmpwx_rm(Reax,  Mebp, inf_SCR02(0x1C))                              \
+        EMITB(0x7E) EMITB(0x07 + x67)                                       \
+        movwx_st(Reax,  Mebp, inf_SCR02(0x1C))                              \
+        stack_ld(Reax)                                                      \
+        movcx_ld(W(XD), Mebp, inf_SCR02(0))
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
 
 #define mincx_rr(XG, XS)                                                    \
@@ -1691,6 +1919,8 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x3D)           \
 #define maxcn3ld(XD, XS, MT, DT)                                            \
         movcx_rr(W(XD), W(XS))                                              \
         maxcn_ld(W(XD), W(MT), W(DT))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
