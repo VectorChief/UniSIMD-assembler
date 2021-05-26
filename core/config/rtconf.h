@@ -1672,6 +1672,204 @@
 #define svrmn3ld(XD, XS, MT, DT)                                            \
         svran3ld(W(XD), W(XS), W(MT), W(DT))
 
+/*****************   packed half-precision integer compare   ******************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minmx_rr(XG, XS)                                                    \
+        minax_rr(W(XG), W(XS))
+
+#define minmx_ld(XG, MS, DS)                                                \
+        minax_ld(W(XG), W(MS), W(DS))
+
+#define minmx3rr(XD, XS, XT)                                                \
+        minax3rr(W(XD), W(XS), W(XT))
+
+#define minmx3ld(XD, XS, MT, DT)                                            \
+        minax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minmn_rr(XG, XS)                                                    \
+        minan_rr(W(XG), W(XS))
+
+#define minmn_ld(XG, MS, DS)                                                \
+        minan_ld(W(XG), W(MS), W(DS))
+
+#define minmn3rr(XD, XS, XT)                                                \
+        minan3rr(W(XD), W(XS), W(XT))
+
+#define minmn3ld(XD, XS, MT, DT)                                            \
+        minan3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxmx_rr(XG, XS)                                                    \
+        maxax_rr(W(XG), W(XS))
+
+#define maxmx_ld(XG, MS, DS)                                                \
+        maxax_ld(W(XG), W(MS), W(DS))
+
+#define maxmx3rr(XD, XS, XT)                                                \
+        maxax3rr(W(XD), W(XS), W(XT))
+
+#define maxmx3ld(XD, XS, MT, DT)                                            \
+        maxax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxmn_rr(XG, XS)                                                    \
+        maxan_rr(W(XG), W(XS))
+
+#define maxmn_ld(XG, MS, DS)                                                \
+        maxan_ld(W(XG), W(MS), W(DS))
+
+#define maxmn3rr(XD, XS, XT)                                                \
+        maxan3rr(W(XD), W(XS), W(XT))
+
+#define maxmn3ld(XD, XS, MT, DT)                                            \
+        maxan3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqmx_rr(XG, XS)                                                    \
+        ceqax_rr(W(XG), W(XS))
+
+#define ceqmx_ld(XG, MS, DS)                                                \
+        ceqax_ld(W(XG), W(MS), W(DS))
+
+#define ceqmx3rr(XD, XS, XT)                                                \
+        ceqax3rr(W(XD), W(XS), W(XT))
+
+#define ceqmx3ld(XD, XS, MT, DT)                                            \
+        ceqax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cnemx_rr(XG, XS)                                                    \
+        cneax_rr(W(XG), W(XS))
+
+#define cnemx_ld(XG, MS, DS)                                                \
+        cneax_ld(W(XG), W(MS), W(DS))
+
+#define cnemx3rr(XD, XS, XT)                                                \
+        cneax3rr(W(XD), W(XS), W(XT))
+
+#define cnemx3ld(XD, XS, MT, DT)                                            \
+        cneax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltmx_rr(XG, XS)                                                    \
+        cltax_rr(W(XG), W(XS))
+
+#define cltmx_ld(XG, MS, DS)                                                \
+        cltax_ld(W(XG), W(MS), W(DS))
+
+#define cltmx3rr(XD, XS, XT)                                                \
+        cltax3rr(W(XD), W(XS), W(XT))
+
+#define cltmx3ld(XD, XS, MT, DT)                                            \
+        cltax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltmn_rr(XG, XS)                                                    \
+        cltan_rr(W(XG), W(XS))
+
+#define cltmn_ld(XG, MS, DS)                                                \
+        cltan_ld(W(XG), W(MS), W(DS))
+
+#define cltmn3rr(XD, XS, XT)                                                \
+        cltan3rr(W(XD), W(XS), W(XT))
+
+#define cltmn3ld(XD, XS, MT, DT)                                            \
+        cltan3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define clemx_rr(XG, XS)                                                    \
+        cleax_rr(W(XG), W(XS))
+
+#define clemx_ld(XG, MS, DS)                                                \
+        cleax_ld(W(XG), W(MS), W(DS))
+
+#define clemx3rr(XD, XS, XT)                                                \
+        cleax3rr(W(XD), W(XS), W(XT))
+
+#define clemx3ld(XD, XS, MT, DT)                                            \
+        cleax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define clemn_rr(XG, XS)                                                    \
+        clean_rr(W(XG), W(XS))
+
+#define clemn_ld(XG, MS, DS)                                                \
+        clean_ld(W(XG), W(MS), W(DS))
+
+#define clemn3rr(XD, XS, XT)                                                \
+        clean3rr(W(XD), W(XS), W(XT))
+
+#define clemn3ld(XD, XS, MT, DT)                                            \
+        clean3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtmx_rr(XG, XS)                                                    \
+        cgtax_rr(W(XG), W(XS))
+
+#define cgtmx_ld(XG, MS, DS)                                                \
+        cgtax_ld(W(XG), W(MS), W(DS))
+
+#define cgtmx3rr(XD, XS, XT)                                                \
+        cgtax3rr(W(XD), W(XS), W(XT))
+
+#define cgtmx3ld(XD, XS, MT, DT)                                            \
+        cgtax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtmn_rr(XG, XS)                                                    \
+        cgtan_rr(W(XG), W(XS))
+
+#define cgtmn_ld(XG, MS, DS)                                                \
+        cgtan_ld(W(XG), W(MS), W(DS))
+
+#define cgtmn3rr(XD, XS, XT)                                                \
+        cgtan3rr(W(XD), W(XS), W(XT))
+
+#define cgtmn3ld(XD, XS, MT, DT)                                            \
+        cgtan3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgemx_rr(XG, XS)                                                    \
+        cgeax_rr(W(XG), W(XS))
+
+#define cgemx_ld(XG, MS, DS)                                                \
+        cgeax_ld(W(XG), W(MS), W(DS))
+
+#define cgemx3rr(XD, XS, XT)                                                \
+        cgeax3rr(W(XD), W(XS), W(XT))
+
+#define cgemx3ld(XD, XS, MT, DT)                                            \
+        cgeax3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgemn_rr(XG, XS)                                                    \
+        cgean_rr(W(XG), W(XS))
+
+#define cgemn_ld(XG, MS, DS)                                                \
+        cgean_ld(W(XG), W(MS), W(DS))
+
+#define cgemn3rr(XD, XS, XT)                                                \
+        cgean3rr(W(XD), W(XS), W(XT))
+
+#define cgemn3ld(XD, XS, MT, DT)                                            \
+        cgean3ld(W(XD), W(XS), W(MT), W(DT))
+
 /******************************************************************************/
 /**** var-len **** SIMD instructions with fixed-16-bit element **** 128-bit ***/
 /******************************************************************************/
@@ -2341,6 +2539,204 @@
 
 #define svrmn3ld(XD, XS, MT, DT)                                            \
         svrgn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/*****************   packed half-precision integer compare   ******************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minmx_rr(XG, XS)                                                    \
+        mingx_rr(W(XG), W(XS))
+
+#define minmx_ld(XG, MS, DS)                                                \
+        mingx_ld(W(XG), W(MS), W(DS))
+
+#define minmx3rr(XD, XS, XT)                                                \
+        mingx3rr(W(XD), W(XS), W(XT))
+
+#define minmx3ld(XD, XS, MT, DT)                                            \
+        mingx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minmn_rr(XG, XS)                                                    \
+        mingn_rr(W(XG), W(XS))
+
+#define minmn_ld(XG, MS, DS)                                                \
+        mingn_ld(W(XG), W(MS), W(DS))
+
+#define minmn3rr(XD, XS, XT)                                                \
+        mingn3rr(W(XD), W(XS), W(XT))
+
+#define minmn3ld(XD, XS, MT, DT)                                            \
+        mingn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxmx_rr(XG, XS)                                                    \
+        maxgx_rr(W(XG), W(XS))
+
+#define maxmx_ld(XG, MS, DS)                                                \
+        maxgx_ld(W(XG), W(MS), W(DS))
+
+#define maxmx3rr(XD, XS, XT)                                                \
+        maxgx3rr(W(XD), W(XS), W(XT))
+
+#define maxmx3ld(XD, XS, MT, DT)                                            \
+        maxgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxmn_rr(XG, XS)                                                    \
+        maxgn_rr(W(XG), W(XS))
+
+#define maxmn_ld(XG, MS, DS)                                                \
+        maxgn_ld(W(XG), W(MS), W(DS))
+
+#define maxmn3rr(XD, XS, XT)                                                \
+        maxgn3rr(W(XD), W(XS), W(XT))
+
+#define maxmn3ld(XD, XS, MT, DT)                                            \
+        maxgn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqmx_rr(XG, XS)                                                    \
+        ceqgx_rr(W(XG), W(XS))
+
+#define ceqmx_ld(XG, MS, DS)                                                \
+        ceqgx_ld(W(XG), W(MS), W(DS))
+
+#define ceqmx3rr(XD, XS, XT)                                                \
+        ceqgx3rr(W(XD), W(XS), W(XT))
+
+#define ceqmx3ld(XD, XS, MT, DT)                                            \
+        ceqgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cnemx_rr(XG, XS)                                                    \
+        cnegx_rr(W(XG), W(XS))
+
+#define cnemx_ld(XG, MS, DS)                                                \
+        cnegx_ld(W(XG), W(MS), W(DS))
+
+#define cnemx3rr(XD, XS, XT)                                                \
+        cnegx3rr(W(XD), W(XS), W(XT))
+
+#define cnemx3ld(XD, XS, MT, DT)                                            \
+        cnegx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltmx_rr(XG, XS)                                                    \
+        cltgx_rr(W(XG), W(XS))
+
+#define cltmx_ld(XG, MS, DS)                                                \
+        cltgx_ld(W(XG), W(MS), W(DS))
+
+#define cltmx3rr(XD, XS, XT)                                                \
+        cltgx3rr(W(XD), W(XS), W(XT))
+
+#define cltmx3ld(XD, XS, MT, DT)                                            \
+        cltgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltmn_rr(XG, XS)                                                    \
+        cltgn_rr(W(XG), W(XS))
+
+#define cltmn_ld(XG, MS, DS)                                                \
+        cltgn_ld(W(XG), W(MS), W(DS))
+
+#define cltmn3rr(XD, XS, XT)                                                \
+        cltgn3rr(W(XD), W(XS), W(XT))
+
+#define cltmn3ld(XD, XS, MT, DT)                                            \
+        cltgn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define clemx_rr(XG, XS)                                                    \
+        clegx_rr(W(XG), W(XS))
+
+#define clemx_ld(XG, MS, DS)                                                \
+        clegx_ld(W(XG), W(MS), W(DS))
+
+#define clemx3rr(XD, XS, XT)                                                \
+        clegx3rr(W(XD), W(XS), W(XT))
+
+#define clemx3ld(XD, XS, MT, DT)                                            \
+        clegx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define clemn_rr(XG, XS)                                                    \
+        clegn_rr(W(XG), W(XS))
+
+#define clemn_ld(XG, MS, DS)                                                \
+        clegn_ld(W(XG), W(MS), W(DS))
+
+#define clemn3rr(XD, XS, XT)                                                \
+        clegn3rr(W(XD), W(XS), W(XT))
+
+#define clemn3ld(XD, XS, MT, DT)                                            \
+        clegn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtmx_rr(XG, XS)                                                    \
+        cgtgx_rr(W(XG), W(XS))
+
+#define cgtmx_ld(XG, MS, DS)                                                \
+        cgtgx_ld(W(XG), W(MS), W(DS))
+
+#define cgtmx3rr(XD, XS, XT)                                                \
+        cgtgx3rr(W(XD), W(XS), W(XT))
+
+#define cgtmx3ld(XD, XS, MT, DT)                                            \
+        cgtgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtmn_rr(XG, XS)                                                    \
+        cgtgn_rr(W(XG), W(XS))
+
+#define cgtmn_ld(XG, MS, DS)                                                \
+        cgtgn_ld(W(XG), W(MS), W(DS))
+
+#define cgtmn3rr(XD, XS, XT)                                                \
+        cgtgn3rr(W(XD), W(XS), W(XT))
+
+#define cgtmn3ld(XD, XS, MT, DT)                                            \
+        cgtgn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgemx_rr(XG, XS)                                                    \
+        cgegx_rr(W(XG), W(XS))
+
+#define cgemx_ld(XG, MS, DS)                                                \
+        cgegx_ld(W(XG), W(MS), W(DS))
+
+#define cgemx3rr(XD, XS, XT)                                                \
+        cgegx3rr(W(XD), W(XS), W(XT))
+
+#define cgemx3ld(XD, XS, MT, DT)                                            \
+        cgegx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgemn_rr(XG, XS)                                                    \
+        cgegn_rr(W(XG), W(XS))
+
+#define cgemn_ld(XG, MS, DS)                                                \
+        cgegn_ld(W(XG), W(MS), W(DS))
+
+#define cgemn3rr(XD, XS, XT)                                                \
+        cgegn3rr(W(XD), W(XS), W(XT))
+
+#define cgemn3ld(XD, XS, MT, DT)                                            \
+        cgegn3ld(W(XD), W(XS), W(MT), W(DT))
 
 #endif /* RT_SIMD: 256, 128 */
 
@@ -3045,6 +3441,204 @@
 #define svron3ld(XD, XS, MT, DT)                                            \
         svrcn3ld(W(XD), W(XS), W(MT), W(DT))
 
+/****************   packed single-precision integer compare   *****************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minox_rr(XG, XS)                                                    \
+        mincx_rr(W(XG), W(XS))
+
+#define minox_ld(XG, MS, DS)                                                \
+        mincx_ld(W(XG), W(MS), W(DS))
+
+#define minox3rr(XD, XS, XT)                                                \
+        mincx3rr(W(XD), W(XS), W(XT))
+
+#define minox3ld(XD, XS, MT, DT)                                            \
+        mincx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minon_rr(XG, XS)                                                    \
+        mincn_rr(W(XG), W(XS))
+
+#define minon_ld(XG, MS, DS)                                                \
+        mincn_ld(W(XG), W(MS), W(DS))
+
+#define minon3rr(XD, XS, XT)                                                \
+        mincn3rr(W(XD), W(XS), W(XT))
+
+#define minon3ld(XD, XS, MT, DT)                                            \
+        mincn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxox_rr(XG, XS)                                                    \
+        maxcx_rr(W(XG), W(XS))
+
+#define maxox_ld(XG, MS, DS)                                                \
+        maxcx_ld(W(XG), W(MS), W(DS))
+
+#define maxox3rr(XD, XS, XT)                                                \
+        maxcx3rr(W(XD), W(XS), W(XT))
+
+#define maxox3ld(XD, XS, MT, DT)                                            \
+        maxcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxon_rr(XG, XS)                                                    \
+        maxcn_rr(W(XG), W(XS))
+
+#define maxon_ld(XG, MS, DS)                                                \
+        maxcn_ld(W(XG), W(MS), W(DS))
+
+#define maxon3rr(XD, XS, XT)                                                \
+        maxcn3rr(W(XD), W(XS), W(XT))
+
+#define maxon3ld(XD, XS, MT, DT)                                            \
+        maxcn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqox_rr(XG, XS)                                                    \
+        ceqcx_rr(W(XG), W(XS))
+
+#define ceqox_ld(XG, MS, DS)                                                \
+        ceqcx_ld(W(XG), W(MS), W(DS))
+
+#define ceqox3rr(XD, XS, XT)                                                \
+        ceqcx3rr(W(XD), W(XS), W(XT))
+
+#define ceqox3ld(XD, XS, MT, DT)                                            \
+        ceqcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cneox_rr(XG, XS)                                                    \
+        cnecx_rr(W(XG), W(XS))
+
+#define cneox_ld(XG, MS, DS)                                                \
+        cnecx_ld(W(XG), W(MS), W(DS))
+
+#define cneox3rr(XD, XS, XT)                                                \
+        cnecx3rr(W(XD), W(XS), W(XT))
+
+#define cneox3ld(XD, XS, MT, DT)                                            \
+        cnecx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltox_rr(XG, XS)                                                    \
+        cltcx_rr(W(XG), W(XS))
+
+#define cltox_ld(XG, MS, DS)                                                \
+        cltcx_ld(W(XG), W(MS), W(DS))
+
+#define cltox3rr(XD, XS, XT)                                                \
+        cltcx3rr(W(XD), W(XS), W(XT))
+
+#define cltox3ld(XD, XS, MT, DT)                                            \
+        cltcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define clton_rr(XG, XS)                                                    \
+        cltcn_rr(W(XG), W(XS))
+
+#define clton_ld(XG, MS, DS)                                                \
+        cltcn_ld(W(XG), W(MS), W(DS))
+
+#define clton3rr(XD, XS, XT)                                                \
+        cltcn3rr(W(XD), W(XS), W(XT))
+
+#define clton3ld(XD, XS, MT, DT)                                            \
+        cltcn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cleox_rr(XG, XS)                                                    \
+        clecx_rr(W(XG), W(XS))
+
+#define cleox_ld(XG, MS, DS)                                                \
+        clecx_ld(W(XG), W(MS), W(DS))
+
+#define cleox3rr(XD, XS, XT)                                                \
+        clecx3rr(W(XD), W(XS), W(XT))
+
+#define cleox3ld(XD, XS, MT, DT)                                            \
+        clecx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define cleon_rr(XG, XS)                                                    \
+        clecn_rr(W(XG), W(XS))
+
+#define cleon_ld(XG, MS, DS)                                                \
+        clecn_ld(W(XG), W(MS), W(DS))
+
+#define cleon3rr(XD, XS, XT)                                                \
+        clecn3rr(W(XD), W(XS), W(XT))
+
+#define cleon3ld(XD, XS, MT, DT)                                            \
+        clecn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtox_rr(XG, XS)                                                    \
+        cgtcx_rr(W(XG), W(XS))
+
+#define cgtox_ld(XG, MS, DS)                                                \
+        cgtcx_ld(W(XG), W(MS), W(DS))
+
+#define cgtox3rr(XD, XS, XT)                                                \
+        cgtcx3rr(W(XD), W(XS), W(XT))
+
+#define cgtox3ld(XD, XS, MT, DT)                                            \
+        cgtcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgton_rr(XG, XS)                                                    \
+        cgtcn_rr(W(XG), W(XS))
+
+#define cgton_ld(XG, MS, DS)                                                \
+        cgtcn_ld(W(XG), W(MS), W(DS))
+
+#define cgton3rr(XD, XS, XT)                                                \
+        cgtcn3rr(W(XD), W(XS), W(XT))
+
+#define cgton3ld(XD, XS, MT, DT)                                            \
+        cgtcn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgeox_rr(XG, XS)                                                    \
+        cgecx_rr(W(XG), W(XS))
+
+#define cgeox_ld(XG, MS, DS)                                                \
+        cgecx_ld(W(XG), W(MS), W(DS))
+
+#define cgeox3rr(XD, XS, XT)                                                \
+        cgecx3rr(W(XD), W(XS), W(XT))
+
+#define cgeox3ld(XD, XS, MT, DT)                                            \
+        cgecx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgeon_rr(XG, XS)                                                    \
+        cgecn_rr(W(XG), W(XS))
+
+#define cgeon_ld(XG, MS, DS)                                                \
+        cgecn_ld(W(XG), W(MS), W(DS))
+
+#define cgeon3rr(XD, XS, XT)                                                \
+        cgecn3rr(W(XD), W(XS), W(XT))
+
+#define cgeon3ld(XD, XS, MT, DT)                                            \
+        cgecn3ld(W(XD), W(XS), W(MT), W(DT))
+
 /******************************************************************************/
 /**** var-len **** SIMD instructions with fixed-32-bit element **** 128-bit ***/
 /******************************************************************************/
@@ -3745,6 +4339,204 @@
 
 #define svron3ld(XD, XS, MT, DT)                                            \
         svrin3ld(W(XD), W(XS), W(MT), W(DT))
+
+/****************   packed single-precision integer compare   *****************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minox_rr(XG, XS)                                                    \
+        minix_rr(W(XG), W(XS))
+
+#define minox_ld(XG, MS, DS)                                                \
+        minix_ld(W(XG), W(MS), W(DS))
+
+#define minox3rr(XD, XS, XT)                                                \
+        minix3rr(W(XD), W(XS), W(XT))
+
+#define minox3ld(XD, XS, MT, DT)                                            \
+        minix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minon_rr(XG, XS)                                                    \
+        minin_rr(W(XG), W(XS))
+
+#define minon_ld(XG, MS, DS)                                                \
+        minin_ld(W(XG), W(MS), W(DS))
+
+#define minon3rr(XD, XS, XT)                                                \
+        minin3rr(W(XD), W(XS), W(XT))
+
+#define minon3ld(XD, XS, MT, DT)                                            \
+        minin3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxox_rr(XG, XS)                                                    \
+        maxix_rr(W(XG), W(XS))
+
+#define maxox_ld(XG, MS, DS)                                                \
+        maxix_ld(W(XG), W(MS), W(DS))
+
+#define maxox3rr(XD, XS, XT)                                                \
+        maxix3rr(W(XD), W(XS), W(XT))
+
+#define maxox3ld(XD, XS, MT, DT)                                            \
+        maxix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxon_rr(XG, XS)                                                    \
+        maxin_rr(W(XG), W(XS))
+
+#define maxon_ld(XG, MS, DS)                                                \
+        maxin_ld(W(XG), W(MS), W(DS))
+
+#define maxon3rr(XD, XS, XT)                                                \
+        maxin3rr(W(XD), W(XS), W(XT))
+
+#define maxon3ld(XD, XS, MT, DT)                                            \
+        maxin3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqox_rr(XG, XS)                                                    \
+        ceqix_rr(W(XG), W(XS))
+
+#define ceqox_ld(XG, MS, DS)                                                \
+        ceqix_ld(W(XG), W(MS), W(DS))
+
+#define ceqox3rr(XD, XS, XT)                                                \
+        ceqix3rr(W(XD), W(XS), W(XT))
+
+#define ceqox3ld(XD, XS, MT, DT)                                            \
+        ceqix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cneox_rr(XG, XS)                                                    \
+        cneix_rr(W(XG), W(XS))
+
+#define cneox_ld(XG, MS, DS)                                                \
+        cneix_ld(W(XG), W(MS), W(DS))
+
+#define cneox3rr(XD, XS, XT)                                                \
+        cneix3rr(W(XD), W(XS), W(XT))
+
+#define cneox3ld(XD, XS, MT, DT)                                            \
+        cneix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltox_rr(XG, XS)                                                    \
+        cltix_rr(W(XG), W(XS))
+
+#define cltox_ld(XG, MS, DS)                                                \
+        cltix_ld(W(XG), W(MS), W(DS))
+
+#define cltox3rr(XD, XS, XT)                                                \
+        cltix3rr(W(XD), W(XS), W(XT))
+
+#define cltox3ld(XD, XS, MT, DT)                                            \
+        cltix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define clton_rr(XG, XS)                                                    \
+        cltin_rr(W(XG), W(XS))
+
+#define clton_ld(XG, MS, DS)                                                \
+        cltin_ld(W(XG), W(MS), W(DS))
+
+#define clton3rr(XD, XS, XT)                                                \
+        cltin3rr(W(XD), W(XS), W(XT))
+
+#define clton3ld(XD, XS, MT, DT)                                            \
+        cltin3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cleox_rr(XG, XS)                                                    \
+        cleix_rr(W(XG), W(XS))
+
+#define cleox_ld(XG, MS, DS)                                                \
+        cleix_ld(W(XG), W(MS), W(DS))
+
+#define cleox3rr(XD, XS, XT)                                                \
+        cleix3rr(W(XD), W(XS), W(XT))
+
+#define cleox3ld(XD, XS, MT, DT)                                            \
+        cleix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define cleon_rr(XG, XS)                                                    \
+        clein_rr(W(XG), W(XS))
+
+#define cleon_ld(XG, MS, DS)                                                \
+        clein_ld(W(XG), W(MS), W(DS))
+
+#define cleon3rr(XD, XS, XT)                                                \
+        clein3rr(W(XD), W(XS), W(XT))
+
+#define cleon3ld(XD, XS, MT, DT)                                            \
+        clein3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtox_rr(XG, XS)                                                    \
+        cgtix_rr(W(XG), W(XS))
+
+#define cgtox_ld(XG, MS, DS)                                                \
+        cgtix_ld(W(XG), W(MS), W(DS))
+
+#define cgtox3rr(XD, XS, XT)                                                \
+        cgtix3rr(W(XD), W(XS), W(XT))
+
+#define cgtox3ld(XD, XS, MT, DT)                                            \
+        cgtix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgton_rr(XG, XS)                                                    \
+        cgtin_rr(W(XG), W(XS))
+
+#define cgton_ld(XG, MS, DS)                                                \
+        cgtin_ld(W(XG), W(MS), W(DS))
+
+#define cgton3rr(XD, XS, XT)                                                \
+        cgtin3rr(W(XD), W(XS), W(XT))
+
+#define cgton3ld(XD, XS, MT, DT)                                            \
+        cgtin3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgeox_rr(XG, XS)                                                    \
+        cgeix_rr(W(XG), W(XS))
+
+#define cgeox_ld(XG, MS, DS)                                                \
+        cgeix_ld(W(XG), W(MS), W(DS))
+
+#define cgeox3rr(XD, XS, XT)                                                \
+        cgeix3rr(W(XD), W(XS), W(XT))
+
+#define cgeox3ld(XD, XS, MT, DT)                                            \
+        cgeix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgeon_rr(XG, XS)                                                    \
+        cgein_rr(W(XG), W(XS))
+
+#define cgeon_ld(XG, MS, DS)                                                \
+        cgein_ld(W(XG), W(MS), W(DS))
+
+#define cgeon3rr(XD, XS, XT)                                                \
+        cgein3rr(W(XD), W(XS), W(XT))
+
+#define cgeon3ld(XD, XS, MT, DT)                                            \
+        cgein3ld(W(XD), W(XS), W(MT), W(DT))
 
 #endif /* RT_SIMD: 256, 128 */
 
@@ -4449,6 +5241,204 @@
 #define svrqn3ld(XD, XS, MT, DT)                                            \
         svrdn3ld(W(XD), W(XS), W(MT), W(DT))
 
+/****************   packed double-precision integer compare   *****************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minqx_rr(XG, XS)                                                    \
+        mindx_rr(W(XG), W(XS))
+
+#define minqx_ld(XG, MS, DS)                                                \
+        mindx_ld(W(XG), W(MS), W(DS))
+
+#define minqx3rr(XD, XS, XT)                                                \
+        mindx3rr(W(XD), W(XS), W(XT))
+
+#define minqx3ld(XD, XS, MT, DT)                                            \
+        mindx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minqn_rr(XG, XS)                                                    \
+        mindn_rr(W(XG), W(XS))
+
+#define minqn_ld(XG, MS, DS)                                                \
+        mindn_ld(W(XG), W(MS), W(DS))
+
+#define minqn3rr(XD, XS, XT)                                                \
+        mindn3rr(W(XD), W(XS), W(XT))
+
+#define minqn3ld(XD, XS, MT, DT)                                            \
+        mindn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxqx_rr(XG, XS)                                                    \
+        maxdx_rr(W(XG), W(XS))
+
+#define maxqx_ld(XG, MS, DS)                                                \
+        maxdx_ld(W(XG), W(MS), W(DS))
+
+#define maxqx3rr(XD, XS, XT)                                                \
+        maxdx3rr(W(XD), W(XS), W(XT))
+
+#define maxqx3ld(XD, XS, MT, DT)                                            \
+        maxdx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxqn_rr(XG, XS)                                                    \
+        maxdn_rr(W(XG), W(XS))
+
+#define maxqn_ld(XG, MS, DS)                                                \
+        maxdn_ld(W(XG), W(MS), W(DS))
+
+#define maxqn3rr(XD, XS, XT)                                                \
+        maxdn3rr(W(XD), W(XS), W(XT))
+
+#define maxqn3ld(XD, XS, MT, DT)                                            \
+        maxdn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqqx_rr(XG, XS)                                                    \
+        ceqdx_rr(W(XG), W(XS))
+
+#define ceqqx_ld(XG, MS, DS)                                                \
+        ceqdx_ld(W(XG), W(MS), W(DS))
+
+#define ceqqx3rr(XD, XS, XT)                                                \
+        ceqdx3rr(W(XD), W(XS), W(XT))
+
+#define ceqqx3ld(XD, XS, MT, DT)                                            \
+        ceqdx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cneqx_rr(XG, XS)                                                    \
+        cnedx_rr(W(XG), W(XS))
+
+#define cneqx_ld(XG, MS, DS)                                                \
+        cnedx_ld(W(XG), W(MS), W(DS))
+
+#define cneqx3rr(XD, XS, XT)                                                \
+        cnedx3rr(W(XD), W(XS), W(XT))
+
+#define cneqx3ld(XD, XS, MT, DT)                                            \
+        cnedx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltqx_rr(XG, XS)                                                    \
+        cltdx_rr(W(XG), W(XS))
+
+#define cltqx_ld(XG, MS, DS)                                                \
+        cltdx_ld(W(XG), W(MS), W(DS))
+
+#define cltqx3rr(XD, XS, XT)                                                \
+        cltdx3rr(W(XD), W(XS), W(XT))
+
+#define cltqx3ld(XD, XS, MT, DT)                                            \
+        cltdx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltqn_rr(XG, XS)                                                    \
+        cltdn_rr(W(XG), W(XS))
+
+#define cltqn_ld(XG, MS, DS)                                                \
+        cltdn_ld(W(XG), W(MS), W(DS))
+
+#define cltqn3rr(XD, XS, XT)                                                \
+        cltdn3rr(W(XD), W(XS), W(XT))
+
+#define cltqn3ld(XD, XS, MT, DT)                                            \
+        cltdn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cleqx_rr(XG, XS)                                                    \
+        cledx_rr(W(XG), W(XS))
+
+#define cleqx_ld(XG, MS, DS)                                                \
+        cledx_ld(W(XG), W(MS), W(DS))
+
+#define cleqx3rr(XD, XS, XT)                                                \
+        cledx3rr(W(XD), W(XS), W(XT))
+
+#define cleqx3ld(XD, XS, MT, DT)                                            \
+        cledx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define cleqn_rr(XG, XS)                                                    \
+        cledn_rr(W(XG), W(XS))
+
+#define cleqn_ld(XG, MS, DS)                                                \
+        cledn_ld(W(XG), W(MS), W(DS))
+
+#define cleqn3rr(XD, XS, XT)                                                \
+        cledn3rr(W(XD), W(XS), W(XT))
+
+#define cleqn3ld(XD, XS, MT, DT)                                            \
+        cledn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtqx_rr(XG, XS)                                                    \
+        cgtdx_rr(W(XG), W(XS))
+
+#define cgtqx_ld(XG, MS, DS)                                                \
+        cgtdx_ld(W(XG), W(MS), W(DS))
+
+#define cgtqx3rr(XD, XS, XT)                                                \
+        cgtdx3rr(W(XD), W(XS), W(XT))
+
+#define cgtqx3ld(XD, XS, MT, DT)                                            \
+        cgtdx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtqn_rr(XG, XS)                                                    \
+        cgtdn_rr(W(XG), W(XS))
+
+#define cgtqn_ld(XG, MS, DS)                                                \
+        cgtdn_ld(W(XG), W(MS), W(DS))
+
+#define cgtqn3rr(XD, XS, XT)                                                \
+        cgtdn3rr(W(XD), W(XS), W(XT))
+
+#define cgtqn3ld(XD, XS, MT, DT)                                            \
+        cgtdn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgeqx_rr(XG, XS)                                                    \
+        cgedx_rr(W(XG), W(XS))
+
+#define cgeqx_ld(XG, MS, DS)                                                \
+        cgedx_ld(W(XG), W(MS), W(DS))
+
+#define cgeqx3rr(XD, XS, XT)                                                \
+        cgedx3rr(W(XD), W(XS), W(XT))
+
+#define cgeqx3ld(XD, XS, MT, DT)                                            \
+        cgedx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgeqn_rr(XG, XS)                                                    \
+        cgedn_rr(W(XG), W(XS))
+
+#define cgeqn_ld(XG, MS, DS)                                                \
+        cgedn_ld(W(XG), W(MS), W(DS))
+
+#define cgeqn3rr(XD, XS, XT)                                                \
+        cgedn3rr(W(XD), W(XS), W(XT))
+
+#define cgeqn3ld(XD, XS, MT, DT)                                            \
+        cgedn3ld(W(XD), W(XS), W(MT), W(DT))
+
 /******************************************************************************/
 /**** var-len **** SIMD instructions with fixed-64-bit element **** 128-bit ***/
 /******************************************************************************/
@@ -5149,6 +6139,204 @@
 
 #define svrqn3ld(XD, XS, MT, DT)                                            \
         svrjn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/****************   packed double-precision integer compare   *****************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minqx_rr(XG, XS)                                                    \
+        minjx_rr(W(XG), W(XS))
+
+#define minqx_ld(XG, MS, DS)                                                \
+        minjx_ld(W(XG), W(MS), W(DS))
+
+#define minqx3rr(XD, XS, XT)                                                \
+        minjx3rr(W(XD), W(XS), W(XT))
+
+#define minqx3ld(XD, XS, MT, DT)                                            \
+        minjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minqn_rr(XG, XS)                                                    \
+        minjn_rr(W(XG), W(XS))
+
+#define minqn_ld(XG, MS, DS)                                                \
+        minjn_ld(W(XG), W(MS), W(DS))
+
+#define minqn3rr(XD, XS, XT)                                                \
+        minjn3rr(W(XD), W(XS), W(XT))
+
+#define minqn3ld(XD, XS, MT, DT)                                            \
+        minjn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxqx_rr(XG, XS)                                                    \
+        maxjx_rr(W(XG), W(XS))
+
+#define maxqx_ld(XG, MS, DS)                                                \
+        maxjx_ld(W(XG), W(MS), W(DS))
+
+#define maxqx3rr(XD, XS, XT)                                                \
+        maxjx3rr(W(XD), W(XS), W(XT))
+
+#define maxqx3ld(XD, XS, MT, DT)                                            \
+        maxjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxqn_rr(XG, XS)                                                    \
+        maxjn_rr(W(XG), W(XS))
+
+#define maxqn_ld(XG, MS, DS)                                                \
+        maxjn_ld(W(XG), W(MS), W(DS))
+
+#define maxqn3rr(XD, XS, XT)                                                \
+        maxjn3rr(W(XD), W(XS), W(XT))
+
+#define maxqn3ld(XD, XS, MT, DT)                                            \
+        maxjn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqqx_rr(XG, XS)                                                    \
+        ceqjx_rr(W(XG), W(XS))
+
+#define ceqqx_ld(XG, MS, DS)                                                \
+        ceqjx_ld(W(XG), W(MS), W(DS))
+
+#define ceqqx3rr(XD, XS, XT)                                                \
+        ceqjx3rr(W(XD), W(XS), W(XT))
+
+#define ceqqx3ld(XD, XS, MT, DT)                                            \
+        ceqjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cneqx_rr(XG, XS)                                                    \
+        cnejx_rr(W(XG), W(XS))
+
+#define cneqx_ld(XG, MS, DS)                                                \
+        cnejx_ld(W(XG), W(MS), W(DS))
+
+#define cneqx3rr(XD, XS, XT)                                                \
+        cnejx3rr(W(XD), W(XS), W(XT))
+
+#define cneqx3ld(XD, XS, MT, DT)                                            \
+        cnejx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltqx_rr(XG, XS)                                                    \
+        cltjx_rr(W(XG), W(XS))
+
+#define cltqx_ld(XG, MS, DS)                                                \
+        cltjx_ld(W(XG), W(MS), W(DS))
+
+#define cltqx3rr(XD, XS, XT)                                                \
+        cltjx3rr(W(XD), W(XS), W(XT))
+
+#define cltqx3ld(XD, XS, MT, DT)                                            \
+        cltjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltqn_rr(XG, XS)                                                    \
+        cltjn_rr(W(XG), W(XS))
+
+#define cltqn_ld(XG, MS, DS)                                                \
+        cltjn_ld(W(XG), W(MS), W(DS))
+
+#define cltqn3rr(XD, XS, XT)                                                \
+        cltjn3rr(W(XD), W(XS), W(XT))
+
+#define cltqn3ld(XD, XS, MT, DT)                                            \
+        cltjn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cleqx_rr(XG, XS)                                                    \
+        clejx_rr(W(XG), W(XS))
+
+#define cleqx_ld(XG, MS, DS)                                                \
+        clejx_ld(W(XG), W(MS), W(DS))
+
+#define cleqx3rr(XD, XS, XT)                                                \
+        clejx3rr(W(XD), W(XS), W(XT))
+
+#define cleqx3ld(XD, XS, MT, DT)                                            \
+        clejx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define cleqn_rr(XG, XS)                                                    \
+        clejn_rr(W(XG), W(XS))
+
+#define cleqn_ld(XG, MS, DS)                                                \
+        clejn_ld(W(XG), W(MS), W(DS))
+
+#define cleqn3rr(XD, XS, XT)                                                \
+        clejn3rr(W(XD), W(XS), W(XT))
+
+#define cleqn3ld(XD, XS, MT, DT)                                            \
+        clejn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtqx_rr(XG, XS)                                                    \
+        cgtjx_rr(W(XG), W(XS))
+
+#define cgtqx_ld(XG, MS, DS)                                                \
+        cgtjx_ld(W(XG), W(MS), W(DS))
+
+#define cgtqx3rr(XD, XS, XT)                                                \
+        cgtjx3rr(W(XD), W(XS), W(XT))
+
+#define cgtqx3ld(XD, XS, MT, DT)                                            \
+        cgtjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtqn_rr(XG, XS)                                                    \
+        cgtjn_rr(W(XG), W(XS))
+
+#define cgtqn_ld(XG, MS, DS)                                                \
+        cgtjn_ld(W(XG), W(MS), W(DS))
+
+#define cgtqn3rr(XD, XS, XT)                                                \
+        cgtjn3rr(W(XD), W(XS), W(XT))
+
+#define cgtqn3ld(XD, XS, MT, DT)                                            \
+        cgtjn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgeqx_rr(XG, XS)                                                    \
+        cgejx_rr(W(XG), W(XS))
+
+#define cgeqx_ld(XG, MS, DS)                                                \
+        cgejx_ld(W(XG), W(MS), W(DS))
+
+#define cgeqx3rr(XD, XS, XT)                                                \
+        cgejx3rr(W(XD), W(XS), W(XT))
+
+#define cgeqx3ld(XD, XS, MT, DT)                                            \
+        cgejx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgeqn_rr(XG, XS)                                                    \
+        cgejn_rr(W(XG), W(XS))
+
+#define cgeqn_ld(XG, MS, DS)                                                \
+        cgejn_ld(W(XG), W(MS), W(DS))
+
+#define cgeqn3rr(XD, XS, XT)                                                \
+        cgejn3rr(W(XD), W(XS), W(XT))
+
+#define cgeqn3ld(XD, XS, MT, DT)                                            \
+        cgejn3ld(W(XD), W(XS), W(MT), W(DT))
 
 #endif /* RT_SIMD: 256, 128 */
 
@@ -5853,6 +7041,204 @@
 #define svrpn3ld(XD, XS, MT, DT)                                            \
         svron3ld(W(XD), W(XS), W(MT), W(DT))
 
+/****************   packed single-precision integer compare   *****************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minpx_rr(XG, XS)                                                    \
+        minox_rr(W(XG), W(XS))
+
+#define minpx_ld(XG, MS, DS)                                                \
+        minox_ld(W(XG), W(MS), W(DS))
+
+#define minpx3rr(XD, XS, XT)                                                \
+        minox3rr(W(XD), W(XS), W(XT))
+
+#define minpx3ld(XD, XS, MT, DT)                                            \
+        minox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minpn_rr(XG, XS)                                                    \
+        minon_rr(W(XG), W(XS))
+
+#define minpn_ld(XG, MS, DS)                                                \
+        minon_ld(W(XG), W(MS), W(DS))
+
+#define minpn3rr(XD, XS, XT)                                                \
+        minon3rr(W(XD), W(XS), W(XT))
+
+#define minpn3ld(XD, XS, MT, DT)                                            \
+        minon3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxpx_rr(XG, XS)                                                    \
+        maxox_rr(W(XG), W(XS))
+
+#define maxpx_ld(XG, MS, DS)                                                \
+        maxox_ld(W(XG), W(MS), W(DS))
+
+#define maxpx3rr(XD, XS, XT)                                                \
+        maxox3rr(W(XD), W(XS), W(XT))
+
+#define maxpx3ld(XD, XS, MT, DT)                                            \
+        maxox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxpn_rr(XG, XS)                                                    \
+        maxon_rr(W(XG), W(XS))
+
+#define maxpn_ld(XG, MS, DS)                                                \
+        maxon_ld(W(XG), W(MS), W(DS))
+
+#define maxpn3rr(XD, XS, XT)                                                \
+        maxon3rr(W(XD), W(XS), W(XT))
+
+#define maxpn3ld(XD, XS, MT, DT)                                            \
+        maxon3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqpx_rr(XG, XS)                                                    \
+        ceqox_rr(W(XG), W(XS))
+
+#define ceqpx_ld(XG, MS, DS)                                                \
+        ceqox_ld(W(XG), W(MS), W(DS))
+
+#define ceqpx3rr(XD, XS, XT)                                                \
+        ceqox3rr(W(XD), W(XS), W(XT))
+
+#define ceqpx3ld(XD, XS, MT, DT)                                            \
+        ceqox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cnepx_rr(XG, XS)                                                    \
+        cneox_rr(W(XG), W(XS))
+
+#define cnepx_ld(XG, MS, DS)                                                \
+        cneox_ld(W(XG), W(MS), W(DS))
+
+#define cnepx3rr(XD, XS, XT)                                                \
+        cneox3rr(W(XD), W(XS), W(XT))
+
+#define cnepx3ld(XD, XS, MT, DT)                                            \
+        cneox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltpx_rr(XG, XS)                                                    \
+        cltox_rr(W(XG), W(XS))
+
+#define cltpx_ld(XG, MS, DS)                                                \
+        cltox_ld(W(XG), W(MS), W(DS))
+
+#define cltpx3rr(XD, XS, XT)                                                \
+        cltox3rr(W(XD), W(XS), W(XT))
+
+#define cltpx3ld(XD, XS, MT, DT)                                            \
+        cltox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltpn_rr(XG, XS)                                                    \
+        clton_rr(W(XG), W(XS))
+
+#define cltpn_ld(XG, MS, DS)                                                \
+        clton_ld(W(XG), W(MS), W(DS))
+
+#define cltpn3rr(XD, XS, XT)                                                \
+        clton3rr(W(XD), W(XS), W(XT))
+
+#define cltpn3ld(XD, XS, MT, DT)                                            \
+        clton3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define clepx_rr(XG, XS)                                                    \
+        cleox_rr(W(XG), W(XS))
+
+#define clepx_ld(XG, MS, DS)                                                \
+        cleox_ld(W(XG), W(MS), W(DS))
+
+#define clepx3rr(XD, XS, XT)                                                \
+        cleox3rr(W(XD), W(XS), W(XT))
+
+#define clepx3ld(XD, XS, MT, DT)                                            \
+        cleox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define clepn_rr(XG, XS)                                                    \
+        cleon_rr(W(XG), W(XS))
+
+#define clepn_ld(XG, MS, DS)                                                \
+        cleon_ld(W(XG), W(MS), W(DS))
+
+#define clepn3rr(XD, XS, XT)                                                \
+        cleon3rr(W(XD), W(XS), W(XT))
+
+#define clepn3ld(XD, XS, MT, DT)                                            \
+        cleon3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtpx_rr(XG, XS)                                                    \
+        cgtox_rr(W(XG), W(XS))
+
+#define cgtpx_ld(XG, MS, DS)                                                \
+        cgtox_ld(W(XG), W(MS), W(DS))
+
+#define cgtpx3rr(XD, XS, XT)                                                \
+        cgtox3rr(W(XD), W(XS), W(XT))
+
+#define cgtpx3ld(XD, XS, MT, DT)                                            \
+        cgtox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtpn_rr(XG, XS)                                                    \
+        cgton_rr(W(XG), W(XS))
+
+#define cgtpn_ld(XG, MS, DS)                                                \
+        cgton_ld(W(XG), W(MS), W(DS))
+
+#define cgtpn3rr(XD, XS, XT)                                                \
+        cgton3rr(W(XD), W(XS), W(XT))
+
+#define cgtpn3ld(XD, XS, MT, DT)                                            \
+        cgton3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgepx_rr(XG, XS)                                                    \
+        cgeox_rr(W(XG), W(XS))
+
+#define cgepx_ld(XG, MS, DS)                                                \
+        cgeox_ld(W(XG), W(MS), W(DS))
+
+#define cgepx3rr(XD, XS, XT)                                                \
+        cgeox3rr(W(XD), W(XS), W(XT))
+
+#define cgepx3ld(XD, XS, MT, DT)                                            \
+        cgeox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgepn_rr(XG, XS)                                                    \
+        cgeon_rr(W(XG), W(XS))
+
+#define cgepn_ld(XG, MS, DS)                                                \
+        cgeon_ld(W(XG), W(MS), W(DS))
+
+#define cgepn3rr(XD, XS, XT)                                                \
+        cgeon3rr(W(XD), W(XS), W(XT))
+
+#define cgepn3ld(XD, XS, MT, DT)                                            \
+        cgeon3ld(W(XD), W(XS), W(MT), W(DT))
+
 /******************************************************************************/
 /**** 256-bit **** SIMD instructions with configurable element **** 32-bit ****/
 /******************************************************************************/
@@ -6552,6 +7938,204 @@
 #define svrfn3ld(XD, XS, MT, DT)                                            \
         svrcn3ld(W(XD), W(XS), W(MT), W(DT))
 
+/****************   packed single-precision integer compare   *****************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minfx_rr(XG, XS)                                                    \
+        mincx_rr(W(XG), W(XS))
+
+#define minfx_ld(XG, MS, DS)                                                \
+        mincx_ld(W(XG), W(MS), W(DS))
+
+#define minfx3rr(XD, XS, XT)                                                \
+        mincx3rr(W(XD), W(XS), W(XT))
+
+#define minfx3ld(XD, XS, MT, DT)                                            \
+        mincx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minfn_rr(XG, XS)                                                    \
+        mincn_rr(W(XG), W(XS))
+
+#define minfn_ld(XG, MS, DS)                                                \
+        mincn_ld(W(XG), W(MS), W(DS))
+
+#define minfn3rr(XD, XS, XT)                                                \
+        mincn3rr(W(XD), W(XS), W(XT))
+
+#define minfn3ld(XD, XS, MT, DT)                                            \
+        mincn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxfx_rr(XG, XS)                                                    \
+        maxcx_rr(W(XG), W(XS))
+
+#define maxfx_ld(XG, MS, DS)                                                \
+        maxcx_ld(W(XG), W(MS), W(DS))
+
+#define maxfx3rr(XD, XS, XT)                                                \
+        maxcx3rr(W(XD), W(XS), W(XT))
+
+#define maxfx3ld(XD, XS, MT, DT)                                            \
+        maxcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxfn_rr(XG, XS)                                                    \
+        maxcn_rr(W(XG), W(XS))
+
+#define maxfn_ld(XG, MS, DS)                                                \
+        maxcn_ld(W(XG), W(MS), W(DS))
+
+#define maxfn3rr(XD, XS, XT)                                                \
+        maxcn3rr(W(XD), W(XS), W(XT))
+
+#define maxfn3ld(XD, XS, MT, DT)                                            \
+        maxcn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqfx_rr(XG, XS)                                                    \
+        ceqcx_rr(W(XG), W(XS))
+
+#define ceqfx_ld(XG, MS, DS)                                                \
+        ceqcx_ld(W(XG), W(MS), W(DS))
+
+#define ceqfx3rr(XD, XS, XT)                                                \
+        ceqcx3rr(W(XD), W(XS), W(XT))
+
+#define ceqfx3ld(XD, XS, MT, DT)                                            \
+        ceqcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cnefx_rr(XG, XS)                                                    \
+        cnecx_rr(W(XG), W(XS))
+
+#define cnefx_ld(XG, MS, DS)                                                \
+        cnecx_ld(W(XG), W(MS), W(DS))
+
+#define cnefx3rr(XD, XS, XT)                                                \
+        cnecx3rr(W(XD), W(XS), W(XT))
+
+#define cnefx3ld(XD, XS, MT, DT)                                            \
+        cnecx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltfx_rr(XG, XS)                                                    \
+        cltcx_rr(W(XG), W(XS))
+
+#define cltfx_ld(XG, MS, DS)                                                \
+        cltcx_ld(W(XG), W(MS), W(DS))
+
+#define cltfx3rr(XD, XS, XT)                                                \
+        cltcx3rr(W(XD), W(XS), W(XT))
+
+#define cltfx3ld(XD, XS, MT, DT)                                            \
+        cltcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltfn_rr(XG, XS)                                                    \
+        cltcn_rr(W(XG), W(XS))
+
+#define cltfn_ld(XG, MS, DS)                                                \
+        cltcn_ld(W(XG), W(MS), W(DS))
+
+#define cltfn3rr(XD, XS, XT)                                                \
+        cltcn3rr(W(XD), W(XS), W(XT))
+
+#define cltfn3ld(XD, XS, MT, DT)                                            \
+        cltcn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define clefx_rr(XG, XS)                                                    \
+        clecx_rr(W(XG), W(XS))
+
+#define clefx_ld(XG, MS, DS)                                                \
+        clecx_ld(W(XG), W(MS), W(DS))
+
+#define clefx3rr(XD, XS, XT)                                                \
+        clecx3rr(W(XD), W(XS), W(XT))
+
+#define clefx3ld(XD, XS, MT, DT)                                            \
+        clecx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define clefn_rr(XG, XS)                                                    \
+        clecn_rr(W(XG), W(XS))
+
+#define clefn_ld(XG, MS, DS)                                                \
+        clecn_ld(W(XG), W(MS), W(DS))
+
+#define clefn3rr(XD, XS, XT)                                                \
+        clecn3rr(W(XD), W(XS), W(XT))
+
+#define clefn3ld(XD, XS, MT, DT)                                            \
+        clecn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtfx_rr(XG, XS)                                                    \
+        cgtcx_rr(W(XG), W(XS))
+
+#define cgtfx_ld(XG, MS, DS)                                                \
+        cgtcx_ld(W(XG), W(MS), W(DS))
+
+#define cgtfx3rr(XD, XS, XT)                                                \
+        cgtcx3rr(W(XD), W(XS), W(XT))
+
+#define cgtfx3ld(XD, XS, MT, DT)                                            \
+        cgtcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtfn_rr(XG, XS)                                                    \
+        cgtcn_rr(W(XG), W(XS))
+
+#define cgtfn_ld(XG, MS, DS)                                                \
+        cgtcn_ld(W(XG), W(MS), W(DS))
+
+#define cgtfn3rr(XD, XS, XT)                                                \
+        cgtcn3rr(W(XD), W(XS), W(XT))
+
+#define cgtfn3ld(XD, XS, MT, DT)                                            \
+        cgtcn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgefx_rr(XG, XS)                                                    \
+        cgecx_rr(W(XG), W(XS))
+
+#define cgefx_ld(XG, MS, DS)                                                \
+        cgecx_ld(W(XG), W(MS), W(DS))
+
+#define cgefx3rr(XD, XS, XT)                                                \
+        cgecx3rr(W(XD), W(XS), W(XT))
+
+#define cgefx3ld(XD, XS, MT, DT)                                            \
+        cgecx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgefn_rr(XG, XS)                                                    \
+        cgecn_rr(W(XG), W(XS))
+
+#define cgefn_ld(XG, MS, DS)                                                \
+        cgecn_ld(W(XG), W(MS), W(DS))
+
+#define cgefn3rr(XD, XS, XT)                                                \
+        cgecn3rr(W(XD), W(XS), W(XT))
+
+#define cgefn3ld(XD, XS, MT, DT)                                            \
+        cgecn3ld(W(XD), W(XS), W(MT), W(DT))
+
 /******************************************************************************/
 /**** 128-bit **** SIMD instructions with configurable element **** 32-bit ****/
 /******************************************************************************/
@@ -7250,6 +8834,204 @@
 
 #define svrln3ld(XD, XS, MT, DT)                                            \
         svrin3ld(W(XD), W(XS), W(MT), W(DT))
+
+/****************   packed single-precision integer compare   *****************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minlx_rr(XG, XS)                                                    \
+        minix_rr(W(XG), W(XS))
+
+#define minlx_ld(XG, MS, DS)                                                \
+        minix_ld(W(XG), W(MS), W(DS))
+
+#define minlx3rr(XD, XS, XT)                                                \
+        minix3rr(W(XD), W(XS), W(XT))
+
+#define minlx3ld(XD, XS, MT, DT)                                            \
+        minix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minln_rr(XG, XS)                                                    \
+        minin_rr(W(XG), W(XS))
+
+#define minln_ld(XG, MS, DS)                                                \
+        minin_ld(W(XG), W(MS), W(DS))
+
+#define minln3rr(XD, XS, XT)                                                \
+        minin3rr(W(XD), W(XS), W(XT))
+
+#define minln3ld(XD, XS, MT, DT)                                            \
+        minin3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxlx_rr(XG, XS)                                                    \
+        maxix_rr(W(XG), W(XS))
+
+#define maxlx_ld(XG, MS, DS)                                                \
+        maxix_ld(W(XG), W(MS), W(DS))
+
+#define maxlx3rr(XD, XS, XT)                                                \
+        maxix3rr(W(XD), W(XS), W(XT))
+
+#define maxlx3ld(XD, XS, MT, DT)                                            \
+        maxix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxln_rr(XG, XS)                                                    \
+        maxin_rr(W(XG), W(XS))
+
+#define maxln_ld(XG, MS, DS)                                                \
+        maxin_ld(W(XG), W(MS), W(DS))
+
+#define maxln3rr(XD, XS, XT)                                                \
+        maxin3rr(W(XD), W(XS), W(XT))
+
+#define maxln3ld(XD, XS, MT, DT)                                            \
+        maxin3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqlx_rr(XG, XS)                                                    \
+        ceqix_rr(W(XG), W(XS))
+
+#define ceqlx_ld(XG, MS, DS)                                                \
+        ceqix_ld(W(XG), W(MS), W(DS))
+
+#define ceqlx3rr(XD, XS, XT)                                                \
+        ceqix3rr(W(XD), W(XS), W(XT))
+
+#define ceqlx3ld(XD, XS, MT, DT)                                            \
+        ceqix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cnelx_rr(XG, XS)                                                    \
+        cneix_rr(W(XG), W(XS))
+
+#define cnelx_ld(XG, MS, DS)                                                \
+        cneix_ld(W(XG), W(MS), W(DS))
+
+#define cnelx3rr(XD, XS, XT)                                                \
+        cneix3rr(W(XD), W(XS), W(XT))
+
+#define cnelx3ld(XD, XS, MT, DT)                                            \
+        cneix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltlx_rr(XG, XS)                                                    \
+        cltix_rr(W(XG), W(XS))
+
+#define cltlx_ld(XG, MS, DS)                                                \
+        cltix_ld(W(XG), W(MS), W(DS))
+
+#define cltlx3rr(XD, XS, XT)                                                \
+        cltix3rr(W(XD), W(XS), W(XT))
+
+#define cltlx3ld(XD, XS, MT, DT)                                            \
+        cltix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltln_rr(XG, XS)                                                    \
+        cltin_rr(W(XG), W(XS))
+
+#define cltln_ld(XG, MS, DS)                                                \
+        cltin_ld(W(XG), W(MS), W(DS))
+
+#define cltln3rr(XD, XS, XT)                                                \
+        cltin3rr(W(XD), W(XS), W(XT))
+
+#define cltln3ld(XD, XS, MT, DT)                                            \
+        cltin3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define clelx_rr(XG, XS)                                                    \
+        cleix_rr(W(XG), W(XS))
+
+#define clelx_ld(XG, MS, DS)                                                \
+        cleix_ld(W(XG), W(MS), W(DS))
+
+#define clelx3rr(XD, XS, XT)                                                \
+        cleix3rr(W(XD), W(XS), W(XT))
+
+#define clelx3ld(XD, XS, MT, DT)                                            \
+        cleix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define cleln_rr(XG, XS)                                                    \
+        clein_rr(W(XG), W(XS))
+
+#define cleln_ld(XG, MS, DS)                                                \
+        clein_ld(W(XG), W(MS), W(DS))
+
+#define cleln3rr(XD, XS, XT)                                                \
+        clein3rr(W(XD), W(XS), W(XT))
+
+#define cleln3ld(XD, XS, MT, DT)                                            \
+        clein3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtlx_rr(XG, XS)                                                    \
+        cgtix_rr(W(XG), W(XS))
+
+#define cgtlx_ld(XG, MS, DS)                                                \
+        cgtix_ld(W(XG), W(MS), W(DS))
+
+#define cgtlx3rr(XD, XS, XT)                                                \
+        cgtix3rr(W(XD), W(XS), W(XT))
+
+#define cgtlx3ld(XD, XS, MT, DT)                                            \
+        cgtix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtln_rr(XG, XS)                                                    \
+        cgtin_rr(W(XG), W(XS))
+
+#define cgtln_ld(XG, MS, DS)                                                \
+        cgtin_ld(W(XG), W(MS), W(DS))
+
+#define cgtln3rr(XD, XS, XT)                                                \
+        cgtin3rr(W(XD), W(XS), W(XT))
+
+#define cgtln3ld(XD, XS, MT, DT)                                            \
+        cgtin3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgelx_rr(XG, XS)                                                    \
+        cgeix_rr(W(XG), W(XS))
+
+#define cgelx_ld(XG, MS, DS)                                                \
+        cgeix_ld(W(XG), W(MS), W(DS))
+
+#define cgelx3rr(XD, XS, XT)                                                \
+        cgeix3rr(W(XD), W(XS), W(XT))
+
+#define cgelx3ld(XD, XS, MT, DT)                                            \
+        cgeix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgeln_rr(XG, XS)                                                    \
+        cgein_rr(W(XG), W(XS))
+
+#define cgeln_ld(XG, MS, DS)                                                \
+        cgein_ld(W(XG), W(MS), W(DS))
+
+#define cgeln3rr(XD, XS, XT)                                                \
+        cgein3rr(W(XD), W(XS), W(XT))
+
+#define cgeln3ld(XD, XS, MT, DT)                                            \
+        cgein3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
 /**** scalar ***** SIMD instructions with configurable element **** 32-bit ****/
@@ -8203,6 +9985,204 @@
 #define svrpn3ld(XD, XS, MT, DT)                                            \
         svrqn3ld(W(XD), W(XS), W(MT), W(DT))
 
+/****************   packed double-precision integer compare   *****************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minpx_rr(XG, XS)                                                    \
+        minqx_rr(W(XG), W(XS))
+
+#define minpx_ld(XG, MS, DS)                                                \
+        minqx_ld(W(XG), W(MS), W(DS))
+
+#define minpx3rr(XD, XS, XT)                                                \
+        minqx3rr(W(XD), W(XS), W(XT))
+
+#define minpx3ld(XD, XS, MT, DT)                                            \
+        minqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minpn_rr(XG, XS)                                                    \
+        minqn_rr(W(XG), W(XS))
+
+#define minpn_ld(XG, MS, DS)                                                \
+        minqn_ld(W(XG), W(MS), W(DS))
+
+#define minpn3rr(XD, XS, XT)                                                \
+        minqn3rr(W(XD), W(XS), W(XT))
+
+#define minpn3ld(XD, XS, MT, DT)                                            \
+        minqn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxpx_rr(XG, XS)                                                    \
+        maxqx_rr(W(XG), W(XS))
+
+#define maxpx_ld(XG, MS, DS)                                                \
+        maxqx_ld(W(XG), W(MS), W(DS))
+
+#define maxpx3rr(XD, XS, XT)                                                \
+        maxqx3rr(W(XD), W(XS), W(XT))
+
+#define maxpx3ld(XD, XS, MT, DT)                                            \
+        maxqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxpn_rr(XG, XS)                                                    \
+        maxqn_rr(W(XG), W(XS))
+
+#define maxpn_ld(XG, MS, DS)                                                \
+        maxqn_ld(W(XG), W(MS), W(DS))
+
+#define maxpn3rr(XD, XS, XT)                                                \
+        maxqn3rr(W(XD), W(XS), W(XT))
+
+#define maxpn3ld(XD, XS, MT, DT)                                            \
+        maxqn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqpx_rr(XG, XS)                                                    \
+        ceqqx_rr(W(XG), W(XS))
+
+#define ceqpx_ld(XG, MS, DS)                                                \
+        ceqqx_ld(W(XG), W(MS), W(DS))
+
+#define ceqpx3rr(XD, XS, XT)                                                \
+        ceqqx3rr(W(XD), W(XS), W(XT))
+
+#define ceqpx3ld(XD, XS, MT, DT)                                            \
+        ceqqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cnepx_rr(XG, XS)                                                    \
+        cneqx_rr(W(XG), W(XS))
+
+#define cnepx_ld(XG, MS, DS)                                                \
+        cneqx_ld(W(XG), W(MS), W(DS))
+
+#define cnepx3rr(XD, XS, XT)                                                \
+        cneqx3rr(W(XD), W(XS), W(XT))
+
+#define cnepx3ld(XD, XS, MT, DT)                                            \
+        cneqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltpx_rr(XG, XS)                                                    \
+        cltqx_rr(W(XG), W(XS))
+
+#define cltpx_ld(XG, MS, DS)                                                \
+        cltqx_ld(W(XG), W(MS), W(DS))
+
+#define cltpx3rr(XD, XS, XT)                                                \
+        cltqx3rr(W(XD), W(XS), W(XT))
+
+#define cltpx3ld(XD, XS, MT, DT)                                            \
+        cltqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltpn_rr(XG, XS)                                                    \
+        cltqn_rr(W(XG), W(XS))
+
+#define cltpn_ld(XG, MS, DS)                                                \
+        cltqn_ld(W(XG), W(MS), W(DS))
+
+#define cltpn3rr(XD, XS, XT)                                                \
+        cltqn3rr(W(XD), W(XS), W(XT))
+
+#define cltpn3ld(XD, XS, MT, DT)                                            \
+        cltqn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define clepx_rr(XG, XS)                                                    \
+        cleqx_rr(W(XG), W(XS))
+
+#define clepx_ld(XG, MS, DS)                                                \
+        cleqx_ld(W(XG), W(MS), W(DS))
+
+#define clepx3rr(XD, XS, XT)                                                \
+        cleqx3rr(W(XD), W(XS), W(XT))
+
+#define clepx3ld(XD, XS, MT, DT)                                            \
+        cleqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define clepn_rr(XG, XS)                                                    \
+        cleqn_rr(W(XG), W(XS))
+
+#define clepn_ld(XG, MS, DS)                                                \
+        cleqn_ld(W(XG), W(MS), W(DS))
+
+#define clepn3rr(XD, XS, XT)                                                \
+        cleqn3rr(W(XD), W(XS), W(XT))
+
+#define clepn3ld(XD, XS, MT, DT)                                            \
+        cleqn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtpx_rr(XG, XS)                                                    \
+        cgtqx_rr(W(XG), W(XS))
+
+#define cgtpx_ld(XG, MS, DS)                                                \
+        cgtqx_ld(W(XG), W(MS), W(DS))
+
+#define cgtpx3rr(XD, XS, XT)                                                \
+        cgtqx3rr(W(XD), W(XS), W(XT))
+
+#define cgtpx3ld(XD, XS, MT, DT)                                            \
+        cgtqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtpn_rr(XG, XS)                                                    \
+        cgtqn_rr(W(XG), W(XS))
+
+#define cgtpn_ld(XG, MS, DS)                                                \
+        cgtqn_ld(W(XG), W(MS), W(DS))
+
+#define cgtpn3rr(XD, XS, XT)                                                \
+        cgtqn3rr(W(XD), W(XS), W(XT))
+
+#define cgtpn3ld(XD, XS, MT, DT)                                            \
+        cgtqn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgepx_rr(XG, XS)                                                    \
+        cgeqx_rr(W(XG), W(XS))
+
+#define cgepx_ld(XG, MS, DS)                                                \
+        cgeqx_ld(W(XG), W(MS), W(DS))
+
+#define cgepx3rr(XD, XS, XT)                                                \
+        cgeqx3rr(W(XD), W(XS), W(XT))
+
+#define cgepx3ld(XD, XS, MT, DT)                                            \
+        cgeqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgepn_rr(XG, XS)                                                    \
+        cgeqn_rr(W(XG), W(XS))
+
+#define cgepn_ld(XG, MS, DS)                                                \
+        cgeqn_ld(W(XG), W(MS), W(DS))
+
+#define cgepn3rr(XD, XS, XT)                                                \
+        cgeqn3rr(W(XD), W(XS), W(XT))
+
+#define cgepn3ld(XD, XS, MT, DT)                                            \
+        cgeqn3ld(W(XD), W(XS), W(MT), W(DT))
+
 /******************************************************************************/
 /**** 256-bit **** SIMD instructions with configurable element **** 64-bit ****/
 /******************************************************************************/
@@ -8902,6 +10882,204 @@
 #define svrfn3ld(XD, XS, MT, DT)                                            \
         svrdn3ld(W(XD), W(XS), W(MT), W(DT))
 
+/****************   packed double-precision integer compare   *****************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minfx_rr(XG, XS)                                                    \
+        mindx_rr(W(XG), W(XS))
+
+#define minfx_ld(XG, MS, DS)                                                \
+        mindx_ld(W(XG), W(MS), W(DS))
+
+#define minfx3rr(XD, XS, XT)                                                \
+        mindx3rr(W(XD), W(XS), W(XT))
+
+#define minfx3ld(XD, XS, MT, DT)                                            \
+        mindx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minfn_rr(XG, XS)                                                    \
+        mindn_rr(W(XG), W(XS))
+
+#define minfn_ld(XG, MS, DS)                                                \
+        mindn_ld(W(XG), W(MS), W(DS))
+
+#define minfn3rr(XD, XS, XT)                                                \
+        mindn3rr(W(XD), W(XS), W(XT))
+
+#define minfn3ld(XD, XS, MT, DT)                                            \
+        mindn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxfx_rr(XG, XS)                                                    \
+        maxdx_rr(W(XG), W(XS))
+
+#define maxfx_ld(XG, MS, DS)                                                \
+        maxdx_ld(W(XG), W(MS), W(DS))
+
+#define maxfx3rr(XD, XS, XT)                                                \
+        maxdx3rr(W(XD), W(XS), W(XT))
+
+#define maxfx3ld(XD, XS, MT, DT)                                            \
+        maxdx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxfn_rr(XG, XS)                                                    \
+        maxdn_rr(W(XG), W(XS))
+
+#define maxfn_ld(XG, MS, DS)                                                \
+        maxdn_ld(W(XG), W(MS), W(DS))
+
+#define maxfn3rr(XD, XS, XT)                                                \
+        maxdn3rr(W(XD), W(XS), W(XT))
+
+#define maxfn3ld(XD, XS, MT, DT)                                            \
+        maxdn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqfx_rr(XG, XS)                                                    \
+        ceqdx_rr(W(XG), W(XS))
+
+#define ceqfx_ld(XG, MS, DS)                                                \
+        ceqdx_ld(W(XG), W(MS), W(DS))
+
+#define ceqfx3rr(XD, XS, XT)                                                \
+        ceqdx3rr(W(XD), W(XS), W(XT))
+
+#define ceqfx3ld(XD, XS, MT, DT)                                            \
+        ceqdx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cnefx_rr(XG, XS)                                                    \
+        cnedx_rr(W(XG), W(XS))
+
+#define cnefx_ld(XG, MS, DS)                                                \
+        cnedx_ld(W(XG), W(MS), W(DS))
+
+#define cnefx3rr(XD, XS, XT)                                                \
+        cnedx3rr(W(XD), W(XS), W(XT))
+
+#define cnefx3ld(XD, XS, MT, DT)                                            \
+        cnedx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltfx_rr(XG, XS)                                                    \
+        cltdx_rr(W(XG), W(XS))
+
+#define cltfx_ld(XG, MS, DS)                                                \
+        cltdx_ld(W(XG), W(MS), W(DS))
+
+#define cltfx3rr(XD, XS, XT)                                                \
+        cltdx3rr(W(XD), W(XS), W(XT))
+
+#define cltfx3ld(XD, XS, MT, DT)                                            \
+        cltdx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltfn_rr(XG, XS)                                                    \
+        cltdn_rr(W(XG), W(XS))
+
+#define cltfn_ld(XG, MS, DS)                                                \
+        cltdn_ld(W(XG), W(MS), W(DS))
+
+#define cltfn3rr(XD, XS, XT)                                                \
+        cltdn3rr(W(XD), W(XS), W(XT))
+
+#define cltfn3ld(XD, XS, MT, DT)                                            \
+        cltdn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define clefx_rr(XG, XS)                                                    \
+        cledx_rr(W(XG), W(XS))
+
+#define clefx_ld(XG, MS, DS)                                                \
+        cledx_ld(W(XG), W(MS), W(DS))
+
+#define clefx3rr(XD, XS, XT)                                                \
+        cledx3rr(W(XD), W(XS), W(XT))
+
+#define clefx3ld(XD, XS, MT, DT)                                            \
+        cledx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define clefn_rr(XG, XS)                                                    \
+        cledn_rr(W(XG), W(XS))
+
+#define clefn_ld(XG, MS, DS)                                                \
+        cledn_ld(W(XG), W(MS), W(DS))
+
+#define clefn3rr(XD, XS, XT)                                                \
+        cledn3rr(W(XD), W(XS), W(XT))
+
+#define clefn3ld(XD, XS, MT, DT)                                            \
+        cledn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtfx_rr(XG, XS)                                                    \
+        cgtdx_rr(W(XG), W(XS))
+
+#define cgtfx_ld(XG, MS, DS)                                                \
+        cgtdx_ld(W(XG), W(MS), W(DS))
+
+#define cgtfx3rr(XD, XS, XT)                                                \
+        cgtdx3rr(W(XD), W(XS), W(XT))
+
+#define cgtfx3ld(XD, XS, MT, DT)                                            \
+        cgtdx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtfn_rr(XG, XS)                                                    \
+        cgtdn_rr(W(XG), W(XS))
+
+#define cgtfn_ld(XG, MS, DS)                                                \
+        cgtdn_ld(W(XG), W(MS), W(DS))
+
+#define cgtfn3rr(XD, XS, XT)                                                \
+        cgtdn3rr(W(XD), W(XS), W(XT))
+
+#define cgtfn3ld(XD, XS, MT, DT)                                            \
+        cgtdn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgefx_rr(XG, XS)                                                    \
+        cgedx_rr(W(XG), W(XS))
+
+#define cgefx_ld(XG, MS, DS)                                                \
+        cgedx_ld(W(XG), W(MS), W(DS))
+
+#define cgefx3rr(XD, XS, XT)                                                \
+        cgedx3rr(W(XD), W(XS), W(XT))
+
+#define cgefx3ld(XD, XS, MT, DT)                                            \
+        cgedx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgefn_rr(XG, XS)                                                    \
+        cgedn_rr(W(XG), W(XS))
+
+#define cgefn_ld(XG, MS, DS)                                                \
+        cgedn_ld(W(XG), W(MS), W(DS))
+
+#define cgefn3rr(XD, XS, XT)                                                \
+        cgedn3rr(W(XD), W(XS), W(XT))
+
+#define cgefn3ld(XD, XS, MT, DT)                                            \
+        cgedn3ld(W(XD), W(XS), W(MT), W(DT))
+
 /******************************************************************************/
 /**** 128-bit **** SIMD instructions with configurable element **** 64-bit ****/
 /******************************************************************************/
@@ -9600,6 +11778,204 @@
 
 #define svrln3ld(XD, XS, MT, DT)                                            \
         svrjn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/****************   packed double-precision integer compare   *****************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minlx_rr(XG, XS)                                                    \
+        minjx_rr(W(XG), W(XS))
+
+#define minlx_ld(XG, MS, DS)                                                \
+        minjx_ld(W(XG), W(MS), W(DS))
+
+#define minlx3rr(XD, XS, XT)                                                \
+        minjx3rr(W(XD), W(XS), W(XT))
+
+#define minlx3ld(XD, XS, MT, DT)                                            \
+        minjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minln_rr(XG, XS)                                                    \
+        minjn_rr(W(XG), W(XS))
+
+#define minln_ld(XG, MS, DS)                                                \
+        minjn_ld(W(XG), W(MS), W(DS))
+
+#define minln3rr(XD, XS, XT)                                                \
+        minjn3rr(W(XD), W(XS), W(XT))
+
+#define minln3ld(XD, XS, MT, DT)                                            \
+        minjn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxlx_rr(XG, XS)                                                    \
+        maxjx_rr(W(XG), W(XS))
+
+#define maxlx_ld(XG, MS, DS)                                                \
+        maxjx_ld(W(XG), W(MS), W(DS))
+
+#define maxlx3rr(XD, XS, XT)                                                \
+        maxjx3rr(W(XD), W(XS), W(XT))
+
+#define maxlx3ld(XD, XS, MT, DT)                                            \
+        maxjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxln_rr(XG, XS)                                                    \
+        maxjn_rr(W(XG), W(XS))
+
+#define maxln_ld(XG, MS, DS)                                                \
+        maxjn_ld(W(XG), W(MS), W(DS))
+
+#define maxln3rr(XD, XS, XT)                                                \
+        maxjn3rr(W(XD), W(XS), W(XT))
+
+#define maxln3ld(XD, XS, MT, DT)                                            \
+        maxjn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqlx_rr(XG, XS)                                                    \
+        ceqjx_rr(W(XG), W(XS))
+
+#define ceqlx_ld(XG, MS, DS)                                                \
+        ceqjx_ld(W(XG), W(MS), W(DS))
+
+#define ceqlx3rr(XD, XS, XT)                                                \
+        ceqjx3rr(W(XD), W(XS), W(XT))
+
+#define ceqlx3ld(XD, XS, MT, DT)                                            \
+        ceqjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cnelx_rr(XG, XS)                                                    \
+        cnejx_rr(W(XG), W(XS))
+
+#define cnelx_ld(XG, MS, DS)                                                \
+        cnejx_ld(W(XG), W(MS), W(DS))
+
+#define cnelx3rr(XD, XS, XT)                                                \
+        cnejx3rr(W(XD), W(XS), W(XT))
+
+#define cnelx3ld(XD, XS, MT, DT)                                            \
+        cnejx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltlx_rr(XG, XS)                                                    \
+        cltjx_rr(W(XG), W(XS))
+
+#define cltlx_ld(XG, MS, DS)                                                \
+        cltjx_ld(W(XG), W(MS), W(DS))
+
+#define cltlx3rr(XD, XS, XT)                                                \
+        cltjx3rr(W(XD), W(XS), W(XT))
+
+#define cltlx3ld(XD, XS, MT, DT)                                            \
+        cltjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltln_rr(XG, XS)                                                    \
+        cltjn_rr(W(XG), W(XS))
+
+#define cltln_ld(XG, MS, DS)                                                \
+        cltjn_ld(W(XG), W(MS), W(DS))
+
+#define cltln3rr(XD, XS, XT)                                                \
+        cltjn3rr(W(XD), W(XS), W(XT))
+
+#define cltln3ld(XD, XS, MT, DT)                                            \
+        cltjn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define clelx_rr(XG, XS)                                                    \
+        clejx_rr(W(XG), W(XS))
+
+#define clelx_ld(XG, MS, DS)                                                \
+        clejx_ld(W(XG), W(MS), W(DS))
+
+#define clelx3rr(XD, XS, XT)                                                \
+        clejx3rr(W(XD), W(XS), W(XT))
+
+#define clelx3ld(XD, XS, MT, DT)                                            \
+        clejx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define cleln_rr(XG, XS)                                                    \
+        clejn_rr(W(XG), W(XS))
+
+#define cleln_ld(XG, MS, DS)                                                \
+        clejn_ld(W(XG), W(MS), W(DS))
+
+#define cleln3rr(XD, XS, XT)                                                \
+        clejn3rr(W(XD), W(XS), W(XT))
+
+#define cleln3ld(XD, XS, MT, DT)                                            \
+        clejn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtlx_rr(XG, XS)                                                    \
+        cgtjx_rr(W(XG), W(XS))
+
+#define cgtlx_ld(XG, MS, DS)                                                \
+        cgtjx_ld(W(XG), W(MS), W(DS))
+
+#define cgtlx3rr(XD, XS, XT)                                                \
+        cgtjx3rr(W(XD), W(XS), W(XT))
+
+#define cgtlx3ld(XD, XS, MT, DT)                                            \
+        cgtjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtln_rr(XG, XS)                                                    \
+        cgtjn_rr(W(XG), W(XS))
+
+#define cgtln_ld(XG, MS, DS)                                                \
+        cgtjn_ld(W(XG), W(MS), W(DS))
+
+#define cgtln3rr(XD, XS, XT)                                                \
+        cgtjn3rr(W(XD), W(XS), W(XT))
+
+#define cgtln3ld(XD, XS, MT, DT)                                            \
+        cgtjn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgelx_rr(XG, XS)                                                    \
+        cgejx_rr(W(XG), W(XS))
+
+#define cgelx_ld(XG, MS, DS)                                                \
+        cgejx_ld(W(XG), W(MS), W(DS))
+
+#define cgelx3rr(XD, XS, XT)                                                \
+        cgejx3rr(W(XD), W(XS), W(XT))
+
+#define cgelx3ld(XD, XS, MT, DT)                                            \
+        cgejx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgeln_rr(XG, XS)                                                    \
+        cgejn_rr(W(XG), W(XS))
+
+#define cgeln_ld(XG, MS, DS)                                                \
+        cgejn_ld(W(XG), W(MS), W(DS))
+
+#define cgeln3rr(XD, XS, XT)                                                \
+        cgejn3rr(W(XD), W(XS), W(XT))
+
+#define cgeln3ld(XD, XS, MT, DT)                                            \
+        cgejn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
 /**** scalar ***** SIMD instructions with configurable element **** 64-bit ****/
