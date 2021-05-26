@@ -1598,6 +1598,10 @@
         movwx_rr(Redx, Recx)                                                \
         shrwx_ri(Redx, IB(17))                                              \
         andwx_ri(Redx, IV(0x00000004))  /* <- SSE4.1 to bit2 */             \
+        movwx_rr(Redi, Recx)                                                \
+        shrwx_ri(Redi, IB(18))                                              \
+        andwx_ri(Redi, IV(0x00000004))  /* <- SSE4.2 to bit2 */             \
+        andwx_rr(Redx, Redi)                                                \
         orrwx_rr(Resi, Redx)                                                \
         movwx_rr(Redx, Recx)                                                \
         shrwx_ri(Redx, IB(20))                                              \
@@ -1641,7 +1645,7 @@
         orrwx_rr(Resi, Recx)                                                \
         movwx_rr(Recx, Resi)                                                \
         shlwx_ri(Recx, IB(4))                                               \
-        andwx_ri(Recx, IV(0x00000040))  /* <- SSE2/4.1 to bit6 */           \
+        andwx_ri(Recx, IV(0x00000040))  /* <- SSE2/4.x to bit6 */           \
         orrwx_rr(Resi, Recx)                                                \
         movwx_rr(Recx, Resi)                                                \
         shlwx_ri(Recx, IB(4))                                               \
