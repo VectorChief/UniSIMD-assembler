@@ -185,13 +185,13 @@ simd_test_p64f64Bp7:
 # For 256-bit VSX1 build use (replace): RT_256=1            (15 SIMD reg-pairs)
 # For 256-bit VSX2 build use (replace): RT_256=1 RT_SIMD_COMPAT_PW8=1   (15 rp)
 # For 256-bit VSX3 build use (replace): RT_256=2            (15 SIMD reg-pairs)
-# For 256-bit VSX1 build use (replace): RT_256=4            (30 SIMD reg-pairs)
+# For 256-bit VSX1 build use (replace): RT_256=4 (<=test29) (30 SIMD reg-pairs)
 # For 256-bit VSX2 build use (replace): RT_256=4 RT_SIMD_COMPAT_PW8=1   (30 rp)
-# For 256-bit VSX3 build use (replace): RT_256=8            (30 SIMD reg-pairs)
+# For 256-bit VSX3 build use (replace): RT_256=8 (<=test29) (30 SIMD reg-pairs)
 
-# For 512-bit VSX1 build use (replace): RT_512=1            (15 SIMD reg-quads)
+# For 512-bit VSX1 build use (replace): RT_512=1 (<=test29) (15 SIMD reg-quads)
 # For 512-bit VSX2 build use (replace): RT_512=1 RT_SIMD_COMPAT_PW8=1   (15 rq)
-# For 512-bit VSX3 build use (replace): RT_512=2            (15 SIMD reg-quads)
+# For 512-bit VSX3 build use (replace): RT_512=2 (<=test29) (15 SIMD reg-quads)
 
 # 64/32-bit (ptr/adr) hybrid mode is compatible with native 64-bit ABI,
 # use (replace): RT_ADDRESS=32, rename the binary to simd_test.p64_**
