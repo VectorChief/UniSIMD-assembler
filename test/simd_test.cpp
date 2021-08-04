@@ -29,7 +29,7 @@
 /*******************************   DEFINITIONS   ******************************/
 /******************************************************************************/
 
-#define SUB_TEST            37
+#define SUB_TEST            51
 #define CYC_SIZE            1000000
 
 #define ARR_SIZE            S*3 /* hardcoded in ASM sections, S = SIMD elems */
@@ -5372,6 +5372,1606 @@ rt_void p_test37(rt_SIMD_INFOX *info)
 #endif /* SUB_TEST 37 */
 
 /******************************************************************************/
+/*******************************   SUB TEST 38   ******************************/
+/******************************************************************************/
+
+#if SUB_TEST >= 38
+
+rt_void c_test38(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            ico1[j] = RT_MIN((rt_uelm)iar0[j], (rt_uelm)iar0[(j + S) % n]);
+            ico2[j] = RT_MAX((rt_uelm)iar0[j], (rt_uelm)iar0[(j + S) % n]);
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
+ */
+rt_void s_test38(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Recx, Mebp, inf_IAR0)
+        movxx_ld(Redx, Mebp, inf_ISO1)
+        movxx_ld(Rebx, Mebp, inf_ISO2)
+
+        movpx_ld(Xmm0, Mecx, AJ0)
+        movpx_ld(Xmm1, Mecx, AJ1)
+        movpx_rr(Xmm2, Xmm0)
+        minpx_rr(Xmm2, Xmm1)
+        movpx_rr(Xmm3, Xmm0)
+        maxpx_rr(Xmm3, Xmm1)
+        movpx_st(Xmm2, Medx, AJ0)
+        movpx_st(Xmm3, Mebx, AJ0)
+
+        movpx_ld(Xmm0, Mecx, AJ1)
+        movpx_rr(Xmm2, Xmm0)
+        minpx_ld(Xmm2, Mecx, AJ2)
+        movpx_rr(Xmm3, Xmm0)
+        maxpx_ld(Xmm3, Mecx, AJ2)
+        movpx_st(Xmm2, Medx, AJ1)
+        movpx_st(Xmm3, Mebx, AJ1)
+
+        movpx_ld(Xmm0, Mecx, AJ2)
+        movpx_ld(Xmm1, Mecx, AJ0)
+        movpx_rr(Xmm2, Xmm0)
+        minpx_rr(Xmm2, Xmm1)
+        movpx_rr(Xmm3, Xmm0)
+        maxpx_rr(Xmm3, Xmm1)
+        movpx_st(Xmm2, Medx, AJ2)
+        movpx_st(Xmm3, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test38(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(ico1[j], iso1[j]) && IEQ(ico2[j], iso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("iarr[%d] = %" PR_L "d, iarr[%d] = %" PR_L "d\n",
+                j, iar0[j], (j + S) % n, iar0[(j + S) % n]);
+
+        RT_LOGI("C MIN(iarr[%d],iarr[%d]) = %" PR_L "d,"
+                 " MAX(iarr[%d],iarr[%d]) = %" PR_L "d\n",
+                j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
+
+        RT_LOGI("S MIN(iarr[%d],iarr[%d]) = %" PR_L "d,"
+                 " MAX(iarr[%d],iarr[%d]) = %" PR_L "d\n",
+                j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
+    }
+}
+
+#endif /* SUB_TEST 38 */
+
+/******************************************************************************/
+/*******************************   SUB TEST 39   ******************************/
+/******************************************************************************/
+
+#if SUB_TEST >= 39
+
+rt_void c_test39(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            ico1[j] = RT_MIN(-iar0[j], iar0[(j + S) % n]);
+            ico2[j] = RT_MAX(-iar0[j], iar0[(j + S) % n]);
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
+ */
+rt_void s_test39(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Recx, Mebp, inf_IAR0)
+        movxx_ld(Redx, Mebp, inf_ISO1)
+        movxx_ld(Rebx, Mebp, inf_ISO2)
+
+        xorpx_rr(Xmm0, Xmm0)
+        subpx_ld(Xmm0, Mecx, AJ0)
+        movpx_ld(Xmm1, Mecx, AJ1)
+        movpx_rr(Xmm2, Xmm0)
+        minpn_rr(Xmm2, Xmm1)
+        movpx_rr(Xmm3, Xmm0)
+        maxpn_rr(Xmm3, Xmm1)
+        movpx_st(Xmm2, Medx, AJ0)
+        movpx_st(Xmm3, Mebx, AJ0)
+
+        xorpx_rr(Xmm0, Xmm0)
+        subpx_ld(Xmm0, Mecx, AJ1)
+        movpx_rr(Xmm2, Xmm0)
+        minpn_ld(Xmm2, Mecx, AJ2)
+        movpx_rr(Xmm3, Xmm0)
+        maxpn_ld(Xmm3, Mecx, AJ2)
+        movpx_st(Xmm2, Medx, AJ1)
+        movpx_st(Xmm3, Mebx, AJ1)
+
+        xorpx_rr(Xmm0, Xmm0)
+        subpx_ld(Xmm0, Mecx, AJ2)
+        movpx_ld(Xmm1, Mecx, AJ0)
+        movpx_rr(Xmm2, Xmm0)
+        minpn_rr(Xmm2, Xmm1)
+        movpx_rr(Xmm3, Xmm0)
+        maxpn_rr(Xmm3, Xmm1)
+        movpx_st(Xmm2, Medx, AJ2)
+        movpx_st(Xmm3, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test39(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(ico1[j], iso1[j]) && IEQ(ico2[j], iso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("iarr[%d] = %" PR_L "d, iarr[%d] = %" PR_L "d\n",
+                j, iar0[j], (j + S) % n, iar0[(j + S) % n]);
+
+        RT_LOGI("C MIN(-iarr[%d],iarr[%d]) = %" PR_L "d,"
+                 " MAX(-iarr[%d],iarr[%d]) = %" PR_L "d\n",
+                j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
+
+        RT_LOGI("S MIN(-iarr[%d],iarr[%d]) = %" PR_L "d,"
+                 " MAX(-iarr[%d],iarr[%d]) = %" PR_L "d\n",
+                j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
+    }
+}
+
+#endif /* SUB_TEST 39 */
+
+/******************************************************************************/
+/*******************************   SUB TEST 40   ******************************/
+/******************************************************************************/
+
+#if SUB_TEST >= 40
+
+rt_void c_test40(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            ico1[j] = (iar0[j] == iar0[(j + S) % n]) ? -1 : 0;
+            ico2[j] = (iar0[j] != iar0[(j + S) % n]) ? -1 : 0;
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
+ */
+rt_void s_test40(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Recx, Mebp, inf_IAR0)
+        movxx_ld(Redx, Mebp, inf_ISO1)
+        movxx_ld(Rebx, Mebp, inf_ISO2)
+
+        movpx_ld(Xmm0, Mecx, AJ0)
+        movpx_ld(Xmm1, Mecx, AJ1)
+        movpx_rr(Xmm2, Xmm0)
+        ceqpx_rr(Xmm2, Xmm1)
+        movpx_rr(Xmm3, Xmm0)
+        cnepx_rr(Xmm3, Xmm1)
+        movpx_st(Xmm2, Medx, AJ0)
+        movpx_st(Xmm3, Mebx, AJ0)
+
+        movpx_ld(Xmm0, Mecx, AJ1)
+        movpx_rr(Xmm2, Xmm0)
+        ceqpx_ld(Xmm2, Mecx, AJ2)
+        movpx_rr(Xmm3, Xmm0)
+        cnepx_ld(Xmm3, Mecx, AJ2)
+        movpx_st(Xmm2, Medx, AJ1)
+        movpx_st(Xmm3, Mebx, AJ1)
+
+        movpx_ld(Xmm0, Mecx, AJ2)
+        movpx_ld(Xmm1, Mecx, AJ0)
+        movpx_rr(Xmm2, Xmm0)
+        ceqpx_rr(Xmm2, Xmm1)
+        movpx_rr(Xmm3, Xmm0)
+        cnepx_rr(Xmm3, Xmm1)
+        movpx_st(Xmm2, Medx, AJ2)
+        movpx_st(Xmm3, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test40(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(ico1[j], iso1[j]) && IEQ(ico2[j], iso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("iarr[%d] = %" PR_L "d, iarr[%d] = %" PR_L "d\n",
+                j, iar0[j], (j + S) % n, iar0[(j + S) % n]);
+
+        RT_LOGI("C (farr[%d]==farr[%d]) = %" PR_L "X, "
+                  "(farr[%d]!=farr[%d]) = %" PR_L "X\n",
+                j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
+
+        RT_LOGI("S (farr[%d]==farr[%d]) = %" PR_L "X, "
+                  "(farr[%d]!=farr[%d]) = %" PR_L "X\n",
+                j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
+    }
+}
+
+#endif /* SUB_TEST 40 */
+
+/******************************************************************************/
+/*******************************   SUB TEST 41   ******************************/
+/******************************************************************************/
+
+#if SUB_TEST >= 41
+
+rt_void c_test41(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            ico1[j] = ((rt_uelm)iar0[j] >  (rt_uelm)iar0[(j + S) % n]) ? -1 : 0;
+            ico2[j] = ((rt_uelm)iar0[j] >= (rt_uelm)iar0[(j + S) % n]) ? -1 : 0;
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
+ */
+rt_void s_test41(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Recx, Mebp, inf_IAR0)
+        movxx_ld(Redx, Mebp, inf_ISO1)
+        movxx_ld(Rebx, Mebp, inf_ISO2)
+
+        movpx_ld(Xmm0, Mecx, AJ0)
+        movpx_ld(Xmm1, Mecx, AJ1)
+        movpx_rr(Xmm2, Xmm0)
+        cgtpx_rr(Xmm2, Xmm1)
+        movpx_rr(Xmm3, Xmm0)
+        cgepx_rr(Xmm3, Xmm1)
+        movpx_st(Xmm2, Medx, AJ0)
+        movpx_st(Xmm3, Mebx, AJ0)
+
+        movpx_ld(Xmm0, Mecx, AJ1)
+        movpx_rr(Xmm2, Xmm0)
+        cgtpx_ld(Xmm2, Mecx, AJ2)
+        movpx_rr(Xmm3, Xmm0)
+        cgepx_ld(Xmm3, Mecx, AJ2)
+        movpx_st(Xmm2, Medx, AJ1)
+        movpx_st(Xmm3, Mebx, AJ1)
+
+        movpx_ld(Xmm0, Mecx, AJ2)
+        movpx_ld(Xmm1, Mecx, AJ0)
+        movpx_rr(Xmm2, Xmm0)
+        cgtpx_rr(Xmm2, Xmm1)
+        movpx_rr(Xmm3, Xmm0)
+        cgepx_rr(Xmm3, Xmm1)
+        movpx_st(Xmm2, Medx, AJ2)
+        movpx_st(Xmm3, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test41(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(ico1[j], iso1[j]) && IEQ(ico2[j], iso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("iarr[%d] = %" PR_L "d, iarr[%d] = %" PR_L "d\n",
+                j, iar0[j], (j + S) % n, iar0[(j + S) % n]);
+
+        RT_LOGI("C (iarr[%d]>!iarr[%d]) = %" PR_L "X, "
+                  "(iarr[%d]>=iarr[%d]) = %" PR_L "X\n",
+                j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
+
+        RT_LOGI("S (iarr[%d]>!iarr[%d]) = %" PR_L "X, "
+                  "(iarr[%d]>=iarr[%d]) = %" PR_L "X\n",
+                j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
+    }
+}
+
+#endif /* SUB_TEST 41 */
+
+/******************************************************************************/
+/*******************************   SUB TEST 42   ******************************/
+/******************************************************************************/
+
+#if SUB_TEST >= 42
+
+rt_void c_test42(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            ico1[j] = (-iar0[j] >  iar0[(j + S) % n]) ? -1 : 0;
+            ico2[j] = (-iar0[j] >= iar0[(j + S) % n]) ? -1 : 0;
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
+ */
+rt_void s_test42(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Recx, Mebp, inf_IAR0)
+        movxx_ld(Redx, Mebp, inf_ISO1)
+        movxx_ld(Rebx, Mebp, inf_ISO2)
+
+        xorpx_rr(Xmm0, Xmm0)
+        subpx_ld(Xmm0, Mecx, AJ0)
+        movpx_ld(Xmm1, Mecx, AJ1)
+        movpx_rr(Xmm2, Xmm0)
+        cgtpn_rr(Xmm2, Xmm1)
+        movpx_rr(Xmm3, Xmm0)
+        cgepn_rr(Xmm3, Xmm1)
+        movpx_st(Xmm2, Medx, AJ0)
+        movpx_st(Xmm3, Mebx, AJ0)
+
+        xorpx_rr(Xmm0, Xmm0)
+        subpx_ld(Xmm0, Mecx, AJ1)
+        movpx_rr(Xmm2, Xmm0)
+        cgtpn_ld(Xmm2, Mecx, AJ2)
+        movpx_rr(Xmm3, Xmm0)
+        cgepn_ld(Xmm3, Mecx, AJ2)
+        movpx_st(Xmm2, Medx, AJ1)
+        movpx_st(Xmm3, Mebx, AJ1)
+
+        xorpx_rr(Xmm0, Xmm0)
+        subpx_ld(Xmm0, Mecx, AJ2)
+        movpx_ld(Xmm1, Mecx, AJ0)
+        movpx_rr(Xmm2, Xmm0)
+        cgtpn_rr(Xmm2, Xmm1)
+        movpx_rr(Xmm3, Xmm0)
+        cgepn_rr(Xmm3, Xmm1)
+        movpx_st(Xmm2, Medx, AJ2)
+        movpx_st(Xmm3, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test42(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(ico1[j], iso1[j]) && IEQ(ico2[j], iso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("iarr[%d] = %" PR_L "d, iarr[%d] = %" PR_L "d\n",
+                j, iar0[j], (j + S) % n, iar0[(j + S) % n]);
+
+        RT_LOGI("C (-iarr[%d]>!iarr[%d]) = %" PR_L "X, "
+                  "(-iarr[%d]>=iarr[%d]) = %" PR_L "X\n",
+                j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
+
+        RT_LOGI("S (-iarr[%d]>!iarr[%d]) = %" PR_L "X, "
+                  "(-iarr[%d]>=iarr[%d]) = %" PR_L "X\n",
+                j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
+    }
+}
+
+#endif /* SUB_TEST 42 */
+
+/******************************************************************************/
+/*******************************   SUB TEST 43   ******************************/
+/******************************************************************************/
+
+#if SUB_TEST >= 43
+
+rt_void c_test43(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            ico1[j] = ((rt_uelm)iar0[j] <  (rt_uelm)iar0[(j + S) % n]) ? -1 : 0;
+            ico2[j] = ((rt_uelm)iar0[j] <= (rt_uelm)iar0[(j + S) % n]) ? -1 : 0;
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
+ */
+rt_void s_test43(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Recx, Mebp, inf_IAR0)
+        movxx_ld(Redx, Mebp, inf_ISO1)
+        movxx_ld(Rebx, Mebp, inf_ISO2)
+
+        movpx_ld(Xmm0, Mecx, AJ0)
+        movpx_ld(Xmm1, Mecx, AJ1)
+        movpx_rr(Xmm2, Xmm0)
+        cltpx_rr(Xmm2, Xmm1)
+        movpx_rr(Xmm3, Xmm0)
+        clepx_rr(Xmm3, Xmm1)
+        movpx_st(Xmm2, Medx, AJ0)
+        movpx_st(Xmm3, Mebx, AJ0)
+
+        movpx_ld(Xmm0, Mecx, AJ1)
+        movpx_rr(Xmm2, Xmm0)
+        cltpx_ld(Xmm2, Mecx, AJ2)
+        movpx_rr(Xmm3, Xmm0)
+        clepx_ld(Xmm3, Mecx, AJ2)
+        movpx_st(Xmm2, Medx, AJ1)
+        movpx_st(Xmm3, Mebx, AJ1)
+
+        movpx_ld(Xmm0, Mecx, AJ2)
+        movpx_ld(Xmm1, Mecx, AJ0)
+        movpx_rr(Xmm2, Xmm0)
+        cltpx_rr(Xmm2, Xmm1)
+        movpx_rr(Xmm3, Xmm0)
+        clepx_rr(Xmm3, Xmm1)
+        movpx_st(Xmm2, Medx, AJ2)
+        movpx_st(Xmm3, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test43(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(ico1[j], iso1[j]) && IEQ(ico2[j], iso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("iarr[%d] = %" PR_L "d, iarr[%d] = %" PR_L "d\n",
+                j, iar0[j], (j + S) % n, iar0[(j + S) % n]);
+
+        RT_LOGI("C (iarr[%d]<!iarr[%d]) = %" PR_L "X, "
+                  "(iarr[%d]<=iarr[%d]) = %" PR_L "X\n",
+                j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
+
+        RT_LOGI("S (iarr[%d]<!iarr[%d]) = %" PR_L "X, "
+                  "(iarr[%d]<=iarr[%d]) = %" PR_L "X\n",
+                j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
+    }
+}
+
+#endif /* SUB_TEST 43 */
+
+/******************************************************************************/
+/*******************************   SUB TEST 44   ******************************/
+/******************************************************************************/
+
+#if SUB_TEST >= 44
+
+rt_void c_test44(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            ico1[j] = (-iar0[j] <  iar0[(j + S) % n]) ? -1 : 0;
+            ico2[j] = (-iar0[j] <= iar0[(j + S) % n]) ? -1 : 0;
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
+ */
+rt_void s_test44(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Recx, Mebp, inf_IAR0)
+        movxx_ld(Redx, Mebp, inf_ISO1)
+        movxx_ld(Rebx, Mebp, inf_ISO2)
+
+        xorpx_rr(Xmm0, Xmm0)
+        subpx_ld(Xmm0, Mecx, AJ0)
+        movpx_ld(Xmm1, Mecx, AJ1)
+        movpx_rr(Xmm2, Xmm0)
+        cltpn_rr(Xmm2, Xmm1)
+        movpx_rr(Xmm3, Xmm0)
+        clepn_rr(Xmm3, Xmm1)
+        movpx_st(Xmm2, Medx, AJ0)
+        movpx_st(Xmm3, Mebx, AJ0)
+
+        xorpx_rr(Xmm0, Xmm0)
+        subpx_ld(Xmm0, Mecx, AJ1)
+        movpx_rr(Xmm2, Xmm0)
+        cltpn_ld(Xmm2, Mecx, AJ2)
+        movpx_rr(Xmm3, Xmm0)
+        clepn_ld(Xmm3, Mecx, AJ2)
+        movpx_st(Xmm2, Medx, AJ1)
+        movpx_st(Xmm3, Mebx, AJ1)
+
+        xorpx_rr(Xmm0, Xmm0)
+        subpx_ld(Xmm0, Mecx, AJ2)
+        movpx_ld(Xmm1, Mecx, AJ0)
+        movpx_rr(Xmm2, Xmm0)
+        cltpn_rr(Xmm2, Xmm1)
+        movpx_rr(Xmm3, Xmm0)
+        clepn_rr(Xmm3, Xmm1)
+        movpx_st(Xmm2, Medx, AJ2)
+        movpx_st(Xmm3, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test44(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = info->size;
+
+    rt_elem *iar0 = info->iar0;
+    rt_elem *ico1 = info->ico1;
+    rt_elem *ico2 = info->ico2;
+    rt_elem *iso1 = info->iso1;
+    rt_elem *iso2 = info->iso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(ico1[j], iso1[j]) && IEQ(ico2[j], iso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("iarr[%d] = %" PR_L "d, iarr[%d] = %" PR_L "d\n",
+                j, iar0[j], (j + S) % n, iar0[(j + S) % n]);
+
+        RT_LOGI("C (-iarr[%d]<!iarr[%d]) = %" PR_L "X, "
+                  "(-iarr[%d]<=iarr[%d]) = %" PR_L "X\n",
+                j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
+
+        RT_LOGI("S (-iarr[%d]<!iarr[%d]) = %" PR_L "X, "
+                  "(-iarr[%d]<=iarr[%d]) = %" PR_L "X\n",
+                j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
+    }
+}
+
+#endif /* SUB_TEST 44 */
+
+/******************************************************************************/
+/*******************************   SUB TEST 45   ******************************/
+/******************************************************************************/
+
+#if SUB_TEST >= 45
+
+rt_void c_test45(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            hco1[j] = (har0[j] == har0[(j + S) % n]) ? -1 : 0;
+            hco2[j] = (har0[j] != har0[(j + S) % n]) ? -1 : 0;
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
+ */
+rt_void s_test45(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Recx, Mebp, inf_HAR0)
+        movxx_ld(Redx, Mebp, inf_HSO1)
+        movxx_ld(Rebx, Mebp, inf_HSO2)
+
+        movmx_ld(Xmm0, Mecx, AJ0)
+        movmx_ld(Xmm1, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        ceqmx_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        cnemx_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+
+        movmx_ld(Xmm0, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        ceqmx_ld(Xmm2, Mecx, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        cnemx_ld(Xmm3, Mecx, AJ2)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+
+        movmx_ld(Xmm0, Mecx, AJ2)
+        movmx_ld(Xmm1, Mecx, AJ0)
+        movmx_rr(Xmm2, Xmm0)
+        ceqmx_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        cnemx_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test45(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+    rt_half *hso1 = info->hso1;
+    rt_half *hso2 = info->hso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(hco1[j], hso1[j]) && IEQ(hco2[j], hso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("harr[%d] = %d, harr[%d] = %d\n",
+                j, (rt_si32)har0[j], (j + S) % n, (rt_si32)har0[(j + S) % n]);
+
+        RT_LOGI("C (harr[%d]==harr[%d]) = %X, "
+                  "(harr[%d]!=harr[%d]) = %X\n",
+                j, (j + S) % n, (rt_si32)hco1[j],
+                j, (j + S) % n, (rt_si32)hco2[j]);
+
+        RT_LOGI("S (harr[%d]==harr[%d]) = %X, "
+                  "(harr[%d]!=harr[%d]) = %X\n",
+                j, (j + S) % n, (rt_si32)hso1[j],
+                j, (j + S) % n, (rt_si32)hso2[j]);
+    }
+}
+
+#endif /* SUB_TEST 45 */
+
+/******************************************************************************/
+/*******************************   SUB TEST 46   ******************************/
+/******************************************************************************/
+
+#if SUB_TEST >= 46
+
+rt_void c_test46(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            hco1[j] = (har0[j] >  har0[(j + N) % n]) ? -1 : 0;
+            hco2[j] = (har0[j] >= har0[(j + N) % n]) ? -1 : 0;
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
+ */
+rt_void s_test46(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Recx, Mebp, inf_HAR0)
+        movxx_ld(Redx, Mebp, inf_HSO1)
+        movxx_ld(Rebx, Mebp, inf_HSO2)
+
+        movmx_ld(Xmm0, Mecx, AJ0)
+        movmx_ld(Xmm1, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        cgtmx_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        cgemx_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+
+        movmx_ld(Xmm0, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        cgtmx_ld(Xmm2, Mecx, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        cgemx_ld(Xmm3, Mecx, AJ2)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+
+        movmx_ld(Xmm0, Mecx, AJ2)
+        movmx_ld(Xmm1, Mecx, AJ0)
+        movmx_rr(Xmm2, Xmm0)
+        cgtmx_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        cgemx_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test46(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+    rt_half *hso1 = info->hso1;
+    rt_half *hso2 = info->hso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(hco1[j], hso1[j]) && IEQ(hco2[j], hso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("harr[%d] = %d, harr[%d] = %d\n",
+                j, (rt_si32)har0[j], (j + N) % n, (rt_si32)har0[(j + N) % n]);
+
+        RT_LOGI("C (harr[%d]>!harr[%d]) = %X, "
+                  "(harr[%d]>=harr[%d]) = %X\n",
+                j, (j + N) % n, (rt_si32)hco1[j],
+                j, (j + N) % n, (rt_si32)hco2[j]);
+
+        RT_LOGI("S (harr[%d]>!harr[%d]) = %X, "
+                  "(harr[%d]>=harr[%d]) = %X\n",
+                j, (j + N) % n, (rt_si32)hso1[j],
+                j, (j + N) % n, (rt_si32)hso2[j]);
+    }
+}
+
+#endif /* SUB_TEST 46 */
+
+/******************************************************************************/
+/*******************************   SUB TEST 47   ******************************/
+/******************************************************************************/
+
+#if SUB_TEST >= 47
+
+rt_void c_test47(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            hco1[j] = (-(rt_shrt)har0[j]> (rt_shrt)har0[(j + N) % n]) ? -1 : 0;
+            hco2[j] = (-(rt_shrt)har0[j]>=(rt_shrt)har0[(j + N) % n]) ? -1 : 0;
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
+ */
+rt_void s_test47(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Recx, Mebp, inf_HAR0)
+        movxx_ld(Redx, Mebp, inf_HSO1)
+        movxx_ld(Rebx, Mebp, inf_HSO2)
+
+        xormx_rr(Xmm0, Xmm0)
+        submx_ld(Xmm0, Mecx, AJ0)
+        movmx_ld(Xmm1, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        cgtmn_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        cgemn_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+
+        xormx_rr(Xmm0, Xmm0)
+        submx_ld(Xmm0, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        cgtmn_ld(Xmm2, Mecx, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        cgemn_ld(Xmm3, Mecx, AJ2)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+
+        xormx_rr(Xmm0, Xmm0)
+        submx_ld(Xmm0, Mecx, AJ2)
+        movmx_ld(Xmm1, Mecx, AJ0)
+        movmx_rr(Xmm2, Xmm0)
+        cgtmn_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        cgemn_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test47(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+    rt_half *hso1 = info->hso1;
+    rt_half *hso2 = info->hso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(hco1[j], hso1[j]) && IEQ(hco2[j], hso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("harr[%d] = %d, harr[%d] = %d\n",
+                j, (rt_si32)har0[j], (j + N) % n, (rt_si32)har0[(j + N) % n]);
+
+        RT_LOGI("C (-harr[%d]>!harr[%d]) = %X, "
+                  "(-harr[%d]>=harr[%d]) = %X\n",
+                j, (j + N) % n, (rt_si32)hco1[j],
+                j, (j + N) % n, (rt_si32)hco2[j]);
+
+        RT_LOGI("S (-harr[%d]>!harr[%d]) = %X, "
+                  "(-harr[%d]>=harr[%d]) = %X\n",
+                j, (j + N) % n, (rt_si32)hso1[j],
+                j, (j + N) % n, (rt_si32)hso2[j]);
+    }
+}
+
+#endif /* SUB_TEST 47 */
+
+/******************************************************************************/
+/*******************************   SUB TEST 48   ******************************/
+/******************************************************************************/
+
+#if SUB_TEST >= 48
+
+rt_void c_test48(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            hco1[j] = (har0[j] <  har0[(j + N) % n]) ? -1 : 0;
+            hco2[j] = (har0[j] <= har0[(j + N) % n]) ? -1 : 0;
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
+ */
+rt_void s_test48(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Recx, Mebp, inf_HAR0)
+        movxx_ld(Redx, Mebp, inf_HSO1)
+        movxx_ld(Rebx, Mebp, inf_HSO2)
+
+        movmx_ld(Xmm0, Mecx, AJ0)
+        movmx_ld(Xmm1, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        cltmx_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        clemx_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+
+        movmx_ld(Xmm0, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        cltmx_ld(Xmm2, Mecx, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        clemx_ld(Xmm3, Mecx, AJ2)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+
+        movmx_ld(Xmm0, Mecx, AJ2)
+        movmx_ld(Xmm1, Mecx, AJ0)
+        movmx_rr(Xmm2, Xmm0)
+        cltmx_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        clemx_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test48(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+    rt_half *hso1 = info->hso1;
+    rt_half *hso2 = info->hso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(hco1[j], hso1[j]) && IEQ(hco2[j], hso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("harr[%d] = %d, harr[%d] = %d\n",
+                j, (rt_si32)har0[j], (j + N) % n, (rt_si32)har0[(j + N) % n]);
+
+        RT_LOGI("C (harr[%d]<!harr[%d]) = %X, "
+                  "(harr[%d]<=harr[%d]) = %X\n",
+                j, (j + N) % n, (rt_si32)hco1[j],
+                j, (j + N) % n, (rt_si32)hco2[j]);
+
+        RT_LOGI("S (harr[%d]<!harr[%d]) = %X, "
+                  "(harr[%d]<=harr[%d]) = %X\n",
+                j, (j + N) % n, (rt_si32)hso1[j],
+                j, (j + N) % n, (rt_si32)hso2[j]);
+    }
+}
+
+#endif /* SUB_TEST 48 */
+
+/******************************************************************************/
+/*******************************   SUB TEST 49   ******************************/
+/******************************************************************************/
+
+#if SUB_TEST >= 49
+
+rt_void c_test49(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            hco1[j] = (-(rt_shrt)har0[j]< (rt_shrt)har0[(j + N) % n]) ? -1 : 0;
+            hco2[j] = (-(rt_shrt)har0[j]<=(rt_shrt)har0[(j + N) % n]) ? -1 : 0;
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
+ */
+rt_void s_test49(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Recx, Mebp, inf_HAR0)
+        movxx_ld(Redx, Mebp, inf_HSO1)
+        movxx_ld(Rebx, Mebp, inf_HSO2)
+
+        xormx_rr(Xmm0, Xmm0)
+        submx_ld(Xmm0, Mecx, AJ0)
+        movmx_ld(Xmm1, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        cltmn_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        clemn_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+
+        xormx_rr(Xmm0, Xmm0)
+        submx_ld(Xmm0, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        cltmn_ld(Xmm2, Mecx, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        clemn_ld(Xmm3, Mecx, AJ2)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+
+        xormx_rr(Xmm0, Xmm0)
+        submx_ld(Xmm0, Mecx, AJ2)
+        movmx_ld(Xmm1, Mecx, AJ0)
+        movmx_rr(Xmm2, Xmm0)
+        cltmn_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        clemn_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test49(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+    rt_half *hso1 = info->hso1;
+    rt_half *hso2 = info->hso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(hco1[j], hso1[j]) && IEQ(hco2[j], hso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("harr[%d] = %d, harr[%d] = %d\n",
+                j, (rt_si32)har0[j], (j + N) % n, (rt_si32)har0[(j + N) % n]);
+
+        RT_LOGI("C (-harr[%d]<!harr[%d]) = %X, "
+                  "(-harr[%d]<=harr[%d]) = %X\n",
+                j, (j + N) % n, (rt_si32)hco1[j],
+                j, (j + N) % n, (rt_si32)hco2[j]);
+
+        RT_LOGI("S (-harr[%d]<!harr[%d]) = %X, "
+                  "(-harr[%d]<=harr[%d]) = %X\n",
+                j, (j + N) % n, (rt_si32)hso1[j],
+                j, (j + N) % n, (rt_si32)hso2[j]);
+    }
+}
+
+#endif /* SUB_TEST 49 */
+
+/******************************************************************************/
+/*******************************   SUB TEST 50   ******************************/
+/******************************************************************************/
+
+#if SUB_TEST >= 50
+
+rt_void c_test50(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            hco1[j] = RT_MIN(har0[j], har0[(j + N) % n]);
+            hco2[j] = RT_MAX(har0[j], har0[(j + N) % n]);
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
+ */
+rt_void s_test50(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Recx, Mebp, inf_HAR0)
+        movxx_ld(Redx, Mebp, inf_HSO1)
+        movxx_ld(Rebx, Mebp, inf_HSO2)
+
+        movmx_ld(Xmm0, Mecx, AJ0)
+        movmx_ld(Xmm1, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        minmx_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        maxmx_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+
+        movmx_ld(Xmm0, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        minmx_ld(Xmm2, Mecx, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        maxmx_ld(Xmm3, Mecx, AJ2)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+
+        movmx_ld(Xmm0, Mecx, AJ2)
+        movmx_ld(Xmm1, Mecx, AJ0)
+        movmx_rr(Xmm2, Xmm0)
+        minmx_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        maxmx_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test50(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+    rt_half *hso1 = info->hso1;
+    rt_half *hso2 = info->hso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(hco1[j], hso1[j]) && IEQ(hco2[j], hso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("harr[%d] = %d, harr[%d] = %d\n",
+                j, (rt_si32)har0[j], (j + N) % n, (rt_si32)har0[(j + N) % n]);
+
+        RT_LOGI("C MIN(harr[%d],harr[%d]) = %d,"
+                 " MAX(harr[%d],harr[%d]) = %d\n",
+                j, (j + N) % n, (rt_si32)hco1[j],
+                j, (j + N) % n, (rt_si32)hco2[j]);
+
+        RT_LOGI("S MIN(harr[%d],harr[%d]) = %d,"
+                 " MAX(harr[%d],harr[%d]) = %d\n",
+                j, (j + N) % n, (rt_si32)hso1[j],
+                j, (j + N) % n, (rt_si32)hso2[j]);
+    }
+}
+
+#endif /* SUB_TEST 50 */
+
+/******************************************************************************/
+/*******************************   SUB TEST 51   ******************************/
+/******************************************************************************/
+
+#if SUB_TEST >= 51
+
+rt_void c_test51(rt_SIMD_INFOX *info)
+{
+    rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        j = n;
+        while (j-->0)
+        {
+            hco1[j] = RT_MIN(-(rt_shrt)har0[j], (rt_shrt)har0[(j + N) % n]);
+            hco2[j] = RT_MAX(-(rt_shrt)har0[j], (rt_shrt)har0[(j + N) % n]);
+        }
+    }
+}
+
+/*
+ * As ASM_ENTER/ASM_LEAVE save/load a sizeable portion of registers onto/from
+ * the stack, they are considered heavy and therefore best suited for compute
+ * intensive parts of the program, in which case the ASM overhead is minimized.
+ * The test code below was designed mainly for assembler validation purposes
+ * and therefore may not fully represent its unlocked performance potential.
+ * For optimal results keep ASM sections in separate functions away from
+ * complex C/C++ logic, while making sure those functions are not inlined.
+ * This is needed for better compatibility with modern optimizing compilers.
+ */
+rt_void s_test51(rt_SIMD_INFOX *info)
+{
+    rt_si32 i;
+
+    i = info->cyc;
+    while (i-->0)
+    {
+        ASM_ENTER(info)
+
+        movxx_ld(Recx, Mebp, inf_HAR0)
+        movxx_ld(Redx, Mebp, inf_HSO1)
+        movxx_ld(Rebx, Mebp, inf_HSO2)
+
+        xormx_rr(Xmm0, Xmm0)
+        submx_ld(Xmm0, Mecx, AJ0)
+        movmx_ld(Xmm1, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        minmn_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        maxmn_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+
+        xormx_rr(Xmm0, Xmm0)
+        submx_ld(Xmm0, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        minmn_ld(Xmm2, Mecx, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        maxmn_ld(Xmm3, Mecx, AJ2)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+
+        xormx_rr(Xmm0, Xmm0)
+        submx_ld(Xmm0, Mecx, AJ2)
+        movmx_ld(Xmm1, Mecx, AJ0)
+        movmx_rr(Xmm2, Xmm0)
+        minmn_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        maxmn_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+
+        ASM_LEAVE(info)
+    }
+}
+
+rt_void p_test51(rt_SIMD_INFOX *info)
+{
+    rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
+
+    rt_half *har0 = info->har0;
+    rt_half *hco1 = info->hco1;
+    rt_half *hco2 = info->hco2;
+    rt_half *hso1 = info->hso1;
+    rt_half *hso2 = info->hso2;
+
+    j = n;
+    while (j-->0)
+    {
+        if (IEQ(hco1[j], hso1[j]) && IEQ(hco2[j], hso2[j]) && !v_mode)
+        {
+            continue;
+        }
+
+        RT_LOGI("harr[%d] = %d, harr[%d] = %d\n",
+                j, (rt_si32)har0[j], (j + N) % n, (rt_si32)har0[(j + N) % n]);
+
+        RT_LOGI("C MIN(-harr[%d],harr[%d]) = %d,"
+                 " MAX(-harr[%d],harr[%d]) = %d\n",
+                j, (j + N) % n, (rt_si32)hco1[j],
+                j, (j + N) % n, (rt_si32)hco2[j]);
+
+        RT_LOGI("S MIN(-harr[%d],harr[%d]) = %d,"
+                 " MAX(-harr[%d],harr[%d]) = %d\n",
+                j, (j + N) % n, (rt_si32)hso1[j],
+                j, (j + N) % n, (rt_si32)hso2[j]);
+    }
+}
+
+#endif /* SUB_TEST 51 */
+
+/******************************************************************************/
 /*********************************   TABLES   *********************************/
 /******************************************************************************/
 
@@ -5526,6 +7126,62 @@ testXX c_test[SUB_TEST] =
 #if SUB_TEST >= 37
     c_test37,
 #endif /* SUB_TEST 37 */
+
+#if SUB_TEST >= 38
+    c_test38,
+#endif /* SUB_TEST 38 */
+
+#if SUB_TEST >= 39
+    c_test39,
+#endif /* SUB_TEST 39 */
+
+#if SUB_TEST >= 40
+    c_test40,
+#endif /* SUB_TEST 40 */
+
+#if SUB_TEST >= 41
+    c_test41,
+#endif /* SUB_TEST 41 */
+
+#if SUB_TEST >= 42
+    c_test42,
+#endif /* SUB_TEST 42 */
+
+#if SUB_TEST >= 43
+    c_test43,
+#endif /* SUB_TEST 43 */
+
+#if SUB_TEST >= 44
+    c_test44,
+#endif /* SUB_TEST 44 */
+
+#if SUB_TEST >= 45
+    c_test45,
+#endif /* SUB_TEST 45 */
+
+#if SUB_TEST >= 46
+    c_test46,
+#endif /* SUB_TEST 46 */
+
+#if SUB_TEST >= 47
+    c_test47,
+#endif /* SUB_TEST 47 */
+
+#if SUB_TEST >= 48
+    c_test48,
+#endif /* SUB_TEST 48 */
+
+#if SUB_TEST >= 49
+    c_test49,
+#endif /* SUB_TEST 49 */
+
+#if SUB_TEST >= 50
+    c_test50,
+#endif /* SUB_TEST 50 */
+
+#if SUB_TEST >= 51
+    c_test51,
+#endif /* SUB_TEST 51 */
 };
 
 testXX s_test[SUB_TEST] =
@@ -5677,6 +7333,62 @@ testXX s_test[SUB_TEST] =
 #if SUB_TEST >= 37
     s_test37,
 #endif /* SUB_TEST 37 */
+
+#if SUB_TEST >= 38
+    s_test38,
+#endif /* SUB_TEST 38 */
+
+#if SUB_TEST >= 39
+    s_test39,
+#endif /* SUB_TEST 39 */
+
+#if SUB_TEST >= 40
+    s_test40,
+#endif /* SUB_TEST 40 */
+
+#if SUB_TEST >= 41
+    s_test41,
+#endif /* SUB_TEST 41 */
+
+#if SUB_TEST >= 42
+    s_test42,
+#endif /* SUB_TEST 42 */
+
+#if SUB_TEST >= 43
+    s_test43,
+#endif /* SUB_TEST 43 */
+
+#if SUB_TEST >= 44
+    s_test44,
+#endif /* SUB_TEST 44 */
+
+#if SUB_TEST >= 45
+    s_test45,
+#endif /* SUB_TEST 45 */
+
+#if SUB_TEST >= 46
+    s_test46,
+#endif /* SUB_TEST 46 */
+
+#if SUB_TEST >= 47
+    s_test47,
+#endif /* SUB_TEST 47 */
+
+#if SUB_TEST >= 48
+    s_test48,
+#endif /* SUB_TEST 48 */
+
+#if SUB_TEST >= 49
+    s_test49,
+#endif /* SUB_TEST 49 */
+
+#if SUB_TEST >= 50
+    s_test50,
+#endif /* SUB_TEST 50 */
+
+#if SUB_TEST >= 51
+    s_test51,
+#endif /* SUB_TEST 51 */
 };
 
 testXX p_test[SUB_TEST] =
@@ -5828,6 +7540,62 @@ testXX p_test[SUB_TEST] =
 #if SUB_TEST >= 37
     p_test37,
 #endif /* SUB_TEST 37 */
+
+#if SUB_TEST >= 38
+    p_test38,
+#endif /* SUB_TEST 38 */
+
+#if SUB_TEST >= 39
+    p_test39,
+#endif /* SUB_TEST 39 */
+
+#if SUB_TEST >= 40
+    p_test40,
+#endif /* SUB_TEST 40 */
+
+#if SUB_TEST >= 41
+    p_test41,
+#endif /* SUB_TEST 41 */
+
+#if SUB_TEST >= 42
+    p_test42,
+#endif /* SUB_TEST 42 */
+
+#if SUB_TEST >= 43
+    p_test43,
+#endif /* SUB_TEST 43 */
+
+#if SUB_TEST >= 44
+    p_test44,
+#endif /* SUB_TEST 44 */
+
+#if SUB_TEST >= 45
+    p_test45,
+#endif /* SUB_TEST 45 */
+
+#if SUB_TEST >= 46
+    p_test46,
+#endif /* SUB_TEST 46 */
+
+#if SUB_TEST >= 47
+    p_test47,
+#endif /* SUB_TEST 47 */
+
+#if SUB_TEST >= 48
+    p_test48,
+#endif /* SUB_TEST 48 */
+
+#if SUB_TEST >= 49
+    p_test49,
+#endif /* SUB_TEST 49 */
+
+#if SUB_TEST >= 50
+    p_test50,
+#endif /* SUB_TEST 50 */
+
+#if SUB_TEST >= 51
+    p_test51,
+#endif /* SUB_TEST 51 */
 };
 
 /******************************************************************************/
