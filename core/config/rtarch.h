@@ -1006,7 +1006,7 @@
 /* RT_SIMD_COMPAT_D12 when enabled uses fp64 load/store in SIMD
  * to make DP displacement type 12-bit for fp32, 11-bit if 0 */
 #ifndef RT_SIMD_COMPAT_D12
-#define RT_SIMD_COMPAT_D12      (Q/RT_DATA != 0) /* if DP is filled over half */
+#define RT_SIMD_COMPAT_D12      -M(Q/RT_DATA!=0) /* if DP is filled over half */
 #endif /* RT_SIMD_COMPAT_D12 */
 
 /* RT_ELEM_COMPAT_MSA when enabled makes scalar SIMD (ELEM) ops
