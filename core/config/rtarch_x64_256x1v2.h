@@ -1632,16 +1632,16 @@
 
 #define cltdx3rr(XD, XS, XT)                                                \
         xordx3ld(W(XD), W(XS), Mebp, inf_GPC06_64)                          \
-        movdx_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         xordx3ld(W(XD), W(XT), Mebp, inf_GPC06_64)                          \
-        cgtdn_ld(W(XD), Mebp, inf_SCR01(0))
+        cgtdn_ld(W(XD), Mebp, inf_SCR02(0))
 
 #define cltdx3ld(XD, XS, MT, DT)                                            \
         xordx3ld(W(XD), W(XS), Mebp, inf_GPC06_64)                          \
-        movdx_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         movdx_ld(W(XD), W(MT), W(DT))                                       \
         xordx_ld(W(XD), Mebp, inf_GPC06_64)                                 \
-        cgtdn_ld(W(XD), Mebp, inf_SCR01(0))
+        cgtdn_ld(W(XD), Mebp, inf_SCR02(0))
 
 /* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
 
@@ -1655,9 +1655,9 @@
         cgtdn3rr(W(XD), W(XT), W(XS))
 
 #define cltdn3ld(XD, XS, MT, DT)                                            \
-        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XS), Mebp, inf_SCR02(0))                                 \
         movdx_ld(W(XD), W(MT), W(DT))                                       \
-        cgtdn_ld(W(XD), Mebp, inf_SCR01(0))
+        cgtdn_ld(W(XD), Mebp, inf_SCR02(0))
 
 /* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
 
@@ -1726,17 +1726,17 @@
 
 #define cgedx3rr(XD, XS, XT)                                                \
         xordx3ld(W(XD), W(XS), Mebp, inf_GPC06_64)                          \
-        movdx_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         xordx3ld(W(XD), W(XT), Mebp, inf_GPC06_64)                          \
-        cgtdn_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cgtdn_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         notdx_rx(W(XD))
 
 #define cgedx3ld(XD, XS, MT, DT)                                            \
         xordx3ld(W(XD), W(XS), Mebp, inf_GPC06_64)                          \
-        movdx_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         movdx_ld(W(XD), W(MT), W(DT))                                       \
         xordx_ld(W(XD), Mebp, inf_GPC06_64)                                 \
-        cgtdn_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cgtdn_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         notdx_rx(W(XD))
 
 /* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
@@ -1748,15 +1748,15 @@
         cgedn3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cgedn3rr(XD, XS, XT)                                                \
-        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XS), Mebp, inf_SCR02(0))                                 \
         movdx_rr(W(XD), W(XT))                                              \
-        cgtdn_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cgtdn_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         notdx_rx(W(XD))
 
 #define cgedn3ld(XD, XS, MT, DT)                                            \
-        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XS), Mebp, inf_SCR02(0))                                 \
         movdx_ld(W(XD), W(MT), W(DT))                                       \
-        cgtdn_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cgtdn_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         notdx_rx(W(XD))
 
 /******************************************************************************/

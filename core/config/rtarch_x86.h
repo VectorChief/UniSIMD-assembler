@@ -187,6 +187,13 @@
         EMITB(0x80 | (0x1) << 2 | (0x0F - (ren)) << 3 | (pfx))              \
         EMITB(0x08 | (len) << 5)
 
+/* 4-byte EVEX prefix with full customization (W1, K1, Z1) */
+#define EZW(ren, len, pfx, aux)                                             \
+        EMITB(0x62)                                                         \
+        EMITB(0xF0 | (aux))                                                 \
+        EMITB(0x80 | (0x1) << 2 | (0x0F - (ren)) << 3 | (pfx))              \
+        EMITB(0x89 | (len) << 5)
+
 /* selectors  */
 
 #define REG(reg, mod, sib)  reg

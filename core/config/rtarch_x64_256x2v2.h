@@ -2044,16 +2044,16 @@
 
 #define cltqx3rr(XD, XS, XT)                                                \
         xorqx3ld(W(XD), W(XS), Mebp, inf_GPC06_64)                          \
-        movqx_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         xorqx3ld(W(XD), W(XT), Mebp, inf_GPC06_64)                          \
-        cgtqn_ld(W(XD), Mebp, inf_SCR01(0))
+        cgtqn_ld(W(XD), Mebp, inf_SCR02(0))
 
 #define cltqx3ld(XD, XS, MT, DT)                                            \
         xorqx3ld(W(XD), W(XS), Mebp, inf_GPC06_64)                          \
-        movqx_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         xorqx_ld(W(XD), Mebp, inf_GPC06_64)                                 \
-        cgtqn_ld(W(XD), Mebp, inf_SCR01(0))
+        cgtqn_ld(W(XD), Mebp, inf_SCR02(0))
 
 /* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
 
@@ -2067,9 +2067,9 @@
         cgtqn3rr(W(XD), W(XT), W(XS))
 
 #define cltqn3ld(XD, XS, MT, DT)                                            \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XS), Mebp, inf_SCR02(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
-        cgtqn_ld(W(XD), Mebp, inf_SCR01(0))
+        cgtqn_ld(W(XD), Mebp, inf_SCR02(0))
 
 /* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
 
@@ -2138,17 +2138,17 @@
 
 #define cgeqx3rr(XD, XS, XT)                                                \
         xorqx3ld(W(XD), W(XS), Mebp, inf_GPC06_64)                          \
-        movqx_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         xorqx3ld(W(XD), W(XT), Mebp, inf_GPC06_64)                          \
-        cgtqn_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cgtqn_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         notqx_rx(W(XD))
 
 #define cgeqx3ld(XD, XS, MT, DT)                                            \
         xorqx3ld(W(XD), W(XS), Mebp, inf_GPC06_64)                          \
-        movqx_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         xorqx_ld(W(XD), Mebp, inf_GPC06_64)                                 \
-        cgtqn_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cgtqn_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         notqx_rx(W(XD))
 
 /* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
@@ -2160,15 +2160,15 @@
         cgeqn3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cgeqn3rr(XD, XS, XT)                                                \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XS), Mebp, inf_SCR02(0))                                 \
         movqx_rr(W(XD), W(XT))                                              \
-        cgtqn_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cgtqn_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         notqx_rx(W(XD))
 
 #define cgeqn3ld(XD, XS, MT, DT)                                            \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XS), Mebp, inf_SCR02(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
-        cgtqn_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        cgtqn_ld(W(XD), Mebp, inf_SCR02(0))                                 \
         notqx_rx(W(XD))
 
 /******************************************************************************/

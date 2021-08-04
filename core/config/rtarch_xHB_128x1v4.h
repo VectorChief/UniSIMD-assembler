@@ -561,35 +561,35 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xE1)                       \
         stack_st(Reax)                                                      \
         movhx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
         cmphx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
-        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        EMITB(0x73) EMITB(0x08 + x67)                                       \
         movhx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
         movhx_ld(Reax,  Mebp, inf_SCR01(0x02))                              \
         cmphx_rm(Reax,  Mebp, inf_SCR02(0x02))                              \
-        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        EMITB(0x73) EMITB(0x08 + x67)                                       \
         movhx_st(Reax,  Mebp, inf_SCR02(0x02))                              \
         movhx_ld(Reax,  Mebp, inf_SCR01(0x04))                              \
         cmphx_rm(Reax,  Mebp, inf_SCR02(0x04))                              \
-        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        EMITB(0x73) EMITB(0x08 + x67)                                       \
         movhx_st(Reax,  Mebp, inf_SCR02(0x04))                              \
         movhx_ld(Reax,  Mebp, inf_SCR01(0x06))                              \
         cmphx_rm(Reax,  Mebp, inf_SCR02(0x06))                              \
-        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        EMITB(0x73) EMITB(0x08 + x67)                                       \
         movhx_st(Reax,  Mebp, inf_SCR02(0x06))                              \
         movhx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmphx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
-        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        EMITB(0x73) EMITB(0x08 + x67)                                       \
         movhx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
         movhx_ld(Reax,  Mebp, inf_SCR01(0x0A))                              \
         cmphx_rm(Reax,  Mebp, inf_SCR02(0x0A))                              \
-        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        EMITB(0x73) EMITB(0x08 + x67)                                       \
         movhx_st(Reax,  Mebp, inf_SCR02(0x0A))                              \
         movhx_ld(Reax,  Mebp, inf_SCR01(0x0C))                              \
         cmphx_rm(Reax,  Mebp, inf_SCR02(0x0C))                              \
-        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        EMITB(0x73) EMITB(0x08 + x67)                                       \
         movhx_st(Reax,  Mebp, inf_SCR02(0x0C))                              \
         movhx_ld(Reax,  Mebp, inf_SCR01(0x0E))                              \
         cmphx_rm(Reax,  Mebp, inf_SCR02(0x0E))                              \
-        EMITB(0x73) EMITB(0x07 + x67)                                       \
+        EMITB(0x73) EMITB(0x08 + x67)                                       \
         movhx_st(Reax,  Mebp, inf_SCR02(0x0E))                              \
         stack_ld(Reax)                                                      \
         movgx_ld(W(XD), Mebp, inf_SCR02(0))
@@ -617,35 +617,35 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xE1)                       \
         stack_st(Reax)                                                      \
         movhx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
         cmphx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
-        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        EMITB(0x76) EMITB(0x08 + x67)                                       \
         movhx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
         movhx_ld(Reax,  Mebp, inf_SCR01(0x02))                              \
         cmphx_rm(Reax,  Mebp, inf_SCR02(0x02))                              \
-        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        EMITB(0x76) EMITB(0x08 + x67)                                       \
         movhx_st(Reax,  Mebp, inf_SCR02(0x02))                              \
         movhx_ld(Reax,  Mebp, inf_SCR01(0x04))                              \
         cmphx_rm(Reax,  Mebp, inf_SCR02(0x04))                              \
-        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        EMITB(0x76) EMITB(0x08 + x67)                                       \
         movhx_st(Reax,  Mebp, inf_SCR02(0x04))                              \
         movhx_ld(Reax,  Mebp, inf_SCR01(0x06))                              \
         cmphx_rm(Reax,  Mebp, inf_SCR02(0x06))                              \
-        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        EMITB(0x76) EMITB(0x08 + x67)                                       \
         movhx_st(Reax,  Mebp, inf_SCR02(0x06))                              \
         movhx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmphx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
-        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        EMITB(0x76) EMITB(0x08 + x67)                                       \
         movhx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
         movhx_ld(Reax,  Mebp, inf_SCR01(0x0A))                              \
         cmphx_rm(Reax,  Mebp, inf_SCR02(0x0A))                              \
-        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        EMITB(0x76) EMITB(0x08 + x67)                                       \
         movhx_st(Reax,  Mebp, inf_SCR02(0x0A))                              \
         movhx_ld(Reax,  Mebp, inf_SCR01(0x0C))                              \
         cmphx_rm(Reax,  Mebp, inf_SCR02(0x0C))                              \
-        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        EMITB(0x76) EMITB(0x08 + x67)                                       \
         movhx_st(Reax,  Mebp, inf_SCR02(0x0C))                              \
         movhx_ld(Reax,  Mebp, inf_SCR01(0x0E))                              \
         cmphx_rm(Reax,  Mebp, inf_SCR02(0x0E))                              \
-        EMITB(0x76) EMITB(0x07 + x67)                                       \
+        EMITB(0x76) EMITB(0x08 + x67)                                       \
         movhx_st(Reax,  Mebp, inf_SCR02(0x0E))                              \
         stack_ld(Reax)                                                      \
         movgx_ld(W(XD), Mebp, inf_SCR02(0))

@@ -1169,7 +1169,7 @@
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define minix3ld(XD, XS, MT, DT)                                            \
-    ADR VEX(REG(XS), 0, 1, 2) EMITB(0x3B)                                   \
+        VEX(REG(XS), 0, 1, 2) EMITB(0x3B)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -1186,7 +1186,7 @@
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define minin3ld(XD, XS, MT, DT)                                            \
-    ADR VEX(REG(XS), 0, 1, 2) EMITB(0x39)                                   \
+        VEX(REG(XS), 0, 1, 2) EMITB(0x39)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -1203,7 +1203,7 @@
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define maxix3ld(XD, XS, MT, DT)                                            \
-    ADR VEX(REG(XS), 0, 1, 2) EMITB(0x3F)                                   \
+        VEX(REG(XS), 0, 1, 2) EMITB(0x3F)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -1220,7 +1220,7 @@
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define maxin3ld(XD, XS, MT, DT)                                            \
-    ADR VEX(REG(XS), 0, 1, 2) EMITB(0x3D)                                   \
+        VEX(REG(XS), 0, 1, 2) EMITB(0x3D)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -1237,7 +1237,7 @@
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define ceqix3ld(XD, XS, MT, DT)                                            \
-    ADR VEX(REG(XS), 0, 1, 1) EMITB(0x76)                                   \
+        VEX(REG(XS), 0, 1, 1) EMITB(0x76)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -1349,7 +1349,7 @@
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define cgtin3ld(XD, XS, MT, DT)                                            \
-    ADR VEX(REG(XS), 0, 1, 1) EMITB(0x66)                                   \
+        VEX(REG(XS), 0, 1, 1) EMITB(0x66)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -1834,7 +1834,7 @@
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define mingx3ld(XD, XS, MT, DT)                                            \
-    ADR VEX(REG(XS), 0, 1, 2) EMITB(0x3A)                                   \
+        VEX(REG(XS), 0, 1, 2) EMITB(0x3A)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -1851,7 +1851,7 @@
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define mingn3ld(XD, XS, MT, DT)                                            \
-    ADR VEX(REG(XS), 0, 1, 1) EMITB(0xEA)                                   \
+        VEX(REG(XS), 0, 1, 1) EMITB(0xEA)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -1868,7 +1868,7 @@
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define maxgx3ld(XD, XS, MT, DT)                                            \
-    ADR VEX(REG(XS), 0, 1, 2) EMITB(0x3E)                                   \
+        VEX(REG(XS), 0, 1, 2) EMITB(0x3E)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -1885,7 +1885,7 @@
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define maxgn3ld(XD, XS, MT, DT)                                            \
-    ADR VEX(REG(XS), 0, 1, 1) EMITB(0xEE)                                   \
+        VEX(REG(XS), 0, 1, 1) EMITB(0xEE)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -1902,7 +1902,7 @@
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define ceqgx3ld(XD, XS, MT, DT)                                            \
-    ADR VEX(REG(XS), 0, 1, 1) EMITB(0x75)                                   \
+        VEX(REG(XS), 0, 1, 1) EMITB(0x75)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -2014,7 +2014,7 @@
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define cgtgn3ld(XD, XS, MT, DT)                                            \
-    ADR VEX(REG(XS), 0, 1, 1) EMITB(0x65)                                   \
+        VEX(REG(XS), 0, 1, 1) EMITB(0x65)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
