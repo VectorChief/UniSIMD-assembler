@@ -1218,8 +1218,8 @@
 
 #define clton3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0x24808010 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
-        EMITW(0x65804010 | MXM(0x01,    TmmM,    REG(XS)))                  \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x24808010 | MXM(0x01,    TmmM,    REG(XS)))                  \
         EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
         EMITW(0x05A0C400 | MXM(REG(XD), TmmQ,    REG(XD)))
 
