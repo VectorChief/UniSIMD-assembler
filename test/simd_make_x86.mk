@@ -69,7 +69,7 @@ simd_test_x86avx512:
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h.
 # Original legacy 32-bit ARMv7/x86 targets only support 8 SIMD registers.
 
-# For 128-bit SSE1 build use (replace): RT_128=1             (8 SIMD registers)
+# For 128-bit SSE1 build use (replace): RT_128=1 (test36/37) (8 SIMD registers)
 # For 128-bit SSE2 build use (replace): RT_128=2             (8 SIMD registers)
 # For 128-bit SSE4 build use (replace): RT_128=4             (8 SIMD registers)
 # For 128-bit AVX1 build use (replace): RT_128=8     (AMD's AVX1-only) (8 regs)

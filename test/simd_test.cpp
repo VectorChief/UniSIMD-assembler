@@ -13,6 +13,18 @@
 #define RT_ELEM_TEST /* enable ELEM instruction sub-tests (scalar SIMD) */
 
 /*
+ * RT_OFFS_DATA is intended for testing different displacement levels locally.
+ * 0x060 - 1/8  DP-level  (9-bit displacements) has not been exceeded (Q=1).
+ * 0x260 - 1/4  DP-level (10-bit displacements) has not been exceeded (Q=1).
+ * 0x660 - 1/2  DP-level (11-bit displacements) has not been exceeded (Q=1).
+ * 0xE60 - full DP-level (12-bit displacements) has not been exceeded (Q=1).
+ * NOTE: the offset value must be divisible by 16 in order for code to work.
+ * NOTE: the built-in rt_SIMD_INFO structure is already filled at full 1/16th.
+ */
+#define RT_OFFS_DATA        0x060 /* test different displacement levels */
+#define RT_OFFS_SIMD        (RT_OFFS_DATA/16) /* number of quads in offset */
+
+/*
  * RT_DATA determines the maximum load-level for data structures in code-base.
  * 1 - means full DP-level (12-bit displacements) is filled or exceeded (Q=1).
  * 2 - means 1/2  DP-level (11-bit displacements) has not been exceeded (Q=1).
@@ -21,7 +33,15 @@
  * 16  means 1/16 DP-level  (8-bit displacements) has not been exceeded (Q=1).
  * NOTE: the built-in rt_SIMD_INFO structure is already filled at full 1/16th.
  */
+#if     RT_OFFS_DATA <= 0x060
 #define RT_DATA 8
+#elif   RT_OFFS_DATA <= 0x260
+#define RT_DATA 4
+#elif   RT_OFFS_DATA <= 0x660
+#define RT_DATA 2
+#elif   RT_OFFS_DATA <= 0xE60
+#define RT_DATA 1
+#endif /* RT_OFFS_DATA */
 
 #include "rtbase.h"
 
@@ -85,85 +105,88 @@ rt_void sys_free(rt_pntr ptr, rt_size size);
  */
 struct rt_SIMD_INFOX : public rt_SIMD_INFO
 {
+    rt_elem pad01[S*RT_OFFS_SIMD];
+#define inf_PAD01           DP(Q*0x100)
+
     /* internal variables */
 
     rt_si32 cyc;
-#define inf_CYC             DP(Q*0x100+0x000)
+#define inf_CYC             DP(Q*0x100 + Q*RT_OFFS_DATA + 0x000)
 
     rt_si32 loc;
-#define inf_LOC             DP(Q*0x100+0x004)
+#define inf_LOC             DP(Q*0x100 + Q*RT_OFFS_DATA + 0x004)
 
     rt_si32 size;
-#define inf_SIZE            DP(Q*0x100+0x008)
+#define inf_SIZE            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x008)
 
     rt_si32 simd;
-#define inf_SIMD            DP(Q*0x100+0x00C)
+#define inf_SIMD            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x00C)
 
     rt_pntr label;
-#define inf_LABEL           DP(Q*0x100+0x010+0x000*P)
+#define inf_LABEL           DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x000*P)
 
     rt_pntr tail;
-#define inf_TAIL            DP(Q*0x100+0x010+0x004*P)
+#define inf_TAIL            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x004*P)
 
     /* floating point arrays */
 
     rt_real*far0;
-#define inf_FAR0            DP(Q*0x100+0x010+0x008*P+E)
+#define inf_FAR0            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x008*P+E)
 
     rt_real*fco1;
-#define inf_FCO1            DP(Q*0x100+0x010+0x00C*P+E)
+#define inf_FCO1            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x00C*P+E)
 
     rt_real*fco2;
-#define inf_FCO2            DP(Q*0x100+0x010+0x010*P+E)
+#define inf_FCO2            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x010*P+E)
 
     rt_real*fso1;
-#define inf_FSO1            DP(Q*0x100+0x010+0x014*P+E)
+#define inf_FSO1            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x014*P+E)
 
     rt_real*fso2;
-#define inf_FSO2            DP(Q*0x100+0x010+0x018*P+E)
+#define inf_FSO2            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x018*P+E)
 
     /* integer arrays */
 
     rt_elem*iar0;
-#define inf_IAR0            DP(Q*0x100+0x010+0x01C*P+E)
+#define inf_IAR0            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x01C*P+E)
 
     rt_elem*ico1;
-#define inf_ICO1            DP(Q*0x100+0x010+0x020*P+E)
+#define inf_ICO1            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x020*P+E)
 
     rt_elem*ico2;
-#define inf_ICO2            DP(Q*0x100+0x010+0x024*P+E)
+#define inf_ICO2            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x024*P+E)
 
     rt_elem*iso1;
-#define inf_ISO1            DP(Q*0x100+0x010+0x028*P+E)
+#define inf_ISO1            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x028*P+E)
 
     rt_elem*iso2;
-#define inf_ISO2            DP(Q*0x100+0x010+0x02C*P+E)
+#define inf_ISO2            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x02C*P+E)
 
     /* half-int arrays */
 
     rt_half*har0;
-#define inf_HAR0            DP(Q*0x100+0x010+0x030*P+E)
+#define inf_HAR0            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x030*P+E)
 
     rt_half*hco1;
-#define inf_HCO1            DP(Q*0x100+0x010+0x034*P+E)
+#define inf_HCO1            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x034*P+E)
 
     rt_half*hco2;
-#define inf_HCO2            DP(Q*0x100+0x010+0x038*P+E)
+#define inf_HCO2            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x038*P+E)
 
     rt_half*hso1;
-#define inf_HSO1            DP(Q*0x100+0x010+0x03C*P+E)
+#define inf_HSO1            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x03C*P+E)
 
     rt_half*hso2;
-#define inf_HSO2            DP(Q*0x100+0x010+0x040*P+E)
+#define inf_HSO2            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x040*P+E)
 
 };
 
 /*
  * SIMD offsets within array (j-index below).
  */
-#define AJ0                 DP(Q*0x000)
-#define AJ1                 DP(Q*0x010)
-#define AJ2                 DP(Q*0x020)
+#define AJ0                 DP(Q*0x000 + Q*RT_OFFS_DATA)
+#define AJ1                 DP(Q*0x010 + Q*RT_OFFS_DATA)
+#define AJ2                 DP(Q*0x020 + Q*RT_OFFS_DATA)
 
 /******************************************************************************/
 /*******************************   SUB TEST  1   ******************************/
@@ -175,9 +198,9 @@ rt_void c_test01(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -277,11 +300,11 @@ rt_void p_test01(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
-    rt_real *fso1 = info->fso1;
-    rt_real *fso2 = info->fso2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
+    rt_real *fso1 = info->fso1 + S*RT_OFFS_SIMD;
+    rt_real *fso2 = info->fso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -314,9 +337,9 @@ rt_void c_test02(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -416,11 +439,11 @@ rt_void p_test02(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
-    rt_real *fso1 = info->fso1;
-    rt_real *fso2 = info->fso2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
+    rt_real *fso1 = info->fso1 + S*RT_OFFS_SIMD;
+    rt_real *fso2 = info->fso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -453,9 +476,9 @@ rt_void c_test03(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -555,11 +578,11 @@ rt_void p_test03(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -594,9 +617,9 @@ rt_void c_test04(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -696,11 +719,11 @@ rt_void p_test04(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -735,9 +758,9 @@ rt_void c_test05(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -837,11 +860,11 @@ rt_void p_test05(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -876,10 +899,10 @@ rt_void c_test06(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_real *fco2 = info->fco2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -944,12 +967,12 @@ rt_void p_test06(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_real *fco2 = info->fco2;
-    rt_elem *iso1 = info->iso1;
-    rt_real *fso2 = info->fso2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_real *fso2 = info->fso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -982,9 +1005,9 @@ rt_void c_test07(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -1068,11 +1091,11 @@ rt_void p_test07(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
-    rt_real *fso1 = info->fso1;
-    rt_real *fso2 = info->fso2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
+    rt_real *fso1 = info->fso1 + S*RT_OFFS_SIMD;
+    rt_real *fso2 = info->fso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -1105,9 +1128,9 @@ rt_void c_test08(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -1234,11 +1257,11 @@ rt_void p_test08(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -1273,9 +1296,9 @@ rt_void c_test09(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -1366,11 +1389,11 @@ rt_void p_test09(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -1405,9 +1428,9 @@ rt_void c_test10(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -1507,11 +1530,11 @@ rt_void p_test10(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
-    rt_real *fso1 = info->fso1;
-    rt_real *fso2 = info->fso2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
+    rt_real *fso1 = info->fso1 + S*RT_OFFS_SIMD;
+    rt_real *fso2 = info->fso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -1544,9 +1567,9 @@ rt_void c_test11(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -1660,11 +1683,11 @@ rt_void p_test11(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -1699,9 +1722,9 @@ rt_void c_test12(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -1816,11 +1839,11 @@ rt_void p_test12(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -1855,9 +1878,9 @@ rt_void c_test13(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -1923,11 +1946,11 @@ rt_void p_test13(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
-    rt_real *fso1 = info->fso1;
-    rt_real *fso2 = info->fso2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
+    rt_real *fso1 = info->fso1 + S*RT_OFFS_SIMD;
+    rt_real *fso2 = info->fso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -1962,9 +1985,9 @@ rt_void c_test14(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, k, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -2096,11 +2119,11 @@ rt_void p_test14(rt_SIMD_INFOX *info)
 {
     rt_si32 j, k, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n / S;
     while (j-->0)
@@ -2159,9 +2182,9 @@ rt_void c_test15(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -2257,11 +2280,11 @@ rt_void p_test15(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -2294,9 +2317,9 @@ rt_void c_test16(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -2407,11 +2430,11 @@ rt_void p_test16(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -2446,9 +2469,9 @@ rt_void c_test17(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -2510,11 +2533,11 @@ rt_void p_test17(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
-    rt_real *fso1 = info->fso1;
-    rt_real *fso2 = info->fso2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
+    rt_real *fso1 = info->fso1 + S*RT_OFFS_SIMD;
+    rt_real *fso2 = info->fso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -2547,9 +2570,9 @@ rt_void c_test18(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -2644,11 +2667,11 @@ rt_void p_test18(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -2683,9 +2706,9 @@ rt_void c_test19(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -2789,11 +2812,11 @@ rt_void p_test19(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -2828,9 +2851,9 @@ rt_void c_test20(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -2930,11 +2953,11 @@ rt_void p_test20(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
-    rt_real *fso1 = info->fso1;
-    rt_real *fso2 = info->fso2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
+    rt_real *fso1 = info->fso1 + S*RT_OFFS_SIMD;
+    rt_real *fso2 = info->fso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -2972,9 +2995,9 @@ rt_void c_test21(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -3062,11 +3085,11 @@ rt_void p_test21(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -3101,9 +3124,9 @@ rt_void c_test22(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -3191,11 +3214,11 @@ rt_void p_test22(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -3230,9 +3253,9 @@ rt_void c_test23(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -3314,11 +3337,11 @@ rt_void p_test23(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -3353,9 +3376,9 @@ rt_void c_test24(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -3431,11 +3454,11 @@ rt_void p_test24(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -3470,9 +3493,9 @@ rt_void c_test25(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -3611,11 +3634,11 @@ rt_void p_test25(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
-    rt_real *fso1 = info->fso1;
-    rt_real *fso2 = info->fso2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
+    rt_real *fso1 = info->fso1 + S*RT_OFFS_SIMD;
+    rt_real *fso2 = info->fso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -3649,9 +3672,9 @@ rt_void c_test26(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -3777,11 +3800,11 @@ rt_void p_test26(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
-    rt_real *fso1 = info->fso1;
-    rt_real *fso2 = info->fso2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
+    rt_real *fso1 = info->fso1 + S*RT_OFFS_SIMD;
+    rt_real *fso2 = info->fso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -3815,9 +3838,9 @@ rt_void c_test27(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -3868,15 +3891,15 @@ rt_void s_test27(rt_SIMD_INFOX *info)
 
         movpx_ld(Xmm1, Mecx, AJ0)
         movpx_st(Xmm0, Medx, AJ0)
-        elmpx_st(Xmm1, Medx, DP(Q*0x000+(1&(S-1))*4*L))
+        elmpx_st(Xmm1, Medx, DP(Q*0x000 + Q*RT_OFFS_DATA + (1&(S-1))*4*L))
 
         movpx_ld(Xmm2, Mecx, AJ1)
         movpx_st(Xmm0, Medx, AJ1)
-        elmpx_st(Xmm2, Medx, DP(Q*0x010+(2&(S-1))*4*L))
+        elmpx_st(Xmm2, Medx, DP(Q*0x010 + Q*RT_OFFS_DATA + (2&(S-1))*4*L))
 
         movpx_ld(Xmm3, Mecx, AJ2)
         movpx_st(Xmm0, Medx, AJ2)
-        elmpx_st(Xmm3, Medx, DP(Q*0x020+(3&(S-1))*4*L))
+        elmpx_st(Xmm3, Medx, DP(Q*0x020 + Q*RT_OFFS_DATA + (3&(S-1))*4*L))
 
         movpx_ld(Xmm0, Mecx, AJ0)
         cgtps_ld(Xmm0, Mecx, AJ1)
@@ -3906,11 +3929,11 @@ rt_void p_test27(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_real *far0 = info->far0;
-    rt_real *fco1 = info->fco1;
-    rt_real *fco2 = info->fco2;
-    rt_real *fso1 = info->fso1;
-    rt_real *fso2 = info->fso2;
+    rt_real *far0 = info->far0 + S*RT_OFFS_SIMD;
+    rt_real *fco1 = info->fco1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
+    rt_real *fso1 = info->fso1 + S*RT_OFFS_SIMD;
+    rt_real *fso2 = info->fso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -3943,8 +3966,8 @@ rt_void c_test28(rt_SIMD_INFOX *info)
 {
     rt_si32 i;
 
-    rt_elem *ico1 = info->ico1;
-    rt_real *fco2 = info->fco2;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -4193,10 +4216,10 @@ rt_void p_test28(rt_SIMD_INFOX *info)
 {
     rt_si32 j;
 
-    rt_elem *ico1 = info->ico1;
-    rt_elem *iso1 = info->iso1;
-    rt_real *fco2 = info->fco2;
-    rt_real *fso2 = info->fso2;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
+    rt_real *fso2 = info->fso2 + S*RT_OFFS_SIMD;
 
     j = 1;
     while (j-->0)
@@ -4226,9 +4249,9 @@ rt_void c_test29(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -4323,11 +4346,11 @@ rt_void p_test29(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -4362,9 +4385,9 @@ rt_void c_test30(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -4495,11 +4518,11 @@ rt_void p_test30(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
-    rt_half *hso1 = info->hso1;
-    rt_half *hso2 = info->hso2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
+    rt_half *hso1 = info->hso1 + N*RT_OFFS_SIMD;
+    rt_half *hso2 = info->hso2 + N*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -4534,9 +4557,9 @@ rt_void c_test31(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -4657,11 +4680,11 @@ rt_void p_test31(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
-    rt_half *hso1 = info->hso1;
-    rt_half *hso2 = info->hso2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
+    rt_half *hso1 = info->hso1 + N*RT_OFFS_SIMD;
+    rt_half *hso2 = info->hso2 + N*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -4696,9 +4719,9 @@ rt_void c_test32(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -4774,11 +4797,11 @@ rt_void p_test32(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
-    rt_half *hso1 = info->hso1;
-    rt_half *hso2 = info->hso2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
+    rt_half *hso1 = info->hso1 + N*RT_OFFS_SIMD;
+    rt_half *hso2 = info->hso2 + N*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -4813,9 +4836,9 @@ rt_void c_test33(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -4893,11 +4916,11 @@ rt_void p_test33(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
-    rt_half *hso1 = info->hso1;
-    rt_half *hso2 = info->hso2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
+    rt_half *hso1 = info->hso1 + N*RT_OFFS_SIMD;
+    rt_half *hso2 = info->hso2 + N*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -4932,9 +4955,9 @@ rt_void c_test34(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -5005,11 +5028,11 @@ rt_void p_test34(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
-    rt_half *hso1 = info->hso1;
-    rt_half *hso2 = info->hso2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
+    rt_half *hso1 = info->hso1 + N*RT_OFFS_SIMD;
+    rt_half *hso2 = info->hso2 + N*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -5044,9 +5067,9 @@ rt_void c_test35(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -5117,11 +5140,11 @@ rt_void p_test35(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
-    rt_half *hso1 = info->hso1;
-    rt_half *hso2 = info->hso2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
+    rt_half *hso1 = info->hso1 + N*RT_OFFS_SIMD;
+    rt_half *hso2 = info->hso2 + N*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -5156,9 +5179,9 @@ rt_void c_test36(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -5229,11 +5252,11 @@ rt_void p_test36(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
-    rt_half *hso1 = info->hso1;
-    rt_half *hso2 = info->hso2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
+    rt_half *hso1 = info->hso1 + N*RT_OFFS_SIMD;
+    rt_half *hso2 = info->hso2 + N*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -5266,9 +5289,9 @@ rt_void c_test37(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -5342,11 +5365,11 @@ rt_void p_test37(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
-    rt_half *hso1 = info->hso1;
-    rt_half *hso2 = info->hso2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
+    rt_half *hso1 = info->hso1 + N*RT_OFFS_SIMD;
+    rt_half *hso2 = info->hso2 + N*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -5381,9 +5404,9 @@ rt_void c_test38(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -5454,11 +5477,11 @@ rt_void p_test38(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -5493,9 +5516,9 @@ rt_void c_test39(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -5569,11 +5592,11 @@ rt_void p_test39(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -5608,9 +5631,9 @@ rt_void c_test40(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -5681,11 +5704,11 @@ rt_void p_test40(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -5720,9 +5743,9 @@ rt_void c_test41(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -5793,11 +5816,11 @@ rt_void p_test41(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -5832,9 +5855,9 @@ rt_void c_test42(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -5908,11 +5931,11 @@ rt_void p_test42(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -5947,9 +5970,9 @@ rt_void c_test43(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -6020,11 +6043,11 @@ rt_void p_test43(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -6059,9 +6082,9 @@ rt_void c_test44(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -6135,11 +6158,11 @@ rt_void p_test44(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
-    rt_elem *iar0 = info->iar0;
-    rt_elem *ico1 = info->ico1;
-    rt_elem *ico2 = info->ico2;
-    rt_elem *iso1 = info->iso1;
-    rt_elem *iso2 = info->iso2;
+    rt_elem *iar0 = info->iar0 + S*RT_OFFS_SIMD;
+    rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
+    rt_elem *ico2 = info->ico2 + S*RT_OFFS_SIMD;
+    rt_elem *iso1 = info->iso1 + S*RT_OFFS_SIMD;
+    rt_elem *iso2 = info->iso2 + S*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -6174,9 +6197,9 @@ rt_void c_test45(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -6247,11 +6270,11 @@ rt_void p_test45(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
-    rt_half *hso1 = info->hso1;
-    rt_half *hso2 = info->hso2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
+    rt_half *hso1 = info->hso1 + N*RT_OFFS_SIMD;
+    rt_half *hso2 = info->hso2 + N*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -6288,9 +6311,9 @@ rt_void c_test46(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -6361,11 +6384,11 @@ rt_void p_test46(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
-    rt_half *hso1 = info->hso1;
-    rt_half *hso2 = info->hso2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
+    rt_half *hso1 = info->hso1 + N*RT_OFFS_SIMD;
+    rt_half *hso2 = info->hso2 + N*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -6402,9 +6425,9 @@ rt_void c_test47(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -6478,11 +6501,11 @@ rt_void p_test47(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
-    rt_half *hso1 = info->hso1;
-    rt_half *hso2 = info->hso2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
+    rt_half *hso1 = info->hso1 + N*RT_OFFS_SIMD;
+    rt_half *hso2 = info->hso2 + N*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -6519,9 +6542,9 @@ rt_void c_test48(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -6592,11 +6615,11 @@ rt_void p_test48(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
-    rt_half *hso1 = info->hso1;
-    rt_half *hso2 = info->hso2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
+    rt_half *hso1 = info->hso1 + N*RT_OFFS_SIMD;
+    rt_half *hso2 = info->hso2 + N*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -6633,9 +6656,9 @@ rt_void c_test49(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -6709,11 +6732,11 @@ rt_void p_test49(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
-    rt_half *hso1 = info->hso1;
-    rt_half *hso2 = info->hso2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
+    rt_half *hso1 = info->hso1 + N*RT_OFFS_SIMD;
+    rt_half *hso2 = info->hso2 + N*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -6750,9 +6773,9 @@ rt_void c_test50(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -6823,11 +6846,11 @@ rt_void p_test50(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
-    rt_half *hso1 = info->hso1;
-    rt_half *hso2 = info->hso2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
+    rt_half *hso1 = info->hso1 + N*RT_OFFS_SIMD;
+    rt_half *hso2 = info->hso2 + N*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -6864,9 +6887,9 @@ rt_void c_test51(rt_SIMD_INFOX *info)
 {
     rt_si32 i, j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
 
     i = info->cyc;
     while (i-->0)
@@ -6940,11 +6963,11 @@ rt_void p_test51(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
-    rt_half *har0 = info->har0;
-    rt_half *hco1 = info->hco1;
-    rt_half *hco2 = info->hco2;
-    rt_half *hso1 = info->hso1;
-    rt_half *hso2 = info->hso2;
+    rt_half *har0 = info->har0 + N*RT_OFFS_SIMD;
+    rt_half *hco1 = info->hco1 + N*RT_OFFS_SIMD;
+    rt_half *hco2 = info->hco2 + N*RT_OFFS_SIMD;
+    rt_half *hso1 = info->hso1 + N*RT_OFFS_SIMD;
+    rt_half *hso2 = info->hso2 + N*RT_OFFS_SIMD;
 
     j = n;
     while (j-->0)
@@ -7724,8 +7747,8 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
         }
     }
 
-    rt_pntr marr = sys_alloc(15*ARR_SIZE*sizeof(rt_elem) + MASK);
-    memset(marr, 0, 15*ARR_SIZE*sizeof(rt_elem) + MASK);
+    rt_pntr marr = sys_alloc(15*ARR_SIZE*sizeof(rt_elem)+Q*RT_OFFS_DATA*3+MASK);
+    memset(marr, 0, 15*ARR_SIZE*sizeof(rt_elem)+Q*RT_OFFS_DATA*3+MASK);
     rt_pntr mar0 = (rt_pntr)(((rt_full)marr + MASK) & ~MASK);
 
 #if   RT_ELEMENT == 32
@@ -7756,15 +7779,15 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     };
 #endif /* RT_ELEMENT */
 
-    rt_real *far0 = (rt_real *)mar0 + ARR_SIZE*0x0;
-    rt_real *fco1 = (rt_real *)mar0 + ARR_SIZE*0x1;
-    rt_real *fco2 = (rt_real *)mar0 + ARR_SIZE*0x2;
-    rt_real *fso1 = (rt_real *)mar0 + ARR_SIZE*0x3;
-    rt_real *fso2 = (rt_real *)mar0 + ARR_SIZE*0x4;
+    rt_real *far0 = (rt_real *)mar0 + S*RT_OFFS_SIMD*0x0 + ARR_SIZE*0x0;
+    rt_real *fco1 = (rt_real *)mar0 + S*RT_OFFS_SIMD*0x0 + ARR_SIZE*0x1;
+    rt_real *fco2 = (rt_real *)mar0 + S*RT_OFFS_SIMD*0x0 + ARR_SIZE*0x2;
+    rt_real *fso1 = (rt_real *)mar0 + S*RT_OFFS_SIMD*0x0 + ARR_SIZE*0x3;
+    rt_real *fso2 = (rt_real *)mar0 + S*RT_OFFS_SIMD*0x0 + ARR_SIZE*0x4;
 
     for (k = 0; k < Q; k++)
     {
-        memcpy(far0 + RT_ARR_SIZE(farr)*k, farr, sizeof(farr));
+        memcpy(far0 + S*RT_OFFS_SIMD + RT_ARR_SIZE(farr)*k, farr, sizeof(farr));
     }
 
 #if   RT_ELEMENT == 32
@@ -7795,15 +7818,15 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     };
 #endif /* RT_ELEMENT */
 
-    rt_elem *iar0 = (rt_elem *)mar0 + ARR_SIZE*0x5;
-    rt_elem *ico1 = (rt_elem *)mar0 + ARR_SIZE*0x6;
-    rt_elem *ico2 = (rt_elem *)mar0 + ARR_SIZE*0x7;
-    rt_elem *iso1 = (rt_elem *)mar0 + ARR_SIZE*0x8;
-    rt_elem *iso2 = (rt_elem *)mar0 + ARR_SIZE*0x9;
+    rt_elem *iar0 = (rt_elem *)mar0 + S*RT_OFFS_SIMD*0x1 + ARR_SIZE*0x5;
+    rt_elem *ico1 = (rt_elem *)mar0 + S*RT_OFFS_SIMD*0x1 + ARR_SIZE*0x6;
+    rt_elem *ico2 = (rt_elem *)mar0 + S*RT_OFFS_SIMD*0x1 + ARR_SIZE*0x7;
+    rt_elem *iso1 = (rt_elem *)mar0 + S*RT_OFFS_SIMD*0x1 + ARR_SIZE*0x8;
+    rt_elem *iso2 = (rt_elem *)mar0 + S*RT_OFFS_SIMD*0x1 + ARR_SIZE*0x9;
 
     for (k = 0; k < Q; k++)
     {
-        memcpy(iar0 + RT_ARR_SIZE(iarr)*k, iarr, sizeof(iarr));
+        memcpy(iar0 + S*RT_OFFS_SIMD + RT_ARR_SIZE(iarr)*k, iarr, sizeof(iarr));
     }
 
     rt_half harr[8*3] =
@@ -7834,15 +7857,16 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
         31,
     };
 
-    rt_elem *har0 = (rt_elem *)mar0 + ARR_SIZE*0xA;
-    rt_elem *hco1 = (rt_elem *)mar0 + ARR_SIZE*0xB;
-    rt_elem *hco2 = (rt_elem *)mar0 + ARR_SIZE*0xC;
-    rt_elem *hso1 = (rt_elem *)mar0 + ARR_SIZE*0xD;
-    rt_elem *hso2 = (rt_elem *)mar0 + ARR_SIZE*0xE;
+    rt_elem *har0 = (rt_elem *)mar0 + S*RT_OFFS_SIMD*0x2 + ARR_SIZE*0xA;
+    rt_elem *hco1 = (rt_elem *)mar0 + S*RT_OFFS_SIMD*0x2 + ARR_SIZE*0xB;
+    rt_elem *hco2 = (rt_elem *)mar0 + S*RT_OFFS_SIMD*0x2 + ARR_SIZE*0xC;
+    rt_elem *hso1 = (rt_elem *)mar0 + S*RT_OFFS_SIMD*0x2 + ARR_SIZE*0xD;
+    rt_elem *hso2 = (rt_elem *)mar0 + S*RT_OFFS_SIMD*0x2 + ARR_SIZE*0xE;
 
     for (k = 0; k < Q; k++)
     {
-        memcpy((rt_half *)har0 + RT_ARR_SIZE(harr)*k, harr, sizeof(harr));
+        rt_half *hbr0 = (rt_half *)har0;
+        memcpy(hbr0 + N*RT_OFFS_SIMD + RT_ARR_SIZE(harr)*k, harr, sizeof(harr));
     }
 
     rt_pntr info = sys_alloc(sizeof(rt_SIMD_INFOX) + MASK);
