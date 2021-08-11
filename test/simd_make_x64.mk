@@ -44,13 +44,13 @@ build_x64: simd_test_x64_32 simd_test_x64_64 simd_test_x64f32 simd_test_x64f64
 
 simd_test_x64_32:
 	g++ -O3 -g \
-        -DRT_LINUX -DRT_X64 -DRT_128=4 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_X64 -DRT_128=4 -DRT_SIMD_COMPAT_SSE=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
       ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_32
 
 simd_test_x64_64:
 	g++ -O3 -g \
-        -DRT_LINUX -DRT_X64 -DRT_128=4 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_X64 -DRT_128=4 -DRT_SIMD_COMPAT_SSE=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
       ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_64
 
