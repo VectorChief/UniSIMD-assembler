@@ -91,10 +91,6 @@ F) Task title: "implement scalar fp compare-to-flags, fp/fp & fp/int converters"
 
 ================================================================================
 
-I) Task title: "implement integer SIMD compare-to-mask across all targets"
-
-================================================================================
-
 M) Task title: "add support for trigonometric/randomizer SIMD meta-instructions"
    (consider sleef library as an example of elementary math functions with SIMD)
    (https://github.com/shibatch/sleef)      <- use this code snapshot as a base
