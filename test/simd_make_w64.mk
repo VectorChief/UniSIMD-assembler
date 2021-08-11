@@ -24,13 +24,13 @@ build_w64: simd_test_w64_32 simd_test_w64_64 simd_test_w64f32 simd_test_w64f64
 
 simd_test_w64_32:
 	g++ -O3 -g -static -m64 \
-        -DRT_WIN64 -DRT_X64 -DRT_128=4 -DRT_DEBUG=0 \
+        -DRT_WIN64 -DRT_X64 -DRT_128=4 -DRT_SIMD_COMPAT_SSE=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
   ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test_w64_32.exe
 
 simd_test_w64_64:
 	g++ -O3 -g -static -m64 \
-        -DRT_WIN64 -DRT_X64 -DRT_128=4 -DRT_DEBUG=0 \
+        -DRT_WIN64 -DRT_X64 -DRT_128=4 -DRT_SIMD_COMPAT_SSE=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
   ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test_w64_64.exe
 
