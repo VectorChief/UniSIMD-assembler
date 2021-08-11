@@ -1,3 +1,23 @@
+v1.1.0b: UniSIMD, code name "ENsed+1b", second development release
+  - implement integer SIMD compare subset (signed/unsigned)
+  - add integer SIMD compare on MIPS32/64 (min/max/ceq/cne/clt/cle/cgt/cge)
+  - add integer SIMD compare on ARMv8 (64-bit min/max emulated) and SVE
+  - add integer SIMD compare on POWER (64-bit emulated on POWER7)
+  - add integer SIMD compare on x86+SSE2/4 (64-bit emulated)
+  - add integer SIMD compare on x86+AVX1/2 (emulated for full SIMD AVX1)
+  - add integer SIMD compare on x86+AVX512
+  - add integer SIMD compare on original legacy targets (ARMv7, x86, PPC G4)
+  - add integer SIMD compare for half-int SIMD backends (16-bit elements)
+  - require both SSE4.1 and SSE4.2 for SSE4 (v4) target slots
+  - add tests for integer SIMD compare (38-51)
+
+v1.0.0f: UniSIMD, code name "ENsed+f", fixes and tests
+  - fix displacement encodings on MIPS
+  - add testing for displacement levels and types
+  - update makefiles to support ancient HW (SSE2, SSE1 has issue with cvzps)
+  - update SIMD test framework, add scripts for test automation
+  - update comments for QEMU 5.2.0 and QEMU 6.0.0 (require ninja-build)
+
 v1.1.0a: UniSIMD, code name "ENsed+1a", first development release
   - add tests for half-int SIMD/BASE ops (run level 30-37)
   - drop extended POWER targets from SIMD testing (no half-int support)
