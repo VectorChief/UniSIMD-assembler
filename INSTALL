@@ -57,10 +57,10 @@ To build QEMU emulator from source on Linux, download the latest version from:
 unpack the archive, open terminal window, go to QEMU's root folder,
 make sure necessary tools and libraries are installed:
     sudo apt-get update
-    sudo apt-get install make g++
+    sudo apt-get install make g++ ninja-build
     sudo apt-get install pkg-config libglib2.0-dev libpixman-1-dev zlib1g-dev
 when building QEMU on RPM-based systems like openSUSE:
-    sudo zypper install make gcc-c++
+    sudo zypper install make gcc-c++ ninja
     sudo zypper install patch glib2-devel libpixman-1-0-devel zlib-devel
 when building QEMU 3.0.0 for SVE targets apply patch for sve-max-vq cpu property
 from https://patchwork.kernel.org/patch/10541199/  (scroll down and click diff):
@@ -90,6 +90,7 @@ To test SVE targets with QEMU 3.x.y or patched version of QEMU 3.0.0 run:
 The most recent QEMU 4.2.0 has been the most stable and feature complete so far,
 while versions 4.x.y prior to 4.2.0 showed issues with POWER8/9 fp32 LE targets.
 QEMU 4.2.0 is now part of Ubuntu 20.04, QEMU 5.0.0 proves to be just as good.
+QEMU 5.2.0 and QEMU 6.0.0 require ninja-build package to build from source.
 
 Ubuntu 20.04 is the first release where MIPS cross-compilers have caught up
 with the rest of the pack (standalone 2020.06-01 and mipsisa64r6* are 9.3.0).
