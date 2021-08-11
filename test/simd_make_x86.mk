@@ -22,7 +22,7 @@ clean:
 
 simd_test_x86:
 	g++ -O3 -g -m32 \
-        -DRT_LINUX -DRT_X86 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_X86 -DRT_128=2 -DRT_DEBUG=0 \
         -DRT_POINTER=32 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x86
 
@@ -69,7 +69,7 @@ simd_test_x86avx512:
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h.
 # Original legacy 32-bit ARMv7/x86 targets only support 8 SIMD registers.
 
-# For 128-bit SSE1 build use (replace): RT_128=1             (8 SIMD registers)
+# For 128-bit SSE1 build use (replace): RT_128=1 (test06cvz) (8 SIMD registers)
 # For 128-bit SSE2 build use (replace): RT_128=2             (8 SIMD registers)
 # For 128-bit SSE4 build use (replace): RT_128=4             (8 SIMD registers)
 # For 128-bit AVX1 build use (replace): RT_128=8     (AMD's AVX1-only) (8 regs)
