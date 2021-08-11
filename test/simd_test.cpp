@@ -18,11 +18,16 @@
  * 0x260 - 1/4  DP-level (10-bit displacements) has not been exceeded (Q=1).
  * 0x660 - 1/2  DP-level (11-bit displacements) has not been exceeded (Q=1).
  * 0xE60 - full DP-level (12-bit displacements) has not been exceeded (Q=1).
+ * 0x1E60  full DE-level (13-bit displacements) has not been exceeded (Q=1).
+ * 0x3E60  full DF-level (14-bit displacements) has not been exceeded (Q=1).
+ * 0x7E60  full DG-level (15-bit displacements) has not been exceeded (Q=1).
+ * 0xFE60  full DH-level (16-bit displacements) has not been exceeded (Q=1).
  * NOTE: the offset value must be divisible by 16 in order for code to work.
  * NOTE: the built-in rt_SIMD_INFO structure is already filled at full 1/16th.
  */
-#define RT_OFFS_DATA        0x060 /* test different displacement levels */
+#define RT_OFFS_DATA        0x000 /* test different displacement levels */
 #define RT_OFFS_SIMD        (RT_OFFS_DATA/16) /* number of quads in offset */
+#define RT_OFFS_ALLOC       0 /* 0 - subtract then add, 1 - allocate then add */
 
 /*
  * RT_DATA determines the maximum load-level for data structures in code-base.
@@ -34,12 +39,31 @@
  * NOTE: the built-in rt_SIMD_INFO structure is already filled at full 1/16th.
  */
 #if     RT_OFFS_DATA <= 0x060
+#define DS DP
 #define RT_DATA 8
 #elif   RT_OFFS_DATA <= 0x260
+#define DS DP
 #define RT_DATA 4
 #elif   RT_OFFS_DATA <= 0x660
+#define DS DP
 #define RT_DATA 2
 #elif   RT_OFFS_DATA <= 0xE60
+#define DS DP
+#define RT_DATA 1
+#elif   RT_OFFS_DATA <= 0x1E60
+#define DS DE
+#define RT_DATA 1
+#elif   RT_OFFS_DATA <= 0x3E60
+#define DS DF
+#define RT_DATA 1
+#elif   RT_OFFS_DATA <= 0x7E60
+#define DS DG
+#define RT_DATA 1
+#elif   RT_OFFS_DATA <= 0xFE60
+#define DS DH
+#define RT_DATA 1
+#else /* RT_OFFS_DATA > 0xFFFF */
+#define DS DV
 #define RT_DATA 1
 #endif /* RT_OFFS_DATA */
 
@@ -105,71 +129,75 @@ rt_void sys_free(rt_pntr ptr, rt_size size);
  */
 struct rt_SIMD_INFOX : public rt_SIMD_INFO
 {
+#if RT_OFFS_SIMD != 0
+
     rt_elem pad01[S*RT_OFFS_SIMD];
-#define inf_PAD01           DP(Q*0x100)
+#define inf_PAD01           DS(Q*0x100)
+
+#endif /* RT_OFFS_SIMD */
 
     /* internal variables */
 
     rt_si32 cyc;
-#define inf_CYC             DP(Q*0x100 + Q*RT_OFFS_DATA + 0x000)
+#define inf_CYC             DS(Q*0x100 + Q*RT_OFFS_DATA + 0x000)
 
     rt_si32 loc;
-#define inf_LOC             DP(Q*0x100 + Q*RT_OFFS_DATA + 0x004)
+#define inf_LOC             DS(Q*0x100 + Q*RT_OFFS_DATA + 0x004)
 
     rt_si32 size;
-#define inf_SIZE            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x008)
+#define inf_SIZE            DS(Q*0x100 + Q*RT_OFFS_DATA + 0x008)
 
     rt_si32 simd;
-#define inf_SIMD            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x00C)
+#define inf_SIMD            DS(Q*0x100 + Q*RT_OFFS_DATA + 0x00C)
 
     rt_pntr label;
-#define inf_LABEL           DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x000*P)
+#define inf_LABEL           DS(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x000*P)
 
     rt_pntr tail;
-#define inf_TAIL            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x004*P)
+#define inf_TAIL            DS(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x004*P)
 
     /* floating point arrays */
 
     rt_real*far0;
-#define inf_FAR0            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x008*P+E)
+#define inf_FAR0            DS(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x008*P+E)
 
     rt_real*fco1;
-#define inf_FCO1            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x00C*P+E)
+#define inf_FCO1            DS(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x00C*P+E)
 
     rt_real*fco2;
-#define inf_FCO2            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x010*P+E)
+#define inf_FCO2            DS(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x010*P+E)
 
     rt_real*fso1;
-#define inf_FSO1            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x014*P+E)
+#define inf_FSO1            DS(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x014*P+E)
 
     rt_real*fso2;
-#define inf_FSO2            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x018*P+E)
+#define inf_FSO2            DS(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x018*P+E)
 
     /* integer arrays */
 
     rt_elem*iar0;
-#define inf_IAR0            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x01C*P+E)
+#define inf_IAR0            DS(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x01C*P+E)
 
     rt_elem*ico1;
-#define inf_ICO1            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x020*P+E)
+#define inf_ICO1            DS(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x020*P+E)
 
     rt_elem*ico2;
-#define inf_ICO2            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x024*P+E)
+#define inf_ICO2            DS(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x024*P+E)
 
     rt_elem*iso1;
-#define inf_ISO1            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x028*P+E)
+#define inf_ISO1            DS(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x028*P+E)
 
     rt_elem*iso2;
-#define inf_ISO2            DP(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x02C*P+E)
+#define inf_ISO2            DS(Q*0x100 + Q*RT_OFFS_DATA + 0x010+0x02C*P+E)
 
 };
 
 /*
  * SIMD offsets within array (j-index below).
  */
-#define AJ0                 DP(Q*0x000 + Q*RT_OFFS_DATA)
-#define AJ1                 DP(Q*0x010 + Q*RT_OFFS_DATA)
-#define AJ2                 DP(Q*0x020 + Q*RT_OFFS_DATA)
+#define AJ0                 DS(Q*0x000 + Q*RT_OFFS_DATA)
+#define AJ1                 DS(Q*0x010 + Q*RT_OFFS_DATA)
+#define AJ2                 DS(Q*0x020 + Q*RT_OFFS_DATA)
 
 /******************************************************************************/
 /*******************************   SUB TEST  1   ******************************/
@@ -3874,15 +3902,15 @@ rt_void s_test27(rt_SIMD_INFOX *info)
 
         movpx_ld(Xmm1, Mecx, AJ0)
         movpx_st(Xmm0, Medx, AJ0)
-        elmpx_st(Xmm1, Medx, DP(Q*0x000 + Q*RT_OFFS_DATA + (1&(S-1))*4*L))
+        elmpx_st(Xmm1, Medx, DS(Q*0x000 + Q*RT_OFFS_DATA + (1&(S-1))*4*L))
 
         movpx_ld(Xmm2, Mecx, AJ1)
         movpx_st(Xmm0, Medx, AJ1)
-        elmpx_st(Xmm2, Medx, DP(Q*0x010 + Q*RT_OFFS_DATA + (2&(S-1))*4*L))
+        elmpx_st(Xmm2, Medx, DS(Q*0x010 + Q*RT_OFFS_DATA + (2&(S-1))*4*L))
 
         movpx_ld(Xmm3, Mecx, AJ2)
         movpx_st(Xmm0, Medx, AJ2)
-        elmpx_st(Xmm3, Medx, DP(Q*0x020 + Q*RT_OFFS_DATA + (3&(S-1))*4*L))
+        elmpx_st(Xmm3, Medx, DS(Q*0x020 + Q*RT_OFFS_DATA + (3&(S-1))*4*L))
 
         movpx_ld(Xmm0, Mecx, AJ0)
         cgtps_ld(Xmm0, Mecx, AJ1)
@@ -4847,9 +4875,15 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
         }
     }
 
-    rt_pntr marr = sys_alloc(10*ARR_SIZE*sizeof(rt_elem)+Q*RT_OFFS_DATA*2+MASK);
-    memset(marr, 0, 10*ARR_SIZE*sizeof(rt_elem)+Q*RT_OFFS_DATA*2+MASK);
-    rt_pntr mar0 = (rt_pntr)(((rt_full)marr + MASK) & ~MASK);
+#if RT_OFFS_ALLOC
+    rt_pntr marr = sys_alloc(10*ARR_SIZE*sizeof(rt_elem)+Q*RT_OFFS_DATA + MASK);
+    memset(marr, 0, 10*ARR_SIZE*sizeof(rt_elem)+Q*RT_OFFS_DATA + MASK);
+    rt_pntr mar0 = (rt_pntr)(((rt_uptr)marr + MASK) & ~MASK);
+#else /* RT_OFFS_ALLOC */
+    rt_pntr marr = sys_alloc(10*ARR_SIZE*sizeof(rt_elem) + MASK);
+    memset(marr, 0, 10*ARR_SIZE*sizeof(rt_elem) + MASK);
+    rt_pntr mar0 = (rt_pntr)(((rt_uptr)marr-Q*RT_OFFS_DATA + MASK) & ~MASK);
+#endif /* RT_OFFS_ALLOC */
 
 #if   RT_ELEMENT == 32
     rt_real farr[4*3] =
@@ -4879,11 +4913,11 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     };
 #endif /* RT_ELEMENT */
 
-    rt_real *far0 = (rt_real *)mar0 + S*RT_OFFS_SIMD*0x0 + ARR_SIZE*0x0;
-    rt_real *fco1 = (rt_real *)mar0 + S*RT_OFFS_SIMD*0x0 + ARR_SIZE*0x1;
-    rt_real *fco2 = (rt_real *)mar0 + S*RT_OFFS_SIMD*0x0 + ARR_SIZE*0x2;
-    rt_real *fso1 = (rt_real *)mar0 + S*RT_OFFS_SIMD*0x0 + ARR_SIZE*0x3;
-    rt_real *fso2 = (rt_real *)mar0 + S*RT_OFFS_SIMD*0x0 + ARR_SIZE*0x4;
+    rt_real *far0 = (rt_real *)mar0 + ARR_SIZE*0x0;
+    rt_real *fco1 = (rt_real *)mar0 + ARR_SIZE*0x1;
+    rt_real *fco2 = (rt_real *)mar0 + ARR_SIZE*0x2;
+    rt_real *fso1 = (rt_real *)mar0 + ARR_SIZE*0x3;
+    rt_real *fso2 = (rt_real *)mar0 + ARR_SIZE*0x4;
 
     for (k = 0; k < Q; k++)
     {
@@ -4918,11 +4952,11 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     };
 #endif /* RT_ELEMENT */
 
-    rt_elem *iar0 = (rt_elem *)mar0 + S*RT_OFFS_SIMD*0x1 + ARR_SIZE*0x5;
-    rt_elem *ico1 = (rt_elem *)mar0 + S*RT_OFFS_SIMD*0x1 + ARR_SIZE*0x6;
-    rt_elem *ico2 = (rt_elem *)mar0 + S*RT_OFFS_SIMD*0x1 + ARR_SIZE*0x7;
-    rt_elem *iso1 = (rt_elem *)mar0 + S*RT_OFFS_SIMD*0x1 + ARR_SIZE*0x8;
-    rt_elem *iso2 = (rt_elem *)mar0 + S*RT_OFFS_SIMD*0x1 + ARR_SIZE*0x9;
+    rt_elem *iar0 = (rt_elem *)mar0 + ARR_SIZE*0x5;
+    rt_elem *ico1 = (rt_elem *)mar0 + ARR_SIZE*0x6;
+    rt_elem *ico2 = (rt_elem *)mar0 + ARR_SIZE*0x7;
+    rt_elem *iso1 = (rt_elem *)mar0 + ARR_SIZE*0x8;
+    rt_elem *iso2 = (rt_elem *)mar0 + ARR_SIZE*0x9;
 
     for (k = 0; k < Q; k++)
     {
