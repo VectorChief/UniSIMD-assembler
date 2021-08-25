@@ -78,6 +78,8 @@ simd_test_a64f64sve:
 # On Ubuntu (MATE) 16.04-20.04 add "universe multiverse" to "main restricted"
 # in /etc/apt/sources.list (sudo nano /etc/apt/sources.list) then run:
 # sudo apt-get update
+# (Ubuntu MATE is set up for an update without a need to edit the file)
+# (extended repositories "universe multiverse" are only needed for clang)
 #
 # Prerequisites for the build:
 # (cross-)compiler for AArch64 is installed and in the PATH variable.
@@ -112,7 +114,7 @@ simd_test_a64f64sve:
 # Use "-c 1" option to reduce test time when emulating with QEMU
 
 # Clang native build works too (takes much longer prior to 3.8), use (replace):
-# clang++ -O0 (in place of ...-g++ -O3) on AArch64 host (Raspberry Pi 3)
+# clang++ (in place of ...-g++) on AArch64 host (Raspberry Pi 3/4)
 # sudo apt-get install clang
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h.

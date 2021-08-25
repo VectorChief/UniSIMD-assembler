@@ -126,6 +126,8 @@ simd_test_x64f64avx512:
 # On Ubuntu (MATE) 16.04-20.04 add "universe multiverse" to "main restricted"
 # in /etc/apt/sources.list (sudo nano /etc/apt/sources.list) then run:
 # sudo apt-get update
+# (Ubuntu MATE is set up for an update without a need to edit the file)
+# (extended repositories "universe multiverse" are only needed for clang)
 #
 # Prerequisites for the build:
 # native-compiler for x86_64 is installed and in the PATH variable.

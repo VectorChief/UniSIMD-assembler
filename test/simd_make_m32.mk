@@ -33,7 +33,13 @@ simd_test_m32Br5:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m32Br5
 
 
-# On Ubuntu (MATE) 16.04-20.04 download MIPS toolchain:
+# On Ubuntu (MATE) 16.04-20.04 add "universe multiverse" to "main restricted"
+# in /etc/apt/sources.list (sudo nano /etc/apt/sources.list) then run:
+# sudo apt-get update
+# (Ubuntu MATE is set up for an update without a need to edit the file)
+# (extended repositories "universe multiverse" are only needed for clang)
+#
+# Download and unpack MIPS toolchain:
 # https://www.mips.com/develop/tools/codescape-mips-sdk/
 # https://codescape.mips.com/components/toolchain/2020.06-01/downloads.html
 #
@@ -56,7 +62,7 @@ simd_test_m32Br5:
 # Use "-c 1" option to reduce test time when emulating with QEMU
 
 # Clang native build should theoretically work too (not tested), use (replace):
-# clang++ -O0 (in place of ...-g++ -O3) on MIPS32 host
+# clang++ -O0 (in place of ...-g++ -O3) on MIPS32r5 host (P5600)
 # sudo apt-get install clang
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h.
