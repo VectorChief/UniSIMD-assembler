@@ -164,6 +164,7 @@
 #define SIB(reg, mod, sib)  sib
 
 #define VAL(val, tp1, tp2)  val
+#define VBL(val, tp1, tp2)  ((val) << 2 & 0x3FFC)
 #define VHL(val, tp1, tp2)  ((val) << 1 & 0x3FFC)
 #define VXL(val, tp1, tp2)  ((val) >> 1 & 0x3FFC)
 #define VYL(val, tp1, tp2)  ((val) | 0x10)
