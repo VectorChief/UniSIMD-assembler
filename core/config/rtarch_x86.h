@@ -2937,11 +2937,11 @@
 
 
 #define negbxZrx(RG)                                                        \
-        EMITB(0xF7)                                                         \
+        EMITB(0xF6)                                                         \
         MRM(0x03,    MOD(RG), REG(RG))
 
 #define negbxZmx(MG, DG)                                                    \
-        EMITB(0xF7)                                                         \
+        EMITB(0xF6)                                                         \
         MRM(0x03,    MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
