@@ -270,12 +270,12 @@
 /* displacement VAL,  TYP,  CMD         (all displacement types are unsigned) */
 /* public scalable DP/DE/DF/DG/DH/DV definitions are now provided in rtbase.h */
 
-#define _DP(dp) (dp), 0x00, EMITW((dp) & 0xFFE)   /* native on all ARMs, MIPS */
-#define _DE(dp) (dp), 0x00, EMITW((dp) & 0x1FFE) /* AArch64 256-bit SVE ld/st */
-#define _DF(dp) (dp), 0x00, EMITW((dp) & 0x3FFE) /* native AArch64 BASE ld/st */
-#define _DG(dp) (dp), 0x00, EMITW((dp) & 0x7FFE)  /* native MIPS64 BASE ld/st */
-#define _DH(dp) (dp), 0x00, EMITW((dp) & 0xFFFE) /* second native on all ARMs */
-#define _DV(dp) (dp), 0x00, EMITW((dp) & 0x7FFFFFFE)  /* native x64 long mode */
+#define _DP(dp) (dp), 0x00, EMITW((dp) & 0xFFF)   /* native on all ARMs, MIPS */
+#define _DE(dp) (dp), 0x00, EMITW((dp) & 0x1FFF) /* AArch64 256-bit SVE ld/st */
+#define _DF(dp) (dp), 0x00, EMITW((dp) & 0x3FFF) /* native AArch64 BASE ld/st */
+#define _DG(dp) (dp), 0x00, EMITW((dp) & 0x7FFF)  /* native MIPS64 BASE ld/st */
+#define _DH(dp) (dp), 0x00, EMITW((dp) & 0xFFFF) /* second native on all ARMs */
+#define _DV(dp) (dp), 0x00, EMITW((dp) & 0x7FFFFFFF)  /* native x64 long mode */
 #define  PLAIN  0x00, 0x00, EMPTY    /* special type for Oeax addressing mode */
 
 /* triplet pass-through wrapper */

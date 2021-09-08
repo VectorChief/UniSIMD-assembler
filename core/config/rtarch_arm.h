@@ -229,7 +229,7 @@
 #define AH0(br, dp) C30(br, dp)                                             \
                     EMITW(0xE0800000 | MRM(TPxx,    (br),    TDxx))
 #define C30(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
-                            (0xF0000 & (dp) <<  4) | (0xFFE & (dp)))
+                            (0xF0000 & (dp) <<  4) | (0xFFF & (dp)))
 
 #define B11(br) (br)
 #define B31(br) TPxx
@@ -241,7 +241,7 @@
                     EMITW(0xE0800000 | MRM(TPxx,    (br),    TDxx))
 #define AH1(br, dp) A11(br, dp)
 #define C31(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
-                            (0xF0000 & (dp) <<  4) | (0xFFE & (dp)))
+                            (0xF0000 & (dp) <<  4) | (0xFFF & (dp)))
 
 #define B12(br) (br)
 #define B32(br) TPxx
@@ -253,7 +253,7 @@
                     EMITW(0xE0800000 | MRM(TPxx,    (br),    TDxx))
 #define AH2(br, dp) A12(br, dp)
 #define C32(br, dp) EMITW(0xE3000000 | MRM(TDxx,    0x00,    0x00) |        \
-                            (0xF0000 & (dp) <<  4) | (0xFFE & (dp)))        \
+                            (0xF0000 & (dp) <<  4) | (0xFFF & (dp)))        \
                     EMITW(0xE3400000 | MRM(TDxx,    0x00,    0x00) |        \
                             (0x70000 & (dp) >> 12) | (0xFFF & (dp) >> 16))
 
@@ -346,12 +346,12 @@
 /* displacement VAL,  TP1,  TP2         (all displacement types are unsigned) */
 /* public scalable DP/DE/DF/DG/DH/DV definitions are now provided in rtbase.h */
 
-#define _DP(dp) ((dp) & 0xFFE),         0, 0      /* native on all ARMs, MIPS */
-#define _DE(dp) ((dp) & 0x1FFE),        1, 1     /* AArch64 256-bit SVE ld/st */
-#define _DF(dp) ((dp) & 0x3FFE),        1, 1     /* native AArch64 BASE ld/st */
-#define _DG(dp) ((dp) & 0x7FFE),        1, 1  /* native MIPS/POWER BASE ld/st */
-#define _DH(dp) ((dp) & 0xFFFE),        1, 1     /* second native on all ARMs */
-#define _DV(dp) ((dp) & 0x7FFFFFFE),    2, 2       /* native x86_64 long mode */
+#define _DP(dp) ((dp) & 0xFFF),         0, 0      /* native on all ARMs, MIPS */
+#define _DE(dp) ((dp) & 0x1FFF),        1, 1     /* AArch64 256-bit SVE ld/st */
+#define _DF(dp) ((dp) & 0x3FFF),        1, 1     /* native AArch64 BASE ld/st */
+#define _DG(dp) ((dp) & 0x7FFF),        1, 1  /* native MIPS/POWER BASE ld/st */
+#define _DH(dp) ((dp) & 0xFFFF),        1, 1     /* second native on all ARMs */
+#define _DV(dp) ((dp) & 0x7FFFFFFF),    2, 2       /* native x86_64 long mode */
 #define  PLAIN  DP(0)                /* special type for Oeax addressing mode */
 
 /* triplet pass-through wrapper */
