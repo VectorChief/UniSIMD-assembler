@@ -929,7 +929,7 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define shrwx_ri(RG, IS)                                                    \
-        EMITW(0xE1A00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        EMITW(0xE1A00000 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000020) |   \
                                                  (0x1F & VAL(IS)) << 7)
 
@@ -968,7 +968,7 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define shrwxZri(RG, IS)                                                    \
-        EMITW(0xE1B00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        EMITW(0xE1B00000 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000020) |   \
                                                  (0x1F & VAL(IS)) << 7)
 
@@ -1007,7 +1007,7 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define shrwn_ri(RG, IS)                                                    \
-        EMITW(0xE1A00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        EMITW(0xE1A00000 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000040) |   \
                                                  (0x1F & VAL(IS)) << 7)
 
@@ -1046,7 +1046,7 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define shrwnZri(RG, IS)                                                    \
-        EMITW(0xE1B00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        EMITW(0xE1B00000 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000040) |   \
                                                  (0x1F & VAL(IS)) << 7)
 
@@ -1703,6 +1703,9 @@
 #define movhx_rr(RD, RS)                                                    \
         EMITW(0xE1A00000 | MRM(REG(RD), 0x00,    REG(RS)))
 
+#define movhn_rr(RD, RS)                                                    \
+        EMITW(0xE6BF0070 | MRM(REG(RD), 0x00,    REG(RS)))
+
 #define movhx_ld(RD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), AH(DS), EMPTY2)   \
         EMITW(0xE1D000B0 | MDM(REG(RD), MOD(MS), VAL(DS), BH(DS), PH(DS)))
@@ -2274,7 +2277,7 @@
         EMITW(0xE1C000B0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))
 
 #define shrhx_ri(RG, IS)                                                    \
-        EMITW(0xE1A00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        EMITW(0xE1A00000 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000020) |   \
                                                  (0x1F & VAL(IS)) << 7)
 
@@ -2313,7 +2316,7 @@
         EMITW(0xE1C000B0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))
 
 #define shrhxZri(RG, IS)                                                    \
-        EMITW(0xE1B00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        EMITW(0xE1B00000 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000020) |   \
                                                  (0x1F & VAL(IS)) << 7)
 
@@ -2352,7 +2355,7 @@
         EMITW(0xE1C000B0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))
 
 #define shrhn_ri(RG, IS)                                                    \
-        EMITW(0xE1A00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        EMITW(0xE1A00000 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000040) |   \
                                                  (0x1F & VAL(IS)) << 7)
 
@@ -2391,7 +2394,7 @@
         EMITW(0xE1C000B0 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))
 
 #define shrhnZri(RG, IS)                                                    \
-        EMITW(0xE1B00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        EMITW(0xE1B00000 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000040) |   \
                                                  (0x1F & VAL(IS)) << 7)
 
@@ -2441,21 +2444,25 @@
 
 
 #define mulhx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
-        EMITW(0xE0800090 | MRM(Teax,    Tedx,    REG(RS)) | Teax << 8)
+        EMITW(0xE0000090 | Teax << 16 | Teax << 8 | REG(RS))                \
+        EMITW(0xE1A00020 | MRM(Tedx,    0x00,    Teax) | 16 << 7)
 
 #define mulhx_xm(MS, DS) /* Reax is in/out, Redx is out(high)-zero-ext */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), AH(DS), EMPTY2)   \
         EMITW(0xE1D000B0 | MDM(TMxx,    MOD(MS), VAL(DS), BH(DS), PH(DS)))  \
-        EMITW(0xE0800090 | MRM(Teax,    Tedx,    TMxx) | Teax << 8)
+        EMITW(0xE0000090 | Teax << 16 | Teax << 8 | TMxx)                   \
+        EMITW(0xE1A00020 | MRM(Tedx,    0x00,    Teax) | 16 << 7)
 
 
 #define mulhn_xr(RS)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
-        EMITW(0xE0C00090 | MRM(Teax,    Tedx,    REG(RS)) | Teax << 8)
+        EMITW(0xE0000090 | Teax << 16 | Teax << 8 | REG(RS))                \
+        EMITW(0xE1A00040 | MRM(Tedx,    0x00,    Teax) | 16 << 7)
 
 #define mulhn_xm(MS, DS) /* Reax is in/out, Redx is out(high)-sign-ext */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), AH(DS), EMPTY2)   \
         EMITW(0xE1D000F0 | MDM(TMxx,    MOD(MS), VAL(DS), BH(DS), PH(DS)))  \
-        EMITW(0xE0C00090 | MRM(Teax,    Tedx,    TMxx) | Teax << 8)
+        EMITW(0xE0000090 | Teax << 16 | Teax << 8 | TMxx)                   \
+        EMITW(0xE1A00040 | MRM(Tedx,    0x00,    Teax) | 16 << 7)
 
 
 #define mulhp_xr(RS)     /* Reax is in/out, prepares Redx for divhn_x* */   \
@@ -2872,6 +2879,9 @@
 
 #define movbx_rr(RD, RS)                                                    \
         EMITW(0xE1A00000 | MRM(REG(RD), 0x00,    REG(RS)))
+
+#define movbn_rr(RD, RS)                                                    \
+        EMITW(0xE6AF0070 | MRM(REG(RD), 0x00,    REG(RS)))
 
 #define movbx_ld(RD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
@@ -3444,7 +3454,7 @@
         EMITW(0xE5C00000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define shrbx_ri(RG, IS)                                                    \
-        EMITW(0xE1A00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        EMITW(0xE1A00000 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000020) |   \
                                                  (0x1F & VAL(IS)) << 7)
 
@@ -3483,7 +3493,7 @@
         EMITW(0xE5C00000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define shrbxZri(RG, IS)                                                    \
-        EMITW(0xE1B00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        EMITW(0xE1B00000 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000020) |   \
                                                  (0x1F & VAL(IS)) << 7)
 
@@ -3522,7 +3532,7 @@
         EMITW(0xE5C00000 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))
 
 #define shrbn_ri(RG, IS)                                                    \
-        EMITW(0xE1A00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        EMITW(0xE1A00000 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000040) |   \
                                                  (0x1F & VAL(IS)) << 7)
 
@@ -3561,7 +3571,7 @@
         EMITW(0xE5C00000 | MDM(TMxx,    MOD(MG), VAL(DG), BH(DG), PH(DG)))
 
 #define shrbnZri(RG, IS)                                                    \
-        EMITW(0xE1B00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        EMITW(0xE1B00000 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000040) |   \
                                                  (0x1F & VAL(IS)) << 7)
 
@@ -3611,21 +3621,25 @@
 
 
 #define mulbx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
-        EMITW(0xE0800090 | MRM(Teax,    Tedx,    REG(RS)) | Teax << 8)
+        EMITW(0xE0000090 | Teax << 16 | Teax << 8 | REG(RS))                \
+        EMITW(0xE1A00020 | MRM(Tedx,    0x00,    Teax) | 8 << 7)
 
 #define mulbx_xm(MS, DS) /* Reax is in/out, Redx is out(high)-zero-ext */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMITW(0xE5D00000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
-        EMITW(0xE0800090 | MRM(Teax,    Tedx,    TMxx) | Teax << 8)
+        EMITW(0xE0000090 | Teax << 16 | Teax << 8 | TMxx)                   \
+        EMITW(0xE1A00020 | MRM(Tedx,    0x00,    Teax) | 8 << 7)
 
 
 #define mulbn_xr(RS)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
-        EMITW(0xE0C00090 | MRM(Teax,    Tedx,    REG(RS)) | Teax << 8)
+        EMITW(0xE0000090 | Teax << 16 | Teax << 8 | REG(RS))                \
+        EMITW(0xE1A00040 | MRM(Tedx,    0x00,    Teax) | 8 << 7)
 
 #define mulbn_xm(MS, DS) /* Reax is in/out, Redx is out(high)-sign-ext */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), AH(DS), EMPTY2)   \
         EMITW(0xE1D000D0 | MDM(TMxx,    MOD(MS), VAL(DS), BH(DS), PH(DS)))  \
-        EMITW(0xE0C00090 | MRM(Teax,    Tedx,    TMxx) | Teax << 8)
+        EMITW(0xE0000090 | Teax << 16 | Teax << 8 | TMxx)                   \
+        EMITW(0xE1A00040 | MRM(Tedx,    0x00,    Teax) | 8 << 7)
 
 
 #define mulbp_xr(RS)     /* Reax is in/out, prepares Redx for divbn_x* */   \

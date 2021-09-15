@@ -1597,6 +1597,10 @@
         EMITB(0x8B)                                                         \
         MRM(REG(RD), MOD(RS), REG(RS))
 
+#define movhn_rr(RD, RS)                                                    \
+        EMITB(0x0F) EMITB(0xBF)                                             \
+        MRM(REG(RD), MOD(RS), REG(RS))
+
 #define movhx_ld(RD, MS, DS)                                                \
         EMITB(0x0F) EMITB(0xB7)                                             \
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
@@ -1935,9 +1939,13 @@
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define addhnZld(RG, MS, DS)                                                \
-    ESC EMITB(0x03)                                                         \
-        MRM(REG(RG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xBF)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        EMITB(0x03)                                                         \
+        MRM(REG(RG),    0x03,    0x05)                                      \
+        stack_ld(Rebp)
 
 #define addhxZst(RS, MG, DG)                                                \
     ESC EMITB(0x01)                                                         \
@@ -1992,9 +2000,13 @@
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define subhnZld(RG, MS, DS)                                                \
-    ESC EMITB(0x2B)                                                         \
-        MRM(REG(RG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xBF)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        EMITB(0x2B)                                                         \
+        MRM(REG(RG),    0x03,    0x05)                                      \
+        stack_ld(Rebp)
 
 #define subhxZst(RS, MG, DG)                                                \
     ESC EMITB(0x29)                                                         \
@@ -2282,12 +2294,17 @@
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define mulhn_ld(RG, MS, DS)                                                \
-        mulhx_ld(W(RG), W(MS), W(DS))
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xBF)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        mulhx_rr(W(RG), Rebp)                                               \
+        stack_ld(Rebp)
 
 
 #define mulhx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
     ESC EMITB(0xF7)                                                         \
-        MRM(0x04,    MOD(RS), REG(RS))                                      \
+        MRM(0x04,    MOD(RS), REG(RS))
 
 #define mulhx_xm(MS, DS) /* Reax is in/out, Redx is out(high)-zero-ext */   \
     ESC EMITB(0xF7)                                                         \
@@ -2297,7 +2314,7 @@
 
 #define mulhn_xr(RS)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
     ESC EMITB(0xF7)                                                         \
-        MRM(0x05,    MOD(RS), REG(RS))                                      \
+        MRM(0x05,    MOD(RS), REG(RS))
 
 #define mulhn_xm(MS, DS) /* Reax is in/out, Redx is out(high)-sign-ext */   \
     ESC EMITB(0xF7)                                                         \
@@ -2652,6 +2669,10 @@
         EMITB(0x8B)                                                         \
         MRM(REG(RD), MOD(RS), REG(RS))
 
+#define movbn_rr(RD, RS)                                                    \
+        EMITB(0x0F) EMITB(0xBE)                                             \
+        MRM(REG(RD), MOD(RS), REG(RS))
+
 #define movbx_ld(RD, MS, DS)                                                \
         EMITB(0x0F) EMITB(0xB6)                                             \
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
@@ -2990,9 +3011,13 @@
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define addbnZld(RG, MS, DS)                                                \
-        EMITB(0x02)                                                         \
-        MRM(REG(RG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xBE)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        EMITB(0x03)                                                         \
+        MRM(REG(RG),    0x03,    0x05)                                      \
+        stack_ld(Rebp)
 
 #define addbxZst(RS, MG, DG)                                                \
         EMITB(0x00)                                                         \
@@ -3047,9 +3072,13 @@
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define subbnZld(RG, MS, DS)                                                \
-        EMITB(0x2A)                                                         \
-        MRM(REG(RG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xBE)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        EMITB(0x2B)                                                         \
+        MRM(REG(RG),    0x03,    0x05)                                      \
+        stack_ld(Rebp)
 
 #define subbxZst(RS, MG, DG)                                                \
         EMITB(0x28)                                                         \
@@ -3339,27 +3368,40 @@
         stack_ld(Reax)
 
 #define mulbn_ld(RG, MS, DS)                                                \
-        mulbx_ld(W(RG), W(MS), W(DS))
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xBE)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        mulbx_rr(W(RG), Rebp)                                               \
+        stack_ld(Rebp)
 
 
 #define mulbx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
         EMITB(0xF6)                                                         \
         MRM(0x04,    MOD(RS), REG(RS))                                      \
+        EMITB(0x8A)                                                         \
+        MRM(0x02,    0x03,    0x04)
 
 #define mulbx_xm(MS, DS) /* Reax is in/out, Redx is out(high)-zero-ext */   \
         EMITB(0xF6)                                                         \
         MRM(0x04,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        EMITB(0x8A)                                                         \
+        MRM(0x02,    0x03,    0x04)
 
 
 #define mulbn_xr(RS)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
         EMITB(0xF6)                                                         \
         MRM(0x05,    MOD(RS), REG(RS))                                      \
+        EMITB(0x8A)                                                         \
+        MRM(0x02,    0x03,    0x04)
 
 #define mulbn_xm(MS, DS) /* Reax is in/out, Redx is out(high)-sign-ext */   \
         EMITB(0xF6)                                                         \
         MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        EMITB(0x8A)                                                         \
+        MRM(0x02,    0x03,    0x04)
 
 
 #define mulbp_xr(RS)     /* Reax is in/out, prepares Redx for divbn_x* */   \
