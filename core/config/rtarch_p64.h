@@ -1391,9 +1391,51 @@
         EMITW(0x00000000 | MDM(TRxx,    MOD(MT), VAL(DT), B1(DT), PW(DT)))  \
         EMITW(0x7C0007B4 | MSM(TLxx,    REG(RS), 0x00))
 
+#define cmphn_rm(RS, MT, DT)    /* cmp 32-bit to 16-bit with sign-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TRxx,    MOD(MT), VAL(DT), B1(DT), PS(DT)))  \
+        EMITW(0x7C0007B4 | MSM(TLxx,    REG(RS), 0x00))
+
+#define cmphz_rm(RS, MT, DT)    /* cmp 32-bit to 16-bit with zero-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TRxx,    MOD(MT), VAL(DT), B1(DT), PH(DT)))  \
+        EMITW(0x7C0007B4 | MSM(TLxx,    REG(RS), 0x00))
+
+#define cmpbn_rm(RS, MT, DT)    /* cmp 32-bit to  8-bit with sign-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TRxx,    MOD(MT), VAL(DT), B1(DT), PB(DT)))  \
+        EMITW(0x7C000774 | MSM(TRxx,    TRxx,    0x00))                     \
+        EMITW(0x7C0007B4 | MSM(TLxx,    REG(RS), 0x00))
+
+#define cmpbz_rm(RS, MT, DT)    /* cmp 32-bit to  8-bit with zero-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TRxx,    MOD(MT), VAL(DT), B1(DT), PB(DT)))  \
+        EMITW(0x7C0007B4 | MSM(TLxx,    REG(RS), 0x00))
+
 #define cmpwx_mr(MS, DS, RT)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x00000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), PW(DS)))  \
+        EMITW(0x7C0007B4 | MSM(TRxx,    REG(RT), 0x00))
+
+#define cmphn_mr(MS, DS, RT)    /* cmp 16-bit to 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), PS(DS)))  \
+        EMITW(0x7C0007B4 | MSM(TRxx,    REG(RT), 0x00))
+
+#define cmphz_mr(MS, DS, RT)    /* cmp 16-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), PH(DS)))  \
+        EMITW(0x7C0007B4 | MSM(TRxx,    REG(RT), 0x00))
+
+#define cmpbn_mr(MS, DS, RT)    /* cmp  8-bit to 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
+        EMITW(0x7C000774 | MSM(TLxx,    TLxx,    0x00))                     \
+        EMITW(0x7C0007B4 | MSM(TRxx,    REG(RT), 0x00))
+
+#define cmpbz_mr(MS, DS, RT)    /* cmp  8-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
         EMITW(0x7C0007B4 | MSM(TRxx,    REG(RT), 0x00))
 
 

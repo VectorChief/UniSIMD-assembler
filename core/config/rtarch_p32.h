@@ -617,9 +617,38 @@
 #define movwx_rr(RD, RS)                                                    \
         EMITW(0x7C000378 | MSM(REG(RD), REG(RS), REG(RS)))
 
+#define movhn_rr(RD, RS)      /* move 16-bit to 32/64-bit w/ sign-extend */ \
+        EMITW(0x7C000734 | MSM(REG(RD), REG(RS), 0x00))
+
+#define movhz_rr(RD, RS)      /* move 16-bit to 32/64-bit w/ zero-extend */ \
+        EMITW(0x5400043E | MSM(REG(RD), REG(RS), 0x00))
+
+#define movbn_rr(RD, RS)      /* move  8-bit to 32/64-bit w/ sign-extend */ \
+        EMITW(0x7C000774 | MSM(REG(RD), REG(RS), 0x00)))
+
+#define movbz_rr(RD, RS)      /* move  8-bit to 32/64-bit w/ zero-extend */ \
+        EMITW(0x5400063E | MSM(REG(RD), REG(RS), 0x00)))
+
 #define movwx_ld(RD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x00000000 | MDM(REG(RD), MOD(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define movhn_ld(RD, MS, DS)  /* load 16-bit to 32/64-bit w/ sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(REG(RD), MOD(MS), VAL(DS), B1(DS), PS(DS)))
+
+#define movhz_ld(RD, MS, DS)  /* load 16-bit to 32/64-bit w/ zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(REG(RD), MOD(MS), VAL(DS), B1(DS), PH(DS)))
+
+#define movbn_ld(RD, MS, DS)  /* load  8-bit to 32/64-bit w/ sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(REG(RD), MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
+        EMITW(0x7C000774 | MSM(REG(RD), REG(RD), 0x00))
+
+#define movbz_ld(RD, MS, DS)  /* load  8-bit to 32/64-bit w/ zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(REG(RD), MOD(MS), VAL(DS), B1(DS), PB(DS)))
 
 #define movwx_st(RS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
@@ -1151,6 +1180,27 @@
         EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0x7C000214 | MRM(REG(RG), REG(RG), TMxx))
 
+#define addhn_ld(RG, MS, DS)    /* add 16-bit to 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PS(DS)))  \
+        EMITW(0x7C000214 | MRM(REG(RG), REG(RG), TMxx))
+
+#define addhz_ld(RG, MS, DS)    /* add 16-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PH(DS)))  \
+        EMITW(0x7C000214 | MRM(REG(RG), REG(RG), TMxx))
+
+#define addbn_ld(RG, MS, DS)    /* add  8-bit to 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
+        EMITW(0x7C000774 | MSM(TMxx,    TMxx,    0x00))                     \
+        EMITW(0x7C000214 | MRM(REG(RG), REG(RG), TMxx))
+
+#define addbz_ld(RG, MS, DS)    /* add  8-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
+        EMITW(0x7C000214 | MRM(REG(RG), REG(RG), TMxx))
+
 #define addwx_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
@@ -1183,6 +1233,27 @@
         EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0x7C000215 | MRM(REG(RG), REG(RG), TMxx))
 
+#define addhnZld(RG, MS, DS)    /* add 16-bit to 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PS(DS)))  \
+        EMITW(0x7C000215 | MRM(REG(RG), REG(RG), TMxx))
+
+#define addhzZld(RG, MS, DS)    /* add 16-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PH(DS)))  \
+        EMITW(0x7C000215 | MRM(REG(RG), REG(RG), TMxx))
+
+#define addbnZld(RG, MS, DS)    /* add  8-bit to 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
+        EMITW(0x7C000774 | MSM(TMxx,    TMxx,    0x00))                     \
+        EMITW(0x7C000215 | MRM(REG(RG), REG(RG), TMxx))
+
+#define addbzZld(RG, MS, DS)    /* add  8-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
+        EMITW(0x7C000215 | MRM(REG(RG), REG(RG), TMxx))
+
 #define addwxZst(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
@@ -1212,6 +1283,31 @@
 #define addwxZld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x7C000214 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define addhnZld(RG, MS, DS)    /* add 16-bit to 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PS(DS)))  \
+        EMITW(0x7C000214 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define addhzZld(RG, MS, DS)    /* add 16-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PH(DS)))  \
+        EMITW(0x7C000214 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define addbnZld(RG, MS, DS)    /* add  8-bit to 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
+        EMITW(0x7C000774 | MSM(TMxx,    TMxx,    0x00))                     \
+        EMITW(0x7C000214 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define addbzZld(RG, MS, DS)    /* add  8-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
         EMITW(0x7C000214 | MRM(REG(RG), REG(RG), TMxx))                     \
         EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
 
@@ -1252,6 +1348,27 @@
         EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0x7C000050 | MRM(REG(RG), REG(RG), TMxx))
 
+#define subhn_ld(RG, MS, DS)  /* sub 16-bit from 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PS(DS)))  \
+        EMITW(0x7C000050 | MRM(REG(RG), REG(RG), TMxx))
+
+#define subhz_ld(RG, MS, DS)  /* sub 16-bit from 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PH(DS)))  \
+        EMITW(0x7C000050 | MRM(REG(RG), REG(RG), TMxx))
+
+#define subbn_ld(RG, MS, DS)  /* sub  8-bit from 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
+        EMITW(0x7C000774 | MSM(TMxx,    TMxx,    0x00))                     \
+        EMITW(0x7C000050 | MRM(REG(RG), REG(RG), TMxx))
+
+#define subbz_ld(RG, MS, DS)  /* sub  8-bit from 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
+        EMITW(0x7C000050 | MRM(REG(RG), REG(RG), TMxx))
+
 #define subwx_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
@@ -1286,6 +1403,27 @@
         EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0x7C000051 | MRM(REG(RG), REG(RG), TMxx))
 
+#define subhnZld(RG, MS, DS)  /* sub 16-bit from 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PS(DS)))  \
+        EMITW(0x7C000051 | MRM(REG(RG), REG(RG), TMxx))
+
+#define subhzZld(RG, MS, DS)  /* sub 16-bit from 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PH(DS)))  \
+        EMITW(0x7C000051 | MRM(REG(RG), REG(RG), TMxx))
+
+#define subbnZld(RG, MS, DS)  /* sub  8-bit from 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
+        EMITW(0x7C000774 | MSM(TMxx,    TMxx,    0x00))                     \
+        EMITW(0x7C000051 | MRM(REG(RG), REG(RG), TMxx))
+
+#define subbzZld(RG, MS, DS)  /* sub  8-bit from 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
+        EMITW(0x7C000051 | MRM(REG(RG), REG(RG), TMxx))
+
 #define subwxZst(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x00000000 | MDM(TMxx,    MOD(MG), VAL(DG), B1(DG), P1(DG)))  \
@@ -1317,6 +1455,31 @@
 #define subwxZld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x7C000050 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define subhnZld(RG, MS, DS)  /* sub 16-bit from 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PS(DS)))  \
+        EMITW(0x7C000050 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define subhzZld(RG, MS, DS)  /* sub 16-bit from 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PH(DS)))  \
+        EMITW(0x7C000050 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define subbnZld(RG, MS, DS)  /* sub  8-bit from 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
+        EMITW(0x7C000774 | MSM(TMxx,    TMxx,    0x00))                     \
+        EMITW(0x7C000050 | MRM(REG(RG), REG(RG), TMxx))                     \
+        EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
+
+#define subbzZld(RG, MS, DS)  /* sub  8-bit from 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
         EMITW(0x7C000050 | MRM(REG(RG), REG(RG), TMxx))                     \
         EMITW(0x28000000 | REG(RG) << 16)              /* <- set flags (Z) */
 
@@ -1662,6 +1825,27 @@
         EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(0x7C0001D6 | MRM(REG(RG), REG(RG), TMxx))
 
+#define mulhn_ld(RG, MS, DS)  /* mul 32-bit with 16-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PS(DS)))  \
+        EMITW(0x7C0001D6 | MRM(REG(RG), REG(RG), TMxx))
+
+#define mulhz_ld(RG, MS, DS)  /* mul 32-bit with 16-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PH(DS)))  \
+        EMITW(0x7C0001D6 | MRM(REG(RG), REG(RG), TMxx))
+
+#define mulbn_ld(RG, MS, DS)  /* mul 32-bit with  8-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
+        EMITW(0x7C000774 | MSM(TMxx,    TMxx,    0x00))                     \
+        EMITW(0x7C0001D6 | MRM(REG(RG), REG(RG), TMxx))
+
+#define mulbz_ld(RG, MS, DS)  /* mul 32-bit with  8-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
+        EMITW(0x7C0001D6 | MRM(REG(RG), REG(RG), TMxx))
+
 
 #define mulwx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
         EMITW(0x7C000016 | MRM(Tedx,    Teax,    REG(RS)))                  \
@@ -1970,9 +2154,51 @@
         EMITW(0x00000000 | MDM(TMxx,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
         CWR(cc, MOD(RS), %%r24,   lb)
 
+#define cmjhn_rm(RS, MT, DT, cc, lb)   /* cmj 32/16-bit with sign-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MT), VAL(DT), B1(DT), PS(DT)))  \
+        CWR(cc, MOD(RS), %%r24,   lb)
+
+#define cmjhz_rm(RS, MT, DT, cc, lb)   /* cmj 32/16-bit with zero-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MT), VAL(DT), B1(DT), PH(DT)))  \
+        CWR(cc, MOD(RS), %%r24,   lb)
+
+#define cmjbn_rm(RS, MT, DT, cc, lb)   /* cmj 32/8-bit  with sign-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MT), VAL(DT), B1(DT), PB(DT)))  \
+        EMITW(0x7C000774 | MSM(TMxx,    TMxx,    0x00))                     \
+        CWR(cc, MOD(RS), %%r24,   lb)
+
+#define cmjbz_rm(RS, MT, DT, cc, lb)   /* cmj 32/8-bit  with zero-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MT), VAL(DT), B1(DT), PB(DT)))  \
+        CWR(cc, MOD(RS), %%r24,   lb)
+
 #define cmjwx_mr(MS, DS, RT, cc, lb)                                        \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        CWR(cc, %%r24,   MOD(RT), lb)
+
+#define cmjhn_mr(MS, DS, RT, cc, lb)   /* cmj 16/32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PS(DS)))  \
+        CWR(cc, %%r24,   MOD(RT), lb)
+
+#define cmjhz_mr(MS, DS, RT, cc, lb)   /* cmj 16/32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PH(DS)))  \
+        CWR(cc, %%r24,   MOD(RT), lb)
+
+#define cmjbn_mr(MS, DS, RT, cc, lb)   /* cmj  8/32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
+        EMITW(0x7C000774 | MSM(TMxx,    TMxx,    0x00))                     \
+        CWR(cc, %%r24,   MOD(RT), lb)
+
+#define cmjbz_mr(MS, DS, RT, cc, lb)   /* cmj  8/32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TMxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
         CWR(cc, %%r24,   MOD(RT), lb)
 
 #if   (defined RT_P32)
@@ -1997,9 +2223,51 @@
         EMITW(0x00000000 | MDM(TRxx,    MOD(MT), VAL(DT), B1(DT), P1(DT)))  \
         EMITW(0x7C000378 | MSM(TLxx,    REG(RS), REG(RS)))
 
+#define cmphn_rm(RS, MT, DT)    /* cmp 32-bit to 16-bit with sign-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TRxx,    MOD(MT), VAL(DT), B1(DT), PS(DT)))  \
+        EMITW(0x7C000378 | MSM(TLxx,    REG(RS), REG(RS)))
+
+#define cmphz_rm(RS, MT, DT)    /* cmp 32-bit to 16-bit with zero-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TRxx,    MOD(MT), VAL(DT), B1(DT), PH(DT)))  \
+        EMITW(0x7C000378 | MSM(TLxx,    REG(RS), REG(RS)))
+
+#define cmpbn_rm(RS, MT, DT)    /* cmp 32-bit to  8-bit with sign-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TRxx,    MOD(MT), VAL(DT), B1(DT), PB(DT)))  \
+        EMITW(0x7C000774 | MSM(TRxx,    TRxx,    0x00))                     \
+        EMITW(0x7C000378 | MSM(TLxx,    REG(RS), REG(RS)))
+
+#define cmpbz_rm(RS, MT, DT)    /* cmp 32-bit to  8-bit with zero-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TRxx,    MOD(MT), VAL(DT), B1(DT), PB(DT)))  \
+        EMITW(0x7C000378 | MSM(TLxx,    REG(RS), REG(RS)))
+
 #define cmpwx_mr(MS, DS, RT)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x00000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(0x7C000378 | MSM(TRxx,    REG(RT), REG(RT)))
+
+#define cmphn_mr(MS, DS, RT)    /* cmp 16-bit to 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), PS(DS)))  \
+        EMITW(0x7C000378 | MSM(TRxx,    REG(RT), REG(RT)))
+
+#define cmphz_mr(MS, DS, RT)    /* cmp 16-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), PH(DS)))  \
+        EMITW(0x7C000378 | MSM(TRxx,    REG(RT), REG(RT)))
+
+#define cmpbn_mr(MS, DS, RT)    /* cmp  8-bit to 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
+        EMITW(0x7C000774 | MSM(TLxx,    TLxx,    0x00))                     \
+        EMITW(0x7C000378 | MSM(TRxx,    REG(RT), REG(RT)))
+
+#define cmpbz_mr(MS, DS, RT)    /* cmp  8-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
+        EMITW(0x00000000 | MDM(TLxx,    MOD(MS), VAL(DS), B1(DS), PB(DS)))  \
         EMITW(0x7C000378 | MSM(TRxx,    REG(RT), REG(RT)))
 
 #endif /* (defined RT_P32) */

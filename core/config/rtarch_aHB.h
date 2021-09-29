@@ -98,16 +98,9 @@
 #define movhx_rr(RD, RS)                                                    \
         EMITW(0x2A000000 | MRM(REG(RD), TZxx,    REG(RS)))
 
-#define movhn_rr(RD, RS)                                                    \
-        EMITW(0x93403C00 | MRM(REG(RD), REG(RS), 0x00))
-
 #define movhx_ld(RD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x78400000 | MDM(REG(RD), MOD(MS), VHL(DS), B1(DS), P1(DS)))
-
-#define movhn_ld(RD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0x78800000 | MDM(REG(RD), MOD(MS), VHL(DS), B1(DS), P1(DS)))
 
 #define movhx_st(RS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
@@ -476,11 +469,6 @@
         EMITW(0x78400000 | MDM(TMxx,    MOD(MS), VHL(DS), B1(DS), P1(DS)))  \
         EMITW(0x0B000000 | MRM(REG(RG), REG(RG), TMxx))
 
-#define addhn_ld(RG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0x78800000 | MDM(TMxx,    MOD(MS), VHL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x0B000000 | MRM(REG(RG), REG(RG), TMxx))
-
 #define addhx_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x78400000 | MDM(TMxx,    MOD(MG), VHL(DG), B1(DG), P1(DG)))  \
@@ -507,11 +495,6 @@
 #define addhxZld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x78400000 | MDM(TMxx,    MOD(MS), VHL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x2B000000 | MRM(REG(RG), REG(RG), TMxx))
-
-#define addhnZld(RG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0x78800000 | MDM(TMxx,    MOD(MS), VHL(DS), B1(DS), P1(DS)))  \
         EMITW(0x2B000000 | MRM(REG(RG), REG(RG), TMxx))
 
 #define addhxZst(RS, MG, DG)                                                \
@@ -544,11 +527,6 @@
         EMITW(0x78400000 | MDM(TMxx,    MOD(MS), VHL(DS), B1(DS), P1(DS)))  \
         EMITW(0x4B000000 | MRM(REG(RG), REG(RG), TMxx))
 
-#define subhn_ld(RG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0x78800000 | MDM(TMxx,    MOD(MS), VHL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x4B000000 | MRM(REG(RG), REG(RG), TMxx))
-
 #define subhx_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x78400000 | MDM(TMxx,    MOD(MG), VHL(DG), B1(DG), P1(DG)))  \
@@ -575,11 +553,6 @@
 #define subhxZld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x78400000 | MDM(TMxx,    MOD(MS), VHL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x6B000000 | MRM(REG(RG), REG(RG), TMxx))
-
-#define subhnZld(RG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0x78800000 | MDM(TMxx,    MOD(MS), VHL(DS), B1(DS), P1(DS)))  \
         EMITW(0x6B000000 | MRM(REG(RG), REG(RG), TMxx))
 
 #define subhxZst(RS, MG, DG)                                                \
@@ -853,11 +826,6 @@
         EMITW(0x78400000 | MDM(TMxx,    MOD(MS), VHL(DS), B1(DS), P1(DS)))  \
         EMITW(0x1B007C00 | MRM(REG(RG), REG(RG), TMxx))
 
-#define mulhn_ld(RG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0x78800000 | MDM(TMxx,    MOD(MS), VHL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x1B007C00 | MRM(REG(RG), REG(RG), TMxx))
-
 
 #define mulhx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
         EMITW(0x1B007C00 | MRM(Teax,    Teax,    REG(RS)))                  \
@@ -1073,9 +1041,6 @@
 #define cmjhx_mz(MS, DS, cc, lb)                                            \
         cmjhx_mi(W(MS), W(DS), IC(0), cc, lb)
 
-#define cmjhn_mz(MS, DS, cc, lb)                                            \
-        cmjhn_mi(W(MS), W(DS), IC(0), cc, lb)
-
 #define cmjhx_ri(RS, IT, cc, lb)                                            \
         cmphx_ri(W(RS), W(IT))                                              \
         CMJ(cc, lb)
@@ -1096,16 +1061,8 @@
         cmphx_rm(W(RS), W(MT), W(DT))                                       \
         CMJ(cc, lb)
 
-#define cmjhn_rm(RS, MT, DT, cc, lb)                                        \
-        cmphn_rm(W(RS), W(MT), W(DT))                                       \
-        CMJ(cc, lb)
-
 #define cmjhx_mr(MS, DS, RT, cc, lb)                                        \
         cmphx_mr(W(MS), W(DS), W(RT))                                       \
-        CMJ(cc, lb)
-
-#define cmjhn_mr(MS, DS, RT, cc, lb)                                        \
-        cmphn_mr(W(MS), W(DS), W(RT))                                       \
         CMJ(cc, lb)
 
 /* cmp (flags = S ? T)
@@ -1120,11 +1077,6 @@
         EMITW(0x78400000 | MDM(TMxx,    MOD(MS), VHL(DS), B1(DS), P1(DS)))  \
         EMITW(0x61000000 | MIM(TZxx,    TMxx,    VAL(IT), T1(IT), M1(IT)))
 
-#define cmphn_mi(MS, DS, IT)                                                \
-        AUW(SIB(MS),  VAL(IT), TIxx,    MOD(MS), VAL(DS), C1(DS), G1(IT))   \
-        EMITW(0x78800000 | MDM(TMxx,    MOD(MS), VHL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x61000000 | MIM(TZxx,    TMxx,    VAL(IT), T1(IT), M1(IT)))
-
 #define cmphx_rr(RS, RT)                                                    \
         EMITW(0x6B000000 | MRM(TZxx,    REG(RS), REG(RT)))
 
@@ -1133,19 +1085,9 @@
         EMITW(0x78400000 | MDM(TMxx,    MOD(MT), VHL(DT), B1(DT), P1(DT)))  \
         EMITW(0x6B000000 | MRM(TZxx,    REG(RS), TMxx))
 
-#define cmphn_rm(RS, MT, DT)                                                \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
-        EMITW(0x78800000 | MDM(TMxx,    MOD(MT), VHL(DT), B1(DT), P1(DT)))  \
-        EMITW(0x6B000000 | MRM(TZxx,    REG(RS), TMxx))
-
 #define cmphx_mr(MS, DS, RT)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x78400000 | MDM(TMxx,    MOD(MS), VHL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x6B000000 | MRM(TZxx,    TMxx,    REG(RT)))
-
-#define cmphn_mr(MS, DS, RT)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0x78800000 | MDM(TMxx,    MOD(MS), VHL(DS), B1(DS), P1(DS)))  \
         EMITW(0x6B000000 | MRM(TZxx,    TMxx,    REG(RT)))
 
 /************************** 8-bit subset instructions *************************/
@@ -1163,16 +1105,9 @@
 #define movbx_rr(RD, RS)                                                    \
         EMITW(0x2A000000 | MRM(REG(RD), TZxx,    REG(RS)))
 
-#define movbn_rr(RD, RS)                                                    \
-        EMITW(0x93401C00 | MRM(REG(RD), REG(RS), 0x00))
-
 #define movbx_ld(RD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x38400000 | MDM(REG(RD), MOD(MS), VBL(DS), B1(DS), P1(DS)))
-
-#define movbn_ld(RD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0x38800000 | MDM(REG(RD), MOD(MS), VBL(DS), B1(DS), P1(DS)))
 
 #define movbx_st(RS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
@@ -1541,11 +1476,6 @@
         EMITW(0x38400000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
         EMITW(0x0B000000 | MRM(REG(RG), REG(RG), TMxx))
 
-#define addbn_ld(RG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0x38800000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x0B000000 | MRM(REG(RG), REG(RG), TMxx))
-
 #define addbx_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x38400000 | MDM(TMxx,    MOD(MG), VBL(DG), B1(DG), P1(DG)))  \
@@ -1572,11 +1502,6 @@
 #define addbxZld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x38400000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x2B000000 | MRM(REG(RG), REG(RG), TMxx))
-
-#define addbnZld(RG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0x38800000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
         EMITW(0x2B000000 | MRM(REG(RG), REG(RG), TMxx))
 
 #define addbxZst(RS, MG, DG)                                                \
@@ -1609,11 +1534,6 @@
         EMITW(0x38400000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
         EMITW(0x4B000000 | MRM(REG(RG), REG(RG), TMxx))
 
-#define subbn_ld(RG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0x38800000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x4B000000 | MRM(REG(RG), REG(RG), TMxx))
-
 #define subbx_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), C1(DG), EMPTY2)   \
         EMITW(0x38400000 | MDM(TMxx,    MOD(MG), VBL(DG), B1(DG), P1(DG)))  \
@@ -1640,11 +1560,6 @@
 #define subbxZld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x38400000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x6B000000 | MRM(REG(RG), REG(RG), TMxx))
-
-#define subbnZld(RG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0x38800000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
         EMITW(0x6B000000 | MRM(REG(RG), REG(RG), TMxx))
 
 #define subbxZst(RS, MG, DG)                                                \
@@ -1918,11 +1833,6 @@
         EMITW(0x38400000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
         EMITW(0x1B007C00 | MRM(REG(RG), REG(RG), TMxx))
 
-#define mulbn_ld(RG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0x38800000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x1B007C00 | MRM(REG(RG), REG(RG), TMxx))
-
 
 #define mulbx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
         EMITW(0x1B007C00 | MRM(Teax,    Teax,    REG(RS)))                  \
@@ -2138,9 +2048,6 @@
 #define cmjbx_mz(MS, DS, cc, lb)                                            \
         cmjbx_mi(W(MS), W(DS), IC(0), cc, lb)
 
-#define cmjbn_mz(MS, DS, cc, lb)                                            \
-        cmjbn_mi(W(MS), W(DS), IC(0), cc, lb)
-
 #define cmjbx_ri(RS, IT, cc, lb)                                            \
         cmpbx_ri(W(RS), W(IT))                                              \
         CMJ(cc, lb)
@@ -2161,16 +2068,8 @@
         cmpbx_rm(W(RS), W(MT), W(DT))                                       \
         CMJ(cc, lb)
 
-#define cmjbn_rm(RS, MT, DT, cc, lb)                                        \
-        cmpbn_rm(W(RS), W(MT), W(DT))                                       \
-        CMJ(cc, lb)
-
 #define cmjbx_mr(MS, DS, RT, cc, lb)                                        \
         cmpbx_mr(W(MS), W(DS), W(RT))                                       \
-        CMJ(cc, lb)
-
-#define cmjbn_mr(MS, DS, RT, cc, lb)                                        \
-        cmpbn_mr(W(MS), W(DS), W(RT))                                       \
         CMJ(cc, lb)
 
 /* cmp (flags = S ? T)
@@ -2185,11 +2084,6 @@
         EMITW(0x38400000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
         EMITW(0x61000000 | MIM(TZxx,    TMxx,    VAL(IT), T1(IT), M1(IT)))
 
-#define cmpbn_mi(MS, DS, IT)                                                \
-        AUW(SIB(MS),  VAL(IT), TIxx,    MOD(MS), VAL(DS), C1(DS), G1(IT))   \
-        EMITW(0x38800000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x61000000 | MIM(TZxx,    TMxx,    VAL(IT), T1(IT), M1(IT)))
-
 #define cmpbx_rr(RS, RT)                                                    \
         EMITW(0x6B000000 | MRM(TZxx,    REG(RS), REG(RT)))
 
@@ -2198,19 +2092,9 @@
         EMITW(0x38400000 | MDM(TMxx,    MOD(MT), VBL(DT), B1(DT), P1(DT)))  \
         EMITW(0x6B000000 | MRM(TZxx,    REG(RS), TMxx))
 
-#define cmpbn_rm(RS, MT, DT)                                                \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C1(DT), EMPTY2)   \
-        EMITW(0x38800000 | MDM(TMxx,    MOD(MT), VBL(DT), B1(DT), P1(DT)))  \
-        EMITW(0x6B000000 | MRM(TZxx,    REG(RS), TMxx))
-
 #define cmpbx_mr(MS, DS, RT)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x38400000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
-        EMITW(0x6B000000 | MRM(TZxx,    TMxx,    REG(RT)))
-
-#define cmpbn_mr(MS, DS, RT)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
-        EMITW(0x38800000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
         EMITW(0x6B000000 | MRM(TZxx,    TMxx,    REG(RT)))
 
 /******************************************************************************/

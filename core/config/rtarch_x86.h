@@ -306,8 +306,44 @@
         EMITB(0x8B)                                                         \
         MRM(REG(RD), MOD(RS), REG(RS))
 
+#define movhn_rr(RD, RS)       /* move 16-bit to 32-bit with sign-extend */ \
+        EMITB(0x0F) EMITB(0xBF)                                             \
+        MRM(REG(RD), MOD(RS), REG(RS))
+
+#define movhz_rr(RD, RS)       /* move 16-bit to 32-bit with zero-extend */ \
+        EMITB(0x0F) EMITB(0xB7)                                             \
+        MRM(REG(RD), MOD(RS), REG(RS))
+
+#define movbn_rr(RD, RS)       /* move  8-bit to 32-bit with sign-extend */ \
+        EMITB(0x0F) EMITB(0xBE)                                             \
+        MRM(REG(RD), MOD(RS), REG(RS))
+
+#define movbz_rr(RD, RS)       /* move  8-bit to 32-bit with zero-extend */ \
+        EMITB(0x0F) EMITB(0xB6)                                             \
+        MRM(REG(RD), MOD(RS), REG(RS))
+
 #define movwx_ld(RD, MS, DS)                                                \
         EMITB(0x8B)                                                         \
+        MRM(REG(RD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define movhn_ld(RD, MS, DS)   /* load 16-bit to 32-bit with sign-extend */ \
+        EMITB(0x0F) EMITB(0xBF)                                             \
+        MRM(REG(RD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define movhz_ld(RD, MS, DS)   /* load 16-bit to 32-bit with zero-extend */ \
+        EMITB(0x0F) EMITB(0xB7)                                             \
+        MRM(REG(RD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define movbn_ld(RD, MS, DS)   /* load  8-bit to 32-bit with sign-extend */ \
+        EMITB(0x0F) EMITB(0xBE)                                             \
+        MRM(REG(RD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define movbz_ld(RD, MS, DS)   /* load  8-bit to 32-bit with zero-extend */ \
+        EMITB(0x0F) EMITB(0xB6)                                             \
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -621,6 +657,18 @@
 #define addwx_ld(RG, MS, DS)                                                \
         addwxZld(W(RG), W(MS), W(DS))
 
+#define addhn_ld(RG, MS, DS)    /* add 16-bit to 32-bit with sign-extend */ \
+        addhnZld(W(RG), W(MS), W(DS))
+
+#define addhz_ld(RG, MS, DS)    /* add 16-bit to 32-bit with zero-extend */ \
+        addhzZld(W(RG), W(MS), W(DS))
+
+#define addbn_ld(RG, MS, DS)    /* add  8-bit to 32-bit with sign-extend */ \
+        addbnZld(W(RG), W(MS), W(DS))
+
+#define addbz_ld(RG, MS, DS)    /* add  8-bit to 32-bit with zero-extend */ \
+        addbzZld(W(RG), W(MS), W(DS))
+
 #define addwx_st(RS, MG, DG)                                                \
         addwxZst(W(RS), W(MG), W(DG))
 
@@ -647,6 +695,38 @@
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
+#define addhnZld(RG, MS, DS)    /* add 16-bit to 32-bit with sign-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xBF)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        addwxZrr(W(RG), Rebp)                                               \
+        stack_ld(Rebp)
+
+#define addhzZld(RG, MS, DS)    /* add 16-bit to 32-bit with zero-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xB7)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        addwxZrr(W(RG), Rebp)                                               \
+        stack_ld(Rebp)
+
+#define addbnZld(RG, MS, DS)    /* add  8-bit to 32-bit with sign-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xBE)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        addwxZrr(W(RG), Rebp)                                               \
+        stack_ld(Rebp)
+
+#define addbzZld(RG, MS, DS)    /* add  8-bit to 32-bit with zero-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xB6)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        addwxZrr(W(RG), Rebp)                                               \
+        stack_ld(Rebp)
+
 #define addwxZst(RS, MG, DG)                                                \
         EMITB(0x01)                                                         \
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
@@ -669,6 +749,18 @@
 
 #define subwx_ld(RG, MS, DS)                                                \
         subwxZld(W(RG), W(MS), W(DS))
+
+#define subhn_ld(RG, MS, DS)  /* sub 16-bit from 32-bit with sign-extend */ \
+        subhnZld(W(RG), W(MS), W(DS))
+
+#define subhz_ld(RG, MS, DS)  /* sub 16-bit from 32-bit with zero-extend */ \
+        subhzZld(W(RG), W(MS), W(DS))
+
+#define subbn_ld(RG, MS, DS)  /* sub  8-bit from 32-bit with sign-extend */ \
+        subbnZld(W(RG), W(MS), W(DS))
+
+#define subbz_ld(RG, MS, DS)  /* sub  8-bit from 32-bit with zero-extend */ \
+        subbzZld(W(RG), W(MS), W(DS))
 
 #define subwx_st(RS, MG, DG)                                                \
         subwxZst(W(RS), W(MG), W(DG))
@@ -695,6 +787,38 @@
         EMITB(0x2B)                                                         \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define subhnZld(RG, MS, DS)  /* sub 16-bit from 32-bit with sign-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xBF)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        subwxZrr(W(RG), Rebp)                                               \
+        stack_ld(Rebp)
+
+#define subhzZld(RG, MS, DS)  /* sub 16-bit from 32-bit with zero-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xB7)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        subwxZrr(W(RG), Rebp)                                               \
+        stack_ld(Rebp)
+
+#define subbnZld(RG, MS, DS)  /* sub  8-bit from 32-bit with sign-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xBE)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        subwxZrr(W(RG), Rebp)                                               \
+        stack_ld(Rebp)
+
+#define subbzZld(RG, MS, DS)  /* sub  8-bit from 32-bit with zero-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xB6)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        subwxZrr(W(RG), Rebp)                                               \
+        stack_ld(Rebp)
 
 #define subwxZst(RS, MG, DG)                                                \
         EMITB(0x29)                                                         \
@@ -1081,6 +1205,38 @@
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
+#define mulhn_ld(RG, MS, DS)  /* mul 32-bit with 16-bit with sign-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xBF)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        mulwx_rr(W(RG), Rebp)                                               \
+        stack_ld(Rebp)
+
+#define mulhz_ld(RG, MS, DS)  /* mul 32-bit with 16-bit with zero-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xB7)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        mulwx_rr(W(RG), Rebp)                                               \
+        stack_ld(Rebp)
+
+#define mulbn_ld(RG, MS, DS)  /* mul 32-bit with  8-bit with sign-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xBE)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        mulwx_rr(W(RG), Rebp)                                               \
+        stack_ld(Rebp)
+
+#define mulbz_ld(RG, MS, DS)  /* mul 32-bit with  8-bit with zero-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xB6)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        mulwx_rr(W(RG), Rebp)                                               \
+        stack_ld(Rebp)
+
 
 #define mulwx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
         EMITB(0xF7)                                                         \
@@ -1389,8 +1545,40 @@
         cmpwx_rm(W(RS), W(MT), W(DT))                                       \
         CMJ(cc, lb)
 
+#define cmjhn_rm(RS, MT, DT, cc, lb)   /* cmj 32/16-bit with sign-extend */ \
+        cmphn_rm(W(RS), W(MT), W(DT))                                       \
+        CMJ(cc, lb)
+
+#define cmjhz_rm(RS, MT, DT, cc, lb)   /* cmj 32/16-bit with zero-extend */ \
+        cmphz_rm(W(RS), W(MT), W(DT))                                       \
+        CMJ(cc, lb)
+
+#define cmjbn_rm(RS, MT, DT, cc, lb)   /* cmj 32/8-bit  with sign-extend */ \
+        cmpbn_rm(W(RS), W(MT), W(DT))                                       \
+        CMJ(cc, lb)
+
+#define cmjbz_rm(RS, MT, DT, cc, lb)   /* cmj 32/8-bit  with zero-extend */ \
+        cmpbz_rm(W(RS), W(MT), W(DT))                                       \
+        CMJ(cc, lb)
+
 #define cmjwx_mr(MS, DS, RT, cc, lb)                                        \
         cmpwx_mr(W(MS), W(DS), W(RT))                                       \
+        CMJ(cc, lb)
+
+#define cmjhn_mr(MS, DS, RT, cc, lb)   /* cmj 16/32-bit with sign-extend */ \
+        cmphn_mr(W(MS), W(DS), W(RT))                                       \
+        CMJ(cc, lb)
+
+#define cmjhz_mr(MS, DS, RT, cc, lb)   /* cmj 16/32-bit with zero-extend */ \
+        cmphz_mr(W(MS), W(DS), W(RT))                                       \
+        CMJ(cc, lb)
+
+#define cmjbn_mr(MS, DS, RT, cc, lb)   /* cmj  8/32-bit with sign-extend */ \
+        cmpbn_mr(W(MS), W(DS), W(RT))                                       \
+        CMJ(cc, lb)
+
+#define cmjbz_mr(MS, DS, RT, cc, lb)   /* cmj  8/32-bit with zero-extend */ \
+        cmpbz_mr(W(MS), W(DS), W(RT))                                       \
         CMJ(cc, lb)
 
 /* cmp (flags = S ? T)
@@ -1415,10 +1603,82 @@
         MRM(REG(RS), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+#define cmphn_rm(RS, MT, DT)    /* cmp 32-bit to 16-bit with sign-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xBF)                                             \
+        MRM(0x05,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)                                        \
+        EMITB(0x3B)                                                         \
+        MRM(REG(RS),    0x03,    0x05)                                      \
+        stack_ld(Rebp)
+
+#define cmphz_rm(RS, MT, DT)    /* cmp 32-bit to 16-bit with zero-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xB7)                                             \
+        MRM(0x05,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)                                        \
+        EMITB(0x3B)                                                         \
+        MRM(REG(RS),    0x03,    0x05)                                      \
+        stack_ld(Rebp)
+
+#define cmpbn_rm(RS, MT, DT)    /* cmp 32-bit to  8-bit with sign-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xBE)                                             \
+        MRM(0x05,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)                                        \
+        EMITB(0x3B)                                                         \
+        MRM(REG(RS),    0x03,    0x05)                                      \
+        stack_ld(Rebp)
+
+#define cmpbz_rm(RS, MT, DT)    /* cmp 32-bit to  8-bit with zero-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xB6)                                             \
+        MRM(0x05,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)                                        \
+        EMITB(0x3B)                                                         \
+        MRM(REG(RS),    0x03,    0x05)                                      \
+        stack_ld(Rebp)
+
 #define cmpwx_mr(MS, DS, RT)                                                \
         EMITB(0x39)                                                         \
         MRM(REG(RT), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define cmphn_mr(MS, DS, RT)    /* cmp 16-bit to 32-bit with sign-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xBF)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        EMITB(0x39)                                                         \
+        MRM(REG(RT),    0x03,    0x05)                                      \
+        stack_ld(Rebp)
+
+#define cmphz_mr(MS, DS, RT)    /* cmp 16-bit to 32-bit with zero-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xB7)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        EMITB(0x39)                                                         \
+        MRM(REG(RT),    0x03,    0x05)                                      \
+        stack_ld(Rebp)
+
+#define cmpbn_mr(MS, DS, RT)    /* cmp  8-bit to 32-bit with sign-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xBE)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        EMITB(0x39)                                                         \
+        MRM(REG(RT),    0x03,    0x05)                                      \
+        stack_ld(Rebp)
+
+#define cmpbz_mr(MS, DS, RT)    /* cmp  8-bit to 32-bit with zero-extend */ \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xB6)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        EMITB(0x39)                                                         \
+        MRM(REG(RT),    0x03,    0x05)                                      \
+        stack_ld(Rebp)
 
 /* ver (Mebp/inf_VER = SIMD-version)
  * set-flags: no
@@ -1600,17 +1860,8 @@
         EMITB(0x8B)                                                         \
         MRM(REG(RD), MOD(RS), REG(RS))
 
-#define movhn_rr(RD, RS)                                                    \
-        EMITB(0x0F) EMITB(0xBF)                                             \
-        MRM(REG(RD), MOD(RS), REG(RS))
-
 #define movhx_ld(RD, MS, DS)                                                \
         EMITB(0x0F) EMITB(0xB7)                                             \
-        MRM(REG(RD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define movhn_ld(RD, MS, DS)                                                \
-        EMITB(0x0F) EMITB(0xBF)                                             \
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -1912,9 +2163,6 @@
 #define addhx_ld(RG, MS, DS)                                                \
         addhxZld(W(RG), W(MS), W(DS))
 
-#define addhn_ld(RG, MS, DS)                                                \
-        addhnZld(W(RG), W(MS), W(DS))
-
 #define addhx_st(RS, MG, DG)                                                \
         addhxZst(W(RS), W(MG), W(DG))
 
@@ -1941,15 +2189,6 @@
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define addhnZld(RG, MS, DS)                                                \
-        stack_st(Rebp)                                                      \
-        EMITB(0x0F) EMITB(0xBF)                                             \
-        MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
-        EMITB(0x03)                                                         \
-        MRM(REG(RG),    0x03,    0x05)                                      \
-        stack_ld(Rebp)
-
 #define addhxZst(RS, MG, DG)                                                \
     ESC EMITB(0x01)                                                         \
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
@@ -1972,9 +2211,6 @@
 
 #define subhx_ld(RG, MS, DS)                                                \
         subhxZld(W(RG), W(MS), W(DS))
-
-#define subhn_ld(RG, MS, DS)                                                \
-        subhnZld(W(RG), W(MS), W(DS))
 
 #define subhx_st(RS, MG, DG)                                                \
         subhxZst(W(RS), W(MG), W(DG))
@@ -2001,15 +2237,6 @@
     ESC EMITB(0x2B)                                                         \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define subhnZld(RG, MS, DS)                                                \
-        stack_st(Rebp)                                                      \
-        EMITB(0x0F) EMITB(0xBF)                                             \
-        MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
-        EMITB(0x2B)                                                         \
-        MRM(REG(RG),    0x03,    0x05)                                      \
-        stack_ld(Rebp)
 
 #define subhxZst(RS, MG, DG)                                                \
     ESC EMITB(0x29)                                                         \
@@ -2296,14 +2523,6 @@
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define mulhn_ld(RG, MS, DS)                                                \
-        stack_st(Rebp)                                                      \
-        EMITB(0x0F) EMITB(0xBF)                                             \
-        MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
-        mulhx_rr(W(RG), Rebp)                                               \
-        stack_ld(Rebp)
-
 
 #define mulhx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
     ESC EMITB(0xF7)                                                         \
@@ -2576,19 +2795,12 @@
 #define cmjhx_mz(MS, DS, cc, lb)                                            \
         cmjhx_mi(W(MS), W(DS), IC(0), cc, lb)
 
-#define cmjhn_mz(MS, DS, cc, lb)                                            \
-        cmjhn_mi(W(MS), W(DS), IC(0), cc, lb)
-
 #define cmjhx_ri(RS, IT, cc, lb)                                            \
         cmphx_ri(W(RS), W(IT))                                              \
         CMJ(cc, lb)
 
 #define cmjhx_mi(MS, DS, IT, cc, lb)                                        \
         cmphx_mi(W(MS), W(DS), W(IT))                                       \
-        CMJ(cc, lb)
-
-#define cmjhn_mi(MS, DS, IT, cc, lb)                                        \
-        cmphn_mi(W(MS), W(DS), W(IT))                                       \
         CMJ(cc, lb)
 
 #define cmjhx_rr(RS, RT, cc, lb)                                            \
@@ -2599,16 +2811,8 @@
         cmphx_rm(W(RS), W(MT), W(DT))                                       \
         CMJ(cc, lb)
 
-#define cmjhn_rm(RS, MT, DT, cc, lb)                                        \
-        cmphn_rm(W(RS), W(MT), W(DT))                                       \
-        CMJ(cc, lb)
-
 #define cmjhx_mr(MS, DS, RT, cc, lb)                                        \
         cmphx_mr(W(MS), W(DS), W(RT))                                       \
-        CMJ(cc, lb)
-
-#define cmjhn_mr(MS, DS, RT, cc, lb)                                        \
-        cmphn_mr(W(MS), W(DS), W(RT))                                       \
         CMJ(cc, lb)
 
 /* cmp (flags = S ? T)
@@ -2624,11 +2828,6 @@
         MRM(0x07,    MOD(MS), REG(MS))   /* truncate IC with TYP below */   \
         AUX(SIB(MS), CMD(DS), EMITH(VAL(IT) & ((TYP(IT) << 6) - 1)))
 
-#define cmphn_mi(MS, DS, IT)                                                \
-    ESC EMITB(0x81)                                                         \
-        MRM(0x07,    MOD(MS), REG(MS))   /* truncate IC with TYP below */   \
-        AUX(SIB(MS), CMD(DS), EMITH(VAL(IT) & ((TYP(IT) << 6) - 1)))
-
 #define cmphx_rr(RS, RT)                                                    \
     ESC EMITB(0x3B)                                                         \
         MRM(REG(RS), MOD(RT), REG(RT))
@@ -2638,17 +2837,7 @@
         MRM(REG(RS), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-#define cmphn_rm(RS, MT, DT)                                                \
-    ESC EMITB(0x3B)                                                         \
-        MRM(REG(RS), MOD(MT), REG(MT))                                      \
-        AUX(SIB(MT), CMD(DT), EMPTY)
-
 #define cmphx_mr(MS, DS, RT)                                                \
-    ESC EMITB(0x39)                                                         \
-        MRM(REG(RT), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define cmphn_mr(MS, DS, RT)                                                \
     ESC EMITB(0x39)                                                         \
         MRM(REG(RT), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
@@ -2672,17 +2861,8 @@
         EMITB(0x8B)                                                         \
         MRM(REG(RD), MOD(RS), REG(RS))
 
-#define movbn_rr(RD, RS)                                                    \
-        EMITB(0x0F) EMITB(0xBE)                                             \
-        MRM(REG(RD), MOD(RS), REG(RS))
-
 #define movbx_ld(RD, MS, DS)                                                \
         EMITB(0x0F) EMITB(0xB6)                                             \
-        MRM(REG(RD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define movbn_ld(RD, MS, DS)                                                \
-        EMITB(0x0F) EMITB(0xBE)                                             \
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -2984,9 +3164,6 @@
 #define addbx_ld(RG, MS, DS)                                                \
         addbxZld(W(RG), W(MS), W(DS))
 
-#define addbn_ld(RG, MS, DS)                                                \
-        addbnZld(W(RG), W(MS), W(DS))
-
 #define addbx_st(RS, MG, DG)                                                \
         addbxZst(W(RS), W(MG), W(DG))
 
@@ -3013,15 +3190,6 @@
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define addbnZld(RG, MS, DS)                                                \
-        stack_st(Rebp)                                                      \
-        EMITB(0x0F) EMITB(0xBE)                                             \
-        MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
-        EMITB(0x03)                                                         \
-        MRM(REG(RG),    0x03,    0x05)                                      \
-        stack_ld(Rebp)
-
 #define addbxZst(RS, MG, DG)                                                \
         EMITB(0x00)                                                         \
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
@@ -3044,9 +3212,6 @@
 
 #define subbx_ld(RG, MS, DS)                                                \
         subbxZld(W(RG), W(MS), W(DS))
-
-#define subbn_ld(RG, MS, DS)                                                \
-        subbnZld(W(RG), W(MS), W(DS))
 
 #define subbx_st(RS, MG, DG)                                                \
         subbxZst(W(RS), W(MG), W(DG))
@@ -3073,15 +3238,6 @@
         EMITB(0x2A)                                                         \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define subbnZld(RG, MS, DS)                                                \
-        stack_st(Rebp)                                                      \
-        EMITB(0x0F) EMITB(0xBE)                                             \
-        MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
-        EMITB(0x2B)                                                         \
-        MRM(REG(RG),    0x03,    0x05)                                      \
-        stack_ld(Rebp)
 
 #define subbxZst(RS, MG, DG)                                                \
         EMITB(0x28)                                                         \
@@ -3370,14 +3526,6 @@
         movbx_rr(W(RG), Reax)                                               \
         stack_ld(Reax)
 
-#define mulbn_ld(RG, MS, DS)                                                \
-        stack_st(Rebp)                                                      \
-        EMITB(0x0F) EMITB(0xBE)                                             \
-        MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
-        mulbx_rr(W(RG), Rebp)                                               \
-        stack_ld(Rebp)
-
 
 #define mulbx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
         EMITB(0xF6)                                                         \
@@ -3663,19 +3811,12 @@
 #define cmjbx_mz(MS, DS, cc, lb)                                            \
         cmjbx_mi(W(MS), W(DS), IC(0), cc, lb)
 
-#define cmjbn_mz(MS, DS, cc, lb)                                            \
-        cmjbn_mi(W(MS), W(DS), IC(0), cc, lb)
-
 #define cmjbx_ri(RS, IT, cc, lb)                                            \
         cmpbx_ri(W(RS), W(IT))                                              \
         CMJ(cc, lb)
 
 #define cmjbx_mi(MS, DS, IT, cc, lb)                                        \
         cmpbx_mi(W(MS), W(DS), W(IT))                                       \
-        CMJ(cc, lb)
-
-#define cmjbn_mi(MS, DS, IT, cc, lb)                                        \
-        cmpbn_mi(W(MS), W(DS), W(IT))                                       \
         CMJ(cc, lb)
 
 #define cmjbx_rr(RS, RT, cc, lb)                                            \
@@ -3686,16 +3827,8 @@
         cmpbx_rm(W(RS), W(MT), W(DT))                                       \
         CMJ(cc, lb)
 
-#define cmjbn_rm(RS, MT, DT, cc, lb)                                        \
-        cmpbn_rm(W(RS), W(MT), W(DT))                                       \
-        CMJ(cc, lb)
-
 #define cmjbx_mr(MS, DS, RT, cc, lb)                                        \
         cmpbx_mr(W(MS), W(DS), W(RT))                                       \
-        CMJ(cc, lb)
-
-#define cmjbn_mr(MS, DS, RT, cc, lb)                                        \
-        cmpbn_mr(W(MS), W(DS), W(RT))                                       \
         CMJ(cc, lb)
 
 /* cmp (flags = S ? T)
@@ -3711,11 +3844,6 @@
         MRM(0x07,    MOD(MS), REG(MS))   /* truncate IC with TYP below */   \
         AUX(SIB(MS), CMD(DS), EMITB(VAL(IT) & ((TYP(IT) << 6) - 1)))
 
-#define cmpbn_mi(MS, DS, IT)                                                \
-        EMITB(0x80)                                                         \
-        MRM(0x07,    MOD(MS), REG(MS))   /* truncate IC with TYP below */   \
-        AUX(SIB(MS), CMD(DS), EMITB(VAL(IT) & ((TYP(IT) << 6) - 1)))
-
 #define cmpbx_rr(RS, RT)                                                    \
         EMITB(0x3A)                                                         \
         MRM(REG(RS), MOD(RT), REG(RT))
@@ -3725,17 +3853,7 @@
         MRM(REG(RS), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-#define cmpbn_rm(RS, MT, DT)                                                \
-        EMITB(0x3A)                                                         \
-        MRM(REG(RS), MOD(MT), REG(MT))                                      \
-        AUX(SIB(MT), CMD(DT), EMPTY)
-
 #define cmpbx_mr(MS, DS, RT)                                                \
-        EMITB(0x38)                                                         \
-        MRM(REG(RT), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define cmpbn_mr(MS, DS, RT)                                                \
         EMITB(0x38)                                                         \
         MRM(REG(RT), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)

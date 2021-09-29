@@ -102,17 +102,8 @@ ADR ESC REX(0,       RXB(MD)) EMITB(0xC7)                                   \
         REX(RXB(RD), RXB(RS)) EMITB(0x8B)                                   \
         MRM(REG(RD), MOD(RS), REG(RS))
 
-#define movhn_rr(RD, RS)                                                    \
-        REW(RXB(RD), RXB(RS)) EMITB(0x0F) EMITB(0xBF)                       \
-        MRM(REG(RD), MOD(RS), REG(RS))
-
 #define movhx_ld(RD, MS, DS)                                                \
     ADR REW(RXB(RD), RXB(MS)) EMITB(0x0F) EMITB(0xB7)                       \
-        MRM(REG(RD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define movhn_ld(RD, MS, DS)                                                \
-    ADR REW(RXB(RD), RXB(MS)) EMITB(0x0F) EMITB(0xBF)                       \
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -414,9 +405,6 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF7)                                   \
 #define addhx_ld(RG, MS, DS)                                                \
         addhxZld(W(RG), W(MS), W(DS))
 
-#define addhn_ld(RG, MS, DS)                                                \
-        addhnZld(W(RG), W(MS), W(DS))
-
 #define addhx_st(RS, MG, DG)                                                \
         addhxZst(W(RS), W(MG), W(DG))
 
@@ -443,13 +431,6 @@ ADR ESC REX(RXB(RG), RXB(MS)) EMITB(0x03)                                   \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define addhnZld(RG, MS, DS)                                                \
-    ADR REW(1,       RXB(MS)) EMITB(0x0F) EMITB(0xBF)                       \
-        MRM(0x07,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
-    ADR REW(RXB(RG),       1) EMITB(0x03)                                   \
-        MRM(REG(RG),    0x03,    0x07)
-
 #define addhxZst(RS, MG, DG)                                                \
 ADR ESC REX(RXB(RS), RXB(MG)) EMITB(0x01)                                   \
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
@@ -472,9 +453,6 @@ ADR ESC REX(RXB(RS), RXB(MG)) EMITB(0x01)                                   \
 
 #define subhx_ld(RG, MS, DS)                                                \
         subhxZld(W(RG), W(MS), W(DS))
-
-#define subhn_ld(RG, MS, DS)                                                \
-        subhnZld(W(RG), W(MS), W(DS))
 
 #define subhx_st(RS, MG, DG)                                                \
         subhxZst(W(RS), W(MG), W(DG))
@@ -501,13 +479,6 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0x81)                                   \
 ADR ESC REX(RXB(RG), RXB(MS)) EMITB(0x2B)                                   \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define subhnZld(RG, MS, DS)                                                \
-    ADR REW(1,       RXB(MS)) EMITB(0x0F) EMITB(0xBF)                       \
-        MRM(0x07,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
-    ADR REW(RXB(RG),       1) EMITB(0x2B)                                   \
-        MRM(REG(RG),    0x03,    0x07)
 
 #define subhxZst(RS, MG, DG)                                                \
 ADR ESC REX(RXB(RS), RXB(MG)) EMITB(0x29)                                   \
@@ -794,14 +765,6 @@ ADR ESC REX(RXB(RG), RXB(MS)) EMITB(0x0F) EMITB(0xAF)                       \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define mulhn_ld(RG, MS, DS)                                                \
-        stack_st(Rebp)                                                      \
-    ADR REW(0,       RXB(MS)) EMITB(0x0F) EMITB(0xBF)                       \
-        MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
-        mulhx_rr(W(RG), Rebp)                                               \
-        stack_ld(Rebp)
-
 
 #define mulhx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
     ESC REX(0,       RXB(RS)) EMITB(0xF7)                                   \
@@ -1074,19 +1037,12 @@ ADR ESC REX(0,       RXB(MS)) EMITB(0xF7)                                   \
 #define cmjhx_mz(MS, DS, cc, lb)                                            \
         cmjhx_mi(W(MS), W(DS), IC(0), cc, lb)
 
-#define cmjhn_mz(MS, DS, cc, lb)                                            \
-        cmjhn_mi(W(MS), W(DS), IC(0), cc, lb)
-
 #define cmjhx_ri(RS, IT, cc, lb)                                            \
         cmphx_ri(W(RS), W(IT))                                              \
         CMJ(cc, lb)
 
 #define cmjhx_mi(MS, DS, IT, cc, lb)                                        \
         cmphx_mi(W(MS), W(DS), W(IT))                                       \
-        CMJ(cc, lb)
-
-#define cmjhn_mi(MS, DS, IT, cc, lb)                                        \
-        cmphn_mi(W(MS), W(DS), W(IT))                                       \
         CMJ(cc, lb)
 
 #define cmjhx_rr(RS, RT, cc, lb)                                            \
@@ -1097,16 +1053,8 @@ ADR ESC REX(0,       RXB(MS)) EMITB(0xF7)                                   \
         cmphx_rm(W(RS), W(MT), W(DT))                                       \
         CMJ(cc, lb)
 
-#define cmjhn_rm(RS, MT, DT, cc, lb)                                        \
-        cmphn_rm(W(RS), W(MT), W(DT))                                       \
-        CMJ(cc, lb)
-
 #define cmjhx_mr(MS, DS, RT, cc, lb)                                        \
         cmphx_mr(W(MS), W(DS), W(RT))                                       \
-        CMJ(cc, lb)
-
-#define cmjhn_mr(MS, DS, RT, cc, lb)                                        \
-        cmphn_mr(W(MS), W(DS), W(RT))                                       \
         CMJ(cc, lb)
 
 /* cmp (flags = S ? T)
@@ -1122,11 +1070,6 @@ ADR ESC REX(0,       RXB(MS)) EMITB(0x81)                                   \
         MRM(0x07,    MOD(MS), REG(MS))   /* truncate IC with TYP below */   \
         AUX(SIB(MS), CMD(DS), EMITH(VAL(IT) & ((TYP(IT) << 6) - 1)))
 
-#define cmphn_mi(MS, DS, IT)                                                \
-ADR ESC REX(0,       RXB(MS)) EMITB(0x81)                                   \
-        MRM(0x07,    MOD(MS), REG(MS))   /* truncate IC with TYP below */   \
-        AUX(SIB(MS), CMD(DS), EMITH(VAL(IT) & ((TYP(IT) << 6) - 1)))
-
 #define cmphx_rr(RS, RT)                                                    \
     ESC REX(RXB(RS), RXB(RT)) EMITB(0x3B)                                   \
         MRM(REG(RS), MOD(RT), REG(RT))
@@ -1136,17 +1079,7 @@ ADR ESC REX(RXB(RS), RXB(MT)) EMITB(0x3B)                                   \
         MRM(REG(RS), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-#define cmphn_rm(RS, MT, DT)                                                \
-ADR ESC REX(RXB(RS), RXB(MT)) EMITB(0x3B)                                   \
-        MRM(REG(RS), MOD(MT), REG(MT))                                      \
-        AUX(SIB(MT), CMD(DT), EMPTY)
-
 #define cmphx_mr(MS, DS, RT)                                                \
-ADR ESC REX(RXB(RT), RXB(MS)) EMITB(0x39)                                   \
-        MRM(REG(RT), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define cmphn_mr(MS, DS, RT)                                                \
 ADR ESC REX(RXB(RT), RXB(MS)) EMITB(0x39)                                   \
         MRM(REG(RT), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
@@ -1170,17 +1103,8 @@ ADR ESC REX(RXB(RT), RXB(MS)) EMITB(0x39)                                   \
         REX(RXB(RD), RXB(RS)) EMITB(0x8B)                                   \
         MRM(REG(RD), MOD(RS), REG(RS))
 
-#define movbn_rr(RD, RS)                                                    \
-        REW(RXB(RD), RXB(RS)) EMITB(0x0F) EMITB(0xBE)                       \
-        MRM(REG(RD), MOD(RS), REG(RS))
-
 #define movbx_ld(RD, MS, DS)                                                \
     ADR REW(RXB(RD), RXB(MS)) EMITB(0x0F) EMITB(0xB6)                       \
-        MRM(REG(RD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define movbn_ld(RD, MS, DS)                                                \
-    ADR REW(RXB(RD), RXB(MS)) EMITB(0x0F) EMITB(0xBE)                       \
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -1482,9 +1406,6 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
 #define addbx_ld(RG, MS, DS)                                                \
         addbxZld(W(RG), W(MS), W(DS))
 
-#define addbn_ld(RG, MS, DS)                                                \
-        addbnZld(W(RG), W(MS), W(DS))
-
 #define addbx_st(RS, MG, DG)                                                \
         addbxZst(W(RS), W(MG), W(DG))
 
@@ -1511,13 +1432,6 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#define addbnZld(RG, MS, DS)                                                \
-    ADR REW(1,       RXB(MS)) EMITB(0x0F) EMITB(0xBE)                       \
-        MRM(0x07,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
-    ADR REW(RXB(RG),       1) EMITB(0x03)                                   \
-        MRM(REG(RG),    0x03,    0x07)
-
 #define addbxZst(RS, MG, DG)                                                \
     ADR REX(RXB(RS), RXB(MG)) EMITB(0x00)                                   \
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
@@ -1540,9 +1454,6 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
 
 #define subbx_ld(RG, MS, DS)                                                \
         subbxZld(W(RG), W(MS), W(DS))
-
-#define subbn_ld(RG, MS, DS)                                                \
-        subbnZld(W(RG), W(MS), W(DS))
 
 #define subbx_st(RS, MG, DG)                                                \
         subbxZst(W(RS), W(MG), W(DG))
@@ -1569,13 +1480,6 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
     ADR REX(RXB(RG), RXB(MS)) EMITB(0x2A)                                   \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define subbnZld(RG, MS, DS)                                                \
-    ADR REW(1,       RXB(MS)) EMITB(0x0F) EMITB(0xBE)                       \
-        MRM(0x07,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
-    ADR REW(RXB(RG),       1) EMITB(0x2B)                                   \
-        MRM(REG(RG),    0x03,    0x07)
 
 #define subbxZst(RS, MG, DG)                                                \
     ADR REX(RXB(RS), RXB(MG)) EMITB(0x28)                                   \
@@ -1865,14 +1769,6 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
         movbx_rr(W(RG), Reax)                                               \
         stack_ld(Reax)
 
-#define mulbn_ld(RG, MS, DS)                                                \
-        stack_st(Rebp)                                                      \
-    ADR REW(0,       RXB(MS)) EMITB(0x0F) EMITB(0xBE)                       \
-        MRM(0x05,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
-        mulbx_rr(W(RG), Rebp)                                               \
-        stack_ld(Rebp)
-
 
 #define mulbx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
         REX(0,       RXB(RS)) EMITB(0xF6)                                   \
@@ -2158,19 +2054,12 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
 #define cmjbx_mz(MS, DS, cc, lb)                                            \
         cmjbx_mi(W(MS), W(DS), IC(0), cc, lb)
 
-#define cmjbn_mz(MS, DS, cc, lb)                                            \
-        cmjbn_mi(W(MS), W(DS), IC(0), cc, lb)
-
 #define cmjbx_ri(RS, IT, cc, lb)                                            \
         cmpbx_ri(W(RS), W(IT))                                              \
         CMJ(cc, lb)
 
 #define cmjbx_mi(MS, DS, IT, cc, lb)                                        \
         cmpbx_mi(W(MS), W(DS), W(IT))                                       \
-        CMJ(cc, lb)
-
-#define cmjbn_mi(MS, DS, IT, cc, lb)                                        \
-        cmpbn_mi(W(MS), W(DS), W(IT))                                       \
         CMJ(cc, lb)
 
 #define cmjbx_rr(RS, RT, cc, lb)                                            \
@@ -2181,16 +2070,8 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
         cmpbx_rm(W(RS), W(MT), W(DT))                                       \
         CMJ(cc, lb)
 
-#define cmjbn_rm(RS, MT, DT, cc, lb)                                        \
-        cmpbn_rm(W(RS), W(MT), W(DT))                                       \
-        CMJ(cc, lb)
-
 #define cmjbx_mr(MS, DS, RT, cc, lb)                                        \
         cmpbx_mr(W(MS), W(DS), W(RT))                                       \
-        CMJ(cc, lb)
-
-#define cmjbn_mr(MS, DS, RT, cc, lb)                                        \
-        cmpbn_mr(W(MS), W(DS), W(RT))                                       \
         CMJ(cc, lb)
 
 /* cmp (flags = S ? T)
@@ -2206,11 +2087,6 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
         MRM(0x07,    MOD(MS), REG(MS))   /* truncate IC with TYP below */   \
         AUX(SIB(MS), CMD(DS), EMITH(VAL(IT) & ((TYP(IT) << 6) - 1)))
 
-#define cmpbn_mi(MS, DS, IT)                                                \
-    ADR REX(0,       RXB(MS)) EMITB(0x80)                                   \
-        MRM(0x07,    MOD(MS), REG(MS))   /* truncate IC with TYP below */   \
-        AUX(SIB(MS), CMD(DS), EMITH(VAL(IT) & ((TYP(IT) << 6) - 1)))
-
 #define cmpbx_rr(RS, RT)                                                    \
         REX(RXB(RS), RXB(RT)) EMITB(0x3A)                                   \
         MRM(REG(RS), MOD(RT), REG(RT))
@@ -2220,17 +2096,7 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
         MRM(REG(RS), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-#define cmpbn_rm(RS, MT, DT)                                                \
-    ADR REX(RXB(RS), RXB(MT)) EMITB(0x3A)                                   \
-        MRM(REG(RS), MOD(MT), REG(MT))                                      \
-        AUX(SIB(MT), CMD(DT), EMPTY)
-
 #define cmpbx_mr(MS, DS, RT)                                                \
-    ADR REX(RXB(RT), RXB(MS)) EMITB(0x38)                                   \
-        MRM(REG(RT), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define cmpbn_mr(MS, DS, RT)                                                \
     ADR REX(RXB(RT), RXB(MS)) EMITB(0x38)                                   \
         MRM(REG(RT), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
