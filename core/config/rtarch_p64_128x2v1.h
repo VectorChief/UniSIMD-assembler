@@ -1615,28 +1615,28 @@
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x41820008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x41820008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x41820008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x41820008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -1669,28 +1669,28 @@
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x40820008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x40820008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x40820008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x40820008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -1723,28 +1723,28 @@
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x41800008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x41800008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x41800008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x41800008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -1777,28 +1777,28 @@
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         EMITW(0x41800008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         EMITW(0x41800008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         EMITW(0x41800008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         EMITW(0x41800008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -1831,28 +1831,28 @@
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x40810008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x40810008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x40810008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x40810008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -1885,28 +1885,28 @@
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         EMITW(0x40810008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         EMITW(0x40810008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         EMITW(0x40810008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         EMITW(0x40810008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -1939,28 +1939,28 @@
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x41810008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x41810008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x41810008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x41810008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -1993,28 +1993,28 @@
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         EMITW(0x41810008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         EMITW(0x41810008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         EMITW(0x41810008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         EMITW(0x41810008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -2047,28 +2047,28 @@
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x40800008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x40800008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x40800008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
         EMITW(0x40800008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -2101,28 +2101,28 @@
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         EMITW(0x40800008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         EMITW(0x40800008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         EMITW(0x40800008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
         EMITW(0x40800008)                                                   \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
