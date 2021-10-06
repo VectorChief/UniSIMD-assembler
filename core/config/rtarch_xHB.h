@@ -20,25 +20,25 @@
  *
  * Recommended naming scheme for instructions:
  *
- * cmdhx_ri - applies [cmd] to [r]egister from [i]mmediate
- * cmdhx_mi - applies [cmd] to [m]emory   from [i]mmediate
- * cmdhx_rz - applies [cmd] to [r]egister from [z]ero-arg
- * cmdhx_mz - applies [cmd] to [m]emory   from [z]ero-arg
+ * cmdxx_ri - applies [cmd] to [r]egister from [i]mmediate
+ * cmdxx_mi - applies [cmd] to [m]emory   from [i]mmediate
+ * cmdxx_rz - applies [cmd] to [r]egister from [z]ero-arg
+ * cmdxx_mz - applies [cmd] to [m]emory   from [z]ero-arg
  *
- * cmdhx_rm - applies [cmd] to [r]egister from [m]emory
- * cmdhx_ld - applies [cmd] as above
- * cmdhx_mr - applies [cmd] to [m]emory   from [r]egister
- * cmdhx_st - applies [cmd] as above (arg list as cmdhx_ld)
+ * cmdxx_rm - applies [cmd] to [r]egister from [m]emory
+ * cmdxx_ld - applies [cmd] as above
+ * cmdxx_mr - applies [cmd] to [m]emory   from [r]egister
+ * cmdxx_st - applies [cmd] as above (arg list as cmdxx_ld)
  *
- * cmdhx_rr - applies [cmd] to [r]egister from [r]egister
- * cmdhx_mm - applies [cmd] to [m]emory   from [m]emory
- * cmdhx_rx - applies [cmd] to [r]egister (one-operand cmd)
- * cmdhx_mx - applies [cmd] to [m]emory   (one-operand cmd)
+ * cmdxx_rr - applies [cmd] to [r]egister from [r]egister
+ * cmdxx_mm - applies [cmd] to [m]emory   from [m]emory
+ * cmdxx_rx - applies [cmd] to [r]egister (one-operand cmd)
+ * cmdxx_mx - applies [cmd] to [m]emory   (one-operand cmd)
  *
- * cmdhx_rx - applies [cmd] to [r]egister from x-register
- * cmdhx_mx - applies [cmd] to [m]emory   from x-register
- * cmdhx_xr - applies [cmd] to x-register from [r]egister
- * cmdhx_xm - applies [cmd] to x-register from [m]emory
+ * cmdxx_rx - applies [cmd] to [r]egister from x-register
+ * cmdxx_mx - applies [cmd] to [m]emory   from x-register
+ * cmdxx_xr - applies [cmd] to x-register from [r]egister
+ * cmdxx_xm - applies [cmd] to x-register from [m]emory
  *
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
@@ -46,6 +46,9 @@
  * cmd**Z** - applies [cmd] while setting condition flags, [Z] - zero flag.
  * Regular cmd*x_**, cmd*n_** instructions may or may not set flags depending
  * on the target architecture, thus no assumptions can be made for jezxx/jnzxx.
+ *
+ * 16/8-bit subsets are both self-consistent within themselves, their results
+ * cannot be used in larger subsets without proper sign/zero-extend bridges.
  *
  * Interpretation of instruction parameters:
  *
@@ -99,7 +102,7 @@ ADR ESC REX(0,       RXB(MD)) EMITB(0xC7)                                   \
         AUX(SIB(MD), CMD(DD), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define movhx_rr(RD, RS)                                                    \
-        REX(RXB(RD), RXB(RS)) EMITB(0x8B)                                   \
+    ESC REX(RXB(RD), RXB(RS)) EMITB(0x8B)                                   \
         MRM(REG(RD), MOD(RS), REG(RS))
 
 #define movhx_ld(RD, MS, DS)                                                \
@@ -145,7 +148,7 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0x81)                                   \
         AUX(SIB(MG), CMD(DG), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define andhxZrr(RG, RS)                                                    \
-        REX(RXB(RG), RXB(RS)) EMITB(0x23)                                   \
+    ESC REX(RXB(RG), RXB(RS)) EMITB(0x23)                                   \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define andhxZld(RG, MS, DS)                                                \
@@ -249,7 +252,7 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0x81)                                   \
         AUX(SIB(MG), CMD(DG), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define orrhxZrr(RG, RS)                                                    \
-        REX(RXB(RG), RXB(RS)) EMITB(0x0B)                                   \
+    ESC REX(RXB(RG), RXB(RS)) EMITB(0x0B)                                   \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define orrhxZld(RG, MS, DS)                                                \
@@ -343,7 +346,7 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0x81)                                   \
         AUX(SIB(MG), CMD(DG), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define xorhxZrr(RG, RS)                                                    \
-        REX(RXB(RG), RXB(RS)) EMITB(0x33)                                   \
+    ESC REX(RXB(RG), RXB(RS)) EMITB(0x33)                                   \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define xorhxZld(RG, MS, DS)                                                \
@@ -363,7 +366,7 @@ ADR ESC REX(RXB(RS), RXB(MG)) EMITB(0x31)                                   \
  * set-flags: no */
 
 #define nothx_rx(RG)                                                        \
-        REX(0,       RXB(RG)) EMITB(0xF7)                                   \
+    ESC REX(0,       RXB(RG)) EMITB(0xF7)                                   \
         MRM(0x02,    MOD(RG), REG(RG))
 
 #define nothx_mx(MG, DG)                                                    \
@@ -382,7 +385,7 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF7)                                   \
 
 
 #define neghxZrx(RG)                                                        \
-        REX(0,       RXB(RG)) EMITB(0xF7)                                   \
+    ESC REX(0,       RXB(RG)) EMITB(0xF7)                                   \
         MRM(0x03,    MOD(RG), REG(RG))
 
 #define neghxZmx(MG, DG)                                                    \
@@ -423,7 +426,7 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0x81)                                   \
         AUX(SIB(MG), CMD(DG), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define addhxZrr(RG, RS)                                                    \
-        REX(RXB(RG), RXB(RS)) EMITB(0x03)                                   \
+    ESC REX(RXB(RG), RXB(RS)) EMITB(0x03)                                   \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define addhxZld(RG, MS, DS)                                                \
@@ -472,7 +475,7 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0x81)                                   \
         AUX(SIB(MG), CMD(DG), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define subhxZrr(RG, RS)                                                    \
-        REX(RXB(RG), RXB(RS)) EMITB(0x2B)                                   \
+    ESC REX(RXB(RG), RXB(RS)) EMITB(0x2B)                                   \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define subhxZld(RG, MS, DS)                                                \
@@ -492,18 +495,8 @@ ADR ESC REX(RXB(RS), RXB(MG)) EMITB(0x29)                                   \
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shlhx_rx(RG)                     /* reads Recx for shift count */   \
         shlhxZrx(W(RG))
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shlhx_rx(RG)                     /* reads Recx for shift count */   \
-        VEX(RXB(RG), RXB(RG),    0x01, 0, 1, 2) EMITB(0xF7)                 \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shlhx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shlhxZmx(W(MG), W(DG))
@@ -514,18 +507,8 @@ ADR ESC REX(RXB(RS), RXB(MG)) EMITB(0x29)                                   \
 #define shlhx_mi(MG, DG, IS)                                                \
         shlhxZmi(W(MG), W(DG), W(IS))
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shlhx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         shlhxZrr(W(RG), W(RS))
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shlhx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        VEX(RXB(RG), RXB(RG), REN(RS), 0, 1, 2) EMITB(0xF7)                 \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shlhx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         shlhxZld(W(RG), W(MS), W(DS))
@@ -538,7 +521,7 @@ ADR ESC REX(RXB(RS), RXB(MG)) EMITB(0x29)                                   \
 
 
 #define shlhxZrx(RG)                     /* reads Recx for shift count */   \
-        REX(0,       RXB(RG)) EMITB(0xD3)                                   \
+    ESC REX(0,       RXB(RG)) EMITB(0xD3)                                   \
         MRM(0x04,    MOD(RG), REG(RG))                                      \
 
 #define shlhxZmx(MG, DG)                 /* reads Recx for shift count */   \
@@ -547,7 +530,7 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xD3)                                   \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
 #define shlhxZri(RG, IS)                                                    \
-        REX(0,       RXB(RG)) EMITB(0xC1)                                   \
+    ESC REX(0,       RXB(RG)) EMITB(0xC1)                                   \
         MRM(0x04,    MOD(RG), REG(RG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
@@ -581,18 +564,8 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xC1)                                   \
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shrhx_rx(RG)                     /* reads Recx for shift count */   \
         shrhxZrx(W(RG))
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shrhx_rx(RG)                     /* reads Recx for shift count */   \
-        VEX(RXB(RG), RXB(RG),    0x01, 0, 3, 2) EMITB(0xF7)                 \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shrhx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrhxZmx(W(MG), W(DG))
@@ -603,18 +576,8 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xC1)                                   \
 #define shrhx_mi(MG, DG, IS)                                                \
         shrhxZmi(W(MG), W(DG), W(IS))
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shrhx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         shrhxZrr(W(RG), W(RS))
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shrhx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        VEX(RXB(RG), RXB(RG), REN(RS), 0, 3, 2) EMITB(0xF7)                 \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shrhx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         shrhxZld(W(RG), W(MS), W(DS))
@@ -627,7 +590,7 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xC1)                                   \
 
 
 #define shrhxZrx(RG)                     /* reads Recx for shift count */   \
-        REX(0,       RXB(RG)) EMITB(0xD3)                                   \
+    ESC REX(0,       RXB(RG)) EMITB(0xD3)                                   \
         MRM(0x05,    MOD(RG), REG(RG))                                      \
 
 #define shrhxZmx(MG, DG)                 /* reads Recx for shift count */   \
@@ -636,7 +599,7 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xD3)                                   \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
 #define shrhxZri(RG, IS)                                                    \
-        REX(0,       RXB(RG)) EMITB(0xC1)                                   \
+    ESC REX(0,       RXB(RG)) EMITB(0xC1)                                   \
         MRM(0x05,    MOD(RG), REG(RG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
@@ -757,7 +720,7 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xC1)                                   \
         AUX(EMPTY,   EMPTY,   EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define mulhx_rr(RG, RS)                                                    \
-        REX(RXB(RG), RXB(RS)) EMITB(0x0F) EMITB(0xAF)                       \
+    ESC REX(RXB(RG), RXB(RS)) EMITB(0x0F) EMITB(0xAF)                       \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define mulhx_ld(RG, MS, DS)                                                \
@@ -784,13 +747,6 @@ ADR ESC REX(0,       RXB(MS)) EMITB(0xF7)                                   \
 ADR ESC REX(0,       RXB(MS)) EMITB(0xF7)                                   \
         MRM(0x05,    MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
-
-
-#define mulhp_xr(RS)     /* Reax is in/out, prepares Redx for divhn_x* */   \
-        mulhn_xr(W(RS))       /* product must not exceed operands size */
-
-#define mulhp_xm(MS, DS) /* Reax is in/out, prepares Redx for divhn_x* */   \
-        mulhn_xm(W(MS), W(DS))/* product must not exceed operands size */
 
 /* div (G = G / S)
  * set-flags: undefined */
@@ -887,15 +843,6 @@ ADR ESC REX(0,       RXB(MS)) EMITB(0xF7)                                   \
 ADR ESC REX(0,       RXB(MS)) EMITB(0xF7)                                   \
         MRM(0x07,    MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
-
-
-#define divhp_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divhn_xr(W(RS))              /* destroys Redx, Xmm0 (in ARMv7) */   \
-                                     /* 24-bit int (fp32 div in ARMv7) */
-
-#define divhp_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divhn_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
-                                     /* 24-bit int (fp32 div in ARMv7) */
 
 /* rem (G = G % S)
  * set-flags: undefined */
@@ -1092,19 +1039,19 @@ ADR ESC REX(RXB(RT), RXB(MS)) EMITB(0x39)                                   \
 #define movbx_ri(RD, IS)                                                    \
         REX(0,       RXB(RD)) EMITB(0xC6)                                   \
         MRM(0x00,    MOD(RD), REG(RD))   /* truncate IC with TYP below */   \
-        AUX(EMPTY,   EMPTY,   EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define movbx_mi(MD, DD, IS)                                                \
     ADR REX(0,       RXB(MD)) EMITB(0xC6)                                   \
         MRM(0x00,    MOD(MD), REG(MD))   /* truncate IC with TYP below */   \
-        AUX(SIB(MD), CMD(DD), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
+        AUX(SIB(MD), CMD(DD), EMITB(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define movbx_rr(RD, RS)                                                    \
-        REX(RXB(RD), RXB(RS)) EMITB(0x8B)                                   \
+        REX(RXB(RD), RXB(RS)) EMITB(0x8A)                                   \
         MRM(REG(RD), MOD(RS), REG(RS))
 
 #define movbx_ld(RD, MS, DS)                                                \
-    ADR REW(RXB(RD), RXB(MS)) EMITB(0x0F) EMITB(0xB6)                       \
+    ADR REX(RXB(RD), RXB(MS)) EMITB(0x8A)                                   \
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -1138,12 +1085,12 @@ ADR ESC REX(RXB(RT), RXB(MS)) EMITB(0x39)                                   \
 #define andbxZri(RG, IS)                                                    \
         REX(0,       RXB(RG)) EMITB(0x80)                                   \
         MRM(0x04,    MOD(RG), REG(RG))   /* truncate IC with TYP below */   \
-        AUX(EMPTY,   EMPTY,   EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define andbxZmi(MG, DG, IS)                                                \
     ADR REX(0,       RXB(MG)) EMITB(0x80)                                   \
         MRM(0x04,    MOD(MG), REG(MG))   /* truncate IC with TYP below */   \
-        AUX(SIB(MG), CMD(DG), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
+        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define andbxZrr(RG, RS)                                                    \
         REX(RXB(RG), RXB(RS)) EMITB(0x22)                                   \
@@ -1242,12 +1189,12 @@ ADR ESC REX(RXB(RT), RXB(MS)) EMITB(0x39)                                   \
 #define orrbxZri(RG, IS)                                                    \
         REX(0,       RXB(RG)) EMITB(0x80)                                   \
         MRM(0x01,    MOD(RG), REG(RG))   /* truncate IC with TYP below */   \
-        AUX(EMPTY,   EMPTY,   EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define orrbxZmi(MG, DG, IS)                                                \
     ADR REX(0,       RXB(MG)) EMITB(0x80)                                   \
         MRM(0x01,    MOD(MG), REG(MG))   /* truncate IC with TYP below */   \
-        AUX(SIB(MG), CMD(DG), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
+        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define orrbxZrr(RG, RS)                                                    \
         REX(RXB(RG), RXB(RS)) EMITB(0x0A)                                   \
@@ -1336,12 +1283,12 @@ ADR ESC REX(RXB(RT), RXB(MS)) EMITB(0x39)                                   \
 #define xorbxZri(RG, IS)                                                    \
         REX(0,       RXB(RG)) EMITB(0x80)                                   \
         MRM(0x06,    MOD(RG), REG(RG))   /* truncate IC with TYP below */   \
-        AUX(EMPTY,   EMPTY,   EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define xorbxZmi(MG, DG, IS)                                                \
     ADR REX(0,       RXB(MG)) EMITB(0x80)                                   \
         MRM(0x06,    MOD(MG), REG(MG))   /* truncate IC with TYP below */   \
-        AUX(SIB(MG), CMD(DG), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
+        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define xorbxZrr(RG, RS)                                                    \
         REX(RXB(RG), RXB(RS)) EMITB(0x32)                                   \
@@ -1368,7 +1315,7 @@ ADR ESC REX(RXB(RT), RXB(MS)) EMITB(0x39)                                   \
         MRM(0x02,    MOD(RG), REG(RG))
 
 #define notbx_mx(MG, DG)                                                    \
-ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
+    ADR REX(0,       RXB(MG)) EMITB(0xF6)                                   \
         MRM(0x02,    MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
@@ -1387,7 +1334,7 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
         MRM(0x03,    MOD(RG), REG(RG))
 
 #define negbxZmx(MG, DG)                                                    \
-ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
+    ADR REX(0,       RXB(MG)) EMITB(0xF6)                                   \
         MRM(0x03,    MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
@@ -1416,12 +1363,12 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
 #define addbxZri(RG, IS)                                                    \
         REX(0,       RXB(RG)) EMITB(0x80)                                   \
         MRM(0x00,    MOD(RG), REG(RG))   /* truncate IC with TYP below */   \
-        AUX(EMPTY,   EMPTY,   EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define addbxZmi(MG, DG, IS)                                                \
     ADR REX(0,       RXB(MG)) EMITB(0x80)                                   \
         MRM(0x00,    MOD(MG), REG(MG))   /* truncate IC with TYP below */   \
-        AUX(SIB(MG), CMD(DG), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
+        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define addbxZrr(RG, RS)                                                    \
         REX(RXB(RG), RXB(RS)) EMITB(0x02)                                   \
@@ -1465,12 +1412,12 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
 #define subbxZri(RG, IS)                                                    \
         REX(0,       RXB(RG)) EMITB(0x80)                                   \
         MRM(0x05,    MOD(RG), REG(RG))   /* truncate IC with TYP below */   \
-        AUX(EMPTY,   EMPTY,   EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define subbxZmi(MG, DG, IS)                                                \
     ADR REX(0,       RXB(MG)) EMITB(0x80)                                   \
         MRM(0x05,    MOD(MG), REG(MG))   /* truncate IC with TYP below */   \
-        AUX(SIB(MG), CMD(DG), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
+        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define subbxZrr(RG, RS)                                                    \
         REX(RXB(RG), RXB(RS)) EMITB(0x2A)                                   \
@@ -1493,18 +1440,8 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shlbx_rx(RG)                     /* reads Recx for shift count */   \
         shlbxZrx(W(RG))
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shlbx_rx(RG)                     /* reads Recx for shift count */   \
-        VEX(RXB(RG), RXB(RG),    0x01, 0, 1, 2) EMITB(0xF7)                 \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shlbx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shlbxZmx(W(MG), W(DG))
@@ -1515,18 +1452,8 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
 #define shlbx_mi(MG, DG, IS)                                                \
         shlbxZmi(W(MG), W(DG), W(IS))
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shlbx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         shlbxZrr(W(RG), W(RS))
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shlbx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        VEX(RXB(RG), RXB(RG), REN(RS), 0, 1, 2) EMITB(0xF7)                 \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shlbx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         shlbxZld(W(RG), W(MS), W(DS))
@@ -1580,21 +1507,10 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
 
 /* shr (G = G >> S)
  * set-flags: undefined (*_*), yes (*Z*)
-
  * for maximum compatibility: shift count must be modulo elem-size */
-
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
 
 #define shrbx_rx(RG)                     /* reads Recx for shift count */   \
         shrbxZrx(W(RG))
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shrbx_rx(RG)                     /* reads Recx for shift count */   \
-        VEX(RXB(RG), RXB(RG),    0x01, 0, 3, 2) EMITB(0xF7)                 \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shrbx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrbxZmx(W(MG), W(DG))
@@ -1605,18 +1521,8 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
 #define shrbx_mi(MG, DG, IS)                                                \
         shrbxZmi(W(MG), W(DG), W(IS))
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shrbx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         shrbxZrr(W(RG), W(RS))
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shrbx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        VEX(RXB(RG), RXB(RG), REN(RS), 0, 3, 2) EMITB(0xF7)                 \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shrbx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         shrbxZld(W(RG), W(MS), W(DS))
@@ -1759,15 +1665,15 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
         AUX(EMPTY,   EMPTY,   EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define mulbx_rr(RG, RS)                                                    \
-        REX(RXB(RG), RXB(RS)) EMITB(0x0F) EMITB(0xAF)                       \
+    ESC REX(RXB(RG), RXB(RS)) EMITB(0x0F) EMITB(0xAF)                       \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define mulbx_ld(RG, MS, DS)                                                \
-        stack_st(Reax)                                                      \
-        movbx_rr(Reax, W(RG))                                               \
-        mulbx_xm(W(MS), W(DS))                                              \
-        movbx_rr(W(RG), Reax)                                               \
-        stack_ld(Reax)
+    ADR REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xB6)                       \
+        MRM(0x07,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+    ESC REX(RXB(RG),       1) EMITB(0x0F) EMITB(0xAF)                       \
+        MRM(REG(RG),    0x03,    0x07)
 
 
 #define mulbx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
@@ -1796,13 +1702,6 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
         AUX(SIB(MS), CMD(DS), EMPTY)                                        \
         EMITB(0x8A)                                                         \
         MRM(0x02,    0x03,    0x04)
-
-
-#define mulbp_xr(RS)     /* Reax is in/out, prepares Redx for divbn_x* */   \
-        mulbn_xr(W(RS))       /* product must not exceed operands size */
-
-#define mulbp_xm(MS, DS) /* Reax is in/out, prepares Redx for divbn_x* */   \
-        mulbn_xm(W(MS), W(DS))/* product must not exceed operands size */
 
 /* div (G = G / S)
  * set-flags: undefined */
@@ -1904,15 +1803,6 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
         AUX(SIB(MS), CMD(DS), EMPTY)                                        \
         EMITB(0x8A)                                                         \
         MRM(0x02,    0x03,    0x04)
-
-
-#define divbp_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divbn_xr(W(RS))              /* destroys Redx, Xmm0 (in ARMv7) */   \
-                                     /* 24-bit int (fp32 div in ARMv7) */
-
-#define divbp_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divbn_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
-                                     /* 24-bit int (fp32 div in ARMv7) */
 
 /* rem (G = G % S)
  * set-flags: undefined */
@@ -2080,12 +1970,12 @@ ADR ESC REX(0,       RXB(MG)) EMITB(0xF6)                                   \
 #define cmpbx_ri(RS, IT)                                                    \
         REX(0,       RXB(RS)) EMITB(0x80)                                   \
         MRM(0x07,    MOD(RS), REG(RS))   /* truncate IC with TYP below */   \
-        AUX(EMPTY,   EMPTY,   EMITH(VAL(IT) & ((TYP(IT) << 6) - 1)))
+        AUX(EMPTY,   EMPTY,   EMITB(VAL(IT) & ((TYP(IT) << 6) - 1)))
 
 #define cmpbx_mi(MS, DS, IT)                                                \
     ADR REX(0,       RXB(MS)) EMITB(0x80)                                   \
         MRM(0x07,    MOD(MS), REG(MS))   /* truncate IC with TYP below */   \
-        AUX(SIB(MS), CMD(DS), EMITH(VAL(IT) & ((TYP(IT) << 6) - 1)))
+        AUX(SIB(MS), CMD(DS), EMITB(VAL(IT) & ((TYP(IT) << 6) - 1)))
 
 #define cmpbx_rr(RS, RT)                                                    \
         REX(RXB(RS), RXB(RT)) EMITB(0x3A)                                   \

@@ -624,10 +624,10 @@
         EMITW(0x5400043E | MSM(REG(RD), REG(RS), 0x00))
 
 #define movbn_rr(RD, RS)      /* move  8-bit to 32/64-bit w/ sign-extend */ \
-        EMITW(0x7C000774 | MSM(REG(RD), REG(RS), 0x00)))
+        EMITW(0x7C000774 | MSM(REG(RD), REG(RS), 0x00))
 
 #define movbz_rr(RD, RS)      /* move  8-bit to 32/64-bit w/ zero-extend */ \
-        EMITW(0x5400063E | MSM(REG(RD), REG(RS), 0x00)))
+        EMITW(0x5400063E | MSM(REG(RD), REG(RS), 0x00))
 
 #define movwx_ld(RD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \

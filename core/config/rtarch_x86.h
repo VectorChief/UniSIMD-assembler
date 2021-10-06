@@ -1857,11 +1857,11 @@
         AUX(SIB(MD), CMD(DD), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define movhx_rr(RD, RS)                                                    \
-        EMITB(0x8B)                                                         \
+    ESC EMITB(0x8B)                                                         \
         MRM(REG(RD), MOD(RS), REG(RS))
 
 #define movhx_ld(RD, MS, DS)                                                \
-        EMITB(0x0F) EMITB(0xB7)                                             \
+    ESC EMITB(0x8B)                                                         \
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -1903,7 +1903,7 @@
         AUX(SIB(MG), CMD(DG), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define andhxZrr(RG, RS)                                                    \
-        EMITB(0x23)                                                         \
+    ESC EMITB(0x23)                                                         \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define andhxZld(RG, MS, DS)                                                \
@@ -2007,7 +2007,7 @@
         AUX(SIB(MG), CMD(DG), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define orrhxZrr(RG, RS)                                                    \
-        EMITB(0x0B)                                                         \
+    ESC EMITB(0x0B)                                                         \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define orrhxZld(RG, MS, DS)                                                \
@@ -2101,7 +2101,7 @@
         AUX(SIB(MG), CMD(DG), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define xorhxZrr(RG, RS)                                                    \
-        EMITB(0x33)                                                         \
+    ESC EMITB(0x33)                                                         \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define xorhxZld(RG, MS, DS)                                                \
@@ -2121,7 +2121,7 @@
  * set-flags: no */
 
 #define nothx_rx(RG)                                                        \
-        EMITB(0xF7)                                                         \
+    ESC EMITB(0xF7)                                                         \
         MRM(0x02,    MOD(RG), REG(RG))
 
 #define nothx_mx(MG, DG)                                                    \
@@ -2140,7 +2140,7 @@
 
 
 #define neghxZrx(RG)                                                        \
-        EMITB(0xF7)                                                         \
+    ESC EMITB(0xF7)                                                         \
         MRM(0x03,    MOD(RG), REG(RG))
 
 #define neghxZmx(MG, DG)                                                    \
@@ -2181,7 +2181,7 @@
         AUX(SIB(MG), CMD(DG), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define addhxZrr(RG, RS)                                                    \
-        EMITB(0x03)                                                         \
+    ESC EMITB(0x03)                                                         \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define addhxZld(RG, MS, DS)                                                \
@@ -2230,7 +2230,7 @@
         AUX(SIB(MG), CMD(DG), EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define subhxZrr(RG, RS)                                                    \
-        EMITB(0x2B)                                                         \
+    ESC EMITB(0x2B)                                                         \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define subhxZld(RG, MS, DS)                                                \
@@ -2250,18 +2250,8 @@
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shlhx_rx(RG)                     /* reads Recx for shift count */   \
         shlhxZrx(W(RG))
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shlhx_rx(RG)                     /* reads Recx for shift count */   \
-        VEX(0x01,    0, 1, 2) EMITB(0xF7)                                   \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shlhx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shlhxZmx(W(MG), W(DG))
@@ -2272,18 +2262,8 @@
 #define shlhx_mi(MG, DG, IS)                                                \
         shlhxZmi(W(MG), W(DG), W(IS))
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shlhx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         shlhxZrr(W(RG), W(RS))
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shlhx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        VEX(REG(RS), 0, 1, 2) EMITB(0xF7)                                   \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shlhx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         shlhxZld(W(RG), W(MS), W(DS))
@@ -2296,7 +2276,7 @@
 
 
 #define shlhxZrx(RG)                     /* reads Recx for shift count */   \
-        EMITB(0xD3)                                                         \
+    ESC EMITB(0xD3)                                                         \
         MRM(0x04,    MOD(RG), REG(RG))                                      \
 
 #define shlhxZmx(MG, DG)                 /* reads Recx for shift count */   \
@@ -2305,7 +2285,7 @@
         AUX(SIB(MG), CMD(DG), EMPTY)
 
 #define shlhxZri(RG, IS)                                                    \
-        EMITB(0xC1)                                                         \
+    ESC EMITB(0xC1)                                                         \
         MRM(0x04,    MOD(RG), REG(RG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
@@ -2339,18 +2319,8 @@
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shrhx_rx(RG)                     /* reads Recx for shift count */   \
         shrhxZrx(W(RG))
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shrhx_rx(RG)                     /* reads Recx for shift count */   \
-        VEX(0x01,    0, 3, 2) EMITB(0xF7)                                   \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shrhx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrhxZmx(W(MG), W(DG))
@@ -2361,18 +2331,8 @@
 #define shrhx_mi(MG, DG, IS)                                                \
         shrhxZmi(W(MG), W(DG), W(IS))
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shrhx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         shrhxZrr(W(RG), W(RS))
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shrhx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        VEX(REG(RS), 0, 3, 2) EMITB(0xF7)                                   \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shrhx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         shrhxZld(W(RG), W(MS), W(DS))
@@ -2385,7 +2345,7 @@
 
 
 #define shrhxZrx(RG)                     /* reads Recx for shift count */   \
-        EMITB(0xD3)                                                         \
+    ESC EMITB(0xD3)                                                         \
         MRM(0x05,    MOD(RG), REG(RG))                                      \
 
 #define shrhxZmx(MG, DG)                 /* reads Recx for shift count */   \
@@ -2394,7 +2354,7 @@
         AUX(SIB(MG), CMD(DG), EMPTY)
 
 #define shrhxZri(RG, IS)                                                    \
-        EMITB(0xC1)                                                         \
+    ESC EMITB(0xC1)                                                         \
         MRM(0x05,    MOD(RG), REG(RG))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
 
@@ -2515,7 +2475,7 @@
         AUX(EMPTY,   EMPTY,   EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define mulhx_rr(RG, RS)                                                    \
-        EMITB(0x0F) EMITB(0xAF)                                             \
+    ESC EMITB(0x0F) EMITB(0xAF)                                             \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define mulhx_ld(RG, MS, DS)                                                \
@@ -2542,13 +2502,6 @@
     ESC EMITB(0xF7)                                                         \
         MRM(0x05,    MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
-
-
-#define mulhp_xr(RS)     /* Reax is in/out, prepares Redx for divhn_x* */   \
-        mulhn_xr(W(RS))       /* product must not exceed operands size */
-
-#define mulhp_xm(MS, DS) /* Reax is in/out, prepares Redx for divhn_x* */   \
-        mulhn_xm(W(MS), W(DS))/* product must not exceed operands size */
 
 /* div (G = G / S)
  * set-flags: undefined */
@@ -2645,15 +2598,6 @@
     ESC EMITB(0xF7)                                                         \
         MRM(0x07,    MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
-
-
-#define divhp_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divhn_xr(W(RS))              /* destroys Redx, Xmm0 (in ARMv7) */   \
-                                     /* 24-bit int (fp32 div in ARMv7) */
-
-#define divhp_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divhn_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
-                                     /* 24-bit int (fp32 div in ARMv7) */
 
 /* rem (G = G % S)
  * set-flags: undefined */
@@ -2858,11 +2802,11 @@
         AUX(SIB(MD), CMD(DD), EMITB(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define movbx_rr(RD, RS)                                                    \
-        EMITB(0x8B)                                                         \
+        EMITB(0x8A)                                                         \
         MRM(REG(RD), MOD(RS), REG(RS))
 
 #define movbx_ld(RD, MS, DS)                                                \
-        EMITB(0x0F) EMITB(0xB6)                                             \
+        EMITB(0x8A)                                                         \
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -3251,18 +3195,8 @@
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shlbx_rx(RG)                     /* reads Recx for shift count */   \
         shlbxZrx(W(RG))
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shlbx_rx(RG)                     /* reads Recx for shift count */   \
-        VEX(0x01,    0, 1, 2) EMITB(0xF7)                                   \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shlbx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shlbxZmx(W(MG), W(DG))
@@ -3273,18 +3207,8 @@
 #define shlbx_mi(MG, DG, IS)                                                \
         shlbxZmi(W(MG), W(DG), W(IS))
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shlbx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         shlbxZrr(W(RG), W(RS))
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shlbx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        VEX(REG(RS), 0, 1, 2) EMITB(0xF7)                                   \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shlbx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         shlbxZld(W(RG), W(MS), W(DS))
@@ -3340,18 +3264,8 @@
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shrbx_rx(RG)                     /* reads Recx for shift count */   \
         shrbxZrx(W(RG))
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shrbx_rx(RG)                     /* reads Recx for shift count */   \
-        VEX(0x01,    0, 3, 2) EMITB(0xF7)                                   \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shrbx_mx(MG, DG)                 /* reads Recx for shift count */   \
         shrbxZmx(W(MG), W(DG))
@@ -3362,18 +3276,8 @@
 #define shrbx_mi(MG, DG, IS)                                                \
         shrbxZmi(W(MG), W(DG), W(IS))
 
-#if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
-
 #define shrbx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
         shrbxZrr(W(RG), W(RS))
-
-#else /* RT_BASE_COMPAT_BMI >= 2 */
-
-#define shrbx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        VEX(REG(RS), 0, 3, 2) EMITB(0xF7)                                   \
-        MRM(REG(RG), MOD(RG), REG(RG))
-
-#endif /* RT_BASE_COMPAT_BMI >= 2 */
 
 #define shrbx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         shrbxZld(W(RG), W(MS), W(DS))
@@ -3516,15 +3420,16 @@
         AUX(EMPTY,   EMPTY,   EMITH(VAL(IS) & ((TYP(IS) << 6) - 1)))
 
 #define mulbx_rr(RG, RS)                                                    \
-        EMITB(0x0F) EMITB(0xAF)                                             \
+    ESC EMITB(0x0F) EMITB(0xAF)                                             \
         MRM(REG(RG), MOD(RS), REG(RS))
 
 #define mulbx_ld(RG, MS, DS)                                                \
-        stack_st(Reax)                                                      \
-        movbx_rr(Reax, W(RG))                                               \
-        mulbx_xm(W(MS), W(DS))                                              \
-        movbx_rr(W(RG), Reax)                                               \
-        stack_ld(Reax)
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0xB6)                                             \
+        MRM(0x05,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        mulbx_rr(W(RG), Rebp)                                               \
+        stack_ld(Rebp)
 
 
 #define mulbx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
@@ -3553,13 +3458,6 @@
         AUX(SIB(MS), CMD(DS), EMPTY)                                        \
         EMITB(0x8A)                                                         \
         MRM(0x02,    0x03,    0x04)
-
-
-#define mulbp_xr(RS)     /* Reax is in/out, prepares Redx for divbn_x* */   \
-        mulbn_xr(W(RS))       /* product must not exceed operands size */
-
-#define mulbp_xm(MS, DS) /* Reax is in/out, prepares Redx for divbn_x* */   \
-        mulbn_xm(W(MS), W(DS))/* product must not exceed operands size */
 
 /* div (G = G / S)
  * set-flags: undefined */
@@ -3661,15 +3559,6 @@
         AUX(SIB(MS), CMD(DS), EMPTY)                                        \
         EMITB(0x8A)                                                         \
         MRM(0x02,    0x03,    0x04)
-
-
-#define divbp_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divbn_xr(W(RS))              /* destroys Redx, Xmm0 (in ARMv7) */   \
-                                     /* 24-bit int (fp32 div in ARMv7) */
-
-#define divbp_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        divbn_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
-                                     /* 24-bit int (fp32 div in ARMv7) */
 
 /* rem (G = G % S)
  * set-flags: undefined */
