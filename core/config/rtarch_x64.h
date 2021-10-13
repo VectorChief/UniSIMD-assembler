@@ -63,6 +63,10 @@
  * Regular cmd*x_**, cmd*n_** instructions may or may not set flags depending
  * on the target architecture, thus no assumptions can be made for jezxx/jnzxx.
  *
+ * 64/32-bit subsets are both self-consistent within themselves, 32-bit results
+ * cannot be used in 64-bit subset without proper sign/zero-extend bridges,
+ * cmdwn/wz bridges for 32-bit subset are provided in 64-bit headers.
+ *
  * Interpretation of instruction parameters:
  *
  * upper-case params have triplet structure and require W to pass-forward
@@ -727,7 +731,7 @@
 #define shlzxZmr(MG, DG, RS)                                                \
         shlzxZst(W(RS), W(MG), W(DG))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -831,6 +835,9 @@
 #define shrzxZmr(MG, DG, RS)                                                \
         shrzxZst(W(RS), W(MG), W(DG))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
 
@@ -1153,10 +1160,10 @@
         stack_ld(Reax)
 
 
-#define prezx_xx()          /* to be placed immediately prior divzx_x* */   \
+#define prezx_xx()   /* to be placed right before divzx_x* or remzx_xx */   \
         movzx_ri(Redx, IC(0))        /* to prepare Redx for int-divide */
 
-#define prezn_xx()          /* to be placed immediately prior divzn_x* */   \
+#define prezn_xx()   /* to be placed right before divzn_x* or remzn_xx */   \
         movzx_rr(Redx, Reax)         /* to prepare Redx for int-divide */   \
         shrzn_ri(Redx, IC(63))
 
@@ -1258,7 +1265,7 @@
         stack_ld(Redx)
 
 
-#define remzx_xx()          /* to be placed immediately prior divzx_x* */   \
+#define remzx_xx() /* to be placed before divzx_x*, but after prezx_xx */   \
                                      /* to prepare for rem calculation */
 
 #define remzx_xr(RS)        /* to be placed immediately after divzx_xr */   \
@@ -1268,7 +1275,7 @@
                                      /* to produce remainder Redx<-rem */
 
 
-#define remzn_xx()          /* to be placed immediately prior divzn_x* */   \
+#define remzn_xx() /* to be placed before divzn_x*, but after prezn_xx */   \
                                      /* to prepare for rem calculation */
 
 #define remzn_xr(RS)        /* to be placed immediately after divzn_xr */   \

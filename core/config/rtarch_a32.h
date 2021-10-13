@@ -65,6 +65,10 @@
  * Regular cmd*x_**, cmd*n_** instructions may or may not set flags depending
  * on the target architecture, thus no assumptions can be made for jezxx/jnzxx.
  *
+ * 64/32-bit subsets are both self-consistent within themselves, 32-bit results
+ * cannot be used in 64-bit subset without proper sign/zero-extend bridges,
+ * cmdwn/wz bridges for 32-bit subset are provided in 64-bit headers.
+ *
  * Interpretation of instruction parameters:
  *
  * upper-case params have triplet structure and require W to pass-forward
@@ -891,7 +895,7 @@
         EMITW(0x38C00000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
         EMITW(0x2B000000 | MRM(REG(RG), REG(RG), TMxx))
 
-#define addbxZld(RG, MS, DS)    /* add  8-bit to 32-bit with zero-extend */ \
+#define addbzZld(RG, MS, DS)    /* add  8-bit to 32-bit with zero-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x38400000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
         EMITW(0x2B000000 | MRM(REG(RG), REG(RG), TMxx))
@@ -1089,7 +1093,7 @@
 #define shlwxZmr(MG, DG, RS)                                                \
         shlwxZst(W(RS), W(MG), W(DG))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -1171,6 +1175,9 @@
 #define shrwxZmr(MG, DG, RS)                                                \
         shrwxZst(W(RS), W(MG), W(DG))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrwn_rx(RG)                     /* reads Recx for shift count */   \
         EMITW(0x1AC02800 | MRM(REG(RG), REG(RG), Tecx))
@@ -1427,10 +1434,10 @@
         EMITW(0x1AC00C00 | MRM(REG(RG), REG(RG), TMxx))
 
 
-#define prewx_xx()          /* to be placed immediately prior divwx_x* */   \
+#define prewx_xx()   /* to be placed right before divwx_x* or remwx_xx */   \
                                      /* to prepare Redx for int-divide */
 
-#define prewn_xx()          /* to be placed immediately prior divwn_x* */   \
+#define prewn_xx()   /* to be placed right before divwn_x* or remwn_xx */   \
                                      /* to prepare Redx for int-divide */
 
 
@@ -1495,7 +1502,7 @@
         EMITW(0x1B008000 | MRM(REG(RG), REG(RG), TMxx) | TIxx << 10)
 
 
-#define remwx_xx()          /* to be placed immediately prior divwx_x* */   \
+#define remwx_xx() /* to be placed before divwx_x*, but after prewx_xx */   \
         movwx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
 #define remwx_xr(RS)        /* to be placed immediately after divwx_xr */   \
@@ -1507,7 +1514,7 @@
                                                           /* Redx<-rem */
 
 
-#define remwn_xx()          /* to be placed immediately prior divwn_x* */   \
+#define remwn_xx() /* to be placed before divwn_x*, but after prewn_xx */   \
         movwx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
 #define remwn_xr(RS)        /* to be placed immediately after divwn_xr */   \
@@ -1531,6 +1538,10 @@
 #define neg_x   AM0
 #define add_x   AM1
 #define sub_x   AM2
+#define add_n   AM3
+#define sub_n   AM4
+#define add_z   AM5
+#define sub_z   AM6
 #define shl_x   AN0
 #define shr_x   AN1
 #define shr_n   AN2
@@ -1895,6 +1906,8 @@
 #define AM2(sz, sg) sub##sz##x##sg
 #define AM3(sz, sg) add##sz##n##sg
 #define AM4(sz, sg) sub##sz##n##sg
+#define AM5(sz, sg) add##sz##z##sg
+#define AM6(sz, sg) sub##sz##z##sg
 #define AN0(sz, sg) shl##sz##x##sg
 #define AN1(sz, sg) shr##sz##x##sg
 #define AN2(sz, sg) shr##sz##n##sg

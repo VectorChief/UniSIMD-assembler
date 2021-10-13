@@ -65,6 +65,10 @@
  * Regular cmd*x_**, cmd*n_** instructions may or may not set flags depending
  * on the target architecture, thus no assumptions can be made for jezxx/jnzxx.
  *
+ * 16/8-bit subsets are both self-consistent within themselves, their results
+ * cannot be used in larger subsets without proper sign/zero-extend bridges,
+ * cmdhn/hz and cmdbn/bz bridges for 16/8-bit are provided in 32-bit headers.
+ *
  * Interpretation of instruction parameters:
  *
  * upper-case params have triplet structure and require W to pass-forward
@@ -917,7 +921,7 @@
 #define shlwxZmr(MG, DG, RS)                                                \
         shlwxZst(W(RS), W(MG), W(DG))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -1006,6 +1010,9 @@
 #define shrwxZmr(MG, DG, RS)                                                \
         shrwxZst(W(RS), W(MG), W(DG))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
 
@@ -1331,10 +1338,10 @@
         stack_ld(Reax)
 
 
-#define prewx_xx()          /* to be placed immediately prior divwx_x* */   \
+#define prewx_xx()   /* to be placed right before divwx_x* or remwx_xx */   \
         movwx_ri(Redx, IC(0))        /* to prepare Redx for int-divide */
 
-#define prewn_xx()          /* to be placed immediately prior divwn_x* */   \
+#define prewn_xx()   /* to be placed right before divwn_x* or remwn_xx */   \
         movwx_rr(Redx, Reax)         /* to prepare Redx for int-divide */   \
         shrwn_ri(Redx, IC(31))
 
@@ -1436,7 +1443,7 @@
         stack_ld(Redx)
 
 
-#define remwx_xx()          /* to be placed immediately prior divwx_x* */   \
+#define remwx_xx() /* to be placed before divwx_x*, but after prewx_xx */   \
                                      /* to prepare for rem calculation */
 
 #define remwx_xr(RS)        /* to be placed immediately after divwx_xr */   \
@@ -1446,7 +1453,7 @@
                                      /* to produce remainder Redx<-rem */
 
 
-#define remwn_xx()          /* to be placed immediately prior divwn_x* */   \
+#define remwn_xx() /* to be placed before divwn_x*, but after prewn_xx */   \
                                      /* to prepare for rem calculation */
 
 #define remwn_xr(RS)        /* to be placed immediately after divwn_xr */   \
@@ -1468,6 +1475,10 @@
 #define neg_x   AM0
 #define add_x   AM1
 #define sub_x   AM2
+#define add_n   AM3
+#define sub_n   AM4
+#define add_z   AM5
+#define sub_z   AM6
 #define shl_x   AN0
 #define shr_x   AN1
 #define shr_n   AN2
@@ -2315,7 +2326,7 @@
 #define shlhxZmr(MG, DG, RS)                                                \
         shlhxZst(W(RS), W(MG), W(DG))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -2384,43 +2395,30 @@
 #define shrhxZmr(MG, DG, RS)                                                \
         shrhxZst(W(RS), W(MG), W(DG))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrhn_rx(RG)                     /* reads Recx for shift count */   \
-    ESC EMITB(0xD3)                                                         \
-        MRM(0x07,    MOD(RG), REG(RG))                                      \
+        shrhnZrx(W(RG))
 
 #define shrhn_mx(MG, DG)                 /* reads Recx for shift count */   \
-    ESC EMITB(0xD3)                                                         \
-        MRM(0x07,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DG), EMPTY)
+        shrhnZmx(W(MG), W(DG))
 
 #define shrhn_ri(RG, IS)                                                    \
-    ESC EMITB(0xC1)                                                         \
-        MRM(0x07,    MOD(RG), REG(RG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
+        shrhnZri(W(RG), W(IS))
 
 #define shrhn_mi(MG, DG, IS)                                                \
-    ESC EMITB(0xC1)                                                         \
-        MRM(0x07,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS)))
+        shrhnZmi(W(MG), W(DG), W(IS))
 
 #define shrhn_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        stack_st(Recx)                                                      \
-        movhx_rr(Recx, W(RS))                                               \
-        shrhn_rx(W(RG))                                                     \
-        stack_ld(Recx)
+        shrhnZrr(W(RG), W(RS))
 
 #define shrhn_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        stack_st(Recx)                                                      \
-        movhx_ld(Recx, W(MS), W(DS))                                        \
-        shrhn_rx(W(RG))                                                     \
-        stack_ld(Recx)
+        shrhnZld(W(RG), W(MS), W(DS))
 
 #define shrhn_st(RS, MG, DG)                                                \
-        stack_st(Recx)                                                      \
-        movhx_rr(Recx, W(RS))                                               \
-        shrhn_mx(W(MG), W(DG))                                              \
-        stack_ld(Recx)
+        shrhnZst(W(RS), W(MG), W(DG))
 
 #define shrhn_mr(MG, DG, RS)                                                \
         shrhn_st(W(RS), W(MG), W(DG))
@@ -2570,12 +2568,12 @@
         stack_ld(Reax)
 
 
-#define prehx_xx()          /* to be placed immediately prior divhx_x* */   \
+#define prehx_xx()   /* to be placed right before divhx_x* or remhx_xx */   \
         movhx_ri(Redx, IC(0))        /* to prepare Redx for int-divide */
 
-#define prehn_xx()          /* to be placed immediately prior divhn_x* */   \
+#define prehn_xx()   /* to be placed right before divhn_x* or remhn_xx */   \
         movhx_rr(Redx, Reax)         /* to prepare Redx for int-divide */   \
-        shrhn_ri(Redx, IC(31))
+        shrhn_ri(Redx, IC(15))
 
 
 #define divhx_xr(RS)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
@@ -2666,7 +2664,7 @@
         stack_ld(Redx)
 
 
-#define remhx_xx()          /* to be placed immediately prior divhx_x* */   \
+#define remhx_xx() /* to be placed before divhx_x*, but after prehx_xx */   \
                                      /* to prepare for rem calculation */
 
 #define remhx_xr(RS)        /* to be placed immediately after divhx_xr */   \
@@ -2676,7 +2674,7 @@
                                      /* to produce remainder Redx<-rem */
 
 
-#define remhn_xx()          /* to be placed immediately prior divhn_x* */   \
+#define remhn_xx() /* to be placed before divhn_x*, but after prehn_xx */   \
                                      /* to prepare for rem calculation */
 
 #define remhn_xr(RS)        /* to be placed immediately after divhn_xr */   \
@@ -2689,9 +2687,6 @@
  * set-flags: undefined
  * refer to individual instruction descriptions
  * to stay within special register limitations */
-
-#define add_n   AM3
-#define sub_n   AM4
 
      /* Definitions for arj's "op" and "cc" parameters
       * are provided in 32-bit rtarch_***.h files. */
@@ -3260,7 +3255,7 @@
 #define shlbxZmr(MG, DG, RS)                                                \
         shlbxZst(W(RS), W(MG), W(DG))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -3329,43 +3324,30 @@
 #define shrbxZmr(MG, DG, RS)                                                \
         shrbxZst(W(RS), W(MG), W(DG))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrbn_rx(RG)                     /* reads Recx for shift count */   \
-        EMITB(0xD2)                                                         \
-        MRM(0x07,    MOD(RG), REG(RG))                                      \
+        shrbnZrx(W(RG))
 
 #define shrbn_mx(MG, DG)                 /* reads Recx for shift count */   \
-        EMITB(0xD2)                                                         \
-        MRM(0x07,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DG), EMPTY)
+        shrbnZmx(W(MG), W(DG))
 
 #define shrbn_ri(RG, IS)                                                    \
-        EMITB(0xC0)                                                         \
-        MRM(0x07,    MOD(RG), REG(RG))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(VAL(IS)))
+        shrbnZri(W(RG), W(IS))
 
 #define shrbn_mi(MG, DG, IS)                                                \
-        EMITB(0xC0)                                                         \
-        MRM(0x07,    MOD(MG), REG(MG))                                      \
-        AUX(SIB(MG), CMD(DG), EMITB(VAL(IS)))
+        shrbnZmi(W(MG), W(DG), W(IS))
 
 #define shrbn_rr(RG, RS)       /* Recx cannot be used as first operand */   \
-        stack_st(Recx)                                                      \
-        movbx_rr(Recx, W(RS))                                               \
-        shrbn_rx(W(RG))                                                     \
-        stack_ld(Recx)
+        shrbnZrr(W(RG), W(RS))
 
 #define shrbn_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        stack_st(Recx)                                                      \
-        movbx_ld(Recx, W(MS), W(DS))                                        \
-        shrbn_rx(W(RG))                                                     \
-        stack_ld(Recx)
+        shrbnZld(W(RG), W(MS), W(DS))
 
 #define shrbn_st(RS, MG, DG)                                                \
-        stack_st(Recx)                                                      \
-        movbx_rr(Recx, W(RS))                                               \
-        shrbn_mx(W(MG), W(DG))                                              \
-        stack_ld(Recx)
+        shrbnZst(W(RS), W(MG), W(DG))
 
 #define shrbn_mr(MG, DG, RS)                                                \
         shrbn_st(W(RS), W(MG), W(DG))
@@ -3526,12 +3508,15 @@
         stack_ld(Reax)
 
 
-#define prebx_xx()          /* to be placed immediately prior divbx_x* */
+#define prebx_xx()   /* to be placed right before divbx_x* or rembx_xx */   \
+                                     /* to prepare Redx for int-divide */
 
-#define prebn_xx()          /* to be placed immediately prior divbn_x* */
+#define prebn_xx()   /* to be placed right before divbn_x* or rembn_xx */   \
+                                     /* to prepare Redx for int-divide */
 
 
 #define divbx_xr(RS)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+        movbz_rr(Reax, Reax)                                                \
         EMITB(0xF6)                                                         \
         MRM(0x06,    MOD(RS), REG(RS))                                      \
         AUX(EMPTY,   EMPTY,   EMPTY)                                        \
@@ -3539,6 +3524,7 @@
         MRM(0x02,    0x03,    0x04)
 
 #define divbx_xm(MS, DS) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+        movbz_rr(Reax, Reax)                                                \
         EMITB(0xF6)                                                         \
         MRM(0x06,    MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)                                        \
@@ -3547,6 +3533,7 @@
 
 
 #define divbn_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        movbn_rr(Reax, Reax)                                                \
         EMITB(0xF6)                                                         \
         MRM(0x07,    MOD(RS), REG(RS))                                      \
         AUX(EMPTY,   EMPTY,   EMPTY)                                        \
@@ -3554,6 +3541,7 @@
         MRM(0x02,    0x03,    0x04)
 
 #define divbn_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        movbn_rr(Reax, Reax)                                                \
         EMITB(0xF6)                                                         \
         MRM(0x07,    MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)                                        \
@@ -3627,7 +3615,7 @@
         stack_ld(Redx)
 
 
-#define rembx_xx()          /* to be placed immediately prior divbx_x* */   \
+#define rembx_xx() /* to be placed before divbx_x*, but after prebx_xx */   \
                                      /* to prepare for rem calculation */
 
 #define rembx_xr(RS)        /* to be placed immediately after divbx_xr */   \
@@ -3637,7 +3625,7 @@
                                      /* to produce remainder Redx<-rem */
 
 
-#define rembn_xx()          /* to be placed immediately prior divbn_x* */   \
+#define rembn_xx() /* to be placed before divbn_x*, but after prebn_xx */   \
                                      /* to prepare for rem calculation */
 
 #define rembn_xr(RS)        /* to be placed immediately after divbn_xr */   \
@@ -3651,38 +3639,35 @@
  * refer to individual instruction descriptions
  * to stay within special register limitations */
 
-#define add_n   AM3
-#define sub_n   AM4
-
      /* Definitions for arj's "op" and "cc" parameters
       * are provided in 32-bit rtarch_***.h files. */
 
 #define arjbx_rx(RG, op, cc, lb)                                            \
-        AR1(W(RG), op, h, Zrx)                                              \
+        AR1(W(RG), op, b, Zrx)                                              \
         CMJ(cc, lb)
 
 #define arjbx_mx(MG, DG, op, cc, lb)                                        \
-        AR2(W(MG), W(DG), op, h, Zmx)                                       \
+        AR2(W(MG), W(DG), op, b, Zmx)                                       \
         CMJ(cc, lb)
 
 #define arjbx_ri(RG, IS, op, cc, lb)                                        \
-        AR2(W(RG), W(IS), op, h, Zri)                                       \
+        AR2(W(RG), W(IS), op, b, Zri)                                       \
         CMJ(cc, lb)
 
 #define arjbx_mi(MG, DG, IS, op, cc, lb)                                    \
-        AR3(W(MG), W(DG), W(IS), op, h, Zmi)                                \
+        AR3(W(MG), W(DG), W(IS), op, b, Zmi)                                \
         CMJ(cc, lb)
 
 #define arjbx_rr(RG, RS, op, cc, lb)                                        \
-        AR2(W(RG), W(RS), op, h, Zrr)                                       \
+        AR2(W(RG), W(RS), op, b, Zrr)                                       \
         CMJ(cc, lb)
 
 #define arjbx_ld(RG, MS, DS, op, cc, lb)                                    \
-        AR3(W(RG), W(MS), W(DS), op, h, Zld)                                \
+        AR3(W(RG), W(MS), W(DS), op, b, Zld)                                \
         CMJ(cc, lb)
 
 #define arjbx_st(RS, MG, DG, op, cc, lb)                                    \
-        AR3(W(RS), W(MG), W(DG), op, h, Zst)                                \
+        AR3(W(RS), W(MG), W(DG), op, b, Zst)                                \
         CMJ(cc, lb)
 
 #define arjbx_mr(MG, DG, RS, op, cc, lb)                                    \
@@ -3983,6 +3968,8 @@
 #define AM2(sz, sg) sub##sz##x##sg
 #define AM3(sz, sg) add##sz##n##sg
 #define AM4(sz, sg) sub##sz##n##sg
+#define AM5(sz, sg) add##sz##z##sg
+#define AM6(sz, sg) sub##sz##z##sg
 #define AN0(sz, sg) shl##sz##x##sg
 #define AN1(sz, sg) shr##sz##x##sg
 #define AN2(sz, sg) shr##sz##n##sg

@@ -12282,6 +12282,10 @@
  * Regular cmd*x_**, cmd*n_** instructions may or may not set flags depending
  * on the target architecture, thus no assumptions can be made for jezxx/jnzxx.
  *
+ * 64/32-bit subsets are both self-consistent within themselves, 32-bit results
+ * cannot be used in 64-bit subset without proper sign/zero-extend bridges,
+ * cmdwn/wz bridges for 32-bit subset are provided in 64-bit headers.
+ *
  * Interpretation of instruction parameters:
  *
  * upper-case params have triplet structure and require W to pass-forward
@@ -12738,7 +12742,7 @@
 #define shlxxZmr(MG, DG, RS)                                                \
         shlwxZmr(W(MG), W(DG), W(RS))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -12791,6 +12795,9 @@
 #define shrxxZmr(MG, DG, RS)                                                \
         shrwxZmr(W(MG), W(DG), W(RS))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrxn_rx(RG)                     /* reads Recx for shift count */   \
         shrwn_rx(W(RG))
@@ -12950,10 +12957,10 @@
         divwn_ld(W(RG), W(MS), W(DS))
 
 
-#define prexx_xx()          /* to be placed immediately prior divxx_x* */   \
+#define prexx_xx()   /* to be placed right before divxx_x* or remxx_xx */   \
         prewx_xx()                   /* to prepare Redx for int-divide */
 
-#define prexn_xx()          /* to be placed immediately prior divxn_x* */   \
+#define prexn_xx()   /* to be placed right before divxn_x* or remxn_xx */   \
         prewn_xx()                   /* to prepare Redx for int-divide */
 
 
@@ -13002,7 +13009,7 @@
         remwn_ld(W(RG), W(MS), W(DS))
 
 
-#define remxx_xx()          /* to be placed immediately prior divxx_x* */   \
+#define remxx_xx() /* to be placed before divxx_x*, but after prexx_xx */   \
         remwx_xx()                   /* to prepare for rem calculation */
 
 #define remxx_xr(RS)        /* to be placed immediately after divxx_xr */   \
@@ -13012,7 +13019,7 @@
         remwx_xm(W(MS), W(DS))       /* to produce remainder Redx<-rem */
 
 
-#define remxn_xx()          /* to be placed immediately prior divxn_x* */   \
+#define remxn_xx() /* to be placed before divxn_x*, but after prexn_xx */   \
         remwn_xx()                   /* to prepare for rem calculation */
 
 #define remxn_xr(RS)        /* to be placed immediately after divxn_xr */   \
@@ -13528,7 +13535,7 @@
 #define shlxxZmr(MG, DG, RS)                                                \
         shlzxZmr(W(MG), W(DG), W(RS))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -13581,6 +13588,9 @@
 #define shrxxZmr(MG, DG, RS)                                                \
         shrzxZmr(W(MG), W(DG), W(RS))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrxn_rx(RG)                     /* reads Recx for shift count */   \
         shrzn_rx(W(RG))
@@ -13740,10 +13750,10 @@
         divzn_ld(W(RG), W(MS), W(DS))
 
 
-#define prexx_xx()          /* to be placed immediately prior divxx_x* */   \
+#define prexx_xx()   /* to be placed right before divxx_x* or remxx_xx */   \
         prezx_xx()                   /* to prepare Redx for int-divide */
 
-#define prexn_xx()          /* to be placed immediately prior divxn_x* */   \
+#define prexn_xx()   /* to be placed right before divxn_x* or remxn_xx */   \
         prezn_xx()                   /* to prepare Redx for int-divide */
 
 
@@ -13792,7 +13802,7 @@
         remzn_ld(W(RG), W(MS), W(DS))
 
 
-#define remxx_xx()          /* to be placed immediately prior divxx_x* */   \
+#define remxx_xx() /* to be placed before divxx_x*, but after prexx_xx */   \
         remzx_xx()                   /* to prepare for rem calculation */
 
 #define remxx_xr(RS)        /* to be placed immediately after divxx_xr */   \
@@ -13802,7 +13812,7 @@
         remzx_xm(W(MS), W(DS))       /* to produce remainder Redx<-rem */
 
 
-#define remxn_xx()          /* to be placed immediately prior divxn_x* */   \
+#define remxn_xx() /* to be placed before divxn_x*, but after prexn_xx */   \
         remzn_xx()                   /* to prepare for rem calculation */
 
 #define remxn_xr(RS)        /* to be placed immediately after divxn_xr */   \
@@ -14320,7 +14330,7 @@
 #define shlyxZmr(MG, DG, RS)                                                \
         shlwxZmr(W(MG), W(DG), W(RS))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -14373,6 +14383,9 @@
 #define shryxZmr(MG, DG, RS)                                                \
         shrwxZmr(W(MG), W(DG), W(RS))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shryn_rx(RG)                     /* reads Recx for shift count */   \
         shrwn_rx(W(RG))
@@ -14532,10 +14545,10 @@
         divwn_ld(W(RG), W(MS), W(DS))
 
 
-#define preyx_xx()          /* to be placed immediately prior divyx_x* */   \
+#define preyx_xx()   /* to be placed right before divyx_x* or remyx_xx */   \
         prewx_xx()                   /* to prepare Redx for int-divide */
 
-#define preyn_xx()          /* to be placed immediately prior divyn_x* */   \
+#define preyn_xx()   /* to be placed right before divyn_x* or remyn_xx */   \
         prewn_xx()                   /* to prepare Redx for int-divide */
 
 
@@ -14584,7 +14597,7 @@
         remwn_ld(W(RG), W(MS), W(DS))
 
 
-#define remyx_xx()          /* to be placed immediately prior divyx_x* */   \
+#define remyx_xx() /* to be placed before divyx_x*, but after preyx_xx */   \
         remwx_xx()                   /* to prepare for rem calculation */
 
 #define remyx_xr(RS)        /* to be placed immediately after divyx_xr */   \
@@ -14594,7 +14607,7 @@
         remwx_xm(W(MS), W(DS))       /* to produce remainder Redx<-rem */
 
 
-#define remyn_xx()          /* to be placed immediately prior divyn_x* */   \
+#define remyn_xx() /* to be placed before divyn_x*, but after preyn_xx */   \
         remwn_xx()                   /* to prepare for rem calculation */
 
 #define remyn_xr(RS)        /* to be placed immediately after divyn_xr */   \
@@ -15069,7 +15082,7 @@
 #define shlyxZmr(MG, DG, RS)                                                \
         shlzxZmr(W(MG), W(DG), W(RS))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -15122,6 +15135,9 @@
 #define shryxZmr(MG, DG, RS)                                                \
         shrzxZmr(W(MG), W(DG), W(RS))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shryn_rx(RG)                     /* reads Recx for shift count */   \
         shrzn_rx(W(RG))
@@ -15281,10 +15297,10 @@
         divzn_ld(W(RG), W(MS), W(DS))
 
 
-#define preyx_xx()          /* to be placed immediately prior divyx_x* */   \
+#define preyx_xx()   /* to be placed right before divyx_x* or remyx_xx */   \
         prezx_xx()                   /* to prepare Redx for int-divide */
 
-#define preyn_xx()          /* to be placed immediately prior divyn_x* */   \
+#define preyn_xx()   /* to be placed right before divyn_x* or remyn_xx */   \
         prezn_xx()                   /* to prepare Redx for int-divide */
 
 
@@ -15333,7 +15349,7 @@
         remzn_ld(W(RG), W(MS), W(DS))
 
 
-#define remyx_xx()          /* to be placed immediately prior divyx_x* */   \
+#define remyx_xx() /* to be placed before divyx_x*, but after preyx_xx */   \
         remzx_xx()                   /* to prepare for rem calculation */
 
 #define remyx_xr(RS)        /* to be placed immediately after divyx_xr */   \
@@ -15343,7 +15359,7 @@
         remzx_xm(W(MS), W(DS))       /* to produce remainder Redx<-rem */
 
 
-#define remyn_xx()          /* to be placed immediately prior divyn_x* */   \
+#define remyn_xx() /* to be placed before divyn_x*, but after preyn_xx */   \
         remzn_xx()                   /* to prepare for rem calculation */
 
 #define remyn_xr(RS)        /* to be placed immediately after divyn_xr */   \

@@ -5341,6 +5341,10 @@ rt_si32 from_mask(rt_si32 mask)
  * Regular cmd*x_**, cmd*n_** instructions may or may not set flags depending
  * on the target architecture, thus no assumptions can be made for jezxx/jnzxx.
  *
+ * 64/32-bit subsets are both self-consistent within themselves, 32-bit results
+ * cannot be used in 64-bit subset without proper sign/zero-extend bridges,
+ * cmdwn/wz bridges for 32-bit subset are provided in 64-bit headers.
+ *
  * Interpretation of instruction parameters:
  *
  * upper-case params have triplet structure and require W to pass-forward
