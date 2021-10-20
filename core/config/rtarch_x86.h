@@ -3448,8 +3448,7 @@
         stack_st(Reax)                                                      \
         stack_st(Redx)                                                      \
         movbx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
-        movbx_rr(Reax, W(RG))                                               \
-        prebx_xx()                                                          \
+        movbz_rr(Reax, W(RG))                                               \
         divbx_xm(Mebp, inf_SCR01(0))                                        \
         stack_ld(Redx)                                                      \
         movbx_rr(W(RG), Reax)                                               \
@@ -3458,8 +3457,7 @@
 #define divbx_rr(RG, RS)                /* RG no Reax, RS no Reax/Redx */   \
         stack_st(Reax)                                                      \
         stack_st(Redx)                                                      \
-        movbx_rr(Reax, W(RG))                                               \
-        prebx_xx()                                                          \
+        movbz_rr(Reax, W(RG))                                               \
         divbx_xr(W(RS))                                                     \
         stack_ld(Redx)                                                      \
         movbx_rr(W(RG), Reax)                                               \
@@ -3468,8 +3466,7 @@
 #define divbx_ld(RG, MS, DS)            /* RG no Reax, MS no Oeax/Medx */   \
         stack_st(Reax)                                                      \
         stack_st(Redx)                                                      \
-        movbx_rr(Reax, W(RG))                                               \
-        prebx_xx()                                                          \
+        movbz_rr(Reax, W(RG))                                               \
         divbx_xm(W(MS), W(DS))                                              \
         stack_ld(Redx)                                                      \
         movbx_rr(W(RG), Reax)                                               \
@@ -3480,8 +3477,7 @@
         stack_st(Reax)                                                      \
         stack_st(Redx)                                                      \
         movbx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
-        movbx_rr(Reax, W(RG))                                               \
-        prebn_xx()                                                          \
+        movbn_rr(Reax, W(RG))                                               \
         divbn_xm(Mebp, inf_SCR01(0))                                        \
         stack_ld(Redx)                                                      \
         movbx_rr(W(RG), Reax)                                               \
@@ -3490,8 +3486,7 @@
 #define divbn_rr(RG, RS)                /* RG no Reax, RS no Reax/Redx */   \
         stack_st(Reax)                                                      \
         stack_st(Redx)                                                      \
-        movbx_rr(Reax, W(RG))                                               \
-        prebn_xx()                                                          \
+        movbn_rr(Reax, W(RG))                                               \
         divbn_xr(W(RS))                                                     \
         stack_ld(Redx)                                                      \
         movbx_rr(W(RG), Reax)                                               \
@@ -3500,8 +3495,7 @@
 #define divbn_ld(RG, MS, DS)            /* RG no Reax, MS no Oeax/Medx */   \
         stack_st(Reax)                                                      \
         stack_st(Redx)                                                      \
-        movbx_rr(Reax, W(RG))                                               \
-        prebn_xx()                                                          \
+        movbn_rr(Reax, W(RG))                                               \
         divbn_xm(W(MS), W(DS))                                              \
         stack_ld(Redx)                                                      \
         movbx_rr(W(RG), Reax)                                               \
@@ -3509,44 +3503,32 @@
 
 
 #define prebx_xx()   /* to be placed right before divbx_x* or rembx_xx */   \
-                                     /* to prepare Redx for int-divide */
+    ESC EMITB(0x0F) EMITB(0xB6)      /* to prepare Reax for int-divide */   \
+        MRM(0x00,    0x03,    0x00)
 
 #define prebn_xx()   /* to be placed right before divbn_x* or rembn_xx */   \
-                                     /* to prepare Redx for int-divide */
+    ESC EMITB(0x0F) EMITB(0xBE)      /* to prepare Reax for int-divide */   \
+        MRM(0x00,    0x03,    0x00)
 
 
-#define divbx_xr(RS)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-        movbz_rr(Reax, Reax)                                                \
+#define divbx_xr(RS)     /* Reax is in/out, Reax is in-zero-ext-(Reax) */   \
         EMITB(0xF6)                                                         \
-        MRM(0x06,    MOD(RS), REG(RS))                                      \
-        AUX(EMPTY,   EMPTY,   EMPTY)                                        \
-        EMITB(0x8A)                                                         \
-        MRM(0x02,    0x03,    0x04)
+        MRM(0x06,    MOD(RS), REG(RS))
 
-#define divbx_xm(MS, DS) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-        movbz_rr(Reax, Reax)                                                \
+#define divbx_xm(MS, DS) /* Reax is in/out, Reax is in-zero-ext-(Reax) */   \
         EMITB(0xF6)                                                         \
         MRM(0x06,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
-        EMITB(0x8A)                                                         \
-        MRM(0x02,    0x03,    0x04)
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
 
-#define divbn_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        movbn_rr(Reax, Reax)                                                \
+#define divbn_xr(RS)     /* Reax is in/out, Reax is in-sign-ext-(Reax) */   \
         EMITB(0xF6)                                                         \
-        MRM(0x07,    MOD(RS), REG(RS))                                      \
-        AUX(EMPTY,   EMPTY,   EMPTY)                                        \
-        EMITB(0x8A)                                                         \
-        MRM(0x02,    0x03,    0x04)
+        MRM(0x07,    MOD(RS), REG(RS))
 
-#define divbn_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        movbn_rr(Reax, Reax)                                                \
+#define divbn_xm(MS, DS) /* Reax is in/out, Reax is in-sign-ext-(Reax) */   \
         EMITB(0xF6)                                                         \
         MRM(0x07,    MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
-        EMITB(0x8A)                                                         \
-        MRM(0x02,    0x03,    0x04)
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* rem (G = G % S)
  * set-flags: undefined */
@@ -3555,9 +3537,10 @@
         stack_st(Redx)                                                      \
         stack_st(Reax)                                                      \
         movbx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
-        movbx_rr(Reax, W(RG))                                               \
-        prebx_xx()                                                          \
+        movbz_rr(Reax, W(RG))                                               \
+        rembx_xx()                                                          \
         divbx_xm(Mebp, inf_SCR01(0))                                        \
+        rembx_xm(Mebp, inf_SCR01(0))                                        \
         stack_ld(Reax)                                                      \
         movbx_rr(W(RG), Redx)                                               \
         stack_ld(Redx)
@@ -3565,9 +3548,10 @@
 #define rembx_rr(RG, RS)                /* RG no Redx, RS no Reax/Redx */   \
         stack_st(Redx)                                                      \
         stack_st(Reax)                                                      \
-        movbx_rr(Reax, W(RG))                                               \
-        prebx_xx()                                                          \
+        movbz_rr(Reax, W(RG))                                               \
+        rembx_xx()                                                          \
         divbx_xr(W(RS))                                                     \
+        rembx_xr(W(RS))                                                     \
         stack_ld(Reax)                                                      \
         movbx_rr(W(RG), Redx)                                               \
         stack_ld(Redx)
@@ -3575,9 +3559,10 @@
 #define rembx_ld(RG, MS, DS)            /* RG no Redx, MS no Oeax/Medx */   \
         stack_st(Redx)                                                      \
         stack_st(Reax)                                                      \
-        movbx_rr(Reax, W(RG))                                               \
-        prebx_xx()                                                          \
+        movbz_rr(Reax, W(RG))                                               \
+        rembx_xx()                                                          \
         divbx_xm(W(MS), W(DS))                                              \
+        rembx_xm(W(MS), W(DS))                                              \
         stack_ld(Reax)                                                      \
         movbx_rr(W(RG), Redx)                                               \
         stack_ld(Redx)
@@ -3587,9 +3572,10 @@
         stack_st(Redx)                                                      \
         stack_st(Reax)                                                      \
         movbx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
-        movbx_rr(Reax, W(RG))                                               \
-        prebn_xx()                                                          \
+        movbn_rr(Reax, W(RG))                                               \
+        rembn_xx()                                                          \
         divbn_xm(Mebp, inf_SCR01(0))                                        \
+        rembn_xm(Mebp, inf_SCR01(0))                                        \
         stack_ld(Reax)                                                      \
         movbx_rr(W(RG), Redx)                                               \
         stack_ld(Redx)
@@ -3597,9 +3583,10 @@
 #define rembn_rr(RG, RS)                /* RG no Redx, RS no Reax/Redx */   \
         stack_st(Redx)                                                      \
         stack_st(Reax)                                                      \
-        movbx_rr(Reax, W(RG))                                               \
-        prebn_xx()                                                          \
+        movbn_rr(Reax, W(RG))                                               \
+        rembn_xx()                                                          \
         divbn_xr(W(RS))                                                     \
+        rembn_xr(W(RS))                                                     \
         stack_ld(Reax)                                                      \
         movbx_rr(W(RG), Redx)                                               \
         stack_ld(Redx)
@@ -3607,9 +3594,10 @@
 #define rembn_ld(RG, MS, DS)            /* RG no Redx, MS no Oeax/Medx */   \
         stack_st(Redx)                                                      \
         stack_st(Reax)                                                      \
-        movbx_rr(Reax, W(RG))                                               \
-        prebn_xx()                                                          \
+        movbn_rr(Reax, W(RG))                                               \
+        rembn_xx()                                                          \
         divbn_xm(W(MS), W(DS))                                              \
+        rembn_xm(W(MS), W(DS))                                              \
         stack_ld(Reax)                                                      \
         movbx_rr(W(RG), Redx)                                               \
         stack_ld(Redx)
@@ -3619,20 +3607,24 @@
                                      /* to prepare for rem calculation */
 
 #define rembx_xr(RS)        /* to be placed immediately after divbx_xr */   \
-                                     /* to produce remainder Redx<-rem */
+        EMITB(0x8A)                  /* to produce remainder Redx<-rem */   \
+        MRM(0x02,    0x03,    0x04)
 
 #define rembx_xm(MS, DS)    /* to be placed immediately after divbx_xm */   \
-                                     /* to produce remainder Redx<-rem */
+        EMITB(0x8A)                  /* to produce remainder Redx<-rem */   \
+        MRM(0x02,    0x03,    0x04)
 
 
 #define rembn_xx() /* to be placed before divbn_x*, but after prebn_xx */   \
                                      /* to prepare for rem calculation */
 
 #define rembn_xr(RS)        /* to be placed immediately after divbn_xr */   \
-                                     /* to produce remainder Redx<-rem */
+        EMITB(0x8A)                  /* to produce remainder Redx<-rem */   \
+        MRM(0x02,    0x03,    0x04)
 
 #define rembn_xm(MS, DS)    /* to be placed immediately after divbn_xm */   \
-                                     /* to produce remainder Redx<-rem */
+        EMITB(0x8A)                  /* to produce remainder Redx<-rem */   \
+        MRM(0x02,    0x03,    0x04)
 
 /* arj (G = G op S, if cc G then jump lb)
  * set-flags: undefined

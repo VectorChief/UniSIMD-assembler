@@ -154,8 +154,7 @@
         EMITW(0x94000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IS), T2(IS), M2(IS)) | \
         (M(TP2(IS) == 0) & 0x30000000) | (M(TP2(IS) != 0) & 0x00000024))    \
-        EMITW(0xA4000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
-        EMITW(0x3000FFFF | MTM(TLxx,    TMxx,    0x00))/* <- set flags (Z) */
+        EMITW(0xA4000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define andhxZrr(RG, RS)                                                    \
         EMITW(0x00000024 | MRM(REG(RG), REG(RG), REG(RS)))                  \
@@ -171,8 +170,7 @@
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMITW(0x94000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
         EMITW(0x00000024 | MRM(TMxx,    TMxx,    REG(RS)))                  \
-        EMITW(0xA4000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
-        EMITW(0x3000FFFF | MTM(TLxx,    TMxx,    0x00))/* <- set flags (Z) */
+        EMITW(0xA4000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define andhxZmr(MG, DG, RS)                                                \
         andhxZst(W(RS), W(MG), W(DG))
@@ -476,8 +474,7 @@
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMITW(0x94000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
         EMITW(0x00000023 | MRM(TMxx,    TZxx,    TMxx))                     \
-        EMITW(0xA4000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
-        EMITW(0x3000FFFF | MTM(TLxx,    TMxx,    0x00))/* <- set flags (Z) */
+        EMITW(0xA4000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 /* add (G = G + S)
  * set-flags: undefined (*_*), yes (*Z*) */
@@ -1418,8 +1415,7 @@
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IS), T2(IS), M2(IS)) | \
         (M(TP2(IS) == 0) & 0x30000000) | (M(TP2(IS) != 0) & 0x00000024))    \
-        EMITW(0xA0000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
-        EMITW(0x300000FF | MTM(TLxx,    TMxx,    0x00))/* <- set flags (Z) */
+        EMITW(0xA0000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define andbxZrr(RG, RS)                                                    \
         EMITW(0x00000024 | MRM(REG(RG), REG(RG), REG(RS)))                  \
@@ -1435,8 +1431,7 @@
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
         EMITW(0x00000024 | MRM(TMxx,    TMxx,    REG(RS)))                  \
-        EMITW(0xA0000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
-        EMITW(0x300000FF | MTM(TLxx,    TMxx,    0x00))/* <- set flags (Z) */
+        EMITW(0xA0000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define andbxZmr(MG, DG, RS)                                                \
         andbxZst(W(RS), W(MG), W(DG))
@@ -1740,8 +1735,7 @@
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
         EMITW(0x00000023 | MRM(TMxx,    TZxx,    TMxx))                     \
-        EMITW(0xA0000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
-        EMITW(0x300000FF | MTM(TLxx,    TMxx,    0x00))/* <- set flags (Z) */
+        EMITW(0xA0000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 /* add (G = G + S)
  * set-flags: undefined (*_*), yes (*Z*) */
@@ -2240,36 +2234,34 @@
 
 
 #define prebx_xx()   /* to be placed right before divbx_x* or rembx_xx */   \
-                                     /* to prepare Redx for int-divide */
+        EMITW(0x300000FF | MTM(Teax,    Teax,    0x00))                     \
+                                     /* to prepare Reax for int-divide */
 
 #define prebn_xx()   /* to be placed right before divbn_x* or rembn_xx */   \
-                                     /* to prepare Redx for int-divide */
+        EMITW(0x7C000420 | MSM(Teax,    Teax,    0x00))                     \
+                                     /* to prepare Reax for int-divide */
 
 
-#define divbx_xr(RS)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+#define divbx_xr(RS)     /* Reax is in/out, Reax is in-zero-ext-(Reax) */   \
         EMITW(0x300000FF | MTM(TIxx,    REG(RS), 0x00))                     \
-        EMITW(0x300000FF | MTM(Teax,    Teax,    0x00))                     \
         EMITW(0x0000001B | MRM(0x00,    Teax,    TIxx))                     \
         EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))
 
-#define divbx_xm(MS, DS) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+#define divbx_xm(MS, DS) /* Reax is in/out, Reax is in-zero-ext-(Reax) */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
-        EMITW(0x300000FF | MTM(Teax,    Teax,    0x00))                     \
         EMITW(0x0000001B | MRM(0x00,    Teax,    TMxx))                     \
         EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))
 
 
-#define divbn_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+#define divbn_xr(RS)     /* Reax is in/out, Reax is in-sign-ext-(Reax) */   \
         EMITW(0x7C000420 | MSM(TIxx,    REG(RS), 0x00))                     \
-        EMITW(0x7C000420 | MSM(Teax,    Teax,    0x00))                     \
         EMITW(0x0000001A | MRM(0x00,    Teax,    TIxx))                     \
         EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))
 
-#define divbn_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+#define divbn_xm(MS, DS) /* Reax is in/out, Reax is in-sign-ext-(Reax) */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
-        EMITW(0x7C000420 | MSM(Teax,    Teax,    0x00))                     \
         EMITW(0x0000001A | MRM(0x00,    Teax,    TMxx))                     \
         EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))
 
@@ -2416,33 +2408,31 @@
 
 
 #define prebx_xx()   /* to be placed right before divbx_x* or rembx_xx */   \
-                                     /* to prepare Redx for int-divide */
+        EMITW(0x300000FF | MTM(Teax,    Teax,    0x00))                     \
+                                     /* to prepare Reax for int-divide */
 
 #define prebn_xx()   /* to be placed right before divbn_x* or rembn_xx */   \
-                                     /* to prepare Redx for int-divide */
+        EMITW(0x7C000420 | MSM(Teax,    Teax,    0x00))                     \
+                                     /* to prepare Reax for int-divide */
 
 
-#define divbx_xr(RS)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+#define divbx_xr(RS)     /* Reax is in/out, Reax is in-zero-ext-(Reax) */   \
         EMITW(0x300000FF | MTM(TIxx,    REG(RS), 0x00))                     \
-        EMITW(0x300000FF | MTM(Teax,    Teax,    0x00))                     \
         EMITW(0x0000009B | MRM(Teax,    Teax,    TIxx))
 
-#define divbx_xm(MS, DS) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+#define divbx_xm(MS, DS) /* Reax is in/out, Reax is in-zero-ext-(Reax) */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMITW(0x90000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
-        EMITW(0x300000FF | MTM(Teax,    Teax,    0x00))                     \
         EMITW(0x0000009B | MRM(Teax,    Teax,    TMxx))
 
 
-#define divbn_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+#define divbn_xr(RS)     /* Reax is in/out, Reax is in-sign-ext-(Reax) */   \
         EMITW(0x7C000420 | MSM(TIxx,    REG(RS), 0x00))                     \
-        EMITW(0x7C000420 | MSM(Teax,    Teax,    0x00))                     \
         EMITW(0x0000009A | MRM(Teax,    Teax,    TIxx))
 
-#define divbn_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+#define divbn_xm(MS, DS) /* Reax is in/out, Reax is in-sign-ext-(Reax) */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMITW(0x80000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
-        EMITW(0x7C000420 | MSM(Teax,    Teax,    0x00))                     \
         EMITW(0x0000009A | MRM(Teax,    Teax,    TMxx))
 
 /* rem (G = G % S)
