@@ -1,3 +1,12 @@
+  - add RT_BASE flag to limit addressing granularity, extend range on ARMv8
+  - add 8-bit elements SIMD subset (native on RISCs, mostly emulated on x86)
+  - add 64-bit sign/zero-extend bridges to existing 32/64-bit BASE subsets
+  - add 32-bit sign/zero-extend bridges to new 8/16-bit BASE subsets
+  - optimize setting flags instructions in 8/16-bit BASE subsets (on RISCs)
+  - add 8-bit (byte) BASE instruction subset, redesign 16-bit BASE
+  - optimize standalone remainder instructions on ARM and POWER
+  - fix 16-bit (half-int) BASE addressing granularity on POWER
+
 v1.1.0b: UniSIMD, code name "ENsed+1b", second development release
   - implement integer SIMD compare subset (signed/unsigned)
   - add integer SIMD compare on MIPS32/64 (min/max/ceq/cne/clt/cle/cgt/cge)
