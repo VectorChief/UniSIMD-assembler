@@ -83,6 +83,13 @@
 /******************************************************************************/
 
 /*
+ * Determine minimal addressing granularity in bytes for BASE instructions.
+ */
+#ifndef RT_BASE
+#define RT_BASE 1
+#endif /* RT_BASE: 1, 2, 4, 8; higher value extends native range on ARMv8 */
+
+/*
  * Determine mapping of vector-length-agnostic SIMD subsets: cmdo, cmdp, cmdq.
  */
 #if (defined RT_SIMD)

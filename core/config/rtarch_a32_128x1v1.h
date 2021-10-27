@@ -144,7 +144,7 @@
 #define P21(dp) (0x00206800 | TDxx << 16)
 #define L21(dp) (0x00000000 | ((dp) & 0x0010) << 6)
 #define C21(br, dp) EMITW(0x52800000 | MRM(TDxx,    0x00,    0x00) |        \
-                             (0xFFFC & (dp)) << 5)
+                             (0xFFF0 & (dp)) << 5)
 #define A21(br, dp) C21(br, dp)                                             \
                     EMITW(0x0B000000 | MRM(TPxx,    (br),    TDxx) | ADR)
 

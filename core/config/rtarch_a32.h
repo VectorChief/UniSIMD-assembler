@@ -397,6 +397,8 @@
 /* public scalable DP/DE/DF/DG/DH/DV definitions are now provided in rtbase.h */
 /* as D* are used for BASE and SIMD instructions, only limits are SIMD-scaled */
 
+#if   RT_BASE == 1
+
 #define _DP(dp) ((dp) & 0xFFF),         0, 0      /* native on all ARMs, MIPS */
 #define _DE(dp) ((dp) & 0x1FFF),        1, 0     /* AArch64 256-bit SVE ld/st */
 #define _DF(dp) ((dp) & 0x3FFF),        1, 0     /* native AArch64 BASE ld/st */
@@ -404,6 +406,38 @@
 #define _DH(dp) ((dp) & 0xFFFF),        1, 0     /* second native on all ARMs */
 #define _DV(dp) ((dp) & 0x7FFFFFFF),    2, 2       /* native x86_64 long mode */
 #define  PLAIN  DP(0)                /* special type for Oeax addressing mode */
+
+#elif RT_BASE == 2
+
+#define _DP(dp) ((dp) & 0xFFE),         0, 0      /* native on all ARMs, MIPS */
+#define _DE(dp) ((dp) & 0x1FFE),        0, 0     /* AArch64 256-bit SVE ld/st */
+#define _DF(dp) ((dp) & 0x3FFE),        1, 0     /* native AArch64 BASE ld/st */
+#define _DG(dp) ((dp) & 0x7FFE),        1, 0  /* native MIPS/POWER BASE ld/st */
+#define _DH(dp) ((dp) & 0xFFFE),        1, 0     /* second native on all ARMs */
+#define _DV(dp) ((dp) & 0x7FFFFFFE),    2, 2       /* native x86_64 long mode */
+#define  PLAIN  DP(0)                /* special type for Oeax addressing mode */
+
+#elif RT_BASE == 4
+
+#define _DP(dp) ((dp) & 0xFFC),         0, 0      /* native on all ARMs, MIPS */
+#define _DE(dp) ((dp) & 0x1FFC),        0, 0     /* AArch64 256-bit SVE ld/st */
+#define _DF(dp) ((dp) & 0x3FFC),        0, 0     /* native AArch64 BASE ld/st */
+#define _DG(dp) ((dp) & 0x7FFC),        1, 0  /* native MIPS/POWER BASE ld/st */
+#define _DH(dp) ((dp) & 0xFFFC),        1, 0     /* second native on all ARMs */
+#define _DV(dp) ((dp) & 0x7FFFFFFC),    2, 2       /* native x86_64 long mode */
+#define  PLAIN  DP(0)                /* special type for Oeax addressing mode */
+
+#elif RT_BASE == 8
+
+#define _DP(dp) ((dp) & 0xFF8),         0, 0      /* native on all ARMs, MIPS */
+#define _DE(dp) ((dp) & 0x1FF8),        0, 0     /* AArch64 256-bit SVE ld/st */
+#define _DF(dp) ((dp) & 0x3FF8),        0, 0     /* native AArch64 BASE ld/st */
+#define _DG(dp) ((dp) & 0x7FF8),        0, 0  /* native MIPS/POWER BASE ld/st */
+#define _DH(dp) ((dp) & 0xFFF8),        1, 0     /* second native on all ARMs */
+#define _DV(dp) ((dp) & 0x7FFFFFF8),    2, 2       /* native x86_64 long mode */
+#define  PLAIN  DP(0)                /* special type for Oeax addressing mode */
+
+#endif /* RT_BASE */
 
 /* triplet pass-through wrapper */
 
