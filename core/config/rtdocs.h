@@ -163,9 +163,7 @@
  * Some emulated instructions within ASM sections rely on general purpose
  * constants in rt_SIMD_INFO structure defined in "core/config/rtbase.h".
  * They need to be initialized before the pointer to this structure is passed to
- * the first ASM section and deinitialized after the last one.
- *
- * This is done with:
+ * the first ASM section and deinitialized after the last one. It's done with:
  *
  * ASM_INIT(inf, reg)
  *
@@ -190,6 +188,14 @@
  * it shows up as Rebp register and can be accessed via Mebp addressing mode
  * with corresponding displacements (offsets) defined in rt_SIMD_INFO and
  * rt_SIMD_INFOX (by extension).
+ *
+ * Potential future improvement is to use an array instead of structure to avoid
+ * possible paddings that compiler may introduce for its own needs (alignment),
+ * in which case some parts of the assembler will need to be redesigned.
+ * ASM_ENTER/LEAVE macros can be converted into just-in-time compilation along
+ * with EMITW/EMITH/EMITB/LBL to avoid possible compiler issues with inline ASM.
+ * The order of arithmetic and shifts within internal definitions can be
+ * hardened by using extra parentheses (in a form of round brackets).
  *
  * For every BASE register starting with R*** (like Rebx, Recx, Redx, ...)
  * there is a corresponding addressing mode starting with M*** (like Mebx, Mecx,
