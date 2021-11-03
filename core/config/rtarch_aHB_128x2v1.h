@@ -20,11 +20,11 @@
  *
  * Recommended naming scheme for instructions:
  *
- * cmda*_rx - applies [cmd] to 256-bit packed-half: [r]egister (one operand)
- * cmda*_rr - applies [cmd] to 256-bit packed-half: [r]egister from [r]egister
+ * cmda*_rx - applies [cmd] to 256-bit packed SIMD: [r]egister (one operand)
+ * cmda*_rr - applies [cmd] to 256-bit packed SIMD: [r]egister from [r]egister
  *
- * cmda*_rm - applies [cmd] to 256-bit packed-half: [r]egister from [m]emory
- * cmda*_ld - applies [cmd] to 256-bit packed-half: as above (friendly alias)
+ * cmda*_rm - applies [cmd] to 256-bit packed SIMD: [r]egister from [m]emory
+ * cmda*_ld - applies [cmd] to 256-bit packed SIMD: as above (friendly alias)
  *
  * Interpretation of instruction parameters:
  *
@@ -979,10 +979,10 @@
 #define shrab3ri(XD, XS, IT)                                                \
         EMITW(0x4F080400 | MXM(REG(XD), REG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00005000) | (M(VAL(IT) != 0) & 0x20000000) |   \
-        (M(VAL(IT) < 8) & ((0x07 &-VAL(IT)) << 8)))                         \
+        (M(VAL(IT) < 8) & ((0x07 &-VAL(IT)) << 16)))                        \
         EMITW(0x4F080400 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
         (M(VAL(IT) == 0) & 0x00005000) | (M(VAL(IT) != 0) & 0x20000000) |   \
-        (M(VAL(IT) < 8) & ((0x07 &-VAL(IT)) << 8)))
+        (M(VAL(IT) < 8) & ((0x07 &-VAL(IT)) << 16)))
 
 #define shrab3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \

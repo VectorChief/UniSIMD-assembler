@@ -30,17 +30,17 @@
  * cmdp*_rm - applies [cmd] to [p]acked: [r]egister from [m]emory
  * cmdp*_ld - applies [cmd] to [p]acked: as above
  *
- * cmdi*_** - applies [cmd] to 32-bit SIMD element args, packed-128-bit
- * cmdj*_** - applies [cmd] to 64-bit SIMD element args, packed-128-bit
- * cmdl*_** - applies [cmd] to L-size SIMD element args, packed-128-bit
+ * cmdi*_** - applies [cmd] to 32-bit elements SIMD args, packed-128-bit
+ * cmdj*_** - applies [cmd] to 64-bit elements SIMD args, packed-128-bit
+ * cmdl*_** - applies [cmd] to L-size elements SIMD args, packed-128-bit
  *
- * cmdc*_** - applies [cmd] to 32-bit SIMD element args, packed-256-bit
- * cmdd*_** - applies [cmd] to 64-bit SIMD element args, packed-256-bit
- * cmdf*_** - applies [cmd] to L-size SIMD element args, packed-256-bit
+ * cmdc*_** - applies [cmd] to 32-bit elements SIMD args, packed-256-bit
+ * cmdd*_** - applies [cmd] to 64-bit elements SIMD args, packed-256-bit
+ * cmdf*_** - applies [cmd] to L-size elements SIMD args, packed-256-bit
  *
- * cmdo*_** - applies [cmd] to 32-bit SIMD element args, packed-var-len
- * cmdp*_** - applies [cmd] to L-size SIMD element args, packed-var-len
- * cmdq*_** - applies [cmd] to 64-bit SIMD element args, packed-var-len
+ * cmdo*_** - applies [cmd] to 32-bit elements SIMD args, packed-var-len
+ * cmdp*_** - applies [cmd] to L-size elements SIMD args, packed-var-len
+ * cmdq*_** - applies [cmd] to 64-bit elements SIMD args, packed-var-len
  *
  * cmd*x_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
@@ -2441,7 +2441,7 @@
 #define shlgb3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
         EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMITW(0xF4A00C3F | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF4A00C2F | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3000440 | MXM(REG(XD), TmmM,    REG(XS)))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
@@ -2461,7 +2461,7 @@
 #define shrgb3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
         EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMITW(0xF4A00C3F | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF4A00C2F | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3B103C0 | MXM(TmmM,    0x00,    TmmM))                     \
         EMITW(0xF3000440 | MXM(REG(XD), TmmM,    REG(XS)))
 
@@ -2482,7 +2482,7 @@
 #define shrgc3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
         EMITW(0xE0800000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMITW(0xF4A00C3F | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF4A00C2F | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF3B103C0 | MXM(TmmM,    0x00,    TmmM))                     \
         EMITW(0xF2000440 | MXM(REG(XD), TmmM,    REG(XS)))
 

@@ -272,7 +272,7 @@
 #define F10(dp) (0xE8000000 |(0x7FFC & (dp)))
 #define O10(dp) (0x90000000 |(0x7FFC & (dp)))
 #define OH0(dp) (0xB0000000 |(0x7FFE & (dp)))
-#define OB0(dp) (0xB0000000 |(0x7FFF & (dp)))
+#define OB0(dp) (0x98000000 |(0x7FFF & (dp)))
 #define Q10(dp) (0xF8000000 |(0x7FFC & (dp)))
 #define C10(br, dp) EMPTY
 #define A10(br, dp) EMPTY
@@ -288,7 +288,7 @@
 #define F11(dp) (0x7C00002A | TDxx << 11)
 #define O11(dp) (0x7C00012E | TDxx << 11)
 #define OH1(dp) (0x7C00032E | TDxx << 11)
-#define OB1(dp) (0x7C00032E | TDxx << 11)
+#define OB1(dp) (0x7C0001AE | TDxx << 11)
 #define Q11(dp) (0x7C00012A | TDxx << 11)
 #define C11(br, dp) C31(br, dp)
 #define A11(br, dp) C31(br, dp)                                             \
@@ -305,7 +305,7 @@
 #define F12(dp) (0x7C00002A | TDxx << 11)
 #define O12(dp) (0x7C00012E | TDxx << 11)
 #define OH2(dp) (0x7C00032E | TDxx << 11)
-#define OB2(dp) (0x7C00032E | TDxx << 11)
+#define OB2(dp) (0x7C0001AE | TDxx << 11)
 #define Q12(dp) (0x7C00012A | TDxx << 11)
 #define C12(br, dp) C32(br, dp)
 #define A12(br, dp) C32(br, dp)                                             \

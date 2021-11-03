@@ -69,17 +69,17 @@
  * cmdp*_rm - applies [cmd] to [p]acked: [r]egister from [m]emory
  * cmdp*_ld - applies [cmd] to [p]acked: as above
  *
- * cmdi*_** - applies [cmd] to 32-bit SIMD element args, packed-128-bit
- * cmdj*_** - applies [cmd] to 64-bit SIMD element args, packed-128-bit
- * cmdl*_** - applies [cmd] to L-size SIMD element args, packed-128-bit
+ * cmdi*_** - applies [cmd] to 32-bit elements SIMD args, packed-128-bit
+ * cmdj*_** - applies [cmd] to 64-bit elements SIMD args, packed-128-bit
+ * cmdl*_** - applies [cmd] to L-size elements SIMD args, packed-128-bit
  *
- * cmdc*_** - applies [cmd] to 32-bit SIMD element args, packed-256-bit
- * cmdd*_** - applies [cmd] to 64-bit SIMD element args, packed-256-bit
- * cmdf*_** - applies [cmd] to L-size SIMD element args, packed-256-bit
+ * cmdc*_** - applies [cmd] to 32-bit elements SIMD args, packed-256-bit
+ * cmdd*_** - applies [cmd] to 64-bit elements SIMD args, packed-256-bit
+ * cmdf*_** - applies [cmd] to L-size elements SIMD args, packed-256-bit
  *
- * cmdo*_** - applies [cmd] to 32-bit SIMD element args, packed-var-len
- * cmdp*_** - applies [cmd] to L-size SIMD element args, packed-var-len
- * cmdq*_** - applies [cmd] to 64-bit SIMD element args, packed-var-len
+ * cmdo*_** - applies [cmd] to 32-bit elements SIMD args, packed-var-len
+ * cmdp*_** - applies [cmd] to L-size elements SIMD args, packed-var-len
+ * cmdq*_** - applies [cmd] to 64-bit elements SIMD args, packed-var-len
  *
  * cmd*x_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
@@ -1027,6 +1027,16 @@
 #define movmx_st(XS, MD, DD)                                                \
         movax_st(W(XS), W(MD), W(DD))
 
+
+#define movmb_rr(XD, XS)                                                    \
+        movab_rr(W(XD), W(XS))
+
+#define movmb_ld(XD, MS, DS)                                                \
+        movab_ld(W(XD), W(MS), W(DS))
+
+#define movmb_st(XS, MD, DD)                                                \
+        movab_st(W(XS), W(MD), W(DD))
+
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
@@ -1038,6 +1048,16 @@
 
 #define mmvmx_st(XS, MG, DG)                                                \
         mmvax_st(W(XS), W(MG), W(DG))
+
+
+#define mmvmb_rr(XD, XS)                                                    \
+        mmvab_rr(W(XD), W(XS))
+
+#define mmvmb_ld(XG, MS, DS)                                                \
+        mmvab_ld(W(XG), W(MS), W(DS))
+
+#define mmvmb_st(XS, MG, DG)                                                \
+        mmvab_st(W(XS), W(MG), W(DG))
 
 /* and (G = G & S), (D = S & T) if (#D != #T) */
 
@@ -1498,6 +1518,19 @@
 #define addmx3ld(XD, XS, MT, DT)                                            \
         addax3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define addmb_rr(XG, XS)                                                    \
+        addab_rr(W(XG), W(XS))
+
+#define addmb_ld(XG, MS, DS)                                                \
+        addab_ld(W(XG), W(MS), W(DS))
+
+#define addmb3rr(XD, XS, XT)                                                \
+        addab3rr(W(XD), W(XS), W(XT))
+
+#define addmb3ld(XD, XS, MT, DT)                                            \
+        addab3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, unsigned */
 
 #define adsmx_rr(XG, XS)                                                    \
@@ -1511,6 +1544,19 @@
 
 #define adsmx3ld(XD, XS, MT, DT)                                            \
         adsax3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define adsmb_rr(XG, XS)                                                    \
+        adsab_rr(W(XG), W(XS))
+
+#define adsmb_ld(XG, MS, DS)                                                \
+        adsab_ld(W(XG), W(MS), W(DS))
+
+#define adsmb3rr(XD, XS, XT)                                                \
+        adsab3rr(W(XD), W(XS), W(XT))
+
+#define adsmb3ld(XD, XS, MT, DT)                                            \
+        adsab3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, signed */
 
@@ -1526,6 +1572,19 @@
 #define adsmn3ld(XD, XS, MT, DT)                                            \
         adsan3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define adsmc_rr(XG, XS)                                                    \
+        adsac_rr(W(XG), W(XS))
+
+#define adsmc_ld(XG, MS, DS)                                                \
+        adsac_ld(W(XG), W(MS), W(DS))
+
+#define adsmc3rr(XD, XS, XT)                                                \
+        adsac3rr(W(XD), W(XS), W(XT))
+
+#define adsmc3ld(XD, XS, MT, DT)                                            \
+        adsac3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define submx_rr(XG, XS)                                                    \
@@ -1539,6 +1598,19 @@
 
 #define submx3ld(XD, XS, MT, DT)                                            \
         subax3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define submb_rr(XG, XS)                                                    \
+        subab_rr(W(XG), W(XS))
+
+#define submb_ld(XG, MS, DS)                                                \
+        subab_ld(W(XG), W(MS), W(DS))
+
+#define submb3rr(XD, XS, XT)                                                \
+        subab3rr(W(XD), W(XS), W(XT))
+
+#define submb3ld(XD, XS, MT, DT)                                            \
+        subab3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, unsigned */
 
@@ -1554,6 +1626,19 @@
 #define sbsmx3ld(XD, XS, MT, DT)                                            \
         sbsax3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define sbsmb_rr(XG, XS)                                                    \
+        sbsab_rr(W(XG), W(XS))
+
+#define sbsmb_ld(XG, MS, DS)                                                \
+        sbsab_ld(W(XG), W(MS), W(DS))
+
+#define sbsmb3rr(XD, XS, XT)                                                \
+        sbsab3rr(W(XD), W(XS), W(XT))
+
+#define sbsmb3ld(XD, XS, MT, DT)                                            \
+        sbsab3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, signed */
 
 #define sbsmn_rr(XG, XS)                                                    \
@@ -1568,6 +1653,19 @@
 #define sbsmn3ld(XD, XS, MT, DT)                                            \
         sbsan3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define sbsmc_rr(XG, XS)                                                    \
+        sbsac_rr(W(XG), W(XS))
+
+#define sbsmc_ld(XG, MS, DS)                                                \
+        sbsac_ld(W(XG), W(MS), W(DS))
+
+#define sbsmc3rr(XD, XS, XT)                                                \
+        sbsac3rr(W(XD), W(XS), W(XT))
+
+#define sbsmc3ld(XD, XS, MT, DT)                                            \
+        sbsac3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulmx_rr(XG, XS)                                                    \
@@ -1581,6 +1679,19 @@
 
 #define mulmx3ld(XD, XS, MT, DT)                                            \
         mulax3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define mulmb_rr(XG, XS)                                                    \
+        mulab_rr(W(XG), W(XS))
+
+#define mulmb_ld(XG, MS, DS)                                                \
+        mulab_ld(W(XG), W(MS), W(DS))
+
+#define mulmb3rr(XD, XS, XT)                                                \
+        mulab3rr(W(XD), W(XS), W(XT))
+
+#define mulmb3ld(XD, XS, MT, DT)                                            \
+        mulab3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -1597,6 +1708,19 @@
 #define shlmx3ld(XD, XS, MT, DT)                                            \
         shlax3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define shlmb_ri(XG, IS)                                                    \
+        shlab_ri(W(XG), W(IS))
+
+#define shlmb_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shlab_ld(W(XG), W(MS), W(DS))
+
+#define shlmb3ri(XD, XS, IT)                                                \
+        shlab3ri(W(XD), W(XS), W(IT))
+
+#define shlmb3ld(XD, XS, MT, DT)                                            \
+        shlab3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -1611,6 +1735,19 @@
 
 #define shrmx3ld(XD, XS, MT, DT)                                            \
         shrax3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define shrmb_ri(XG, IS)                                                    \
+        shrab_ri(W(XG), W(IS))
+
+#define shrmb_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrab_ld(W(XG), W(MS), W(DS))
+
+#define shrmb3ri(XD, XS, IT)                                                \
+        shrab3ri(W(XD), W(XS), W(IT))
+
+#define shrmb3ld(XD, XS, MT, DT)                                            \
+        shrab3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -1627,6 +1764,19 @@
 #define shrmn3ld(XD, XS, MT, DT)                                            \
         shran3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define shrmc_ri(XG, IS)                                                    \
+        shrac_ri(W(XG), W(IS))
+
+#define shrmc_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrac_ld(W(XG), W(MS), W(DS))
+
+#define shrmc3ri(XD, XS, IT)                                                \
+        shrac3ri(W(XD), W(XS), W(IT))
+
+#define shrmc3ld(XD, XS, MT, DT)                                            \
+        shrac3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -1641,6 +1791,19 @@
 
 #define svlmx3ld(XD, XS, MT, DT)                                            \
         svlax3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define svlmb_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlab_rr(W(XG), W(XS))
+
+#define svlmb_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlab_ld(W(XG), W(MS), W(DS))
+
+#define svlmb3rr(XD, XS, XT)                                                \
+        svlab3rr(W(XD), W(XS), W(XT))
+
+#define svlmb3ld(XD, XS, MT, DT)                                            \
+        svlab3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -1657,6 +1820,19 @@
 #define svrmx3ld(XD, XS, MT, DT)                                            \
         svrax3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define svrmb_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrab_rr(W(XG), W(XS))
+
+#define svrmb_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrab_ld(W(XG), W(MS), W(DS))
+
+#define svrmb3rr(XD, XS, XT)                                                \
+        svrab3rr(W(XD), W(XS), W(XT))
+
+#define svrmb3ld(XD, XS, MT, DT)                                            \
+        svrab3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -1671,6 +1847,19 @@
 
 #define svrmn3ld(XD, XS, MT, DT)                                            \
         svran3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define svrmc_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrac_rr(W(XG), W(XS))
+
+#define svrmc_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrac_ld(W(XG), W(MS), W(DS))
+
+#define svrmc3rr(XD, XS, XT)                                                \
+        svrac3rr(W(XD), W(XS), W(XT))
+
+#define svrmc3ld(XD, XS, MT, DT)                                            \
+        svrac3ld(W(XD), W(XS), W(MT), W(DT))
 
 /*****************   packed half-precision integer compare   ******************/
 
@@ -1688,6 +1877,19 @@
 #define minmx3ld(XD, XS, MT, DT)                                            \
         minax3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define minmb_rr(XG, XS)                                                    \
+        minab_rr(W(XG), W(XS))
+
+#define minmb_ld(XG, MS, DS)                                                \
+        minab_ld(W(XG), W(MS), W(DS))
+
+#define minmb3rr(XD, XS, XT)                                                \
+        minab3rr(W(XD), W(XS), W(XT))
+
+#define minmb3ld(XD, XS, MT, DT)                                            \
+        minab3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
 
 #define minmn_rr(XG, XS)                                                    \
@@ -1701,6 +1903,19 @@
 
 #define minmn3ld(XD, XS, MT, DT)                                            \
         minan3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define minmc_rr(XG, XS)                                                    \
+        minac_rr(W(XG), W(XS))
+
+#define minmc_ld(XG, MS, DS)                                                \
+        minac_ld(W(XG), W(MS), W(DS))
+
+#define minmc3rr(XD, XS, XT)                                                \
+        minac3rr(W(XD), W(XS), W(XT))
+
+#define minmc3ld(XD, XS, MT, DT)                                            \
+        minac3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
 
@@ -1716,6 +1931,19 @@
 #define maxmx3ld(XD, XS, MT, DT)                                            \
         maxax3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define maxmb_rr(XG, XS)                                                    \
+        maxab_rr(W(XG), W(XS))
+
+#define maxmb_ld(XG, MS, DS)                                                \
+        maxab_ld(W(XG), W(MS), W(DS))
+
+#define maxmb3rr(XD, XS, XT)                                                \
+        maxab3rr(W(XD), W(XS), W(XT))
+
+#define maxmb3ld(XD, XS, MT, DT)                                            \
+        maxab3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
 
 #define maxmn_rr(XG, XS)                                                    \
@@ -1729,6 +1957,19 @@
 
 #define maxmn3ld(XD, XS, MT, DT)                                            \
         maxan3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define maxmc_rr(XG, XS)                                                    \
+        maxac_rr(W(XG), W(XS))
+
+#define maxmc_ld(XG, MS, DS)                                                \
+        maxac_ld(W(XG), W(MS), W(DS))
+
+#define maxmc3rr(XD, XS, XT)                                                \
+        maxac3rr(W(XD), W(XS), W(XT))
+
+#define maxmc3ld(XD, XS, MT, DT)                                            \
+        maxac3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
@@ -1744,6 +1985,19 @@
 #define ceqmx3ld(XD, XS, MT, DT)                                            \
         ceqax3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define ceqmb_rr(XG, XS)                                                    \
+        ceqab_rr(W(XG), W(XS))
+
+#define ceqmb_ld(XG, MS, DS)                                                \
+        ceqab_ld(W(XG), W(MS), W(DS))
+
+#define ceqmb3rr(XD, XS, XT)                                                \
+        ceqab3rr(W(XD), W(XS), W(XT))
+
+#define ceqmb3ld(XD, XS, MT, DT)                                            \
+        ceqab3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cnemx_rr(XG, XS)                                                    \
@@ -1757,6 +2011,19 @@
 
 #define cnemx3ld(XD, XS, MT, DT)                                            \
         cneax3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define cnemb_rr(XG, XS)                                                    \
+        cneab_rr(W(XG), W(XS))
+
+#define cnemb_ld(XG, MS, DS)                                                \
+        cneab_ld(W(XG), W(MS), W(DS))
+
+#define cnemb3rr(XD, XS, XT)                                                \
+        cneab3rr(W(XD), W(XS), W(XT))
+
+#define cnemb3ld(XD, XS, MT, DT)                                            \
+        cneab3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
 
@@ -1772,6 +2039,19 @@
 #define cltmx3ld(XD, XS, MT, DT)                                            \
         cltax3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define cltmb_rr(XG, XS)                                                    \
+        cltab_rr(W(XG), W(XS))
+
+#define cltmb_ld(XG, MS, DS)                                                \
+        cltab_ld(W(XG), W(MS), W(DS))
+
+#define cltmb3rr(XD, XS, XT)                                                \
+        cltab3rr(W(XD), W(XS), W(XT))
+
+#define cltmb3ld(XD, XS, MT, DT)                                            \
+        cltab3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
 
 #define cltmn_rr(XG, XS)                                                    \
@@ -1785,6 +2065,19 @@
 
 #define cltmn3ld(XD, XS, MT, DT)                                            \
         cltan3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define cltmc_rr(XG, XS)                                                    \
+        cltac_rr(W(XG), W(XS))
+
+#define cltmc_ld(XG, MS, DS)                                                \
+        cltac_ld(W(XG), W(MS), W(DS))
+
+#define cltmc3rr(XD, XS, XT)                                                \
+        cltac3rr(W(XD), W(XS), W(XT))
+
+#define cltmc3ld(XD, XS, MT, DT)                                            \
+        cltac3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
 
@@ -1800,6 +2093,19 @@
 #define clemx3ld(XD, XS, MT, DT)                                            \
         cleax3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define clemb_rr(XG, XS)                                                    \
+        cleab_rr(W(XG), W(XS))
+
+#define clemb_ld(XG, MS, DS)                                                \
+        cleab_ld(W(XG), W(MS), W(DS))
+
+#define clemb3rr(XD, XS, XT)                                                \
+        cleab3rr(W(XD), W(XS), W(XT))
+
+#define clemb3ld(XD, XS, MT, DT)                                            \
+        cleab3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
 
 #define clemn_rr(XG, XS)                                                    \
@@ -1813,6 +2119,19 @@
 
 #define clemn3ld(XD, XS, MT, DT)                                            \
         clean3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define clemc_rr(XG, XS)                                                    \
+        cleac_rr(W(XG), W(XS))
+
+#define clemc_ld(XG, MS, DS)                                                \
+        cleac_ld(W(XG), W(MS), W(DS))
+
+#define clemc3rr(XD, XS, XT)                                                \
+        cleac3rr(W(XD), W(XS), W(XT))
+
+#define clemc3ld(XD, XS, MT, DT)                                            \
+        cleac3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
 
@@ -1828,6 +2147,19 @@
 #define cgtmx3ld(XD, XS, MT, DT)                                            \
         cgtax3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define cgtmb_rr(XG, XS)                                                    \
+        cgtab_rr(W(XG), W(XS))
+
+#define cgtmb_ld(XG, MS, DS)                                                \
+        cgtab_ld(W(XG), W(MS), W(DS))
+
+#define cgtmb3rr(XD, XS, XT)                                                \
+        cgtab3rr(W(XD), W(XS), W(XT))
+
+#define cgtmb3ld(XD, XS, MT, DT)                                            \
+        cgtab3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
 
 #define cgtmn_rr(XG, XS)                                                    \
@@ -1841,6 +2173,19 @@
 
 #define cgtmn3ld(XD, XS, MT, DT)                                            \
         cgtan3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define cgtmc_rr(XG, XS)                                                    \
+        cgtac_rr(W(XG), W(XS))
+
+#define cgtmc_ld(XG, MS, DS)                                                \
+        cgtac_ld(W(XG), W(MS), W(DS))
+
+#define cgtmc3rr(XD, XS, XT)                                                \
+        cgtac3rr(W(XD), W(XS), W(XT))
+
+#define cgtmc3ld(XD, XS, MT, DT)                                            \
+        cgtac3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
 
@@ -1856,6 +2201,19 @@
 #define cgemx3ld(XD, XS, MT, DT)                                            \
         cgeax3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define cgemb_rr(XG, XS)                                                    \
+        cgeab_rr(W(XG), W(XS))
+
+#define cgemb_ld(XG, MS, DS)                                                \
+        cgeab_ld(W(XG), W(MS), W(DS))
+
+#define cgemb3rr(XD, XS, XT)                                                \
+        cgeab3rr(W(XD), W(XS), W(XT))
+
+#define cgemb3ld(XD, XS, MT, DT)                                            \
+        cgeab3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
 
 #define cgemn_rr(XG, XS)                                                    \
@@ -1869,6 +2227,19 @@
 
 #define cgemn3ld(XD, XS, MT, DT)                                            \
         cgean3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define cgemc_rr(XG, XS)                                                    \
+        cgeac_rr(W(XG), W(XS))
+
+#define cgemc_ld(XG, MS, DS)                                                \
+        cgeac_ld(W(XG), W(MS), W(DS))
+
+#define cgemc3rr(XD, XS, XT)                                                \
+        cgeac3rr(W(XD), W(XS), W(XT))
+
+#define cgemc3ld(XD, XS, MT, DT)                                            \
+        cgeac3ld(W(XD), W(XS), W(MT), W(DT))
 
 /******************************************************************************/
 /**** var-len **** SIMD instructions with fixed-16-bit element **** 128-bit ***/
@@ -1895,6 +2266,16 @@
 #define movmx_st(XS, MD, DD)                                                \
         movgx_st(W(XS), W(MD), W(DD))
 
+
+#define movmb_rr(XD, XS)                                                    \
+        movgb_rr(W(XD), W(XS))
+
+#define movmb_ld(XD, MS, DS)                                                \
+        movgb_ld(W(XD), W(MS), W(DS))
+
+#define movmb_st(XS, MD, DD)                                                \
+        movgb_st(W(XS), W(MD), W(DD))
+
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
@@ -1906,6 +2287,16 @@
 
 #define mmvmx_st(XS, MG, DG)                                                \
         mmvgx_st(W(XS), W(MG), W(DG))
+
+
+#define mmvmb_rr(XD, XS)                                                    \
+        mmvgb_rr(W(XD), W(XS))
+
+#define mmvmb_ld(XG, MS, DS)                                                \
+        mmvgb_ld(W(XG), W(MS), W(DS))
+
+#define mmvmb_st(XS, MG, DG)                                                \
+        mmvgb_st(W(XS), W(MG), W(DG))
 
 /* and (G = G & S), (D = S & T) if (#D != #T) */
 
@@ -2366,6 +2757,19 @@
 #define addmx3ld(XD, XS, MT, DT)                                            \
         addgx3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define addmb_rr(XG, XS)                                                    \
+        addgb_rr(W(XG), W(XS))
+
+#define addmb_ld(XG, MS, DS)                                                \
+        addgb_ld(W(XG), W(MS), W(DS))
+
+#define addmb3rr(XD, XS, XT)                                                \
+        addgb3rr(W(XD), W(XS), W(XT))
+
+#define addmb3ld(XD, XS, MT, DT)                                            \
+        addgb3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, unsigned */
 
 #define adsmx_rr(XG, XS)                                                    \
@@ -2379,6 +2783,19 @@
 
 #define adsmx3ld(XD, XS, MT, DT)                                            \
         adsgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define adsmb_rr(XG, XS)                                                    \
+        adsgb_rr(W(XG), W(XS))
+
+#define adsmb_ld(XG, MS, DS)                                                \
+        adsgb_ld(W(XG), W(MS), W(DS))
+
+#define adsmb3rr(XD, XS, XT)                                                \
+        adsgb3rr(W(XD), W(XS), W(XT))
+
+#define adsmb3ld(XD, XS, MT, DT)                                            \
+        adsgb3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, signed */
 
@@ -2394,6 +2811,19 @@
 #define adsmn3ld(XD, XS, MT, DT)                                            \
         adsgn3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define adsmc_rr(XG, XS)                                                    \
+        adsgc_rr(W(XG), W(XS))
+
+#define adsmc_ld(XG, MS, DS)                                                \
+        adsgc_ld(W(XG), W(MS), W(DS))
+
+#define adsmc3rr(XD, XS, XT)                                                \
+        adsgc3rr(W(XD), W(XS), W(XT))
+
+#define adsmc3ld(XD, XS, MT, DT)                                            \
+        adsgc3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define submx_rr(XG, XS)                                                    \
@@ -2407,6 +2837,19 @@
 
 #define submx3ld(XD, XS, MT, DT)                                            \
         subgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define submb_rr(XG, XS)                                                    \
+        subgb_rr(W(XG), W(XS))
+
+#define submb_ld(XG, MS, DS)                                                \
+        subgb_ld(W(XG), W(MS), W(DS))
+
+#define submb3rr(XD, XS, XT)                                                \
+        subgb3rr(W(XD), W(XS), W(XT))
+
+#define submb3ld(XD, XS, MT, DT)                                            \
+        subgb3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, unsigned */
 
@@ -2422,6 +2865,19 @@
 #define sbsmx3ld(XD, XS, MT, DT)                                            \
         sbsgx3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define sbsmb_rr(XG, XS)                                                    \
+        sbsgb_rr(W(XG), W(XS))
+
+#define sbsmb_ld(XG, MS, DS)                                                \
+        sbsgb_ld(W(XG), W(MS), W(DS))
+
+#define sbsmb3rr(XD, XS, XT)                                                \
+        sbsgb3rr(W(XD), W(XS), W(XT))
+
+#define sbsmb3ld(XD, XS, MT, DT)                                            \
+        sbsgb3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, signed */
 
 #define sbsmn_rr(XG, XS)                                                    \
@@ -2436,6 +2892,19 @@
 #define sbsmn3ld(XD, XS, MT, DT)                                            \
         sbsgn3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define sbsmc_rr(XG, XS)                                                    \
+        sbsgc_rr(W(XG), W(XS))
+
+#define sbsmc_ld(XG, MS, DS)                                                \
+        sbsgc_ld(W(XG), W(MS), W(DS))
+
+#define sbsmc3rr(XD, XS, XT)                                                \
+        sbsgc3rr(W(XD), W(XS), W(XT))
+
+#define sbsmc3ld(XD, XS, MT, DT)                                            \
+        sbsgc3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulmx_rr(XG, XS)                                                    \
@@ -2449,6 +2918,19 @@
 
 #define mulmx3ld(XD, XS, MT, DT)                                            \
         mulgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define mulmb_rr(XG, XS)                                                    \
+        mulgb_rr(W(XG), W(XS))
+
+#define mulmb_ld(XG, MS, DS)                                                \
+        mulgb_ld(W(XG), W(MS), W(DS))
+
+#define mulmb3rr(XD, XS, XT)                                                \
+        mulgb3rr(W(XD), W(XS), W(XT))
+
+#define mulmb3ld(XD, XS, MT, DT)                                            \
+        mulgb3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -2465,6 +2947,19 @@
 #define shlmx3ld(XD, XS, MT, DT)                                            \
         shlgx3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define shlmb_ri(XG, IS)                                                    \
+        shlgb_ri(W(XG), W(IS))
+
+#define shlmb_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shlgb_ld(W(XG), W(MS), W(DS))
+
+#define shlmb3ri(XD, XS, IT)                                                \
+        shlgb3ri(W(XD), W(XS), W(IT))
+
+#define shlmb3ld(XD, XS, MT, DT)                                            \
+        shlgb3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -2479,6 +2974,19 @@
 
 #define shrmx3ld(XD, XS, MT, DT)                                            \
         shrgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define shrmb_ri(XG, IS)                                                    \
+        shrgb_ri(W(XG), W(IS))
+
+#define shrmb_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrgb_ld(W(XG), W(MS), W(DS))
+
+#define shrmb3ri(XD, XS, IT)                                                \
+        shrgb3ri(W(XD), W(XS), W(IT))
+
+#define shrmb3ld(XD, XS, MT, DT)                                            \
+        shrgb3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -2495,6 +3003,19 @@
 #define shrmn3ld(XD, XS, MT, DT)                                            \
         shrgn3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define shrmc_ri(XG, IS)                                                    \
+        shrgc_ri(W(XG), W(IS))
+
+#define shrmc_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrgc_ld(W(XG), W(MS), W(DS))
+
+#define shrmc3ri(XD, XS, IT)                                                \
+        shrgc3ri(W(XD), W(XS), W(IT))
+
+#define shrmc3ld(XD, XS, MT, DT)                                            \
+        shrgc3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -2509,6 +3030,19 @@
 
 #define svlmx3ld(XD, XS, MT, DT)                                            \
         svlgx3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define svlmb_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlgb_rr(W(XG), W(XS))
+
+#define svlmb_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlgb_ld(W(XG), W(MS), W(DS))
+
+#define svlmb3rr(XD, XS, XT)                                                \
+        svlgb3rr(W(XD), W(XS), W(XT))
+
+#define svlmb3ld(XD, XS, MT, DT)                                            \
+        svlgb3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -2525,6 +3059,19 @@
 #define svrmx3ld(XD, XS, MT, DT)                                            \
         svrgx3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define svrmb_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrgb_rr(W(XG), W(XS))
+
+#define svrmb_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrgb_ld(W(XG), W(MS), W(DS))
+
+#define svrmb3rr(XD, XS, XT)                                                \
+        svrgb3rr(W(XD), W(XS), W(XT))
+
+#define svrmb3ld(XD, XS, MT, DT)                                            \
+        svrgb3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -2539,6 +3086,19 @@
 
 #define svrmn3ld(XD, XS, MT, DT)                                            \
         svrgn3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define svrmc_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrgc_rr(W(XG), W(XS))
+
+#define svrmc_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrgc_ld(W(XG), W(MS), W(DS))
+
+#define svrmc3rr(XD, XS, XT)                                                \
+        svrgc3rr(W(XD), W(XS), W(XT))
+
+#define svrmc3ld(XD, XS, MT, DT)                                            \
+        svrgc3ld(W(XD), W(XS), W(MT), W(DT))
 
 /*****************   packed half-precision integer compare   ******************/
 
@@ -2556,6 +3116,19 @@
 #define minmx3ld(XD, XS, MT, DT)                                            \
         mingx3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define minmb_rr(XG, XS)                                                    \
+        mingb_rr(W(XG), W(XS))
+
+#define minmb_ld(XG, MS, DS)                                                \
+        mingb_ld(W(XG), W(MS), W(DS))
+
+#define minmb3rr(XD, XS, XT)                                                \
+        mingb3rr(W(XD), W(XS), W(XT))
+
+#define minmb3ld(XD, XS, MT, DT)                                            \
+        mingb3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
 
 #define minmn_rr(XG, XS)                                                    \
@@ -2569,6 +3142,19 @@
 
 #define minmn3ld(XD, XS, MT, DT)                                            \
         mingn3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define minmc_rr(XG, XS)                                                    \
+        mingc_rr(W(XG), W(XS))
+
+#define minmc_ld(XG, MS, DS)                                                \
+        mingc_ld(W(XG), W(MS), W(DS))
+
+#define minmc3rr(XD, XS, XT)                                                \
+        mingc3rr(W(XD), W(XS), W(XT))
+
+#define minmc3ld(XD, XS, MT, DT)                                            \
+        mingc3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
 
@@ -2584,6 +3170,19 @@
 #define maxmx3ld(XD, XS, MT, DT)                                            \
         maxgx3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define maxmb_rr(XG, XS)                                                    \
+        maxgb_rr(W(XG), W(XS))
+
+#define maxmb_ld(XG, MS, DS)                                                \
+        maxgb_ld(W(XG), W(MS), W(DS))
+
+#define maxmb3rr(XD, XS, XT)                                                \
+        maxgb3rr(W(XD), W(XS), W(XT))
+
+#define maxmb3ld(XD, XS, MT, DT)                                            \
+        maxgb3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
 
 #define maxmn_rr(XG, XS)                                                    \
@@ -2597,6 +3196,19 @@
 
 #define maxmn3ld(XD, XS, MT, DT)                                            \
         maxgn3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define maxmc_rr(XG, XS)                                                    \
+        maxgc_rr(W(XG), W(XS))
+
+#define maxmc_ld(XG, MS, DS)                                                \
+        maxgc_ld(W(XG), W(MS), W(DS))
+
+#define maxmc3rr(XD, XS, XT)                                                \
+        maxgc3rr(W(XD), W(XS), W(XT))
+
+#define maxmc3ld(XD, XS, MT, DT)                                            \
+        maxgc3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
@@ -2612,6 +3224,19 @@
 #define ceqmx3ld(XD, XS, MT, DT)                                            \
         ceqgx3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define ceqmb_rr(XG, XS)                                                    \
+        ceqgb_rr(W(XG), W(XS))
+
+#define ceqmb_ld(XG, MS, DS)                                                \
+        ceqgb_ld(W(XG), W(MS), W(DS))
+
+#define ceqmb3rr(XD, XS, XT)                                                \
+        ceqgb3rr(W(XD), W(XS), W(XT))
+
+#define ceqmb3ld(XD, XS, MT, DT)                                            \
+        ceqgb3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cnemx_rr(XG, XS)                                                    \
@@ -2625,6 +3250,19 @@
 
 #define cnemx3ld(XD, XS, MT, DT)                                            \
         cnegx3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define cnemb_rr(XG, XS)                                                    \
+        cnegb_rr(W(XG), W(XS))
+
+#define cnemb_ld(XG, MS, DS)                                                \
+        cnegb_ld(W(XG), W(MS), W(DS))
+
+#define cnemb3rr(XD, XS, XT)                                                \
+        cnegb3rr(W(XD), W(XS), W(XT))
+
+#define cnemb3ld(XD, XS, MT, DT)                                            \
+        cnegb3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
 
@@ -2640,6 +3278,19 @@
 #define cltmx3ld(XD, XS, MT, DT)                                            \
         cltgx3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define cltmb_rr(XG, XS)                                                    \
+        cltgb_rr(W(XG), W(XS))
+
+#define cltmb_ld(XG, MS, DS)                                                \
+        cltgb_ld(W(XG), W(MS), W(DS))
+
+#define cltmb3rr(XD, XS, XT)                                                \
+        cltgb3rr(W(XD), W(XS), W(XT))
+
+#define cltmb3ld(XD, XS, MT, DT)                                            \
+        cltgb3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
 
 #define cltmn_rr(XG, XS)                                                    \
@@ -2653,6 +3304,19 @@
 
 #define cltmn3ld(XD, XS, MT, DT)                                            \
         cltgn3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define cltmc_rr(XG, XS)                                                    \
+        cltgc_rr(W(XG), W(XS))
+
+#define cltmc_ld(XG, MS, DS)                                                \
+        cltgc_ld(W(XG), W(MS), W(DS))
+
+#define cltmc3rr(XD, XS, XT)                                                \
+        cltgc3rr(W(XD), W(XS), W(XT))
+
+#define cltmc3ld(XD, XS, MT, DT)                                            \
+        cltgc3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
 
@@ -2668,6 +3332,19 @@
 #define clemx3ld(XD, XS, MT, DT)                                            \
         clegx3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define clemb_rr(XG, XS)                                                    \
+        clegb_rr(W(XG), W(XS))
+
+#define clemb_ld(XG, MS, DS)                                                \
+        clegb_ld(W(XG), W(MS), W(DS))
+
+#define clemb3rr(XD, XS, XT)                                                \
+        clegb3rr(W(XD), W(XS), W(XT))
+
+#define clemb3ld(XD, XS, MT, DT)                                            \
+        clegb3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
 
 #define clemn_rr(XG, XS)                                                    \
@@ -2681,6 +3358,19 @@
 
 #define clemn3ld(XD, XS, MT, DT)                                            \
         clegn3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define clemc_rr(XG, XS)                                                    \
+        clegc_rr(W(XG), W(XS))
+
+#define clemc_ld(XG, MS, DS)                                                \
+        clegc_ld(W(XG), W(MS), W(DS))
+
+#define clemc3rr(XD, XS, XT)                                                \
+        clegc3rr(W(XD), W(XS), W(XT))
+
+#define clemc3ld(XD, XS, MT, DT)                                            \
+        clegc3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
 
@@ -2696,6 +3386,19 @@
 #define cgtmx3ld(XD, XS, MT, DT)                                            \
         cgtgx3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define cgtmb_rr(XG, XS)                                                    \
+        cgtgb_rr(W(XG), W(XS))
+
+#define cgtmb_ld(XG, MS, DS)                                                \
+        cgtgb_ld(W(XG), W(MS), W(DS))
+
+#define cgtmb3rr(XD, XS, XT)                                                \
+        cgtgb3rr(W(XD), W(XS), W(XT))
+
+#define cgtmb3ld(XD, XS, MT, DT)                                            \
+        cgtgb3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
 
 #define cgtmn_rr(XG, XS)                                                    \
@@ -2709,6 +3412,19 @@
 
 #define cgtmn3ld(XD, XS, MT, DT)                                            \
         cgtgn3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define cgtmc_rr(XG, XS)                                                    \
+        cgtgc_rr(W(XG), W(XS))
+
+#define cgtmc_ld(XG, MS, DS)                                                \
+        cgtgc_ld(W(XG), W(MS), W(DS))
+
+#define cgtmc3rr(XD, XS, XT)                                                \
+        cgtgc3rr(W(XD), W(XS), W(XT))
+
+#define cgtmc3ld(XD, XS, MT, DT)                                            \
+        cgtgc3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
 
@@ -2724,6 +3440,19 @@
 #define cgemx3ld(XD, XS, MT, DT)                                            \
         cgegx3ld(W(XD), W(XS), W(MT), W(DT))
 
+
+#define cgemb_rr(XG, XS)                                                    \
+        cgegb_rr(W(XG), W(XS))
+
+#define cgemb_ld(XG, MS, DS)                                                \
+        cgegb_ld(W(XG), W(MS), W(DS))
+
+#define cgemb3rr(XD, XS, XT)                                                \
+        cgegb3rr(W(XD), W(XS), W(XT))
+
+#define cgemb3ld(XD, XS, MT, DT)                                            \
+        cgegb3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
 
 #define cgemn_rr(XG, XS)                                                    \
@@ -2737,6 +3466,19 @@
 
 #define cgemn3ld(XD, XS, MT, DT)                                            \
         cgegn3ld(W(XD), W(XS), W(MT), W(DT))
+
+
+#define cgemc_rr(XG, XS)                                                    \
+        cgegc_rr(W(XG), W(XS))
+
+#define cgemc_ld(XG, MS, DS)                                                \
+        cgegc_ld(W(XG), W(MS), W(DS))
+
+#define cgemc3rr(XD, XS, XT)                                                \
+        cgegc3rr(W(XD), W(XS), W(XT))
+
+#define cgemc3ld(XD, XS, MT, DT)                                            \
+        cgegc3ld(W(XD), W(XS), W(MT), W(DT))
 
 #endif /* RT_SIMD: 256, 128 */
 

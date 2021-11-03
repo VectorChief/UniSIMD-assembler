@@ -5800,8 +5800,8 @@ rt_void c_test45(rt_SIMD_INFOX *info)
     j = n;
     while (j-->0)
     {
-        hco1[j] = (har0[j] == har0[(j + S) % n]) ? -1 : 0;
-        hco2[j] = (har0[j] != har0[(j + S) % n]) ? -1 : 0;
+        hco1[j] = (har0[j] == har0[(j + N) % n]) ? -1 : 0;
+        hco2[j] = (har0[j] != har0[(j + N) % n]) ? -1 : 0;
     }
 }
 
@@ -5871,17 +5871,17 @@ rt_void p_test45(rt_SIMD_INFOX *info)
         }
 
         RT_LOGI("harr[%d] = %d, harr[%d] = %d\n",
-                j, (rt_si32)har0[j], (j + S) % n, (rt_si32)har0[(j + S) % n]);
+                j, (rt_si32)har0[j], (j + N) % n, (rt_si32)har0[(j + N) % n]);
 
         RT_LOGI("C (harr[%d]==harr[%d]) = %X, "
                   "(harr[%d]!=harr[%d]) = %X\n",
-                j, (j + S) % n, (rt_si32)hco1[j],
-                j, (j + S) % n, (rt_si32)hco2[j]);
+                j, (j + N) % n, (rt_si32)hco1[j],
+                j, (j + N) % n, (rt_si32)hco2[j]);
 
         RT_LOGI("S (harr[%d]==harr[%d]) = %X, "
                   "(harr[%d]!=harr[%d]) = %X\n",
-                j, (j + S) % n, (rt_si32)hso1[j],
-                j, (j + S) % n, (rt_si32)hso2[j]);
+                j, (j + N) % n, (rt_si32)hso1[j],
+                j, (j + N) % n, (rt_si32)hso2[j]);
     }
 }
 

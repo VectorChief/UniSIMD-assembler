@@ -242,6 +242,10 @@
  * Short names P, A and L represent RT_POINTER, RT_ADDRESS and RT_ELEMENT
  * in base units: 1 for 32-bit, 2 for 64-bit.
  *
+ * Note that logical cmdpx instructions are configured for floating-point
+ * SIMD pipeline on x86 where applicable, while logical cmdmx instructions
+ * are better suited for integer SIMD workloads.
+ *
  * Constants like B/C/D/.../I define various displacement corrections for
  * endianness, when C/C++ and ASM sections work on different data sizes packed
  * within a single larger field.

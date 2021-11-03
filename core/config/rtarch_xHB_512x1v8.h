@@ -20,11 +20,11 @@
  *
  * Recommended naming scheme for instructions:
  *
- * cmdm*_rx - applies [cmd] to var-len packed-half: [r]egister (one operand)
- * cmdm*_rr - applies [cmd] to var-len packed-half: [r]egister from [r]egister
+ * cmdm*_rx - applies [cmd] to var-len packed SIMD: [r]egister (one operand)
+ * cmdm*_rr - applies [cmd] to var-len packed SIMD: [r]egister from [r]egister
  *
- * cmdm*_rm - applies [cmd] to var-len packed-half: [r]egister from [m]emory
- * cmdm*_ld - applies [cmd] to var-len packed-half: as above (friendly alias)
+ * cmdm*_rm - applies [cmd] to var-len packed SIMD: [r]egister from [m]emory
+ * cmdm*_ld - applies [cmd] to var-len packed SIMD: as above (friendly alias)
  *
  * Interpretation of instruction parameters:
  *
@@ -3293,7 +3293,7 @@
     ADR EVX(0,       RXB(MT), REN(XS), K, 1, 3) EMITB(0x3E)                 \
         MRM(0x01,    MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x04))                                  \
-        mz1mx_ld(W(XD), Mebp, inf_GPC07)
+        mz1mb_ld(W(XD), Mebp, inf_GPC07)
 
 /* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
 

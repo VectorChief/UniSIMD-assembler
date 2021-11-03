@@ -20,11 +20,11 @@
  *
  * Recommended naming scheme for instructions:
  *
- * cmdm*_rx - applies [cmd] to var-len packed-half: [r]egister (one operand)
- * cmdm*_rr - applies [cmd] to var-len packed-half: [r]egister from [r]egister
+ * cmdm*_rx - applies [cmd] to var-len packed SIMD: [r]egister (one operand)
+ * cmdm*_rr - applies [cmd] to var-len packed SIMD: [r]egister from [r]egister
  *
- * cmdm*_rm - applies [cmd] to var-len packed-half: [r]egister from [m]emory
- * cmdm*_ld - applies [cmd] to var-len packed-half: as above (friendly alias)
+ * cmdm*_rm - applies [cmd] to var-len packed SIMD: [r]egister from [m]emory
+ * cmdm*_ld - applies [cmd] to var-len packed SIMD: as above (friendly alias)
  *
  * Interpretation of instruction parameters:
  *
@@ -2978,17 +2978,17 @@
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
 
 #define maxmb_rr(XG, XS)                                                    \
-        maxmx3rr(W(XG), W(XG), W(XS))
+        maxmb3rr(W(XG), W(XG), W(XS))
 
 #define maxmb_ld(XG, MS, DS)                                                \
-        maxmx3ld(W(XG), W(XG), W(MS), W(DS))
+        maxmb3ld(W(XG), W(XG), W(MS), W(DS))
 
-#define maxmx3rr(XD, XS, XT)                                                \
+#define maxmb3rr(XD, XS, XT)                                                \
         movmb_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmb_st(W(XT), Mebp, inf_SCR02(0))                                 \
         maxmb_rx(W(XD))
 
-#define maxmx3ld(XD, XS, MT, DT)                                            \
+#define maxmb3ld(XD, XS, MT, DT)                                            \
         movmb_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmb_ld(W(XD), W(MT), W(DT))                                       \
         movmb_st(W(XD), Mebp, inf_SCR02(0))                                 \
@@ -3046,17 +3046,17 @@
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqmb_rr(XG, XS)                                                    \
-        ceqmx3rr(W(XG), W(XG), W(XS))
+        ceqmb3rr(W(XG), W(XG), W(XS))
 
 #define ceqmb_ld(XG, MS, DS)                                                \
-        ceqmx3ld(W(XG), W(XG), W(MS), W(DS))
+        ceqmb3ld(W(XG), W(XG), W(MS), W(DS))
 
-#define ceqmx3rr(XD, XS, XT)                                                \
+#define ceqmb3rr(XD, XS, XT)                                                \
         movmb_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmb_st(W(XT), Mebp, inf_SCR02(0))                                 \
         ceqmb_rx(W(XD))
 
-#define ceqmx3ld(XD, XS, MT, DT)                                            \
+#define ceqmb3ld(XD, XS, MT, DT)                                            \
         movmb_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movmb_ld(W(XD), W(MT), W(DT))                                       \
         movmb_st(W(XD), Mebp, inf_SCR02(0))                                 \
