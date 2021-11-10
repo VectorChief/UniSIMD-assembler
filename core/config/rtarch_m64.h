@@ -165,7 +165,7 @@
         EMITW(0x00000025 | MRM(REG(RD), REG(RS), TZxx))
 
 #define movwn_rr(RD, RS)       /* move 32-bit to 64-bit with sign-extend */ \
-        EMITW(0x00000000 | MSM(REG(RG), REG(RS), 0x00)
+        EMITW(0x00000000 | MSM(REG(RD), REG(RS), 0x00))
 
 #define movwz_rr(RD, RS)       /* move 32-bit to 64-bit with zero-extend */ \
         EMITW(0x0000003C | MSM(REG(RD), REG(RS), 0x00))                     \
