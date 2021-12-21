@@ -10,9 +10,9 @@ Initial documentation for the assembler is provided in core/config/rtdocs.h.
 At present, Intel SSE/SSE2/SSE4 and AVX/AVX2/AVX-512 (32/64-bit x86 ISAs),
 ARMv7 NEON/NEONv2, ARMv8 AArch32 and AArch64 NEON, SVE (32/64-bit ARM ISAs),
 MIPS 32/64-bit r5/r6 MSA and POWER 32/64-bit VMX/VSX (little/big-endian ISAs)
-are mostly implemented (w/ horizontal reductions) although scalar improvements,
-wider SIMD vectors with zeroing/merging predicates in 3/4-operand instructions,
-cross-precision fp-converters as well as sub-word (byte/half) integer SIMD ops
+are mostly implemented (w/ horizontal reductions and byte/half SIMD+BASE ops)
+although scalar improvements, wider SIMD vectors with zeroing/merging predicates
+in 3/4-operand instructions, cross-precision fp-converters on modern CPU targets
 are planned as extensions to current 2/3-operand SPMD-driven vertical SIMD ISA.
 
 The project has a test framework for Linux/GCC/Clang and Windows/VC++/TDM64-GCC.
@@ -22,12 +22,12 @@ for supported platforms can be found in the accompanying INSTALL file.
 
 UniSIMD core features:
  - Unified, Universal, Portable, Compatible code
- - Explicit register-allocation, predictable performance
- - Three register-sets for code: 8, 16, 32 (free: 8, 15, 30)
+ - Explicit register allocation, predictable performance
+ - Three register sets for code: 8, 16, 32 (free: 8, 15, 30)
  - High-level SIMD registers/ops as singles, pairs and quads
  - SIMD-aligned backend structures with offsets/factors
  - Vector-length agnostic vertical SIMD ISA, configurable
- - Simultaneous scalar+128/256-bit+configurable SIMD ops
+ - Simultaneous scalar + 128/256-bit + configurable SIMD ops
  - ISA reservation for fp16/fp128 (half/quad) SIMD ops
  - C/C++, Compute, SPMD on 4 major archs
  - Intel SSE/SSE2/SSE4 and AVX/AVX2/AVX-512
