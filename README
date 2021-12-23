@@ -28,7 +28,7 @@ UniSIMD core features:
  - SIMD-aligned backend structures with offsets/factors
  - Vector-length agnostic vertical SIMD ISA, configurable
  - Simultaneous scalar + 128/256-bit + configurable SIMD ops
- - ISA reservation for fp16/fp128 (half/quad) SIMD ops
+ - ISA implementation for fp16/fp128 (half/quad) SIMD ops
  - C/C++, Compute, SPMD on 4 major archs
  - Intel SSE/SSE2/SSE4 and AVX/AVX2/AVX-512
  - ARMv7 NEON/NEONv2, ARMv8 AArch32/AArch64 NEON, SVE
@@ -36,12 +36,13 @@ UniSIMD core features:
  - POWER VMX/VSX (PowerPC G4/G5, POWER6/7/8/9)
  - CISC, RISC, CISC on RISC, little/big-endian ISA
  - Support for reg-reg, load/store, load-op instructions
+ - Plain, indexed and scaled-indexed addressing modes
  - FMA3 support (native or higher-precision emulation)
  - 32/64-bit hybrid mode for native 64-bit ABI
  - 32/64-bit addressing for BASE and SIMD ops
  - 32/64-bit configurable SIMD elements (fp+int)
- - Simultaneous 32/64-bit BASE (with rules) and SIMD ops
- - ISA reservation for int8/int16 (byte/half) BASE ops
+ - Simultaneous 32/64-bit BASE (bridges, rules) and SIMD ops
+ - ISA implementation for int8/int16 (byte/half) BASE ops
  - Full control over code, compiler steps out of the way
  - Potential for bit-exact fp-compute across modern targets
  - Used in QuadRay engine
