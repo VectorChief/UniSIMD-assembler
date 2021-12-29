@@ -212,6 +212,20 @@
         EMITB(0x84 | (15-((ren)&15))<<3 | (pfx))                            \
         EMITB(0x00 | (16-((ren)&16))>>1 | (len) << 5)
 
+/* 4-byte EVEX prefix with full customization (W0, K0), fp16 */
+#define E5X(rxg, rxm, ren, len, pfx, aux)                                   \
+        EMITB(0x62)                                                         \
+        EMITB(0x04 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
+        EMITB(0x04 | (15-((ren)&15))<<3 | (pfx))                            \
+        EMITB(0x00 | (16-((ren)&16))>>1 | (len) << 5)
+
+/* 4-byte EVEX prefix with full customization (W1, K0), fp16 */
+#define E5W(rxg, rxm, ren, len, pfx, aux)                                   \
+        EMITB(0x62)                                                         \
+        EMITB(0x04 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
+        EMITB(0x84 | (15-((ren)&15))<<3 | (pfx))                            \
+        EMITB(0x00 | (16-((ren)&16))>>1 | (len) << 5)
+
 /* 4-byte EVEX prefix with full customization (W0, K1, Z0) */
 #define EKX(rxg, rxm, ren, len, pfx, aux)                                   \
         EMITB(0x62)                                                         \
@@ -251,6 +265,20 @@
 #define ERW(rxg, rxm, ren, erm, pfx, aux)                                   \
         EMITB(0x62)                                                         \
         EMITB(0x00 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
+        EMITB(0x84 | (15-((ren)&15))<<3 | (pfx))                            \
+        EMITB(0x10 | (16-((ren)&16))>>1 | (erm) << 5)
+
+/* 4-byte EVEX prefix with full customization (W0, B1, RM), fp16 */
+#define EGX(rxg, rxm, ren, erm, pfx, aux)                                   \
+        EMITB(0x62)                                                         \
+        EMITB(0x04 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
+        EMITB(0x04 | (15-((ren)&15))<<3 | (pfx))                            \
+        EMITB(0x10 | (16-((ren)&16))>>1 | (erm) << 5)
+
+/* 4-byte EVEX prefix with full customization (W1, B1, RM), fp16 */
+#define EGW(rxg, rxm, ren, erm, pfx, aux)                                   \
+        EMITB(0x62)                                                         \
+        EMITB(0x04 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
         EMITB(0x84 | (15-((ren)&15))<<3 | (pfx))                            \
         EMITB(0x10 | (16-((ren)&16))>>1 | (erm) << 5)
 

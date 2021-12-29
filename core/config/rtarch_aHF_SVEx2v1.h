@@ -145,7 +145,7 @@
         EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
         EMITW(0x65400800 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divms_rr(XG, XS)                                                    \
         EMITW(0x654D8000 | MXM(REG(XG), REG(XS), 0x00))                     \
@@ -166,7 +166,8 @@
         movmx_rr(W(XD), W(XS))                                              \
         divms_ld(W(XD), W(MT), W(DT))
 
-/* sqr (D = sqrt S) */
+/* sqr (D = sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define sqrms_rr(XD, XS)                                                    \
         EMITW(0x654DA000 | MXM(REG(XD), REG(XS), 0x00))                     \
@@ -179,7 +180,8 @@
         EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VZL(DS), B3(DS), K1(DS)))  \
         EMITW(0x654DA000 | MXM(RYG(XD), TmmM,    0x00))
 
-/* rcp (D = 1.0 / S) */
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rcems_rr(XD, XS)                                                    \
         EMITW(0x654E3000 | MXM(REG(XD), REG(XS), 0x00))                     \
@@ -191,7 +193,8 @@
         EMITW(0x65401800 | MXM(RYG(XS), RYG(XS), RYG(XG)))                  \
         EMITW(0x65400800 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-/* rsq (D = 1.0 / sqrt S) */
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rsems_rr(XD, XS)                                                    \
         EMITW(0x654F3000 | MXM(REG(XD), REG(XS), 0x00))                     \

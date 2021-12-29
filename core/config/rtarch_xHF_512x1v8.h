@@ -4,15 +4,15 @@
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
 
-#ifndef RT_RTARCH_AHF_SVEX1V1_H
-#define RT_RTARCH_AHF_SVEX1V1_H
+#ifndef RT_RTARCH_XHF_512X1V8_H
+#define RT_RTARCH_XHF_512X1V8_H
 
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
 
 /*
- * rtarch_aHF_SVEx1v1.h: Implementation of AArch64 fp16 SVE instructions.
+ * rtarch_xHF_512x1v8.h: Implementation of x86_64 AVX512F/fp16 instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * and contains architecture-specific extensions
@@ -61,7 +61,10 @@
 
 #if (defined RT_SIMD_CODE)
 
-#if (RT_SVEX1 != 0)
+#if (RT_512X1 >= 1 && RT_512X1 <= 8)
+
+#undef  K
+#define K 2
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -75,7 +78,7 @@
  * allows to decouple scalar subset from SIMD where appropriate */
 
 #define elmmx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
-        movns_st(W(XS), W(MD), W(DD))
+        elmns_st(W(XS), W(MD), W(DD))
 
 /*************   packed half-precision floating-point arithmetic   ************/
 
@@ -85,7 +88,11 @@
         negms_rr(W(XG), W(XG))
 
 #define negms_rr(XD, XS)                                                    \
-        EMITW(0x045DA000 | MXM(REG(XD), REG(XS), 0x00))
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), Mebp, inf_GPC06_32)                                 \
+        shrox_ri(W(XD), IB(16))                                             \
+        xorox_ld(W(XD), Mebp, inf_SCR01(0))                                 \
+        xorox_ld(W(XD), Mebp, inf_GPC06_32)
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
@@ -96,12 +103,13 @@
         addms3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define addms3rr(XD, XS, XT)                                                \
-        EMITW(0x65400000 | MXM(REG(XD), REG(XS), REG(XT)))
+        E5X(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x58)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
 
 #define addms3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
-        EMITW(0x65400000 | MXM(REG(XD), REG(XS), TmmM))
+    ADR E5X(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x58)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* sub (G = G - S), (D = S - T) if (#D != #T) */
 
@@ -112,12 +120,13 @@
         subms3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define subms3rr(XD, XS, XT)                                                \
-        EMITW(0x65400400 | MXM(REG(XD), REG(XS), REG(XT)))
+        E5X(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x5C)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
 
 #define subms3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
-        EMITW(0x65400400 | MXM(REG(XD), REG(XS), TmmM))
+    ADR E5X(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x5C)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
 
@@ -128,120 +137,120 @@
         mulms3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define mulms3rr(XD, XS, XT)                                                \
-        EMITW(0x65400800 | MXM(REG(XD), REG(XS), REG(XT)))
+        E5X(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x59)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
 
 #define mulms3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
-        EMITW(0x65400800 | MXM(REG(XD), REG(XS), TmmM))
+    ADR E5X(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x59)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divms_rr(XG, XS)                                                    \
-        EMITW(0x654D8000 | MXM(REG(XG), REG(XS), 0x00))
+        divms3rr(W(XG), W(XG), W(XS))
 
 #define divms_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
-        EMITW(0x654D8000 | MXM(REG(XG), TmmM,    0x00))
+        divms3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define divms3rr(XD, XS, XT)                                                \
-        movmx_rr(W(XD), W(XS))                                              \
-        divms_rr(W(XD), W(XT))
+        E5X(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x5E)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
 
 #define divms3ld(XD, XS, MT, DT)                                            \
-        movmx_rr(W(XD), W(XS))                                              \
-        divms_ld(W(XD), W(MT), W(DT))
+    ADR E5X(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x5E)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* sqr (D = sqrt S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define sqrms_rr(XD, XS)                                                    \
-        EMITW(0x654DA000 | MXM(REG(XD), REG(XS), 0x00))
+        E5X(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x51)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
 
 #define sqrms_ld(XD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
-        EMITW(0x654DA000 | MXM(REG(XD), TmmM,    0x00))
+    ADR E5X(RXB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x51)                 \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rcems_rr(XD, XS)                                                    \
-        EMITW(0x654E3000 | MXM(REG(XD), REG(XS), 0x00))
+        E5X(RXB(XD), RXB(XS),    0x00, K, 1, 2) EMITB(0x4C)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
 
 #define rcsms_rr(XG, XS) /* destroys XS */                                  \
-        EMITW(0x65401800 | MXM(REG(XS), REG(XS), REG(XG)))                  \
-        EMITW(0x65400800 | MXM(REG(XG), REG(XG), REG(XS)))
+        mulms_rr(W(XS), W(XG))                                              \
+        mulms_rr(W(XS), W(XG))                                              \
+        addms_rr(W(XG), W(XG))                                              \
+        subms_rr(W(XG), W(XS))
 
 /* rsq (D = 1.0 / sqrt S)
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rsems_rr(XD, XS)                                                    \
-        EMITW(0x654F3000 | MXM(REG(XD), REG(XS), 0x00))
-
-#define rssms_rr(XG, XS) /* destroys XS */                                  \
-        EMITW(0x65400800 | MXM(REG(XS), REG(XS), REG(XG)))                  \
-        EMITW(0x65401C00 | MXM(REG(XS), REG(XS), REG(XG)))                  \
-        EMITW(0x65400800 | MXM(REG(XG), REG(XG), REG(XS)))
+        E5X(RXB(XD), RXB(XS),    0x00, K, 1, 2) EMITB(0x4E)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T) */
 
 #define fmams_rr(XG, XS, XT)                                                \
-        EMITW(0x65600000 | MXM(REG(XG), REG(XS), REG(XT)))
+    ADR E5X(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xB8)                 \
+        MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmams_ld(XG, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
-        EMITW(0x65600000 | MXM(REG(XG), REG(XS), TmmM))
+    ADR E5X(RXB(XG), RXB(MT), REN(XS), K, 1, 2) EMITB(0xB8)                 \
+        MRM(REG(XG), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T) */
 
 #define fmsms_rr(XG, XS, XT)                                                \
-        EMITW(0x65602000 | MXM(REG(XG), REG(XS), REG(XT)))
+    ADR E5X(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xBC)                 \
+        MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmsms_ld(XG, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
-        EMITW(0x65602000 | MXM(REG(XG), REG(XS), TmmM))
+    ADR E5X(RXB(XG), RXB(MT), REN(XS), K, 1, 2) EMITB(0xBC)                 \
+        MRM(REG(XG), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /**************   packed half-precision floating-point compare   **************/
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minms_rr(XG, XS)                                                    \
-        EMITW(0x65478000 | MXM(REG(XG), REG(XS), 0x00))
+        minms3rr(W(XG), W(XG), W(XS))
 
 #define minms_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
-        EMITW(0x65478000 | MXM(REG(XG), TmmM,    0x00))
+        minms3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define minms3rr(XD, XS, XT)                                                \
-        movmx_rr(W(XD), W(XS))                                              \
-        minms_rr(W(XD), W(XT))
+        E5X(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x5D)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
 
 #define minms3ld(XD, XS, MT, DT)                                            \
-        movmx_rr(W(XD), W(XS))                                              \
-        minms_ld(W(XD), W(MT), W(DT))
+    ADR E5X(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x5D)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxms_rr(XG, XS)                                                    \
-        EMITW(0x65468000 | MXM(REG(XG), REG(XS), 0x00))
+        maxms3rr(W(XG), W(XG), W(XS))
 
 #define maxms_ld(XG, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
-        EMITW(0x65468000 | MXM(REG(XG), TmmM,    0x00))
+        maxms3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define maxms3rr(XD, XS, XT)                                                \
-        movmx_rr(W(XD), W(XS))                                              \
-        maxms_rr(W(XD), W(XT))
+        E5X(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x5F)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
 
 #define maxms3ld(XD, XS, MT, DT)                                            \
-        movmx_rr(W(XD), W(XS))                                              \
-        maxms_ld(W(XD), W(MT), W(DT))
+    ADR E5X(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x5F)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
@@ -252,16 +261,16 @@
         ceqms3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define ceqms3rr(XD, XS, XT)                                                \
-        EMITW(0x65406000 | MXM(0x01,    REG(XS), REG(XT)))                  \
-        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
-        EMITW(0x0560C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+        EVX(0,       RXB(XT), REN(XS), K, 0, 3) EMITB(0xC2)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))                                  \
+        mz1mx_ld(W(XD), Mebp, inf_GPC07)
 
 #define ceqms3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
-        EMITW(0x65406000 | MXM(0x01,    REG(XS), TmmM))                     \
-        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
-        EMITW(0x0560C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+    ADR EVX(0,       RXB(MT), REN(XS), K, 0, 3) EMITB(0xC2)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x00))                                  \
+        mz1mx_ld(W(XD), Mebp, inf_GPC07)
 
 /* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
@@ -272,16 +281,16 @@
         cnems3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cnems3rr(XD, XS, XT)                                                \
-        EMITW(0x65406010 | MXM(0x01,    REG(XS), REG(XT)))                  \
-        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
-        EMITW(0x0560C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+        EVX(0,       RXB(XT), REN(XS), K, 0, 3) EMITB(0xC2)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+        mz1mx_ld(W(XD), Mebp, inf_GPC07)
 
 #define cnems3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
-        EMITW(0x65406010 | MXM(0x01,    REG(XS), TmmM))                     \
-        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
-        EMITW(0x0560C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+    ADR EVX(0,       RXB(MT), REN(XS), K, 0, 3) EMITB(0xC2)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x04))                                  \
+        mz1mx_ld(W(XD), Mebp, inf_GPC07)
 
 /* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
@@ -292,16 +301,16 @@
         cltms3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cltms3rr(XD, XS, XT)                                                \
-        EMITW(0x65404010 | MXM(0x01,    REG(XT), REG(XS)))                  \
-        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
-        EMITW(0x0560C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+        EVX(0,       RXB(XT), REN(XS), K, 0, 3) EMITB(0xC2)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
+        mz1mx_ld(W(XD), Mebp, inf_GPC07)
 
 #define cltms3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
-        EMITW(0x65404010 | MXM(0x01,    TmmM,    REG(XS)))                  \
-        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
-        EMITW(0x0560C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+    ADR EVX(0,       RXB(MT), REN(XS), K, 0, 3) EMITB(0xC2)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x01))                                  \
+        mz1mx_ld(W(XD), Mebp, inf_GPC07)
 
 /* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
@@ -312,16 +321,16 @@
         clems3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define clems3rr(XD, XS, XT)                                                \
-        EMITW(0x65404000 | MXM(0x01,    REG(XT), REG(XS)))                  \
-        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
-        EMITW(0x0560C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+        EVX(0,       RXB(XT), REN(XS), K, 0, 3) EMITB(0xC2)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
+        mz1mx_ld(W(XD), Mebp, inf_GPC07)
 
 #define clems3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
-        EMITW(0x65404000 | MXM(0x01,    TmmM,    REG(XS)))                  \
-        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
-        EMITW(0x0560C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+    ADR EVX(0,       RXB(MT), REN(XS), K, 0, 3) EMITB(0xC2)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x02))                                  \
+        mz1mx_ld(W(XD), Mebp, inf_GPC07)
 
 /* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
@@ -332,16 +341,16 @@
         cgtms3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cgtms3rr(XD, XS, XT)                                                \
-        EMITW(0x65404010 | MXM(0x01,    REG(XS), REG(XT)))                  \
-        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
-        EMITW(0x0560C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+        EVX(0,       RXB(XT), REN(XS), K, 0, 3) EMITB(0xC2)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))                                  \
+        mz1mx_ld(W(XD), Mebp, inf_GPC07)
 
 #define cgtms3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
-        EMITW(0x65404010 | MXM(0x01,    REG(XS), TmmM))                     \
-        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
-        EMITW(0x0560C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+    ADR EVX(0,       RXB(MT), REN(XS), K, 0, 3) EMITB(0xC2)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x06))                                  \
+        mz1mx_ld(W(XD), Mebp, inf_GPC07)
 
 /* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
@@ -352,28 +361,31 @@
         cgems3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cgems3rr(XD, XS, XT)                                                \
-        EMITW(0x65404000 | MXM(0x01,    REG(XS), REG(XT)))                  \
-        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
-        EMITW(0x0560C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+        EVX(0,       RXB(XT), REN(XS), K, 0, 3) EMITB(0xC2)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))                                  \
+        mz1mx_ld(W(XD), Mebp, inf_GPC07)
 
 #define cgems3ld(XD, XS, MT, DT)                                            \
-        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
-        EMITW(0x65404000 | MXM(0x01,    REG(XS), TmmM))                     \
-        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
-        EMITW(0x0560C400 | MXM(REG(XD), TmmQ,    REG(XD)))
+    ADR EVX(0,       RXB(MT), REN(XS), K, 0, 3) EMITB(0xC2)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
+        mz1mx_ld(W(XD), Mebp, inf_GPC07)
 
 /* mkj (jump to lb) if (S satisfies mask condition) */
 
-#define RT_SIMD_MASK_NONE16_SVE     0x00    /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL16_SVE     0x01    /*  all satisfy the condition */
+#define RT_SIMD_MASK_NONE16_512    0x00000000 /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL16_512    0xFFFFFFFF /*  all satisfy the condition */
+
+#define mk1hx_rx(RD)         /* not portable, do not use outside */         \
+        VEX(RXB(RD),       0,    0x00, 0, 3, 1) EMITB(0x93)                 \
+        MRM(REG(RD),    0x03,    0x01)
 
 #define mkjmx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        EMITW(0x04582000 | MXM(TmmM,    REG(XS), 0x00) |                    \
-                          RT_SIMD_MASK_##mask##16_SVE << 17)                \
-        EMITW(0x0E022C00 | MXM(Teax,    TmmM,    0x00))                     \
-        addwxZri(Reax, IB(RT_SIMD_MASK_##mask##16_SVE))                     \
-        jezxx_lb(lb)
+        ck1mx_rm(W(XS), Mebp, inf_GPC07)                                    \
+        mk1hx_rx(Reax)                                                      \
+        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##16_512))                     \
+        jeqxx_lb(lb)
 
 /**************   packed half-precision floating-point convert   **************/
 
@@ -381,77 +393,84 @@
  * rounding mode is encoded directly (can be used in FCTRL blocks) */
 
 #define rnzms_rr(XD, XS)     /* round towards zero */                       \
-        EMITW(0x6543A000 | MXM(REG(XD), REG(XS), 0x00))
+        EVX(RXB(XD), RXB(XS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x03))
 
 #define rnzms_ld(XD, MS, DS) /* round towards zero */                       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
-        EMITW(0x6543A000 | MXM(REG(XD), TmmM,    0x00))
+    ADR EVX(RXB(XD), RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x03))
 
 #define cvzms_rr(XD, XS)     /* round towards zero */                       \
-        EMITW(0x655AA000 | MXM(REG(XD), REG(XS), 0x00))
+        E5X(RXB(XD), RXB(XS),    0x00, K, 1, 1) EMITB(0x7C)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvzms_ld(XD, MS, DS) /* round towards zero */                       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
-        EMITW(0x655AA000 | MXM(REG(XD), TmmM,    0x00))
+    ADR E5X(RXB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x7C)                 \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* cvp (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks) */
 
 #define rnpms_rr(XD, XS)     /* round towards +inf */                       \
-        EMITW(0x6541A000 | MXM(REG(XD), REG(XS), 0x00))
+        EVX(RXB(XD), RXB(XS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
 
 #define rnpms_ld(XD, MS, DS) /* round towards +inf */                       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
-        EMITW(0x6541A000 | MXM(REG(XD), TmmM,    0x00))
+    ADR EVX(RXB(XD), RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x02))
 
 #define cvpms_rr(XD, XS)     /* round towards +inf */                       \
-        rnpms_rr(W(XD), W(XS))                                              \
-        cvzms_rr(W(XD), W(XD))
+        EGX(RXB(XD), RXB(XS),    0x00, 2, 1, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvpms_ld(XD, MS, DS) /* round towards +inf */                       \
-        rnpms_ld(W(XD), W(MS), W(DS))                                       \
-        cvzms_rr(W(XD), W(XD))
+        movmx_ld(W(XD), W(MS), W(DS))                                       \
+        cvpms_rr(W(XD), W(XD))
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks) */
 
 #define rnmms_rr(XD, XS)     /* round towards -inf */                       \
-        EMITW(0x6542A000 | MXM(REG(XD), REG(XS), 0x00))
+        EVX(RXB(XD), RXB(XS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
 
 #define rnmms_ld(XD, MS, DS) /* round towards -inf */                       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
-        EMITW(0x6542A000 | MXM(REG(XD), TmmM,    0x00))
+    ADR EVX(RXB(XD), RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x01))
 
 #define cvmms_rr(XD, XS)     /* round towards -inf */                       \
-        rnmms_rr(W(XD), W(XS))                                              \
-        cvzms_rr(W(XD), W(XD))
+        EGX(RXB(XD), RXB(XS),    0x00, 1, 1, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvmms_ld(XD, MS, DS) /* round towards -inf */                       \
-        rnmms_ld(W(XD), W(MS), W(DS))                                       \
-        cvzms_rr(W(XD), W(XD))
+        movmx_ld(W(XD), W(MS), W(DS))                                       \
+        cvmms_rr(W(XD), W(XD))
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks) */
 
 #define rnnms_rr(XD, XS)     /* round towards near */                       \
-        EMITW(0x6540A000 | MXM(REG(XD), REG(XS), 0x00))
+        EVX(RXB(XD), RXB(XS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
 
 #define rnnms_ld(XD, MS, DS) /* round towards near */                       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
-        EMITW(0x6540A000 | MXM(REG(XD), TmmM,    0x00))
+    ADR EVX(RXB(XD), RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x00))
 
 #define cvnms_rr(XD, XS)     /* round towards near */                       \
-        rnnms_rr(W(XD), W(XS))                                              \
-        cvzms_rr(W(XD), W(XD))
+        cvtms_rr(W(XD), W(XS))
 
 #define cvnms_ld(XD, MS, DS) /* round towards near */                       \
-        rnnms_ld(W(XD), W(MS), W(DS))                                       \
-        cvzms_rr(W(XD), W(XD))
+        cvtms_ld(W(XD), W(MS), W(DS))
 
 /* cvn (D = signed-int-to-fp S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
@@ -466,52 +485,57 @@
  * rounding mode comes from control register (set in FCTRL blocks) */
 
 #define rndms_rr(XD, XS)                                                    \
-        EMITW(0x6547A000 | MXM(REG(XD), REG(XS), 0x00))
+        EVX(RXB(XD), RXB(XS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
 
 #define rndms_ld(XD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
-        EMITW(0x6547A000 | MXM(REG(XD), TmmM,    0x00))
+    ADR EVX(RXB(XD), RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x04))
 
 #define cvtms_rr(XD, XS)                                                    \
-        rndms_rr(W(XD), W(XS))                                              \
-        cvzms_rr(W(XD), W(XD))
+        E5X(RXB(XD), RXB(XS),    0x00, K, 1, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvtms_ld(XD, MS, DS)                                                \
-        rndms_ld(W(XD), W(MS), W(DS))                                       \
-        cvzms_rr(W(XD), W(XD))
+    ADR E5X(RXB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from control register (set in FCTRL blocks) */
 
 #define cvtmn_rr(XD, XS)                                                    \
-        EMITW(0x6552A000 | MXM(REG(XD), REG(XS), 0x00))
+        E5X(RXB(XD), RXB(XS),    0x00, K, 2, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvtmn_ld(XD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
-        EMITW(0x6552A000 | MXM(REG(XD), TmmM,    0x00))
+    ADR E5X(RXB(XD), RXB(MS),    0x00, K, 2, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks) */
 
 #define rnrms_rr(XD, XS, mode)                                              \
-        EMITW(0x6540A000 | MXM(REG(XD), REG(XS), 0x00) |                    \
-                                        RT_SIMD_MODE_##mode << 16)
+        EVX(RXB(XD), RXB(XS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
 
 #define cvrms_rr(XD, XS, mode)                                              \
-        rnrms_rr(W(XD), W(XS), mode)                                        \
-        cvzms_rr(W(XD), W(XD))
+        EGX(RXB(XD), RXB(XS), 0x00, RT_SIMD_MODE_##mode&3, 2, 1) EMITB(0x7D)\
+        MRM(REG(XD), MOD(XS), REG(XS))
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
-#endif /* RT_SVEX1 */
+#endif /* RT_512X1 */
 
 #endif /* RT_SIMD_CODE */
 
-#endif /* RT_RTARCH_AHF_SVEX1V1_H */
+#endif /* RT_RTARCH_XHF_512X1V8_H */
 
 /******************************************************************************/
 /******************************************************************************/

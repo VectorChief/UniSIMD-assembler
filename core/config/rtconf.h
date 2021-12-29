@@ -1189,7 +1189,7 @@
 #define mulms3ld(XD, XS, MT, DT)                                            \
         mulas3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divms_rr(XG, XS)                                                    \
         divas_rr(W(XG), W(XS))
@@ -1203,7 +1203,8 @@
 #define divms3ld(XD, XS, MT, DT)                                            \
         divas3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sqr (D = sqrt S) */
+/* sqr (D = sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define sqrms_rr(XD, XS)                                                    \
         sqras_rr(W(XD), W(XS))
@@ -1211,7 +1212,8 @@
 #define sqrms_ld(XD, MS, DS)                                                \
         sqras_ld(W(XD), W(MS), W(DS))
 
-/* rcp (D = 1.0 / S) */
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rcems_rr(XD, XS)                                                    \
         rceas_rr(W(XD), W(XS))
@@ -1219,7 +1221,8 @@
 #define rcsms_rr(XG, XS) /* destroys XS */                                  \
         rcsas_rr(W(XG), W(XS))
 
-/* rsq (D = 1.0 / sqrt S) */
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rsems_rr(XD, XS)                                                    \
         rseas_rr(W(XD), W(XS))
@@ -2428,7 +2431,7 @@
 #define mulms3ld(XD, XS, MT, DT)                                            \
         mulgs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divms_rr(XG, XS)                                                    \
         divgs_rr(W(XG), W(XS))
@@ -2442,7 +2445,8 @@
 #define divms3ld(XD, XS, MT, DT)                                            \
         divgs3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* sqr (D = sqrt S) */
+/* sqr (D = sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define sqrms_rr(XD, XS)                                                    \
         sqrgs_rr(W(XD), W(XS))
@@ -2450,7 +2454,8 @@
 #define sqrms_ld(XD, MS, DS)                                                \
         sqrgs_ld(W(XD), W(MS), W(DS))
 
-/* rcp (D = 1.0 / S) */
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rcems_rr(XD, XS)                                                    \
         rcegs_rr(W(XD), W(XS))
@@ -2458,7 +2463,8 @@
 #define rcsms_rr(XG, XS) /* destroys XS */                                  \
         rcsgs_rr(W(XG), W(XS))
 
-/* rsq (D = 1.0 / sqrt S) */
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rsems_rr(XD, XS)                                                    \
         rsegs_rr(W(XD), W(XS))

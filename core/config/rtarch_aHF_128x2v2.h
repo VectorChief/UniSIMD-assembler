@@ -147,7 +147,7 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x6E401C00 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divas_rr(XG, XS)                                                    \
         divas3rr(W(XG), W(XG), W(XS))
@@ -166,7 +166,8 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x6E403C00 | MXM(RYG(XD), RYG(XS), TmmM))
 
-/* sqr (D = sqrt S) */
+/* sqr (D = sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define sqras_rr(XD, XS)                                                    \
         EMITW(0x6EF9F800 | MXM(REG(XD), REG(XS), 0x00))                     \
@@ -179,7 +180,8 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
         EMITW(0x6EF9F800 | MXM(RYG(XD), TmmM,    0x00))
 
-/* rcp (D = 1.0 / S) */
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rceas_rr(XD, XS)                                                    \
         EMITW(0x4EF9D800 | MXM(REG(XD), REG(XS), 0x00))                     \
@@ -191,7 +193,8 @@
         EMITW(0x4E403C00 | MXM(RYG(XS), RYG(XS), RYG(XG)))                  \
         EMITW(0x6E401C00 | MXM(RYG(XG), RYG(XG), RYG(XS)))
 
-/* rsq (D = 1.0 / sqrt S) */
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rseas_rr(XD, XS)                                                    \
         EMITW(0x6EF9D800 | MXM(REG(XD), REG(XS), 0x00))                     \
