@@ -743,6 +743,26 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x7A20000F | MXM(RYG(XD), TmmM,    RYG(XS)))
 
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE16_256  MN16_256   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL16_256  MF16_256   /*  all satisfy the condition */
+
+/* #define S0(mask)    S1(mask)            (defined in 32_128-bit header) */
+/* #define S1(mask)    S##mask             (defined in 32_128-bit header) */
+
+#define SMN16_256(xs, lb) /* not portable, do not use outside */            \
+        EMITW(0x7820001E | MXM(TmmM, xs, xs+16))                            \
+        ASM_BEG ASM_OP2( bz.v, $w31, lb) ASM_END
+
+#define SMF16_256(xs, lb) /* not portable, do not use outside */            \
+        EMITW(0x7800001E | MXM(TmmM, xs, xs+16))                            \
+        ASM_BEG ASM_OP2(bnz.h, $w31, lb) ASM_END
+
+#define mkjax_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        AUW(EMPTY, EMPTY, EMPTY, REG(XS), lb,                               \
+        S0(RT_SIMD_MASK_##mask##16_256), EMPTY2)
+
 /****************   packed byte-precision generic move/logic   ****************/
 
 /* mov (D = S) */

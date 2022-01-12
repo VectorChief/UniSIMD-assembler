@@ -844,7 +844,7 @@ ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x7C)                       \
 #define mkjix_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         REX(0,       RXB(XS)) EMITB(0x0F) EMITB(0x50)                       \
         MRM(0x00,    MOD(XS), REG(XS))                                      \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##32_128))                     \
+        cmpwx_ri(Reax, IB(RT_SIMD_MASK_##mask##32_128))                     \
         jeqxx_lb(lb)
 
 /*************   packed single-precision floating-point convert   *************/

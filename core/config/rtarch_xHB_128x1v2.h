@@ -63,6 +63,22 @@
 
 #if (RT_128X1 == 2)
 
+#define ck1gx_rm(XS, MT, DT) /* not portable, do not use outside */         \
+        EVW(0,       RXB(XS),    0x00, 0, 2, 2) EMITB(0x29)                 \
+        MRM(0x01,    MOD(XS), REG(XS))
+
+#define ck1gb_rm(XS, MT, DT) /* not portable, do not use outside */         \
+        EVX(0,       RXB(XS),    0x00, 0, 2, 2) EMITB(0x29)                 \
+        MRM(0x01,    MOD(XS), REG(XS))
+
+#define mz1gx_ld(XD, MS, DS) /* not portable, do not use outside */         \
+        EVW(RXB(XD),       0,    0x00, 0, 2, 2) EMITB(0x28)                 \
+        MRM(REG(XD),    0x03,    0x01)
+
+#define mz1gb_ld(XD, MS, DS) /* not portable, do not use outside */         \
+        EVX(RXB(XD),       0,    0x00, 0, 2, 2) EMITB(0x28)                 \
+        MRM(REG(XD),    0x03,    0x01)
+
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -108,11 +124,6 @@
     ADR EKW(RXB(XS), RXB(MG),    0x00, 0, 3, 1) EMITB(0x7F)                 \
         MRM(REG(XS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
-
-#define ck1gx_rm(XS, MT, DT) /* not portable, do not use outside */         \
-    ADR EVX(0,       RXB(MT), REN(XS), 0, 1, 1) EMITB(0x75)                 \
-        MRM(0x01,    MOD(MT), REG(MT))                                      \
-        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* and (G = G & S), (D = S & T) if (#D != #T) */
 
@@ -710,11 +721,20 @@
         AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
         mz1gx_ld(W(XD), Mebp, inf_GPC07)
 
+/* mkj (jump to lb) if (S satisfies mask condition) */
 
-#define mz1gx_ld(XG, MS, DS) /* not portable, do not use outside */         \
-    ADR EZW(RXB(XG), RXB(MS), REN(XG), 0, 1, 2) EMITB(0x66)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+#define RT_SIMD_MASK_NONE16_128    0x00     /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL16_128    0xFF     /*  all satisfy the condition */
+
+#define mk1hx_rx(RD)         /* not portable, do not use outside */         \
+        VEX(RXB(RD),       0,    0x00, 0, 3, 1) EMITB(0x93)                 \
+        MRM(REG(RD),    0x03,    0x01)
+
+#define mkjgx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        ck1gx_rm(W(XS), Mebp, inf_GPC07)                                    \
+        mk1hx_rx(Reax)                                                      \
+        cmpwx_ri(Reax, IB(RT_SIMD_MASK_##mask##16_128))                     \
+        jeqxx_lb(lb)
 
 /****************   packed byte-precision generic move/logic   ****************/
 
@@ -753,11 +773,6 @@
     ADR EKX(RXB(XS), RXB(MG),    0x00, 0, 3, 1) EMITB(0x7F)                 \
         MRM(REG(XS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
-
-#define ck1gb_rm(XS, MT, DT) /* not portable, do not use outside */         \
-    ADR EVX(0,       RXB(MT), REN(XS), 0, 1, 1) EMITB(0x74)                 \
-        MRM(0x01,    MOD(MT), REG(MT))                                      \
-        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* logic instructions are sizeless and provided in 16-bit subset above */
 
@@ -1506,12 +1521,6 @@
         MRM(0x01,    MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
         mz1gb_ld(W(XD), Mebp, inf_GPC07)
-
-
-#define mz1gb_ld(XG, MS, DS) /* not portable, do not use outside */         \
-    ADR EZX(RXB(XG), RXB(MS), REN(XG), 0, 1, 2) EMITB(0x66)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

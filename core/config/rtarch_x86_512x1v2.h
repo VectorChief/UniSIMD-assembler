@@ -150,6 +150,66 @@
         EMITB(0x00 | 1 << 2 | (0x0F - (ren)) << 3 | (pfx))                  \
         EMITB(0x18 | (erm) << 5)
 
+#if (RT_512X1 == 1) /* instructions below require AVX512BW (16/8-bit mx/mb) */
+
+#define ck1ox_rm(XS, MT, DT) /* not portable, do not use outside */         \
+        EVX(REG(XS), K, 1, 1) EMITB(0x76)                                   \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+#define mz1ox_ld(XD, MS, DS) /* not portable, do not use outside */         \
+        EZX(0x00,    K, 0, 1) EMITB(0x28)                                   \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define ck1mx_rm(XS, MT, DT) /* not portable, do not use outside */         \
+        EVX(REG(XS), K, 1, 1) EMITB(0x75)                                   \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+#define ck1mb_rm(XS, MT, DT) /* not portable, do not use outside */         \
+        EVX(REG(XS), K, 1, 1) EMITB(0x74)                                   \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+#define mz1mx_ld(XD, MS, DS) /* not portable, do not use outside */         \
+        EZW(REG(XD), K, 1, 2) EMITB(0x66)                                   \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define mz1mb_ld(XD, MS, DS) /* not portable, do not use outside */         \
+        EZX(REG(XD), K, 1, 2) EMITB(0x66)                                   \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#else  /* (RT_512X1 == 2) */
+
+#define ck1ox_rm(XS, MT, DT) /* not portable, do not use outside */         \
+        EVX(0x00,    K, 2, 2) EMITB(0x39)                                   \
+        MRM(0x01,    MOD(XS), REG(XS))
+
+#define mz1ox_ld(XD, MS, DS) /* not portable, do not use outside */         \
+        EVX(0x00,    K, 2, 2) EMITB(0x38)                                   \
+        MRM(REG(XD),    0x03,    0x01)
+
+#define ck1mx_rm(XS, MT, DT) /* not portable, do not use outside */         \
+        EVW(0x00,    K, 2, 2) EMITB(0x29)                                   \
+        MRM(0x01,    MOD(XS), REG(XS))
+
+#define ck1mb_rm(XS, MT, DT) /* not portable, do not use outside */         \
+        EVX(0x00,    K, 2, 2) EMITB(0x29)                                   \
+        MRM(0x01,    MOD(XS), REG(XS))
+
+#define mz1mx_ld(XD, MS, DS) /* not portable, do not use outside */         \
+        EVW(0x00,    K, 2, 2) EMITB(0x28)                                   \
+        MRM(REG(XD),    0x03,    0x01)
+
+#define mz1mb_ld(XD, MS, DS) /* not portable, do not use outside */         \
+        EVX(0x00,    K, 2, 2) EMITB(0x28)                                   \
+        MRM(REG(XD),    0x03,    0x01)
+
+#endif /* (RT_512X1 == 2) */
+
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -201,11 +261,6 @@
         EKX(0x00,    K, 0, 1) EMITB(0x29)                                   \
         MRM(REG(XS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
-
-#define ck1ox_rm(XS, MT, DT) /* not portable, do not use outside */         \
-        EVX(REG(XS), K, 1, 1) EMITB(0x76)                                   \
-        MRM(0x01,    MOD(MT), REG(MT))                                      \
-        AUX(SIB(MT), CMD(DT), EMPTY)
 
 #if (RT_512X1 < 2)
 
@@ -760,12 +815,6 @@
         MRM(0x01,    MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
         mz1ox_ld(W(XD), Mebp, inf_GPC07)
-
-
-#define mz1ox_ld(XG, MS, DS) /* not portable, do not use outside */         \
-        EZX(0x00,    K, 0, 1) EMITB(0x28)                                   \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* mkj (jump to lb) if (S satisfies mask condition) */
 
@@ -1431,11 +1480,6 @@
         EKW(0x00,    K, 3, 1) EMITB(0x7F)                                   \
         MRM(REG(XS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
-
-#define ck1mx_rm(XS, MT, DT) /* not portable, do not use outside */         \
-        EVX(REG(XS), K, 1, 1) EMITB(0x75)                                   \
-        MRM(0x01,    MOD(MT), REG(MT))                                      \
-        AUX(SIB(MT), CMD(DT), EMPTY)
 
 #endif /* RT_512X1 >= 2 */
 
@@ -2614,6 +2658,31 @@
         minmn3ld(W(XD), W(XS), W(MT), W(DT))                                \
         ceqmx_ld(W(XD), W(MT), W(DT))
 
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE16_512  0x00000000 /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL16_512  0xFFF0FFF0 /*  all satisfy the condition */
+
+#define adpax3rr(XD, XS, XT)     /* not portable, do not use outside */     \
+        VEX(REN(XS), 1, 1, 2) EMITB(0x01)                                   \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define adpax3ld(XD, XS, MT, DT) /* not portable, do not use outside */     \
+        VEX(REN(XS), 1, 1, 2) EMITB(0x01)                                   \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+#define mkjmx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        movmx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        adpax3ld(W(XS), W(XS), Mebp, inf_SCR01(0x20))                       \
+        adpax3rr(W(XS), W(XS), W(XS))                                       \
+        adpax3rr(W(XS), W(XS), W(XS))                                       \
+        adpax3rr(W(XS), W(XS), W(XS))                                       \
+        movrs_st(W(XS), Mebp, inf_SCR02(0))                                 \
+        movmx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        cmpwx_mi(Mebp, inf_SCR02(0), IW(RT_SIMD_MASK_##mask##16_512))       \
+        jeqxx_lb(lb)
+
 #else /* RT_512X1 >= 2 */
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
@@ -2884,11 +2953,20 @@
         AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
         mz1mx_ld(W(XD), Mebp, inf_GPC07)
 
+/* mkj (jump to lb) if (S satisfies mask condition) */
 
-#define mz1mx_ld(XG, MS, DS) /* not portable, do not use outside */         \
-        EZW(REG(XG), K, 1, 2) EMITB(0x66)                                   \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+#define RT_SIMD_MASK_NONE16_512  0x00000000 /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL16_512  0xFFFFFFFF /*  all satisfy the condition */
+
+#define mk1hx_rx(RD)         /* not portable, do not use outside */         \
+        VEX(0x00,    0, 3, 1) EMITB(0x93)                                   \
+        MRM(REG(RD),    0x03,    0x01)
+
+#define mkjmx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        ck1mx_rm(W(XS), Mebp, inf_GPC07)                                    \
+        mk1hx_rx(Reax)                                                      \
+        cmpwx_ri(Reax, IW(RT_SIMD_MASK_##mask##16_512))                     \
+        jeqxx_lb(lb)
 
 #endif /* RT_512X1 >= 2 */
 
@@ -2951,11 +3029,6 @@
         EKX(0x00,    K, 3, 1) EMITB(0x7F)                                   \
         MRM(REG(XS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
-
-#define ck1mb_rm(XS, MT, DT) /* not portable, do not use outside */         \
-        EVX(REG(XS), K, 1, 1) EMITB(0x74)                                   \
-        MRM(0x01,    MOD(MT), REG(MT))                                      \
-        AUX(SIB(MT), CMD(DT), EMPTY)
 
 #endif /* RT_512X1 >= 2 */
 
@@ -4755,12 +4828,6 @@
         MRM(0x01,    MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
         mz1mb_ld(W(XD), Mebp, inf_GPC07)
-
-
-#define mz1mb_ld(XG, MS, DS) /* not portable, do not use outside */         \
-        EZX(REG(XG), K, 1, 2) EMITB(0x66)                                   \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
 
 #endif /* RT_512X1 >= 2 */
 

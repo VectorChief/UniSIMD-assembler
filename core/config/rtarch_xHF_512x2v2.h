@@ -61,7 +61,7 @@
 
 #if (defined RT_SIMD_CODE)
 
-#if (RT_512X2 >= 1 && RT_512X2 <= 2)
+#if (RT_512X2 == 2)
 
 #undef  K
 #define K 2
@@ -103,16 +103,16 @@
         addms3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define addms3rr(XD, XS, XT)                                                \
-        E5X(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x58)                 \
+        EFX(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x58)                 \
         MRM(REG(XD), MOD(XT), REG(XT))                                      \
-        E5X(RMB(XD), RMB(XT), REM(XS), K, 0, 1) EMITB(0x58)                 \
+        EFX(RMB(XD), RMB(XT), REM(XS), K, 0, 1) EMITB(0x58)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define addms3ld(XD, XS, MT, DT)                                            \
-    ADR E5X(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x58)                 \
+    ADR EFX(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x58)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
-    ADR E5X(RMB(XD), RXB(MT), REM(XS), K, 0, 1) EMITB(0x58)                 \
+    ADR EFX(RMB(XD), RXB(MT), REM(XS), K, 0, 1) EMITB(0x58)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
@@ -125,16 +125,16 @@
         subms3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define subms3rr(XD, XS, XT)                                                \
-        E5X(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x5C)                 \
+        EFX(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x5C)                 \
         MRM(REG(XD), MOD(XT), REG(XT))                                      \
-        E5X(RMB(XD), RMB(XT), REM(XS), K, 0, 1) EMITB(0x5C)                 \
+        EFX(RMB(XD), RMB(XT), REM(XS), K, 0, 1) EMITB(0x5C)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define subms3ld(XD, XS, MT, DT)                                            \
-    ADR E5X(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x5C)                 \
+    ADR EFX(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x5C)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
-    ADR E5X(RMB(XD), RXB(MT), REM(XS), K, 0, 1) EMITB(0x5C)                 \
+    ADR EFX(RMB(XD), RXB(MT), REM(XS), K, 0, 1) EMITB(0x5C)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
@@ -147,16 +147,16 @@
         mulms3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define mulms3rr(XD, XS, XT)                                                \
-        E5X(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x59)                 \
+        EFX(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x59)                 \
         MRM(REG(XD), MOD(XT), REG(XT))                                      \
-        E5X(RMB(XD), RMB(XT), REM(XS), K, 0, 1) EMITB(0x59)                 \
+        EFX(RMB(XD), RMB(XT), REM(XS), K, 0, 1) EMITB(0x59)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define mulms3ld(XD, XS, MT, DT)                                            \
-    ADR E5X(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x59)                 \
+    ADR EFX(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x59)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
-    ADR E5X(RMB(XD), RXB(MT), REM(XS), K, 0, 1) EMITB(0x59)                 \
+    ADR EFX(RMB(XD), RXB(MT), REM(XS), K, 0, 1) EMITB(0x59)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
@@ -169,16 +169,16 @@
         divms3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define divms3rr(XD, XS, XT)                                                \
-        E5X(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x5E)                 \
+        EFX(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x5E)                 \
         MRM(REG(XD), MOD(XT), REG(XT))                                      \
-        E5X(RMB(XD), RMB(XT), REM(XS), K, 0, 1) EMITB(0x5E)                 \
+        EFX(RMB(XD), RMB(XT), REM(XS), K, 0, 1) EMITB(0x5E)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define divms3ld(XD, XS, MT, DT)                                            \
-    ADR E5X(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x5E)                 \
+    ADR EFX(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x5E)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
-    ADR E5X(RMB(XD), RXB(MT), REM(XS), K, 0, 1) EMITB(0x5E)                 \
+    ADR EFX(RMB(XD), RXB(MT), REM(XS), K, 0, 1) EMITB(0x5E)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
@@ -186,16 +186,16 @@
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define sqrms_rr(XD, XS)                                                    \
-        E5X(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x51)                 \
+        EFX(RXB(XD), RXB(XS),    0x00, K, 0, 1) EMITB(0x51)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        E5X(RMB(XD), RMB(XS),    0x00, K, 0, 1) EMITB(0x51)                 \
+        EFX(RMB(XD), RMB(XS),    0x00, K, 0, 1) EMITB(0x51)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define sqrms_ld(XD, MS, DS)                                                \
-    ADR E5X(RXB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x51)                 \
+    ADR EFX(RXB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x51)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR E5X(RMB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x51)                 \
+    ADR EFX(RMB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x51)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
@@ -203,9 +203,9 @@
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rcems_rr(XD, XS)                                                    \
-        E5X(RXB(XD), RXB(XS),    0x00, K, 1, 2) EMITB(0x4C)                 \
+        EFX(RXB(XD), RXB(XS),    0x00, K, 1, 2) EMITB(0x4C)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        E5X(RMB(XD), RMB(XS),    0x00, K, 1, 2) EMITB(0x4C)                 \
+        EFX(RMB(XD), RMB(XS),    0x00, K, 1, 2) EMITB(0x4C)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define rcsms_rr(XG, XS) /* destroys XS */                                  \
@@ -218,40 +218,40 @@
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rsems_rr(XD, XS)                                                    \
-        E5X(RXB(XD), RXB(XS),    0x00, K, 1, 2) EMITB(0x4E)                 \
+        EFX(RXB(XD), RXB(XS),    0x00, K, 1, 2) EMITB(0x4E)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        E5X(RMB(XD), RMB(XS),    0x00, K, 1, 2) EMITB(0x4E)                 \
+        EFX(RMB(XD), RMB(XS),    0x00, K, 1, 2) EMITB(0x4E)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T) */
 
 #define fmams_rr(XG, XS, XT)                                                \
-    ADR E5X(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xB8)                 \
+    ADR EFX(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG), MOD(XT), REG(XT))                                      \
-    ADR E5X(RMB(XG), RMB(XT), REM(XS), K, 1, 2) EMITB(0xB8)                 \
+    ADR EFX(RMB(XG), RMB(XT), REM(XS), K, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmams_ld(XG, XS, MT, DT)                                            \
-    ADR E5X(RXB(XG), RXB(MT), REN(XS), K, 1, 2) EMITB(0xB8)                 \
+    ADR EFX(RXB(XG), RXB(MT), REN(XS), K, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
-    ADR E5X(RMB(XG), RXB(MT), REM(XS), K, 1, 2) EMITB(0xB8)                 \
+    ADR EFX(RMB(XG), RXB(MT), REM(XS), K, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T) */
 
 #define fmsms_rr(XG, XS, XT)                                                \
-    ADR E5X(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xBC)                 \
+    ADR EFX(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG), MOD(XT), REG(XT))                                      \
-    ADR E5X(RMB(XG), RMB(XT), REM(XS), K, 1, 2) EMITB(0xBC)                 \
+    ADR EFX(RMB(XG), RMB(XT), REM(XS), K, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmsms_ld(XG, XS, MT, DT)                                            \
-    ADR E5X(RXB(XG), RXB(MT), REN(XS), K, 1, 2) EMITB(0xBC)                 \
+    ADR EFX(RXB(XG), RXB(MT), REN(XS), K, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
-    ADR E5X(RMB(XG), RXB(MT), REM(XS), K, 1, 2) EMITB(0xBC)                 \
+    ADR EFX(RMB(XG), RXB(MT), REM(XS), K, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
@@ -266,16 +266,16 @@
         minms3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define minms3rr(XD, XS, XT)                                                \
-        E5X(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x5D)                 \
+        EFX(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x5D)                 \
         MRM(REG(XD), MOD(XT), REG(XT))                                      \
-        E5X(RMB(XD), RMB(XT), REM(XS), K, 0, 1) EMITB(0x5D)                 \
+        EFX(RMB(XD), RMB(XT), REM(XS), K, 0, 1) EMITB(0x5D)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define minms3ld(XD, XS, MT, DT)                                            \
-    ADR E5X(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x5D)                 \
+    ADR EFX(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x5D)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
-    ADR E5X(RMB(XD), RXB(MT), REM(XS), K, 0, 1) EMITB(0x5D)                 \
+    ADR EFX(RMB(XD), RXB(MT), REM(XS), K, 0, 1) EMITB(0x5D)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
@@ -288,16 +288,16 @@
         maxms3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define maxms3rr(XD, XS, XT)                                                \
-        E5X(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x5F)                 \
+        EFX(RXB(XD), RXB(XT), REN(XS), K, 0, 1) EMITB(0x5F)                 \
         MRM(REG(XD), MOD(XT), REG(XT))                                      \
-        E5X(RMB(XD), RMB(XT), REM(XS), K, 0, 1) EMITB(0x5F)                 \
+        EFX(RMB(XD), RMB(XT), REM(XS), K, 0, 1) EMITB(0x5F)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define maxms3ld(XD, XS, MT, DT)                                            \
-    ADR E5X(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x5F)                 \
+    ADR EFX(RXB(XD), RXB(MT), REN(XS), K, 0, 1) EMITB(0x5F)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
-    ADR E5X(RMB(XD), RXB(MT), REM(XS), K, 0, 1) EMITB(0x5F)                 \
+    ADR EFX(RMB(XD), RXB(MT), REM(XS), K, 0, 1) EMITB(0x5F)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
@@ -471,25 +471,7 @@
 
 /* mkj (jump to lb) if (S satisfies mask condition) */
 
-#define RT_SIMD_MASK_NONE16_1K4    0x00000000 /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL16_1K4    0xFFFFFFFF /*  all satisfy the condition */
-
-#define mk1hx_rx(RD)         /* not portable, do not use outside */         \
-        VEX(RXB(RD),       0,    0x00, 0, 3, 1) EMITB(0x93)                 \
-        MRM(REG(RD),    0x03,    0x01)
-
-#define mkjmx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        ck1mx_rm(W(XS), Mebp, inf_GPC07)                                    \
-        mk1hx_rx(Reax)                                                      \
-        REX(1,             0) EMITB(0x8B)                                   \
-        MRM(0x07,       0x03, 0x00)                                         \
-        ck1mx_rm(X(XS), Mebp, inf_GPC07)                                    \
-        mk1hx_rx(Reax)                                                      \
-        REX(0,             1)                                               \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##16_1K4 & 0x1) << 1)))  \
-        MRM(0x00,       0x03, 0x07)                                         \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##16_1K4))                     \
-        jeqxx_lb(lb)
+    /* mkj for half-precision is defined in corresponding HB_512 header */
 
 /**************   packed half-precision floating-point convert   **************/
 
@@ -513,16 +495,16 @@
         AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x03))
 
 #define cvzms_rr(XD, XS)     /* round towards zero */                       \
-        E5X(RXB(XD), RXB(XS),    0x00, K, 1, 1) EMITB(0x7C)                 \
+        EFX(RXB(XD), RXB(XS),    0x00, K, 1, 1) EMITB(0x7C)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        E5X(RMB(XD), RMB(XS),    0x00, K, 1, 1) EMITB(0x7C)                 \
+        EFX(RMB(XD), RMB(XS),    0x00, K, 1, 1) EMITB(0x7C)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvzms_ld(XD, MS, DS) /* round towards zero */                       \
-    ADR E5X(RXB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x7C)                 \
+    ADR EFX(RXB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x7C)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR E5X(RMB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x7C)                 \
+    ADR EFX(RMB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x7C)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
@@ -638,16 +620,16 @@
         AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x04))
 
 #define cvtms_rr(XD, XS)                                                    \
-        E5X(RXB(XD), RXB(XS),    0x00, K, 1, 1) EMITB(0x7D)                 \
+        EFX(RXB(XD), RXB(XS),    0x00, K, 1, 1) EMITB(0x7D)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        E5X(RMB(XD), RMB(XS),    0x00, K, 1, 1) EMITB(0x7D)                 \
+        EFX(RMB(XD), RMB(XS),    0x00, K, 1, 1) EMITB(0x7D)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvtms_ld(XD, MS, DS)                                                \
-    ADR E5X(RXB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x7D)                 \
+    ADR EFX(RXB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x7D)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR E5X(RMB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x7D)                 \
+    ADR EFX(RMB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x7D)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
@@ -655,16 +637,16 @@
  * rounding mode comes from control register (set in FCTRL blocks) */
 
 #define cvtmn_rr(XD, XS)                                                    \
-        E5X(RXB(XD), RXB(XS),    0x00, K, 2, 1) EMITB(0x7D)                 \
+        EFX(RXB(XD), RXB(XS),    0x00, K, 2, 1) EMITB(0x7D)                 \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        E5X(RMB(XD), RMB(XS),    0x00, K, 2, 1) EMITB(0x7D)                 \
+        EFX(RMB(XD), RMB(XS),    0x00, K, 2, 1) EMITB(0x7D)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvtmn_ld(XD, MS, DS)                                                \
-    ADR E5X(RXB(XD), RXB(MS),    0x00, K, 2, 1) EMITB(0x7D)                 \
+    ADR EFX(RXB(XD), RXB(MS),    0x00, K, 2, 1) EMITB(0x7D)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR E5X(RMB(XD), RXB(MS),    0x00, K, 2, 1) EMITB(0x7D)                 \
+    ADR EFX(RMB(XD), RXB(MS),    0x00, K, 2, 1) EMITB(0x7D)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 

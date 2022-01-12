@@ -100,11 +100,11 @@
         addas3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define addas3rr(XD, XS, XT)                                                \
-        E5X(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x58)                 \
+        EFX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x58)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define addas3ld(XD, XS, MT, DT)                                            \
-    ADR E5X(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x58)                 \
+    ADR EFX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x58)                 \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -117,11 +117,11 @@
         subas3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define subas3rr(XD, XS, XT)                                                \
-        E5X(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x5C)                 \
+        EFX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x5C)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define subas3ld(XD, XS, MT, DT)                                            \
-    ADR E5X(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x5C)                 \
+    ADR EFX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x5C)                 \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -134,11 +134,11 @@
         mulas3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define mulas3rr(XD, XS, XT)                                                \
-        E5X(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x59)                 \
+        EFX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x59)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define mulas3ld(XD, XS, MT, DT)                                            \
-    ADR E5X(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x59)                 \
+    ADR EFX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x59)                 \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -151,11 +151,11 @@
         divas3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define divas3rr(XD, XS, XT)                                                \
-        E5X(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x5E)                 \
+        EFX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x5E)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define divas3ld(XD, XS, MT, DT)                                            \
-    ADR E5X(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x5E)                 \
+    ADR EFX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x5E)                 \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -163,11 +163,11 @@
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define sqras_rr(XD, XS)                                                    \
-        E5X(RXB(XD), RXB(XS),    0x00, 1, 0, 1) EMITB(0x51)                 \
+        EFX(RXB(XD), RXB(XS),    0x00, 1, 0, 1) EMITB(0x51)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define sqras_ld(XD, MS, DS)                                                \
-    ADR E5X(RXB(XD), RXB(MS),    0x00, 1, 0, 1) EMITB(0x51)                 \
+    ADR EFX(RXB(XD), RXB(MS),    0x00, 1, 0, 1) EMITB(0x51)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -175,7 +175,7 @@
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rceas_rr(XD, XS)                                                    \
-        E5X(RXB(XD), RXB(XS),    0x00, 1, 1, 2) EMITB(0x4C)                 \
+        EFX(RXB(XD), RXB(XS),    0x00, 1, 1, 2) EMITB(0x4C)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define rcsas_rr(XG, XS) /* destroys XS */                                  \
@@ -188,28 +188,28 @@
  * accuracy/behavior may vary across supported targets, use accordingly */
 
 #define rseas_rr(XD, XS)                                                    \
-        E5X(RXB(XD), RXB(XS),    0x00, 1, 1, 2) EMITB(0x4E)                 \
+        EFX(RXB(XD), RXB(XS),    0x00, 1, 1, 2) EMITB(0x4E)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T) */
 
 #define fmaas_rr(XG, XS, XT)                                                \
-    ADR E5X(RXB(XG), RXB(XT), REN(XS), 1, 1, 2) EMITB(0xB8)                 \
+    ADR EFX(RXB(XG), RXB(XT), REN(XS), 1, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmaas_ld(XG, XS, MT, DT)                                            \
-    ADR E5X(RXB(XG), RXB(MT), REN(XS), 1, 1, 2) EMITB(0xB8)                 \
+    ADR EFX(RXB(XG), RXB(MT), REN(XS), 1, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* fms (G = G - S * T) if (#G != #S && #G != #T) */
 
 #define fmsas_rr(XG, XS, XT)                                                \
-    ADR E5X(RXB(XG), RXB(XT), REN(XS), 1, 1, 2) EMITB(0xBC)                 \
+    ADR EFX(RXB(XG), RXB(XT), REN(XS), 1, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmsas_ld(XG, XS, MT, DT)                                            \
-    ADR E5X(RXB(XG), RXB(MT), REN(XS), 1, 1, 2) EMITB(0xBC)                 \
+    ADR EFX(RXB(XG), RXB(MT), REN(XS), 1, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -224,11 +224,11 @@
         minas3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define minas3rr(XD, XS, XT)                                                \
-        E5X(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x5D)                 \
+        EFX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x5D)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define minas3ld(XD, XS, MT, DT)                                            \
-    ADR E5X(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x5D)                 \
+    ADR EFX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x5D)                 \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -241,11 +241,11 @@
         maxas3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define maxas3rr(XD, XS, XT)                                                \
-        E5X(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x5F)                 \
+        EFX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x5F)                 \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define maxas3ld(XD, XS, MT, DT)                                            \
-    ADR E5X(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x5F)                 \
+    ADR EFX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x5F)                 \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -371,18 +371,7 @@
 
 /* mkj (jump to lb) if (S satisfies mask condition) */
 
-#define RT_SIMD_MASK_NONE16_256    0x0000   /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL16_256    0xFFFF   /*  all satisfy the condition */
-
-#define mk1hx_rx(RD)         /* not portable, do not use outside */         \
-        VEX(RXB(RD),       0,    0x00, 0, 3, 1) EMITB(0x93)                 \
-        MRM(REG(RD),    0x03,    0x01)
-
-#define mkjax_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        ck1ax_rm(W(XS), Mebp, inf_GPC07)                                    \
-        mk1hx_rx(Reax)                                                      \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##16_256))                     \
-        jeqxx_lb(lb)
+    /* mkj for half-precision is defined in corresponding HB_256 header */
 
 /**************   packed half-precision floating-point convert   **************/
 
@@ -400,11 +389,11 @@
         AUX(SIB(MS), CMD(DS), EMITB(0x03))
 
 #define cvzas_rr(XD, XS)     /* round towards zero */                       \
-        E5X(RXB(XD), RXB(XS),    0x00, 1, 1, 1) EMITB(0x7C)                 \
+        EFX(RXB(XD), RXB(XS),    0x00, 1, 1, 1) EMITB(0x7C)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvzas_ld(XD, MS, DS) /* round towards zero */                       \
-    ADR E5X(RXB(XD), RXB(MS),    0x00, 1, 1, 1) EMITB(0x7C)                 \
+    ADR EFX(RXB(XD), RXB(MS),    0x00, 1, 1, 1) EMITB(0x7C)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -492,11 +481,11 @@
         AUX(SIB(MS), CMD(DS), EMITB(0x04))
 
 #define cvtas_rr(XD, XS)                                                    \
-        E5X(RXB(XD), RXB(XS),    0x00, 1, 1, 1) EMITB(0x7D)                 \
+        EFX(RXB(XD), RXB(XS),    0x00, 1, 1, 1) EMITB(0x7D)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvtas_ld(XD, MS, DS)                                                \
-    ADR E5X(RXB(XD), RXB(MS),    0x00, 1, 1, 1) EMITB(0x7D)                 \
+    ADR EFX(RXB(XD), RXB(MS),    0x00, 1, 1, 1) EMITB(0x7D)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -504,11 +493,11 @@
  * rounding mode comes from control register (set in FCTRL blocks) */
 
 #define cvtan_rr(XD, XS)                                                    \
-        E5X(RXB(XD), RXB(XS),    0x00, 1, 2, 1) EMITB(0x7D)                 \
+        EFX(RXB(XD), RXB(XS),    0x00, 1, 2, 1) EMITB(0x7D)                 \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvtan_ld(XD, MS, DS)                                                \
-    ADR E5X(RXB(XD), RXB(MS),    0x00, 1, 2, 1) EMITB(0x7D)                 \
+    ADR EFX(RXB(XD), RXB(MS),    0x00, 1, 2, 1) EMITB(0x7D)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 

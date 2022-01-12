@@ -113,11 +113,41 @@
 
 #if (RT_512X1 >= 1 && RT_512X1 <= 8)
 
+#if (RT_512X1 == 1 || RT_512X1 == 4)
+
 #ifndef RT_RTARCH_X64_256X1V2_H
 #undef  RT_256X1
 #define RT_256X1  2
 #include "rtarch_x64_256x1v2.h"
 #endif /* RT_RTARCH_X64_256X1V2_H */
+
+#define ck1ox_rm(XS, MT, DT) /* not portable, do not use outside */         \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 1, 1) EMITB(0x76)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+#define mz1ox_ld(XD, MS, DS) /* not portable, do not use outside */         \
+    ADR EZX(RXB(XD), RXB(MS),    0x00, K, 0, 1) EMITB(0x28)                 \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#else  /* (RT_512X1 == 2 || RT_512X1 == 8) */
+
+#ifndef RT_RTARCH_X64_256X1V8_H
+#undef  RT_256X1
+#define RT_256X1  8
+#include "rtarch_x64_256x1v8.h"
+#endif /* RT_RTARCH_X64_256X1V8_H */
+
+#define ck1ox_rm(XS, MT, DT) /* not portable, do not use outside */         \
+        EVX(0,       RXB(XS),    0x00, K, 2, 2) EMITB(0x39)                 \
+        MRM(0x01,    MOD(XS), REG(XS))
+
+#define mz1ox_ld(XD, MS, DS) /* not portable, do not use outside */         \
+        EVX(RXB(XD),       0,    0x00, K, 2, 2) EMITB(0x38)                 \
+        MRM(REG(XD),    0x03,    0x01)
+
+#endif /* (RT_512X1 == 2 || RT_512X1 == 8) */
 
 #undef  K
 #define K 2
@@ -173,11 +203,6 @@
     ADR EKX(RXB(XS), RXB(MG),    0x00, K, 0, 1) EMITB(0x29)                 \
         MRM(REG(XS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
-
-#define ck1ox_rm(XS, MT, DT) /* not portable, do not use outside */         \
-    ADR EVX(0,       RXB(MT), REN(XS), K, 1, 1) EMITB(0x76)                 \
-        MRM(0x01,    MOD(MT), REG(MT))                                      \
-        AUX(SIB(MT), CMD(DT), EMPTY)
 
 #if (RT_512X1 == 1 || RT_512X1 == 4)
 
@@ -717,12 +742,6 @@
         MRM(0x01,    MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
         mz1ox_ld(W(XD), Mebp, inf_GPC07)
-
-
-#define mz1ox_ld(XG, MS, DS) /* not portable, do not use outside */         \
-    ADR EZX(RXB(XG), RXB(MS),    0x00, K, 0, 1) EMITB(0x28)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* mkj (jump to lb) if (S satisfies mask condition) */
 

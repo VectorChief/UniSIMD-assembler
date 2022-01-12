@@ -2265,6 +2265,18 @@
         EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
         EMITW(0xF2100350 | MXM(REG(XD), REG(XS), TmmM))
 
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE16_128  0x00000000 /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL16_128  0xFFFCFFFC /*  all satisfy the condition */
+
+#define mkjgx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        EMITW(0xF2100B10 | MXM(TmmM+0,  REG(XS)+0, REG(XS)+1))              \
+        EMITW(0xF2100B10 | MXM(TmmM+0,  TmmM+0,    TmmM+1))                 \
+        EMITW(0xEE100B10 | MXM(Teax,    TmmM+0,    0x00))                   \
+        cmpwx_ri(Reax, IW(RT_SIMD_MASK_##mask##16_128))                     \
+        jeqxx_lb(lb)
+
 /****************   packed byte-precision generic move/logic   ****************/
 
 /* mov (D = S) */

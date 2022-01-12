@@ -365,15 +365,7 @@
 
 /* mkj (jump to lb) if (S satisfies mask condition) */
 
-#define RT_SIMD_MASK_NONE16_SVE     0x00    /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL16_SVE     0x01    /*  all satisfy the condition */
-
-#define mkjmx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        EMITW(0x04582000 | MXM(TmmM,    REG(XS), 0x00) |                    \
-                          RT_SIMD_MASK_##mask##16_SVE << 17)                \
-        EMITW(0x0E022C00 | MXM(Teax,    TmmM,    0x00))                     \
-        addwxZri(Reax, IB(RT_SIMD_MASK_##mask##16_SVE))                     \
-        jezxx_lb(lb)
+    /* mkj for half-precision is defined in corresponding HB_SVE header */
 
 /**************   packed half-precision floating-point convert   **************/
 

@@ -3425,6 +3425,26 @@
         movgx_rr(W(XD), W(XS))                                              \
         cgegn_ld(W(XD), W(MT), W(DT))
 
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE16_128    0x00     /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL16_128    0x0F     /*  all satisfy the condition */
+
+#define mkjgx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Rebp)                                                      \
+        EMITB(0x0F) EMITB(0x50)                                             \
+        MRM(0x00,    MOD(XS), REG(XS))                                      \
+        shlix_ri(W(XS), IB(16))                                             \
+        EMITB(0x0F) EMITB(0x50)                                             \
+        MRM(0x05,    MOD(XS), REG(XS))                                      \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##16_128 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x05)                                         \
+        stack_ld(Rebp)                                                      \
+        movgx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        cmpwx_ri(Reax, IB(RT_SIMD_MASK_##mask##16_128))                     \
+        jeqxx_lb(lb)
+
 /****************   packed byte-precision generic move/logic   ****************/
 
 /* mov (D = S) */

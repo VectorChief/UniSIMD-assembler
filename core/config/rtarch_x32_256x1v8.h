@@ -119,6 +119,14 @@
 #include "rtarch_x64_128x1v2.h"
 #endif /* RT_RTARCH_X64_128X1V2_H */
 
+#define ck1cx_rm(XS, MT, DT) /* not portable, do not use outside */         \
+        EVX(0,       RXB(XS),    0x00, 1, 2, 2) EMITB(0x39)                 \
+        MRM(0x01,    MOD(XS), REG(XS))
+
+#define mz1cx_ld(XD, MS, DS) /* not portable, do not use outside */         \
+        EVX(RXB(XD),       0,    0x00, 1, 2, 2) EMITB(0x38)                 \
+        MRM(REG(XD),    0x03,    0x01)
+
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -170,11 +178,6 @@
     ADR EKX(RXB(XS), RXB(MG),    0x00, 1, 0, 1) EMITB(0x29)                 \
         MRM(REG(XS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
-
-#define ck1cx_rm(XS, MT, DT) /* not portable, do not use outside */         \
-    ADR EVX(0,       RXB(MT), REN(XS), 1, 1, 1) EMITB(0x76)                 \
-        MRM(0x01,    MOD(MT), REG(MT))                                      \
-        AUX(SIB(MT), CMD(DT), EMPTY)
 
 /* and (G = G & S), (D = S & T) if (#D != #T) */
 
@@ -622,12 +625,6 @@
         MRM(0x01,    MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
         mz1cx_ld(W(XD), Mebp, inf_GPC07)
-
-
-#define mz1cx_ld(XG, MS, DS) /* not portable, do not use outside */         \
-    ADR EZX(RXB(XG), RXB(MS),    0x00, 1, 0, 1) EMITB(0x28)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* mkj (jump to lb) if (S satisfies mask condition) */
 
