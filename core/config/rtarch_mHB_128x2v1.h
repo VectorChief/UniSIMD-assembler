@@ -1330,6 +1330,26 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x7A00000F | MXM(RYG(XD), TmmM,    RYG(XS)))
 
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE08_256  MN08_256   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL08_256  MF08_256   /*  all satisfy the condition */
+
+/* #define S0(mask)    S1(mask)            (defined in 32_128-bit header) */
+/* #define S1(mask)    S##mask             (defined in 32_128-bit header) */
+
+#define SMN08_256(xs, lb) /* not portable, do not use outside */            \
+        EMITW(0x7820001E | MXM(TmmM, xs, xs+16))                            \
+        ASM_BEG ASM_OP2( bz.v, $w31, lb) ASM_END
+
+#define SMF08_256(xs, lb) /* not portable, do not use outside */            \
+        EMITW(0x7800001E | MXM(TmmM, xs, xs+16))                            \
+        ASM_BEG ASM_OP2(bnz.b, $w31, lb) ASM_END
+
+#define mkjab_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        AUW(EMPTY, EMPTY, EMPTY, REG(XS), lb,                               \
+        S0(RT_SIMD_MASK_##mask##08_256), EMPTY2)
+
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/

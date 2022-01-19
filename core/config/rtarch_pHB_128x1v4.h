@@ -321,8 +321,8 @@
         AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
-        EMITW(0x100004C4 | MXM(TmmQ,    TmmQ,    TmmQ))                     \
-        EMITW(0x10000022 | MXM(REG(XD), REG(XS), TmmM) | TmmQ << 6)
+        EMITW(0x100004C4 | MXM(TmmZ,    TmmZ,    TmmZ))                     \
+        EMITW(0x10000022 | MXM(REG(XD), REG(XS), TmmM) | TmmZ << 6)
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -1285,6 +1285,26 @@
         EMITW(0x7C0000CE | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
         EMITW(0x10000306 | MXM(REG(XD), TmmM,    REG(XS)))                  \
         EMITW(0x10000504 | MXM(REG(XD), REG(XD), REG(XD)))
+
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE08_128  MN08_128   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL08_128  MF08_128   /*  all satisfy the condition */
+
+/* #define S0(mask)    S1(mask)            (defined in 32_128-bit header) */
+/* #define S1(mask)    S##mask             (defined in 32_128-bit header) */
+
+#define SMN08_128(xs, lb) /* not portable, do not use outside */            \
+        ASM_BEG ASM_OP2(beq, cr6, lb) ASM_END
+
+#define SMF08_128(xs, lb) /* not portable, do not use outside */            \
+        ASM_BEG ASM_OP2(blt, cr6, lb) ASM_END
+
+#define mkjgb_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        EMITW(0x1000038C | MXM(TmmQ,    0x1F,    0x00))                     \
+        EMITW(0x10000406 | MXM(REG(XS), REG(XS), TmmQ))                     \
+        AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb,                                 \
+        S0(RT_SIMD_MASK_##mask##08_128), EMPTY2)
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

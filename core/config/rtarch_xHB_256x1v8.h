@@ -1714,6 +1714,21 @@
         AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
         mz1ab_ld(W(XD), Mebp, inf_GPC07)
 
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE08_256  0x00000000 /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL08_256  0xFFFFFFFF /*  all satisfy the condition */
+
+#define mk1bx_rx(RD)         /* not portable, do not use outside */         \
+        VEW(RXB(RD),       0,    0x00, 0, 3, 1) EMITB(0x93)                 \
+        MRM(REG(RD),    0x03,    0x01)
+
+#define mkjab_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        ck1ab_rm(W(XS), Mebp, inf_GPC07)                                    \
+        mk1bx_rx(Reax)                                                      \
+        cmpwx_ri(Reax, IW(RT_SIMD_MASK_##mask##08_256))                     \
+        jeqxx_lb(lb)
+
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/

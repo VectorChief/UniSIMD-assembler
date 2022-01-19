@@ -4664,6 +4664,68 @@
         minmc3ld(W(XD), W(XS), W(MT), W(DT))                                \
         ceqmb_ld(W(XD), W(MT), W(DT))
 
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE08_1K4    0x00     /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL08_1K4    0xFF     /*  all satisfy the condition */
+
+#define bsncx_rx(XS, mask) /* not portable, do not use outside */           \
+        VEX(1,       RXB(XS),    0x00, 1, 0, 1) EMITB(0x50)                 \
+        MRM(0x07,    MOD(XS), REG(XS))                                      \
+        REX(0,             1)                                               \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_1K4 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x07)
+
+#define mkjmb_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        movmb_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        VEX(0,       RXB(XS),    0x00, 1, 0, 1) EMITB(0x50)                 \
+        MRM(0x00,    MOD(XS), REG(XS))                                      \
+        movab_ld(W(XS), Mebp, inf_SCR01(0x20))                              \
+        bsncx_rx(W(XS), mask)                                               \
+        movab_ld(W(XS), Mebp, inf_SCR01(0x40))                              \
+        bsncx_rx(W(XS), mask)                                               \
+        movab_ld(W(XS), Mebp, inf_SCR01(0x60))                              \
+        bsncx_rx(W(XS), mask)                                               \
+        movab_ld(W(XS), Mebp, inf_SCR01(0x00))                              \
+        shlcx_ri(W(XS), IB(8))                                              \
+        bsncx_rx(W(XS), mask)                                               \
+        movab_ld(W(XS), Mebp, inf_SCR01(0x20))                              \
+        shlcx_ri(W(XS), IB(8))                                              \
+        bsncx_rx(W(XS), mask)                                               \
+        movab_ld(W(XS), Mebp, inf_SCR01(0x40))                              \
+        shlcx_ri(W(XS), IB(8))                                              \
+        bsncx_rx(W(XS), mask)                                               \
+        movab_ld(W(XS), Mebp, inf_SCR01(0x60))                              \
+        shlcx_ri(W(XS), IB(8))                                              \
+        bsncx_rx(W(XS), mask)                                               \
+        movab_ld(W(XS), Mebp, inf_SCR01(0x00))                              \
+        shlcx_ri(W(XS), IB(16))                                             \
+        bsncx_rx(W(XS), mask)                                               \
+        movab_ld(W(XS), Mebp, inf_SCR01(0x20))                              \
+        shlcx_ri(W(XS), IB(16))                                             \
+        bsncx_rx(W(XS), mask)                                               \
+        movab_ld(W(XS), Mebp, inf_SCR01(0x40))                              \
+        shlcx_ri(W(XS), IB(16))                                             \
+        bsncx_rx(W(XS), mask)                                               \
+        movab_ld(W(XS), Mebp, inf_SCR01(0x60))                              \
+        shlcx_ri(W(XS), IB(16))                                             \
+        bsncx_rx(W(XS), mask)                                               \
+        movab_ld(W(XS), Mebp, inf_SCR01(0x00))                              \
+        shlcx_ri(W(XS), IB(24))                                             \
+        bsncx_rx(W(XS), mask)                                               \
+        movab_ld(W(XS), Mebp, inf_SCR01(0x20))                              \
+        shlcx_ri(W(XS), IB(24))                                             \
+        bsncx_rx(W(XS), mask)                                               \
+        movab_ld(W(XS), Mebp, inf_SCR01(0x40))                              \
+        shlcx_ri(W(XS), IB(24))                                             \
+        bsncx_rx(W(XS), mask)                                               \
+        movab_ld(W(XS), Mebp, inf_SCR01(0x60))                              \
+        shlcx_ri(W(XS), IB(24))                                             \
+        bsncx_rx(W(XS), mask)                                               \
+        movmb_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        cmpwx_ri(Reax, IB(RT_SIMD_MASK_##mask##08_1K4))                     \
+        jeqxx_lb(lb)
+
 #else /* RT_512X2 >= 2 */
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
@@ -5033,6 +5095,30 @@
         MRM(0x01,       0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x05))                           \
         mz1mb_ld(X(XD), Mebp, inf_GPC07)
+
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE08_1K4  0x00000000 /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL08_1K4  0xFFFFFFFF /*  all satisfy the condition */
+
+#define mk1bx_rx(RD)         /* not portable, do not use outside */         \
+        VEW(RXB(RD),       0,    0x00, 0, 3, 1) EMITB(0x93)                 \
+        MRM(REG(RD),    0x03,    0x01)
+
+#define mkjmb_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        ck1mb_rm(W(XS), Mebp, inf_GPC07)                                    \
+        mk1bx_rx(Reax)                                                      \
+        REW(1,             0) EMITB(0x8B)                                   \
+        MRM(0x07,       0x03, 0x00)                                         \
+        ck1mb_rm(X(XS), Mebp, inf_GPC07)                                    \
+        mk1bx_rx(Reax)                                                      \
+        REW(0,             1)                                               \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_1K4 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x07)                                         \
+        movzx_mj(Mebp, inf_SCR02(0), IW(RT_SIMD_MASK_##mask##08_1K4),       \
+                                     IW(RT_SIMD_MASK_##mask##08_1K4))       \
+        cmpzx_rm(Reax, Mebp, inf_SCR02(0))                                  \
+        jeqxx_lb(lb)
 
 #endif /* RT_512X2 >= 2 */
 

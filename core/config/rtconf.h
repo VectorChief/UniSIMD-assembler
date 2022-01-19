@@ -1396,11 +1396,6 @@
 #define cgems3ld(XD, XS, MT, DT)                                            \
         cgeas3ld(W(XD), W(XS), W(MT), W(DT))
 
-/* mkj (jump to lb) if (S satisfies mask condition) */
-
-#define mkjmx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        mkjax_rx(W(XS), mask, lb)
-
 /**************   packed half-precision floating-point convert   **************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -2244,6 +2239,14 @@
 #define cgemc3ld(XD, XS, MT, DT)                                            \
         cgeac3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define mkjmx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjax_rx(W(XS), mask, lb)
+
+#define mkjmb_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjab_rx(W(XS), mask, lb)
+
 /******************************************************************************/
 /**** var-len **** SIMD instructions with fixed-16-bit element **** 128-bit ***/
 /******************************************************************************/
@@ -2637,11 +2640,6 @@
 
 #define cgems3ld(XD, XS, MT, DT)                                            \
         cgegs3ld(W(XD), W(XS), W(MT), W(DT))
-
-/* mkj (jump to lb) if (S satisfies mask condition) */
-
-#define mkjmx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        mkjgx_rx(W(XS), mask, lb)
 
 /**************   packed half-precision floating-point convert   **************/
 
@@ -3485,6 +3483,14 @@
 
 #define cgemc3ld(XD, XS, MT, DT)                                            \
         cgegc3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define mkjmx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjgx_rx(W(XS), mask, lb)
+
+#define mkjmb_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        mkjgb_rx(W(XS), mask, lb)
 
 #endif /* RT_SIMD: 256, 128 */
 

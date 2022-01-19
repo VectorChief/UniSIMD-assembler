@@ -361,11 +361,11 @@
 #define mulax3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
         EMITW(0x38000000 | MPM(TPxx,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMITW(0x100004C4 | MXM(TmmQ,    TmmQ,    TmmQ))                     \
+        EMITW(0x100004C4 | MXM(TmmZ,    TmmZ,    TmmZ))                     \
         EMITW(0x7C0000CE | MXM(TmmM,    T0xx,    TPxx))                     \
-        EMITW(0x10000022 | MXM(REG(XD), REG(XS), TmmM) | TmmQ << 6)         \
+        EMITW(0x10000022 | MXM(REG(XD), REG(XS), TmmM) | TmmZ << 6)         \
         EMITW(0x7C0000CE | MXM(TmmM,    T1xx,    TPxx))                     \
-        EMITW(0x10000022 | MXM(RYG(XD), RYG(XS), TmmM) | TmmQ << 6)
+        EMITW(0x10000022 | MXM(RYG(XD), RYG(XS), TmmM) | TmmZ << 6)
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -817,6 +817,7 @@
         ASM_BEG ASM_OP2(blt, cr6, lb) ASM_END
 
 #define mkjax_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        EMITW(0x1000038C | MXM(TmmQ,    0x1F,    0x00))                     \
         AUW(EMPTY, EMPTY, EMPTY, REG(XS), lb,                               \
         S0(RT_SIMD_MASK_##mask##16_256), EMPTY2)
 
@@ -1539,6 +1540,29 @@
         EMITW(0x7C0000CE | MXM(TmmM,    T1xx,    TPxx))                     \
         EMITW(0x10000306 | MXM(RYG(XD), TmmM,    RYG(XS)))                  \
         EMITW(0x10000504 | MXM(RYG(XD), RYG(XD), RYG(XD)))
+
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE08_256  MN08_256   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL08_256  MF08_256   /*  all satisfy the condition */
+
+/* #define S0(mask)    S1(mask)            (defined in 32_128-bit header) */
+/* #define S1(mask)    S##mask             (defined in 32_128-bit header) */
+
+#define SMN08_256(xs, lb) /* not portable, do not use outside */            \
+        EMITW(0x10000484 | MXM(TmmM,    xs,      xs+16))                    \
+        EMITW(0x10000406 | MXM(TmmM,    TmmM,    TmmQ))                     \
+        ASM_BEG ASM_OP2(beq, cr6, lb) ASM_END
+
+#define SMF08_256(xs, lb) /* not portable, do not use outside */            \
+        EMITW(0x10000404 | MXM(TmmM,    xs,      xs+16))                    \
+        EMITW(0x10000406 | MXM(TmmM,    TmmM,    TmmQ))                     \
+        ASM_BEG ASM_OP2(blt, cr6, lb) ASM_END
+
+#define mkjab_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        EMITW(0x1000038C | MXM(TmmQ,    0x1F,    0x00))                     \
+        AUW(EMPTY, EMPTY, EMPTY, REG(XS), lb,                               \
+        S0(RT_SIMD_MASK_##mask##08_256), EMPTY2)
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

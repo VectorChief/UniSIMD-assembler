@@ -2523,6 +2523,57 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x64)                       \
         movab_rr(W(XD), W(XS))                                              \
         cgeac_ld(W(XD), W(MT), W(DT))
 
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE08_256    0x00     /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL08_256    0x0F     /*  all satisfy the condition */
+
+#define mkjab_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        REX(0,             0) EMITB(0x0F) EMITB(0x50)                       \
+        MRM(0x00,    MOD(XS), REG(XS))                                      \
+        REX(1,             1) EMITB(0x0F) EMITB(0x50)                       \
+        MRM(0x07,    MOD(XS), REG(XS))                                      \
+        REX(0,             1)                                               \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_256 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x07)                                         \
+        shlcx_ri(W(XS), IB(8))                                              \
+        REX(1,             0) EMITB(0x0F) EMITB(0x50)                       \
+        MRM(0x07,    MOD(XS), REG(XS))                                      \
+        REX(0,             1)                                               \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_256 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x07)                                         \
+        REX(1,             1) EMITB(0x0F) EMITB(0x50)                       \
+        MRM(0x07,    MOD(XS), REG(XS))                                      \
+        REX(0,             1)                                               \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_256 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x07)                                         \
+        shlcx_ri(W(XS), IB(8))                                              \
+        REX(1,             0) EMITB(0x0F) EMITB(0x50)                       \
+        MRM(0x07,    MOD(XS), REG(XS))                                      \
+        REX(0,             1)                                               \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_256 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x07)                                         \
+        REX(1,             1) EMITB(0x0F) EMITB(0x50)                       \
+        MRM(0x07,    MOD(XS), REG(XS))                                      \
+        REX(0,             1)                                               \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_256 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x07)                                         \
+        shlcx_ri(W(XS), IB(8))                                              \
+        REX(1,             0) EMITB(0x0F) EMITB(0x50)                       \
+        MRM(0x07,    MOD(XS), REG(XS))                                      \
+        REX(0,             1)                                               \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_256 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x07)                                         \
+        REX(1,             1) EMITB(0x0F) EMITB(0x50)                       \
+        MRM(0x07,    MOD(XS), REG(XS))                                      \
+        REX(0,             1)                                               \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_256 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x07)                                         \
+        movab_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        cmpwx_ri(Reax, IB(RT_SIMD_MASK_##mask##08_256))                     \
+        jeqxx_lb(lb)
+
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/

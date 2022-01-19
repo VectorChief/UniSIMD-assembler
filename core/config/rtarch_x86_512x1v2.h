@@ -2664,11 +2664,11 @@
 #define RT_SIMD_MASK_FULL16_512  0xFFF0FFF0 /*  all satisfy the condition */
 
 #define adpax3rr(XD, XS, XT)     /* not portable, do not use outside */     \
-        VEX(REN(XS), 1, 1, 2) EMITB(0x01)                                   \
+        VEX(REG(XS), 1, 1, 2) EMITB(0x01)                                   \
         MRM(REG(XD), MOD(XT), REG(XT))
 
 #define adpax3ld(XD, XS, MT, DT) /* not portable, do not use outside */     \
-        VEX(REN(XS), 1, 1, 2) EMITB(0x01)                                   \
+        VEX(REG(XS), 1, 1, 2) EMITB(0x01)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -4559,6 +4559,46 @@
         minmc3ld(W(XD), W(XS), W(MT), W(DT))                                \
         ceqmb_ld(W(XD), W(MT), W(DT))
 
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE08_512    0x00     /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL08_512    0xFF     /*  all satisfy the condition */
+
+#define prmox_rx(XD) /* not portable, do not use outside */                 \
+        EVX(REG(XD), K, 1, 3) EMITB(0x43)                                   \
+        MRM(REG(XD), MOD(XD), REG(XD))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x4E))  /* permute two 256-bit halves */
+
+#define bsncx_rx(XS, mask) /* not portable, do not use outside */           \
+        V2X(0x00,    1, 0) EMITB(0x50)                                      \
+        MRM(0x05,    MOD(XS), REG(XS))                                      \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_512 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x05)
+
+#define mkjmb_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        movmb_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Rebp)                                                      \
+        V2X(0x00,    1, 0) EMITB(0x50)                                      \
+        MRM(0x00,    MOD(XS), REG(XS))                                      \
+        prmox_rx(W(XS))                                                     \
+        bsncx_rx(W(XS), mask)                                               \
+        shlox_ri(W(XS), IB(8))                                              \
+        bsncx_rx(W(XS), mask)                                               \
+        prmox_rx(W(XS))                                                     \
+        bsncx_rx(W(XS), mask)                                               \
+        shlox_ri(W(XS), IB(8))                                              \
+        bsncx_rx(W(XS), mask)                                               \
+        prmox_rx(W(XS))                                                     \
+        bsncx_rx(W(XS), mask)                                               \
+        shlox_ri(W(XS), IB(8))                                              \
+        bsncx_rx(W(XS), mask)                                               \
+        prmox_rx(W(XS))                                                     \
+        bsncx_rx(W(XS), mask)                                               \
+        stack_ld(Rebp)                                                      \
+        movmb_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        cmpwx_ri(Reax, IB(RT_SIMD_MASK_##mask##08_512))                     \
+        jeqxx_lb(lb)
+
 #else /* RT_512X1 >= 2 */
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
@@ -4828,6 +4868,28 @@
         MRM(0x01,    MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
         mz1mb_ld(W(XD), Mebp, inf_GPC07)
+
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE08_512  0x00000000 /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL08_512  0xFFFFFFFF /*  all satisfy the condition */
+
+#define sh1hx_xx()           /* not portable, do not use outside */         \
+        VEW(0x00,    0, 1, 3) EMITB(0x31)                                   \
+        MRM(0x01,       0x03,    0x01)                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x20))
+
+#define mkjmb_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        ck1mb_rm(W(XS), Mebp, inf_GPC07)                                    \
+        stack_st(Rebp)                                                      \
+        mk1hx_rx(Reax)                                                      \
+        sh1hx_xx()                                                          \
+        mk1hx_rx(Rebp)                                                      \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_512 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x05)                                         \
+        stack_ld(Rebp)                                                      \
+        cmpwx_ri(Reax, IW(RT_SIMD_MASK_##mask##08_512))                     \
+        jeqxx_lb(lb)
 
 #endif /* RT_512X1 >= 2 */
 

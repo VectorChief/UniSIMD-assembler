@@ -1503,6 +1503,37 @@
         mingc3ld(W(XD), W(XS), W(MT), W(DT))                                \
         ceqgb_ld(W(XD), W(MT), W(DT))
 
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE08_128    0x00     /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL08_128    0x0F     /*  all satisfy the condition */
+
+#define mkjgb_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        VEX(0,       RXB(XS),    0x00, 0, 0, 1) EMITB(0x50)                 \
+        MRM(0x00,    MOD(XS), REG(XS))                                      \
+        shlix_ri(W(XS), IB(8))                                              \
+        VEX(1,       RXB(XS),    0x00, 0, 0, 1) EMITB(0x50)                 \
+        MRM(0x07,    MOD(XS), REG(XS))                                      \
+        REX(0,             1)                                               \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_128 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x07)                                         \
+        shlix_ri(W(XS), IB(8))                                              \
+        VEX(1,       RXB(XS),    0x00, 0, 0, 1) EMITB(0x50)                 \
+        MRM(0x07,    MOD(XS), REG(XS))                                      \
+        REX(0,             1)                                               \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_128 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x07)                                         \
+        shlix_ri(W(XS), IB(8))                                              \
+        VEX(1,       RXB(XS),    0x00, 0, 0, 1) EMITB(0x50)                 \
+        MRM(0x07,    MOD(XS), REG(XS))                                      \
+        REX(0,             1)                                               \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_128 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x07)                                         \
+        movgb_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        cmpwx_ri(Reax, IB(RT_SIMD_MASK_##mask##08_128))                     \
+        jeqxx_lb(lb)
+
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/

@@ -2058,10 +2058,10 @@
 #define mkjgx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         stack_st(Rebp)                                                      \
-        VEX(0x00,    0, 0, 1) EMITB(0x50)                                   \
+        V2X(0x00,    0, 0) EMITB(0x50)                                      \
         MRM(0x00,    MOD(XS), REG(XS))                                      \
         shlix_ri(W(XS), IB(16))                                             \
-        VEX(0x00,    0, 0, 1) EMITB(0x50)                                   \
+        V2X(0x00,    0, 0) EMITB(0x50)                                      \
         MRM(0x05,    MOD(XS), REG(XS))                                      \
         EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##16_128 & 0x1) << 1)))  \
         MRM(0x00,       0x03, 0x05)                                         \
@@ -2817,6 +2817,36 @@
 #define cgegc3ld(XD, XS, MT, DT)                                            \
         mingc3ld(W(XD), W(XS), W(MT), W(DT))                                \
         ceqgb_ld(W(XD), W(MT), W(DT))
+
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE08_128    0x00     /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL08_128    0x0F     /*  all satisfy the condition */
+
+#define mkjgb_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Rebp)                                                      \
+        V2X(0x00,    0, 0) EMITB(0x50)                                      \
+        MRM(0x00,    MOD(XS), REG(XS))                                      \
+        shlix_ri(W(XS), IB(8))                                              \
+        V2X(0x00,    0, 0) EMITB(0x50)                                      \
+        MRM(0x05,    MOD(XS), REG(XS))                                      \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_128 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x05)                                         \
+        shlix_ri(W(XS), IB(8))                                              \
+        V2X(0x00,    0, 0) EMITB(0x50)                                      \
+        MRM(0x05,    MOD(XS), REG(XS))                                      \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_128 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x05)                                         \
+        shlix_ri(W(XS), IB(8))                                              \
+        V2X(0x00,    0, 0) EMITB(0x50)                                      \
+        MRM(0x05,    MOD(XS), REG(XS))                                      \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_128 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x05)                                         \
+        stack_ld(Rebp)                                                      \
+        movgb_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        cmpwx_ri(Reax, IB(RT_SIMD_MASK_##mask##08_128))                     \
+        jeqxx_lb(lb)
 
 /******************************************************************************/
 /**********************************   ELEM   **********************************/

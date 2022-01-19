@@ -180,7 +180,7 @@
 #define TmmW    0x1C  /* v28, VMX only */
 #define TmmZ    0x1D  /* v29, VMX only */
 
-#define TmmQ    0x0F  /* v15, internal name for all-ones */
+#define TmmQ    0x0F  /* v15, internal name for all-ones, not persistent */
 #define TmmM    0x1F  /* v31, temp-reg name for mem-args */
 
 /******************************************************************************/
@@ -872,6 +872,7 @@
         ASM_BEG ASM_OP2(blt, cr6, lb) ASM_END
 
 #define mkjix_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        EMITW(0x1000038C | MXM(TmmQ,    0x1F,    0x00))                     \
         EMITW(0x10000486 | MXM(REG(XS), REG(XS), TmmQ))                     \
         AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb,                                 \
         S0(RT_SIMD_MASK_##mask##32_128), EMPTY2)
