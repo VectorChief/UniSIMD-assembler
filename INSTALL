@@ -34,7 +34,7 @@ run for x64 architecture:
 To build SIMD test framework on Windows,
 go to UniSIMD's "test" subfolder and open (in Visual C++ 6.0 or later):
     simd_workspace.dsw
-In newer versions of VC++ agree to convert workspace files.
+In newer versions of VC++ (VS2008) agree to convert workspace files.
 Exit and open newly created solution file for development.
 Select "Release" build target in drop-down list/menus, then press F5.
 More recent versions (VS2017) need a few extra steps to complete the build.
@@ -43,6 +43,9 @@ and select "Retarget solution", choose Windows SDK Version "10.0.15063.0",
 then select "Build" -> "Rebuild Solution" from the top-level menu, not F5.
 Run produced binary simd_test.exe in "test" subfolder from Windows Explorer.
 VS2019 automatically retargets solution to the latest installed Windows SDK.
+Starting from VS2022 legacy workspace files (*.dsw) are not supported anymore,
+use standalone TDM64-GCC option below to produce modern 64-bit binaries.
+Native support for 64-bit applications with VS2022 may be added later.
 
 To build SIMD test framework for 64-bit Windows,
 download and install TDM64-GCC toolchain (tdm64-gcc-10.3.0-2.exe) from github,
@@ -92,6 +95,8 @@ while versions 4.x.y prior to 4.2.0 showed issues with POWER8/9 fp32 LE targets.
 QEMU 4.2.0 is now part of Ubuntu 20.04, QEMU 5.0.0 proves to be just as good.
 QEMU 5.2.0 and beyond may require ninja-build package to build from source.
 Starting from QEMU 5.2.0 POWER9 lxvwsx instruction is supported properly.
+From QEMU 5.2.0 through QEMU 6.2.0 ppc64abi32 targets are marked as deprecated
+and will be removed in the following releases (Ubuntu 22.04 should have 6.2.0).
 
 Ubuntu 20.04 is the first release where MIPS cross-compilers have caught up
 with the rest of the pack (standalone 2020.06-01 and mipsisa64r6* are 9.3.0).
@@ -114,6 +119,11 @@ In terminal window for 64-bit x64 run:
     path-to-kit/sde64 -hsw -- ./simd_test.x64f32avx -c 1
     path-to-kit/sde64 -skx -- ./simd_test.x64f32avx512 -c 1
 for AVX2 (Haswell) and AVX512DQ (Skylake-X) respectively.
+
+Intel's AVX512 fp16 subset (in Sapphire Rapids and in some Alder Lake configs)
+is now supported in Intel SDE 9.0 (with -spr option) and can be tested within
+the assembler by substituting regular 32/64-bit cmdps with 16-bit cmdms aliases
+and using direct ASM section output comparison method (with ARMv8.2 fp16).
 
 Use "-c 1" option to reduce test time when emulating with Intel SDE.
 
