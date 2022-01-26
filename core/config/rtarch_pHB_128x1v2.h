@@ -727,19 +727,6 @@
 
 /****************   packed byte-precision generic move/logic   ****************/
 
-/* mov (D = S) */
-
-#define movgb_rr(XD, XS)                                                    \
-        EMITW(0xF0000497 | MXM(REG(XD), REG(XS), REG(XS)))
-
-#define movgb_ld(XD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x00000000 | MPM(REG(XD), MOD(MS), VAL(DS), B2(DS), P2(DS)))
-
-#define movgb_st(XS, MD, DD)                                                \
-        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
-        EMITW(0x00000000 | MPM(REG(XS), MOD(MD), VAL(DD), B2(DD), O2(DD)))
-
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
@@ -757,7 +744,7 @@
         EMITW(0xF000003F | MXM(TmmM,    TmmM,    REG(XS)))                  \
         EMITW(0x00000000 | MPM(TmmM,    MOD(MG), VAL(DG), B2(DG), O2(DG)))
 
-/* logic instructions are sizeless and provided in 16-bit subset above */
+/* move/logic instructions are sizeless and provided in 16-bit subset above */
 
 /*************   packed byte-precision integer arithmetic/shifts   ************/
 
@@ -866,14 +853,14 @@
         mulgb3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define mulgb3rr(XD, XS, XT)                                                \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movgb_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_st(W(XT), Mebp, inf_SCR02(0))                                 \
         mulgb_rx(W(XD))
 
 #define mulgb3ld(XD, XS, MT, DT)                                            \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movgb_ld(W(XD), W(MT), W(DT))                                       \
-        movgb_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_ld(W(XD), W(MT), W(DT))                                       \
+        movgx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         mulgb_rx(W(XD))
 
 #define mulgb_rx(XD) /* not portable, do not use outside */                 \
@@ -927,7 +914,7 @@
         mulbx_ld(Recx,  Mebp, inf_SCR02(0x0F))                              \
         movbx_st(Recx,  Mebp, inf_SCR01(0x0F))                              \
         stack_ld(Recx)                                                      \
-        movgb_ld(W(XD), Mebp, inf_SCR01(0))
+        movgx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */

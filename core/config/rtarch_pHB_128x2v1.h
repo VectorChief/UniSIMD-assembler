@@ -901,24 +901,6 @@
 
 /****************   packed byte-precision generic move/logic   ****************/
 
-/* mov (D = S) */
-
-#define movab_rr(XD, XS)                                                    \
-        EMITW(0xF0000497 | MXM(REG(XD), REG(XS), REG(XS)))                  \
-        EMITW(0xF0000497 | MXM(RYG(XD), RYG(XS), RYG(XS)))
-
-#define movab_ld(XD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0x7C000619 | MXM(REG(XD), T0xx,    TPxx))                     \
-        EMITW(0x7C000619 | MXM(RYG(XD), T1xx,    TPxx))
-
-#define movab_st(XS, MD, DD)                                                \
-        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
-        EMITW(0x38000000 | MPM(TPxx,    MOD(MD), VAL(DD), B2(DD), P2(DD)))  \
-        EMITW(0x7C000719 | MXM(REG(XS), T0xx,    TPxx))                     \
-        EMITW(0x7C000719 | MXM(RYG(XS), T1xx,    TPxx))
-
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
@@ -944,7 +926,7 @@
         EMITW(0xF000043F | MXM(TmmM,    TmmM,    RYG(XS)))                  \
         EMITW(0x7C000719 | MXM(TmmM,    T1xx,    TPxx))
 
-/* logic instructions are sizeless and provided in 16-bit subset above */
+/* move/logic instructions are sizeless and provided in 16-bit subset above */
 
 /*************   packed byte-precision integer arithmetic/shifts   ************/
 
@@ -1077,14 +1059,14 @@
         mulab3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define mulab3rr(XD, XS, XT)                                                \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movab_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
         mulab_rx(W(XD))
 
 #define mulab3ld(XD, XS, MT, DT)                                            \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movab_ld(W(XD), W(MT), W(DT))                                       \
-        movab_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
         mulab_rx(W(XD))
 
 #define mulab_rx(XD) /* not portable, do not use outside */                 \
@@ -1186,7 +1168,7 @@
         mulbx_ld(Recx,  Mebp, inf_SCR02(0x1F))                              \
         movbx_st(Recx,  Mebp, inf_SCR01(0x1F))                              \
         stack_ld(Recx)                                                      \
-        movab_ld(W(XD), Mebp, inf_SCR01(0))
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */

@@ -2084,22 +2084,6 @@
 
 /****************   packed byte-precision generic move/logic   ****************/
 
-/* mov (D = S) */
-
-#define movgb_rr(XD, XS)                                                    \
-        V2X(0x00,    0, 0) EMITB(0x28)                                      \
-        MRM(REG(XD), MOD(XS), REG(XS))
-
-#define movgb_ld(XD, MS, DS)                                                \
-        V2X(0x00,    0, 0) EMITB(0x28)                                      \
-        MRM(REG(XD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define movgb_st(XS, MD, DD)                                                \
-        V2X(0x00,    0, 0) EMITB(0x29)                                      \
-        MRM(REG(XS), MOD(MD), REG(MD))                                      \
-        AUX(SIB(MD), CMD(DD), EMPTY)
-
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
@@ -2107,7 +2091,7 @@
         andgx_rr(W(XS), Xmm0)                                               \
         anngx_rr(Xmm0, W(XG))                                               \
         orrgx_rr(Xmm0, W(XS))                                               \
-        movgb_rr(W(XG), Xmm0)
+        movgx_rr(W(XG), Xmm0)
 
 #define mmvgb_ld(XG, MS, DS)                                                \
         notgx_rx(Xmm0)                                                      \
@@ -2119,9 +2103,9 @@
         andgx_rr(W(XS), Xmm0)                                               \
         anngx_ld(Xmm0, W(MG), W(DG))                                        \
         orrgx_rr(Xmm0, W(XS))                                               \
-        movgb_st(Xmm0, W(MG), W(DG))
+        movgx_st(Xmm0, W(MG), W(DG))
 
-/* logic instructions are sizeless and provided in 16-bit subset above */
+/* move/logic instructions are sizeless and provided in 16-bit subset above */
 
 /*************   packed byte-precision integer arithmetic/shifts   ************/
 
@@ -2236,14 +2220,14 @@
         mulgb3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define mulgb3rr(XD, XS, XT)                                                \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movgb_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_st(W(XT), Mebp, inf_SCR02(0))                                 \
         mulgb_rx(W(XD))
 
 #define mulgb3ld(XD, XS, MT, DT)                                            \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movgb_ld(W(XD), W(MT), W(DT))                                       \
-        movgb_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_ld(W(XD), W(MT), W(DT))                                       \
+        movgx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         mulgb_rx(W(XD))
 
 #define mulgb_rx(XD) /* not portable, do not use outside */                 \
@@ -2297,7 +2281,7 @@
         mulbx_ld(Recx,  Mebp, inf_SCR02(0x0F))                              \
         movbx_st(Recx,  Mebp, inf_SCR01(0x0F))                              \
         stack_ld(Recx)                                                      \
-        movgb_ld(W(XD), Mebp, inf_SCR01(0))
+        movgx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -2309,20 +2293,20 @@
         shlgb3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shlgb3ri(XD, XS, IT)                                                \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movbx_ri(Recx, W(IT))                                               \
         shlgb_xx()                                                          \
         stack_ld(Recx)                                                      \
-        movgb_ld(W(XD), Mebp, inf_SCR01(0))
+        movgx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define shlgb3ld(XD, XS, MT, DT)                                            \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movbx_ld(Recx, W(MT), W(DT))                                        \
         shlgb_xx()                                                          \
         stack_ld(Recx)                                                      \
-        movgb_ld(W(XD), Mebp, inf_SCR01(0))
+        movgx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define shlgb_xx() /* not portable, do not use outside */                   \
         shlbx_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -2352,20 +2336,20 @@
         shrgb3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrgb3ri(XD, XS, IT)                                                \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movbx_ri(Recx, W(IT))                                               \
         shrgb_xx()                                                          \
         stack_ld(Recx)                                                      \
-        movgb_ld(W(XD), Mebp, inf_SCR01(0))
+        movgx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define shrgb3ld(XD, XS, MT, DT)                                            \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movbx_ld(Recx, W(MT), W(DT))                                        \
         shrgb_xx()                                                          \
         stack_ld(Recx)                                                      \
-        movgb_ld(W(XD), Mebp, inf_SCR01(0))
+        movgx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define shrgb_xx() /* not portable, do not use outside */                   \
         shrbx_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -2395,20 +2379,20 @@
         shrgc3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrgc3ri(XD, XS, IT)                                                \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movbx_ri(Recx, W(IT))                                               \
         shrgc_xx()                                                          \
         stack_ld(Recx)                                                      \
-        movgb_ld(W(XD), Mebp, inf_SCR01(0))
+        movgx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define shrgc3ld(XD, XS, MT, DT)                                            \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movbx_ld(Recx, W(MT), W(DT))                                        \
         shrgc_xx()                                                          \
         stack_ld(Recx)                                                      \
-        movgb_ld(W(XD), Mebp, inf_SCR01(0))
+        movgx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define shrgc_xx() /* not portable, do not use outside */                   \
         shrbn_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -2438,14 +2422,14 @@
         svlgb3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define svlgb3rr(XD, XS, XT)                                                \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movgb_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_st(W(XT), Mebp, inf_SCR02(0))                                 \
         svlgb_rx(W(XD))
 
 #define svlgb3ld(XD, XS, MT, DT)                                            \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movgb_ld(W(XD), W(MT), W(DT))                                       \
-        movgb_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_ld(W(XD), W(MT), W(DT))                                       \
+        movgx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         svlgb_rx(W(XD))
 
 #define svlgb_rx(XD) /* not portable, do not use outside */                 \
@@ -2483,7 +2467,7 @@
         movbx_ld(Recx,  Mebp, inf_SCR02(0x0F))                              \
         shlbx_mx(Mebp,  inf_SCR01(0x0F))                                    \
         stack_ld(Recx)                                                      \
-        movgb_ld(W(XD), Mebp, inf_SCR01(0))
+        movgx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -2495,14 +2479,14 @@
         svrgb3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define svrgb3rr(XD, XS, XT)                                                \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movgb_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_st(W(XT), Mebp, inf_SCR02(0))                                 \
         svrgb_rx(W(XD))
 
 #define svrgb3ld(XD, XS, MT, DT)                                            \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movgb_ld(W(XD), W(MT), W(DT))                                       \
-        movgb_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_ld(W(XD), W(MT), W(DT))                                       \
+        movgx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         svrgb_rx(W(XD))
 
 #define svrgb_rx(XD) /* not portable, do not use outside */                 \
@@ -2540,7 +2524,7 @@
         movbx_ld(Recx,  Mebp, inf_SCR02(0x0F))                              \
         shrbx_mx(Mebp,  inf_SCR01(0x0F))                                    \
         stack_ld(Recx)                                                      \
-        movgb_ld(W(XD), Mebp, inf_SCR01(0))
+        movgx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -2552,14 +2536,14 @@
         svrgc3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define svrgc3rr(XD, XS, XT)                                                \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movgb_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_st(W(XT), Mebp, inf_SCR02(0))                                 \
         svrgc_rx(W(XD))
 
 #define svrgc3ld(XD, XS, MT, DT)                                            \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movgb_ld(W(XD), W(MT), W(DT))                                       \
-        movgb_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_ld(W(XD), W(MT), W(DT))                                       \
+        movgx_st(W(XD), Mebp, inf_SCR02(0))                                 \
         svrgc_rx(W(XD))
 
 #define svrgc_rx(XD) /* not portable, do not use outside */                 \
@@ -2597,7 +2581,7 @@
         movbx_ld(Recx,  Mebp, inf_SCR02(0x0F))                              \
         shrbn_mx(Mebp,  inf_SCR01(0x0F))                                    \
         stack_ld(Recx)                                                      \
-        movgb_ld(W(XD), Mebp, inf_SCR01(0))
+        movgx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /*****************   packed byte-precision integer compare   ******************/
 
@@ -2835,28 +2819,25 @@
 #define RT_SIMD_MASK_NONE08_128    0x00     /* none satisfy the condition */
 #define RT_SIMD_MASK_FULL08_128    0x0F     /*  all satisfy the condition */
 
+#define bsnix_rx(XS, mask) /* not portable, do not use outside */           \
+        V2X(0x00,    0, 0) EMITB(0x50)                                      \
+        MRM(0x05,    MOD(XS), REG(XS))                                      \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_128 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x05)
+
 #define mkjgb_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        movgb_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         stack_st(Rebp)                                                      \
         V2X(0x00,    0, 0) EMITB(0x50)                                      \
         MRM(0x00,    MOD(XS), REG(XS))                                      \
         shlix_ri(W(XS), IB(8))                                              \
-        V2X(0x00,    0, 0) EMITB(0x50)                                      \
-        MRM(0x05,    MOD(XS), REG(XS))                                      \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_128 & 0x1) << 1)))  \
-        MRM(0x00,       0x03, 0x05)                                         \
+        bsnix_rx(W(XS), mask)                                               \
         shlix_ri(W(XS), IB(8))                                              \
-        V2X(0x00,    0, 0) EMITB(0x50)                                      \
-        MRM(0x05,    MOD(XS), REG(XS))                                      \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_128 & 0x1) << 1)))  \
-        MRM(0x00,       0x03, 0x05)                                         \
+        bsnix_rx(W(XS), mask)                                               \
         shlix_ri(W(XS), IB(8))                                              \
-        V2X(0x00,    0, 0) EMITB(0x50)                                      \
-        MRM(0x05,    MOD(XS), REG(XS))                                      \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_128 & 0x1) << 1)))  \
-        MRM(0x00,       0x03, 0x05)                                         \
+        bsnix_rx(W(XS), mask)                                               \
         stack_ld(Rebp)                                                      \
-        movgb_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        movgx_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         cmpwx_ri(Reax, IB(RT_SIMD_MASK_##mask##08_128))                     \
         jeqxx_lb(lb)
 

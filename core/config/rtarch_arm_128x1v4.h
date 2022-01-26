@@ -2291,21 +2291,6 @@
 
 /****************   packed byte-precision generic move/logic   ****************/
 
-/* mov (D = S) */
-
-#define movgb_rr(XD, XS)                                                    \
-        EMITW(0xF2200150 | MXM(REG(XD), REG(XS), REG(XS)))
-
-#define movgb_ld(XD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0xF4200AAF | MXM(REG(XD), TPxx,    0x00))
-
-#define movgb_st(XS, MD, DD)                                                \
-        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C2(DD), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MD), VAL(DD), B2(DD), P2(DD)))  \
-        EMITW(0xF4000AAF | MXM(REG(XS), TPxx,    0x00))
-
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
@@ -2325,7 +2310,7 @@
         EMITW(0xF3200150 | MXM(TmmM,    REG(XS), Tmm0))                     \
         EMITW(0xF4000AAF | MXM(TmmM,    TPxx,    0x00))
 
-/* logic instructions are sizeless and provided in 16-bit subset above */
+/* move/logic instructions are sizeless and provided in 16-bit subset above */
 
 /*************   packed byte-precision integer arithmetic/shifts   ************/
 

@@ -1220,30 +1220,6 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x65)                       \
 
 /****************   packed byte-precision generic move/logic   ****************/
 
-/* mov (D = S) */
-
-#define movab_rr(XD, XS)                                                    \
-        REX(0,             0) EMITB(0x0F) EMITB(0x28)                       \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        REX(1,             1) EMITB(0x0F) EMITB(0x28)                       \
-        MRM(REG(XD), MOD(XS), REG(XS))
-
-#define movab_ld(XD, MS, DS)                                                \
-    ADR REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0x28)                       \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-    ADR REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x28)                       \
-        MRM(REG(XD),    0x02, REG(MS))                                      \
-        AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
-
-#define movab_st(XS, MD, DD)                                                \
-    ADR REX(0,       RXB(MD)) EMITB(0x0F) EMITB(0x29)                       \
-        MRM(REG(XS),    0x02, REG(MD))                                      \
-        AUX(SIB(MD), EMITW(VAL(DD)), EMPTY)                                 \
-    ADR REX(1,       RXB(MD)) EMITB(0x0F) EMITB(0x29)                       \
-        MRM(REG(XS),    0x02, REG(MD))                                      \
-        AUX(SIB(MD), EMITW(VYL(DD)), EMPTY)
-
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
@@ -1251,7 +1227,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x65)                       \
         andax_rr(W(XS), Xmm0)                                               \
         annax_rr(Xmm0, W(XG))                                               \
         orrax_rr(Xmm0, W(XS))                                               \
-        movab_rr(W(XG), Xmm0)
+        movax_rr(W(XG), Xmm0)
 
 #define mmvab_ld(XG, MS, DS)                                                \
         notax_rx(Xmm0)                                                      \
@@ -1263,9 +1239,9 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x65)                       \
         andax_rr(W(XS), Xmm0)                                               \
         annax_ld(Xmm0, W(MG), W(DG))                                        \
         orrax_rr(Xmm0, W(XS))                                               \
-        movab_st(Xmm0, W(MG), W(DG))
+        movax_st(Xmm0, W(MG), W(DG))
 
-/* logic instructions are sizeless and provided in 16-bit subset above */
+/* move/logic instructions are sizeless and provided in 16-bit subset above */
 
 /*************   packed byte-precision integer arithmetic/shifts   ************/
 
@@ -1286,11 +1262,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xFC)                       \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
 #define addab3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         addab_rr(W(XD), W(XT))
 
 #define addab3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         addab_ld(W(XD), W(MT), W(DT))
 
 /* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, unsigned */
@@ -1310,11 +1286,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xDC)                       \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
 #define adsab3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         adsab_rr(W(XD), W(XT))
 
 #define adsab3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         adsab_ld(W(XD), W(MT), W(DT))
 
 /* ads (G = G + S), (D = S + T) if (#D != #T) - saturate, signed */
@@ -1334,11 +1310,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xEC)                       \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
 #define adsac3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         adsac_rr(W(XD), W(XT))
 
 #define adsac3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         adsac_ld(W(XD), W(MT), W(DT))
 
 /* sub (G = G - S), (D = S - T) if (#D != #T) */
@@ -1358,11 +1334,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xF8)                       \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
 #define subab3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         subab_rr(W(XD), W(XT))
 
 #define subab3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         subab_ld(W(XD), W(MT), W(DT))
 
 /* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, unsigned */
@@ -1382,11 +1358,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD8)                       \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
 #define sbsab3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         sbsab_rr(W(XD), W(XT))
 
 #define sbsab3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         sbsab_ld(W(XD), W(MT), W(DT))
 
 /* sbs (G = G - S), (D = S - T) if (#D != #T) - saturate, signed */
@@ -1406,11 +1382,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE8)                       \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
 #define sbsac3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         sbsac_rr(W(XD), W(XT))
 
 #define sbsac3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         sbsac_ld(W(XD), W(MT), W(DT))
 
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
@@ -1422,14 +1398,14 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE8)                       \
         mulab3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define mulab3rr(XD, XS, XT)                                                \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movab_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
         mulab_rx(W(XD))
 
 #define mulab3ld(XD, XS, MT, DT)                                            \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movab_ld(W(XD), W(MT), W(DT))                                       \
-        movab_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
         mulab_rx(W(XD))
 
 #define mulab_rx(XD) /* not portable, do not use outside */                 \
@@ -1531,7 +1507,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE8)                       \
         mulbx_ld(Recx,  Mebp, inf_SCR02(0x1F))                              \
         movbx_st(Recx,  Mebp, inf_SCR01(0x1F))                              \
         stack_ld(Recx)                                                      \
-        movab_ld(W(XD), Mebp, inf_SCR01(0))
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -1543,20 +1519,20 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE8)                       \
         shlab3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shlab3ri(XD, XS, IT)                                                \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movbx_ri(Recx, W(IT))                                               \
         shlab_xx()                                                          \
         stack_ld(Recx)                                                      \
-        movab_ld(W(XD), Mebp, inf_SCR01(0))
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define shlab3ld(XD, XS, MT, DT)                                            \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movbx_ld(Recx, W(MT), W(DT))                                        \
         shlab_xx()                                                          \
         stack_ld(Recx)                                                      \
-        movab_ld(W(XD), Mebp, inf_SCR01(0))
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define shlab_xx() /* not portable, do not use outside */                   \
         shlbx_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -1602,20 +1578,20 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE8)                       \
         shrab3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrab3ri(XD, XS, IT)                                                \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movbx_ri(Recx, W(IT))                                               \
         shrab_xx()                                                          \
         stack_ld(Recx)                                                      \
-        movab_ld(W(XD), Mebp, inf_SCR01(0))
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define shrab3ld(XD, XS, MT, DT)                                            \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movbx_ld(Recx, W(MT), W(DT))                                        \
         shrab_xx()                                                          \
         stack_ld(Recx)                                                      \
-        movab_ld(W(XD), Mebp, inf_SCR01(0))
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define shrab_xx() /* not portable, do not use outside */                   \
         shrbx_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -1661,20 +1637,20 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE8)                       \
         shrac3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define shrac3ri(XD, XS, IT)                                                \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movbx_ri(Recx, W(IT))                                               \
         shrac_xx()                                                          \
         stack_ld(Recx)                                                      \
-        movab_ld(W(XD), Mebp, inf_SCR01(0))
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define shrac3ld(XD, XS, MT, DT)                                            \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
         stack_st(Recx)                                                      \
         movbx_ld(Recx, W(MT), W(DT))                                        \
         shrac_xx()                                                          \
         stack_ld(Recx)                                                      \
-        movab_ld(W(XD), Mebp, inf_SCR01(0))
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define shrac_xx() /* not portable, do not use outside */                   \
         shrbn_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -1720,14 +1696,14 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE8)                       \
         svlab3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define svlab3rr(XD, XS, XT)                                                \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movab_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
         svlab_rx(W(XD))
 
 #define svlab3ld(XD, XS, MT, DT)                                            \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movab_ld(W(XD), W(MT), W(DT))                                       \
-        movab_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
         svlab_rx(W(XD))
 
 #define svlab_rx(XD) /* not portable, do not use outside */                 \
@@ -1797,7 +1773,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE8)                       \
         movbx_ld(Recx,  Mebp, inf_SCR02(0x1F))                              \
         shlbx_mx(Mebp,  inf_SCR01(0x1F))                                    \
         stack_ld(Recx)                                                      \
-        movab_ld(W(XD), Mebp, inf_SCR01(0))
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -1809,14 +1785,14 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE8)                       \
         svrab3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define svrab3rr(XD, XS, XT)                                                \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movab_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
         svrab_rx(W(XD))
 
 #define svrab3ld(XD, XS, MT, DT)                                            \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movab_ld(W(XD), W(MT), W(DT))                                       \
-        movab_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
         svrab_rx(W(XD))
 
 #define svrab_rx(XD) /* not portable, do not use outside */                 \
@@ -1886,7 +1862,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE8)                       \
         movbx_ld(Recx,  Mebp, inf_SCR02(0x1F))                              \
         shrbx_mx(Mebp,  inf_SCR01(0x1F))                                    \
         stack_ld(Recx)                                                      \
-        movab_ld(W(XD), Mebp, inf_SCR01(0))
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -1898,14 +1874,14 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE8)                       \
         svrac3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define svrac3rr(XD, XS, XT)                                                \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movab_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
         svrac_rx(W(XD))
 
 #define svrac3ld(XD, XS, MT, DT)                                            \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movab_ld(W(XD), W(MT), W(DT))                                       \
-        movab_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
         svrac_rx(W(XD))
 
 #define svrac_rx(XD) /* not portable, do not use outside */                 \
@@ -1975,7 +1951,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xE8)                       \
         movbx_ld(Recx,  Mebp, inf_SCR02(0x1F))                              \
         shrbn_mx(Mebp,  inf_SCR01(0x1F))                                    \
         stack_ld(Recx)                                                      \
-        movab_ld(W(XD), Mebp, inf_SCR01(0))
+        movax_ld(W(XD), Mebp, inf_SCR01(0))
 
 /*****************   packed byte-precision integer compare   ******************/
 
@@ -1996,11 +1972,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xDA)                       \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
 #define minab3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         minab_rr(W(XD), W(XT))
 
 #define minab3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         minab_ld(W(XD), W(MT), W(DT))
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
@@ -2020,11 +1996,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xDE)                       \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
 #define maxab3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         maxab_rr(W(XD), W(XT))
 
 #define maxab3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         maxab_ld(W(XD), W(MT), W(DT))
 
 #if (RT_SIMD_COMPAT_SSE < 4)
@@ -2038,14 +2014,14 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xDE)                       \
         minac3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define minac3rr(XD, XS, XT)                                                \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movab_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
         minac_rx(W(XD))
 
 #define minac3ld(XD, XS, MT, DT)                                            \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movab_ld(W(XD), W(MT), W(DT))                                       \
-        movab_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
         minac_rx(W(XD))
 
 #define minac_rx(XD) /* not portable, do not use outside */                 \
@@ -2179,7 +2155,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xDE)                       \
         EMITB(0x7D) EMITB(0x07 + x67)                                       \
         movbx_st(Reax,  Mebp, inf_SCR02(0x1F))                              \
         stack_ld(Reax)                                                      \
-        movab_ld(W(XD), Mebp, inf_SCR02(0))
+        movax_ld(W(XD), Mebp, inf_SCR02(0))
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
 
@@ -2190,14 +2166,14 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xDE)                       \
         maxac3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define maxac3rr(XD, XS, XT)                                                \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movab_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XT), Mebp, inf_SCR02(0))                                 \
         maxac_rx(W(XD))
 
 #define maxac3ld(XD, XS, MT, DT)                                            \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movab_ld(W(XD), W(MT), W(DT))                                       \
-        movab_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_ld(W(XD), W(MT), W(DT))                                       \
+        movax_st(W(XD), Mebp, inf_SCR02(0))                                 \
         maxac_rx(W(XD))
 
 #define maxac_rx(XD) /* not portable, do not use outside */                 \
@@ -2331,7 +2307,7 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xDE)                       \
         EMITB(0x7E) EMITB(0x07 + x67)                                       \
         movbx_st(Reax,  Mebp, inf_SCR02(0x1F))                              \
         stack_ld(Reax)                                                      \
-        movab_ld(W(XD), Mebp, inf_SCR02(0))
+        movax_ld(W(XD), Mebp, inf_SCR02(0))
 
 #else /* RT_SIMD_COMPAT_SSE >= 4 */
 
@@ -2352,11 +2328,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x38)           \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
 #define minac3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         minac_rr(W(XD), W(XT))
 
 #define minac3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         minac_ld(W(XD), W(MT), W(DT))
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
@@ -2376,11 +2352,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x3C)           \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
 #define maxac3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         maxac_rr(W(XD), W(XT))
 
 #define maxac3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         maxac_ld(W(XD), W(MT), W(DT))
 
 #endif /* RT_SIMD_COMPAT_SSE >= 4 */
@@ -2402,11 +2378,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x74)                       \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
 #define ceqab3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         ceqab_rr(W(XD), W(XT))
 
 #define ceqab3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         ceqab_ld(W(XD), W(MT), W(DT))
 
 /* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
@@ -2420,11 +2396,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x74)                       \
         notax_rx(W(XG))
 
 #define cneab3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cneab_rr(W(XD), W(XT))
 
 #define cneab3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cneab_ld(W(XD), W(MT), W(DT))
 
 /* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
@@ -2438,11 +2414,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x74)                       \
         cneab_ld(W(XG), W(MS), W(DS))
 
 #define cltab3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cltab_rr(W(XD), W(XT))
 
 #define cltab3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cltab_ld(W(XD), W(MT), W(DT))
 
 /* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
@@ -2456,11 +2432,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x74)                       \
         cneab_ld(W(XG), W(MS), W(DS))
 
 #define cltac3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cltac_rr(W(XD), W(XT))
 
 #define cltac3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cltac_ld(W(XD), W(MT), W(DT))
 
 /* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
@@ -2474,11 +2450,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x74)                       \
         ceqab_ld(W(XG), W(MS), W(DS))
 
 #define cleab3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cleab_rr(W(XD), W(XT))
 
 #define cleab3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cleab_ld(W(XD), W(MT), W(DT))
 
 /* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
@@ -2492,11 +2468,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x74)                       \
         notax_rx(W(XG))
 
 #define cleac3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cleac_rr(W(XD), W(XT))
 
 #define cleac3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cleac_ld(W(XD), W(MT), W(DT))
 
 /* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
@@ -2510,11 +2486,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x74)                       \
         cneab_ld(W(XG), W(MS), W(DS))
 
 #define cgtab3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cgtab_rr(W(XD), W(XT))
 
 #define cgtab3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cgtab_ld(W(XD), W(MT), W(DT))
 
 /* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
@@ -2534,11 +2510,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x64)                       \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 
 #define cgtac3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cgtac_rr(W(XD), W(XT))
 
 #define cgtac3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cgtac_ld(W(XD), W(MT), W(DT))
 
 /* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
@@ -2552,11 +2528,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x64)                       \
         ceqab_ld(W(XG), W(MS), W(DS))
 
 #define cgeab3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cgeab_rr(W(XD), W(XT))
 
 #define cgeab3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cgeab_ld(W(XD), W(MT), W(DT))
 
 /* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
@@ -2570,11 +2546,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x64)                       \
         ceqab_ld(W(XG), W(MS), W(DS))
 
 #define cgeac3rr(XD, XS, XT)                                                \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cgeac_rr(W(XD), W(XT))
 
 #define cgeac3ld(XD, XS, MT, DT)                                            \
-        movab_rr(W(XD), W(XS))                                              \
+        movax_rr(W(XD), W(XS))                                              \
         cgeac_ld(W(XD), W(MT), W(DT))
 
 /* mkj (jump to lb) if (S satisfies mask condition) */
@@ -2582,8 +2558,20 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x64)                       \
 #define RT_SIMD_MASK_NONE08_256    0x00     /* none satisfy the condition */
 #define RT_SIMD_MASK_FULL08_256    0x0F     /*  all satisfy the condition */
 
+#define bsncx_rx(XS, mask) /* not portable, do not use outside */           \
+        REX(1,             0) EMITB(0x0F) EMITB(0x50)                       \
+        MRM(0x07,    MOD(XS), REG(XS))                                      \
+        REX(0,             1)                                               \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_256 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x07)                                         \
+        REX(1,             1) EMITB(0x0F) EMITB(0x50)                       \
+        MRM(0x07,    MOD(XS), REG(XS))                                      \
+        REX(0,             1)                                               \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_256 & 0x1) << 1)))  \
+        MRM(0x00,       0x03, 0x07)
+
 #define mkjab_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        movab_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movax_st(W(XS), Mebp, inf_SCR01(0))                                 \
         REX(0,             0) EMITB(0x0F) EMITB(0x50)                       \
         MRM(0x00,    MOD(XS), REG(XS))                                      \
         REX(1,             1) EMITB(0x0F) EMITB(0x50)                       \
@@ -2592,39 +2580,12 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x64)                       \
         EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_256 & 0x1) << 1)))  \
         MRM(0x00,       0x03, 0x07)                                         \
         shlcx_ri(W(XS), IB(8))                                              \
-        REX(1,             0) EMITB(0x0F) EMITB(0x50)                       \
-        MRM(0x07,    MOD(XS), REG(XS))                                      \
-        REX(0,             1)                                               \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_256 & 0x1) << 1)))  \
-        MRM(0x00,       0x03, 0x07)                                         \
-        REX(1,             1) EMITB(0x0F) EMITB(0x50)                       \
-        MRM(0x07,    MOD(XS), REG(XS))                                      \
-        REX(0,             1)                                               \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_256 & 0x1) << 1)))  \
-        MRM(0x00,       0x03, 0x07)                                         \
+        bsncx_rx(W(XS), mask)                                               \
         shlcx_ri(W(XS), IB(8))                                              \
-        REX(1,             0) EMITB(0x0F) EMITB(0x50)                       \
-        MRM(0x07,    MOD(XS), REG(XS))                                      \
-        REX(0,             1)                                               \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_256 & 0x1) << 1)))  \
-        MRM(0x00,       0x03, 0x07)                                         \
-        REX(1,             1) EMITB(0x0F) EMITB(0x50)                       \
-        MRM(0x07,    MOD(XS), REG(XS))                                      \
-        REX(0,             1)                                               \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_256 & 0x1) << 1)))  \
-        MRM(0x00,       0x03, 0x07)                                         \
+        bsncx_rx(W(XS), mask)                                               \
         shlcx_ri(W(XS), IB(8))                                              \
-        REX(1,             0) EMITB(0x0F) EMITB(0x50)                       \
-        MRM(0x07,    MOD(XS), REG(XS))                                      \
-        REX(0,             1)                                               \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_256 & 0x1) << 1)))  \
-        MRM(0x00,       0x03, 0x07)                                         \
-        REX(1,             1) EMITB(0x0F) EMITB(0x50)                       \
-        MRM(0x07,    MOD(XS), REG(XS))                                      \
-        REX(0,             1)                                               \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##08_256 & 0x1) << 1)))  \
-        MRM(0x00,       0x03, 0x07)                                         \
-        movab_ld(W(XS), Mebp, inf_SCR01(0))                                 \
+        bsncx_rx(W(XS), mask)                                               \
+        movax_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         cmpwx_ri(Reax, IB(RT_SIMD_MASK_##mask##08_256))                     \
         jeqxx_lb(lb)
 

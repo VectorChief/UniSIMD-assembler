@@ -1035,16 +1035,6 @@
 #define movmx_st(XS, MD, DD)                                                \
         movax_st(W(XS), W(MD), W(DD))
 
-
-#define movmb_rr(XD, XS)                                                    \
-        movab_rr(W(XD), W(XS))
-
-#define movmb_ld(XD, MS, DS)                                                \
-        movab_ld(W(XD), W(MS), W(DS))
-
-#define movmb_st(XS, MD, DD)                                                \
-        movab_st(W(XS), W(MD), W(DD))
-
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
@@ -2279,16 +2269,6 @@
 
 #define movmx_st(XS, MD, DD)                                                \
         movgx_st(W(XS), W(MD), W(DD))
-
-
-#define movmb_rr(XD, XS)                                                    \
-        movgb_rr(W(XD), W(XS))
-
-#define movmb_ld(XD, MS, DS)                                                \
-        movgb_ld(W(XD), W(MS), W(DS))
-
-#define movmb_st(XS, MD, DD)                                                \
-        movgb_st(W(XS), W(MD), W(DD))
 
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */

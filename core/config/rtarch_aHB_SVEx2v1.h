@@ -925,22 +925,6 @@
 
 /****************   packed byte-precision generic move/logic   ****************/
 
-/* mov (D = S) */
-
-#define movmb_rr(XD, XS)                                                    \
-        EMITW(0x04603000 | MXM(REG(XD), REG(XS), REG(XS)))                  \
-        EMITW(0x04603000 | MXM(RYG(XD), RYG(XS), RYG(XS)))
-
-#define movmb_ld(XD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMITW(0x85804000 | MPM(REG(XD), MOD(MS), VAL(DS), B3(DS), K1(DS)))  \
-        EMITW(0x85804000 | MPM(RYG(XD), MOD(MS), VZL(DS), B3(DS), K1(DS)))
-
-#define movmb_st(XS, MD, DD)                                                \
-        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), A1(DD), EMPTY2)   \
-        EMITW(0xE5804000 | MPM(REG(XS), MOD(MD), VAL(DD), B3(DD), K1(DD)))  \
-        EMITW(0xE5804000 | MPM(RYG(XS), MOD(MD), VZL(DD), B3(DD), K1(DD)))
-
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
@@ -970,7 +954,7 @@
         EMITW(0x0520C400 | MXM(TmmM,    RYG(XS), TmmM))                     \
         EMITW(0xE5804000 | MPM(TmmM,    MOD(MG), VZL(DG), B3(DG), K1(DG)))
 
-/* logic instructions are sizeless and provided in 16-bit subset above */
+/* move/logic instructions are sizeless and provided in 16-bit subset above */
 
 /*************   packed byte-precision integer arithmetic/shifts   ************/
 
@@ -1102,11 +1086,11 @@
         EMITW(0x04100000 | MXM(RYG(XG), TmmM,    0x00))
 
 #define mulmb3rr(XD, XS, XT)                                                \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         mulmb_rr(W(XD), W(XT))
 
 #define mulmb3ld(XD, XS, MT, DT)                                            \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         mulmb_ld(W(XD), W(MT), W(DT))
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
@@ -1131,7 +1115,7 @@
         (M(VAL(IT) < 8) & ((0x07 & VAL(IT)) << 16)))
 
 #define shlmb3ld(XD, XS, MT, DT)                                            \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         shlmb_ld(W(XD), W(MT), W(DT))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
@@ -1156,7 +1140,7 @@
         (M(VAL(IT) < 8) & ((0x07 &-VAL(IT)) << 16)))
 
 #define shrmb3ld(XD, XS, MT, DT)                                            \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         shrmb_ld(W(XD), W(MT), W(DT))
 
 /* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
@@ -1181,7 +1165,7 @@
         (M(VAL(IT) < 8) & ((0x07 &-VAL(IT)) << 16)))
 
 #define shrmc3ld(XD, XS, MT, DT)                                            \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         shrmc_ld(W(XD), W(MT), W(DT))
 
 /* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
@@ -1199,11 +1183,11 @@
         EMITW(0x04138000 | MXM(RYG(XG), TmmM,    0x00))
 
 #define svlmb3rr(XD, XS, XT)                                                \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         svlmb_rr(W(XD), W(XT))
 
 #define svlmb3ld(XD, XS, MT, DT)                                            \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         svlmb_ld(W(XD), W(MT), W(DT))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
@@ -1221,11 +1205,11 @@
         EMITW(0x04118000 | MXM(RYG(XG), TmmM,    0x00))
 
 #define svrmb3rr(XD, XS, XT)                                                \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         svrmb_rr(W(XD), W(XT))
 
 #define svrmb3ld(XD, XS, MT, DT)                                            \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         svrmb_ld(W(XD), W(MT), W(DT))
 
 /* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
@@ -1243,11 +1227,11 @@
         EMITW(0x04108000 | MXM(RYG(XG), TmmM,    0x00))
 
 #define svrmc3rr(XD, XS, XT)                                                \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         svrmc_rr(W(XD), W(XT))
 
 #define svrmc3ld(XD, XS, MT, DT)                                            \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         svrmc_ld(W(XD), W(MT), W(DT))
 
 /*****************   packed byte-precision integer compare   ******************/
@@ -1266,11 +1250,11 @@
         EMITW(0x040B0000 | MXM(RYG(XG), TmmM,    0x00))
 
 #define minmb3rr(XD, XS, XT)                                                \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         minmb_rr(W(XD), W(XT))
 
 #define minmb3ld(XD, XS, MT, DT)                                            \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         minmb_ld(W(XD), W(MT), W(DT))
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
@@ -1287,11 +1271,11 @@
         EMITW(0x040A0000 | MXM(RYG(XG), TmmM,    0x00))
 
 #define minmc3rr(XD, XS, XT)                                                \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         minmc_rr(W(XD), W(XT))
 
 #define minmc3ld(XD, XS, MT, DT)                                            \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         minmc_ld(W(XD), W(MT), W(DT))
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
@@ -1308,11 +1292,11 @@
         EMITW(0x04090000 | MXM(RYG(XG), TmmM,    0x00))
 
 #define maxmb3rr(XD, XS, XT)                                                \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         maxmb_rr(W(XD), W(XT))
 
 #define maxmb3ld(XD, XS, MT, DT)                                            \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         maxmb_ld(W(XD), W(MT), W(DT))
 
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
@@ -1329,11 +1313,11 @@
         EMITW(0x04080000 | MXM(RYG(XG), TmmM,    0x00))
 
 #define maxmc3rr(XD, XS, XT)                                                \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         maxmc_rr(W(XD), W(XT))
 
 #define maxmc3ld(XD, XS, MT, DT)                                            \
-        movmb_rr(W(XD), W(XS))                                              \
+        movmx_rr(W(XD), W(XS))                                              \
         maxmc_ld(W(XD), W(MT), W(DT))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */

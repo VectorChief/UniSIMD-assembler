@@ -819,22 +819,6 @@
 
 /****************   packed byte-precision generic move/logic   ****************/
 
-/* mov (D = S) */
-
-#define movab_rr(XD, XS)                                                    \
-        EMITW(0x78BE0019 | MXM(REG(XD), REG(XS), 0x00))                     \
-        EMITW(0x78BE0019 | MXM(RYG(XD), RYG(XS), 0x00))
-
-#define movab_ld(XD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A2(DS), EMPTY2)   \
-        EMITW(0x78000023 | MPM(REG(XD), MOD(MS), VAL(DS), B4(DS), L2(DS)))  \
-        EMITW(0x78000023 | MPM(RYG(XD), MOD(MS), VYL(DS), B4(DS), L2(DS)))
-
-#define movab_st(XS, MD, DD)                                                \
-        AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), A2(DD), EMPTY2)   \
-        EMITW(0x78000027 | MPM(REG(XS), MOD(MD), VAL(DD), B4(DD), L2(DD)))  \
-        EMITW(0x78000027 | MPM(RYG(XS), MOD(MD), VYL(DD), B4(DD), L2(DD)))
-
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
@@ -858,7 +842,7 @@
         EMITW(0x7880001E | MXM(TmmM,    RYG(XS), Tmm0+16))                  \
         EMITW(0x78000027 | MPM(TmmM,    MOD(MG), VYL(DG), B4(DG), L2(DG)))
 
-/* logic instructions are sizeless and provided in 16-bit subset above */
+/* move/logic instructions are sizeless and provided in 16-bit subset above */
 
 /*************   packed byte-precision integer arithmetic/shifts   ************/
 
