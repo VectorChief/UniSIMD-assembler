@@ -40,9 +40,13 @@
  * cmdp*_** - applies [cmd] to L-size elements SIMD args, packed-var-len
  * cmdq*_** - applies [cmd] to 64-bit elements SIMD args, packed-var-len
  *
- * cmd*x_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
- * cmd*n_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
- * cmd*s_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
+ * cmdr*_** - applies [cmd] to 32-bit elements ELEM args, scalar-fp-only
+ * cmds*_** - applies [cmd] to L-size elements ELEM args, scalar-fp-only
+ * cmdt*_** - applies [cmd] to 64-bit elements ELEM args, scalar-fp-only
+ *
+ * cmd*x_** - applies [cmd] to SIMD/BASE unsigned integer args, [x] - default
+ * cmd*n_** - applies [cmd] to SIMD/BASE   signed integer args, [n] - negatable
+ * cmd*s_** - applies [cmd] to SIMD/ELEM floating point   args, [s] - scalable
  *
  * The cmdp*_** (rtconf.h) instructions are intended for SPMD programming model
  * and can be configured to work with 32/64-bit data elements (fp+int).
@@ -72,7 +76,15 @@
  * floating point compare and min/max input/output. The result of floating point
  * compare instructions can be considered a -QNaN, though it is also interpreted
  * as integer -1 and is often treated as a mask. Most arithmetic instructions
- * should propagate QNaNs unchanged, however this behavior hasn't been verified.
+ * should propagate QNaNs unchanged, however this behavior hasn't been tested.
+ *
+ * Note, that instruction subsets operating on vectors of different length
+ * may support different number of SIMD registers, therefore mixing them
+ * in the same code needs to be done with register awareness in mind.
+ * For example, AVX-512 supports 32 SIMD registers, while AVX2 only has 16,
+ * as does 256-bit paired subset on ARMv8, while 128-bit and SVE have 32.
+ * These numbers should be consistent across architectures if properly
+ * mapped to SIMD target mask presented in rtzero.h (compatibility layer).
  *
  * Interpretation of instruction parameters:
  *

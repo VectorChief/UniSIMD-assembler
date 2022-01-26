@@ -26,6 +26,60 @@
  * cmdm*_rm - applies [cmd] to var-len packed SIMD: [r]egister from [m]emory
  * cmdm*_ld - applies [cmd] to var-len packed SIMD: as above (friendly alias)
  *
+ * cmdg*_** - applies [cmd] to 16-bit elements SIMD args, packed-128-bit
+ * cmdgb_** - applies [cmd] to u-char elements SIMD args, packed-128-bit
+ * cmdgc_** - applies [cmd] to s-char elements SIMD args, packed-128-bit
+ *
+ * cmda*_** - applies [cmd] to 16-bit elements SIMD args, packed-256-bit
+ * cmdab_** - applies [cmd] to u-char elements SIMD args, packed-256-bit
+ * cmdac_** - applies [cmd] to s-char elements SIMD args, packed-256-bit
+ *
+ * cmdn*_** - applies [cmd] to 16-bit elements ELEM args, scalar-fp-only
+ * cmdh*_** - applies [cmd] to 16-bit elements BASE args, BASE-regs-only
+ * cmdb*_** - applies [cmd] to  8-bit elements BASE args, BASE-regs-only
+ *
+ * cmd*x_** - applies [cmd] to SIMD/BASE unsigned integer args, [x] - default
+ * cmd*n_** - applies [cmd] to SIMD/BASE   signed integer args, [n] - negatable
+ * cmd*s_** - applies [cmd] to SIMD/ELEM floating point   args, [s] - scalable
+ *
+ * The cmdm*_** (rtconf.h) instructions are intended for SPMD programming model
+ * and simultaneously support 16/8-bit data elements (int, fp16 on ARM and x86).
+ * In this model data paths are fixed-width, BASE and SIMD data elements are
+ * width-compatible, code path divergence is handled via mkj**_** pseudo-ops.
+ * Matching 16/8-bit BASE subsets cmdh* / cmdb* are defined in rtarch_*HB.h.
+ *
+ * Note, when using fixed-data-size 128/256-bit SIMD subsets simultaneously
+ * upper 128-bit halves of full 256-bit SIMD registers may end up undefined.
+ * On RISC targets they remain unchanged, while on x86-AVX they are zeroed.
+ * This happens when registers written in 128-bit subset are then used/read
+ * from within 256-bit subset. The same rule applies to mixing with 512-bit
+ * and wider vectors. Use of scalars may leave respective vector registers
+ * undefined, as seen from the perspective of any particular vector subset.
+ *
+ * 256-bit vectors used with wider subsets may not be compatible with regards
+ * to memory loads/stores when mixed in the code. It means that data loaded
+ * with wider vector and stored within 256-bit subset at the same address may
+ * result in changing the initial representation in memory. The same can be
+ * said about mixing vector and scalar subsets. Scalars can be completely
+ * detached on some architectures. Use elm*x_st to store 1st vector element.
+ * 128-bit vectors should be memory-compatible with any wider vector subset.
+ *
+ * Handling of NaNs in the floating point pipeline may not be consistent
+ * across different architectures. Avoid NaNs entering the data flow by using
+ * masking or control flow instructions. Apply special care when dealing with
+ * floating point compare and min/max input/output. The result of floating point
+ * compare instructions can be considered a -QNaN, though it is also interpreted
+ * as integer -1 and is often treated as a mask. Most arithmetic instructions
+ * should propagate QNaNs unchanged, however this behavior hasn't been tested.
+ *
+ * Note, that instruction subsets operating on vectors of different length
+ * may support different number of SIMD registers, therefore mixing them
+ * in the same code needs to be done with register awareness in mind.
+ * For example, AVX-512 supports 32 SIMD registers, while AVX2 only has 16,
+ * as does 256-bit paired subset on ARMv8, while 128-bit and SVE have 32.
+ * These numbers should be consistent across architectures if properly
+ * mapped to SIMD target mask presented in rtzero.h (compatibility layer).
+ *
  * Interpretation of instruction parameters:
  *
  * upper-case params have triplet structure and require W to pass-forward
@@ -3265,7 +3319,7 @@
 
 #define mkjmb_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         movmb_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movab_st(Xmm0,  Mebp, inf_SCR02(0))                                 \
+        movmb_st(Xmm0,  Mebp, inf_SCR02(0))                                 \
         VEX(0,             0,    0x00, 1, 0, 1) EMITB(0x50)                 \
         MRM(0x00,       0x03,    0x00)                                      \
         movab_ld(Xmm0,  Mebp, inf_SCR01(0x20))                              \
@@ -3288,7 +3342,7 @@
         movab_ld(Xmm0,  Mebp, inf_SCR01(0x20))                              \
         shlcx_ri(Xmm0,  IB(24))                                             \
         bsncx_rx(Xmm0,  mask)                                               \
-        movab_ld(Xmm0,  Mebp, inf_SCR02(0))                                 \
+        movmb_ld(Xmm0,  Mebp, inf_SCR02(0))                                 \
         movmb_ld(W(XS), Mebp, inf_SCR01(0))                                 \
         cmpwx_ri(Reax, IB(RT_SIMD_MASK_##mask##08_512))                     \
         jeqxx_lb(lb)

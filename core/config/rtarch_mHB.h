@@ -73,6 +73,13 @@
  *
  * IS - immediate value (is used as a second or first source)
  * IT - immediate value (is used as a third or second source)
+ *
+ * Argument x-register (implied) is fixed by the implementation.
+ * Some formal definitions are not given below to encourage
+ * use of friendly aliases for better code readability.
+ *
+ * Only the first 4 registers are available for byte BASE logic/arithmetic and
+ * shifts on legacy 32-bit targets with 8 BASE registers (ARMv7, x86).
  */
 
 /******************************************************************************/

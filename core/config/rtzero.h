@@ -139,7 +139,15 @@
  * floating point compare and min/max input/output. The result of floating point
  * compare instructions can be considered a -QNaN, though it is also interpreted
  * as integer -1 and is often treated as a mask. Most arithmetic instructions
- * should propagate QNaNs unchanged, however this behavior hasn't been verified.
+ * should propagate QNaNs unchanged, however this behavior hasn't been tested.
+ *
+ * Note, that instruction subsets operating on vectors of different length
+ * may support different number of SIMD registers, therefore mixing them
+ * in the same code needs to be done with register awareness in mind.
+ * For example, AVX-512 supports 32 SIMD registers, while AVX2 only has 16,
+ * as does 256-bit paired subset on ARMv8, while 128-bit and SVE have 32.
+ * These numbers should be consistent across architectures if properly
+ * mapped to SIMD target mask presented in rtzero.h (compatibility layer).
  *
  * Working with sub-word BASE elements (byte, half) is reserved for future use.
  * However, current displacement types may not work due to natural alignment.

@@ -26,6 +26,38 @@
  * cmdv*_rm - applies [cmd] to scalar-fp128: [r]egister from [m]emory
  * cmdv*_ld - applies [cmd] to scalar-fp128: as above (friendly alias)
  *
+ * Note, when using fixed-data-size 128/256-bit SIMD subsets simultaneously
+ * upper 128-bit halves of full 256-bit SIMD registers may end up undefined.
+ * On RISC targets they remain unchanged, while on x86-AVX they are zeroed.
+ * This happens when registers written in 128-bit subset are then used/read
+ * from within 256-bit subset. The same rule applies to mixing with 512-bit
+ * and wider vectors. Use of scalars may leave respective vector registers
+ * undefined, as seen from the perspective of any particular vector subset.
+ *
+ * 256-bit vectors used with wider subsets may not be compatible with regards
+ * to memory loads/stores when mixed in the code. It means that data loaded
+ * with wider vector and stored within 256-bit subset at the same address may
+ * result in changing the initial representation in memory. The same can be
+ * said about mixing vector and scalar subsets. Scalars can be completely
+ * detached on some architectures. Use elm*x_st to store 1st vector element.
+ * 128-bit vectors should be memory-compatible with any wider vector subset.
+ *
+ * Handling of NaNs in the floating point pipeline may not be consistent
+ * across different architectures. Avoid NaNs entering the data flow by using
+ * masking or control flow instructions. Apply special care when dealing with
+ * floating point compare and min/max input/output. The result of floating point
+ * compare instructions can be considered a -QNaN, though it is also interpreted
+ * as integer -1 and is often treated as a mask. Most arithmetic instructions
+ * should propagate QNaNs unchanged, however this behavior hasn't been tested.
+ *
+ * Note, that instruction subsets operating on vectors of different length
+ * may support different number of SIMD registers, therefore mixing them
+ * in the same code needs to be done with register awareness in mind.
+ * For example, AVX-512 supports 32 SIMD registers, while AVX2 only has 16,
+ * as does 256-bit paired subset on ARMv8, while 128-bit and SVE have 32.
+ * These numbers should be consistent across architectures if properly
+ * mapped to SIMD target mask presented in rtzero.h (compatibility layer).
+ *
  * Interpretation of instruction parameters:
  *
  * upper-case params have triplet structure and require W to pass-forward

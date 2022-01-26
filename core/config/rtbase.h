@@ -952,7 +952,7 @@ struct rt_SIMD_REGS
     RT_SIMD_SET64(__Info__->gpc04_64, LL(0x7FFFFFFFFFFFFFFF));              \
     RT_SIMD_SET64(__Info__->gpc05_64, LL(0x3FF0000000000000));              \
     RT_SIMD_SET64(__Info__->gpc06_64, LL(0x8000000000000000));              \
-    __Info__->regs = (rt_ui64)(rt_word)__Regs__;
+    __Info__->regs = (rt_ui64)(rt_uptr)__Regs__;
 
 #define ASM_DONE(__Info__)
 
@@ -1313,7 +1313,15 @@ rt_si32 from_mask(rt_si32 mask)
  * floating point compare and min/max input/output. The result of floating point
  * compare instructions can be considered a -QNaN, though it is also interpreted
  * as integer -1 and is often treated as a mask. Most arithmetic instructions
- * should propagate QNaNs unchanged, however this behavior hasn't been verified.
+ * should propagate QNaNs unchanged, however this behavior hasn't been tested.
+ *
+ * Note, that instruction subsets operating on vectors of different length
+ * may support different number of SIMD registers, therefore mixing them
+ * in the same code needs to be done with register awareness in mind.
+ * For example, AVX-512 supports 32 SIMD registers, while AVX2 only has 16,
+ * as does 256-bit paired subset on ARMv8, while 128-bit and SVE have 32.
+ * These numbers should be consistent across architectures if properly
+ * mapped to SIMD target mask presented in rtzero.h (compatibility layer).
  *
  * Interpretation of instruction parameters:
  *
@@ -5522,7 +5530,7 @@ rt_si32 from_mask(rt_si32 mask)
  * Alternatively, data written natively in C/C++ can be worked on from within
  * a given (one) subset if appropriate offset correction is used from rtbase.h.
  *
- * Setting-flags instruction naming scheme has been changed again recently for
+ * Setting-flags instruction naming scheme was changed twice in the past for
  * better orthogonality with operand size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
@@ -5535,6 +5543,9 @@ rt_si32 from_mask(rt_si32 mask)
  * Argument x-register (implied) is fixed by the implementation.
  * Some formal definitions are not given below to encourage
  * use of friendly aliases for better code readability.
+ *
+ * Only the first 4 registers are available for byte BASE logic/arithmetic and
+ * shifts on legacy 32-bit targets with 8 BASE registers (ARMv7, x86).
  */
 
 /******************************************************************************/

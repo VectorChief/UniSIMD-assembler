@@ -119,7 +119,7 @@
  * Alternatively, data written natively in C/C++ can be worked on from within
  * a given (one) subset if appropriate offset correction is used from rtbase.h.
  *
- * Setting-flags instruction naming scheme has been changed again recently for
+ * Setting-flags instruction naming scheme was changed twice in the past for
  * better orthogonality with operand size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
@@ -132,6 +132,9 @@
  * Argument x-register (implied) is fixed by the implementation.
  * Some formal definitions are not given below to encourage
  * use of friendly aliases for better code readability.
+ *
+ * Only the first 4 registers are available for byte BASE logic/arithmetic and
+ * shifts on legacy 32-bit targets with 8 BASE registers (ARMv7, x86).
  */
 
 /******************************************************************************/
