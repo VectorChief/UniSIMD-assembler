@@ -396,9 +396,9 @@
  */
 #define J   (Q*16)    /* for cmdm*_** SIMD-subset, rt_si08/ui08 SIMD-fields */
 #define N   (Q*8)     /* for cmdm*_** SIMD-subset, rt_si16/ui16 SIMD-fields */
-#define R   (Q*4)     /* for cmdo*_** SIMD-subset, rt_fp32/*i32 SIMD-fields */
+#define R   (Q*4)     /* for cmdo*_** SIMD-subset, rt_fp32/ui32 SIMD-fields */
 #define S   (Q*4/L)   /* for cmdp*_** SIMD-subset, rt_real/elem SIMD-fields */
-#define T   (Q*2)     /* for cmdq*_** SIMD-subset, rt_fp64/*i64 SIMD-fields */
+#define T   (Q*2)     /* for cmdq*_** SIMD-subset, rt_fp64/ui64 SIMD-fields */
 
 /*
  * Short names for pointer, address and SIMD element sizes (in 32-bit chunks).
@@ -5456,10 +5456,10 @@ rt_si32 from_mask(rt_si32 mask)
  * cmdxx_lb - applies [cmd] as above
  * label_ld - applies [adr] as above
  *
- * stack_st - applies [mov] to stack from register (push)
- * stack_ld - applies [mov] to register from stack (pop)
- * stack_sa - applies [mov] to stack from all registers
- * stack_la - applies [mov] to all registers from stack
+ * stack_st - applies [mov] to stack from full register (push)
+ * stack_ld - applies [mov] to full register from stack (pop)
+ * stack_sa - applies [mov] to stack from all full registers
+ * stack_la - applies [mov] to all full registers from stack
  *
  * cmdw*_** - applies [cmd] to 32-bit BASE register/memory/immediate args
  * cmdx*_** - applies [cmd] to A-size BASE register/memory/immediate args
@@ -5473,10 +5473,6 @@ rt_si32 from_mask(rt_si32 mask)
  * cmd**Z** - applies [cmd] while setting condition flags, [Z] - zero flag.
  * Regular cmd*x_**, cmd*n_** instructions may or may not set flags depending
  * on the target architecture, thus no assumptions can be made for jezxx/jnzxx.
- *
- * 64/32-bit subsets are both self-consistent within themselves, 32-bit results
- * cannot be used in 64-bit subset without proper sign/zero-extend bridges,
- * cmdwn/wz bridges for 32-bit subset are provided in 64-bit headers.
  *
  * Interpretation of instruction parameters:
  *
@@ -5510,6 +5506,15 @@ rt_si32 from_mask(rt_si32 mask)
  * address size (RT_ADDRESS or A) and only label_ld/st, jmpxx_xr/xm follow
  * pointer size (RT_POINTER or P) as code/data/stack segments are fixed.
  * Stack ops always work with full registers regardless of the mode chosen.
+ *
+ * 64/32-bit subsets are both self-consistent within themselves, 32-bit results
+ * cannot be used in 64-bit subset without proper sign/zero-extend bridges,
+ * cmdwn/wz bridges for 32-bit subset are provided in 64-bit headers.
+ * 16/8-bit subsets are both self-consistent within themselves, their results
+ * cannot be used in larger subsets without proper sign/zero-extend bridges,
+ * cmdhn/hz and cmdbn/bz bridges for 16/8-bit are provided in 32-bit headers.
+ * The results of 8-bit subset cannot be used within 16-bit subset consistently.
+ * There is no sign/zero-extend bridge from 8-bit to 16-bit, use 32-bit instead.
  *
  * 32-bit and 64-bit BASE subsets are not easily compatible on all targets,
  * thus any register modified with 32-bit op cannot be used in 64-bit subset.
@@ -5582,7 +5587,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /*
  * The following two files (rtarch.h and rtconf.h) provide configuration
- * on the architecture and the instruction subset mapping levels respectively.
+ * for the architecture and the instruction subset mapping levels respectively.
  *
  * Placing rtarch.h below the common instruction definitions of rtbase.h
  * allows target-specific BASE and SIMD headers to redefine common instructions

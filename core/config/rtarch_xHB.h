@@ -47,10 +47,6 @@
  * Regular cmd*x_**, cmd*n_** instructions may or may not set flags depending
  * on the target architecture, thus no assumptions can be made for jezxx/jnzxx.
  *
- * 16/8-bit subsets are both self-consistent within themselves, their results
- * cannot be used in larger subsets without proper sign/zero-extend bridges,
- * cmdhn/hz and cmdbn/bz bridges for 16/8-bit are provided in 32-bit headers.
- *
  * Interpretation of instruction parameters:
  *
  * upper-case params have triplet structure and require W to pass-forward
@@ -73,6 +69,54 @@
  *
  * IS - immediate value (is used as a second or first source)
  * IT - immediate value (is used as a third or second source)
+ *
+ * Alphabetical view of current/future instruction namespaces is in rtzero.h.
+ * Configurable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtconf.h.
+ * Mixing of 64/32-bit fields in backend structures may lead to misalignment
+ * of 64-bit fields to 4-byte boundary, which is not supported on some targets.
+ * Place fields carefully to ensure natural alignment for all data types.
+ * Note that within cmdx*_** subset most of the instructions follow in-heap
+ * address size (RT_ADDRESS or A) and only label_ld/st, jmpxx_xr/xm follow
+ * pointer size (RT_POINTER or P) as code/data/stack segments are fixed.
+ * Stack ops always work with full registers regardless of the mode chosen.
+ *
+ * 64/32-bit subsets are both self-consistent within themselves, 32-bit results
+ * cannot be used in 64-bit subset without proper sign/zero-extend bridges,
+ * cmdwn/wz bridges for 32-bit subset are provided in 64-bit headers.
+ * 16/8-bit subsets are both self-consistent within themselves, their results
+ * cannot be used in larger subsets without proper sign/zero-extend bridges,
+ * cmdhn/hz and cmdbn/bz bridges for 16/8-bit are provided in 32-bit headers.
+ * The results of 8-bit subset cannot be used within 16-bit subset consistently.
+ * There is no sign/zero-extend bridge from 8-bit to 16-bit, use 32-bit instead.
+ *
+ * 32-bit and 64-bit BASE subsets are not easily compatible on all targets,
+ * thus any register modified with 32-bit op cannot be used in 64-bit subset.
+ * Alternatively, data flow must not exceed 31-bit range for 32-bit operations
+ * to produce consistent results usable in 64-bit subsets across all targets.
+ * Registers written with 64-bit op aren't always compatible with 32-bit either,
+ * as m64 requires the upper half to be all 0s or all 1s for m32 arithmetic.
+ * Only a64 and x64 have a complete 32-bit support in 64-bit mode both zeroing
+ * the upper half of the result, while m64 sign-extending all 32-bit operations
+ * and p64 overflowing 32-bit arithmetic into the upper half. Similar reasons
+ * of inconsistency prohibit use of IW immediate type within 64-bit subsets,
+ * where a64 and p64 zero-extend, while x64 and m64 sign-extend 32-bit value.
+ *
+ * Note that offset correction for endianness E is only applicable for addresses
+ * within pointer fields, when (in-heap) address and pointer sizes don't match.
+ * Working with 32-bit data in 64-bit fields in any other circumstances must be
+ * done consistently within a subset of one size (32-bit, 64-bit or C/C++).
+ * Alternatively, data written natively in C/C++ can be worked on from within
+ * a given (one) subset if appropriate offset correction is used from rtbase.h.
+ *
+ * Setting-flags instruction naming scheme was changed twice in the past for
+ * better orthogonality with operand size, type and args-list. It is therefore
+ * recommended to use combined-arithmetic-jump (arj) for better API stability
+ * and maximum efficiency across all supported targets. For similar reasons
+ * of higher performance on MIPS and POWER use combined-compare-jump (cmj).
+ * Not all canonical forms of BASE instructions have efficient implementation.
+ * For example, some forms of shifts and division use stack ops on x86 targets,
+ * while standalone remainders can only be done natively on MIPSr6 and POWER9.
+ * Consider using special fixed-register forms for maximum performance.
  *
  * Argument x-register (implied) is fixed by the implementation.
  * Some formal definitions are not given below to encourage

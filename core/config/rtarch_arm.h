@@ -47,10 +47,10 @@
  * cmdxx_lb - applies [cmd] as above
  * label_ld - applies [adr] as above
  *
- * stack_st - applies [mov] to stack from register (push)
- * stack_ld - applies [mov] to register from stack (pop)
- * stack_sa - applies [mov] to stack from all registers
- * stack_la - applies [mov] to all registers from stack
+ * stack_st - applies [mov] to stack from full register (push)
+ * stack_ld - applies [mov] to full register from stack (pop)
+ * stack_sa - applies [mov] to stack from all full registers
+ * stack_la - applies [mov] to all full registers from stack
  *
  * cmdw*_** - applies [cmd] to 32-bit BASE register/memory/immediate args
  * cmdx*_** - applies [cmd] to A-size BASE register/memory/immediate args
@@ -64,10 +64,6 @@
  * cmd**Z** - applies [cmd] while setting condition flags, [Z] - zero flag.
  * Regular cmd*x_**, cmd*n_** instructions may or may not set flags depending
  * on the target architecture, thus no assumptions can be made for jezxx/jnzxx.
- *
- * 16/8-bit subsets are both self-consistent within themselves, their results
- * cannot be used in larger subsets without proper sign/zero-extend bridges,
- * cmdhn/hz and cmdbn/bz bridges for 16/8-bit are provided in 32-bit headers.
  *
  * Interpretation of instruction parameters:
  *
@@ -101,6 +97,15 @@
  * address size (RT_ADDRESS or A) and only label_ld/st, jmpxx_xr/xm follow
  * pointer size (RT_POINTER or P) as code/data/stack segments are fixed.
  * Stack ops always work with full registers regardless of the mode chosen.
+ *
+ * 64/32-bit subsets are both self-consistent within themselves, 32-bit results
+ * cannot be used in 64-bit subset without proper sign/zero-extend bridges,
+ * cmdwn/wz bridges for 32-bit subset are provided in 64-bit headers.
+ * 16/8-bit subsets are both self-consistent within themselves, their results
+ * cannot be used in larger subsets without proper sign/zero-extend bridges,
+ * cmdhn/hz and cmdbn/bz bridges for 16/8-bit are provided in 32-bit headers.
+ * The results of 8-bit subset cannot be used within 16-bit subset consistently.
+ * There is no sign/zero-extend bridge from 8-bit to 16-bit, use 32-bit instead.
  *
  * 32-bit and 64-bit BASE subsets are not easily compatible on all targets,
  * thus any register modified with 32-bit op cannot be used in 64-bit subset.

@@ -124,10 +124,10 @@
  *
  * not all registers in target descriptions are always exposed for apps to use
  * flags RT_BASE_REGS and RT_SIMD_REGS are available for rough differentiation
- * between register-file sizes with current values: legacy 8, 16 and 32 (SIMD)
+ * between register file sizes with current values: legacy 8, 16 and 32 (SIMD)
  * while top registers reservation is controlled via RT_SIMD_COMPAT_XMM option
  *
- * Current naming scheme for extended BASE and SIMD register-files.
+ * Current naming scheme for extended BASE and SIMD register files.
  *
  * Legacy 8 BASE and 8 SIMD registers:
  *  - Reax, Rebx, Recx, Redx, Resp, Rebp, Resi, Redi
@@ -153,16 +153,23 @@
 /******************************************************************************/
 
 /*
- *** The following BASE instruction namespaces are defined for current use.
+ *** The following BASE instruction namespaces are defined for current use. ***
  *
  * cmdw*_** - word-size args, BASE ISA (data element is always fixed at 32-bit)
  * cmdx*_** - addr-size args, BASE ISA (32/64-bit configurable with RT_ADDRESS)
  * cmdy*_** - elem-size args, BASE ISA (32/64-bit configurable with RT_ELEMENT)
  * cmdz*_** - full-size args, BASE ISA (data element is always fixed at 64-bit)
  *
+ * cmdb*_** - byte-size args, BASE ISA (displacement/alignment may differ)
+ * cmdh*_** - half-size args, BASE ISA (displacement/alignment may differ)
+ *
  * cmd**Z** - setting-flags: [Z] - zero flag, orthogonal to data-size/data-type
  *
- *** The following SIMD instruction namespaces are defined for current use.
+ *** The following BASE instruction namespaces are reserved for the future. ***
+ *
+ * cmdk*_** - king-kong args, BASE ISA (for 128-bit BASE subset, RISC-V)
+ *
+ *** The following SIMD instruction namespaces are defined for current use. ***
  *
  * cmdr*_** - SIMD-elem args, ELEM ISA (data element is 32-bit, scalar)
  * cmds*_** - SIMD-elem args, ELEM ISA (32/64-bit configurable, scalar)
@@ -170,11 +177,18 @@
  *
  * cmde*_** - extd-size args, extd ISA (for 80-bit extended double, x87)
  *
- *** The following SIMD instruction namespaces are defined for current use.
- *
  * cmdo*_** - SIMD-data args, SIMD ISA (data element is 32-bit, packed-var-len)
  * cmdp*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed-var-len)
  * cmdq*_** - SIMD-data args, SIMD ISA (data element is 64-bit, packed-var-len)
+ *
+ * cmdm*_** - SIMD-data args, SIMD ISA (packed fp16/int subset, half-precision)
+ * cmdn*_** - SIMD-elem args, ELEM ISA (scalar fp16/int subset, half-precision)
+ *
+ * cmdu*_** - SIMD-data args, SIMD ISA (packed f128/int subset, quad-precision)
+ * cmdv*_** - SIMD-elem args, ELEM ISA (scalar f128/int subset, quad-precision)
+ *
+ * cmdmb_** - SIMD-data args, uint ISA (packed byte-int subset, unsigned 8-bit)
+ * cmdmc_** - SIMD-data args, sint ISA (packed char-int subset,   signed 8-bit)
  *
  * packed SIMD instructions above are vector-length-agnostic: 128-bit multiples
  *
@@ -185,6 +199,15 @@
  * cmdc*_** - SIMD-data args, SIMD ISA (data element is 32-bit, packed-256-bit)
  * cmdd*_** - SIMD-data args, SIMD ISA (data element is 64-bit, packed-256-bit)
  * cmdf*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed-256-bit)
+ *
+ * cmdg*_** - SIMD-data args, SIMD ISA (data element is 16-bit, packed-128-bit)
+ * cmda*_** - SIMD-data args, SIMD ISA (data element is 16-bit, packed-256-bit)
+ *
+ * cmdgb_** - SIMD-data args, uint ISA (packed byte-int subset, packed-128-bit)
+ * cmdgc_** - SIMD-data args, sint ISA (packed char-int subset, packed-128-bit)
+ *
+ * cmdab_** - SIMD-data args, uint ISA (packed byte-int subset, packed-256-bit)
+ * cmdac_** - SIMD-data args, sint ISA (packed char-int subset, packed-256-bit)
  *
  * fixed 256-bit ops can be done as pairs with 2*15 128-bit regs on modern RISCs
  * fixed 256-bit ops can be done as pairs with 2*30 128-bit regs on modern POWER
@@ -203,36 +226,9 @@
  * cv**x_rr, cv**x_ld are reserved for unsigned-int-to-fp conversion, keeps size
  * cv***F**, c***sF** can reuse fp<->int names for .?-sized fixed-point, ? = F*8
  * when fp<->int sizes don't match extended fpu ISA can be used with other archs
- *
- *** The following BASE instruction namespaces are reserved for the future.
- *
- * cmdb*_** - byte-size args, BASE ISA (displacement/alignment may differ)
- * cmdh*_** - half-size args, BASE ISA (displacement/alignment may differ)
- *
- * cmdk*_** - king-kong args, BASE ISA (for 128-bit BASE subset, RISC-V)
- *
- *** The following SIMD instruction namespaces are reserved for the future.
- *
- * cmdm*_** - SIMD-data args, SIMD ISA (packed fp16/int subset, half-precision)
- * cmdn*_** - SIMD-elem args, ELEM ISA (scalar fp16/int subset, half-precision)
- *
- * cmdu*_** - SIMD-data args, SIMD ISA (packed f128/int subset, quad-precision)
- * cmdv*_** - SIMD-elem args, ELEM ISA (scalar f128/int subset, quad-precision)
- *
- * cmdmb_** - SIMD-data args, uint ISA (packed byte-int subset, unsigned 8-bit)
- * cmdmc_** - SIMD-data args, sint ISA (packed char-int subset,   signed 8-bit)
- *
- * packed SIMD instructions above are vector-length-agnostic: 128-bit multiples
- *
- * cmdg*_** - SIMD-data args, SIMD ISA (data element is 16-bit, packed-128-bit)
- * cmda*_** - SIMD-data args, SIMD ISA (data element is 16-bit, packed-256-bit)
- *
- * cmdgb_** - SIMD-data args, uint ISA (packed byte-int subset, packed-128-bit)
- * cmdgc_** - SIMD-data args, sint ISA (packed char-int subset, packed-128-bit)
- *
- * cmdab_** - SIMD-data args, uint ISA (packed byte-int subset, packed-256-bit)
- * cmdac_** - SIMD-data args, sint ISA (packed char-int subset, packed-256-bit)
- *
+ */
+
+/*
  * Alphabetical view of current/future instruction namespaces is in rtzero.h.
  * Configurable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtconf.h.
  * Mixing of 64/32-bit fields in backend structures may lead to misalignment
@@ -242,6 +238,15 @@
  * address size (RT_ADDRESS or A) and only label_ld/st, jmpxx_xr/xm follow
  * pointer size (RT_POINTER or P) as code/data/stack segments are fixed.
  * Stack ops always work with full registers regardless of the mode chosen.
+ *
+ * 64/32-bit subsets are both self-consistent within themselves, 32-bit results
+ * cannot be used in 64-bit subset without proper sign/zero-extend bridges,
+ * cmdwn/wz bridges for 32-bit subset are provided in 64-bit headers.
+ * 16/8-bit subsets are both self-consistent within themselves, their results
+ * cannot be used in larger subsets without proper sign/zero-extend bridges,
+ * cmdhn/hz and cmdbn/bz bridges for 16/8-bit are provided in 32-bit headers.
+ * The results of 8-bit subset cannot be used within 16-bit subset consistently.
+ * There is no sign/zero-extend bridge from 8-bit to 16-bit, use 32-bit instead.
  *
  * 32-bit and 64-bit BASE subsets are not easily compatible on all targets,
  * thus any register modified with 32-bit op cannot be used in 64-bit subset.
@@ -262,7 +267,7 @@
  * Alternatively, data written natively in C/C++ can be worked on from within
  * a given (one) subset if appropriate offset correction is used from rtbase.h.
  *
- * Setting-flags instruction naming scheme has been changed again recently for
+ * Setting-flags instruction naming scheme was changed twice in the past for
  * better orthogonality with operand size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
@@ -310,13 +315,6 @@
  * These numbers should be consistent across architectures if properly
  * mapped to SIMD target mask presented in rtzero.h (compatibility layer).
  *
- * Working with sub-word BASE elements (byte, half) is reserved for future use.
- * However, current displacement types may not work due to natural alignment.
- * Signed/unsigned types can be supported orthogonally in cmd*n_**, cmd*x_**.
- * Working with sub-word SIMD elements (byte, half) has not been investigated.
- * However, as current major ISAs lack the ability to do sub-word fp-compute,
- * these corresponding subsets cannot be viewed as valid targets for SPMD.
- *
  * Scalar SIMD improvements, horizontal SIMD reductions, wider SIMD vectors
  * with zeroing/merging predicates in 3/4-operand instructions are planned as
  * future extensions to current 2/3-operand SPMD-driven vertical SIMD ISA.
@@ -342,6 +340,7 @@
 #define RT_SIMD_COMPAT_SQR_MASTER       1 /* for full-precision sqrps_** */
 #define RT_SIMD_COMPAT_SSE_MASTER       4 /* for v4 slot SSE2/4.1 - 2,4 (x64) */
 #define RT_SIMD_COMPAT_FMR_MASTER       0 /* for fm*ps_** rounding mode (x86) */
+#define RT_SIMD_COMPAT_DAZ_MASTER       1 /* DAZ for flush-to-zero mode (x86) */
 #define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and POWER */
 
 /*
@@ -1611,6 +1610,12 @@
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
 #endif /* RT_SIMD_FLUSH_ZERO */
 
+/* RT_SIMD_COMPAT_DAZ when enabled changes the default behavior
+ * of flush-to-zero mode above to treat denormals as 0 (x86) */
+#ifndef RT_SIMD_COMPAT_DAZ
+#define RT_SIMD_COMPAT_DAZ      RT_SIMD_COMPAT_DAZ_MASTER
+#endif /* RT_SIMD_COMPAT_DAZ */
+
 /* RT_SIMD_COMPAT_XMM distinguishes between SIMD reg-file sizes
  * with current top values: 0 - 16, 1 - 15, 2 - 14 SIMD regs */
 #ifndef RT_SIMD_COMPAT_XMM
@@ -1794,6 +1799,19 @@
  * This mode is closely compatible with ARMv7, which lacks full IEEE support.
  */
 
+#if RT_SIMD_COMPAT_DAZ != 0
+
+#define fsave_st(MD, DD) /* not portable, do not use outside */             \
+    ADR REW(0,       RXB(MD)) EMITB(0x0F) EMITB(0xAE)                       \
+        MRM(0x00,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+#else /* RT_SIMD_COMPAT_DAZ */
+
+#define fsave_st(MD, DD) /* not portable, do not use outside */
+
+#endif /* RT_SIMD_COMPAT_DAZ */
+
 #if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
@@ -1807,8 +1825,16 @@
         movlb_ld(%[Info_])                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Rebx, Mebp, inf_REGS)                                      \
+        xorwx_rr(Reax, Reax)                                                \
+        movwx_st(Reax, Mebx, DP(0x1C))                                      \
+        fsave_st(Mebx, DP(0x00))                                            \
+        movwx_ld(Reax, Mebx, DP(0x1C))                                      \
+        andwx_ri(Reax, IH(0x0040))                                          \
+        movwx_rr(Rebx, Reax)                                                \
         sregs_sa()                                                          \
         movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(0*4))                                \
         mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
 #define ASM_LEAVE_F(__Info__)                                               \
@@ -1836,11 +1862,22 @@
         movlb_ld(%[Info_])                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Rebx, Mebp, inf_REGS)                                      \
+        xorwx_rr(Reax, Reax)                                                \
+        movwx_st(Reax, Mebx, DP(0x1C))                                      \
+        fsave_st(Mebx, DP(0x00))                                            \
+        movwx_ld(Reax, Mebx, DP(0x1C))                                      \
+        andwx_ri(Reax, IH(0x0040))                                          \
+        movwx_rr(Rebx, Reax)                                                \
         sregs_sa()                                                          \
         movwx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(3*4))                                \
         movwx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(2*4))                                \
         movwx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(1*4))                                \
         movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(0*4))                                \
         mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
 #define ASM_LEAVE_F(__Info__)                                               \
@@ -1907,6 +1944,12 @@
 #ifndef RT_SIMD_FLUSH_ZERO
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
 #endif /* RT_SIMD_FLUSH_ZERO */
+
+/* RT_SIMD_COMPAT_DAZ when enabled changes the default behavior
+ * of flush-to-zero mode above to treat denormals as 0 (x86) */
+#ifndef RT_SIMD_COMPAT_DAZ
+#define RT_SIMD_COMPAT_DAZ      RT_SIMD_COMPAT_DAZ_MASTER
+#endif /* RT_SIMD_COMPAT_DAZ */
 
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
@@ -2061,6 +2104,19 @@
  * This mode is closely compatible with ARMv7, which lacks full IEEE support.
  */
 
+#if RT_SIMD_COMPAT_DAZ != 0
+
+#define fsave_st(MD, DD) /* not portable, do not use outside */             \
+        EMITB(0x0F) EMITB(0xAE)                                             \
+        MRM(0x00,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+#else /* RT_SIMD_COMPAT_DAZ */
+
+#define fsave_st(MD, DD) /* not portable, do not use outside */
+
+#endif /* RT_SIMD_COMPAT_DAZ */
+
 #if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
@@ -2074,8 +2130,16 @@
         movlb_ld(%[Info_])                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Rebx, Mebp, inf_REGS)                                      \
+        xorwx_rr(Reax, Reax)                                                \
+        movwx_st(Reax, Mebx, DP(0x1C))                                      \
+        fsave_st(Mebx, DP(0x00))                                            \
+        movwx_ld(Reax, Mebx, DP(0x1C))                                      \
+        andwx_ri(Reax, IH(0x0040))                                          \
+        movwx_rr(Rebx, Reax)                                                \
         sregs_sa()                                                          \
         movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(0*4))                                \
         mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
 #define ASM_LEAVE_F(__Info__)                                               \
@@ -2103,11 +2167,22 @@
         movlb_ld(%[Info_])                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Rebx, Mebp, inf_REGS)                                      \
+        xorwx_rr(Reax, Reax)                                                \
+        movwx_st(Reax, Mebx, DP(0x1C))                                      \
+        fsave_st(Mebx, DP(0x00))                                            \
+        movwx_ld(Reax, Mebx, DP(0x1C))                                      \
+        andwx_ri(Reax, IH(0x0040))                                          \
+        movwx_rr(Rebx, Reax)                                                \
         sregs_sa()                                                          \
         movwx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(3*4))                                \
         movwx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(2*4))                                \
         movwx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(1*4))                                \
         movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(0*4))                                \
         mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
 #define ASM_LEAVE_F(__Info__)                                               \
@@ -2184,6 +2259,12 @@
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
 #endif /* RT_SIMD_FLUSH_ZERO */
 
+/* RT_SIMD_COMPAT_DAZ when enabled changes the default behavior
+ * of flush-to-zero mode above to treat denormals as 0 (x86) */
+#ifndef RT_SIMD_COMPAT_DAZ
+#define RT_SIMD_COMPAT_DAZ      RT_SIMD_COMPAT_DAZ_MASTER
+#endif /* RT_SIMD_COMPAT_DAZ */
+
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
 #ifndef RT_SIMD_COMPAT_RCP
@@ -2331,6 +2412,19 @@
  * This mode is closely compatible with ARMv7, which lacks full IEEE support.
  */
 
+#if RT_SIMD_COMPAT_DAZ != 0
+
+#define fsave_st(MD, DD) /* not portable, do not use outside */             \
+        EMITB(0x0F) EMITB(0xAE)                                             \
+        MRM(0x00,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+#else /* RT_SIMD_COMPAT_DAZ */
+
+#define fsave_st(MD, DD) /* not portable, do not use outside */
+
+#endif /* RT_SIMD_COMPAT_DAZ */
+
 #if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
@@ -2344,8 +2438,16 @@
         movlb_ld(__Info__)                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Rebx, Mebp, inf_REGS)                                      \
+        xorwx_rr(Reax, Reax)                                                \
+        movwx_st(Reax, Mebx, DP(0x1C))                                      \
+        fsave_st(Mebx, DP(0x00))                                            \
+        movwx_ld(Reax, Mebx, DP(0x1C))                                      \
+        andwx_ri(Reax, IH(0x0040))                                          \
+        movwx_rr(Rebx, Reax)                                                \
         sregs_sa()                                                          \
         movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(0*4))                                \
         mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
 #define ASM_LEAVE_F(__Info__)                                               \
@@ -2370,11 +2472,22 @@
         movlb_ld(__Info__)                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Rebx, Mebp, inf_REGS)                                      \
+        xorwx_rr(Reax, Reax)                                                \
+        movwx_st(Reax, Mebx, DP(0x1C))                                      \
+        fsave_st(Mebx, DP(0x00))                                            \
+        movwx_ld(Reax, Mebx, DP(0x1C))                                      \
+        andwx_ri(Reax, IH(0x0040))                                          \
+        movwx_rr(Rebx, Reax)                                                \
         sregs_sa()                                                          \
         movwx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(3*4))                                \
         movwx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(2*4))                                \
         movwx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(1*4))                                \
         movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(0*4))                                \
         mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
 #define ASM_LEAVE_F(__Info__)                                               \
