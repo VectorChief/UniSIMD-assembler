@@ -1,11 +1,26 @@
-  - add RT_BASE flag to limit addressing granularity, extend range on ARMv8
+v1.1.0c: UniSIMD, code name "ENsed+1c": full-stack SIMD/BASE
+  - add 8-bit (byte) BASE instruction subset, redesign 16-bit BASE
   - add 8-bit elements SIMD subset (native on RISCs, mostly emulated on x86)
   - add 64-bit sign/zero-extend bridges to existing 32/64-bit BASE subsets
   - add 32-bit sign/zero-extend bridges to new 8/16-bit BASE subsets
+  - add RT_BASE flag to limit addressing granularity, extend range on ARMv8
+  - add mask-jump (mkj) SIMD instructions for 8/16-bit SIMD subsets
+  - add DAZ support for flush-to-zero mode on x86 (makes on par with RISCs)
+  - add support for AVX-512 fp16 subset to match existing ARMv8.2 + SVE
+  - AVX-512 fp16 requires separate binary (no target slot or cap check)
+  - implement direct ASM section output comparison method (bypass C++ test)
+  - AVX-512 fp16 now provides validation for ARM's fp16 using above method
+  - target slots AVX512DQ now include VL backends for 128/256-bit subsets
+  - target slots AVX512DQ now require BW support to facilitate 8/16-bit SIMD
+  - optimize SIMD compare and mask-jump instructions for AVX-512
   - optimize setting flags instructions in 8/16-bit BASE subsets (on RISCs)
-  - add 8-bit (byte) BASE instruction subset, redesign 16-bit BASE
   - optimize standalone remainder instructions on ARM and POWER
+  - extended 30-reg 256-bit and 15-reg 512-bit POWER backends are deprecated
+  - extended POWER backends are still supported with v1.0.0f ASM feature set
   - fix 16-bit (half-int) BASE addressing granularity on POWER
+  - add notes for VS2022, QEMU 6.2.0, Intel SDE 9.0
+  - clean up comments in BASE and SIMD headers
+  - update copyright year to 2022
 
 v1.1.0b: UniSIMD, code name "ENsed+1b", second development release
   - implement integer SIMD compare subset (signed/unsigned)
