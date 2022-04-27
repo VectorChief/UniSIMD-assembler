@@ -1297,14 +1297,14 @@ rt_void s_test09(rt_SIMD_INFOX *info)
 
         movwx_mi(Mebp, inf_LOC, IB(2))
 
-    LBL(cyc_beg)
+    LBL(100500) /* cyc_beg */
 
         movxx_ld(Recx, Mebp, inf_IAR0)
         movxx_ld(Rebx, Mebp, inf_ISO1)
         movxx_ld(Resi, Mebp, inf_ISO2)
         movwx_ld(Redi, Mebp, inf_SIZE)
 
-    LBL(loc_beg)
+    LBL(100501) /* loc_beg */
 
         movyx_ld(Reax, Mecx, AJ0)
         mulyn_xm(Mecx, AJ1)
@@ -1319,12 +1319,12 @@ rt_void s_test09(rt_SIMD_INFOX *info)
         addxx_ri(Resi, IB(4*L))
         subwx_ri(Redi, IB(1))
         cmjwx_ri(Redi, IB(S),
-        /* if */ GT_x, loc_beg)
+        /* if */ GT_x, 100501b) /* loc_beg */
 
         movxx_ld(Redi, Mebp, inf_IAR0)
         movwx_mi(Mebp, inf_SIMD, IB(S))
 
-    LBL(smd_beg)
+    LBL(100502) /* smd_beg */
 
         movyx_ld(Reax, Mecx, AJ0)
         mulyn_xm(Medi, AJ0)
@@ -1340,15 +1340,15 @@ rt_void s_test09(rt_SIMD_INFOX *info)
         addxx_ri(Redi, IB(4*L))
         subwx_mi(Mebp, inf_SIMD, IB(1))
         cmjwx_mz(Mebp, inf_SIMD,
-        /* if */ GT_x, smd_beg)
+        /* if */ GT_x, 100502b) /* smd_beg */
 
         subwx_mi(Mebp, inf_LOC, IB(1))
         cmjwx_mz(Mebp, inf_LOC,
-        /* if */ EQ_x, cyc_end)
+        /* if */ EQ_x, 100503f) /* cyc_end */
 
-        jmpxx_lb(cyc_beg)
+        jmpxx_lb(100500b) /* cyc_beg */
 
-    LBL(cyc_end)
+    LBL(100503) /* cyc_end */
 
     ASM_LEAVE(info)
 }
@@ -1971,22 +1971,22 @@ rt_void s_test14(rt_SIMD_INFOX *info)
 
         movpx_rr(Xmm2, Xmm0)
         ceqps_rr(Xmm2, Xmm1)
-        CHECK_MASK(eq0_out, NONE, Xmm2)
+        CHECK_MASK(100501f, NONE, Xmm2)         /* eq0_out */
 
         xorpx_rr(Xmm2, Xmm2)
         ceqps_rr(Xmm2, Xmm2)
 
-    LBL(eq0_out)
+    LBL(100501) /* eq0_out */
 
         movpx_st(Xmm2, Medx, AJ0)
 
         movpx_rr(Xmm3, Xmm0)
         cneps_rr(Xmm3, Xmm1)
-        CHECK_MASK(ne0_out, FULL, Xmm3)
+        CHECK_MASK(100502f, FULL, Xmm3)         /* ne0_out */
 
         xorpx_rr(Xmm3, Xmm3)
 
-    LBL(ne0_out)
+    LBL(100502) /* ne0_out */
 
         movpx_st(Xmm3, Mebx, AJ0)
 
@@ -1996,22 +1996,22 @@ rt_void s_test14(rt_SIMD_INFOX *info)
 
         movpx_rr(Xmm2, Xmm0)
         ceqps_rr(Xmm2, Xmm1)
-        CHECK_MASK(eq1_out, NONE, Xmm2)
+        CHECK_MASK(100503f, NONE, Xmm2)         /* eq1_out */
 
         xorpx_rr(Xmm2, Xmm2)
         ceqps_rr(Xmm2, Xmm2)
 
-    LBL(eq1_out)
+    LBL(100503) /* eq1_out */
 
         movpx_st(Xmm2, Medx, AJ1)
 
         movpx_rr(Xmm3, Xmm0)
         cneps_rr(Xmm3, Xmm1)
-        CHECK_MASK(ne1_out, FULL, Xmm3)
+        CHECK_MASK(100504f, FULL, Xmm3)         /* ne1_out */
 
         xorpx_rr(Xmm3, Xmm3)
 
-    LBL(ne1_out)
+    LBL(100504) /* ne1_out */
 
         movpx_st(Xmm3, Mebx, AJ1)
 
@@ -2021,22 +2021,22 @@ rt_void s_test14(rt_SIMD_INFOX *info)
 
         movpx_rr(Xmm2, Xmm0)
         ceqps_rr(Xmm2, Xmm1)
-        CHECK_MASK(eq2_out, NONE, Xmm2)
+        CHECK_MASK(100505f, NONE, Xmm2)         /* eq2_out */
 
         xorpx_rr(Xmm2, Xmm2)
         ceqps_rr(Xmm2, Xmm2)
 
-    LBL(eq2_out)
+    LBL(100505) /* eq2_out */
 
         movpx_st(Xmm2, Medx, AJ2)
 
         movpx_rr(Xmm3, Xmm0)
         cneps_rr(Xmm3, Xmm1)
-        CHECK_MASK(ne2_out, FULL, Xmm3)
+        CHECK_MASK(100506f, FULL, Xmm3)         /* ne2_out */
 
         xorpx_rr(Xmm3, Xmm3)
 
-    LBL(ne2_out)
+    LBL(100506) /* ne2_out */
 
         movpx_st(Xmm3, Mebx, AJ2)
 
@@ -2506,14 +2506,14 @@ rt_void s_test18(rt_SIMD_INFOX *info)
 
         movwx_mi(Mebp, inf_LOC, IB(2))
 
-    LBL(cyc_ini)
+    LBL(100500) /* cyc_ini */
 
         movxx_ld(Recx, Mebp, inf_IAR0)
         movxx_ld(Rebx, Mebp, inf_ISO1)
         movxx_ld(Resi, Mebp, inf_ISO2)
         movwx_ld(Redi, Mebp, inf_SIZE)
 
-    LBL(loc_ini)
+    LBL(100501) /* loc_ini */
 
         movyx_ld(Reax, Mecx, AJ0)
         mulyn_xm(Mecx, AJ1)
@@ -2530,12 +2530,12 @@ rt_void s_test18(rt_SIMD_INFOX *info)
         addxx_ri(Resi, IB(4*L))
         subwx_ri(Redi, IB(1))
         cmjwx_ri(Redi, IB(S),
-        /* if */ GT_x, loc_ini)
+        /* if */ GT_x, 100501b) /* loc_ini */
 
         movxx_ld(Redi, Mebp, inf_IAR0)
         movwx_mi(Mebp, inf_SIMD, IB(S))
 
-    LBL(smd_ini)
+    LBL(100502) /* smd_ini */
 
         movyx_ld(Reax, Mecx, AJ0)
         mulyn_xm(Medi, AJ0)
@@ -2553,15 +2553,15 @@ rt_void s_test18(rt_SIMD_INFOX *info)
         addxx_ri(Redi, IB(4*L))
         subwx_mi(Mebp, inf_SIMD, IB(1))
         cmjwx_mz(Mebp, inf_SIMD,
-        /* if */ GT_x, smd_ini)
+        /* if */ GT_x, 100502b) /* smd_ini */
 
         subwx_mi(Mebp, inf_LOC, IB(1))
         cmjwx_mz(Mebp, inf_LOC,
-        /* if */ EQ_x, cyc_fin)
+        /* if */ EQ_x, 100503f) /* cyc_fin */
 
-        jmpxx_lb(cyc_ini)
+        jmpxx_lb(100500b) /* cyc_ini */
 
-    LBL(cyc_fin)
+    LBL(100503) /* cyc_fin */
 
     ASM_LEAVE(info)
 }
@@ -2916,7 +2916,7 @@ rt_void s_test21(rt_SIMD_INFOX *info)
 
         movwx_mi(Mebp, inf_SIMD, IB(S))
 
-    LBL(div_ini)
+    LBL(100500) /* div_ini */
 
         movyx_ld(Reax, Mesi, AJ0)
         movyx_rr(Recx, Reax)
@@ -2955,7 +2955,7 @@ rt_void s_test21(rt_SIMD_INFOX *info)
         addxx_ri(Rebx, IB(L*4))
 
         arjwx_mi(Mebp, inf_SIMD, IB(1),
-        sub_x,   NZ_x, div_ini)
+        sub_x,   NZ_x, 100500b) /* div_ini */
 
     ASM_LEAVE(info)
 }
@@ -3037,7 +3037,7 @@ rt_void s_test22(rt_SIMD_INFOX *info)
 
         movwx_mi(Mebp, inf_SIMD, IB(S))
 
-    LBL(rem_ini)
+    LBL(100500) /* rem_ini */
 
         movyx_ld(Reax, Mesi, AJ0)
         movyx_rr(Recx, Reax)
@@ -3076,7 +3076,7 @@ rt_void s_test22(rt_SIMD_INFOX *info)
         addxx_ri(Rebx, IB(L*4))
 
         arjwx_mi(Mebp, inf_SIMD, IB(1),
-        sub_x,   NZ_x, rem_ini)
+        sub_x,   NZ_x, 100500b) /* rem_ini */
 
     ASM_LEAVE(info)
 }
@@ -3158,7 +3158,7 @@ rt_void s_test23(rt_SIMD_INFOX *info)
 
         movwx_mi(Mebp, inf_SIMD, IB(S))
 
-    LBL(ror_ini)
+    LBL(100500) /* ror_ini */
 
         movyx_ld(Reax, Mesi, AJ0)
         movyx_rr(Recx, Reax)
@@ -3191,7 +3191,7 @@ rt_void s_test23(rt_SIMD_INFOX *info)
         addxx_ri(Rebx, IB(L*4))
 
         arjwx_mi(Mebp, inf_SIMD, IB(1),
-        sub_x,   NZ_x, ror_ini)
+        sub_x,   NZ_x, 100500b) /* ror_ini */
 
     ASM_LEAVE(info)
 }

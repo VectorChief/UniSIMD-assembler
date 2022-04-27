@@ -4,17 +4,17 @@ To build SIMD test framework on Linux, open terminal window,
 go to UniSIMD's "test" subfolder,
 make sure necessary tools and libraries are installed
     sudo apt-get update
-for native builds (binary ABI matches host):
+for native builds (binary ABI matches host: x64, RISCs):
     sudo apt-get install make g++
-for multilib builds (if libs are available):
+for multilib builds (if libs are available: 32-bit x86):
     sudo apt-get install make g++-multilib
-run for x86 architecture:
-    make -f simd_make_x86.mk -j4
-    ./simd_test.x86
 run for x64 architecture:
     make -f simd_make_x64.mk -j4
     ./simd_test.x64f32
-run for non-x86 architectures:
+run for x86 architecture:
+    make -f simd_make_x86.mk -j4
+    ./simd_test.x86
+run for *** architectures (on native host or QEMU linux-user mode):
     make -f simd_make_***.mk -j4
     ./simd_test.***
 Prerequisites for building/emulating guest non-x86 architectures as well as
@@ -25,29 +25,17 @@ refer to the AArch64 Linux on RPi3 section down below for RPM-based options.
 To build SIMD test framework on macOS, open terminal window,
 go to UniSIMD's "test" subfolder,
 make sure necessary tools and libraries are installed:
-http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/
-    xcode-select --install
+    clang
+it will prompt to install Command Line Tools (will make alias to g++)
 run for x64 architecture:
     make -f simd_make_x64.mk -j4
     ./simd_test.x64f32
+run for a64 architecture:
+    make -f simd_make_a64.mk -j4
+    ./simd_test.a64f32
+Alternatively, use clang option (make -f simd_make_*64.mk clang -j4).
 
 To build SIMD test framework on Windows,
-go to UniSIMD's "test" subfolder and open (in Visual C++ 6.0 or later):
-    simd_workspace.dsw
-In newer versions of VC++ (VS2008) agree to convert workspace files.
-Exit and open newly created solution file for development.
-Select "Release" build target in drop-down list/menus, then press F5.
-More recent versions (VS2017) need a few extra steps to complete the build.
-Right-click on the Solution in the Solution Explorer window on the left
-and select "Retarget solution", choose Windows SDK Version "10.0.15063.0",
-then select "Build" -> "Rebuild Solution" from the top-level menu, not F5.
-Run produced binary simd_test.exe in "test" subfolder from Windows Explorer.
-VS2019 automatically retargets solution to the latest installed Windows SDK.
-Starting from VS2022 legacy workspace files (*.dsw) are not supported anymore,
-use standalone TDM64-GCC option below to produce modern 64-bit binaries.
-Native support for 64-bit applications with VS2022 may be added later.
-
-To build SIMD test framework for 64-bit Windows,
 download and install TDM64-GCC toolchain (tdm64-gcc-10.3.0-2.exe) from github,
 then open UniSIMD's "test" subfolder and run from "cmd" or Windows Explorer:
     simd_make_w64.bat
