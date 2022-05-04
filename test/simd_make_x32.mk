@@ -43,7 +43,7 @@ simd_test_x32:
 # ./simd_test.x32
 
 # Clang native build works too (takes much longer prior to 3.8), use (replace):
-# clang++ -O0 (in place of g++ -O3)
+# clang++ (in place of g++)
 # sudo apt-get install clang (requires g++-multilib for non-native ABI)
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h.

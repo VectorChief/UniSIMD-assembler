@@ -12,12 +12,32 @@ LIB_LIST =                              \
 
 
 build: build_a64 build_a64sve
+clang: clang_a64 clang_a64sve
 
 strip:
 	aarch64-linux-gnu-strip simd_test.a64*
 
 clean:
 	rm simd_test.a64*
+
+macOS:
+	mv simd_test.a64_32 simd_test.d64_32
+	mv simd_test.a64_64 simd_test.d64_64
+	mv simd_test.a64f32 simd_test.d64f32
+	mv simd_test.a64f64 simd_test.d64f64
+	mv simd_test.a64_32sve simd_test.d64_32sve
+	mv simd_test.a64_64sve simd_test.d64_64sve
+	mv simd_test.a64f32sve simd_test.d64f32sve
+	mv simd_test.a64f64sve simd_test.d64f64sve
+
+macRD:
+	rm -fr simd_test.a64*.dSYM/
+
+macST:
+	strip simd_test.a64*
+
+macRM:
+	rm simd_test.d64*
 
 
 build_a64: simd_test_a64_32 simd_test_a64_64 simd_test_a64f32 simd_test_a64f64
@@ -70,6 +90,61 @@ simd_test_a64f32sve:
 
 simd_test_a64f64sve:
 	aarch64-linux-gnu-g++ -O3 -g -static \
+        -DRT_LINUX -DRT_A64 -DRT_1K4=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64f64sve
+
+
+clang_a64: simd_test.a64_32 simd_test.a64_64 simd_test.a64f32 simd_test.a64f64
+
+simd_test.a64_32:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_A64 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64_32
+
+simd_test.a64_64:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_A64 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64_64
+
+simd_test.a64f32:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_A64 -DRT_256=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64f32
+
+simd_test.a64f64:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_A64 -DRT_256=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64f64
+
+
+clang_a64sve: simd_test.a64_32sve simd_test.a64_64sve \
+              simd_test.a64f32sve simd_test.a64f64sve
+
+simd_test.a64_32sve:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_A64 -DRT_512=4 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64_32sve
+
+simd_test.a64_64sve:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_A64 -DRT_512=4 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64_64sve
+
+simd_test.a64f32sve:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_A64 -DRT_1K4=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+        ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64f32sve
+
+simd_test.a64f64sve:
+	clang++ -O3 -g \
         -DRT_LINUX -DRT_A64 -DRT_1K4=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64f64sve

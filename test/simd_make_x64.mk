@@ -12,6 +12,7 @@ LIB_LIST =                              \
 
 
 build: build_x64 build_x64avx build_x64avx512
+clang: clang_x64 clang_x64avx clang_x64avx512
 
 strip:
 	strip simd_test.x64*
@@ -123,6 +124,89 @@ simd_test_x64f64avx512:
       ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f64avx512
 
 
+clang_x64: simd_test.x64_32 simd_test.x64_64 simd_test.x64f32 simd_test.x64f64
+
+simd_test.x64_32:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_X64 -DRT_128=4 -DRT_SIMD_COMPAT_SSE=2 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+      ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_32
+
+simd_test.x64_64:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_X64 -DRT_128=4 -DRT_SIMD_COMPAT_SSE=2 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+      ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_64
+
+simd_test.x64f32:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_X64 -DRT_256_R8=4 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+      ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f32
+
+simd_test.x64f64:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_X64 -DRT_256_R8=4 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+      ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f64
+
+
+clang_x64avx: simd_test.x64_32avx simd_test.x64_64avx \
+              simd_test.x64f32avx simd_test.x64f64avx
+
+simd_test.x64_32avx:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_X64 -DRT_256=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+      ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_32avx
+
+simd_test.x64_64avx:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_X64 -DRT_256=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+      ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_64avx
+
+simd_test.x64f32avx:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_X64 -DRT_256=2 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+      ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f32avx
+
+simd_test.x64f64avx:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_X64 -DRT_256=2 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+      ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f64avx
+
+
+clang_x64avx512: simd_test.x64_32avx512 simd_test.x64_64avx512 \
+                 simd_test.x64f32avx512 simd_test.x64f64avx512
+
+simd_test.x64_32avx512:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_X64 -DRT_512=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+      ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_32avx512
+
+simd_test.x64_64avx512:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_X64 -DRT_512=1 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+      ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64_64avx512
+
+simd_test.x64f32avx512:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_X64 -DRT_512=2 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
+      ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f32avx512
+
+simd_test.x64f64avx512:
+	clang++ -O3 -g \
+        -DRT_LINUX -DRT_X64 -DRT_512=2 -DRT_DEBUG=0 \
+        -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
+      ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.x64f64avx512
+
+
 # On Ubuntu (MATE) 16.04-20.04 add "universe multiverse" to "main restricted"
 # in /etc/apt/sources.list (sudo nano /etc/apt/sources.list) then run:
 # sudo apt-get update
@@ -150,7 +234,7 @@ simd_test_x64f64avx512:
 # Use "-c 1" option to reduce test time when emulating with Intel SDE
 
 # Clang native build works too (takes much longer prior to 3.8), use (replace):
-# clang++ -O0 (in place of g++ -O3)
+# clang++ (in place of g++)
 # sudo apt-get install clang
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h.

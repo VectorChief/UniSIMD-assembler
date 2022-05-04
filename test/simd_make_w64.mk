@@ -118,7 +118,7 @@ simd_test_w64f64avx512:
 # Use "-c 1" option to reduce test time when emulating with Intel SDE
 
 # Clang native build should theoretically work too (not tested), use (replace):
-# clang++ -O0 (in place of g++ -O3) may require Visual Studio
+# clang++ (in place of g++) may require Visual Studio
 # once clang for Windows is installed and in the PATH variable.
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h.
