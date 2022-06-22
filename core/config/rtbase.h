@@ -939,20 +939,20 @@ struct rt_SIMD_REGS
 };
 
 #define ASM_INIT(__Info__, __Regs__)                                        \
-    RT_SIMD_SET32(__Info__->gpc01_32, +1.0f);                               \
-    RT_SIMD_SET32(__Info__->gpc02_32, -0.5f);                               \
-    RT_SIMD_SET32(__Info__->gpc03_32, +3.0f);                               \
-    RT_SIMD_SET32(__Info__->gpc04_32, 0x7FFFFFFF);                          \
-    RT_SIMD_SET32(__Info__->gpc05_32, 0x3F800000);                          \
-    RT_SIMD_SET32(__Info__->gpc06_32, 0x80000000);                          \
-    RT_SIMD_SET32(__Info__->gpc07,    0xFFFFFFFF);                          \
-    RT_SIMD_SET64(__Info__->gpc01_64, +1.0);                                \
-    RT_SIMD_SET64(__Info__->gpc02_64, -0.5);                                \
-    RT_SIMD_SET64(__Info__->gpc03_64, +3.0);                                \
-    RT_SIMD_SET64(__Info__->gpc04_64, LL(0x7FFFFFFFFFFFFFFF));              \
-    RT_SIMD_SET64(__Info__->gpc05_64, LL(0x3FF0000000000000));              \
-    RT_SIMD_SET64(__Info__->gpc06_64, LL(0x8000000000000000));              \
-    __Info__->regs = (rt_ui64)(rt_uptr)__Regs__;
+    RT_SIMD_SET32((__Info__)->gpc01_32, +1.0f);                             \
+    RT_SIMD_SET32((__Info__)->gpc02_32, -0.5f);                             \
+    RT_SIMD_SET32((__Info__)->gpc03_32, +3.0f);                             \
+    RT_SIMD_SET32((__Info__)->gpc04_32, 0x7FFFFFFF);                        \
+    RT_SIMD_SET32((__Info__)->gpc05_32, 0x3F800000);                        \
+    RT_SIMD_SET32((__Info__)->gpc06_32, 0x80000000);                        \
+    RT_SIMD_SET32((__Info__)->gpc07,    0xFFFFFFFF);                        \
+    RT_SIMD_SET64((__Info__)->gpc01_64, +1.0);                              \
+    RT_SIMD_SET64((__Info__)->gpc02_64, -0.5);                              \
+    RT_SIMD_SET64((__Info__)->gpc03_64, +3.0);                              \
+    RT_SIMD_SET64((__Info__)->gpc04_64, LL(0x7FFFFFFFFFFFFFFF));            \
+    RT_SIMD_SET64((__Info__)->gpc05_64, LL(0x3FF0000000000000));            \
+    RT_SIMD_SET64((__Info__)->gpc06_64, LL(0x8000000000000000));            \
+    __Info__->regs = (rt_ui64)(rt_uptr)(__Regs__);
 
 #define ASM_DONE(__Info__)
 

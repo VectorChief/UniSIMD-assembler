@@ -106,6 +106,12 @@
  * The load-level is measured at Q equal to 1 and UniSIMD then adjusts internal
  * displacement values as Q scales up.
  *
+ * UniSIMD defines a lot of simple single-letter internal values which can
+ * interfere with program's own variables, especially when adding UniSIMD to
+ * an existing project. It is therefore recommended using a separate file
+ * for ASM header and sections or adding them at the end of an existing file,
+ * while keeping function declarations to be used in the program at the top.
+ *
  * All applications need to include a single root header with base types and
  * definitions so that UniSIMD can do the rest of configuration based on
  * makefile flags. Depending on where the source files are located makefile
