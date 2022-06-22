@@ -145,7 +145,7 @@
 #define elmcx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
         elmix_st(W(XS), W(MD), W(DD))
 
-/***************   packed single-precision generic move/logic   ***************/
+/***********   packed single/double-precision generic move/logic   ************/
 
 /* mov (D = S) */
 
@@ -160,6 +160,21 @@
 
 #define movcx_st(XS, MD, DD)                                                \
         V2X(0x00,    1, 0) EMITB(0x29)                                      \
+        MRM(REG(XS), MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+
+#define movdx_rr(XD, XS)                                                    \
+        V2X(0x00,    1, 1) EMITB(0x28)                                      \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define movdx_ld(XD, MS, DS)                                                \
+        V2X(0x00,    1, 1) EMITB(0x28)                                      \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define movdx_st(XS, MD, DD)                                                \
+        V2X(0x00,    1, 1) EMITB(0x29)                                      \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
@@ -181,6 +196,22 @@
         MRM(REG(XS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
+
+#define mmvdx_rr(XG, XS)                                                    \
+        VEX(REG(XG), 1, 1, 3) EMITB(0x4B)                                   \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+
+#define mmvdx_ld(XG, MS, DS)                                                \
+        VEX(REG(XG), 1, 1, 3) EMITB(0x4B)                                   \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x00))
+
+#define mmvdx_st(XS, MG, DG)                                                \
+        VEX(0x00,    1, 1, 2) EMITB(0x2F)                                   \
+        MRM(REG(XS), MOD(MG), REG(MG))                                      \
+        AUX(SIB(MG), CMD(DG), EMPTY)
+
 /* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andcx_rr(XG, XS)                                                    \
@@ -195,6 +226,22 @@
 
 #define andcx3ld(XD, XS, MT, DT)                                            \
         V2X(REG(XS), 1, 0) EMITB(0x54)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+
+#define anddx_rr(XG, XS)                                                    \
+        anddx3rr(W(XG), W(XG), W(XS))
+
+#define anddx_ld(XG, MS, DS)                                                \
+        anddx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define anddx3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 1, 1) EMITB(0x54)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define anddx3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 1, 1) EMITB(0x54)                                      \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -215,6 +262,22 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+
+#define anndx_rr(XG, XS)                                                    \
+        anndx3rr(W(XG), W(XG), W(XS))
+
+#define anndx_ld(XG, MS, DS)                                                \
+        anndx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define anndx3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 1, 1) EMITB(0x55)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define anndx3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 1, 1) EMITB(0x55)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrcx_rr(XG, XS)                                                    \
@@ -229,6 +292,22 @@
 
 #define orrcx3ld(XD, XS, MT, DT)                                            \
         V2X(REG(XS), 1, 0) EMITB(0x56)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+
+#define orrdx_rr(XG, XS)                                                    \
+        orrdx3rr(W(XG), W(XG), W(XS))
+
+#define orrdx_ld(XG, MS, DS)                                                \
+        orrdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define orrdx3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 1, 1) EMITB(0x56)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define orrdx3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 1, 1) EMITB(0x56)                                      \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -250,6 +329,23 @@
         notcx_rr(W(XD), W(XS))                                              \
         orrcx_ld(W(XD), W(MT), W(DT))
 
+
+#define orndx_rr(XG, XS)                                                    \
+        notdx_rx(W(XG))                                                     \
+        orrdx_rr(W(XG), W(XS))
+
+#define orndx_ld(XG, MS, DS)                                                \
+        notdx_rx(W(XG))                                                     \
+        orrdx_ld(W(XG), W(MS), W(DS))
+
+#define orndx3rr(XD, XS, XT)                                                \
+        notdx_rr(W(XD), W(XS))                                              \
+        orrdx_rr(W(XD), W(XT))
+
+#define orndx3ld(XD, XS, MT, DT)                                            \
+        notdx_rr(W(XD), W(XS))                                              \
+        orrdx_ld(W(XD), W(MT), W(DT))
+
 /* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorcx_rr(XG, XS)                                                    \
@@ -267,6 +363,22 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+
+#define xordx_rr(XG, XS)                                                    \
+        xordx3rr(W(XG), W(XG), W(XS))
+
+#define xordx_ld(XG, MS, DS)                                                \
+        xordx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define xordx3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 1, 1) EMITB(0x57)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define xordx3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 1, 1) EMITB(0x57)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* not (G = ~G), (D = ~S) */
 
 #define notcx_rx(XG)                                                        \
@@ -275,7 +387,14 @@
 #define notcx_rr(XD, XS)                                                    \
         anncx3ld(W(XD), W(XS), Mebp, inf_GPC07)
 
-/************   packed single-precision floating-point arithmetic   ***********/
+
+#define notdx_rx(XG)                                                        \
+        notdx_rr(W(XG), W(XG))
+
+#define notdx_rr(XD, XS)                                                    \
+        anndx3ld(W(XD), W(XS), Mebp, inf_GPC07)
+
+/********   packed single/double-precision floating-point arithmetic   ********/
 
 /* neg (G = -G), (D = -S) */
 
@@ -284,6 +403,13 @@
 
 #define negcs_rr(XD, XS)                                                    \
         xorcx3ld(W(XD), W(XS), Mebp, inf_GPC06_32)
+
+
+#define negds_rx(XG)                                                        \
+        negds_rr(W(XG), W(XG))
+
+#define negds_rr(XD, XS)                                                    \
+        xordx3ld(W(XD), W(XS), Mebp, inf_GPC06_64)
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
@@ -302,6 +428,22 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+
+#define addds_rr(XG, XS)                                                    \
+        addds3rr(W(XG), W(XG), W(XS))
+
+#define addds_ld(XG, MS, DS)                                                \
+        addds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define addds3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 1, 1) EMITB(0x58)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define addds3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 1, 1) EMITB(0x58)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
         /* adp, adh are defined in rtbase.h (first 15-regs only)
          * under "COMMON SIMD INSTRUCTIONS" section */
 
@@ -313,6 +455,16 @@
         movix_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
         adpis_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
         movix_st(W(XD), Mebp, inf_SCR01(0x10))
+
+
+#undef  adpds_rx
+#define adpds_rx(XD) /* not portable, do not use outside */                 \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        adpjs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        adpjs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x10))
 
 /* sub (G = G - S), (D = S - T) if (#D != #T) */
 
@@ -331,6 +483,22 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+
+#define subds_rr(XG, XS)                                                    \
+        subds3rr(W(XG), W(XG), W(XS))
+
+#define subds_ld(XG, MS, DS)                                                \
+        subds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subds3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 1, 1) EMITB(0x5C)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define subds3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 1, 1) EMITB(0x5C)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulcs_rr(XG, XS)                                                    \
@@ -345,6 +513,22 @@
 
 #define mulcs3ld(XD, XS, MT, DT)                                            \
         V2X(REG(XS), 1, 0) EMITB(0x59)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+
+#define mulds_rr(XG, XS)                                                    \
+        mulds3rr(W(XG), W(XG), W(XS))
+
+#define mulds_ld(XG, MS, DS)                                                \
+        mulds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulds3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 1, 1) EMITB(0x59)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define mulds3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 1, 1) EMITB(0x59)                                      \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -368,6 +552,22 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+
+#define divds_rr(XG, XS)                                                    \
+        divds3rr(W(XG), W(XG), W(XS))
+
+#define divds_ld(XG, MS, DS)                                                \
+        divds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divds3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 1, 1) EMITB(0x5E)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define divds3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 1, 1) EMITB(0x5E)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* sqr (D = sqrt S) */
 
 #define sqrcs_rr(XD, XS)                                                    \
@@ -376,6 +576,16 @@
 
 #define sqrcs_ld(XD, MS, DS)                                                \
         V2X(0x00,    1, 0) EMITB(0x51)                                      \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+
+#define sqrds_rr(XD, XS)                                                    \
+        V2X(0x00,    1, 1) EMITB(0x51)                                      \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define sqrds_ld(XD, MS, DS)                                                \
+        V2X(0x00,    1, 1) EMITB(0x51)                                      \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 

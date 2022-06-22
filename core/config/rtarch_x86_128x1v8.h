@@ -150,7 +150,7 @@
 #define elmix_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
         movrs_st(W(XS), W(MD), W(DD))
 
-/***************   packed single-precision generic move/logic   ***************/
+/***********   packed single/double-precision generic move/logic   ************/
 
 /* mov (D = S) */
 
@@ -165,6 +165,21 @@
 
 #define movix_st(XS, MD, DD)                                                \
         V2X(0x00,    0, 0) EMITB(0x29)                                      \
+        MRM(REG(XS), MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+
+#define movjx_rr(XD, XS)                                                    \
+        V2X(0x00,    0, 1) EMITB(0x28)                                      \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define movjx_ld(XD, MS, DS)                                                \
+        V2X(0x00,    0, 1) EMITB(0x28)                                      \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define movjx_st(XS, MD, DD)                                                \
+        V2X(0x00,    0, 1) EMITB(0x29)                                      \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
@@ -186,6 +201,22 @@
         MRM(REG(XS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
+
+#define mmvjx_rr(XG, XS)                                                    \
+        VEX(REG(XG), 0, 1, 3) EMITB(0x4B)                                   \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+
+#define mmvjx_ld(XG, MS, DS)                                                \
+        VEX(REG(XG), 0, 1, 3) EMITB(0x4B)                                   \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x00))
+
+#define mmvjx_st(XS, MG, DG)                                                \
+        VEX(0x00,    0, 1, 2) EMITB(0x2F)                                   \
+        MRM(REG(XS), MOD(MG), REG(MG))                                      \
+        AUX(SIB(MG), CMD(DG), EMPTY)
+
 /* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andix_rr(XG, XS)                                                    \
@@ -200,6 +231,22 @@
 
 #define andix3ld(XD, XS, MT, DT)                                            \
         V2X(REG(XS), 0, 0) EMITB(0x54)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+
+#define andjx_rr(XG, XS)                                                    \
+        andjx3rr(W(XG), W(XG), W(XS))
+
+#define andjx_ld(XG, MS, DS)                                                \
+        andjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define andjx3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 1) EMITB(0x54)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define andjx3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 1) EMITB(0x54)                                      \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -220,6 +267,22 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+
+#define annjx_rr(XG, XS)                                                    \
+        annjx3rr(W(XG), W(XG), W(XS))
+
+#define annjx_ld(XG, MS, DS)                                                \
+        annjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define annjx3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 1) EMITB(0x55)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define annjx3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 1) EMITB(0x55)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrix_rr(XG, XS)                                                    \
@@ -234,6 +297,22 @@
 
 #define orrix3ld(XD, XS, MT, DT)                                            \
         V2X(REG(XS), 0, 0) EMITB(0x56)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+
+#define orrjx_rr(XG, XS)                                                    \
+        orrjx3rr(W(XG), W(XG), W(XS))
+
+#define orrjx_ld(XG, MS, DS)                                                \
+        orrjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define orrjx3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 1) EMITB(0x56)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define orrjx3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 1) EMITB(0x56)                                      \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -255,6 +334,23 @@
         notix_rr(W(XD), W(XS))                                              \
         orrix_ld(W(XD), W(MT), W(DT))
 
+
+#define ornjx_rr(XG, XS)                                                    \
+        notjx_rx(W(XG))                                                     \
+        orrjx_rr(W(XG), W(XS))
+
+#define ornjx_ld(XG, MS, DS)                                                \
+        notjx_rx(W(XG))                                                     \
+        orrjx_ld(W(XG), W(MS), W(DS))
+
+#define ornjx3rr(XD, XS, XT)                                                \
+        notjx_rr(W(XD), W(XS))                                              \
+        orrjx_rr(W(XD), W(XT))
+
+#define ornjx3ld(XD, XS, MT, DT)                                            \
+        notjx_rr(W(XD), W(XS))                                              \
+        orrjx_ld(W(XD), W(MT), W(DT))
+
 /* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorix_rr(XG, XS)                                                    \
@@ -272,6 +368,22 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+
+#define xorjx_rr(XG, XS)                                                    \
+        xorjx3rr(W(XG), W(XG), W(XS))
+
+#define xorjx_ld(XG, MS, DS)                                                \
+        xorjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define xorjx3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 1) EMITB(0x57)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define xorjx3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 1) EMITB(0x57)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* not (G = ~G), (D = ~S) */
 
 #define notix_rx(XG)                                                        \
@@ -280,7 +392,14 @@
 #define notix_rr(XD, XS)                                                    \
         annix3ld(W(XD), W(XS), Mebp, inf_GPC07)
 
-/************   packed single-precision floating-point arithmetic   ***********/
+
+#define notjx_rx(XG)                                                        \
+        notjx_rr(W(XG), W(XG))
+
+#define notjx_rr(XD, XS)                                                    \
+        annjx3ld(W(XD), W(XS), Mebp, inf_GPC07)
+
+/********   packed single/double-precision floating-point arithmetic   ********/
 
 /* neg (G = -G), (D = -S) */
 
@@ -289,6 +408,13 @@
 
 #define negis_rr(XD, XS)                                                    \
         xorix3ld(W(XD), W(XS), Mebp, inf_GPC06_32)
+
+
+#define negjs_rx(XG)                                                        \
+        negjs_rr(W(XG), W(XG))
+
+#define negjs_rr(XD, XS)                                                    \
+        xorjx3ld(W(XD), W(XS), Mebp, inf_GPC06_64)
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
@@ -307,6 +433,22 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+
+#define addjs_rr(XG, XS)                                                    \
+        addjs3rr(W(XG), W(XG), W(XS))
+
+#define addjs_ld(XG, MS, DS)                                                \
+        addjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define addjs3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 1) EMITB(0x58)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define addjs3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 1) EMITB(0x58)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
         /* adp, adh are defined in rtbase.h (first 15-regs only)
          * under "COMMON SIMD INSTRUCTIONS" section */
 
@@ -318,6 +460,18 @@
 #undef  adpis3ld
 #define adpis3ld(XD, XS, MT, DT)                                            \
         V2X(REG(XS), 0, 3) EMITB(0x7C)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+
+#undef  adpjs3rr
+#define adpjs3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 1) EMITB(0x7C)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#undef  adpjs3ld
+#define adpjs3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 1) EMITB(0x7C)                                      \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -338,6 +492,22 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+
+#define subjs_rr(XG, XS)                                                    \
+        subjs3rr(W(XG), W(XG), W(XS))
+
+#define subjs_ld(XG, MS, DS)                                                \
+        subjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subjs3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 1) EMITB(0x5C)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define subjs3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 1) EMITB(0x5C)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulis_rr(XG, XS)                                                    \
@@ -352,6 +522,22 @@
 
 #define mulis3ld(XD, XS, MT, DT)                                            \
         V2X(REG(XS), 0, 0) EMITB(0x59)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+
+#define muljs_rr(XG, XS)                                                    \
+        muljs3rr(W(XG), W(XG), W(XS))
+
+#define muljs_ld(XG, MS, DS)                                                \
+        muljs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define muljs3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 1) EMITB(0x59)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define muljs3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 1) EMITB(0x59)                                      \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -375,6 +561,22 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+
+#define divjs_rr(XG, XS)                                                    \
+        divjs3rr(W(XG), W(XG), W(XS))
+
+#define divjs_ld(XG, MS, DS)                                                \
+        divjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divjs3rr(XD, XS, XT)                                                \
+        V2X(REG(XS), 0, 1) EMITB(0x5E)                                      \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define divjs3ld(XD, XS, MT, DT)                                            \
+        V2X(REG(XS), 0, 1) EMITB(0x5E)                                      \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* sqr (D = sqrt S) */
 
 #define sqris_rr(XD, XS)                                                    \
@@ -383,6 +585,16 @@
 
 #define sqris_ld(XD, MS, DS)                                                \
         V2X(0x00,    0, 0) EMITB(0x51)                                      \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+
+#define sqrjs_rr(XD, XS)                                                    \
+        V2X(0x00,    0, 1) EMITB(0x51)                                      \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define sqrjs_ld(XD, MS, DS)                                                \
+        V2X(0x00,    0, 1) EMITB(0x51)                                      \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
