@@ -97,22 +97,25 @@ echo "Testing p64f64Bp7 target (POWER7 VSX1    big-endian)" | tee -a qemu64
 echo "========================================================" | tee -a qemu64
 qemu-ppc64   -cpu POWER7 simd_test.p64f64Bp7 -c 1 | tee -a qemu64
 
+# forcing -cpu power9 for power8 targets is a workaround for Ubuntu 22.04 LTS
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=109007
+
 echo "========================================================" | tee -a qemu64
 echo "Testing p64_32Lp8 target (POWER8 VSX2 little-endian)" | tee -a qemu64
 echo "========================================================" | tee -a qemu64
-qemu-ppc64le -cpu POWER8 simd_test.p64_32Lp8 -c 1 | tee -a qemu64
+qemu-ppc64le -cpu POWER9 simd_test.p64_32Lp8 -c 1 | tee -a qemu64
 echo "========================================================" | tee -a qemu64
 echo "Testing p64_64Lp8 target (POWER8 VSX2 little-endian)" | tee -a qemu64
 echo "========================================================" | tee -a qemu64
-qemu-ppc64le -cpu POWER8 simd_test.p64_64Lp8 -c 1 | tee -a qemu64
+qemu-ppc64le -cpu POWER9 simd_test.p64_64Lp8 -c 1 | tee -a qemu64
 echo "========================================================" | tee -a qemu64
 echo "Testing p64f32Lp8 target (POWER8 VSX2 little-endian)" | tee -a qemu64
 echo "========================================================" | tee -a qemu64
-qemu-ppc64le -cpu POWER8 simd_test.p64f32Lp8 -c 1 | tee -a qemu64
+qemu-ppc64le -cpu POWER9 simd_test.p64f32Lp8 -c 1 | tee -a qemu64
 echo "========================================================" | tee -a qemu64
 echo "Testing p64f64Lp8 target (POWER8 VSX2 little-endian)" | tee -a qemu64
 echo "========================================================" | tee -a qemu64
-qemu-ppc64le -cpu POWER8 simd_test.p64f64Lp8 -c 1 | tee -a qemu64
+qemu-ppc64le -cpu POWER9 simd_test.p64f64Lp8 -c 1 | tee -a qemu64
 
 echo "========================================================" | tee -a qemu64
 echo "Testing p64_32Lp9 target (POWER9 VSX3 little-endian)" | tee -a qemu64
