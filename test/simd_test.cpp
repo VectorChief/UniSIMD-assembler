@@ -56,7 +56,7 @@ rt_pntr sys_alloc(rt_word size)
 
     if ((P-A) != 0)
     {
-        RT_LOGI("ALLOC PTR = %016"RT_PR64"X\n", (rt_full)ptr);
+        RT_LOGI("ALLOC PTR = %016" RT_PR64 "X\n", (rt_full)ptr);
 
         if ((rt_full)ptr > (0xFFFFFFFF - size))
         {
@@ -79,7 +79,7 @@ rt_void sys_free(rt_pntr ptr)
 
     if ((P-A) != 0)
     {
-        RT_LOGI("FREED PTR = %016"RT_PR64"X\n", (rt_full)ptr);
+        RT_LOGI("FREED PTR = %016" RT_PR64 "X\n", (rt_full)ptr);
     }
 }
 
