@@ -2797,7 +2797,7 @@ rt_pntr sys_alloc(rt_size size)
 
 #if RT_DEBUG >= 1
 
-    RT_LOGI("ALLOC PTR = %016"RT_PR64"X, size = %ld\n", (rt_full)ptr, size);
+    RT_LOGI("ALLOC PTR = %016" RT_PR64 "X, size = %ld\n", (rt_full)ptr, size);
 
 #endif /* RT_DEBUG */
 
@@ -2837,7 +2837,7 @@ rt_void sys_free(rt_pntr ptr, rt_size size)
 
 #if RT_DEBUG >= 1
 
-    RT_LOGI("FREED PTR = %016"RT_PR64"X, size = %ld\n", (rt_full)ptr, size);
+    RT_LOGI("FREED PTR = %016" RT_PR64 "X, size = %ld\n", (rt_full)ptr, size);
 
 #endif /* RT_DEBUG */
 }
@@ -2894,7 +2894,7 @@ rt_pntr sys_alloc(rt_size size)
 
 #if RT_DEBUG >= 1
 
-    RT_LOGI("ALLOC PTR = %016"RT_PR64"X, size = %ld\n", (rt_full)ptr, size);
+    RT_LOGI("ALLOC PTR = %016" RT_PR64 "X, size = %ld\n", (rt_full)ptr, size);
 
 #endif /* RT_DEBUG */
 
@@ -2934,7 +2934,7 @@ rt_void sys_free(rt_pntr ptr, rt_size size)
 
 #if RT_DEBUG >= 1
 
-    RT_LOGI("FREED PTR = %016"RT_PR64"X, size = %ld\n", (rt_full)ptr, size);
+    RT_LOGI("FREED PTR = %016" RT_PR64 "X, size = %ld\n", (rt_full)ptr, size);
 
 #endif /* RT_DEBUG */
 }
