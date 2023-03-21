@@ -23,7 +23,7 @@
  * Definitions provided in this file are intended to hide the differences of
  * inline assembly implementations in various compilers and operating systems,
  * while definitions of particular instruction sets are delegated to the
- * corresponding companion files named rtarch_***.h for core instructions
+ * corresponding companion files named rtarch_***.h for BASE instructions
  * and rtarch_***_***.h for SIMD instructions.
  *
  * At present, Intel SSE2 (32-bit x86 ISA) and ARM NEON (32-bit ARMv7 ISA)
@@ -33,56 +33,56 @@
  * Preliminary naming scheme for potential future targets.
  *
  * Current 32-bit targets:
- *  - rtarch_arm.h         - 32-bit ARMv7 ISA, 16 core regs, 8 + temps used
+ *  - rtarch_arm.h         - 32-bit ARMv7 ISA, 16 BASE regs, 8 + temps used
  *  - rtarch_arm_128.h     - 32-bit ARMv7 ISA, 16 SIMD regs, 8 + temps used
- *  - rtarch_x86.h         - 32-bit x86 ISA, 8 core regs, 6 + esp, ebp used
+ *  - rtarch_x86.h         - 32-bit x86 ISA, 8 BASE regs, 6 + esp, ebp used
  *  - rtarch_x86_128.h     - 32-bit x86 ISA, 8 SIMD regs, 8 used, SSE 128-bit
  *
  * Future 32-bit targets:
- *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 core regs, int-div, fp-cvt-r
+ *  - rtarch_a32.h         - AArch64:ILP32 ABI, 32 BASE regs, int-div, fp-cvt-r
  *  - rtarch_a32_128.h     - AArch64:ILP32 ABI, 32 SIMD regs, IEEE-fp, sqr, div
- *  - rtarch_x32.h         - x86_64:x32 ABI, 16 core regs, 32-bit ptrs
+ *  - rtarch_x32.h         - x86_64:x32 ABI, 16 BASE regs, 32-bit ptrs
  *  - rtarch_x32_128.h     - x86_64:x32 ABI, 16 SIMD regs, SSE 128-bit
  *  - rtarch_x32_256.h     - x86_64:x32 ABI, 16 SIMD regs, AVX 256-bit
  *  - rtarch_x32_512.h     - x86_64:x32 ABI, 32 SIMD regs, AVX 512-bit
  *
  * Future 64-bit targets:
- *  - rtarch_a64.h         - AArch64:ARMv8 ISA, 32 core regs, int-div, fp-cvt-r
+ *  - rtarch_a64.h         - AArch64:ARMv8 ISA, 32 BASE regs, int-div, fp-cvt-r
  *  - rtarch_a64_128.h     - AArch64:ARMv8 ISA, 32 SIMD regs, IEEE-fp, sqr, div
- *  - rtarch_x64.h         - x86_64:x64 ISA, 16 core regs, 64-bit ptrs
+ *  - rtarch_x64.h         - x86_64:x64 ISA, 16 BASE regs, 64-bit ptrs
  *  - rtarch_x64_128.h     - x86_64:x64 ISA, 16 SIMD regs, SSE 128-bit
  *  - rtarch_x64_256.h     - x86_64:x64 ISA, 16 SIMD regs, AVX 256-bit
  *  - rtarch_x64_512.h     - x86_64:x64 ISA, 32 SIMD regs, AVX 512-bit
  *
  * Reserved 32-bit targets:
- *  - rtarch_m32.h         - 32-bit MIPS ISA, 32 core regs
+ *  - rtarch_m32.h         - 32-bit MIPS ISA, 32 BASE regs
  *  - rtarch_m32_128.h     - 32-bit MIPS ISA, 32 SIMD regs, MSA
- *  - rtarch_p32.h         - 32-bit PowerISA, 32 core regs
+ *  - rtarch_p32.h         - 32-bit PowerISA, 32 BASE regs
  *  - rtarch_p32_128.h     - 32-bit PowerISA, 32 SIMD regs, VMX/VSX
  *
  * Reserved 64-bit targets:
- *  - rtarch_m64.h         - 64-bit MIPS ISA, 32 core regs
+ *  - rtarch_m64.h         - 64-bit MIPS ISA, 32 BASE regs
  *  - rtarch_m64_128.h     - 64-bit MIPS ISA, 32 SIMD regs, MSA
- *  - rtarch_p64.h         - 64-bit PowerISA, 32 core regs
+ *  - rtarch_p64.h         - 64-bit PowerISA, 32 BASE regs
  *  - rtarch_p64_128.h     - 64-bit PowerISA, 32 SIMD regs, VMX/VSX
  *
- * Preliminary naming scheme for extended core and SIMD register files.
+ * Preliminary naming scheme for extended BASE and SIMD register files.
  *
- * Current 8 core and 8 SIMD registers:
+ * Current 8 BASE and 8 SIMD registers:
  *  - Reax, Rebx, Recx, Redx, Resp, Rebp, Resi, Redi
  *  - Xmm0, Xmm1, Xmm2, Xmm3, Xmm4, Xmm5, Xmm6, Xmm7
  *
- * Future 16 core and 16 SIMD registers:
+ * Future 16 BASE and 16 SIMD registers:
  *  - Reax, ... , Redi, Reg8, Reg9, RegA, ... , RegF
  *  - Xmm0, ... , Xmm7, Xmm8, Xmm9, XmmA, ... , XmmF
  *
- * Future 32 core and 32 SIMD registers:
+ * Future 32 BASE and 32 SIMD registers:
  *  - Reax, ... , Redi, Reg8, Reg9, RegA, ... , RegV
  *  - Xmm0, ... , Xmm7, Xmm8, Xmm9, XmmA, ... , XmmV
  *
  * While register names are fixed, register sizes are not and depend on the
- * chosen target (only 32-bit core and 128-bit SIMD are implemented for now).
- * Core registers can be 32-bit/64-bit wide, while their SIMD counterparts
+ * chosen target (only 32-bit BASE and 128-bit SIMD are implemented for now).
+ * BASE registers can be 32-bit/64-bit wide, while their SIMD counterparts
  * depend on the architecture and SIMD version chosen for the target.
  * Fractional sub-registers don't have names and aren't architecturally
  * visible in the assembler in order to simplify SPMD programming model.
