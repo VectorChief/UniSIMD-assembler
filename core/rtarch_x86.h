@@ -12,7 +12,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_x86.h: Implementation of x86 core instructions.
+ * rtarch_x86.h: Implementation of x86 BASE instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -48,7 +48,7 @@
  * stack_sa - applies [mov] to stack from all registers
  * stack_la - applies [mov] to all registers from stack
  *
- * cmdx*_** - applies [cmd] to core register/memory/immediate args
+ * cmdx*_** - applies [cmd] to BASE register/memory/immediate args
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
  *

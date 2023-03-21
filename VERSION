@@ -4,16 +4,16 @@ v0.6: Unified SIMD Assembler, additional SIMD targets
   - add new SIMD targets for SSE1, AVX1, AVX2 with corresponding build flags
   - add float-to-integer convert with explicit mode parameter (x86, AArch32)
   - add signed-integer-divide native instruction for ARM's AArch32 mode
-  - add SIMD test for shifts by runtime value & core register, run level 16
+  - add SIMD test for shifts by runtime value & BASE register, run level 16
   - add ver (cpuid) instruction for runtime SIMD target selection (x86 only)
   - add mmv (vmaskmov) to AVX backend for fast conditional loads/stores
-  - add core instructions sub-tests to SIMD test if RT_CORE_CODE is defined
-  - drop set-flags bit (slow) from core mul instructions on ARM
+  - add BASE instructions sub-tests to SIMD test if RT_CORE_CODE is defined
+  - drop set-flags bit (slow) from BASE mul instructions on ARM
   - add RT_SIMD_FAST_FCTRL to save 1 instruction on FCTRL blocks entry
   - clarify current and future targets in rtarch (from here backported down)
-  - add xor & neg core instructions to rtarch
-  - add shifts by fixed core register instructions
-  - add register versions of core mul/div, remainder instructions
+  - add xor & neg BASE instructions to rtarch
+  - add shifts by fixed BASE register instructions
+  - add register versions of BASE mul/div, remainder instructions
   - add SIMD cvzps instruction for fp-to-int round-towards-zero conversion
   - add ASM_ENTER_F/ASM_LEAVE_F/ROUND*_F for non-IEEE flush-to-zero SIMD mode
   - add RT_SIMD_FLUSH_ZERO to enable faster non-IEEE flush-to-zero SIMD mode
