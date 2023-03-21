@@ -22,8 +22,8 @@ for supported platforms can be found in the accompanying INSTALL file.
 
 UniSIMD core features:
  - Unified, Universal, Portable, Compatible code
- - Explicit register-allocation, predictable performance
- - Three register-sets for code: 8, 16, 32 (free: 8, 15, 30)
+ - Explicit register allocation, predictable performance
+ - Three register sets for code: 8, 16, 32 (free: 8, 15, 30)
  - High-level SIMD registers/ops as singles, pairs and quads
  - SIMD-aligned backend structures with offsets/factors
  - Vector-length agnostic vertical SIMD ISA, configurable
@@ -36,6 +36,7 @@ UniSIMD core features:
  - POWER VMX/VSX (PowerPC G4/G5, POWER6/7/8/9)
  - CISC, RISC, CISC on RISC, little/big-endian ISA
  - Support for reg-reg, load/store, load-op instructions
+ - Plain, indexed and scaled-indexed addressing modes
  - FMA3 support (native or higher-precision emulation)
  - 32/64-bit hybrid mode for native 64-bit ABI
  - 32/64-bit addressing for BASE and SIMD ops
