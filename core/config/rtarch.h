@@ -334,6 +334,7 @@
 #define RT_SIMD_COMPAT_SQR_MASTER       1 /* for full-precision sqrps_** */
 #define RT_SIMD_COMPAT_SSE_MASTER       4 /* for v4 slot SSE2/4.1 - 2,4 (x64) */
 #define RT_SIMD_COMPAT_FMR_MASTER       0 /* for fm*ps_** rounding mode (x86) */
+#define RT_SIMD_COMPAT_DAZ_MASTER       1 /* DAZ for flush-to-zero mode (x86) */
 #define RT_SIMD_FLUSH_ZERO_MASTER       0 /* optional on MIPS and POWER */
 
 /*
@@ -1599,6 +1600,12 @@
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
 #endif /* RT_SIMD_FLUSH_ZERO */
 
+/* RT_SIMD_COMPAT_DAZ when enabled changes the default behavior
+ * of flush-to-zero mode above to treat denormals as 0 (x86) */
+#ifndef RT_SIMD_COMPAT_DAZ
+#define RT_SIMD_COMPAT_DAZ      RT_SIMD_COMPAT_DAZ_MASTER
+#endif /* RT_SIMD_COMPAT_DAZ */
+
 /* RT_SIMD_COMPAT_XMM distinguishes between SIMD reg-file sizes
  * with current top values: 0 - 16, 1 - 15, 2 - 14 SIMD regs */
 #ifndef RT_SIMD_COMPAT_XMM
@@ -1782,6 +1789,19 @@
  * This mode is closely compatible with ARMv7, which lacks full IEEE support.
  */
 
+#if RT_SIMD_COMPAT_DAZ != 0
+
+#define fsave_st(MD, DD) /* not portable, do not use outside */             \
+    ADR REW(0,       RXB(MD)) EMITB(0x0F) EMITB(0xAE)                       \
+        MRM(0x00,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+#else /* RT_SIMD_COMPAT_DAZ */
+
+#define fsave_st(MD, DD) /* not portable, do not use outside */
+
+#endif /* RT_SIMD_COMPAT_DAZ */
+
 #if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
@@ -1795,8 +1815,16 @@
         movlb_ld(%[Info_])                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Rebx, Mebp, inf_REGS)                                      \
+        xorwx_rr(Reax, Reax)                                                \
+        movwx_st(Reax, Mebx, DP(0x1C))                                      \
+        fsave_st(Mebx, DP(0x00))                                            \
+        movwx_ld(Reax, Mebx, DP(0x1C))                                      \
+        andwx_ri(Reax, IH(0x0040))                                          \
+        movwx_rr(Rebx, Reax)                                                \
         sregs_sa()                                                          \
         movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(0*4))                                \
         mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
 #define ASM_LEAVE_F(__Info__)                                               \
@@ -1824,11 +1852,22 @@
         movlb_ld(%[Info_])                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Rebx, Mebp, inf_REGS)                                      \
+        xorwx_rr(Reax, Reax)                                                \
+        movwx_st(Reax, Mebx, DP(0x1C))                                      \
+        fsave_st(Mebx, DP(0x00))                                            \
+        movwx_ld(Reax, Mebx, DP(0x1C))                                      \
+        andwx_ri(Reax, IH(0x0040))                                          \
+        movwx_rr(Rebx, Reax)                                                \
         sregs_sa()                                                          \
         movwx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(3*4))                                \
         movwx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(2*4))                                \
         movwx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(1*4))                                \
         movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(0*4))                                \
         mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
 #define ASM_LEAVE_F(__Info__)                                               \
@@ -1891,6 +1930,12 @@
 #ifndef RT_SIMD_FLUSH_ZERO
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
 #endif /* RT_SIMD_FLUSH_ZERO */
+
+/* RT_SIMD_COMPAT_DAZ when enabled changes the default behavior
+ * of flush-to-zero mode above to treat denormals as 0 (x86) */
+#ifndef RT_SIMD_COMPAT_DAZ
+#define RT_SIMD_COMPAT_DAZ      RT_SIMD_COMPAT_DAZ_MASTER
+#endif /* RT_SIMD_COMPAT_DAZ */
 
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
@@ -2045,6 +2090,19 @@
  * This mode is closely compatible with ARMv7, which lacks full IEEE support.
  */
 
+#if RT_SIMD_COMPAT_DAZ != 0
+
+#define fsave_st(MD, DD) /* not portable, do not use outside */             \
+        EMITB(0x0F) EMITB(0xAE)                                             \
+        MRM(0x00,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+#else /* RT_SIMD_COMPAT_DAZ */
+
+#define fsave_st(MD, DD) /* not portable, do not use outside */
+
+#endif /* RT_SIMD_COMPAT_DAZ */
+
 #if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
@@ -2058,8 +2116,16 @@
         movlb_ld(%[Info_])                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Rebx, Mebp, inf_REGS)                                      \
+        xorwx_rr(Reax, Reax)                                                \
+        movwx_st(Reax, Mebx, DP(0x1C))                                      \
+        fsave_st(Mebx, DP(0x00))                                            \
+        movwx_ld(Reax, Mebx, DP(0x1C))                                      \
+        andwx_ri(Reax, IH(0x0040))                                          \
+        movwx_rr(Rebx, Reax)                                                \
         sregs_sa()                                                          \
         movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(0*4))                                \
         mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
 #define ASM_LEAVE_F(__Info__)                                               \
@@ -2087,11 +2153,22 @@
         movlb_ld(%[Info_])                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Rebx, Mebp, inf_REGS)                                      \
+        xorwx_rr(Reax, Reax)                                                \
+        movwx_st(Reax, Mebx, DP(0x1C))                                      \
+        fsave_st(Mebx, DP(0x00))                                            \
+        movwx_ld(Reax, Mebx, DP(0x1C))                                      \
+        andwx_ri(Reax, IH(0x0040))                                          \
+        movwx_rr(Rebx, Reax)                                                \
         sregs_sa()                                                          \
         movwx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(3*4))                                \
         movwx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(2*4))                                \
         movwx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(1*4))                                \
         movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(0*4))                                \
         mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
 #define ASM_LEAVE_F(__Info__)                                               \
@@ -2164,6 +2241,12 @@
 #define RT_SIMD_FLUSH_ZERO      RT_SIMD_FLUSH_ZERO_MASTER
 #endif /* RT_SIMD_FLUSH_ZERO */
 
+/* RT_SIMD_COMPAT_DAZ when enabled changes the default behavior
+ * of flush-to-zero mode above to treat denormals as 0 (x86) */
+#ifndef RT_SIMD_COMPAT_DAZ
+#define RT_SIMD_COMPAT_DAZ      RT_SIMD_COMPAT_DAZ_MASTER
+#endif /* RT_SIMD_COMPAT_DAZ */
+
 /* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
  * of rcpps_** instructions to their full-precision fallback */
 #ifndef RT_SIMD_COMPAT_RCP
@@ -2311,6 +2394,19 @@
  * This mode is closely compatible with ARMv7, which lacks full IEEE support.
  */
 
+#if RT_SIMD_COMPAT_DAZ != 0
+
+#define fsave_st(MD, DD) /* not portable, do not use outside */             \
+        EMITB(0x0F) EMITB(0xAE)                                             \
+        MRM(0x00,    MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+#else /* RT_SIMD_COMPAT_DAZ */
+
+#define fsave_st(MD, DD) /* not portable, do not use outside */
+
+#endif /* RT_SIMD_COMPAT_DAZ */
+
 #if RT_SIMD_FAST_FCTRL == 0
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
@@ -2324,8 +2420,16 @@
         movlb_ld(__Info__)                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Rebx, Mebp, inf_REGS)                                      \
+        xorwx_rr(Reax, Reax)                                                \
+        movwx_st(Reax, Mebx, DP(0x1C))                                      \
+        fsave_st(Mebx, DP(0x00))                                            \
+        movwx_ld(Reax, Mebx, DP(0x1C))                                      \
+        andwx_ri(Reax, IH(0x0040))                                          \
+        movwx_rr(Rebx, Reax)                                                \
         sregs_sa()                                                          \
         movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(0*4))                                \
         mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
 #define ASM_LEAVE_F(__Info__)                                               \
@@ -2350,11 +2454,22 @@
         movlb_ld(__Info__)                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
+        movxx_ld(Rebx, Mebp, inf_REGS)                                      \
+        xorwx_rr(Reax, Reax)                                                \
+        movwx_st(Reax, Mebx, DP(0x1C))                                      \
+        fsave_st(Mebx, DP(0x00))                                            \
+        movwx_ld(Reax, Mebx, DP(0x1C))                                      \
+        andwx_ri(Reax, IH(0x0040))                                          \
+        movwx_rr(Rebx, Reax)                                                \
         sregs_sa()                                                          \
         movwx_mi(Mebp, inf_FCTRL(3*4), IH(0xFF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(3*4))                                \
         movwx_mi(Mebp, inf_FCTRL(2*4), IH(0xDF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(2*4))                                \
         movwx_mi(Mebp, inf_FCTRL(1*4), IH(0xBF80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(1*4))                                \
         movwx_mi(Mebp, inf_FCTRL(0*4), IH(0x9F80))                          \
+        orrwx_st(Rebx, Mebp, inf_FCTRL(0*4))                                \
         mxcsr_ld(Mebp, inf_FCTRL(0*4))
 
 #define ASM_LEAVE_F(__Info__)                                               \
