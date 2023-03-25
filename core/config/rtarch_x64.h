@@ -161,8 +161,26 @@
         REW(RXB(RD), RXB(RS)) EMITB(0x8B)                                   \
         MRM(REG(RD), MOD(RS), REG(RS))
 
+#define movwn_rr(RD, RS)       /* move 32-bit to 64-bit with sign-extend */ \
+        REW(RXB(RD), RXB(RS)) EMITB(0x63)                                   \
+        MRM(REG(RD), MOD(RS), REG(RS))
+
+#define movwz_rr(RD, RS)       /* move 32-bit to 64-bit with zero-extend */ \
+        REX(RXB(RD), RXB(RS)) EMITB(0x8B)                                   \
+        MRM(REG(RD), MOD(RS), REG(RS))
+
 #define movzx_ld(RD, MS, DS)                                                \
     ADR REW(RXB(RD), RXB(MS)) EMITB(0x8B)                                   \
+        MRM(REG(RD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define movwn_ld(RD, MS, DS)   /* load 32-bit to 64-bit with sign-extend */ \
+    ADR REW(RXB(RD), RXB(MS)) EMITB(0x63)                                   \
+        MRM(REG(RD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define movwz_ld(RD, MS, DS)   /* load 32-bit to 64-bit with zero-extend */ \
+    ADR REX(RXB(RD), RXB(MS)) EMITB(0x8B)                                   \
         MRM(REG(RD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -481,6 +499,12 @@
 #define addzx_ld(RG, MS, DS)                                                \
         addzxZld(W(RG), W(MS), W(DS))
 
+#define addwn_ld(RG, MS, DS)    /* add 32-bit to 64-bit with sign-extend */ \
+        addwnZld(W(RG), W(MS), W(DS))
+
+#define addwz_ld(RG, MS, DS)    /* add 32-bit to 64-bit with zero-extend */ \
+        addwzZld(W(RG), W(MS), W(DS))
+
 #define addzx_st(RS, MG, DG)                                                \
         addzxZst(W(RS), W(MG), W(DG))
 
@@ -507,6 +531,20 @@
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
+#define addwnZld(RG, MS, DS)    /* add 32-bit to 64-bit with sign-extend */ \
+    ADR REW(1,       RXB(MS)) EMITB(0x63)                                   \
+        MRM(0x07,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        REW(RXB(RG),       1) EMITB(0x03)                                   \
+        MRM(REG(RG),    0x03,    0x07)
+
+#define addwzZld(RG, MS, DS)    /* add 32-bit to 64-bit with zero-extend */ \
+    ADR REX(1,       RXB(MS)) EMITB(0x8B)                                   \
+        MRM(0x07,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        REW(RXB(RG),       1) EMITB(0x03)                                   \
+        MRM(REG(RG),    0x03,    0x07)
+
 #define addzxZst(RS, MG, DG)                                                \
     ADR REW(RXB(RS), RXB(MG)) EMITB(0x01)                                   \
         MRM(REG(RS), MOD(MG), REG(MG))                                      \
@@ -529,6 +567,12 @@
 
 #define subzx_ld(RG, MS, DS)                                                \
         subzxZld(W(RG), W(MS), W(DS))
+
+#define subwn_ld(RG, MS, DS)  /* sub 32-bit from 64-bit with sign-extend */ \
+        subwnZld(W(RG), W(MS), W(DS))
+
+#define subwz_ld(RG, MS, DS)  /* sub 32-bit from 64-bit with zero-extend */ \
+        subwzZld(W(RG), W(MS), W(DS))
 
 #define subzx_st(RS, MG, DG)                                                \
         subzxZst(W(RS), W(MG), W(DG))
@@ -555,6 +599,20 @@
     ADR REW(RXB(RG), RXB(MS)) EMITB(0x2B)                                   \
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define subwnZld(RG, MS, DS)  /* sub 32-bit from 64-bit with sign-extend */ \
+    ADR REW(1,       RXB(MS)) EMITB(0x63)                                   \
+        MRM(0x07,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        REW(RXB(RG),       1) EMITB(0x2B)                                   \
+        MRM(REG(RG),    0x03,    0x07)
+
+#define subwzZld(RG, MS, DS)  /* sub 32-bit from 64-bit with zero-extend */ \
+    ADR REX(1,       RXB(MS)) EMITB(0x8B)                                   \
+        MRM(0x07,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        REW(RXB(RG),       1) EMITB(0x2B)                                   \
+        MRM(REG(RG),    0x03,    0x07)
 
 #define subzxZst(RS, MG, DG)                                                \
     ADR REW(RXB(RS), RXB(MG)) EMITB(0x29)                                   \
@@ -986,6 +1044,20 @@
         MRM(REG(RG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
+#define mulwn_ld(RG, MS, DS)  /* mul 64-bit with 32-bit with sign-extend */ \
+    ADR REW(1,       RXB(MS)) EMITB(0x63)                                   \
+        MRM(0x07,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        REW(RXB(RG),       1) EMITB(0x0F) EMITB(0xAF)                       \
+        MRM(REG(RG),    0x03,    0x07)
+
+#define mulwz_ld(RG, MS, DS)  /* mul 64-bit with 32-bit with zero-extend */ \
+    ADR REX(1,       RXB(MS)) EMITB(0x8B)                                   \
+        MRM(0x07,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        REW(RXB(RG),       1) EMITB(0x0F) EMITB(0xAF)                       \
+        MRM(REG(RG),    0x03,    0x07)
+
 
 #define mulzx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
     ADR REW(0,       RXB(RS)) EMITB(0xF7)                                   \
@@ -1271,8 +1343,24 @@
         cmpzx_rm(W(RS), W(MT), W(DT))                                       \
         CMJ(cc, lb)
 
+#define cmjwn_rm(RS, MT, DT, cc, lb)   /* cmj 64/32-bit with sign-extend */ \
+        cmpwn_rm(W(RS), W(MT), W(DT))                                       \
+        CMJ(cc, lb)
+
+#define cmjwz_rm(RS, MT, DT, cc, lb)   /* cmj 64/32-bit with zero-extend */ \
+        cmpwz_rm(W(RS), W(MT), W(DT))                                       \
+        CMJ(cc, lb)
+
 #define cmjzx_mr(MS, DS, RT, cc, lb)                                        \
         cmpzx_mr(W(MS), W(DS), W(RT))                                       \
+        CMJ(cc, lb)
+
+#define cmjwn_mr(MS, DS, RT, cc, lb)   /* cmj 32/64-bit with sign-extend */ \
+        cmpwn_mr(W(MS), W(DS), W(RT))                                       \
+        CMJ(cc, lb)
+
+#define cmjwz_mr(MS, DS, RT, cc, lb)   /* cmj 32/64-bit with zero-extend */ \
+        cmpwz_mr(W(MS), W(DS), W(RT))                                       \
         CMJ(cc, lb)
 
 /* cmp (flags = S ? T)
@@ -1297,10 +1385,38 @@
         MRM(REG(RS), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+#define cmpwn_rm(RS, MT, DT)    /* cmp 64-bit to 32-bit with sign-extend */ \
+    ADR REW(1,       RXB(MT)) EMITB(0x63)                                   \
+        MRM(0x07,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)                                        \
+        REW(RXB(RS),       1) EMITB(0x3B)                                   \
+        MRM(REG(RS),    0x03,    0x07)
+
+#define cmpwz_rm(RS, MT, DT)    /* cmp 64-bit to 32-bit with zero-extend */ \
+    ADR REX(1,       RXB(MT)) EMITB(0x8B)                                   \
+        MRM(0x07,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)                                        \
+        REW(RXB(RS),       1) EMITB(0x3B)                                   \
+        MRM(REG(RS),    0x03,    0x07)
+
 #define cmpzx_mr(MS, DS, RT)                                                \
     ADR REW(RXB(RT), RXB(MS)) EMITB(0x39)                                   \
         MRM(REG(RT), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define cmpwn_mr(MS, DS, RT)    /* cmp 32-bit to 64-bit with sign-extend */ \
+    ADR REW(1,       RXB(MS)) EMITB(0x63)                                   \
+        MRM(0x07,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        REW(RXB(RT),       1) EMITB(0x39)                                   \
+        MRM(REG(RT),    0x03,    0x07)
+
+#define cmpwz_mr(MS, DS, RT)    /* cmp 32-bit to 64-bit with zero-extend */ \
+    ADR REX(1,       RXB(MS)) EMITB(0x8B)                                   \
+        MRM(0x07,    MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)                                        \
+        REW(RXB(RT),       1) EMITB(0x39)                                   \
+        MRM(REG(RT),    0x03,    0x07)
 
 /* ver (Mebp/inf_VER = SIMD-version)
  * set-flags: no

@@ -321,6 +321,8 @@
 #define Ledi    Tedi, TPxx, EMITW(0xE0800180 | MRM(TPxx,    Tedi,    Teax))
 
 /* immediate    VAL,  TP1,  TP2            (all immediate types are unsigned) */
+/* full-size IW type is only applicable within cmdw* subset, can set sign-bit */
+/* within cmdz* subset use of IW type is limited to movzx_rj/_mj instructions */
 
 #define  IC(im) ((im) & 0x7F),          0, 0        /* drop sign-ext (on x86) */
 #define  IB(im) ((im) & 0xFF),          0, 0          /* 32-bit word (on x86) */
@@ -328,10 +330,11 @@
 #define  IG(im) ((im) & 0x7FFF),        1, 1 /* native MIPS/POWER add/sub/cmp */
 #define  IH(im) ((im) & 0xFFFF),        1, 1    /* second native on ARMs/MIPS */
 #define  IV(im) ((im) & 0x7FFFFFFF),    2, 2       /* native x86_64 long mode */
-#define  IW(im) ((im) & 0xFFFFFFFF),    2, 2         /* only for cmdw*_** set */
+#define  IW(im) ((im) & 0xFFFFFFFF),    2, 2          /* for cmdw* subset, *j */
 
 /* displacement VAL,  TP1,  TP2         (all displacement types are unsigned) */
 /* public scalable DP/DE/DF/DG/DH/DV definitions are now provided in rtbase.h */
+/* as D* are used for BASE and SIMD instructions, only limits are SIMD-scaled */
 
 #define _DP(dp) ((dp) & 0xFFC),         0, 0      /* native on all ARMs, MIPS */
 #define _DE(dp) ((dp) & 0x1FFC),        1, 1     /* AArch64 256-bit SVE ld/st */

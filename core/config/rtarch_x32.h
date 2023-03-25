@@ -370,6 +370,8 @@
 #define LegE    0x0C, 0x02, EMITB(0xC6) /* [r14d + eax*8 + DP] */
 
 /* immediate    VAL,  TYP,  CMD            (all immediate types are unsigned) */
+/* full-size IW type is only applicable within cmdw* subset, can set sign-bit */
+/* within cmdz* subset use of IW type is limited to movzx_rj/_mj instructions */
 
 #define  IC(im) (im), 0x02, EMITB((im) & 0x7F) /* drop sign-ext (zero on ARM) */
 #define  IB(im) (im), 0x00, EMITW((im) & 0xFF) /* drop sign-ext (32-bit word) */
@@ -377,10 +379,11 @@
 #define  IG(im) (im), 0x00, EMITW((im) & 0x7FFF) /* native MIPS64 add/sub/cmp */
 #define  IH(im) (im), 0x00, EMITW((im) & 0xFFFF) /* second native on all ARMs */
 #define  IV(im) (im), 0x00, EMITW((im) & 0x7FFFFFFF)  /* native x64 long mode */
-#define  IW(im) (im), 0x00, EMITW((im) & 0xFFFFFFFF) /* only for cmdw*_** set */
+#define  IW(im) (im), 0x00, EMITW((im) & 0xFFFFFFFF)  /* for cmdw* subset, *j */
 
 /* displacement VAL,  TYP,  CMD         (all displacement types are unsigned) */
 /* public scalable DP/DE/DF/DG/DH/DV definitions are now provided in rtbase.h */
+/* as D* are used for BASE and SIMD instructions, only limits are SIMD-scaled */
 
 #define _DP(dp) (dp), 0x00, EMITW((dp) & 0xFFC)   /* native on all ARMs, MIPS */
 #define _DE(dp) (dp), 0x00, EMITW((dp) & 0x1FFC) /* AArch64 256-bit SVE ld/st */
