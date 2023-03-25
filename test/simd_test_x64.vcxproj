@@ -148,7 +148,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalOptions>/I "../core/config/" /D "RT_WIN64" /D "RT_X64" /D RT_128=4 /D RT_SIMD_COMPAT_SSE=2 /D RT_POINTER=64 /D RT_ADDRESS=64  /D RT_ELEMENT=32 /D RT_ENDIAN=0 /D RT_DEBUG=1 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/I "../core/config/" -Wno-unused-function -Wno-missing-braces -Wno-deprecated-declarations /D "RT_WIN64" /D "RT_X64" /D RT_128=4 /D RT_SIMD_COMPAT_SSE=2 /D RT_POINTER=64 /D RT_ADDRESS=64  /D RT_ELEMENT=32 /D RT_ENDIAN=0 /D RT_DEBUG=1 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -163,7 +163,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalOptions>/I "../core/config/" /D "RT_WIN64" /D "RT_X64" /D RT_128=4 /D RT_SIMD_COMPAT_SSE=2 /D RT_POINTER=64 /D RT_ADDRESS=64  /D RT_ELEMENT=32 /D RT_ENDIAN=0 /D RT_DEBUG=0 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/I "../core/config/" -Wno-unused-function -Wno-missing-braces -Wno-deprecated-declarations /D "RT_WIN64" /D "RT_X64" /D RT_128=4 /D RT_SIMD_COMPAT_SSE=2 /D RT_POINTER=64 /D RT_ADDRESS=64  /D RT_ELEMENT=32 /D RT_ENDIAN=0 /D RT_DEBUG=0 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
