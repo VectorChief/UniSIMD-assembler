@@ -1161,26 +1161,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xFA)                       \
 #define mulix3rr(XD, XS, XT)                                                \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Recx)                                                      \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x00))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x04))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x04))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x08))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x08))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x0C))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x0C))                              \
-        stack_ld(Recx)                                                      \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
+        mulix_rx(W(XD))
 
 #define mulix3ld(XD, XS, MT, DT)                                            \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_ld(W(XD), W(MT), W(DT))                                       \
         movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mulix_rx(W(XD))
+
+#define mulix_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movwx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
         mulwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
@@ -1293,22 +1282,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
 #define svlix3rr(XD, XS, XT)                                                \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Recx)                                                      \
-        movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
-        shlwx_mx(Mebp,  inf_SCR01(0x00))                                    \
-        movwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
-        shlwx_mx(Mebp,  inf_SCR01(0x04))                                    \
-        movwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
-        shlwx_mx(Mebp,  inf_SCR01(0x08))                                    \
-        movwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
-        shlwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
-        stack_ld(Recx)                                                      \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
+        svlix_rx(W(XD))
 
 #define svlix3ld(XD, XS, MT, DT)                                            \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_ld(W(XD), W(MT), W(DT))                                       \
         movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svlix_rx(W(XD))
+
+#define svlix_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
         shlwx_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -1333,22 +1315,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
 #define svrix3rr(XD, XS, XT)                                                \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Recx)                                                      \
-        movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
-        shrwx_mx(Mebp,  inf_SCR01(0x00))                                    \
-        movwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
-        shrwx_mx(Mebp,  inf_SCR01(0x04))                                    \
-        movwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
-        shrwx_mx(Mebp,  inf_SCR01(0x08))                                    \
-        movwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
-        shrwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
-        stack_ld(Recx)                                                      \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
+        svrix_rx(W(XD))
 
 #define svrix3ld(XD, XS, MT, DT)                                            \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_ld(W(XD), W(MT), W(DT))                                       \
         movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svrix_rx(W(XD))
+
+#define svrix_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
         shrwx_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -1373,22 +1348,15 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xE2)                       \
 #define svrin3rr(XD, XS, XT)                                                \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Recx)                                                      \
-        movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
-        shrwn_mx(Mebp,  inf_SCR01(0x00))                                    \
-        movwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
-        shrwn_mx(Mebp,  inf_SCR01(0x04))                                    \
-        movwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
-        shrwn_mx(Mebp,  inf_SCR01(0x08))                                    \
-        movwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
-        shrwn_mx(Mebp,  inf_SCR01(0x0C))                                    \
-        stack_ld(Recx)                                                      \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
+        svrin_rx(W(XD))
 
 #define svrin3ld(XD, XS, MT, DT)                                            \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_ld(W(XD), W(MT), W(DT))                                       \
         movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svrin_rx(W(XD))
+
+#define svrin_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
         shrwn_mx(Mebp,  inf_SCR01(0x00))                                    \
