@@ -1759,25 +1759,25 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         EMITB(0x74) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         EMITB(0x74) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         EMITB(0x74) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         EMITB(0x74) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -1809,25 +1809,25 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         EMITB(0x75) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         EMITB(0x75) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         EMITB(0x75) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         EMITB(0x75) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -1859,25 +1859,25 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         EMITB(0x72) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         EMITB(0x72) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         EMITB(0x72) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         EMITB(0x72) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -1909,25 +1909,25 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         EMITB(0x7C) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         EMITB(0x7C) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         EMITB(0x7C) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         EMITB(0x7C) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -1959,25 +1959,25 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         EMITB(0x76) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         EMITB(0x76) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         EMITB(0x76) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         EMITB(0x76) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -2009,25 +2009,25 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         EMITB(0x7E) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         EMITB(0x7E) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         EMITB(0x7E) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         EMITB(0x7E) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -2059,25 +2059,25 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         EMITB(0x77) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         EMITB(0x77) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         EMITB(0x77) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         EMITB(0x77) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -2109,25 +2109,25 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         EMITB(0x7F) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         EMITB(0x7F) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         EMITB(0x7F) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         EMITB(0x7F) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -2159,25 +2159,25 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         EMITB(0x73) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         EMITB(0x73) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         EMITB(0x73) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         EMITB(0x73) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
@@ -2209,25 +2209,25 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xD3)                       \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
         EMITB(0x7D) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
         EMITB(0x7D) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
         EMITB(0x7D) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x10))                              \
         movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
         EMITB(0x7D) EMITB(0x03)                                             \
-        xorxz_rr(Recx,  Recx)                                               \
+        xorzx_rr(Recx,  Recx)                                               \
         movzx_st(Recx,  Mebp, inf_SCR02(0x18))                              \
         stack_ld(Recx)                                                      \
         stack_ld(Reax)                                                      \
