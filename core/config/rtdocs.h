@@ -177,7 +177,7 @@
  * to keep the state of all SIMD registers (from C/C++ code) while ASM section
  * is doing some processing. It can be allocated separately or as a part of a
  * larger combined "inf+reg" structure. In any case both pointers should end up
- * SIMD-aligned.
+ * SIMD-aligned (divisible by full SIMD-width they are pointing at in bytes).
  *
  * As was mentioned previously "inf" is a pointer to rt_SIMD_INFOX structure,
  * which is usually an extension of rt_SIMD_INFO. The extension of the initial
@@ -190,6 +190,13 @@
  * it shows up as Rebp register and can be accessed via Mebp addressing mode
  * with corresponding displacements (offsets) defined in rt_SIMD_INFO and
  * rt_SIMD_INFOX (by extension).
+ *
+ * Right shifts on signed/unsigned data types in C/C++ are not guaranteed by
+ * the standard to produce arithmetic/logical shift instructions respectively,
+ * therefore some tests within SIMD test framework may need to be rewritten.
+ * Modern open-source compilers produce consistent results only with data sizes
+ * above 8-bit (char). With 8-bit signed/unsigned char ARM and POWER compilers
+ * show discrepancy in right shifts behavior relative to MIPS and x86.
  *
  * For every BASE register starting with R*** (like Rebx, Recx, Redx, ...)
  * there is a corresponding addressing mode starting with M*** (like Mebx, Mecx,
