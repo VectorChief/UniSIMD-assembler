@@ -1247,7 +1247,7 @@
 
 
 #define mulwx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
-    ADR REX(0,       RXB(RS)) EMITB(0xF7)                                   \
+        REX(0,       RXB(RS)) EMITB(0xF7)                                   \
         MRM(0x04,    MOD(RS), REG(RS))                                      \
 
 #define mulwx_xm(MS, DS) /* Reax is in/out, Redx is out(high)-zero-ext */   \
@@ -1257,7 +1257,7 @@
 
 
 #define mulwn_xr(RS)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
-    ADR REX(0,       RXB(RS)) EMITB(0xF7)                                   \
+        REX(0,       RXB(RS)) EMITB(0xF7)                                   \
         MRM(0x05,    MOD(RS), REG(RS))                                      \
 
 #define mulwn_xm(MS, DS) /* Reax is in/out, Redx is out(high)-sign-ext */   \
@@ -1348,7 +1348,7 @@
 
 
 #define divwx_xr(RS)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-    ADR REX(0,       RXB(RS)) EMITB(0xF7)                                   \
+        REX(0,       RXB(RS)) EMITB(0xF7)                                   \
         MRM(0x06,    MOD(RS), REG(RS))                                      \
         AUX(EMPTY,   EMPTY,   EMPTY)
 
@@ -1359,7 +1359,7 @@
 
 
 #define divwn_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-    ADR REX(0,       RXB(RS)) EMITB(0xF7)                                   \
+        REX(0,       RXB(RS)) EMITB(0xF7)                                   \
         MRM(0x07,    MOD(RS), REG(RS))                                      \
         AUX(EMPTY,   EMPTY,   EMPTY)
 

@@ -1067,7 +1067,7 @@
 
 
 #define mulzx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
-    ADR REW(0,       RXB(RS)) EMITB(0xF7)                                   \
+        REW(0,       RXB(RS)) EMITB(0xF7)                                   \
         MRM(0x04,    MOD(RS), REG(RS))                                      \
 
 #define mulzx_xm(MS, DS) /* Reax is in/out, Redx is out(high)-zero-ext */   \
@@ -1077,7 +1077,7 @@
 
 
 #define mulzn_xr(RS)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
-    ADR REW(0,       RXB(RS)) EMITB(0xF7)                                   \
+        REW(0,       RXB(RS)) EMITB(0xF7)                                   \
         MRM(0x05,    MOD(RS), REG(RS))                                      \
 
 #define mulzn_xm(MS, DS) /* Reax is in/out, Redx is out(high)-sign-ext */   \
@@ -1168,7 +1168,7 @@
 
 
 #define divzx_xr(RS)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-    ADR REW(0,       RXB(RS)) EMITB(0xF7)                                   \
+        REW(0,       RXB(RS)) EMITB(0xF7)                                   \
         MRM(0x06,    MOD(RS), REG(RS))                                      \
         AUX(EMPTY,   EMPTY,   EMPTY)
 
@@ -1179,7 +1179,7 @@
 
 
 #define divzn_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-    ADR REW(0,       RXB(RS)) EMITB(0xF7)                                   \
+        REW(0,       RXB(RS)) EMITB(0xF7)                                   \
         MRM(0x07,    MOD(RS), REG(RS))                                      \
         AUX(EMPTY,   EMPTY,   EMPTY)
 
