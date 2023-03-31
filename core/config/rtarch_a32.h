@@ -47,10 +47,10 @@
  * cmdxx_lb - applies [cmd] as above
  * label_ld - applies [adr] as above
  *
- * stack_st - applies [mov] to stack from register (push)
- * stack_ld - applies [mov] to register from stack (pop)
- * stack_sa - applies [mov] to stack from all registers
- * stack_la - applies [mov] to all registers from stack
+ * stack_st - applies [mov] to stack from full register (push)
+ * stack_ld - applies [mov] to full register from stack (pop)
+ * stack_sa - applies [mov] to stack from all full registers
+ * stack_la - applies [mov] to all full registers from stack
  *
  * cmdw*_** - applies [cmd] to 32-bit BASE register/memory/immediate args
  * cmdx*_** - applies [cmd] to A-size BASE register/memory/immediate args
@@ -98,6 +98,10 @@
  * pointer size (RT_POINTER or P) as code/data/stack segments are fixed.
  * Stack ops always work with full registers regardless of the mode chosen.
  *
+ * 64/32-bit subsets are both self-consistent within themselves, 32-bit results
+ * cannot be used in 64-bit subset without proper sign/zero-extend bridges,
+ * cmdwn/wz bridges for 32-bit subset are provided in 64-bit headers.
+ *
  * 32-bit and 64-bit BASE subsets are not easily compatible on all targets,
  * thus any register modified with 32-bit op cannot be used in 64-bit subset.
  * Alternatively, data flow must not exceed 31-bit range for 32-bit operations
@@ -117,7 +121,7 @@
  * Alternatively, data written natively in C/C++ can be worked on from within
  * a given (one) subset if appropriate offset correction is used from rtbase.h.
  *
- * Setting-flags instruction naming scheme has been changed again recently for
+ * Setting-flags instruction naming scheme was changed twice in the past for
  * better orthogonality with operand size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
