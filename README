@@ -27,7 +27,7 @@ UniSIMD core features:
  - High-level SIMD registers/ops as singles, pairs and quads
  - SIMD-aligned backend structures with offsets/factors
  - Vector-length agnostic vertical SIMD ISA, configurable
- - Simultaneous scalar+128/256-bit+configurable SIMD ops
+ - Simultaneous scalar + 128/256-bit + configurable SIMD ops
  - ISA reservation for fp16/fp128 (half/quad) SIMD ops
  - C/C++, Compute, SPMD on 4 major archs
  - Intel SSE/SSE2/SSE4 and AVX/AVX2/AVX-512
@@ -41,7 +41,7 @@ UniSIMD core features:
  - 32/64-bit hybrid mode for native 64-bit ABI
  - 32/64-bit addressing for BASE and SIMD ops
  - 32/64-bit configurable SIMD elements (fp+int)
- - Simultaneous 32/64-bit BASE (with rules) and SIMD ops
+ - Simultaneous 32/64-bit BASE (bridges, rules) and SIMD ops
  - ISA reservation for int8/int16 (byte/half) BASE ops
  - Full control over code, compiler steps out of the way
  - Potential for bit-exact fp-compute across modern targets
