@@ -124,10 +124,10 @@
  *
  * not all registers in target descriptions are always exposed for apps to use
  * flags RT_BASE_REGS and RT_SIMD_REGS are available for rough differentiation
- * between register-file sizes with current values: legacy 8, 16 and 32 (SIMD)
+ * between register file sizes with current values: legacy 8, 16 and 32 (SIMD)
  * while top registers reservation is controlled via RT_SIMD_COMPAT_XMM option
  *
- * Current naming scheme for extended BASE and SIMD register-files.
+ * Current naming scheme for extended BASE and SIMD register files.
  *
  * Legacy 8 BASE and 8 SIMD registers:
  *  - Reax, Rebx, Recx, Redx, Resp, Rebp, Resi, Redi
