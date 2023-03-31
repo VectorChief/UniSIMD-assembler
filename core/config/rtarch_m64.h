@@ -827,7 +827,7 @@
 #define shlzxZmr(MG, DG, RS)                                                \
         shlzxZst(W(RS), W(MG), W(DG))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -914,6 +914,9 @@
 #define shrzxZmr(MG, DG, RS)                                                \
         shrzxZst(W(RS), W(MG), W(DG))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrzn_rx(RG)                     /* reads Recx for shift count */   \
         EMITW(0x00000017 | MSM(REG(RG), REG(RG), Tecx))
@@ -1185,10 +1188,10 @@
         EMITW(0x00000012 | MRM(REG(RG), 0x00,    0x00))
 
 
-#define prezx_xx()          /* to be placed immediately prior divzx_x* */   \
+#define prezx_xx()   /* to be placed right before divzx_x* or remzx_xx */   \
                                      /* to prepare Redx for int-divide */
 
-#define prezn_xx()          /* to be placed immediately prior divzn_x* */   \
+#define prezn_xx()   /* to be placed right before divzn_x* or remzn_xx */   \
                                      /* to prepare Redx for int-divide */
 
 
@@ -1257,7 +1260,8 @@
         EMITW(0x00000010 | MRM(REG(RG), 0x00,    0x00))
 
 
-#define remzx_xx()          /* to be placed immediately prior divzx_x* */   \
+#define remzx_xx() /* to be placed before divzx_x*, but after prezx_xx */   \
+                                     /* to prepare for rem calculation */
 
 #define remzx_xr(RS)        /* to be placed immediately after divzx_xr */   \
         EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))   /* Redx<-rem */
@@ -1266,7 +1270,7 @@
         EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))   /* Redx<-rem */
 
 
-#define remzn_xx()          /* to be placed immediately prior divzn_x* */   \
+#define remzn_xx() /* to be placed before divzn_x*, but after prezn_xx */   \
                                      /* to prepare for rem calculation */
 
 #define remzn_xr(RS)        /* to be placed immediately after divzn_xr */   \
@@ -1360,10 +1364,10 @@
         EMITW(0x0000009E | MRM(REG(RG), REG(RG), TMxx))
 
 
-#define prezx_xx()          /* to be placed immediately prior divzx_x* */   \
+#define prezx_xx()   /* to be placed right before divzx_x* or remzx_xx */   \
                                      /* to prepare Redx for int-divide */
 
-#define prezn_xx()          /* to be placed immediately prior divzn_x* */   \
+#define prezn_xx()   /* to be placed right before divzn_x* or remzn_xx */   \
                                      /* to prepare Redx for int-divide */
 
 
@@ -1422,7 +1426,7 @@
         EMITW(0x000000DE | MRM(REG(RG), REG(RG), TMxx))
 
 
-#define remzx_xx()          /* to be placed immediately prior divzx_x* */   \
+#define remzx_xx() /* to be placed before divzx_x*, but after prezx_xx */   \
         movzx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
 #define remzx_xr(RS)        /* to be placed immediately after divzx_xr */   \
@@ -1432,7 +1436,7 @@
         EMITW(0x000000DF | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
 
 
-#define remzn_xx()          /* to be placed immediately prior divzn_x* */   \
+#define remzn_xx() /* to be placed before divzn_x*, but after prezn_xx */   \
         movzx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
 #define remzn_xr(RS)        /* to be placed immediately after divzn_xr */   \

@@ -1394,7 +1394,7 @@
 #define shlwxZmr(MG, DG, RS)                                                \
         shlwxZst(W(RS), W(MG), W(DG))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -1473,6 +1473,9 @@
 #define shrwxZmr(MG, DG, RS)                                                \
         shrwxZst(W(RS), W(MG), W(DG))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrwn_rx(RG)                     /* reads Recx for shift count */   \
         EMITW(0x7C000630 | MSM(REG(RG), REG(RG), Tecx))
@@ -1703,10 +1706,10 @@
         EMITW(0x7C0003D6 | MTM(REG(RG), REG(RG), TMxx))
 
 
-#define prewx_xx()          /* to be placed immediately prior divwx_x* */   \
+#define prewx_xx()   /* to be placed right before divwx_x* or remwx_xx */   \
                                      /* to prepare Redx for int-divide */
 
-#define prewn_xx()          /* to be placed immediately prior divwn_x* */   \
+#define prewn_xx()   /* to be placed right before divwn_x* or remwn_xx */   \
                                      /* to prepare Redx for int-divide */
 
 
@@ -1791,7 +1794,7 @@
         stack_ld(Redx)
 
 
-#define remwx_xx()          /* to be placed immediately prior divwx_x* */   \
+#define remwx_xx() /* to be placed before divwx_x*, but after prewx_xx */   \
         movwx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
 #define remwx_xr(RS)        /* to be placed immediately after divwx_xr */   \
@@ -1803,7 +1806,7 @@
         EMITW(0x7C000050 | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
 
 
-#define remwn_xx()          /* to be placed immediately prior divwn_x* */   \
+#define remwn_xx() /* to be placed before divwn_x*, but after prewn_xx */   \
         movwx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
 #define remwn_xr(RS)        /* to be placed immediately after divwn_xr */   \
@@ -1842,7 +1845,7 @@
         EMITW(0x7C000616 | MTM(REG(RG), REG(RG), TMxx))
 
 
-#define remwx_xx()          /* to be placed immediately prior divwx_x* */   \
+#define remwx_xx() /* to be placed before divwx_x*, but after prewx_xx */   \
         movwx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
 #define remwx_xr(RS)        /* to be placed immediately after divwx_xr */   \
@@ -1852,7 +1855,7 @@
         EMITW(0x7C000216 | MTM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
 
 
-#define remwn_xx()          /* to be placed immediately prior divwn_x* */   \
+#define remwn_xx() /* to be placed before divwn_x*, but after prewn_xx */   \
         movwx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
 #define remwn_xr(RS)        /* to be placed immediately after divwn_xr */   \

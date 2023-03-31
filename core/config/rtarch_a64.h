@@ -777,7 +777,7 @@
 #define shlzxZmr(MG, DG, RS)                                                \
         shlzxZst(W(RS), W(MG), W(DG))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -859,6 +859,9 @@
 #define shrzxZmr(MG, DG, RS)                                                \
         shrzxZst(W(RS), W(MG), W(DG))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrzn_rx(RG)                     /* reads Recx for shift count */   \
         EMITW(0x9AC02800 | MRM(REG(RG), REG(RG), Tecx))
@@ -1105,10 +1108,10 @@
         EMITW(0x9AC00C00 | MRM(REG(RG), REG(RG), TMxx))
 
 
-#define prezx_xx()          /* to be placed immediately prior divzx_x* */   \
+#define prezx_xx()   /* to be placed right before divzx_x* or remzx_xx */   \
                                      /* to prepare Redx for int-divide */
 
-#define prezn_xx()          /* to be placed immediately prior divzn_x* */   \
+#define prezn_xx()   /* to be placed right before divzn_x* or remzn_xx */   \
                                      /* to prepare Redx for int-divide */
 
 
@@ -1185,7 +1188,7 @@
         stack_ld(Redx)
 
 
-#define remzx_xx()          /* to be placed immediately prior divzx_x* */   \
+#define remzx_xx() /* to be placed before divzx_x*, but after prezx_xx */   \
         movzx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
 #define remzx_xr(RS)        /* to be placed immediately after divzx_xr */   \
@@ -1197,7 +1200,7 @@
                                                           /* Redx<-rem */
 
 
-#define remzn_xx()          /* to be placed immediately prior divzn_x* */   \
+#define remzn_xx() /* to be placed before divzn_x*, but after prezn_xx */   \
         movzx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
 #define remzn_xr(RS)        /* to be placed immediately after divzn_xr */   \

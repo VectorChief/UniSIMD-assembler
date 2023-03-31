@@ -924,7 +924,7 @@
 #define shlwxZmr(MG, DG, RS)                                                \
         shlwxZst(W(RS), W(MG), W(DG))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -1028,6 +1028,9 @@
 #define shrwxZmr(MG, DG, RS)                                                \
         shrwxZst(W(RS), W(MG), W(DG))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #if RT_BASE_COMPAT_BMI < 2 /* 0 - generic, 1 - 3-op-VEX, 2 - BMI1+BMI2 */
 
@@ -1336,10 +1339,10 @@
         stack_ld(Reax)
 
 
-#define prewx_xx()          /* to be placed immediately prior divwx_x* */   \
+#define prewx_xx()   /* to be placed right before divwx_x* or remwx_xx */   \
         movwx_ri(Redx, IC(0))        /* to prepare Redx for int-divide */
 
-#define prewn_xx()          /* to be placed immediately prior divwn_x* */   \
+#define prewn_xx()   /* to be placed right before divwn_x* or remwn_xx */   \
         movwx_rr(Redx, Reax)         /* to prepare Redx for int-divide */   \
         shrwn_ri(Redx, IC(31))
 
@@ -1441,7 +1444,7 @@
         stack_ld(Redx)
 
 
-#define remwx_xx()          /* to be placed immediately prior divwx_x* */   \
+#define remwx_xx() /* to be placed before divwx_x*, but after prewx_xx */   \
                                      /* to prepare for rem calculation */
 
 #define remwx_xr(RS)        /* to be placed immediately after divwx_xr */   \
@@ -1451,7 +1454,7 @@
                                      /* to produce remainder Redx<-rem */
 
 
-#define remwn_xx()          /* to be placed immediately prior divwn_x* */   \
+#define remwn_xx() /* to be placed before divwn_x*, but after prewn_xx */   \
                                      /* to prepare for rem calculation */
 
 #define remwn_xr(RS)        /* to be placed immediately after divwn_xr */   \
