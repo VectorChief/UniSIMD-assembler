@@ -1168,6 +1168,237 @@
 
 #endif /* RT_128X1 >= 32, AVX2 */
 
+/****************   packed single-precision integer compare   *****************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minix_rr(XG, XS)                                                    \
+        minix3rr(W(XG), W(XG), W(XS))
+
+#define minix_ld(XG, MS, DS)                                                \
+        minix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minix3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 1, 2) EMITB(0x3B)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define minix3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 1, 2) EMITB(0x3B)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minin_rr(XG, XS)                                                    \
+        minin3rr(W(XG), W(XG), W(XS))
+
+#define minin_ld(XG, MS, DS)                                                \
+        minin3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minin3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 1, 2) EMITB(0x39)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define minin3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 1, 2) EMITB(0x39)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxix_rr(XG, XS)                                                    \
+        maxix3rr(W(XG), W(XG), W(XS))
+
+#define maxix_ld(XG, MS, DS)                                                \
+        maxix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxix3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 1, 2) EMITB(0x3F)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define maxix3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 1, 2) EMITB(0x3F)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxin_rr(XG, XS)                                                    \
+        maxin3rr(W(XG), W(XG), W(XS))
+
+#define maxin_ld(XG, MS, DS)                                                \
+        maxin3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxin3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 1, 2) EMITB(0x3D)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define maxin3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 1, 2) EMITB(0x3D)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqix_rr(XG, XS)                                                    \
+        ceqix3rr(W(XG), W(XG), W(XS))
+
+#define ceqix_ld(XG, MS, DS)                                                \
+        ceqix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqix3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 1, 1) EMITB(0x76)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define ceqix3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 1, 1) EMITB(0x76)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cneix_rr(XG, XS)                                                    \
+        cneix3rr(W(XG), W(XG), W(XS))
+
+#define cneix_ld(XG, MS, DS)                                                \
+        cneix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cneix3rr(XD, XS, XT)                                                \
+        ceqix3rr(W(XD), W(XS), W(XT))                                       \
+        notix_rx(W(XD))
+
+#define cneix3ld(XD, XS, MT, DT)                                            \
+        ceqix3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notix_rx(W(XD))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltix_rr(XG, XS)                                                    \
+        cltix3rr(W(XG), W(XG), W(XS))
+
+#define cltix_ld(XG, MS, DS)                                                \
+        cltix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltix3rr(XD, XS, XT)                                                \
+        minix3rr(W(XD), W(XS), W(XT))                                       \
+        cneix_rr(W(XD), W(XT))
+
+#define cltix3ld(XD, XS, MT, DT)                                            \
+        minix3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        cneix_ld(W(XD), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltin_rr(XG, XS)                                                    \
+        cltin3rr(W(XG), W(XG), W(XS))
+
+#define cltin_ld(XG, MS, DS)                                                \
+        cltin3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltin3rr(XD, XS, XT)                                                \
+        cgtin3rr(W(XD), W(XT), W(XS))
+
+#define cltin3ld(XD, XS, MT, DT)                                            \
+        minin3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        cneix_ld(W(XD), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cleix_rr(XG, XS)                                                    \
+        cleix3rr(W(XG), W(XG), W(XS))
+
+#define cleix_ld(XG, MS, DS)                                                \
+        cleix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cleix3rr(XD, XS, XT)                                                \
+        maxix3rr(W(XD), W(XS), W(XT))                                       \
+        ceqix_rr(W(XD), W(XT))
+
+#define cleix3ld(XD, XS, MT, DT)                                            \
+        maxix3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        ceqix_ld(W(XD), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define clein_rr(XG, XS)                                                    \
+        clein3rr(W(XG), W(XG), W(XS))
+
+#define clein_ld(XG, MS, DS)                                                \
+        clein3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clein3rr(XD, XS, XT)                                                \
+        cgtin3rr(W(XD), W(XS), W(XT))                                       \
+        notix_rx(W(XD))
+
+#define clein3ld(XD, XS, MT, DT)                                            \
+        cgtin3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notix_rx(W(XD))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtix_rr(XG, XS)                                                    \
+        cgtix3rr(W(XG), W(XG), W(XS))
+
+#define cgtix_ld(XG, MS, DS)                                                \
+        cgtix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtix3rr(XD, XS, XT)                                                \
+        maxix3rr(W(XD), W(XS), W(XT))                                       \
+        cneix_rr(W(XD), W(XT))
+
+#define cgtix3ld(XD, XS, MT, DT)                                            \
+        maxix3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        cneix_ld(W(XD), W(MT), W(DT))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtin_rr(XG, XS)                                                    \
+        cgtin3rr(W(XG), W(XG), W(XS))
+
+#define cgtin_ld(XG, MS, DS)                                                \
+        cgtin3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtin3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 0, 1, 1) EMITB(0x66)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define cgtin3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 0, 1, 1) EMITB(0x66)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgeix_rr(XG, XS)                                                    \
+        cgeix3rr(W(XG), W(XG), W(XS))
+
+#define cgeix_ld(XG, MS, DS)                                                \
+        cgeix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgeix3rr(XD, XS, XT)                                                \
+        minix3rr(W(XD), W(XS), W(XT))                                       \
+        ceqix_rr(W(XD), W(XT))
+
+#define cgeix3ld(XD, XS, MT, DT)                                            \
+        minix3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        ceqix_ld(W(XD), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgein_rr(XG, XS)                                                    \
+        cgein3rr(W(XG), W(XG), W(XS))
+
+#define cgein_ld(XG, MS, DS)                                                \
+        cgein3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgein3rr(XD, XS, XT)                                                \
+        minin3rr(W(XD), W(XS), W(XT))                                       \
+        ceqix_rr(W(XD), W(XT))
+
+#define cgein3ld(XD, XS, MT, DT)                                            \
+        minin3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        ceqix_ld(W(XD), W(MT), W(DT))
+
 /******************************************************************************/
 /**********************************   ELEM   **********************************/
 /******************************************************************************/

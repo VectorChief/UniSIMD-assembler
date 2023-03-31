@@ -1720,6 +1720,477 @@
 
 #endif /* RT_256X2 >= 2, AVX2 */
 
+/****************   packed single-precision integer compare   *****************/
+
+#if (RT_256X2 < 2)
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minox_rr(XG, XS)                                                    \
+        minox3rr(W(XG), W(XG), W(XS))
+
+#define minox_ld(XG, MS, DS)                                                \
+        minox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minox3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        minox_rx(W(XD))
+
+#define minox3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        minox_rx(W(XD))
+
+#define minox_rx(XD) /* not portable, do not use outside */                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        minix_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        minix_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        minix_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        minix_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x30))                              \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minon_rr(XG, XS)                                                    \
+        minon3rr(W(XG), W(XG), W(XS))
+
+#define minon_ld(XG, MS, DS)                                                \
+        minon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minon3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        minon_rx(W(XD))
+
+#define minon3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        minon_rx(W(XD))
+
+#define minon_rx(XD) /* not portable, do not use outside */                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        minin_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        minin_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        minin_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        minin_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x30))                              \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxox_rr(XG, XS)                                                    \
+        maxox3rr(W(XG), W(XG), W(XS))
+
+#define maxox_ld(XG, MS, DS)                                                \
+        maxox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxox3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        maxox_rx(W(XD))
+
+#define maxox3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        maxox_rx(W(XD))
+
+#define maxox_rx(XD) /* not portable, do not use outside */                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        maxix_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        maxix_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        maxix_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        maxix_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x30))                              \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxon_rr(XG, XS)                                                    \
+        maxon3rr(W(XG), W(XG), W(XS))
+
+#define maxon_ld(XG, MS, DS)                                                \
+        maxon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxon3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        maxon_rx(W(XD))
+
+#define maxon3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        maxon_rx(W(XD))
+
+#define maxon_rx(XD) /* not portable, do not use outside */                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        maxin_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        maxin_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        maxin_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        maxin_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x30))                              \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqox_rr(XG, XS)                                                    \
+        ceqox3rr(W(XG), W(XG), W(XS))
+
+#define ceqox_ld(XG, MS, DS)                                                \
+        ceqox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqox3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        ceqox_rx(W(XD))
+
+#define ceqox3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        ceqox_rx(W(XD))
+
+#define ceqox_rx(XD) /* not portable, do not use outside */                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        ceqix_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        ceqix_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        ceqix_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        ceqix_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x30))                              \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgton_rr(XG, XS)                                                    \
+        cgton3rr(W(XG), W(XG), W(XS))
+
+#define cgton_ld(XG, MS, DS)                                                \
+        cgton3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgton3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        cgton_rx(W(XD))
+
+#define cgton3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        cgton_rx(W(XD))
+
+#define cgton_rx(XD) /* not portable, do not use outside */                 \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        cgtin_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        cgtin_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        cgtin_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movix_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        cgtin_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        movix_st(W(XD), Mebp, inf_SCR01(0x30))                              \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#else /* RT_256X2 >= 2, AVX2 */
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minox_rr(XG, XS)                                                    \
+        minox3rr(W(XG), W(XG), W(XS))
+
+#define minox_ld(XG, MS, DS)                                                \
+        minox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minox3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 1, 2) EMITB(0x3B)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 1, 2) EMITB(0x3B)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define minox3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 1, 2) EMITB(0x3B)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 1, 2) EMITB(0x3B)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minon_rr(XG, XS)                                                    \
+        minon3rr(W(XG), W(XG), W(XS))
+
+#define minon_ld(XG, MS, DS)                                                \
+        minon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minon3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 1, 2) EMITB(0x39)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 1, 2) EMITB(0x39)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define minon3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 1, 2) EMITB(0x39)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 1, 2) EMITB(0x39)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxox_rr(XG, XS)                                                    \
+        maxox3rr(W(XG), W(XG), W(XS))
+
+#define maxox_ld(XG, MS, DS)                                                \
+        maxox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxox3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 1, 2) EMITB(0x3F)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 1, 2) EMITB(0x3F)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define maxox3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 1, 2) EMITB(0x3F)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 1, 2) EMITB(0x3F)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxon_rr(XG, XS)                                                    \
+        maxon3rr(W(XG), W(XG), W(XS))
+
+#define maxon_ld(XG, MS, DS)                                                \
+        maxon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxon3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 1, 2) EMITB(0x3D)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 1, 2) EMITB(0x3D)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define maxon3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 1, 2) EMITB(0x3D)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 1, 2) EMITB(0x3D)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqox_rr(XG, XS)                                                    \
+        ceqox3rr(W(XG), W(XG), W(XS))
+
+#define ceqox_ld(XG, MS, DS)                                                \
+        ceqox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqox3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 1, 1) EMITB(0x76)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 1, 1) EMITB(0x76)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define ceqox3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 1, 1) EMITB(0x76)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 1, 1) EMITB(0x76)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgton_rr(XG, XS)                                                    \
+        cgton3rr(W(XG), W(XG), W(XS))
+
+#define cgton_ld(XG, MS, DS)                                                \
+        cgton3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgton3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 1, 1) EMITB(0x66)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 1, 1) EMITB(0x66)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define cgton3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 1, 1) EMITB(0x66)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 1, 1) EMITB(0x66)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+#endif /* RT_256X2 >= 2, AVX2 */
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cneox_rr(XG, XS)                                                    \
+        cneox3rr(W(XG), W(XG), W(XS))
+
+#define cneox_ld(XG, MS, DS)                                                \
+        cneox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cneox3rr(XD, XS, XT)                                                \
+        ceqox3rr(W(XD), W(XS), W(XT))                                       \
+        notox_rx(W(XD))
+
+#define cneox3ld(XD, XS, MT, DT)                                            \
+        ceqox3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notox_rx(W(XD))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltox_rr(XG, XS)                                                    \
+        cltox3rr(W(XG), W(XG), W(XS))
+
+#define cltox_ld(XG, MS, DS)                                                \
+        cltox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltox3rr(XD, XS, XT)                                                \
+        minox3rr(W(XD), W(XS), W(XT))                                       \
+        cneox_rr(W(XD), W(XT))
+
+#define cltox3ld(XD, XS, MT, DT)                                            \
+        minox3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        cneox_ld(W(XD), W(MT), W(DT))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define clton_rr(XG, XS)                                                    \
+        clton3rr(W(XG), W(XG), W(XS))
+
+#define clton_ld(XG, MS, DS)                                                \
+        clton3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clton3rr(XD, XS, XT)                                                \
+        cgton3rr(W(XD), W(XT), W(XS))
+
+#define clton3ld(XD, XS, MT, DT)                                            \
+        minon3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        cneox_ld(W(XD), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cleox_rr(XG, XS)                                                    \
+        cleox3rr(W(XG), W(XG), W(XS))
+
+#define cleox_ld(XG, MS, DS)                                                \
+        cleox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cleox3rr(XD, XS, XT)                                                \
+        maxox3rr(W(XD), W(XS), W(XT))                                       \
+        ceqox_rr(W(XD), W(XT))
+
+#define cleox3ld(XD, XS, MT, DT)                                            \
+        maxox3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        ceqox_ld(W(XD), W(MT), W(DT))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define cleon_rr(XG, XS)                                                    \
+        cleon3rr(W(XG), W(XG), W(XS))
+
+#define cleon_ld(XG, MS, DS)                                                \
+        cleon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cleon3rr(XD, XS, XT)                                                \
+        cgton3rr(W(XD), W(XS), W(XT))                                       \
+        notox_rx(W(XD))
+
+#define cleon3ld(XD, XS, MT, DT)                                            \
+        cgton3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notox_rx(W(XD))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtox_rr(XG, XS)                                                    \
+        cgtox3rr(W(XG), W(XG), W(XS))
+
+#define cgtox_ld(XG, MS, DS)                                                \
+        cgtox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtox3rr(XD, XS, XT)                                                \
+        maxox3rr(W(XD), W(XS), W(XT))                                       \
+        cneox_rr(W(XD), W(XT))
+
+#define cgtox3ld(XD, XS, MT, DT)                                            \
+        maxox3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        cneox_ld(W(XD), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgeox_rr(XG, XS)                                                    \
+        cgeox3rr(W(XG), W(XG), W(XS))
+
+#define cgeox_ld(XG, MS, DS)                                                \
+        cgeox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgeox3rr(XD, XS, XT)                                                \
+        minox3rr(W(XD), W(XS), W(XT))                                       \
+        ceqox_rr(W(XD), W(XT))
+
+#define cgeox3ld(XD, XS, MT, DT)                                            \
+        minox3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        ceqox_ld(W(XD), W(MT), W(DT))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgeon_rr(XG, XS)                                                    \
+        cgeon3rr(W(XG), W(XG), W(XS))
+
+#define cgeon_ld(XG, MS, DS)                                                \
+        cgeon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgeon3rr(XD, XS, XT)                                                \
+        minon3rr(W(XD), W(XS), W(XT))                                       \
+        ceqox_rr(W(XD), W(XT))
+
+#define cgeon3ld(XD, XS, MT, DT)                                            \
+        minon3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        ceqox_ld(W(XD), W(MT), W(DT))
+
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/

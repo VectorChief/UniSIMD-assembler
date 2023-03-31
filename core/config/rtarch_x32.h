@@ -163,6 +163,8 @@
 #define ADR                                                                 \
         EMITB(0x67)
 
+#define x67 1
+
 #elif (defined RT_X64)
 
 #ifdef RT_BASE_COMPAT_BMI
@@ -171,6 +173,8 @@
 #endif /* RT_BASE_COMPAT_BMI */
 
 #define ADR
+
+#define x67 0
 
 #endif /* defined (RT_X32, RT_X64) */
 

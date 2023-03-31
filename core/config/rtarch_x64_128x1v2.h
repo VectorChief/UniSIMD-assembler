@@ -972,6 +972,276 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+/****************   packed double-precision integer compare   *****************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minjx_rr(XG, XS)                                                    \
+        minjx3rr(W(XG), W(XG), W(XS))
+
+#define minjx_ld(XG, MS, DS)                                                \
+        minjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minjx3rr(XD, XS, XT)                                                \
+        EVW(RXB(XD), RXB(XT), REN(XS), 0, 1, 2) EMITB(0x3B)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define minjx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(RXB(XD), RXB(MT), REN(XS), 0, 1, 2) EMITB(0x3B)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minjn_rr(XG, XS)                                                    \
+        minjn3rr(W(XG), W(XG), W(XS))
+
+#define minjn_ld(XG, MS, DS)                                                \
+        minjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minjn3rr(XD, XS, XT)                                                \
+        EVW(RXB(XD), RXB(XT), REN(XS), 0, 1, 2) EMITB(0x39)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define minjn3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(RXB(XD), RXB(MT), REN(XS), 0, 1, 2) EMITB(0x39)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxjx_rr(XG, XS)                                                    \
+        maxjx3rr(W(XG), W(XG), W(XS))
+
+#define maxjx_ld(XG, MS, DS)                                                \
+        maxjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxjx3rr(XD, XS, XT)                                                \
+        EVW(RXB(XD), RXB(XT), REN(XS), 0, 1, 2) EMITB(0x3F)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define maxjx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(RXB(XD), RXB(MT), REN(XS), 0, 1, 2) EMITB(0x3F)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxjn_rr(XG, XS)                                                    \
+        maxjn3rr(W(XG), W(XG), W(XS))
+
+#define maxjn_ld(XG, MS, DS)                                                \
+        maxjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxjn3rr(XD, XS, XT)                                                \
+        EVW(RXB(XD), RXB(XT), REN(XS), 0, 1, 2) EMITB(0x3D)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define maxjn3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(RXB(XD), RXB(MT), REN(XS), 0, 1, 2) EMITB(0x3D)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqjx_rr(XG, XS)                                                    \
+        ceqjx3rr(W(XG), W(XG), W(XS))
+
+#define ceqjx_ld(XG, MS, DS)                                                \
+        ceqjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqjx3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 0, 1, 3) EMITB(0x1E)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+#define ceqjx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 0, 1, 3) EMITB(0x1E)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x00))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cnejx_rr(XG, XS)                                                    \
+        cnejx3rr(W(XG), W(XG), W(XS))
+
+#define cnejx_ld(XG, MS, DS)                                                \
+        cnejx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cnejx3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 0, 1, 3) EMITB(0x1E)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+#define cnejx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 0, 1, 3) EMITB(0x1E)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x04))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltjx_rr(XG, XS)                                                    \
+        cltjx3rr(W(XG), W(XG), W(XS))
+
+#define cltjx_ld(XG, MS, DS)                                                \
+        cltjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltjx3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 0, 1, 3) EMITB(0x1E)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+#define cltjx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 0, 1, 3) EMITB(0x1E)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x01))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltjn_rr(XG, XS)                                                    \
+        cltjn3rr(W(XG), W(XG), W(XS))
+
+#define cltjn_ld(XG, MS, DS)                                                \
+        cltjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltjn3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 0, 1, 3) EMITB(0x1F)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+#define cltjn3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 0, 1, 3) EMITB(0x1F)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x01))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define clejx_rr(XG, XS)                                                    \
+        clejx3rr(W(XG), W(XG), W(XS))
+
+#define clejx_ld(XG, MS, DS)                                                \
+        clejx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clejx3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 0, 1, 3) EMITB(0x1E)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+#define clejx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 0, 1, 3) EMITB(0x1E)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x02))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define clejn_rr(XG, XS)                                                    \
+        clejn3rr(W(XG), W(XG), W(XS))
+
+#define clejn_ld(XG, MS, DS)                                                \
+        clejn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clejn3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 0, 1, 3) EMITB(0x1F)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+#define clejn3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 0, 1, 3) EMITB(0x1F)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x02))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtjx_rr(XG, XS)                                                    \
+        cgtjx3rr(W(XG), W(XG), W(XS))
+
+#define cgtjx_ld(XG, MS, DS)                                                \
+        cgtjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtjx3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 0, 1, 3) EMITB(0x1E)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+#define cgtjx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 0, 1, 3) EMITB(0x1E)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x06))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtjn_rr(XG, XS)                                                    \
+        cgtjn3rr(W(XG), W(XG), W(XS))
+
+#define cgtjn_ld(XG, MS, DS)                                                \
+        cgtjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtjn3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 0, 1, 3) EMITB(0x1F)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+#define cgtjn3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 0, 1, 3) EMITB(0x1F)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x06))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgejx_rr(XG, XS)                                                    \
+        cgejx3rr(W(XG), W(XG), W(XS))
+
+#define cgejx_ld(XG, MS, DS)                                                \
+        cgejx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgejx3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 0, 1, 3) EMITB(0x1E)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+#define cgejx3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 0, 1, 3) EMITB(0x1E)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgejn_rr(XG, XS)                                                    \
+        cgejn3rr(W(XG), W(XG), W(XS))
+
+#define cgejn_ld(XG, MS, DS)                                                \
+        cgejn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgejn3rr(XD, XS, XT)                                                \
+        EVW(0,       RXB(XT), REN(XS), 0, 1, 3) EMITB(0x1F)                 \
+        MRM(0x01,    MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
+#define cgejn3ld(XD, XS, MT, DT)                                            \
+    ADR EVW(0,       RXB(MT), REN(XS), 0, 1, 3) EMITB(0x1F)                 \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
+        mz1jx_ld(W(XD), Mebp, inf_GPC07)
+
 /******************************************************************************/
 /**********************************   ELEM   **********************************/
 /******************************************************************************/

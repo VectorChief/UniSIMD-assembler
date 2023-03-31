@@ -1218,6 +1218,798 @@
 
 #endif /* RT_SIMD_COMPAT_PW8 == 1 */
 
+/****************   packed double-precision integer compare   *****************/
+
+#if (RT_SIMD_COMPAT_PW8 == 0)
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minjx_rr(XG, XS)                                                    \
+        minjx3rr(W(XG), W(XG), W(XS))
+
+#define minjx_ld(XG, MS, DS)                                                \
+        minjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minjx3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        minjx_rx(W(XD))
+
+#define minjx3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        minjx_rx(W(XD))
+
+#define minjx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
+        EMITW(0x40800008)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
+        EMITW(0x40800008)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        stack_ld(Reax)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minjn_rr(XG, XS)                                                    \
+        minjn3rr(W(XG), W(XG), W(XS))
+
+#define minjn_ld(XG, MS, DS)                                                \
+        minjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minjn3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        minjn_rx(W(XD))
+
+#define minjn3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        minjn_rx(W(XD))
+
+#define minjn_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
+        EMITW(0x40800008)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
+        EMITW(0x40800008)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        stack_ld(Reax)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxjx_rr(XG, XS)                                                    \
+        maxjx3rr(W(XG), W(XG), W(XS))
+
+#define maxjx_ld(XG, MS, DS)                                                \
+        maxjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxjx3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        maxjx_rx(W(XD))
+
+#define maxjx3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        maxjx_rx(W(XD))
+
+#define maxjx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
+        EMITW(0x40810008)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
+        EMITW(0x40810008)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        stack_ld(Reax)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxjn_rr(XG, XS)                                                    \
+        maxjn3rr(W(XG), W(XG), W(XS))
+
+#define maxjn_ld(XG, MS, DS)                                                \
+        maxjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxjn3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        maxjn_rx(W(XD))
+
+#define maxjn3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        maxjn_rx(W(XD))
+
+#define maxjn_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
+        EMITW(0x40810008)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
+        EMITW(0x40810008)                                                   \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
+        stack_ld(Reax)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqjx_rr(XG, XS)                                                    \
+        ceqjx3rr(W(XG), W(XG), W(XS))
+
+#define ceqjx_ld(XG, MS, DS)                                                \
+        ceqjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqjx3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        ceqjx_rx(W(XD))
+
+#define ceqjx3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        ceqjx_rx(W(XD))
+
+#define ceqjx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
+        EMITW(0x41820008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
+        EMITW(0x41820008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
+        stack_ld(Recx)                                                      \
+        stack_ld(Reax)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cnejx_rr(XG, XS)                                                    \
+        cnejx3rr(W(XG), W(XG), W(XS))
+
+#define cnejx_ld(XG, MS, DS)                                                \
+        cnejx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cnejx3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        cnejx_rx(W(XD))
+
+#define cnejx3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        cnejx_rx(W(XD))
+
+#define cnejx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
+        EMITW(0x40820008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
+        EMITW(0x40820008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
+        stack_ld(Recx)                                                      \
+        stack_ld(Reax)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltjx_rr(XG, XS)                                                    \
+        cltjx3rr(W(XG), W(XG), W(XS))
+
+#define cltjx_ld(XG, MS, DS)                                                \
+        cltjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltjx3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        cltjx_rx(W(XD))
+
+#define cltjx3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        cltjx_rx(W(XD))
+
+#define cltjx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
+        EMITW(0x41800008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
+        EMITW(0x41800008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
+        stack_ld(Recx)                                                      \
+        stack_ld(Reax)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltjn_rr(XG, XS)                                                    \
+        cltjn3rr(W(XG), W(XG), W(XS))
+
+#define cltjn_ld(XG, MS, DS)                                                \
+        cltjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltjn3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        cltjn_rx(W(XD))
+
+#define cltjn3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        cltjn_rx(W(XD))
+
+#define cltjn_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
+        EMITW(0x41800008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
+        EMITW(0x41800008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
+        stack_ld(Recx)                                                      \
+        stack_ld(Reax)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define clejx_rr(XG, XS)                                                    \
+        clejx3rr(W(XG), W(XG), W(XS))
+
+#define clejx_ld(XG, MS, DS)                                                \
+        clejx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clejx3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        clejx_rx(W(XD))
+
+#define clejx3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        clejx_rx(W(XD))
+
+#define clejx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
+        EMITW(0x40810008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
+        EMITW(0x40810008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
+        stack_ld(Recx)                                                      \
+        stack_ld(Reax)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define clejn_rr(XG, XS)                                                    \
+        clejn3rr(W(XG), W(XG), W(XS))
+
+#define clejn_ld(XG, MS, DS)                                                \
+        clejn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clejn3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        clejn_rx(W(XD))
+
+#define clejn3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        clejn_rx(W(XD))
+
+#define clejn_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
+        EMITW(0x40810008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
+        EMITW(0x40810008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
+        stack_ld(Recx)                                                      \
+        stack_ld(Reax)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtjx_rr(XG, XS)                                                    \
+        cgtjx3rr(W(XG), W(XG), W(XS))
+
+#define cgtjx_ld(XG, MS, DS)                                                \
+        cgtjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtjx3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        cgtjx_rx(W(XD))
+
+#define cgtjx3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        cgtjx_rx(W(XD))
+
+#define cgtjx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
+        EMITW(0x41810008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
+        EMITW(0x41810008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
+        stack_ld(Recx)                                                      \
+        stack_ld(Reax)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtjn_rr(XG, XS)                                                    \
+        cgtjn3rr(W(XG), W(XG), W(XS))
+
+#define cgtjn_ld(XG, MS, DS)                                                \
+        cgtjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtjn3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        cgtjn_rx(W(XD))
+
+#define cgtjn3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        cgtjn_rx(W(XD))
+
+#define cgtjn_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
+        EMITW(0x41810008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
+        EMITW(0x41810008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
+        stack_ld(Recx)                                                      \
+        stack_ld(Reax)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgejx_rr(XG, XS)                                                    \
+        cgejx3rr(W(XG), W(XG), W(XS))
+
+#define cgejx_ld(XG, MS, DS)                                                \
+        cgejx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgejx3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        cgejx_rx(W(XD))
+
+#define cgejx3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        cgejx_rx(W(XD))
+
+#define cgejx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
+        EMITW(0x40800008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        ASM_BEG ASM_OP2(cmpld, %%r24, %%r25) ASM_END                        \
+        EMITW(0x40800008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
+        stack_ld(Recx)                                                      \
+        stack_ld(Reax)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgejn_rr(XG, XS)                                                    \
+        cgejn3rr(W(XG), W(XG), W(XS))
+
+#define cgejn_ld(XG, MS, DS)                                                \
+        cgejn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgejn3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        cgejn_rx(W(XD))
+
+#define cgejn3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        cgejn_rx(W(XD))
+
+#define cgejn_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
+        ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
+        EMITW(0x40800008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movzx_ld(Recx,  Mebp, inf_GPC07)                                    \
+        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
+        ASM_BEG ASM_OP2(cmpd,  %%r24, %%r25) ASM_END                        \
+        EMITW(0x40800008)                                                   \
+        xorxz_rr(Recx,  Recx)                                               \
+        movzx_st(Recx,  Mebp, inf_SCR02(0x08))                              \
+        stack_ld(Recx)                                                      \
+        stack_ld(Reax)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0))
+
+#else /* RT_SIMD_COMPAT_PW8 == 1 */
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minjx_rr(XG, XS)                                                    \
+        minjx3rr(W(XG), W(XG), W(XS))
+
+#define minjx_ld(XG, MS, DS)                                                \
+        minjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minjx3rr(XD, XS, XT)                                                \
+        EMITW(0x100002C2 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define minjx3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
+        EMITW(0x100002C2 | MXM(REG(XD), REG(XS), TmmM))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minjn_rr(XG, XS)                                                    \
+        minjn3rr(W(XG), W(XG), W(XS))
+
+#define minjn_ld(XG, MS, DS)                                                \
+        minjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minjn3rr(XD, XS, XT)                                                \
+        EMITW(0x100003C2 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define minjn3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
+        EMITW(0x100003C2 | MXM(REG(XD), REG(XS), TmmM))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxjx_rr(XG, XS)                                                    \
+        maxjx3rr(W(XG), W(XG), W(XS))
+
+#define maxjx_ld(XG, MS, DS)                                                \
+        maxjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxjx3rr(XD, XS, XT)                                                \
+        EMITW(0x100000C2 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define maxjx3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
+        EMITW(0x100000C2 | MXM(REG(XD), REG(XS), TmmM))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxjn_rr(XG, XS)                                                    \
+        maxjn3rr(W(XG), W(XG), W(XS))
+
+#define maxjn_ld(XG, MS, DS)                                                \
+        maxjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxjn3rr(XD, XS, XT)                                                \
+        EMITW(0x100001C2 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define maxjn3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
+        EMITW(0x100001C2 | MXM(REG(XD), REG(XS), TmmM))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqjx_rr(XG, XS)                                                    \
+        ceqjx3rr(W(XG), W(XG), W(XS))
+
+#define ceqjx_ld(XG, MS, DS)                                                \
+        ceqjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqjx3rr(XD, XS, XT)                                                \
+        EMITW(0x100000C7 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define ceqjx3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
+        EMITW(0x100000C7 | MXM(REG(XD), REG(XS), TmmM))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cnejx_rr(XG, XS)                                                    \
+        cnejx3rr(W(XG), W(XG), W(XS))
+
+#define cnejx_ld(XG, MS, DS)                                                \
+        cnejx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cnejx3rr(XD, XS, XT)                                                \
+        EMITW(0x100000C7 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x10000504 | MXM(REG(XD), REG(XD), REG(XD)))
+
+#define cnejx3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
+        EMITW(0x100000C7 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x10000504 | MXM(REG(XD), REG(XD), REG(XD)))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltjx_rr(XG, XS)                                                    \
+        cltjx3rr(W(XG), W(XG), W(XS))
+
+#define cltjx_ld(XG, MS, DS)                                                \
+        cltjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltjx3rr(XD, XS, XT)                                                \
+        EMITW(0x100002C7 | MXM(REG(XD), REG(XT), REG(XS)))
+
+#define cltjx3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
+        EMITW(0x100002C7 | MXM(REG(XD), TmmM,    REG(XS)))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltjn_rr(XG, XS)                                                    \
+        cltjn3rr(W(XG), W(XG), W(XS))
+
+#define cltjn_ld(XG, MS, DS)                                                \
+        cltjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltjn3rr(XD, XS, XT)                                                \
+        EMITW(0x100003C7 | MXM(REG(XD), REG(XT), REG(XS)))
+
+#define cltjn3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
+        EMITW(0x100003C7 | MXM(REG(XD), TmmM,    REG(XS)))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define clejx_rr(XG, XS)                                                    \
+        clejx3rr(W(XG), W(XG), W(XS))
+
+#define clejx_ld(XG, MS, DS)                                                \
+        clejx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clejx3rr(XD, XS, XT)                                                \
+        EMITW(0x100002C7 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x10000504 | MXM(REG(XD), REG(XD), REG(XD)))
+
+#define clejx3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
+        EMITW(0x100002C7 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x10000504 | MXM(REG(XD), REG(XD), REG(XD)))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define clejn_rr(XG, XS)                                                    \
+        clejn3rr(W(XG), W(XG), W(XS))
+
+#define clejn_ld(XG, MS, DS)                                                \
+        clejn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clejn3rr(XD, XS, XT)                                                \
+        EMITW(0x100003C7 | MXM(REG(XD), REG(XS), REG(XT)))                  \
+        EMITW(0x10000504 | MXM(REG(XD), REG(XD), REG(XD)))
+
+#define clejn3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
+        EMITW(0x100003C7 | MXM(REG(XD), REG(XS), TmmM))                     \
+        EMITW(0x10000504 | MXM(REG(XD), REG(XD), REG(XD)))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtjx_rr(XG, XS)                                                    \
+        cgtjx3rr(W(XG), W(XG), W(XS))
+
+#define cgtjx_ld(XG, MS, DS)                                                \
+        cgtjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtjx3rr(XD, XS, XT)                                                \
+        EMITW(0x100002C7 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define cgtjx3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
+        EMITW(0x100002C7 | MXM(REG(XD), REG(XS), TmmM))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtjn_rr(XG, XS)                                                    \
+        cgtjn3rr(W(XG), W(XG), W(XS))
+
+#define cgtjn_ld(XG, MS, DS)                                                \
+        cgtjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtjn3rr(XD, XS, XT)                                                \
+        EMITW(0x100003C7 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define cgtjn3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
+        EMITW(0x100003C7 | MXM(REG(XD), REG(XS), TmmM))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgejx_rr(XG, XS)                                                    \
+        cgejx3rr(W(XG), W(XG), W(XS))
+
+#define cgejx_ld(XG, MS, DS)                                                \
+        cgejx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgejx3rr(XD, XS, XT)                                                \
+        EMITW(0x100002C7 | MXM(REG(XD), REG(XT), REG(XS)))                  \
+        EMITW(0x10000504 | MXM(REG(XD), REG(XD), REG(XD)))
+
+#define cgejx3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
+        EMITW(0x100002C7 | MXM(REG(XD), TmmM,    REG(XS)))                  \
+        EMITW(0x10000504 | MXM(REG(XD), REG(XD), REG(XD)))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgejn_rr(XG, XS)                                                    \
+        cgejn3rr(W(XG), W(XG), W(XS))
+
+#define cgejn_ld(XG, MS, DS)                                                \
+        cgejn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgejn3rr(XD, XS, XT)                                                \
+        EMITW(0x100003C7 | MXM(REG(XD), REG(XT), REG(XS)))                  \
+        EMITW(0x10000504 | MXM(REG(XD), REG(XD), REG(XD)))
+
+#define cgejn3ld(XD, XS, MT, DT)                                            \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    Teax & M(MOD(MT) == TPxx), TPxx))   \
+        EMITW(0x100003C7 | MXM(REG(XD), TmmM,    REG(XS)))                  \
+        EMITW(0x10000504 | MXM(REG(XD), REG(XD), REG(XD)))
+
+#endif /* RT_SIMD_COMPAT_PW8 == 1 */
+
 /******************************************************************************/
 /**********************************   ELEM   **********************************/
 /******************************************************************************/
