@@ -898,14 +898,12 @@
 #define mkjox_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         VEX(0,             0,    0x00, 1, 0, 1) EMITB(0x50)                 \
         MRM(0x00,    MOD(XS), REG(XS))                                      \
-        REX(1,             0) EMITB(0x8B)                                   \
-        MRM(0x07,       0x03, 0x00)                                         \
-        VEX(0,             1,    0x00, 1, 0, 1) EMITB(0x50)                 \
-        MRM(0x00,    MOD(XS), REG(XS))                                      \
+        VEX(1,             1,    0x00, 1, 0, 1) EMITB(0x50)                 \
+        MRM(0x07,    MOD(XS), REG(XS))                                      \
         REX(0,             1)                                               \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##32_512 >> 7) << 1)))   \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##32_512 & 0x1) << 1)))  \
         MRM(0x00,       0x03, 0x07)                                         \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##32_512))                     \
+        cmpwx_ri(Reax, IB(RT_SIMD_MASK_##mask##32_512))                     \
         jeqxx_lb(lb)
 
 /*************   packed single-precision floating-point convert   *************/
