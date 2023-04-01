@@ -234,7 +234,7 @@
 
 /* lxvwsx-workaround for POWER9 on QEMU 3.0.0 */
 
-#define RT_ELEM_COMPAT_PW9  0 /* set it to 1 when QEMU is fixed */
+#define RT_ELEM_COMPAT_PW9  0 /* set it to 1 when QEMU is fixed (QEMU 5.2.0) */
 
 #if RT_ELEM_COMPAT_PW9
 #define Ox7C000XXX  0x7C0002D9

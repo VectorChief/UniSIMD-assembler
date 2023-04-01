@@ -1684,46 +1684,15 @@
 #define minqx3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Reax)                                                      \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
-        EMITB(0x73) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
-        EMITB(0x73) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
-        EMITB(0x73) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
-        EMITB(0x73) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x20))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x20))                              \
-        EMITB(0x73) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x20))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x28))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x28))                              \
-        EMITB(0x73) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x28))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x30))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x30))                              \
-        EMITB(0x73) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x30))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x38))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x38))                              \
-        EMITB(0x73) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x38))                              \
-        stack_ld(Reax)                                                      \
-        movqx_ld(W(XD), Mebp, inf_SCR02(0))
+        minqx_rx(W(XD))
 
 #define minqx3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        minqx_rx(W(XD))
+
+#define minqx_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Reax)                                                      \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
@@ -1771,46 +1740,15 @@
 #define minqn3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Reax)                                                      \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
-        EMITB(0x7D) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
-        EMITB(0x7D) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
-        EMITB(0x7D) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
-        EMITB(0x7D) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x20))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x20))                              \
-        EMITB(0x7D) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x20))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x28))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x28))                              \
-        EMITB(0x7D) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x28))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x30))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x30))                              \
-        EMITB(0x7D) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x30))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x38))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x38))                              \
-        EMITB(0x7D) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x38))                              \
-        stack_ld(Reax)                                                      \
-        movqx_ld(W(XD), Mebp, inf_SCR02(0))
+        minqn_rx(W(XD))
 
 #define minqn3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        minqn_rx(W(XD))
+
+#define minqn_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Reax)                                                      \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
@@ -1858,46 +1796,15 @@
 #define maxqx3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Reax)                                                      \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
-        EMITB(0x76) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
-        EMITB(0x76) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
-        EMITB(0x76) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
-        EMITB(0x76) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x20))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x20))                              \
-        EMITB(0x76) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x20))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x28))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x28))                              \
-        EMITB(0x76) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x28))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x30))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x30))                              \
-        EMITB(0x76) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x30))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x38))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x38))                              \
-        EMITB(0x76) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x38))                              \
-        stack_ld(Reax)                                                      \
-        movqx_ld(W(XD), Mebp, inf_SCR02(0))
+        maxqx_rx(W(XD))
 
 #define maxqx3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        maxqx_rx(W(XD))
+
+#define maxqx_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Reax)                                                      \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
@@ -1945,46 +1852,15 @@
 #define maxqn3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Reax)                                                      \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
-        EMITB(0x7E) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x08))                              \
-        EMITB(0x7E) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x08))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x10))                              \
-        EMITB(0x7E) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x10))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x18))                              \
-        EMITB(0x7E) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x18))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x20))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x20))                              \
-        EMITB(0x7E) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x20))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x28))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x28))                              \
-        EMITB(0x7E) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x28))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x30))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x30))                              \
-        EMITB(0x7E) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x30))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR01(0x38))                              \
-        cmpzx_rm(Reax,  Mebp, inf_SCR02(0x38))                              \
-        EMITB(0x7E) EMITB(0x07 + x67)                                       \
-        movzx_st(Reax,  Mebp, inf_SCR02(0x38))                              \
-        stack_ld(Reax)                                                      \
-        movqx_ld(W(XD), Mebp, inf_SCR02(0))
+        maxqn_rx(W(XD))
 
 #define maxqn3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        maxqn_rx(W(XD))
+
+#define maxqn_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Reax)                                                      \
         movzx_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
         cmpzx_rm(Reax,  Mebp, inf_SCR02(0x00))                              \
