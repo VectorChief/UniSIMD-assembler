@@ -1,5 +1,5 @@
 /******************************************************************************/
-/* Copyright (c) 2013-2021 VectorChief (at github, bitbucket, sourceforge)    */
+/* Copyright (c) 2013-2022 VectorChief (at github, bitbucket, sourceforge)    */
 /* Distributed under the MIT software license, see the accompanying           */
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
@@ -28,21 +28,25 @@
  * cmdp*_rm - applies [cmd] to [p]acked: [r]egister from [m]emory
  * cmdp*_ld - applies [cmd] to [p]acked: as above
  *
- * cmdi*_** - applies [cmd] to 32-bit SIMD element args, packed-128-bit
- * cmdj*_** - applies [cmd] to 64-bit SIMD element args, packed-128-bit
- * cmdl*_** - applies [cmd] to L-size SIMD element args, packed-128-bit
+ * cmdi*_** - applies [cmd] to 32-bit elements SIMD args, packed-128-bit
+ * cmdj*_** - applies [cmd] to 64-bit elements SIMD args, packed-128-bit
+ * cmdl*_** - applies [cmd] to L-size elements SIMD args, packed-128-bit
  *
- * cmdc*_** - applies [cmd] to 32-bit SIMD element args, packed-256-bit
- * cmdd*_** - applies [cmd] to 64-bit SIMD element args, packed-256-bit
- * cmdf*_** - applies [cmd] to L-size SIMD element args, packed-256-bit
+ * cmdc*_** - applies [cmd] to 32-bit elements SIMD args, packed-256-bit
+ * cmdd*_** - applies [cmd] to 64-bit elements SIMD args, packed-256-bit
+ * cmdf*_** - applies [cmd] to L-size elements SIMD args, packed-256-bit
  *
- * cmdo*_** - applies [cmd] to 32-bit SIMD element args, packed-var-len
- * cmdp*_** - applies [cmd] to L-size SIMD element args, packed-var-len
- * cmdq*_** - applies [cmd] to 64-bit SIMD element args, packed-var-len
+ * cmdo*_** - applies [cmd] to 32-bit elements SIMD args, packed-var-len
+ * cmdp*_** - applies [cmd] to L-size elements SIMD args, packed-var-len
+ * cmdq*_** - applies [cmd] to 64-bit elements SIMD args, packed-var-len
  *
- * cmd*x_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
- * cmd*n_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
- * cmd*s_** - applies [cmd] to [p]acked floating point   args, [s] - scalable
+ * cmdr*_** - applies [cmd] to 32-bit elements ELEM args, scalar-fp-only
+ * cmds*_** - applies [cmd] to L-size elements ELEM args, scalar-fp-only
+ * cmdt*_** - applies [cmd] to 64-bit elements ELEM args, scalar-fp-only
+ *
+ * cmd*x_** - applies [cmd] to SIMD/BASE unsigned integer args, [x] - default
+ * cmd*n_** - applies [cmd] to SIMD/BASE   signed integer args, [n] - negatable
+ * cmd*s_** - applies [cmd] to SIMD/ELEM floating point   args, [s] - scalable
  *
  * The cmdp*_** (rtconf.h) instructions are intended for SPMD programming model
  * and can be configured to work with 32/64-bit data elements (fp+int).
@@ -72,7 +76,15 @@
  * floating point compare and min/max input/output. The result of floating point
  * compare instructions can be considered a -QNaN, though it is also interpreted
  * as integer -1 and is often treated as a mask. Most arithmetic instructions
- * should propagate QNaNs unchanged, however this behavior hasn't been verified.
+ * should propagate QNaNs unchanged, however this behavior hasn't been tested.
+ *
+ * Note, that instruction subsets operating on vectors of different length
+ * may support different number of SIMD registers, therefore mixing them
+ * in the same code needs to be done with register awareness in mind.
+ * For example, AVX-512 supports 32 SIMD registers, while AVX2 only has 16,
+ * as does 256-bit paired subset on ARMv8, while 128-bit and SVE have 32.
+ * These numbers should be consistent across architectures if properly
+ * mapped to SIMD target mask presented in rtzero.h (compatibility layer).
  *
  * Interpretation of instruction parameters:
  *
