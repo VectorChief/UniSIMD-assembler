@@ -1,5 +1,5 @@
 /******************************************************************************/
-/* Copyright (c) 2013-2021 VectorChief (at github, bitbucket, sourceforge)    */
+/* Copyright (c) 2013-2022 VectorChief (at github, bitbucket, sourceforge)    */
 /* Distributed under the MIT software license, see the accompanying           */
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
@@ -1867,6 +1867,10 @@
 #define neg_x   AM0
 #define add_x   AM1
 #define sub_x   AM2
+#define add_n   AM3
+#define sub_n   AM4
+#define add_z   AM5
+#define sub_z   AM6
 #define shl_x   AN0
 #define shr_x   AN1
 #define shr_n   AN2
@@ -1985,7 +1989,7 @@
  * 2nd byte - 512-bit version, 3rd byte - 1K4-bit version, | in upper halves */
 
 #define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
-        movwx_mi(Mebp, inf_VER, IV(0x033F47)) /* <- VSX1+2/3/VMX: 128,256,512 */
+        movwx_mi(Mebp, inf_VER, IV(0x033F4F)) /* <- VSX1+2/3/VMX: 128,256,512 */
 
 /************************* address-sized instructions *************************/
 
@@ -2166,6 +2170,8 @@
 #define AM2(sz, sg) sub##sz##x##sg
 #define AM3(sz, sg) add##sz##n##sg
 #define AM4(sz, sg) sub##sz##n##sg
+#define AM5(sz, sg) add##sz##z##sg
+#define AM6(sz, sg) sub##sz##z##sg
 #define AN0(sz, sg) shl##sz##x##sg
 #define AN1(sz, sg) shr##sz##x##sg
 #define AN2(sz, sg) shr##sz##n##sg

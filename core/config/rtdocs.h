@@ -1,5 +1,5 @@
 /******************************************************************************/
-/* Copyright (c) 2013-2021 VectorChief (at github, bitbucket, sourceforge)    */
+/* Copyright (c) 2013-2022 VectorChief (at github, bitbucket, sourceforge)    */
 /* Distributed under the MIT software license, see the accompanying           */
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
@@ -106,6 +106,12 @@
  * The load-level is measured at Q equal to 1 and UniSIMD then adjusts internal
  * displacement values as Q scales up.
  *
+ * UniSIMD defines a lot of simple single-letter internal values which can
+ * interfere with program's own variables, especially when adding UniSIMD to
+ * an existing project. It is therefore recommended using a separate file
+ * for ASM header and sections or adding them at the end of an existing file,
+ * while keeping function declarations to be used in the program at the top.
+ *
  * All applications need to include a single root header with base types and
  * definitions so that UniSIMD can do the rest of configuration based on
  * makefile flags. Depending on where the source files are located makefile
@@ -163,9 +169,7 @@
  * Some emulated instructions within ASM sections rely on general purpose
  * constants in rt_SIMD_INFO structure defined in "core/config/rtbase.h".
  * They need to be initialized before the pointer to this structure is passed to
- * the first ASM section and deinitialized after the last one.
- *
- * This is done with:
+ * the first ASM section and deinitialized after the last one. It's done with:
  *
  * ASM_INIT(inf, reg)
  *
@@ -190,6 +194,14 @@
  * it shows up as Rebp register and can be accessed via Mebp addressing mode
  * with corresponding displacements (offsets) defined in rt_SIMD_INFO and
  * rt_SIMD_INFOX (by extension).
+ *
+ * Potential future improvement is to use an array instead of structure to avoid
+ * possible paddings that compiler may introduce for its own needs (alignment),
+ * in which case some parts of the assembler will need to be redesigned.
+ * ASM_ENTER/LEAVE macros can be converted into just-in-time compilation along
+ * with EMITW/EMITH/EMITB/LBL to avoid possible compiler issues with inline ASM.
+ * The order of arithmetic and shifts within internal definitions can be
+ * hardened by using extra parentheses (in a form of round brackets).
  *
  * Right shifts on signed/unsigned data types in C/C++ are not guaranteed by
  * the standard to produce arithmetic/logical shift instructions respectively,

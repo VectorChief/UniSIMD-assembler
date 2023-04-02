@@ -1,5 +1,5 @@
 /******************************************************************************/
-/* Copyright (c) 2013-2021 VectorChief (at github, bitbucket, sourceforge)    */
+/* Copyright (c) 2013-2022 VectorChief (at github, bitbucket, sourceforge)    */
 /* Distributed under the MIT software license, see the accompanying           */
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
@@ -72,7 +72,7 @@
  */
 
 /*
- * Alphabetical view of current/future instruction namespaces is given above.
+ * Alphabetical view of current/future instruction namespaces is in rtzero.h.
  * Configurable BASE/SIMD subsets (cmdx*, cmdy*, cmdp*) are defined in rtconf.h.
  * Mixing of 64/32-bit fields in backend structures may lead to misalignment
  * of 64-bit fields to 4-byte boundary, which is not supported on some targets.
@@ -81,6 +81,10 @@
  * address size (RT_ADDRESS or A) and only label_ld/st, jmpxx_xr/xm follow
  * pointer size (RT_POINTER or P) as code/data/stack segments are fixed.
  * Stack ops always work with full registers regardless of the mode chosen.
+ *
+ * 64/32-bit subsets are both self-consistent within themselves, 32-bit results
+ * cannot be used in 64-bit subset without proper sign/zero-extend bridges,
+ * cmdwn/wz bridges for 32-bit subset are provided in 64-bit headers.
  *
  * 32-bit and 64-bit BASE subsets are not easily compatible on all targets,
  * thus any register modified with 32-bit op cannot be used in 64-bit subset.
@@ -101,7 +105,7 @@
  * Alternatively, data written natively in C/C++ can be worked on from within
  * a given (one) subset if appropriate offset correction is used from rtbase.h.
  *
- * Setting-flags instruction naming scheme has been changed again recently for
+ * Setting-flags instruction naming scheme was changed twice in the past for
  * better orthogonality with operand size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
@@ -139,14 +143,15 @@
  * floating point compare and min/max input/output. The result of floating point
  * compare instructions can be considered a -QNaN, though it is also interpreted
  * as integer -1 and is often treated as a mask. Most arithmetic instructions
- * should propagate QNaNs unchanged, however this behavior hasn't been verified.
+ * should propagate QNaNs unchanged, however this behavior hasn't been tested.
  *
- * Working with sub-word BASE elements (byte, half) is reserved for future use.
- * However, current displacement types may not work due to natural alignment.
- * Signed/unsigned types can be supported orthogonally in cmd*n_**, cmd*x_**.
- * Working with sub-word SIMD elements (byte, half) has not been investigated.
- * However, as current major ISAs lack the ability to do sub-word fp-compute,
- * these corresponding subsets cannot be viewed as valid targets for SPMD.
+ * Note, that instruction subsets operating on vectors of different length
+ * may support different number of SIMD registers, therefore mixing them
+ * in the same code needs to be done with register awareness in mind.
+ * For example, AVX-512 supports 32 SIMD registers, while AVX2 only has 16,
+ * as does 256-bit paired subset on ARMv8, while 128-bit and SVE have 32.
+ * These numbers should be consistent across architectures if properly
+ * mapped to SIMD target mask presented in rtzero.h (compatibility layer).
  *
  * Scalar SIMD improvements, horizontal SIMD reductions, wider SIMD vectors
  * with zeroing/merging predicates in 3/4-operand instructions are planned as

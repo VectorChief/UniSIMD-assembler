@@ -1,5 +1,5 @@
 /******************************************************************************/
-/* Copyright (c) 2013-2021 VectorChief (at github, bitbucket, sourceforge)    */
+/* Copyright (c) 2013-2022 VectorChief (at github, bitbucket, sourceforge)    */
 /* Distributed under the MIT software license, see the accompanying           */
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
@@ -153,7 +153,7 @@
 /******************************************************************************/
 
 /*
- *** The following BASE instruction namespaces are defined for current use.
+ *** The following BASE instruction namespaces are defined for current use. ***
  *
  * cmdw*_** - word-size args, BASE ISA (data element is always fixed at 32-bit)
  * cmdx*_** - addr-size args, BASE ISA (32/64-bit configurable with RT_ADDRESS)
@@ -162,7 +162,7 @@
  *
  * cmd**Z** - setting-flags: [Z] - zero flag, orthogonal to data-size/data-type
  *
- *** The following SIMD instruction namespaces are defined for current use.
+ *** The following SIMD instruction namespaces are defined for current use. ***
  *
  * cmdr*_** - SIMD-elem args, ELEM ISA (data element is 32-bit, scalar)
  * cmds*_** - SIMD-elem args, ELEM ISA (32/64-bit configurable, scalar)
@@ -170,7 +170,7 @@
  *
  * cmde*_** - extd-size args, extd ISA (for 80-bit extended double, x87)
  *
- *** The following SIMD instruction namespaces are defined for current use.
+ *** The following SIMD instruction namespaces are defined for current use. ***
  *
  * cmdo*_** - SIMD-data args, SIMD ISA (data element is 32-bit, packed-var-len)
  * cmdp*_** - SIMD-data args, SIMD ISA (32/64-bit configurable, packed-var-len)
@@ -204,14 +204,14 @@
  * cv***F**, c***sF** can reuse fp<->int names for .?-sized fixed-point, ? = F*8
  * when fp<->int sizes don't match extended fpu ISA can be used with other archs
  *
- *** The following BASE instruction namespaces are reserved for the future.
+ *** The following BASE instruction namespaces are reserved for the future. ***
  *
  * cmdb*_** - byte-size args, BASE ISA (displacement/alignment may differ)
  * cmdh*_** - half-size args, BASE ISA (displacement/alignment may differ)
  *
  * cmdk*_** - king-kong args, BASE ISA (for 128-bit BASE subset, RISC-V)
  *
- *** The following SIMD instruction namespaces are reserved for the future.
+ *** The following SIMD instruction namespaces are reserved for the future. ***
  *
  * cmdm*_** - SIMD-data args, SIMD ISA (packed fp16/int subset, half-precision)
  * cmdn*_** - SIMD-elem args, ELEM ISA (scalar fp16/int subset, half-precision)
@@ -242,6 +242,10 @@
  * address size (RT_ADDRESS or A) and only label_ld/st, jmpxx_xr/xm follow
  * pointer size (RT_POINTER or P) as code/data/stack segments are fixed.
  * Stack ops always work with full registers regardless of the mode chosen.
+ *
+ * 64/32-bit subsets are both self-consistent within themselves, 32-bit results
+ * cannot be used in 64-bit subset without proper sign/zero-extend bridges,
+ * cmdwn/wz bridges for 32-bit subset are provided in 64-bit headers.
  *
  * 32-bit and 64-bit BASE subsets are not easily compatible on all targets,
  * thus any register modified with 32-bit op cannot be used in 64-bit subset.
@@ -300,14 +304,15 @@
  * floating point compare and min/max input/output. The result of floating point
  * compare instructions can be considered a -QNaN, though it is also interpreted
  * as integer -1 and is often treated as a mask. Most arithmetic instructions
- * should propagate QNaNs unchanged, however this behavior hasn't been verified.
+ * should propagate QNaNs unchanged, however this behavior hasn't been tested.
  *
- * Working with sub-word BASE elements (byte, half) is reserved for future use.
- * However, current displacement types may not work due to natural alignment.
- * Signed/unsigned types can be supported orthogonally in cmd*n_**, cmd*x_**.
- * Working with sub-word SIMD elements (byte, half) has not been investigated.
- * However, as current major ISAs lack the ability to do sub-word fp-compute,
- * these corresponding subsets cannot be viewed as valid targets for SPMD.
+ * Note, that instruction subsets operating on vectors of different length
+ * may support different number of SIMD registers, therefore mixing them
+ * in the same code needs to be done with register awareness in mind.
+ * For example, AVX-512 supports 32 SIMD registers, while AVX2 only has 16,
+ * as does 256-bit paired subset on ARMv8, while 128-bit and SVE have 32.
+ * These numbers should be consistent across architectures if properly
+ * mapped to SIMD target mask presented in rtzero.h (compatibility layer).
  *
  * Scalar SIMD improvements, horizontal SIMD reductions, wider SIMD vectors
  * with zeroing/merging predicates in 3/4-operand instructions are planned as

@@ -1,5 +1,5 @@
 /******************************************************************************/
-/* Copyright (c) 2013-2021 VectorChief (at github, bitbucket, sourceforge)    */
+/* Copyright (c) 2013-2022 VectorChief (at github, bitbucket, sourceforge)    */
 /* Distributed under the MIT software license, see the accompanying           */
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
@@ -67,17 +67,17 @@
  * cmdp*_rm - applies [cmd] to [p]acked: [r]egister from [m]emory
  * cmdp*_ld - applies [cmd] to [p]acked: as above
  *
- * cmdi*_** - applies [cmd] to 32-bit SIMD element args, packed-128-bit
- * cmdj*_** - applies [cmd] to 64-bit SIMD element args, packed-128-bit
- * cmdl*_** - applies [cmd] to L-size SIMD element args, packed-128-bit
+ * cmdi*_** - applies [cmd] to 32-bit elements SIMD args, packed-128-bit
+ * cmdj*_** - applies [cmd] to 64-bit elements SIMD args, packed-128-bit
+ * cmdl*_** - applies [cmd] to L-size elements SIMD args, packed-128-bit
  *
- * cmdc*_** - applies [cmd] to 32-bit SIMD element args, packed-256-bit
- * cmdd*_** - applies [cmd] to 64-bit SIMD element args, packed-256-bit
- * cmdf*_** - applies [cmd] to L-size SIMD element args, packed-256-bit
+ * cmdc*_** - applies [cmd] to 32-bit elements SIMD args, packed-256-bit
+ * cmdd*_** - applies [cmd] to 64-bit elements SIMD args, packed-256-bit
+ * cmdf*_** - applies [cmd] to L-size elements SIMD args, packed-256-bit
  *
- * cmdo*_** - applies [cmd] to 32-bit SIMD element args, packed-var-len
- * cmdp*_** - applies [cmd] to L-size SIMD element args, packed-var-len
- * cmdq*_** - applies [cmd] to 64-bit SIMD element args, packed-var-len
+ * cmdo*_** - applies [cmd] to 32-bit elements SIMD args, packed-var-len
+ * cmdp*_** - applies [cmd] to L-size elements SIMD args, packed-var-len
+ * cmdq*_** - applies [cmd] to 64-bit elements SIMD args, packed-var-len
  *
  * cmd*x_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
@@ -111,7 +111,15 @@
  * floating point compare and min/max input/output. The result of floating point
  * compare instructions can be considered a -QNaN, though it is also interpreted
  * as integer -1 and is often treated as a mask. Most arithmetic instructions
- * should propagate QNaNs unchanged, however this behavior hasn't been verified.
+ * should propagate QNaNs unchanged, however this behavior hasn't been tested.
+ *
+ * Note, that instruction subsets operating on vectors of different length
+ * may support different number of SIMD registers, therefore mixing them
+ * in the same code needs to be done with register awareness in mind.
+ * For example, AVX-512 supports 32 SIMD registers, while AVX2 only has 16,
+ * as does 256-bit paired subset on ARMv8, while 128-bit and SVE have 32.
+ * These numbers should be consistent across architectures if properly
+ * mapped to SIMD target mask presented in rtzero.h (compatibility layer).
  *
  * Interpretation of instruction parameters:
  *
@@ -10524,10 +10532,10 @@
  * cmdxx_lb - applies [cmd] as above
  * label_ld - applies [adr] as above
  *
- * stack_st - applies [mov] to stack from register (push)
- * stack_ld - applies [mov] to register from stack (pop)
- * stack_sa - applies [mov] to stack from all registers
- * stack_la - applies [mov] to all registers from stack
+ * stack_st - applies [mov] to stack from full register (push)
+ * stack_ld - applies [mov] to full register from stack (pop)
+ * stack_sa - applies [mov] to stack from all full registers
+ * stack_la - applies [mov] to all full registers from stack
  *
  * cmdw*_** - applies [cmd] to 32-bit BASE register/memory/immediate args
  * cmdx*_** - applies [cmd] to A-size BASE register/memory/immediate args
@@ -10575,6 +10583,10 @@
  * pointer size (RT_POINTER or P) as code/data/stack segments are fixed.
  * Stack ops always work with full registers regardless of the mode chosen.
  *
+ * 64/32-bit subsets are both self-consistent within themselves, 32-bit results
+ * cannot be used in 64-bit subset without proper sign/zero-extend bridges,
+ * cmdwn/wz bridges for 32-bit subset are provided in 64-bit headers.
+ *
  * 32-bit and 64-bit BASE subsets are not easily compatible on all targets,
  * thus any register modified with 32-bit op cannot be used in 64-bit subset.
  * Alternatively, data flow must not exceed 31-bit range for 32-bit operations
@@ -10594,7 +10606,7 @@
  * Alternatively, data written natively in C/C++ can be worked on from within
  * a given (one) subset if appropriate offset correction is used from rtbase.h.
  *
- * Setting-flags instruction naming scheme has been changed again recently for
+ * Setting-flags instruction naming scheme was changed twice in the past for
  * better orthogonality with operand size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
@@ -10998,7 +11010,7 @@
 #define shlxxZmr(MG, DG, RS)                                                \
         shlwxZmr(W(MG), W(DG), W(RS))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -11051,6 +11063,9 @@
 #define shrxxZmr(MG, DG, RS)                                                \
         shrwxZmr(W(MG), W(DG), W(RS))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrxn_rx(RG)                     /* reads Recx for shift count */   \
         shrwn_rx(W(RG))
@@ -11210,10 +11225,10 @@
         divwn_ld(W(RG), W(MS), W(DS))
 
 
-#define prexx_xx()          /* to be placed immediately prior divxx_x* */   \
+#define prexx_xx()   /* to be placed right before divxx_x* or remxx_xx */   \
         prewx_xx()                   /* to prepare Redx for int-divide */
 
-#define prexn_xx()          /* to be placed immediately prior divxn_x* */   \
+#define prexn_xx()   /* to be placed right before divxn_x* or remxn_xx */   \
         prewn_xx()                   /* to prepare Redx for int-divide */
 
 
@@ -11262,7 +11277,7 @@
         remwn_ld(W(RG), W(MS), W(DS))
 
 
-#define remxx_xx()          /* to be placed immediately prior divxx_x* */   \
+#define remxx_xx() /* to be placed before divxx_x*, but after prexx_xx */   \
         remwx_xx()                   /* to prepare for rem calculation */
 
 #define remxx_xr(RS)        /* to be placed immediately after divxx_xr */   \
@@ -11272,7 +11287,7 @@
         remwx_xm(W(MS), W(DS))       /* to produce remainder Redx<-rem */
 
 
-#define remxn_xx()          /* to be placed immediately prior divxn_x* */   \
+#define remxn_xx() /* to be placed before divxn_x*, but after prexn_xx */   \
         remwn_xx()                   /* to prepare for rem calculation */
 
 #define remxn_xr(RS)        /* to be placed immediately after divxn_xr */   \
@@ -11788,7 +11803,7 @@
 #define shlxxZmr(MG, DG, RS)                                                \
         shlzxZmr(W(MG), W(DG), W(RS))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -11841,6 +11856,9 @@
 #define shrxxZmr(MG, DG, RS)                                                \
         shrzxZmr(W(MG), W(DG), W(RS))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrxn_rx(RG)                     /* reads Recx for shift count */   \
         shrzn_rx(W(RG))
@@ -12000,10 +12018,10 @@
         divzn_ld(W(RG), W(MS), W(DS))
 
 
-#define prexx_xx()          /* to be placed immediately prior divxx_x* */   \
+#define prexx_xx()   /* to be placed right before divxx_x* or remxx_xx */   \
         prezx_xx()                   /* to prepare Redx for int-divide */
 
-#define prexn_xx()          /* to be placed immediately prior divxn_x* */   \
+#define prexn_xx()   /* to be placed right before divxn_x* or remxn_xx */   \
         prezn_xx()                   /* to prepare Redx for int-divide */
 
 
@@ -12052,7 +12070,7 @@
         remzn_ld(W(RG), W(MS), W(DS))
 
 
-#define remxx_xx()          /* to be placed immediately prior divxx_x* */   \
+#define remxx_xx() /* to be placed before divxx_x*, but after prexx_xx */   \
         remzx_xx()                   /* to prepare for rem calculation */
 
 #define remxx_xr(RS)        /* to be placed immediately after divxx_xr */   \
@@ -12062,7 +12080,7 @@
         remzx_xm(W(MS), W(DS))       /* to produce remainder Redx<-rem */
 
 
-#define remxn_xx()          /* to be placed immediately prior divxn_x* */   \
+#define remxn_xx() /* to be placed before divxn_x*, but after prexn_xx */   \
         remzn_xx()                   /* to prepare for rem calculation */
 
 #define remxn_xr(RS)        /* to be placed immediately after divxn_xr */   \
@@ -12580,7 +12598,7 @@
 #define shlyxZmr(MG, DG, RS)                                                \
         shlwxZmr(W(MG), W(DG), W(RS))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -12633,6 +12651,9 @@
 #define shryxZmr(MG, DG, RS)                                                \
         shrwxZmr(W(MG), W(DG), W(RS))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shryn_rx(RG)                     /* reads Recx for shift count */   \
         shrwn_rx(W(RG))
@@ -12792,10 +12813,10 @@
         divwn_ld(W(RG), W(MS), W(DS))
 
 
-#define preyx_xx()          /* to be placed immediately prior divyx_x* */   \
+#define preyx_xx()   /* to be placed right before divyx_x* or remyx_xx */   \
         prewx_xx()                   /* to prepare Redx for int-divide */
 
-#define preyn_xx()          /* to be placed immediately prior divyn_x* */   \
+#define preyn_xx()   /* to be placed right before divyn_x* or remyn_xx */   \
         prewn_xx()                   /* to prepare Redx for int-divide */
 
 
@@ -12844,7 +12865,7 @@
         remwn_ld(W(RG), W(MS), W(DS))
 
 
-#define remyx_xx()          /* to be placed immediately prior divyx_x* */   \
+#define remyx_xx() /* to be placed before divyx_x*, but after preyx_xx */   \
         remwx_xx()                   /* to prepare for rem calculation */
 
 #define remyx_xr(RS)        /* to be placed immediately after divyx_xr */   \
@@ -12854,7 +12875,7 @@
         remwx_xm(W(MS), W(DS))       /* to produce remainder Redx<-rem */
 
 
-#define remyn_xx()          /* to be placed immediately prior divyn_x* */   \
+#define remyn_xx() /* to be placed before divyn_x*, but after preyn_xx */   \
         remwn_xx()                   /* to prepare for rem calculation */
 
 #define remyn_xr(RS)        /* to be placed immediately after divyn_xr */   \
@@ -13329,7 +13350,7 @@
 #define shlyxZmr(MG, DG, RS)                                                \
         shlzxZmr(W(MG), W(DG), W(RS))
 
-/* shr (G = G >> S)
+/* shr (G = G >> S), unsigned (logical)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -13382,6 +13403,9 @@
 #define shryxZmr(MG, DG, RS)                                                \
         shrzxZmr(W(MG), W(DG), W(RS))
 
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shryn_rx(RG)                     /* reads Recx for shift count */   \
         shrzn_rx(W(RG))
@@ -13541,10 +13565,10 @@
         divzn_ld(W(RG), W(MS), W(DS))
 
 
-#define preyx_xx()          /* to be placed immediately prior divyx_x* */   \
+#define preyx_xx()   /* to be placed right before divyx_x* or remyx_xx */   \
         prezx_xx()                   /* to prepare Redx for int-divide */
 
-#define preyn_xx()          /* to be placed immediately prior divyn_x* */   \
+#define preyn_xx()   /* to be placed right before divyn_x* or remyn_xx */   \
         prezn_xx()                   /* to prepare Redx for int-divide */
 
 
@@ -13593,7 +13617,7 @@
         remzn_ld(W(RG), W(MS), W(DS))
 
 
-#define remyx_xx()          /* to be placed immediately prior divyx_x* */   \
+#define remyx_xx() /* to be placed before divyx_x*, but after preyx_xx */   \
         remzx_xx()                   /* to prepare for rem calculation */
 
 #define remyx_xr(RS)        /* to be placed immediately after divyx_xr */   \
@@ -13603,7 +13627,7 @@
         remzx_xm(W(MS), W(DS))       /* to produce remainder Redx<-rem */
 
 
-#define remyn_xx()          /* to be placed immediately prior divyn_x* */   \
+#define remyn_xx() /* to be placed before divyn_x*, but after preyn_xx */   \
         remzn_xx()                   /* to prepare for rem calculation */
 
 #define remyn_xr(RS)        /* to be placed immediately after divyn_xr */   \

@@ -1,5 +1,5 @@
 /******************************************************************************/
-/* Copyright (c) 2013-2021 VectorChief (at github, bitbucket, sourceforge)    */
+/* Copyright (c) 2013-2022 VectorChief (at github, bitbucket, sourceforge)    */
 /* Distributed under the MIT software license, see the accompanying           */
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
@@ -196,6 +196,7 @@
                             s[40]=s[41]=s[42]=s[43]=s[44]=s[45]=s[46]=s[47]=\
                             s[48]=s[49]=s[50]=s[51]=s[52]=s[53]=s[54]=s[55]=\
                             s[56]=s[57]=s[58]=s[59]=s[60]=s[61]=s[62]=s[63]=v
+
 #elif (RT_SIMD == 1024)
 
 #define RT_SIMD_ALIGN       128
@@ -207,6 +208,7 @@
                             s[8]=s[9]=s[10]=s[11]=s[12]=s[13]=s[14]=s[15]=\
                             s[16]=s[17]=s[18]=s[19]=s[20]=s[21]=s[22]=s[23]=\
                             s[24]=s[25]=s[26]=s[27]=s[28]=s[29]=s[30]=s[31]=v
+
 #elif (RT_SIMD == 512)
 
 #define RT_SIMD_ALIGN       64
@@ -270,10 +272,10 @@
  * RT_SIMD_WIDTH and S may differ for builds with runtime SIMD target
  * selection in backend's ASM code sections, S is used in SIMD structs.
  */
-#define N   (Q*8)       /* for cmdm*_** SIMD-subset, rt_fp16 SIMD-fields */
-#define R   (Q*4)       /* for cmdo*_** SIMD-subset, rt_fp32 SIMD-fields */
-#define S   (Q*4/L)     /* for cmdp*_** SIMD-subset, rt_real SIMD-fields */
-#define T   (Q*2)       /* for cmdq*_** SIMD-subset, rt_fp64 SIMD-fields */
+#define N   (Q*8)     /* for cmdm*_** SIMD-subset, rt_si16/ui16 SIMD-fields */
+#define R   (Q*4)     /* for cmdo*_** SIMD-subset, rt_fp32/ui32 SIMD-fields */
+#define S   (Q*4/L)   /* for cmdp*_** SIMD-subset, rt_real/elem SIMD-fields */
+#define T   (Q*2)     /* for cmdq*_** SIMD-subset, rt_fp64/ui64 SIMD-fields */
 
 /*
  * Short names for pointer, address and SIMD element sizes (in 32-bit chunks).
@@ -814,20 +816,20 @@ struct rt_SIMD_REGS
 };
 
 #define ASM_INIT(__Info__, __Regs__)                                        \
-    RT_SIMD_SET32(__Info__->gpc01_32, +1.0f);                               \
-    RT_SIMD_SET32(__Info__->gpc02_32, -0.5f);                               \
-    RT_SIMD_SET32(__Info__->gpc03_32, +3.0f);                               \
-    RT_SIMD_SET32(__Info__->gpc04_32, 0x7FFFFFFF);                          \
-    RT_SIMD_SET32(__Info__->gpc05_32, 0x3F800000);                          \
-    RT_SIMD_SET32(__Info__->gpc06_32, 0x80000000);                          \
-    RT_SIMD_SET32(__Info__->gpc07,    0xFFFFFFFF);                          \
-    RT_SIMD_SET64(__Info__->gpc01_64, +1.0);                                \
-    RT_SIMD_SET64(__Info__->gpc02_64, -0.5);                                \
-    RT_SIMD_SET64(__Info__->gpc03_64, +3.0);                                \
-    RT_SIMD_SET64(__Info__->gpc04_64, LL(0x7FFFFFFFFFFFFFFF));              \
-    RT_SIMD_SET64(__Info__->gpc05_64, LL(0x3FF0000000000000));              \
-    RT_SIMD_SET64(__Info__->gpc06_64, LL(0x8000000000000000));              \
-    __Info__->regs = (rt_ui64)(rt_word)__Regs__;
+    RT_SIMD_SET32((__Info__)->gpc01_32, +1.0f);                             \
+    RT_SIMD_SET32((__Info__)->gpc02_32, -0.5f);                             \
+    RT_SIMD_SET32((__Info__)->gpc03_32, +3.0f);                             \
+    RT_SIMD_SET32((__Info__)->gpc04_32, 0x7FFFFFFF);                        \
+    RT_SIMD_SET32((__Info__)->gpc05_32, 0x3F800000);                        \
+    RT_SIMD_SET32((__Info__)->gpc06_32, 0x80000000);                        \
+    RT_SIMD_SET32((__Info__)->gpc07,    0xFFFFFFFF);                        \
+    RT_SIMD_SET64((__Info__)->gpc01_64, +1.0);                              \
+    RT_SIMD_SET64((__Info__)->gpc02_64, -0.5);                              \
+    RT_SIMD_SET64((__Info__)->gpc03_64, +3.0);                              \
+    RT_SIMD_SET64((__Info__)->gpc04_64, LL(0x7FFFFFFFFFFFFFFF));            \
+    RT_SIMD_SET64((__Info__)->gpc05_64, LL(0x3FF0000000000000));            \
+    RT_SIMD_SET64((__Info__)->gpc06_64, LL(0x8000000000000000));            \
+    __Info__->regs = (rt_ui64)(rt_uptr)(__Regs__);
 
 #define ASM_DONE(__Info__)
 
@@ -1144,17 +1146,17 @@ rt_si32 from_mask(rt_si32 mask)
  * cmdp*_rm - applies [cmd] to [p]acked: [r]egister from [m]emory
  * cmdp*_ld - applies [cmd] to [p]acked: as above
  *
- * cmdi*_** - applies [cmd] to 32-bit SIMD element args, packed-128-bit
- * cmdj*_** - applies [cmd] to 64-bit SIMD element args, packed-128-bit
- * cmdl*_** - applies [cmd] to L-size SIMD element args, packed-128-bit
+ * cmdi*_** - applies [cmd] to 32-bit elements SIMD args, packed-128-bit
+ * cmdj*_** - applies [cmd] to 64-bit elements SIMD args, packed-128-bit
+ * cmdl*_** - applies [cmd] to L-size elements SIMD args, packed-128-bit
  *
- * cmdc*_** - applies [cmd] to 32-bit SIMD element args, packed-256-bit
- * cmdd*_** - applies [cmd] to 64-bit SIMD element args, packed-256-bit
- * cmdf*_** - applies [cmd] to L-size SIMD element args, packed-256-bit
+ * cmdc*_** - applies [cmd] to 32-bit elements SIMD args, packed-256-bit
+ * cmdd*_** - applies [cmd] to 64-bit elements SIMD args, packed-256-bit
+ * cmdf*_** - applies [cmd] to L-size elements SIMD args, packed-256-bit
  *
- * cmdo*_** - applies [cmd] to 32-bit SIMD element args, packed-var-len
- * cmdp*_** - applies [cmd] to L-size SIMD element args, packed-var-len
- * cmdq*_** - applies [cmd] to 64-bit SIMD element args, packed-var-len
+ * cmdo*_** - applies [cmd] to 32-bit elements SIMD args, packed-var-len
+ * cmdp*_** - applies [cmd] to L-size elements SIMD args, packed-var-len
+ * cmdq*_** - applies [cmd] to 64-bit elements SIMD args, packed-var-len
  *
  * cmd*x_** - applies [cmd] to [p]acked unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to [p]acked   signed integer args, [n] - negatable
@@ -1188,7 +1190,15 @@ rt_si32 from_mask(rt_si32 mask)
  * floating point compare and min/max input/output. The result of floating point
  * compare instructions can be considered a -QNaN, though it is also interpreted
  * as integer -1 and is often treated as a mask. Most arithmetic instructions
- * should propagate QNaNs unchanged, however this behavior hasn't been verified.
+ * should propagate QNaNs unchanged, however this behavior hasn't been tested.
+ *
+ * Note, that instruction subsets operating on vectors of different length
+ * may support different number of SIMD registers, therefore mixing them
+ * in the same code needs to be done with register awareness in mind.
+ * For example, AVX-512 supports 32 SIMD registers, while AVX2 only has 16,
+ * as does 256-bit paired subset on ARMv8, while 128-bit and SVE have 32.
+ * These numbers should be consistent across architectures if properly
+ * mapped to SIMD target mask presented in rtzero.h (compatibility layer).
  *
  * Interpretation of instruction parameters:
  *
@@ -5323,10 +5333,10 @@ rt_si32 from_mask(rt_si32 mask)
  * cmdxx_lb - applies [cmd] as above
  * label_ld - applies [adr] as above
  *
- * stack_st - applies [mov] to stack from register (push)
- * stack_ld - applies [mov] to register from stack (pop)
- * stack_sa - applies [mov] to stack from all registers
- * stack_la - applies [mov] to all registers from stack
+ * stack_st - applies [mov] to stack from full register (push)
+ * stack_ld - applies [mov] to full register from stack (pop)
+ * stack_sa - applies [mov] to stack from all full registers
+ * stack_la - applies [mov] to all full registers from stack
  *
  * cmdw*_** - applies [cmd] to 32-bit BASE register/memory/immediate args
  * cmdx*_** - applies [cmd] to A-size BASE register/memory/immediate args
@@ -5374,6 +5384,10 @@ rt_si32 from_mask(rt_si32 mask)
  * pointer size (RT_POINTER or P) as code/data/stack segments are fixed.
  * Stack ops always work with full registers regardless of the mode chosen.
  *
+ * 64/32-bit subsets are both self-consistent within themselves, 32-bit results
+ * cannot be used in 64-bit subset without proper sign/zero-extend bridges,
+ * cmdwn/wz bridges for 32-bit subset are provided in 64-bit headers.
+ *
  * 32-bit and 64-bit BASE subsets are not easily compatible on all targets,
  * thus any register modified with 32-bit op cannot be used in 64-bit subset.
  * Alternatively, data flow must not exceed 31-bit range for 32-bit operations
@@ -5393,7 +5407,7 @@ rt_si32 from_mask(rt_si32 mask)
  * Alternatively, data written natively in C/C++ can be worked on from within
  * a given (one) subset if appropriate offset correction is used from rtbase.h.
  *
- * Setting-flags instruction naming scheme has been changed again recently for
+ * Setting-flags instruction naming scheme was changed twice in the past for
  * better orthogonality with operand size, type and args-list. It is therefore
  * recommended to use combined-arithmetic-jump (arj) for better API stability
  * and maximum efficiency across all supported targets. For similar reasons
@@ -5442,7 +5456,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /*
  * The following two files (rtarch.h and rtconf.h) provide configuration
- * on the architecture and the instruction subset mapping levels respectively.
+ * for the architecture and the instruction subset mapping levels respectively.
  *
  * Placing rtarch.h below the common instruction definitions of rtbase.h
  * allows target-specific BASE and SIMD headers to redefine common instructions

@@ -1,5 +1,5 @@
 /******************************************************************************/
-/* Copyright (c) 2013-2021 VectorChief (at github, bitbucket, sourceforge)    */
+/* Copyright (c) 2013-2022 VectorChief (at github, bitbucket, sourceforge)    */
 /* Distributed under the MIT software license, see the accompanying           */
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
@@ -1417,6 +1417,10 @@
 #define neg_x   AM0
 #define add_x   AM1
 #define sub_x   AM2
+#define add_n   AM3
+#define sub_n   AM4
+#define add_z   AM5
+#define sub_z   AM6
 #define shl_x   AN0
 #define shr_x   AN1
 #define shr_n   AN2
@@ -1537,7 +1541,7 @@
         movwx_ri(Reax, IB(0))                                               \
         rdvla_xx()                                                          \
         shrwx_ri(Reax, IB(4)) /* get as quads */                            \
-        movwx_ri(Resi, IM(0x145)) /* NEON to bits: 0,2,6,8 */               \
+        movwx_ri(Resi, IM(0x34F)) /* NEON to bits: 0,1,2,3,6,8,9 */         \
         movwx_rr(Recx, Reax)                                                \
         andwx_ri(Recx, IB(2))                                               \
         shlwx_ri(Recx, IB(9))                                               \
@@ -1566,7 +1570,7 @@
         andwx_ri(Recx, IB(16))                                              \
         shlwx_ri(Recx, IB(26))                                              \
         orrwx_rr(Resi, Recx)  /* 2K8-bit to RT_2K8=4 */                     \
-        andwx_ri(Resi, IV(0x55151545)) /* NEON: 0,2,6,8; SVE: rest */       \
+        andwx_ri(Resi, IV(0x5515174F)) /* NEON: 0,1,2,3,6,8,9; SVE: rest */ \
         movwx_st(Resi, Mebp, inf_VER)
 
 /************************* address-sized instructions *************************/
@@ -1709,6 +1713,8 @@
 #define AM2(sz, sg) sub##sz##x##sg
 #define AM3(sz, sg) add##sz##n##sg
 #define AM4(sz, sg) sub##sz##n##sg
+#define AM5(sz, sg) add##sz##z##sg
+#define AM6(sz, sg) sub##sz##z##sg
 #define AN0(sz, sg) shl##sz##x##sg
 #define AN1(sz, sg) shr##sz##x##sg
 #define AN2(sz, sg) shr##sz##n##sg

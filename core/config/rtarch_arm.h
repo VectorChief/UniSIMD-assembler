@@ -1,5 +1,5 @@
 /******************************************************************************/
-/* Copyright (c) 2013-2021 VectorChief (at github, bitbucket, sourceforge)    */
+/* Copyright (c) 2013-2022 VectorChief (at github, bitbucket, sourceforge)    */
 /* Distributed under the MIT software license, see the accompanying           */
 /* file COPYING or http://www.opensource.org/licenses/mit-license.php         */
 /******************************************************************************/
@@ -923,7 +923,7 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define shrwx_ri(RG, IS)                                                    \
-        EMITW(0xE1A00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        EMITW(0xE1A00000 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000020) |   \
                                                  (0x1F & VAL(IS)) << 7)
 
@@ -962,7 +962,7 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define shrwxZri(RG, IS)                                                    \
-        EMITW(0xE1B00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        EMITW(0xE1B00000 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000020) |   \
                                                  (0x1F & VAL(IS)) << 7)
 
@@ -1004,7 +1004,7 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define shrwn_ri(RG, IS)                                                    \
-        EMITW(0xE1A00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        EMITW(0xE1A00000 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000040) |   \
                                                  (0x1F & VAL(IS)) << 7)
 
@@ -1043,7 +1043,7 @@
         EMITW(0xE5800000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define shrwnZri(RG, IS)                                                    \
-        EMITW(0xE1B00000 | MXM(REG(RG), 0x00,    REG(RG)) |                 \
+        EMITW(0xE1B00000 | MRM(REG(RG), 0x00,    REG(RG)) |                 \
         (M(VAL(IS) == 0) & 0x00000000) | (M(VAL(IS) != 0) & 0x00000040) |   \
                                                  (0x1F & VAL(IS)) << 7)
 
@@ -1360,10 +1360,10 @@
         EMITW(0xE710F010 | MRM(0x00,    REG(RG), REG(RG)) | TMxx << 8)
 
 
-#define prewx_xx()          /* to be placed immediately prior divwx_x* */   \
+#define prewx_xx()   /* to be placed right before divwx_x* or remwx_xx */   \
                                      /* to prepare Redx for int-divide */
 
-#define prewn_xx()          /* to be placed immediately prior divwn_x* */   \
+#define prewn_xx()   /* to be placed right before divwn_x* or remwn_xx */   \
                                      /* to prepare Redx for int-divide */
 
 
@@ -1466,6 +1466,10 @@
 #define neg_x   AM0
 #define add_x   AM1
 #define sub_x   AM2
+#define add_n   AM3
+#define sub_n   AM4
+#define add_z   AM5
+#define sub_z   AM6
 #define shl_x   AN0
 #define shr_x   AN1
 #define shr_n   AN2
@@ -1579,7 +1583,7 @@
  * 2nd byte - 512-bit version, 3rd byte - 1K4-bit version, | in upper halves */
 
 #define verxx_xx() /* destroys Reax, Recx, Rebx, Redx, Resi, Redi */        \
-        movwx_mi(Mebp, inf_VER, IB(0x7)) /* <- NEON to bits: 0,1,2 */
+        movwx_mi(Mebp, inf_VER, IB(0xF)) /* <- NEON to bits: 0,1,2,3 */
 
 /************************* address-sized instructions *************************/
 
@@ -1689,6 +1693,8 @@
 #define AM2(sz, sg) sub##sz##x##sg
 #define AM3(sz, sg) add##sz##n##sg
 #define AM4(sz, sg) sub##sz##n##sg
+#define AM5(sz, sg) add##sz##z##sg
+#define AM6(sz, sg) sub##sz##z##sg
 #define AN0(sz, sg) shl##sz##x##sg
 #define AN1(sz, sg) shr##sz##x##sg
 #define AN2(sz, sg) shr##sz##n##sg
