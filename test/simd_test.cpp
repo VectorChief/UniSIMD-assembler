@@ -12,6 +12,8 @@
 #define RT_BASE_TEST /* enable BASE instruction sub-tests */
 #define RT_ELEM_TEST /* enable ELEM instruction sub-tests (scalar SIMD) */
 #define RT_PRINT_CPP /* enable printouts from C++ code sections of the tests */
+#define RT_PRINT_ASM /* enable printouts from ASM code sections of the tests */
+#define RT_PRINT_NUM /* enable printouts of test times and SIMD version */
 
 /* in case of inconsistencies related to C++ implementation on different
  * processor architectures (for example signed/unsigned right shift behavior)
@@ -328,8 +330,10 @@ rt_void p_test01(rt_SIMD_INFOX *info)
         RT_LOGI("C farr[%d]+farr[%d] = %e, farr[%d]-farr[%d] = %e\n",
                 j, (j + S) % n, fco1[j], j, (j + S) % n, fco2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S farr[%d]+farr[%d] = %e, farr[%d]-farr[%d] = %e\n",
                 j, (j + S) % n, fso1[j], j, (j + S) % n, fso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -457,8 +461,10 @@ rt_void p_test02(rt_SIMD_INFOX *info)
         RT_LOGI("C farr[%d]*farr[%d] = %e, farr[%d]/farr[%d] = %e\n",
                 j, (j + S) % n, fco1[j], j, (j + S) % n, fco2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S farr[%d]*farr[%d] = %e, farr[%d]/farr[%d] = %e\n",
                 j, (j + S) % n, fso1[j], j, (j + S) % n, fso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -587,9 +593,11 @@ rt_void p_test03(rt_SIMD_INFOX *info)
                   "(farr[%d]>=farr[%d]) = %" PR_L "X\n",
                 j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S (farr[%d]>!farr[%d]) = %" PR_L "X, "
                   "(farr[%d]>=farr[%d]) = %" PR_L "X\n",
                 j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -718,9 +726,11 @@ rt_void p_test04(rt_SIMD_INFOX *info)
                   "(farr[%d]<=farr[%d]) = %" PR_L "X\n",
                 j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S (farr[%d]<!farr[%d]) = %" PR_L "X, "
                   "(farr[%d]<=farr[%d]) = %" PR_L "X\n",
                 j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -849,9 +859,11 @@ rt_void p_test05(rt_SIMD_INFOX *info)
                   "(farr[%d]!=farr[%d]) = %" PR_L "X\n",
                 j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S (farr[%d]==farr[%d]) = %" PR_L "X, "
                   "(farr[%d]!=farr[%d]) = %" PR_L "X\n",
                 j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -946,8 +958,10 @@ rt_void p_test06(rt_SIMD_INFOX *info)
         RT_LOGI("C (rt_elem)farr[%d] = %" PR_L "d, (rt_real)iarr[%d] = %e\n",
                 j, ico1[j], j, fco2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S (rt_elem)farr[%d] = %" PR_L "d, (rt_real)iarr[%d] = %e\n",
                 j, iso1[j], j, fso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -1059,8 +1073,10 @@ rt_void p_test07(rt_SIMD_INFOX *info)
         RT_LOGI("C RT_SQRT(farr[%d]) = %e, 1.0/farr[%d] = %e\n",
                 j, fco1[j], j, fco2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S RT_SQRT(farr[%d]) = %e, 1.0/farr[%d] = %e\n",
                 j, fso1[j], j, fso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -1216,9 +1232,11 @@ rt_void p_test08(rt_SIMD_INFOX *info)
                   "iarr[%d]-((rt_uelm)-iarr[%d]>>2) = %" PR_L "d\n",
                 j, j, ico1[j], j, j, ico2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S iarr[%d]+((rt_uelm)+iarr[%d]<<1) = %" PR_L "d, "
                   "iarr[%d]-((rt_uelm)-iarr[%d]>>2) = %" PR_L "d\n",
                 j, j, iso1[j], j, j, iso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -1343,9 +1361,11 @@ rt_void p_test09(rt_SIMD_INFOX *info)
                   "iarr[%d]/iarr[%d] = %" PR_L "d\n",
                 j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S iarr[%d]*iarr[%d] = %" PR_L "d, "
                   "iarr[%d]/iarr[%d] = %" PR_L "d\n",
                 j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -1473,8 +1493,10 @@ rt_void p_test10(rt_SIMD_INFOX *info)
         RT_LOGI("C MIN(farr[%d],farr[%d]) = %e, MAX(farr[%d],farr[%d]) = %e\n",
                 j, (j + S) % n, fco1[j], j, (j + S) % n, fco2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S MIN(farr[%d],farr[%d]) = %e, MAX(farr[%d],farr[%d]) = %e\n",
                 j, (j + S) % n, fso1[j], j, (j + S) % n, fso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -1617,9 +1639,11 @@ rt_void p_test11(rt_SIMD_INFOX *info)
                   "iarr[%d]^(iarr[%d]>>3) = %" PR_L "d\n",
                 j, j, ico1[j], j, j, ico2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S iarr[%d]|(iarr[%d]<<7) = %" PR_L "d, "
                   "iarr[%d]^(iarr[%d]>>3) = %" PR_L "d\n",
                 j, j, iso1[j], j, j, iso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -1763,9 +1787,11 @@ rt_void p_test12(rt_SIMD_INFOX *info)
                  "~iarr[%d]&(iarr[%d]>>3) = %" PR_L "d\n",
                 j, j, ico1[j], j, j, ico2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S iarr[%d]&(iarr[%d]<<7) = %" PR_L "d, "
                  "~iarr[%d]&(iarr[%d]>>3) = %" PR_L "d\n",
                 j, j, iso1[j], j, j, iso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -1860,9 +1886,11 @@ rt_void p_test13(rt_SIMD_INFOX *info)
                     "-1.0/RT_SQRT(farr[%d]) = %e\n",
                 j, fco1[j], j, fco2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S RT_POW(farr[%d],1.0/3.0) = %e, "
                     "-1.0/RT_SQRT(farr[%d]) = %e\n",
                 j, fso1[j], j, fso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -2047,10 +2075,12 @@ rt_void p_test14(rt_SIMD_INFOX *info)
         k = S;
         while (k-->0)
         {
+#ifdef RT_PRINT_ASM
             RT_LOGI("S (farr[%d]==farr[%d]) = %" PR_L "X, "
                       "(farr[%d]!=farr[%d]) = %" PR_L "X\n",
                     j*S + k, ((j+1)*S + k) % n, iso1[j*S + k],
                     j*S + k, ((j+1)*S + k) % n, iso2[j*S + k]);
+#endif /* RT_PRINT_ASM */
         }
     }
 }
@@ -2175,8 +2205,10 @@ rt_void p_test15(rt_SIMD_INFOX *info)
         RT_LOGI("C +iarr[%d]>>3 = %" PR_L "d, -iarr[%d]>>5 = %" PR_L "d\n",
                 j, ico1[j], j, ico2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S +iarr[%d]>>3 = %" PR_L "d, -iarr[%d]>>5 = %" PR_L "d\n",
                 j, iso1[j], j, iso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -2316,9 +2348,11 @@ rt_void p_test16(rt_SIMD_INFOX *info)
                   "iarr[%d]<<iarr[%d] = %" PR_L "d\n",
                 j, (j/S)*S, ico1[j], j, (j/S)*S, ico2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S iarr[%d]>>iarr[%d] = %" PR_L "d, "
                   "iarr[%d]<<iarr[%d] = %" PR_L "d\n",
                 j, (j/S)*S, iso1[j], j, (j/S)*S, iso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -2408,8 +2442,10 @@ rt_void p_test17(rt_SIMD_INFOX *info)
         RT_LOGI("C RT_CEIL(farr[%d]) = %e, RT_FLOOR(farr[%d]) = %e\n",
                 j, fco1[j], j, fco2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S RT_CEIL(farr[%d]) = %e, RT_FLOOR(farr[%d]) = %e\n",
                 j, fso1[j], j, fso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -2538,9 +2574,11 @@ rt_void p_test18(rt_SIMD_INFOX *info)
                   "iarr[%d]%%iarr[%d] = %" PR_L "d\n",
                 j, (j + S) % n, ico1[j], j, (j + S) % n, ico2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S iarr[%d]*iarr[%d] = %" PR_L "d, "
                   "iarr[%d]%%iarr[%d] = %" PR_L "d\n",
                 j, (j + S) % n, iso1[j], j, (j + S) % n, iso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -2673,9 +2711,11 @@ rt_void p_test19(rt_SIMD_INFOX *info)
                   "~iarr[%d] = %" PR_L "d\n",
                 j, j, ico1[j], j, ico2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S ~iarr[%d]|(iarr[%d]<<7) = %" PR_L "d, "
                   "~iarr[%d] = %" PR_L "d\n",
                 j, j, iso1[j], j, iso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -2806,10 +2846,12 @@ rt_void p_test20(rt_SIMD_INFOX *info)
                 j, (j + S) % n, (j + 2*S) % n, fco1[j],
                 j, (j + S) % n, (j + 2*S) % n, fco2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S farr[%d]+farr[%d]*farr[%d] = %+.25e, "
                   "farr[%d]-farr[%d]*farr[%d] = %+.25e\n",
                 j, (j + S) % n, (j + 2*S) % n, fso1[j],
                 j, (j + S) % n, (j + 2*S) % n, fso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -2926,9 +2968,11 @@ rt_void p_test21(rt_SIMD_INFOX *info)
                  "-iarr[%d]/289 = %" PR_L "d\n",
                 j, ico1[j], j, ico2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S iarr[%d]/117 = %" PR_L "d, "
                  "-iarr[%d]/289 = %" PR_L "d\n",
                 j, iso1[j], j, iso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -3045,9 +3089,11 @@ rt_void p_test22(rt_SIMD_INFOX *info)
                  "-iarr[%d]%%289 = %" PR_L "d\n",
                 j, ico1[j], j, ico2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S iarr[%d]%%117 = %" PR_L "d, "
                  "-iarr[%d]%%289 = %" PR_L "d\n",
                 j, iso1[j], j, iso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -3158,9 +3204,11 @@ rt_void p_test23(rt_SIMD_INFOX *info)
                  " iarr[%d] ror 31 = %" PR_L "d\n",
                 j, ico1[j], j, ico2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S iarr[%d] ror 5 = %" PR_L "d, "
                  " iarr[%d] ror 31 = %" PR_L "d\n",
                 j, iso1[j], j, iso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -3265,9 +3313,11 @@ rt_void p_test24(rt_SIMD_INFOX *info)
                   "iarr[%d]>>(iarr[%d]&((16<<L)-1)) = %" PR_L "d\n",
                 j, j, ico1[j], j, j, ico2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S iarr[%d]<<(iarr[%d]&((16<<L)-1)) = %" PR_L "d, "
                   "iarr[%d]>>(iarr[%d]&((16<<L)-1)) = %" PR_L "d\n",
                 j, j, iso1[j], j, j, iso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -3435,8 +3485,10 @@ rt_void p_test25(rt_SIMD_INFOX *info)
         RT_LOGI("C farr[%d]+farr[%d] = %e, farr[%d]*farr[%d] = %e\n",
                 2*j+0, 2*j+1, fco1[j], 2*j+0, 2*j+1, fco2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S farr[%d]+farr[%d] = %e, farr[%d]*farr[%d] = %e\n",
                 2*j+0, 2*j+1, fso1[j], 2*j+0, 2*j+1, fso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -3591,8 +3643,10 @@ rt_void p_test26(rt_SIMD_INFOX *info)
         RT_LOGI("C MIN(farr[%d],farr[%d]) = %e, MAX(farr[%d],farr[%d]) = %e\n",
                 2*j+0, 2*j+1, fco1[j], 2*j+0, 2*j+1, fco2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S MIN(farr[%d],farr[%d]) = %e, MAX(farr[%d],farr[%d]) = %e\n",
                 2*j+0, 2*j+1, fso1[j], 2*j+0, 2*j+1, fso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -3709,8 +3763,10 @@ rt_void p_test27(rt_SIMD_INFOX *info)
         RT_LOGI("C fout[%d] = %e, MIN(farr[%d],farr[%d]) = %e\n",
                 j, fco1[j], j, (j + S) % n, fco2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S fout[%d] = %e, MIN(farr[%d],farr[%d]) = %e\n",
                 j, fso1[j], j, (j + S) % n, fso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -3980,8 +4036,10 @@ rt_void p_test28(rt_SIMD_INFOX *info)
         RT_LOGI("C iout[%d] = %" PR_L "d, fout[%d] = %e\n",
                 j, ico1[j], j, fco2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S iout[%d] = %" PR_L "d, fout[%d] = %e\n",
                 j, iso1[j], j, fso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -4105,9 +4163,11 @@ rt_void p_test29(rt_SIMD_INFOX *info)
                   "(rt_uelm)iarr[%d]>>(iarr[%d]&((16<<L)-1)) = %" PR_L "d\n",
                 j, (j + S) % n, ico1[j], j, j, ico2[j]);
 #endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
         RT_LOGI("S iarr[%d]*iarr[%d] = %" PR_L "d, "
                   "(rt_uelm)iarr[%d]>>(iarr[%d]&((16<<L)-1)) = %" PR_L "d\n",
                 j, (j + S) % n, iso1[j], j, j, iso2[j]);
+#endif /* RT_PRINT_ASM */
     }
 }
 
@@ -4805,7 +4865,9 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 
         time2 = get_time();
         tC = time2 - time1;
+#ifdef RT_PRINT_NUM
         RT_LOGI("Time C = %d\n", (rt_si32)tC);
+#endif /* RT_PRINT_NUM */
 
         /* --------------------------------- */
 
@@ -4816,14 +4878,18 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
 
         time2 = get_time();
         tS = time2 - time1;
+#ifdef RT_PRINT_NUM
         RT_LOGI("Time S = %d\n", (rt_si32)tS);
+#endif /* RT_PRINT_NUM */
 
         /* --------------------------------- */
 
         p_test[i](inf0);
 
+#ifdef RT_PRINT_NUM
         RT_LOGI("-------------------------------------- simd = %4dx%dv%d -\n",
                 (simd & 0xFF) * 128, (simd >> 16) & 0xFF, (simd >> 8) & 0xFF);
+#endif /* RT_PRINT_NUM */
     }
 
     ASM_DONE(inf0)
