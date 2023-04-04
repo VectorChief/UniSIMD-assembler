@@ -4,17 +4,17 @@ To build SIMD test framework on Linux, open terminal window,
 go to UniSIMD's "test" subfolder,
 make sure necessary tools and libraries are installed
     sudo apt-get update
-for native builds (binary ABI matches host):
+for native builds (binary ABI matches host: x64, RISCs):
     sudo apt-get install make g++
-for multilib builds (if libs are available):
+for multilib builds (if libs are available: 32-bit x86):
     sudo apt-get install make g++-multilib
-run for x86 architecture:
-    make -f simd_make_x86.mk -j4
-    ./simd_test.x86
 run for x64 architecture:
     make -f simd_make_x64.mk -j4
     ./simd_test.x64f32
-run for non-x86 architectures:
+run for x86 architecture:
+    make -f simd_make_x86.mk -j4
+    ./simd_test.x86
+run for *** architectures (on native host or QEMU linux-user mode):
     make -f simd_make_***.mk -j4
     ./simd_test.***
 Prerequisites for building/emulating guest non-x86 architectures as well as
@@ -25,27 +25,21 @@ refer to the AArch64 Linux on RPi3 section down below for RPM-based options.
 To build SIMD test framework on macOS, open terminal window,
 go to UniSIMD's "test" subfolder,
 make sure necessary tools and libraries are installed:
-http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/
-    xcode-select --install
+    clang
+it will prompt to install Command Line Tools (will make alias to g++)
 run for x64 architecture:
     make -f simd_make_x64.mk -j4
     ./simd_test.x64f32
+Alternatively, use clang option for x64 (make -f simd_make_x64.mk clang -j4).
 
-To build SIMD test framework on Windows,
-go to UniSIMD's "test" subfolder and open (in Visual C++ 6.0 or later):
-    simd_workspace.dsw
-In newer versions of VC++ agree to convert workspace files.
-Exit and open newly created solution file for development.
-Select "Release" build target in drop-down list/menus, then press F5.
-More recent versions (VS2017) need a few extra steps to complete the build.
-Right-click on the Solution in the Solution Explorer window on the left
-and select "Retarget solution", choose Windows SDK Version "10.0.15063.0",
-then select "Build" -> "Rebuild Solution" from the top-level menu, not F5.
-Run produced binary simd_test.exe in "test" subfolder from Windows Explorer.
-VS2019 automatically retargets solution to the latest installed Windows SDK.
+To build SIMD test framework on Windows using Visual Studio,
+download and install Visual Studio 2022 or later (with clang option enabled),
+then open UniSIMD's "test" subfolder and click on VS2022 solution file:
+    simd_test_x64.sln
+from within the Visual Studio press F5 key to build and run the binary.
 
-To build SIMD test framework for 64-bit Windows,
-download and install TDM64-GCC toolchain (tdm64-gcc-9.2.0.exe) from github,
+To build SIMD test framework on Windows using TDM64-GCC,
+download and install TDM64-GCC toolchain (tdm64-gcc-10.3.0-2.exe) from github,
 then open UniSIMD's "test" subfolder and run from "cmd" or Windows Explorer:
     simd_make_w64.bat
 produced simd_test_w64f32.exe binary file will launch upon build completion.
@@ -90,7 +84,10 @@ To test SVE targets with QEMU 3.x.y or patched version of QEMU 3.0.0 run:
 The most recent QEMU 4.2.0 has been the most stable and feature complete so far,
 while versions 4.x.y prior to 4.2.0 showed issues with POWER8/9 fp32 LE targets.
 QEMU 4.2.0 is now part of Ubuntu 20.04, QEMU 5.0.0 proves to be just as good.
-QEMU 5.2.0 and QEMU 6.0.0 require ninja-build package to build from source.
+QEMU 5.2.0 and beyond may require ninja-build package to build from source.
+Starting from QEMU 5.2.0 POWER9 lxvwsx instruction is supported properly.
+From QEMU 5.2.0 through QEMU 6.2.0 ppc64abi32 targets are marked as deprecated
+and will be removed in the following releases (Ubuntu 22.04 should have 6.2.0).
 
 Ubuntu 20.04 is the first release where MIPS cross-compilers have caught up
 with the rest of the pack (standalone 2020.06-01 and mipsisa64r6* are 9.3.0).
