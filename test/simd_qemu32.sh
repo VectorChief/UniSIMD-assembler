@@ -5,8 +5,8 @@
 
 touch qemu32; rm qemu32
 
-# fully successful test pass results in qemu32 file of  36794 bytes (29 tests)
-# unlike simd_test64/86.sh the result is the same on all CPU types  (29 tests)
+# fully successful test pass results in qemu32 file of  44410 bytes (36 tests)
+# unlike simd_test64/86.sh the result is the same on all CPU types  (36 tests)
 # check the output if qemu32 file size differs, look for printouts
 
 
@@ -49,7 +49,7 @@ qemu-ppc64abi32 -cpu POWER9 simd_test.p32Bp9 -c 1 | tee -a qemu32
 
 
 echo "========================================================"
-echo "fully successful test pass writes  36794 bytes to qemu32"
+echo "fully successful test pass writes  44410 bytes to qemu32"
 echo "the result doesn't depend on CPU type (unlike test64/86)"
 echo "check the output if qemu32 size differs, check printouts"
 echo "========================================================"

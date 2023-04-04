@@ -5,8 +5,8 @@
 
 touch qemu64; rm qemu64
 
-# fully successful test pass results in qemu64 file of 128756 bytes (29 tests)
-# unlike simd_test64/86.sh the result is the same on all CPU types  (29 tests)
+# fully successful test pass results in qemu64 file of 155412 bytes (36 tests)
+# unlike simd_test64/86.sh the result is the same on all CPU types  (36 tests)
 # check the output if qemu64 file size differs, look for printouts
 
 
@@ -133,7 +133,7 @@ qemu-ppc64le -cpu POWER9 simd_test.p64f64Lp9 -c 1 | tee -a qemu64
 
 
 echo "========================================================"
-echo "fully successful test pass writes 128756 bytes to qemu64"
+echo "fully successful test pass writes 155412 bytes to qemu64"
 echo "the result doesn't depend on CPU type (unlike test64/86)"
 echo "check the output if qemu64 size differs, check printouts"
 echo "========================================================"
