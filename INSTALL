@@ -59,15 +59,10 @@ make sure necessary tools and libraries are installed:
 when building QEMU on RPM-based systems like openSUSE:
     sudo zypper install make gcc-c++ ninja
     sudo zypper install patch glib2-devel libpixman-1-0-devel zlib-devel
-when building QEMU 3.0.0 for SVE targets apply patch for sve-max-vq cpu property
-from https://patchwork.kernel.org/patch/10541199/  (scroll down and click diff):
-    patch -p1 < ../for-3.0-target-arm-Add-sve-max-vq-cpu-property-to--***.diff
-run configure script:
-    ./configure
 to build a reduced set of targets for linux-user mode emulation only, use:
     ./configure --target-list=arm-linux-user,aarch64-linux-user,\
 mips-linux-user,mipsel-linux-user,mips64-linux-user,mips64el-linux-user,\
-ppc-linux-user,ppc64abi32-linux-user,ppc64-linux-user,ppc64le-linux-user,\
+ppc-linux-user,ppc64-linux-user,ppc64le-linux-user,\
 i386-linux-user,x86_64-linux-user
     (copy the whole multi-line command above without leading or trailing spaces)
     (paste into terminal and run after or instead of plain ./configure script)
@@ -81,12 +76,6 @@ When building QEMU from source isn't necessary install full binary package:
 on RPM-based systems like openSUSE:
     sudo zypper install qemu
 
-To test SVE targets with QEMU 3.x.y or patched version of QEMU 3.0.0 run:
-    qemu-aarch64 -cpu max,sve-max-vq=4 simd_test.a64f32sve -c 1
-
-The most recent QEMU 4.2.0 has been the most stable and feature complete so far,
-while versions 4.x.y prior to 4.2.0 showed issues with POWER8/9 fp32 LE targets.
-QEMU 4.2.0 is now part of Ubuntu 20.04, QEMU 5.0.0 proves to be just as good.
 QEMU 5.2.0 and beyond may require ninja-build package to build from source.
 Starting from QEMU 5.2.0 POWER9 lxvwsx instruction is supported properly.
 From QEMU 5.2.0 through QEMU 6.2.0 ppc64abi32 targets are marked as deprecated
@@ -94,8 +83,6 @@ and will be removed in the following releases (Ubuntu 22.04 should have 6.2.0).
 
 Ubuntu 20.04 is the first release where MIPS cross-compilers have caught up
 with the rest of the pack (standalone 2020.06-01 and mipsisa64r6* are 9.3.0).
-
-Use "-c 1" option to reduce test time when emulating with QEMU.
 
 ================================================================================
 
