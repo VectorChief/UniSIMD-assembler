@@ -4191,12 +4191,12 @@ rt_void p_test29(rt_SIMD_INFOX *info)
 #endif /* SUB_TEST 29 */
 
 /******************************************************************************/
-/*******************************   SUB TEST 30   ******************************/
+/*******************************   SUB TEST 37   ******************************/
 /******************************************************************************/
 
-#if SUB_TEST >= 30
+#if SUB_TEST >= 37
 
-rt_void c_test30(rt_SIMD_INFOX *info)
+rt_void c_test37(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
@@ -4222,7 +4222,7 @@ rt_void c_test30(rt_SIMD_INFOX *info)
  * complex C/C++ logic, while making sure those functions are not inlined.
  * This is needed for better compatibility with modern optimizing compilers.
  */
-rt_void s_test30(rt_SIMD_INFOX *info)
+rt_void s_test37(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
@@ -4319,7 +4319,7 @@ rt_void s_test30(rt_SIMD_INFOX *info)
     ASM_LEAVE(info)
 }
 
-rt_void p_test30(rt_SIMD_INFOX *info)
+rt_void p_test37(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
@@ -4352,15 +4352,15 @@ rt_void p_test30(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* SUB_TEST 30 */
+#endif /* SUB_TEST 37 */
 
 /******************************************************************************/
-/*******************************   SUB TEST 31   ******************************/
+/*******************************   SUB TEST 38   ******************************/
 /******************************************************************************/
 
-#if SUB_TEST >= 31
+#if SUB_TEST >= 38
 
-rt_void c_test31(rt_SIMD_INFOX *info)
+rt_void c_test38(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
@@ -4386,7 +4386,7 @@ rt_void c_test31(rt_SIMD_INFOX *info)
  * complex C/C++ logic, while making sure those functions are not inlined.
  * This is needed for better compatibility with modern optimizing compilers.
  */
-rt_void s_test31(rt_SIMD_INFOX *info)
+rt_void s_test38(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
@@ -4473,7 +4473,7 @@ rt_void s_test31(rt_SIMD_INFOX *info)
     ASM_LEAVE(info)
 }
 
-rt_void p_test31(rt_SIMD_INFOX *info)
+rt_void p_test38(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
@@ -4506,15 +4506,15 @@ rt_void p_test31(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* SUB_TEST 31 */
+#endif /* SUB_TEST 38 */
 
 /******************************************************************************/
-/*******************************   SUB TEST 32   ******************************/
+/*******************************   SUB TEST 39   ******************************/
 /******************************************************************************/
 
-#if SUB_TEST >= 32
+#if SUB_TEST >= 39
 
-rt_void c_test32(rt_SIMD_INFOX *info)
+rt_void c_test39(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
@@ -4540,7 +4540,7 @@ rt_void c_test32(rt_SIMD_INFOX *info)
  * complex C/C++ logic, while making sure those functions are not inlined.
  * This is needed for better compatibility with modern optimizing compilers.
  */
-rt_void s_test32(rt_SIMD_INFOX *info)
+rt_void s_test39(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
@@ -4582,7 +4582,7 @@ rt_void s_test32(rt_SIMD_INFOX *info)
     ASM_LEAVE(info)
 }
 
-rt_void p_test32(rt_SIMD_INFOX *info)
+rt_void p_test39(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
@@ -4615,15 +4615,15 @@ rt_void p_test32(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* SUB_TEST 32 */
+#endif /* SUB_TEST 39 */
 
 /******************************************************************************/
-/*******************************   SUB TEST 33   ******************************/
+/*******************************   SUB TEST 40   ******************************/
 /******************************************************************************/
 
-#if SUB_TEST >= 33
+#if SUB_TEST >= 40
 
-rt_void c_test33(rt_SIMD_INFOX *info)
+rt_void c_test40(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
@@ -4649,7 +4649,7 @@ rt_void c_test33(rt_SIMD_INFOX *info)
  * complex C/C++ logic, while making sure those functions are not inlined.
  * This is needed for better compatibility with modern optimizing compilers.
  */
-rt_void s_test33(rt_SIMD_INFOX *info)
+rt_void s_test40(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
@@ -4693,7 +4693,7 @@ rt_void s_test33(rt_SIMD_INFOX *info)
     ASM_LEAVE(info)
 }
 
-rt_void p_test33(rt_SIMD_INFOX *info)
+rt_void p_test40(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
@@ -4726,15 +4726,15 @@ rt_void p_test33(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* SUB_TEST 33 */
+#endif /* SUB_TEST 40 */
 
 /******************************************************************************/
-/*******************************   SUB TEST 34   ******************************/
+/*******************************   SUB TEST 41   ******************************/
 /******************************************************************************/
 
-#if SUB_TEST >= 34
+#if SUB_TEST >= 41
 
-rt_void c_test34(rt_SIMD_INFOX *info)
+rt_void c_test41(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
@@ -4760,7 +4760,7 @@ rt_void c_test34(rt_SIMD_INFOX *info)
  * complex C/C++ logic, while making sure those functions are not inlined.
  * This is needed for better compatibility with modern optimizing compilers.
  */
-rt_void s_test34(rt_SIMD_INFOX *info)
+rt_void s_test41(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
@@ -4797,7 +4797,7 @@ rt_void s_test34(rt_SIMD_INFOX *info)
     ASM_LEAVE(info)
 }
 
-rt_void p_test34(rt_SIMD_INFOX *info)
+rt_void p_test41(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
@@ -4830,15 +4830,15 @@ rt_void p_test34(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* SUB_TEST 34 */
+#endif /* SUB_TEST 41 */
 
 /******************************************************************************/
-/*******************************   SUB TEST 35   ******************************/
+/*******************************   SUB TEST 42   ******************************/
 /******************************************************************************/
 
-#if SUB_TEST >= 35
+#if SUB_TEST >= 42
 
-rt_void c_test35(rt_SIMD_INFOX *info)
+rt_void c_test42(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
@@ -4864,7 +4864,7 @@ rt_void c_test35(rt_SIMD_INFOX *info)
  * complex C/C++ logic, while making sure those functions are not inlined.
  * This is needed for better compatibility with modern optimizing compilers.
  */
-rt_void s_test35(rt_SIMD_INFOX *info)
+rt_void s_test42(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
@@ -4901,7 +4901,7 @@ rt_void s_test35(rt_SIMD_INFOX *info)
     ASM_LEAVE(info)
 }
 
-rt_void p_test35(rt_SIMD_INFOX *info)
+rt_void p_test42(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
@@ -4934,15 +4934,15 @@ rt_void p_test35(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* SUB_TEST 35 */
+#endif /* SUB_TEST 42 */
 
 /******************************************************************************/
-/*******************************   SUB TEST 36   ******************************/
+/*******************************   SUB TEST 43   ******************************/
 /******************************************************************************/
 
-#if SUB_TEST >= 36
+#if SUB_TEST >= 43
 
-rt_void c_test36(rt_SIMD_INFOX *info)
+rt_void c_test43(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
@@ -4970,7 +4970,7 @@ rt_void c_test36(rt_SIMD_INFOX *info)
  * complex C/C++ logic, while making sure those functions are not inlined.
  * This is needed for better compatibility with modern optimizing compilers.
  */
-rt_void s_test36(rt_SIMD_INFOX *info)
+rt_void s_test43(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
@@ -5005,7 +5005,7 @@ rt_void s_test36(rt_SIMD_INFOX *info)
     ASM_LEAVE(info)
 }
 
-rt_void p_test36(rt_SIMD_INFOX *info)
+rt_void p_test43(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
@@ -5036,15 +5036,15 @@ rt_void p_test36(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* SUB_TEST 36 */
+#endif /* SUB_TEST 43 */
 
 /******************************************************************************/
-/*******************************   SUB TEST 37   ******************************/
+/*******************************   SUB TEST 44   ******************************/
 /******************************************************************************/
 
-#if SUB_TEST >= 37
+#if SUB_TEST >= 44
 
-rt_void c_test37(rt_SIMD_INFOX *info)
+rt_void c_test44(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
@@ -5073,7 +5073,7 @@ rt_void c_test37(rt_SIMD_INFOX *info)
  * complex C/C++ logic, while making sure those functions are not inlined.
  * This is needed for better compatibility with modern optimizing compilers.
  */
-rt_void s_test37(rt_SIMD_INFOX *info)
+rt_void s_test44(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
@@ -5110,7 +5110,7 @@ rt_void s_test37(rt_SIMD_INFOX *info)
     ASM_LEAVE(info)
 }
 
-rt_void p_test37(rt_SIMD_INFOX *info)
+rt_void p_test44(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = (info->size * sizeof(rt_elem)) / sizeof(rt_half);
 
@@ -5143,15 +5143,15 @@ rt_void p_test37(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* SUB_TEST 37 */
+#endif /* SUB_TEST 44 */
 
 /******************************************************************************/
-/*******************************   SUB TEST 38   ******************************/
+/*******************************   SUB TEST 30   ******************************/
 /******************************************************************************/
 
-#if SUB_TEST >= 38
+#if SUB_TEST >= 30
 
-rt_void c_test38(rt_SIMD_INFOX *info)
+rt_void c_test30(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
@@ -5177,7 +5177,7 @@ rt_void c_test38(rt_SIMD_INFOX *info)
  * complex C/C++ logic, while making sure those functions are not inlined.
  * This is needed for better compatibility with modern optimizing compilers.
  */
-rt_void s_test38(rt_SIMD_INFOX *info)
+rt_void s_test30(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
@@ -5214,7 +5214,7 @@ rt_void s_test38(rt_SIMD_INFOX *info)
     ASM_LEAVE(info)
 }
 
-rt_void p_test38(rt_SIMD_INFOX *info)
+rt_void p_test30(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
@@ -5247,15 +5247,15 @@ rt_void p_test38(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* SUB_TEST 38 */
+#endif /* SUB_TEST 30 */
 
 /******************************************************************************/
-/*******************************   SUB TEST 39   ******************************/
+/*******************************   SUB TEST 31   ******************************/
 /******************************************************************************/
 
-#if SUB_TEST >= 39
+#if SUB_TEST >= 31
 
-rt_void c_test39(rt_SIMD_INFOX *info)
+rt_void c_test31(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
@@ -5281,7 +5281,7 @@ rt_void c_test39(rt_SIMD_INFOX *info)
  * complex C/C++ logic, while making sure those functions are not inlined.
  * This is needed for better compatibility with modern optimizing compilers.
  */
-rt_void s_test39(rt_SIMD_INFOX *info)
+rt_void s_test31(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
@@ -5321,7 +5321,7 @@ rt_void s_test39(rt_SIMD_INFOX *info)
     ASM_LEAVE(info)
 }
 
-rt_void p_test39(rt_SIMD_INFOX *info)
+rt_void p_test31(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
@@ -5354,15 +5354,15 @@ rt_void p_test39(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* SUB_TEST 39 */
+#endif /* SUB_TEST 31 */
 
 /******************************************************************************/
-/*******************************   SUB TEST 40   ******************************/
+/*******************************   SUB TEST 32   ******************************/
 /******************************************************************************/
 
-#if SUB_TEST >= 40
+#if SUB_TEST >= 32
 
-rt_void c_test40(rt_SIMD_INFOX *info)
+rt_void c_test32(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
@@ -5388,7 +5388,7 @@ rt_void c_test40(rt_SIMD_INFOX *info)
  * complex C/C++ logic, while making sure those functions are not inlined.
  * This is needed for better compatibility with modern optimizing compilers.
  */
-rt_void s_test40(rt_SIMD_INFOX *info)
+rt_void s_test32(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
@@ -5425,7 +5425,7 @@ rt_void s_test40(rt_SIMD_INFOX *info)
     ASM_LEAVE(info)
 }
 
-rt_void p_test40(rt_SIMD_INFOX *info)
+rt_void p_test32(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
@@ -5458,15 +5458,15 @@ rt_void p_test40(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* SUB_TEST 40 */
+#endif /* SUB_TEST 32 */
 
 /******************************************************************************/
-/*******************************   SUB TEST 41   ******************************/
+/*******************************   SUB TEST 33   ******************************/
 /******************************************************************************/
 
-#if SUB_TEST >= 41
+#if SUB_TEST >= 33
 
-rt_void c_test41(rt_SIMD_INFOX *info)
+rt_void c_test33(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
@@ -5492,7 +5492,7 @@ rt_void c_test41(rt_SIMD_INFOX *info)
  * complex C/C++ logic, while making sure those functions are not inlined.
  * This is needed for better compatibility with modern optimizing compilers.
  */
-rt_void s_test41(rt_SIMD_INFOX *info)
+rt_void s_test33(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
@@ -5529,7 +5529,7 @@ rt_void s_test41(rt_SIMD_INFOX *info)
     ASM_LEAVE(info)
 }
 
-rt_void p_test41(rt_SIMD_INFOX *info)
+rt_void p_test33(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
@@ -5562,15 +5562,15 @@ rt_void p_test41(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* SUB_TEST 41 */
+#endif /* SUB_TEST 33 */
 
 /******************************************************************************/
-/*******************************   SUB TEST 42   ******************************/
+/*******************************   SUB TEST 34   ******************************/
 /******************************************************************************/
 
-#if SUB_TEST >= 42
+#if SUB_TEST >= 34
 
-rt_void c_test42(rt_SIMD_INFOX *info)
+rt_void c_test34(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
@@ -5596,7 +5596,7 @@ rt_void c_test42(rt_SIMD_INFOX *info)
  * complex C/C++ logic, while making sure those functions are not inlined.
  * This is needed for better compatibility with modern optimizing compilers.
  */
-rt_void s_test42(rt_SIMD_INFOX *info)
+rt_void s_test34(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
@@ -5636,7 +5636,7 @@ rt_void s_test42(rt_SIMD_INFOX *info)
     ASM_LEAVE(info)
 }
 
-rt_void p_test42(rt_SIMD_INFOX *info)
+rt_void p_test34(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
@@ -5669,15 +5669,15 @@ rt_void p_test42(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* SUB_TEST 42 */
+#endif /* SUB_TEST 34 */
 
 /******************************************************************************/
-/*******************************   SUB TEST 43   ******************************/
+/*******************************   SUB TEST 35   ******************************/
 /******************************************************************************/
 
-#if SUB_TEST >= 43
+#if SUB_TEST >= 35
 
-rt_void c_test43(rt_SIMD_INFOX *info)
+rt_void c_test35(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
@@ -5703,7 +5703,7 @@ rt_void c_test43(rt_SIMD_INFOX *info)
  * complex C/C++ logic, while making sure those functions are not inlined.
  * This is needed for better compatibility with modern optimizing compilers.
  */
-rt_void s_test43(rt_SIMD_INFOX *info)
+rt_void s_test35(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
@@ -5740,7 +5740,7 @@ rt_void s_test43(rt_SIMD_INFOX *info)
     ASM_LEAVE(info)
 }
 
-rt_void p_test43(rt_SIMD_INFOX *info)
+rt_void p_test35(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
@@ -5773,15 +5773,15 @@ rt_void p_test43(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* SUB_TEST 43 */
+#endif /* SUB_TEST 35 */
 
 /******************************************************************************/
-/*******************************   SUB TEST 44   ******************************/
+/*******************************   SUB TEST 36   ******************************/
 /******************************************************************************/
 
-#if SUB_TEST >= 44
+#if SUB_TEST >= 36
 
-rt_void c_test44(rt_SIMD_INFOX *info)
+rt_void c_test36(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
@@ -5807,7 +5807,7 @@ rt_void c_test44(rt_SIMD_INFOX *info)
  * complex C/C++ logic, while making sure those functions are not inlined.
  * This is needed for better compatibility with modern optimizing compilers.
  */
-rt_void s_test44(rt_SIMD_INFOX *info)
+rt_void s_test36(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
 
@@ -5847,7 +5847,7 @@ rt_void s_test44(rt_SIMD_INFOX *info)
     ASM_LEAVE(info)
 }
 
-rt_void p_test44(rt_SIMD_INFOX *info)
+rt_void p_test36(rt_SIMD_INFOX *info)
 {
     rt_si32 j, n = info->size;
 
@@ -5880,7 +5880,7 @@ rt_void p_test44(rt_SIMD_INFOX *info)
     }
 }
 
-#endif /* SUB_TEST 44 */
+#endif /* SUB_TEST 36 */
 
 /******************************************************************************/
 /*******************************   SUB TEST 45   ******************************/
