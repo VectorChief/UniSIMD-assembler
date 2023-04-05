@@ -5,7 +5,7 @@
 
 touch qemu32; rm qemu32
 
-# fully successful test pass results in qemu32 file of  44410 bytes (36 tests)
+# fully successful test pass results in qemu32 file of  27754 bytes (36 tests)
 # unlike simd_test64/86.sh the result is the same on all CPU types  (36 tests)
 # check the output if qemu32 file size differs, look for printouts
 
@@ -30,26 +30,29 @@ echo "========================================================" | tee -a qemu32
 qemu-mips   -cpu P5600 simd_test.m32Br5 -c 1 | tee -a qemu32
 
 
+# ppc64abi32 targets are deprecated since QEMU 5.2.0 (dropped in Ubuntu 22.04)
+# fully successful test pass writes 44410 bytes to qemu32 with ppc64abi32 runs
+
 echo "========================================================" | tee -a qemu32
 echo "Testing p32Bg4 target (PPC G4 VMX     big-endian)" | tee -a qemu32
 echo "========================================================" | tee -a qemu32
 qemu-ppc        -cpu G4     simd_test.p32Bg4 -c 1 | tee -a qemu32
-echo "========================================================" | tee -a qemu32
-echo "Testing p32Bp7 target (POWER7 VSX1    big-endian)" | tee -a qemu32
-echo "========================================================" | tee -a qemu32
-qemu-ppc64abi32 -cpu POWER7 simd_test.p32Bp7 -c 1 | tee -a qemu32
-echo "========================================================" | tee -a qemu32
-echo "Testing p32Bp8 target (POWER8 VSX2    big-endian)" | tee -a qemu32
-echo "========================================================" | tee -a qemu32
-qemu-ppc64abi32 -cpu POWER8 simd_test.p32Bp8 -c 1 | tee -a qemu32
-echo "========================================================" | tee -a qemu32
-echo "Testing p32Bp9 target (POWER9 VSX3    big-endian)" | tee -a qemu32
-echo "========================================================" | tee -a qemu32
-qemu-ppc64abi32 -cpu POWER9 simd_test.p32Bp9 -c 1 | tee -a qemu32
+#echo "========================================================" | tee -a qemu32
+#echo "Testing p32Bp7 target (POWER7 VSX1    big-endian)" | tee -a qemu32
+#echo "========================================================" | tee -a qemu32
+#qemu-ppc64abi32 -cpu POWER7 simd_test.p32Bp7 -c 1 | tee -a qemu32
+#echo "========================================================" | tee -a qemu32
+#echo "Testing p32Bp8 target (POWER8 VSX2    big-endian)" | tee -a qemu32
+#echo "========================================================" | tee -a qemu32
+#qemu-ppc64abi32 -cpu POWER8 simd_test.p32Bp8 -c 1 | tee -a qemu32
+#echo "========================================================" | tee -a qemu32
+#echo "Testing p32Bp9 target (POWER9 VSX3    big-endian)" | tee -a qemu32
+#echo "========================================================" | tee -a qemu32
+#qemu-ppc64abi32 -cpu POWER9 simd_test.p32Bp9 -c 1 | tee -a qemu32
 
 
 echo "========================================================"
-echo "fully successful test pass writes  44410 bytes to qemu32"
+echo "fully successful test pass writes  27754 bytes to qemu32"
 echo "the result doesn't depend on CPU type (unlike test64/86)"
 echo "check the output if qemu32 size differs, check printouts"
 echo "========================================================"
