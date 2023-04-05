@@ -21,6 +21,51 @@
   <ItemGroup>
     <ClCompile Include="simd_test.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\core\config\rtarch.h" />
+    <ClInclude Include="..\core\config\rtarch_x32.h" />
+    <ClInclude Include="..\core\config\rtarch_x32_128x1v2.h" />
+    <ClInclude Include="..\core\config\rtarch_x32_128x1v4.h" />
+    <ClInclude Include="..\core\config\rtarch_x32_128x1v8.h" />
+    <ClInclude Include="..\core\config\rtarch_x32_128x2v4.h" />
+    <ClInclude Include="..\core\config\rtarch_x32_256x1v2.h" />
+    <ClInclude Include="..\core\config\rtarch_x32_256x1v8.h" />
+    <ClInclude Include="..\core\config\rtarch_x32_256x2v2.h" />
+    <ClInclude Include="..\core\config\rtarch_x32_512x1v8.h" />
+    <ClInclude Include="..\core\config\rtarch_x32_512x2v2.h" />
+    <ClInclude Include="..\core\config\rtarch_x32_512x4v2.h" />
+    <ClInclude Include="..\core\config\rtarch_x64.h" />
+    <ClInclude Include="..\core\config\rtarch_x64_128x1v2.h" />
+    <ClInclude Include="..\core\config\rtarch_x64_128x1v4.h" />
+    <ClInclude Include="..\core\config\rtarch_x64_128x1v8.h" />
+    <ClInclude Include="..\core\config\rtarch_x64_128x2v4.h" />
+    <ClInclude Include="..\core\config\rtarch_x64_256x1v2.h" />
+    <ClInclude Include="..\core\config\rtarch_x64_256x1v8.h" />
+    <ClInclude Include="..\core\config\rtarch_x64_256x2v2.h" />
+    <ClInclude Include="..\core\config\rtarch_x64_512x1v8.h" />
+    <ClInclude Include="..\core\config\rtarch_x64_512x2v2.h" />
+    <ClInclude Include="..\core\config\rtarch_x64_512x4v2.h" />
+    <ClInclude Include="..\core\config\rtarch_xHB.h" />
+    <ClInclude Include="..\core\config\rtarch_xHB_128x1v2.h" />
+    <ClInclude Include="..\core\config\rtarch_xHB_128x1v4.h" />
+    <ClInclude Include="..\core\config\rtarch_xHB_128x1v8.h" />
+    <ClInclude Include="..\core\config\rtarch_xHB_128x2v4.h" />
+    <ClInclude Include="..\core\config\rtarch_xHB_256x1v2.h" />
+    <ClInclude Include="..\core\config\rtarch_xHB_256x1v8.h" />
+    <ClInclude Include="..\core\config\rtarch_xHB_256x2v2.h" />
+    <ClInclude Include="..\core\config\rtarch_xHB_512x1v8.h" />
+    <ClInclude Include="..\core\config\rtarch_xHB_512x2v2.h" />
+    <ClInclude Include="..\core\config\rtarch_xHB_512x4v2.h" />
+    <ClInclude Include="..\core\config\rtarch_xHF_128x1v2.h" />
+    <ClInclude Include="..\core\config\rtarch_xHF_256x1v8.h" />
+    <ClInclude Include="..\core\config\rtarch_xHF_512x1v8.h" />
+    <ClInclude Include="..\core\config\rtarch_xHF_512x2v2.h" />
+    <ClInclude Include="..\core\config\rtarch_xHF_512x4v2.h" />
+    <ClInclude Include="..\core\config\rtbase.h" />
+    <ClInclude Include="..\core\config\rtconf.h" />
+    <ClInclude Include="..\core\config\rtdocs.h" />
+    <ClInclude Include="..\core\config\rtzero.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

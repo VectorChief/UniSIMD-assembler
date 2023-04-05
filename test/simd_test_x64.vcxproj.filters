@@ -9,10 +9,147 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{0a255df8-ee9e-45d2-b928-0b1efb68dc8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\config">
+      <UniqueIdentifier>{b0a101d1-d784-48f3-8e7b-ed50858362a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="simd_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\core\config\rtarch.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x32.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x32_128x1v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x32_128x1v4.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x32_128x1v8.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x32_128x2v4.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x32_256x1v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x32_256x1v8.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x32_256x2v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x32_512x1v8.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x32_512x2v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x32_512x4v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x64.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x64_128x1v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x64_128x1v4.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x64_128x1v8.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x64_128x2v4.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x64_256x1v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x64_256x1v8.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x64_256x2v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x64_512x1v8.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x64_512x2v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_x64_512x4v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_xHB.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_xHB_128x1v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_xHB_128x1v4.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_xHB_128x1v8.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_xHB_128x2v4.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_xHB_256x1v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_xHB_256x1v8.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_xHB_256x2v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_xHB_512x1v8.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_xHB_512x2v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_xHB_512x4v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_xHF_128x1v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_xHF_256x1v8.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_xHF_512x1v8.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_xHF_512x2v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtarch_xHF_512x4v2.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtbase.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtconf.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtdocs.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\config\rtzero.h">
+      <Filter>core\config</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
