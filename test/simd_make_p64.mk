@@ -21,29 +21,32 @@ clean:
 	rm simd_test.p64*
 
 
+# forcing -mcpu=power8 for power9 targets is a workaround for GCC 11 bug
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=109004
+
 build_p9: simd_test_p64_32Lp9 simd_test_p64_64Lp9 \
           simd_test_p64f32Lp9 simd_test_p64f64Lp9
 
 simd_test_p64_32Lp9:
-	powerpc64le-linux-gnu-g++ -O2 -g -static \
+	powerpc64le-linux-gnu-g++ -O2 -g -static -mcpu=power8 \
         -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64_32Lp9
 
 simd_test_p64_64Lp9:
-	powerpc64le-linux-gnu-g++ -O2 -g -static \
+	powerpc64le-linux-gnu-g++ -O2 -g -static -mcpu=power8 \
         -DRT_LINUX -DRT_P64 -DRT_128=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64_64Lp9
 
 simd_test_p64f32Lp9:
-	powerpc64le-linux-gnu-g++ -O2 -g -static \
+	powerpc64le-linux-gnu-g++ -O2 -g -static -mcpu=power8 \
         -DRT_LINUX -DRT_P64 -DRT_256=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f32Lp9
 
 simd_test_p64f64Lp9:
-	powerpc64le-linux-gnu-g++ -O2 -g -static \
+	powerpc64le-linux-gnu-g++ -O2 -g -static -mcpu=power8 \
         -DRT_LINUX -DRT_P64 -DRT_256=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f64Lp9
@@ -53,25 +56,25 @@ build_pX: simd_test_p64_32LpX simd_test_p64_64LpX \
           simd_test_p64f32LpX simd_test_p64f64LpX
 
 simd_test_p64_32LpX:
-	powerpc64le-linux-gnu-g++ -O2 -g -static \
+	powerpc64le-linux-gnu-g++ -O0 -g -static \
         -DRT_LINUX -DRT_P64 -DRT_256=8 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64_32LpX
 
 simd_test_p64_64LpX:
-	powerpc64le-linux-gnu-g++ -O2 -g -static \
+	powerpc64le-linux-gnu-g++ -O0 -g -static \
         -DRT_LINUX -DRT_P64 -DRT_256=8 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64_64LpX
 
 simd_test_p64f32LpX:
-	powerpc64le-linux-gnu-g++ -O2 -g -static \
+	powerpc64le-linux-gnu-g++ -O0 -g -static \
         -DRT_LINUX -DRT_P64 -DRT_512=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f32LpX
 
 simd_test_p64f64LpX:
-	powerpc64le-linux-gnu-g++ -O2 -g -static \
+	powerpc64le-linux-gnu-g++ -O0 -g -static \
         -DRT_LINUX -DRT_P64 -DRT_512=2 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p64f64LpX
