@@ -657,21 +657,6 @@
 
 #define X(val, typ, cmd)  (val+16), typ, cmd
 
-#define addds_ld(XG, MS, DS) /* not portable, do not use outside */         \
-        V2X(REG(XG), 1, 1) EMITB(0x58)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define subds_ld(XG, MS, DS) /* not portable, do not use outside */         \
-        V2X(REG(XG), 1, 1) EMITB(0x5C)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#define mulds_ld(XG, MS, DS) /* not portable, do not use outside */         \
-        V2X(REG(XG), 1, 1) EMITB(0x59)                                      \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
 #if RT_SIMD_COMPAT_FMA == 0
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)

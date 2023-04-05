@@ -646,18 +646,6 @@
 
 #if (RT_128X1 < 16)
 
-#define addds_rr(XG, XS)     /* not portable, do not use outside */         \
-        V2X(REG(XG), 1, 1) EMITB(0x58)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define subds_rr(XG, XS)     /* not portable, do not use outside */         \
-        V2X(REG(XG), 1, 1) EMITB(0x5C)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
-#define mulds_rr(XG, XS)     /* not portable, do not use outside */         \
-        V2X(REG(XG), 1, 1) EMITB(0x59)                                      \
-        MRM(REG(XG), MOD(XS), REG(XS))
-
 #if RT_SIMD_COMPAT_FMA == 0
 
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
