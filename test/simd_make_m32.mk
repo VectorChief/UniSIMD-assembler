@@ -40,7 +40,6 @@ simd_test_m32Br5:
 # (extended repositories "universe multiverse" are only needed for clang)
 #
 # Download and unpack MIPS toolchain:
-# https://www.mips.com/develop/tools/codescape-mips-sdk/
 # https://codescape.mips.com/components/toolchain/2020.06-01/downloads.html
 #
 # Prerequisites for the build:
