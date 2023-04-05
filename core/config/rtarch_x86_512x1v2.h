@@ -157,10 +157,20 @@
 
 #if (RT_512X1 == 1)
 
+#define ck1qx_rm(XS, MT, DT) /* not portable, do not use outside */         \
+        EVW(REG(XS), K, 1, 2) EMITB(0x29)                                   \
+        MRM(0x01,    MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 #define ck1ox_rm(XS, MT, DT) /* not portable, do not use outside */         \
         EVX(REG(XS), K, 1, 1) EMITB(0x76)                                   \
         MRM(0x01,    MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
+
+#define mz1qx_ld(XD, MS, DS) /* not portable, do not use outside */         \
+        EZW(0x00,    K, 1, 1) EMITB(0x28)                                   \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define mz1ox_ld(XD, MS, DS) /* not portable, do not use outside */         \
         EZX(0x00,    K, 0, 1) EMITB(0x28)                                   \
@@ -169,9 +179,17 @@
 
 #else  /* (RT_512X1 == 2) */
 
+#define ck1qx_rm(XS, MT, DT) /* not portable, do not use outside */         \
+        EVW(0x00,    K, 2, 2) EMITB(0x39)                                   \
+        MRM(0x01,    MOD(XS), REG(XS))
+
 #define ck1ox_rm(XS, MT, DT) /* not portable, do not use outside */         \
         EVX(0x00,    K, 2, 2) EMITB(0x39)                                   \
         MRM(0x01,    MOD(XS), REG(XS))
+
+#define mz1qx_ld(XD, MS, DS) /* not portable, do not use outside */         \
+        EVW(0x00,    K, 2, 2) EMITB(0x38)                                   \
+        MRM(REG(XD),    0x03,    0x01)
 
 #define mz1ox_ld(XD, MS, DS) /* not portable, do not use outside */         \
         EVX(0x00,    K, 2, 2) EMITB(0x38)                                   \
@@ -193,7 +211,7 @@
 #define elmox_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
         elmix_st(W(XS), W(MD), W(DD))
 
-/***************   packed single-precision generic move/logic   ***************/
+/***********   packed single/double-precision generic move/logic   ************/
 
 /* mov (D = S) */
 
@@ -208,6 +226,21 @@
 
 #define movox_st(XS, MD, DD)                                                \
         EVX(0x00,    K, 0, 1) EMITB(0x29)                                   \
+        MRM(REG(XS), MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), CMD(DD), EMPTY)
+
+
+#define movqx_rr(XD, XS)                                                    \
+        EVW(0x00,    K, 1, 1) EMITB(0x28)                                   \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define movqx_ld(XD, MS, DS)                                                \
+        EVW(0x00,    K, 1, 1) EMITB(0x28)                                   \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define movqx_st(XS, MD, DD)                                                \
+        EVW(0x00,    K, 1, 1) EMITB(0x29)                                   \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
@@ -231,6 +264,24 @@
         MRM(REG(XS), MOD(MG), REG(MG))                                      \
         AUX(SIB(MG), CMD(DG), EMPTY)
 
+
+#define mmvqx_rr(XG, XS)                                                    \
+        ck1qx_rm(Xmm0, Mebp, inf_GPC07)                                     \
+        EKW(0x00,    K, 1, 1) EMITB(0x28)                                   \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define mmvqx_ld(XG, MS, DS)                                                \
+        ck1qx_rm(Xmm0, Mebp, inf_GPC07)                                     \
+        EKW(0x00,    K, 1, 1) EMITB(0x28)                                   \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define mmvqx_st(XS, MG, DG)                                                \
+        ck1qx_rm(Xmm0, Mebp, inf_GPC07)                                     \
+        EKW(0x00,    K, 1, 1) EMITB(0x29)                                   \
+        MRM(REG(XS), MOD(MG), REG(MG))                                      \
+        AUX(SIB(MG), CMD(DG), EMPTY)
+
 #if (RT_512X1 < 2)
 
 /* and (G = G & S), (D = S & T) if (#D != #T) */
@@ -247,6 +298,22 @@
 
 #define andox3ld(XD, XS, MT, DT)                                            \
         EVX(REG(XS), K, 1, 1) EMITB(0xDB)                                   \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+
+#define andqx_rr(XG, XS)                                                    \
+        andqx3rr(W(XG), W(XG), W(XS))
+
+#define andqx_ld(XG, MS, DS)                                                \
+        andqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define andqx3rr(XD, XS, XT)                                                \
+        EVW(REG(XS), K, 1, 1) EMITB(0xDB)                                   \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define andqx3ld(XD, XS, MT, DT)                                            \
+        EVW(REG(XS), K, 1, 1) EMITB(0xDB)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -267,6 +334,22 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+
+#define annqx_rr(XG, XS)                                                    \
+        annqx3rr(W(XG), W(XG), W(XS))
+
+#define annqx_ld(XG, MS, DS)                                                \
+        annqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define annqx3rr(XD, XS, XT)                                                \
+        EVW(REG(XS), K, 1, 1) EMITB(0xDF)                                   \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define annqx3ld(XD, XS, MT, DT)                                            \
+        EVW(REG(XS), K, 1, 1) EMITB(0xDF)                                   \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrox_rr(XG, XS)                                                    \
@@ -281,6 +364,22 @@
 
 #define orrox3ld(XD, XS, MT, DT)                                            \
         EVX(REG(XS), K, 1, 1) EMITB(0xEB)                                   \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+
+#define orrqx_rr(XG, XS)                                                    \
+        orrqx3rr(W(XG), W(XG), W(XS))
+
+#define orrqx_ld(XG, MS, DS)                                                \
+        orrqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define orrqx3rr(XD, XS, XT)                                                \
+        EVW(REG(XS), K, 1, 1) EMITB(0xEB)                                   \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define orrqx3ld(XD, XS, MT, DT)                                            \
+        EVW(REG(XS), K, 1, 1) EMITB(0xEB)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -302,6 +401,23 @@
         notox_rr(W(XD), W(XS))                                              \
         orrox_ld(W(XD), W(MT), W(DT))
 
+
+#define ornqx_rr(XG, XS)                                                    \
+        notqx_rx(W(XG))                                                     \
+        orrqx_rr(W(XG), W(XS))
+
+#define ornqx_ld(XG, MS, DS)                                                \
+        notqx_rx(W(XG))                                                     \
+        orrqx_ld(W(XG), W(MS), W(DS))
+
+#define ornqx3rr(XD, XS, XT)                                                \
+        notqx_rr(W(XD), W(XS))                                              \
+        orrqx_rr(W(XD), W(XT))
+
+#define ornqx3ld(XD, XS, MT, DT)                                            \
+        notqx_rr(W(XD), W(XS))                                              \
+        orrqx_ld(W(XD), W(MT), W(DT))
+
 /* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorox_rr(XG, XS)                                                    \
@@ -316,6 +432,22 @@
 
 #define xorox3ld(XD, XS, MT, DT)                                            \
         EVX(REG(XS), K, 1, 1) EMITB(0xEF)                                   \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+
+#define xorqx_rr(XG, XS)                                                    \
+        xorqx3rr(W(XG), W(XG), W(XS))
+
+#define xorqx_ld(XG, MS, DS)                                                \
+        xorqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define xorqx3rr(XD, XS, XT)                                                \
+        EVW(REG(XS), K, 1, 1) EMITB(0xEF)                                   \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define xorqx3ld(XD, XS, MT, DT)                                            \
+        EVW(REG(XS), K, 1, 1) EMITB(0xEF)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -338,6 +470,22 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+
+#define andqx_rr(XG, XS)                                                    \
+        andqx3rr(W(XG), W(XG), W(XS))
+
+#define andqx_ld(XG, MS, DS)                                                \
+        andqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define andqx3rr(XD, XS, XT)                                                \
+        EVW(REG(XS), K, 1, 1) EMITB(0x54)                                   \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define andqx3ld(XD, XS, MT, DT)                                            \
+        EVW(REG(XS), K, 1, 1) EMITB(0x54)                                   \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
 
 #define annox_rr(XG, XS)                                                    \
@@ -355,6 +503,22 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+
+#define annqx_rr(XG, XS)                                                    \
+        annqx3rr(W(XG), W(XG), W(XS))
+
+#define annqx_ld(XG, MS, DS)                                                \
+        annqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define annqx3rr(XD, XS, XT)                                                \
+        EVW(REG(XS), K, 1, 1) EMITB(0x55)                                   \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define annqx3ld(XD, XS, MT, DT)                                            \
+        EVW(REG(XS), K, 1, 1) EMITB(0x55)                                   \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* orr (G = G | S), (D = S | T) if (#D != #T) */
 
 #define orrox_rr(XG, XS)                                                    \
@@ -369,6 +533,22 @@
 
 #define orrox3ld(XD, XS, MT, DT)                                            \
         EVX(REG(XS), K, 0, 1) EMITB(0x56)                                   \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+
+#define orrqx_rr(XG, XS)                                                    \
+        orrqx3rr(W(XG), W(XG), W(XS))
+
+#define orrqx_ld(XG, MS, DS)                                                \
+        orrqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define orrqx3rr(XD, XS, XT)                                                \
+        EVW(REG(XS), K, 1, 1) EMITB(0x56)                                   \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define orrqx3ld(XD, XS, MT, DT)                                            \
+        EVW(REG(XS), K, 1, 1) EMITB(0x56)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -390,6 +570,23 @@
         notox_rr(W(XD), W(XS))                                              \
         orrox_ld(W(XD), W(MT), W(DT))
 
+
+#define ornqx_rr(XG, XS)                                                    \
+        notqx_rx(W(XG))                                                     \
+        orrqx_rr(W(XG), W(XS))
+
+#define ornqx_ld(XG, MS, DS)                                                \
+        notqx_rx(W(XG))                                                     \
+        orrqx_ld(W(XG), W(MS), W(DS))
+
+#define ornqx3rr(XD, XS, XT)                                                \
+        notqx_rr(W(XD), W(XS))                                              \
+        orrqx_rr(W(XD), W(XT))
+
+#define ornqx3ld(XD, XS, MT, DT)                                            \
+        notqx_rr(W(XD), W(XS))                                              \
+        orrqx_ld(W(XD), W(MT), W(DT))
+
 /* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
 #define xorox_rr(XG, XS)                                                    \
@@ -407,6 +604,22 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+
+#define xorqx_rr(XG, XS)                                                    \
+        xorqx3rr(W(XG), W(XG), W(XS))
+
+#define xorqx_ld(XG, MS, DS)                                                \
+        xorqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define xorqx3rr(XD, XS, XT)                                                \
+        EVW(REG(XS), K, 1, 1) EMITB(0x57)                                   \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define xorqx3ld(XD, XS, MT, DT)                                            \
+        EVW(REG(XS), K, 1, 1) EMITB(0x57)                                   \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 #endif /* RT_512X1 >= 2 */
 
 /* not (G = ~G), (D = ~S) */
@@ -417,7 +630,14 @@
 #define notox_rr(XD, XS)                                                    \
         annox3ld(W(XD), W(XS), Mebp, inf_GPC07)
 
-/************   packed single-precision floating-point arithmetic   ***********/
+
+#define notqx_rx(XG)                                                        \
+        notqx_rr(W(XG), W(XG))
+
+#define notqx_rr(XD, XS)                                                    \
+        annqx3ld(W(XD), W(XS), Mebp, inf_GPC07)
+
+/********   packed single/double-precision floating-point arithmetic   ********/
 
 /* neg (G = -G), (D = -S) */
 
@@ -426,6 +646,13 @@
 
 #define negos_rr(XD, XS)                                                    \
         xorox3ld(W(XD), W(XS), Mebp, inf_GPC06_32)
+
+
+#define negqs_rx(XG)                                                        \
+        negqs_rr(W(XG), W(XG))
+
+#define negqs_rr(XD, XS)                                                    \
+        xorqx3ld(W(XD), W(XS), Mebp, inf_GPC06_64)
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
@@ -441,6 +668,22 @@
 
 #define addos3ld(XD, XS, MT, DT)                                            \
         EVX(REG(XS), K, 0, 1) EMITB(0x58)                                   \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+
+#define addqs_rr(XG, XS)                                                    \
+        addqs3rr(W(XG), W(XG), W(XS))
+
+#define addqs_ld(XG, MS, DS)                                                \
+        addqs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define addqs3rr(XD, XS, XT)                                                \
+        EVW(REG(XS), K, 1, 1) EMITB(0x58)                                   \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define addqs3ld(XD, XS, MT, DT)                                            \
+        EVW(REG(XS), K, 1, 1) EMITB(0x58)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -462,6 +705,22 @@
         adpis_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
         movix_st(W(XD), Mebp, inf_SCR01(0x30))
 
+
+#undef  adpqs_rx
+#define adpqs_rx(XD) /* not portable, do not use outside */                 \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x00))                              \
+        adpjs_ld(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x00))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0x20))                              \
+        adpjs_ld(W(XD), Mebp, inf_SCR01(0x30))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x10))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
+        adpjs_ld(W(XD), Mebp, inf_SCR02(0x10))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x20))                              \
+        movjx_ld(W(XD), Mebp, inf_SCR02(0x20))                              \
+        adpjs_ld(W(XD), Mebp, inf_SCR02(0x30))                              \
+        movjx_st(W(XD), Mebp, inf_SCR01(0x30))
+
 /* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subos_rr(XG, XS)                                                    \
@@ -479,6 +738,22 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+
+#define subqs_rr(XG, XS)                                                    \
+        subqs3rr(W(XG), W(XG), W(XS))
+
+#define subqs_ld(XG, MS, DS)                                                \
+        subqs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subqs3rr(XD, XS, XT)                                                \
+        EVW(REG(XS), K, 1, 1) EMITB(0x5C)                                   \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define subqs3ld(XD, XS, MT, DT)                                            \
+        EVW(REG(XS), K, 1, 1) EMITB(0x5C)                                   \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulos_rr(XG, XS)                                                    \
@@ -493,6 +768,22 @@
 
 #define mulos3ld(XD, XS, MT, DT)                                            \
         EVX(REG(XS), K, 0, 1) EMITB(0x59)                                   \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+
+#define mulqs_rr(XG, XS)                                                    \
+        mulqs3rr(W(XG), W(XG), W(XS))
+
+#define mulqs_ld(XG, MS, DS)                                                \
+        mulqs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulqs3rr(XD, XS, XT)                                                \
+        EVW(REG(XS), K, 1, 1) EMITB(0x59)                                   \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define mulqs3ld(XD, XS, MT, DT)                                            \
+        EVW(REG(XS), K, 1, 1) EMITB(0x59)                                   \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
@@ -516,6 +807,22 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+
+#define divqs_rr(XG, XS)                                                    \
+        divqs3rr(W(XG), W(XG), W(XS))
+
+#define divqs_ld(XG, MS, DS)                                                \
+        divqs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divqs3rr(XD, XS, XT)                                                \
+        EVW(REG(XS), K, 1, 1) EMITB(0x5E)                                   \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define divqs3ld(XD, XS, MT, DT)                                            \
+        EVW(REG(XS), K, 1, 1) EMITB(0x5E)                                   \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /* sqr (D = sqrt S) */
 
 #define sqros_rr(XD, XS)                                                    \
@@ -524,6 +831,16 @@
 
 #define sqros_ld(XD, MS, DS)                                                \
         EVX(0x00,    K, 0, 1) EMITB(0x51)                                   \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+
+#define sqrqs_rr(XD, XS)                                                    \
+        EVW(0x00,    K, 1, 1) EMITB(0x51)                                   \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define sqrqs_ld(XD, MS, DS)                                                \
+        EVW(0x00,    K, 1, 1) EMITB(0x51)                                   \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
