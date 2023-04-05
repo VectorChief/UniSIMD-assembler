@@ -21,8 +21,8 @@ clean:
 	rm simd_test.p64*
 
 
-# forcing -mcpu=power8 for power9 targets is a workaround for GCC 11 bug
-# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=109004
+# using -mcpu=power8 for power9 targets is a workaround for QEMU 6.2.0 bug
+# https://bugs.launchpad.net/ubuntu/+source/qemu/+bug/2011832
 
 build_p9: simd_test_p64_32Lp9 simd_test_p64_64Lp9 \
           simd_test_p64f32Lp9 simd_test_p64f64Lp9
