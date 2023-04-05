@@ -164,10 +164,10 @@ simd_test_p64f64Bp7:
 # qemu-ppc64le -cpu POWER9 simd_test.p64_64LpX -c 1
 # qemu-ppc64le -cpu POWER9 simd_test.p64f32LpX -c 1
 # qemu-ppc64le -cpu POWER9 simd_test.p64f64LpX -c 1
-# qemu-ppc64le -cpu POWER8 simd_test.p64_32Lp8 -c 1
-# qemu-ppc64le -cpu POWER8 simd_test.p64_64Lp8 -c 1
-# qemu-ppc64le -cpu POWER8 simd_test.p64f32Lp8 -c 1
-# qemu-ppc64le -cpu POWER8 simd_test.p64f64Lp8 -c 1
+# qemu-ppc64le -cpu POWER8 simd_test.p64_32Lp8 -c 1 (use POWER9 on Ubuntu 22.04)
+# qemu-ppc64le -cpu POWER8 simd_test.p64_64Lp8 -c 1 (use POWER9 on Ubuntu 22.04)
+# qemu-ppc64le -cpu POWER8 simd_test.p64f32Lp8 -c 1 (use POWER9 on Ubuntu 22.04)
+# qemu-ppc64le -cpu POWER8 simd_test.p64f64Lp8 -c 1 (use POWER9 on Ubuntu 22.04)
 # qemu-ppc64   -cpu POWER7 simd_test.p64_32Bp7 -c 1
 # qemu-ppc64   -cpu POWER7 simd_test.p64_64Bp7 -c 1
 # qemu-ppc64   -cpu POWER7 simd_test.p64f32Bp7 -c 1
