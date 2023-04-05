@@ -41,6 +41,8 @@ then open UniSIMD's "test" subfolder and click on VS2022 solution file:
     simd_test_x64.sln
 from within the Visual Studio press F5 key to build and run the binary.
 
+For maximum compatibility, always copy the binaries to *.sln's subfolder.
+
 To build SIMD test framework on Windows using TDM64-GCC,
 download and install TDM64-GCC toolchain (tdm64-gcc-10.3.0-2.exe) from github,
 then open UniSIMD's "test" subfolder and run from "cmd" or Windows Explorer:
