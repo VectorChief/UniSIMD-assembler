@@ -1,3 +1,40 @@
+v1.1.0d: UniSIMD, code name "ENsed+1d": macOS M1, VS2022, Ubuntu 22.04
+  - switch to malloc for 64-bit pointer/address combo
+  - use assembler-local labels to build on M1 macOS
+  - add support for M1 macOS to makefiles
+  - add VS2022 support for SIMD test
+  - add notes for building on Windows with VS2022 and M1 macOS
+  - update documentation and main header (add braces to ASM_INIT)
+  - add double-precision logic/arithmetic to ARMv7, x86
+  - add workarounds for POWER8 and POWER9 targets on Ubuntu 22.04
+  - drop ppc64abi32 targets (since QEMU 5.2.0), also from QEMU build script
+  - add notes for VS2022, QEMU 6.2.0 and 7.2.0, Ubuntu 23.04
+  - swap 16-bit and SIMD integer compare test groups (30-37 <-> 38-44)
+  - update copyright year to 2023
+
+v1.0.0g: UniSIMD, code name "ENsed+g", backports, VS2022, Ubuntu 22.04
+  - switch to malloc for 64-bit pointer/address combo
+  - require both SSE4.1 and SSE4.2 for SSE4 (v4) target slots
+  - add DAZ support for flush-to-zero mode on x86 (makes on par with RISCs)
+  - backport integer SIMD compare subset (min/max/ceq/cne/clt/cle/cgt/cge)
+  - backport tests for integer SIMD compare (30-36) (signed/unsigned)
+  - target slots AVX512DQ now include VL backends for 128/256-bit subsets
+  - optimize SIMD compare and mask-jump instructions for AVX-512
+  - add 64-bit sign/zero-extend bridges to existing 32/64-bit BASE subsets
+  - optimize standalone remainder instructions on ARM and POWER
+  - implement direct ASM section output comparison method (bypass C++ test)
+  - extended 30-reg 256-bit and 15-reg 512-bit POWER backends are deprecated
+  - extended POWER backends are still supported with v1.0.0f ASM feature set
+  - add VS2022 support for SIMD test
+  - update build scripts with TDM64-GCC 10.3.0-2 compiler reference
+  - update documentation and main header (add braces to ASM_INIT)
+  - add double-precision logic/arithmetic to ARMv7, x86
+  - add workarounds for POWER8 and POWER9 targets on Ubuntu 22.04
+  - drop ppc64abi32 targets (since QEMU 5.2.0), also from QEMU build script
+  - add notes for VS2022, QEMU 6.2.0 and 7.2.0, Ubuntu 23.04
+  - clean up comments in BASE and SIMD headers
+  - update copyright year to 2023
+
 v1.1.0c: UniSIMD, code name "ENsed+1c": full-stack SIMD/BASE
   - add 8-bit (byte) BASE instruction subset, redesign 16-bit BASE
   - add 8-bit elements SIMD subset (native on RISCs, mostly emulated on x86)
