@@ -17,13 +17,13 @@ Q) Task title: "implement fp128 backend on POWER9 as tier-2 extension (no SPMD)"
 ================================================================================
 
 X) Task title: "implement predicated AVX-512/ARM-SVE backends (in *_RX slots)"
-1) Add rtarch_***_***x*vP.h header files to core/config for predicated targets
-2) Add predicate registers M1..M6 (merging) and Z1..Z6 (zeroing) as triplets
+1) Add rtarch_***_***x*p*.h header files to core/config for predicated targets
+2) Add predicate registers X1..X6 (merging) and Z1..Z6 (zeroing) as triplets
 3) Add cmd**P** subset for "two-operand + predicate" instructions
 4) Add cmd**4** subset for "three-operand + predicate" instructions
 5) Predicate is placed 1st in cmp-ops, and right after dest-SIMD-reg otherwise
 6) Predicated targets can be implemented as extension to current AVX-512/ARM-SVE
-7) Define predicate registers P1..P6 where merging/zeroing is not applicable
+7) Use predicate registers X1..X6 where merging/zeroing is not applicable
 8) Emulate zeroing and three-operand ops on ARM-SVE from fields in triplets
 9) Paired predicated backends should expose half the predicates (and registers)
 
