@@ -82,9 +82,13 @@ and will be removed in the following releases (Ubuntu 22.04 should have 6.2.0).
 QEMU 6.2.0 contains some MIPS regressions and POWER bugs (exposed by gcc 11.3),
 consider an update: https://bugs.launchpad.net/ubuntu/+source/qemu/+bug/2011832
 or build QEMU 7.2.0 from source (contains all the fixes, also in Ubuntu 23.04).
+All QEMU versions since 6.0.0 including 8.0.0 have MIPS bug reported here:
+https://gitlab.com/qemu-project/qemu/-/issues/1624
+Note that using standalone MIPS cross-compiler masks the issue with local QEMU.
 
 Ubuntu 20.04 is the first release where MIPS cross-compilers have caught up
 with the rest of the pack (standalone 2020.06-01 and mipsisa64r6* are 9.3.0).
+It is the only release which has full support for all the targets (ppc64abi32).
 
 ================================================================================
 
