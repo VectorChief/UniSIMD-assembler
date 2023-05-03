@@ -206,6 +206,20 @@
         EMITB(0x00 | (1 - (rxg)) << 7 | 1 << 6 | (1 - (rxm)) << 5 | (aux))  \
         EMITB(0x80 | (len) << 2 | (0x0F - (ren)) << 3 | (pfx))
 
+/* 4-byte EVEX prefix with full customization (W0, KX) */
+#define EPX(pre, mod, rxg, rxm, ren, len, pfx, aux)                         \
+        EMITB(0x62)                                                         \
+        EMITB(0x00 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
+        EMITB(0x04 | (15-((ren)&15))<<3 | (pfx))                            \
+        EMITB(0x00 | (16-((ren)&16))>>1 | (len) << 5 | (mod) << 7 | (pre))
+
+/* 4-byte EVEX prefix with full customization (W1, KX) */
+#define EPW(pre, mod, rxg, rxm, ren, len, pfx, aux)                         \
+        EMITB(0x62)                                                         \
+        EMITB(0x00 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
+        EMITB(0x84 | (15-((ren)&15))<<3 | (pfx))                            \
+        EMITB(0x00 | (16-((ren)&16))>>1 | (len) << 5 | (mod) << 7 | (pre))
+
 /* 4-byte EVEX prefix with full customization (W0, K0) */
 #define EVX(rxg, rxm, ren, len, pfx, aux)                                   \
         EMITB(0x62)                                                         \

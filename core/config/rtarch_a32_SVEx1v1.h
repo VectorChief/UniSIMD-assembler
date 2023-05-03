@@ -147,6 +147,110 @@
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
 
+/* predicates   REG,  MOD,  SIB */
+
+#define X1      0x07, 0x00, EMPTY
+#define X2      0x02, 0x00, EMPTY
+#define X3      0x03, 0x00, EMPTY
+#define X4      0x04, 0x00, EMPTY
+#define X5      0x05, 0x00, EMPTY
+#define X6      0x06, 0x00, EMPTY
+
+#define Z1      0x07, 0x01, EMPTY
+#define Z2      0x02, 0x01, EMPTY
+#define Z3      0x03, 0x01, EMPTY
+#define Z4      0x04, 0x01, EMPTY
+#define Z5      0x05, 0x01, EMPTY
+#define Z6      0x06, 0x01, EMPTY
+
+/* add (G = G + S), (D = S + T) if (#D != #T) */
+
+#define addosPrr(XG, PS, XS)                                                \
+        addos4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define addosPld(XG, PS, MS, DS)                                            \
+        addos4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define addos4rr(XD, PS, XS, XT)                                            \
+        EMITW(0x04000000 |                                                  \
+        ((MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) |  \
+        ((MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))      \
+        EMITW(0x65808000 | MTM(REG(XD), REG(XT), REG(PS)))
+
+#define addos4ld(XD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x04000000 |                                                  \
+        ((MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) |  \
+        ((MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))      \
+        EMITW(0x65808000 | MTM(REG(XD), TmmM,    REG(PS)))
+
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
+
+#define subosPrr(XG, PS, XS)                                                \
+        subos4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define subosPld(XG, PS, MS, DS)                                            \
+        subos4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define subos4rr(XD, PS, XS, XT)                                            \
+        EMITW(0x04000000 |                                                  \
+        ((MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) |  \
+        ((MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))      \
+        EMITW(0x65818000 | MTM(REG(XD), REG(XT), REG(PS)))
+
+#define subos4ld(XD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x04000000 |                                                  \
+        ((MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) |  \
+        ((MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))      \
+        EMITW(0x65818000 | MTM(REG(XD), TmmM,    REG(PS)))
+
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
+
+#define mulosPrr(XG, PS, XS)                                                \
+        mulos4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define mulosPld(XG, PS, MS, DS)                                            \
+        mulos4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define mulos4rr(XD, PS, XS, XT)                                            \
+        EMITW(0x04000000 |                                                  \
+        ((MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) |  \
+        ((MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))      \
+        EMITW(0x65828000 | MTM(REG(XD), REG(XT), REG(PS)))
+
+#define mulos4ld(XD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x04000000 |                                                  \
+        ((MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) |  \
+        ((MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))      \
+        EMITW(0x65828000 | MTM(REG(XD), TmmM,    REG(PS)))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
+
+#define divosPrr(XG, PS, XS)                                                \
+        divos4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define divosPld(XG, PS, MS, DS)                                            \
+        divos4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define divos4rr(XD, PS, XS, XT)                                            \
+        EMITW(0x04000000 |                                                  \
+        ((MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) |  \
+        ((MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))      \
+        EMITW(0x658D8000 | MTM(REG(XD), REG(XT), REG(PS)))
+
+#define divos4ld(XD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x04000000 |                                                  \
+        ((MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) |  \
+        ((MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))      \
+        EMITW(0x658D8000 | MTM(REG(XD), TmmM,    REG(PS)))
+
 /******************************************************************************/
 /**********************************   SIMD   **********************************/
 /******************************************************************************/
@@ -1430,7 +1534,19 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         EMITW(0xE5800000 | MXM(0x00,    Teax,    0x00))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        EMITW(0xE5800000 | MXM(0x01,    Teax,    0x00))
+        EMITW(0xE5800000 | MXM(0x01,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0xE5800000 | MXM(0x02,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0xE5800000 | MXM(0x03,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0xE5800000 | MXM(0x04,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0xE5800000 | MXM(0x05,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0xE5800000 | MXM(0x06,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0xE5800000 | MXM(0x07,    Teax,    0x00))
 
 #undef  sregs_la
 #define sregs_la() /* load all SIMD regs, destroys Reax */                  \
@@ -1501,7 +1617,19 @@
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
         EMITW(0x85800000 | MXM(0x00,    Teax,    0x00))                     \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
-        EMITW(0x85800000 | MXM(0x01,    Teax,    0x00))
+        EMITW(0x85800000 | MXM(0x01,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0x85800000 | MXM(0x02,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0x85800000 | MXM(0x03,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0x85800000 | MXM(0x04,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0x85800000 | MXM(0x05,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0x85800000 | MXM(0x06,    Teax,    0x00))                     \
+        addxx_ri(Reax, IB(RT_SIMD_WIDTH32*4))                               \
+        EMITW(0x85800000 | MXM(0x07,    Teax,    0x00))
 
 #endif /* RT_SVEX1 */
 

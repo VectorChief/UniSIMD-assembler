@@ -153,6 +153,9 @@
 #define MRM(reg, ren, rem)                                                  \
         ((rem) << 16 | (ren) << 5 | (reg))
 
+#define MTM(reg, ren, pre)                                                  \
+        ((pre) << 10 | (ren) << 5 | (reg))
+
 #define MDM(reg, brm, vdp, bxx, pxx)                                        \
         (pxx(vdp) | bxx(brm) << 5 | (reg))
 
