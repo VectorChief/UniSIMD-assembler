@@ -168,6 +168,9 @@
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
 
+/* preliminary implementation of predicated targets: ARM-SVE and AVX-512 only
+ * for regular (unpredicated) cross-compatible SIMD refer to the next section */
+
 /* predicates   REG,  MOD,  SIB */
 
 #define X1      0x07, 0x00, EMPTY
@@ -235,7 +238,7 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
-/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
+/* div (G = G / S), (D = S / T) if (#D != #T) */
 
 #define divosPrr(XG, PS, XS)                                                \
         divos4rr(W(XG), W(PS), W(XG), W(XS))
@@ -251,6 +254,138 @@
     ADR EPX(REG(PS), MOD(PS), RXB(XD), RXB(MT), REN(XS), K,0,1) EMITB(0x5E) \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* ceq (D = S == T ? 1 : 0) if (#D != #T), zeroing-masking only */
+
+#define ceqosPrr(PD, XS, XT)                                                \
+        EVX(0,       RXB(XT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+
+#define ceqosPld(PD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(PD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x00))
+
+#define ceqos4rr(PD, PS, XS, XT)                                            \
+        EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,0,1) EMITB(0xC2) \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+
+#define ceqos4ld(PD, PS, XS, MT, DT)                                        \
+    ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,0,1) EMITB(0xC2) \
+        MRM(REG(PD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x00))
+
+/* cne (D = S != T ? 1 : 0) if (#D != #T), zeroing-masking only */
+
+#define cneosPrr(PD, XS, XT)                                                \
+        EVX(0,       RXB(XT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define cneosPld(PD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(PD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x04))
+
+#define cneos4rr(PD, PS, XS, XT)                                            \
+        EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,0,1) EMITB(0xC2) \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define cneos4ld(PD, PS, XS, MT, DT)                                        \
+    ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,0,1) EMITB(0xC2) \
+        MRM(REG(PD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x04))
+
+/* clt (D = S < T ? 1 : 0) if (#D != #T), zeroing-masking only */
+
+#define cltosPrr(PD, XS, XT)                                                \
+        EVX(0,       RXB(XT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+
+#define cltosPld(PD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(PD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x01))
+
+#define cltos4rr(PD, PS, XS, XT)                                            \
+        EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,0,1) EMITB(0xC2) \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+
+#define cltos4ld(PD, PS, XS, MT, DT)                                        \
+    ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,0,1) EMITB(0xC2) \
+        MRM(REG(PD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x01))
+
+/* cle (D = S <= T ? 1 : 0) if (#D != #T), zeroing-masking only */
+
+#define cleosPrr(PD, XS, XT)                                                \
+        EVX(0,       RXB(XT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+
+#define cleosPld(PD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(PD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x02))
+
+#define cleos4rr(PD, PS, XS, XT)                                            \
+        EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,0,1) EMITB(0xC2) \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+
+#define cleos4ld(PD, PS, XS, MT, DT)                                        \
+    ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,0,1) EMITB(0xC2) \
+        MRM(REG(PD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x02))
+
+/* cgt (D = S > T ? 1 : 0) if (#D != #T), zeroing-masking only */
+
+#define cgtosPrr(PD, XS, XT)                                                \
+        EVX(0,       RXB(XT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))
+
+#define cgtosPld(PD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(PD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x06))
+
+#define cgtos4rr(PD, PS, XS, XT)                                            \
+        EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,0,1) EMITB(0xC2) \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))
+
+#define cgtos4ld(PD, PS, XS, MT, DT)                                        \
+    ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,0,1) EMITB(0xC2) \
+        MRM(REG(PD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x06))
+
+/* cge (D = S >= T ? 1 : 0) if (#D != #T), zeroing-masking only */
+
+#define cgeosPrr(PD, XS, XT)                                                \
+        EVX(0,       RXB(XT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))
+
+#define cgeosPld(PD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
+        MRM(REG(PD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x05))
+
+#define cgeos4rr(PD, PS, XS, XT)                                            \
+        EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,0,1) EMITB(0xC2) \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))
+
+#define cgeos4ld(PD, PS, XS, MT, DT)                                        \
+    ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,0,1) EMITB(0xC2) \
+        MRM(REG(PD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMITB(0x05))
 
 /******************************************************************************/
 /**********************************   SIMD   **********************************/
