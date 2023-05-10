@@ -172,6 +172,116 @@
         orrmx_rr(Xmm0, W(XS))                                               \
         movmx_st(Xmm0, W(MG), W(DG))
 
+#if (RT_256X2 < 2)
+
+/* and (G = G & S), (D = S & T) if (#D != #T) */
+
+#define andmx_rr(XG, XS)                                                    \
+        andmx3rr(W(XG), W(XG), W(XS))
+
+#define andmx_ld(XG, MS, DS)                                                \
+        andmx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define andmx3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 0, 1) EMITB(0x54)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 0, 1) EMITB(0x54)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define andmx3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 0, 1) EMITB(0x54)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 0, 1) EMITB(0x54)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
+
+#define annmx_rr(XG, XS)                                                    \
+        annmx3rr(W(XG), W(XG), W(XS))
+
+#define annmx_ld(XG, MS, DS)                                                \
+        annmx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define annmx3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 0, 1) EMITB(0x55)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 0, 1) EMITB(0x55)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define annmx3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 0, 1) EMITB(0x55)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 0, 1) EMITB(0x55)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
+
+#define orrmx_rr(XG, XS)                                                    \
+        orrmx3rr(W(XG), W(XG), W(XS))
+
+#define orrmx_ld(XG, MS, DS)                                                \
+        orrmx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define orrmx3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 0, 1) EMITB(0x56)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 0, 1) EMITB(0x56)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define orrmx3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 0, 1) EMITB(0x56)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 0, 1) EMITB(0x56)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
+
+#define ornmx_rr(XG, XS)                                                    \
+        notmx_rx(W(XG))                                                     \
+        orrmx_rr(W(XG), W(XS))
+
+#define ornmx_ld(XG, MS, DS)                                                \
+        notmx_rx(W(XG))                                                     \
+        orrmx_ld(W(XG), W(MS), W(DS))
+
+#define ornmx3rr(XD, XS, XT)                                                \
+        notmx_rr(W(XD), W(XS))                                              \
+        orrmx_rr(W(XD), W(XT))
+
+#define ornmx3ld(XD, XS, MT, DT)                                            \
+        notmx_rr(W(XD), W(XS))                                              \
+        orrmx_ld(W(XD), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
+
+#define xormx_rr(XG, XS)                                                    \
+        xormx3rr(W(XG), W(XG), W(XS))
+
+#define xormx_ld(XG, MS, DS)                                                \
+        xormx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define xormx3rr(XD, XS, XT)                                                \
+        VEX(0,             0, REG(XS), 1, 0, 1) EMITB(0x57)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        VEX(1,             1, REH(XS), 1, 0, 1) EMITB(0x57)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define xormx3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(0,       RXB(MT), REG(XS), 1, 0, 1) EMITB(0x57)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR VEX(1,       RXB(MT), REH(XS), 1, 0, 1) EMITB(0x57)                 \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+#else /* RT_256X2 >= 2, AVX2 */
+
 /* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andmx_rr(XG, XS)                                                    \
@@ -277,6 +387,8 @@
     ADR VEX(1,       RXB(MT), REH(XS), 1, 1, 1) EMITB(0xEF)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+#endif /* RT_256X2 >= 2, AVX2 */
 
 /* not (G = ~G), (D = ~S) */
 

@@ -164,6 +164,96 @@
         orrax_rr(Xmm0, W(XS))                                               \
         movax_st(Xmm0, W(MG), W(DG))
 
+#if (RT_256X1 < 2)
+
+/* and (G = G & S), (D = S & T) if (#D != #T) */
+
+#define andax_rr(XG, XS)                                                    \
+        andax3rr(W(XG), W(XG), W(XS))
+
+#define andax_ld(XG, MS, DS)                                                \
+        andax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define andax3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x54)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define andax3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x54)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
+
+#define annax_rr(XG, XS)                                                    \
+        annax3rr(W(XG), W(XG), W(XS))
+
+#define annax_ld(XG, MS, DS)                                                \
+        annax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define annax3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x55)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define annax3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x55)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
+
+#define orrax_rr(XG, XS)                                                    \
+        orrax3rr(W(XG), W(XG), W(XS))
+
+#define orrax_ld(XG, MS, DS)                                                \
+        orrax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define orrax3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x56)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define orrax3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x56)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
+
+#define ornax_rr(XG, XS)                                                    \
+        notax_rx(W(XG))                                                     \
+        orrax_rr(W(XG), W(XS))
+
+#define ornax_ld(XG, MS, DS)                                                \
+        notax_rx(W(XG))                                                     \
+        orrax_ld(W(XG), W(MS), W(DS))
+
+#define ornax3rr(XD, XS, XT)                                                \
+        notax_rr(W(XD), W(XS))                                              \
+        orrax_rr(W(XD), W(XT))
+
+#define ornax3ld(XD, XS, MT, DT)                                            \
+        notax_rr(W(XD), W(XS))                                              \
+        orrax_ld(W(XD), W(MT), W(DT))
+
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
+
+#define xorax_rr(XG, XS)                                                    \
+        xorax3rr(W(XG), W(XG), W(XS))
+
+#define xorax_ld(XG, MS, DS)                                                \
+        xorax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define xorax3rr(XD, XS, XT)                                                \
+        VEX(RXB(XD), RXB(XT), REN(XS), 1, 0, 1) EMITB(0x57)                 \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define xorax3ld(XD, XS, MT, DT)                                            \
+    ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 0, 1) EMITB(0x57)                 \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+#else /* RT_256X1 >= 2, AVX2 */
+
 /* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andax_rr(XG, XS)                                                    \
@@ -249,6 +339,8 @@
     ADR VEX(RXB(XD), RXB(MT), REN(XS), 1, 1, 1) EMITB(0xEF)                 \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
+
+#endif /* RT_256X1 >= 2, AVX2 */
 
 /* not (G = ~G), (D = ~S) */
 
