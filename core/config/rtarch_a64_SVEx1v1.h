@@ -129,6 +129,94 @@
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
 
+/* add (G = G + S), (D = S + T) if (#D != #T) */
+
+#define addqsPrr(XG, PS, XS)                                                \
+        addqs4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define addqsPld(XG, PS, MS, DS)                                            \
+        addqs4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define addqs4rr(XD, PS, XS, XT)                                            \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00D02000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
+        EMITW(0x65C08000 | MTM(REG(XD), REG(XT), REG(PS)))
+
+#define addqs4ld(XD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00D02000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
+        EMITW(0x65C08000 | MTM(REG(XD), TmmM,    REG(PS)))
+
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
+
+#define subqsPrr(XG, PS, XS)                                                \
+        subqs4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define subqsPld(XG, PS, MS, DS)                                            \
+        subqs4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define subqs4rr(XD, PS, XS, XT)                                            \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00D02000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
+        EMITW(0x65C18000 | MTM(REG(XD), REG(XT), REG(PS)))
+
+#define subqs4ld(XD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00D02000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
+        EMITW(0x65C18000 | MTM(REG(XD), TmmM,    REG(PS)))
+
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
+
+#define mulqsPrr(XG, PS, XS)                                                \
+        mulqs4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define mulqsPld(XG, PS, MS, DS)                                            \
+        mulqs4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define mulqs4rr(XD, PS, XS, XT)                                            \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00D02000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
+        EMITW(0x65C28000 | MTM(REG(XD), REG(XT), REG(PS)))
+
+#define mulqs4ld(XD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00D02000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
+        EMITW(0x65C28000 | MTM(REG(XD), TmmM,    REG(PS)))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
+
+#define divqsPrr(XG, PS, XS)                                                \
+        divqs4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define divqsPld(XG, PS, MS, DS)                                            \
+        divqs4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define divqs4rr(XD, PS, XS, XT)                                            \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00D02000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
+        EMITW(0x65CD8000 | MTM(REG(XD), REG(XT), REG(PS)))
+
+#define divqs4ld(XD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00D02000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
+        EMITW(0x65CD8000 | MTM(REG(XD), TmmM,    REG(PS)))
+
 /******************************************************************************/
 /**********************************   SIMD   **********************************/
 /******************************************************************************/

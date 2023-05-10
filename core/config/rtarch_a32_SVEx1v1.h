@@ -173,16 +173,16 @@
 
 #define addos4rr(XD, PS, XS, XT)                                            \
         EMITW(0x04000000 |                                                  \
-        ((MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) |  \
-        ((MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))      \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
         EMITW(0x65808000 | MTM(REG(XD), REG(XT), REG(PS)))
 
 #define addos4ld(XD, PS, XS, MT, DT)                                        \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
         EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
         EMITW(0x04000000 |                                                  \
-        ((MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) |  \
-        ((MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))      \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
         EMITW(0x65808000 | MTM(REG(XD), TmmM,    REG(PS)))
 
 /* sub (G = G - S), (D = S - T) if (#D != #T) */
@@ -195,16 +195,16 @@
 
 #define subos4rr(XD, PS, XS, XT)                                            \
         EMITW(0x04000000 |                                                  \
-        ((MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) |  \
-        ((MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))      \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
         EMITW(0x65818000 | MTM(REG(XD), REG(XT), REG(PS)))
 
 #define subos4ld(XD, PS, XS, MT, DT)                                        \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
         EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
         EMITW(0x04000000 |                                                  \
-        ((MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) |  \
-        ((MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))      \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
         EMITW(0x65818000 | MTM(REG(XD), TmmM,    REG(PS)))
 
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
@@ -217,16 +217,16 @@
 
 #define mulos4rr(XD, PS, XS, XT)                                            \
         EMITW(0x04000000 |                                                  \
-        ((MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) |  \
-        ((MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))      \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
         EMITW(0x65828000 | MTM(REG(XD), REG(XT), REG(PS)))
 
 #define mulos4ld(XD, PS, XS, MT, DT)                                        \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
         EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
         EMITW(0x04000000 |                                                  \
-        ((MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) |  \
-        ((MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))      \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
         EMITW(0x65828000 | MTM(REG(XD), TmmM,    REG(PS)))
 
 /* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
@@ -239,16 +239,16 @@
 
 #define divos4rr(XD, PS, XS, XT)                                            \
         EMITW(0x04000000 |                                                  \
-        ((MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) |  \
-        ((MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))      \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
         EMITW(0x658D8000 | MTM(REG(XD), REG(XT), REG(PS)))
 
 #define divos4ld(XD, PS, XS, MT, DT)                                        \
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
         EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), F1(DT)))  \
         EMITW(0x04000000 |                                                  \
-        ((MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) |  \
-        ((MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))      \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
         EMITW(0x658D8000 | MTM(REG(XD), TmmM,    REG(PS)))
 
 /******************************************************************************/

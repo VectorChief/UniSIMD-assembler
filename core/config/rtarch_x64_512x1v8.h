@@ -153,6 +153,74 @@
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
 
+/* add (G = G + S), (D = S + T) if (#D != #T) */
+
+#define addqsPrr(XG, PS, XS)                                                \
+        addqs4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define addqsPld(XG, PS, MS, DS)                                            \
+        addqs4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define addqs4rr(XD, PS, XS, XT)                                            \
+        EPW(REG(PS), MOD(PS), RXB(XD), RXB(XT), REN(XS), K,1,1) EMITB(0x58) \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define addqs4ld(XD, PS, XS, MT, DT)                                        \
+    ADR EPW(REG(PS), MOD(PS), RXB(XD), RXB(MT), REN(XS), K,1,1) EMITB(0x58) \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
+
+#define subqsPrr(XG, PS, XS)                                                \
+        subqs4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define subqsPld(XG, PS, MS, DS)                                            \
+        subqs4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define subqs4rr(XD, PS, XS, XT)                                            \
+        EPW(REG(PS), MOD(PS), RXB(XD), RXB(XT), REN(XS), K,1,1) EMITB(0x5C) \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define subqs4ld(XD, PS, XS, MT, DT)                                        \
+    ADR EPW(REG(PS), MOD(PS), RXB(XD), RXB(MT), REN(XS), K,1,1) EMITB(0x5C) \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
+
+#define mulqsPrr(XG, PS, XS)                                                \
+        mulqs4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define mulqsPld(XG, PS, MS, DS)                                            \
+        mulqs4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define mulqs4rr(XD, PS, XS, XT)                                            \
+        EPW(REG(PS), MOD(PS), RXB(XD), RXB(XT), REN(XS), K,1,1) EMITB(0x59) \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define mulqs4ld(XD, PS, XS, MT, DT)                                        \
+    ADR EPW(REG(PS), MOD(PS), RXB(XD), RXB(MT), REN(XS), K,1,1) EMITB(0x59) \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
+
+#define divqsPrr(XG, PS, XS)                                                \
+        divqs4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define divqsPld(XG, PS, MS, DS)                                            \
+        divqs4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define divqs4rr(XD, PS, XS, XT)                                            \
+        EPW(REG(PS), MOD(PS), RXB(XD), RXB(XT), REN(XS), K,1,1) EMITB(0x5E) \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define divqs4ld(XD, PS, XS, MT, DT)                                        \
+    ADR EPW(REG(PS), MOD(PS), RXB(XD), RXB(MT), REN(XS), K,1,1) EMITB(0x5E) \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), CMD(DT), EMPTY)
+
 /******************************************************************************/
 /**********************************   SIMD   **********************************/
 /******************************************************************************/
