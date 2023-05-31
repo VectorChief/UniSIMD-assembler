@@ -14,10 +14,20 @@
 #define RT_PRINT_CPP /* enable printouts from C++ code sections of the tests */
 #define RT_PRINT_ASM /* enable printouts from ASM code sections of the tests */
 #define RT_PRINT_NUM /* enable printouts of test times and SIMD version */
-/* To enable byte sub-tests undefine RT_BASE_TEST, RT_PRINT_CPP, RT_PRINT_NUM
+
+/* to enable byte sub-tests undefine RT_PRINT_CPP, RT_PRINT_NUM
  * enable RT_BYTE_TEST, redirect ASM section outputs to target-specific files
- * when running the binaries in verbose mode (-v), compare the results (diff) */
+ * when running the binaries in verbose mode (-v), compare the results (diff),
+ * only compare outputs from targets with the same SIMD width and preferably
+ * the same number of registers (test 28) */
 /* #define RT_BYTE_TEST *//* enable BYTE instruction sub-tests */
+
+/* to enable fp16 sub-tests undefine RT_PRINT_CPP, RT_PRINT_NUM
+ * enable RT_FP16_TEST, redirect ASM section outputs to target-specific files
+ * when running the binaries in verbose mode (-v), compare the results (diff),
+ * only compare outputs from targets with the same SIMD width and preferably
+ * the same number of registers (test 28), only build ARMv8.2+SVE and AVX-512 */
+/* #define RT_FP16_TEST *//* enable FP16 instruction sub-tests */
 
 /* in case of inconsistencies related to C++ implementation on different
  * processor architectures (for example signed/unsigned right shift behavior)
@@ -277,6 +287,16 @@ rt_void s_test01(rt_SIMD_INFOX *info)
         subps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ0)
+        movmx_ld(Xmm1, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        addms_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        subms_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ0)
         movss_ld(Xmm1, Mecx, AJ1)
@@ -286,6 +306,16 @@ rt_void s_test01(rt_SIMD_INFOX *info)
         subss_rr(Xmm3, Xmm1)
         movss_st(Xmm2, Medx, AJ0)
         movss_st(Xmm3, Mebx, AJ0)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ0)
+        movns_ld(Xmm1, Mecx, AJ1)
+        movns_rr(Xmm2, Xmm0)
+        addns_rr(Xmm2, Xmm1)
+        movns_rr(Xmm3, Xmm0)
+        subns_rr(Xmm3, Xmm1)
+        movns_st(Xmm2, Medx, AJ0)
+        movns_st(Xmm3, Mebx, AJ0)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ1)
@@ -295,6 +325,15 @@ rt_void s_test01(rt_SIMD_INFOX *info)
         subps_ld(Xmm3, Mecx, AJ2)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        addms_ld(Xmm2, Mecx, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        subms_ld(Xmm3, Mecx, AJ2)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ1)
         movss_rr(Xmm2, Xmm0)
@@ -303,6 +342,15 @@ rt_void s_test01(rt_SIMD_INFOX *info)
         subss_ld(Xmm3, Mecx, AJ2)
         movss_st(Xmm2, Medx, AJ1)
         movss_st(Xmm3, Mebx, AJ1)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ1)
+        movns_rr(Xmm2, Xmm0)
+        addns_ld(Xmm2, Mecx, AJ2)
+        movns_rr(Xmm3, Xmm0)
+        subns_ld(Xmm3, Mecx, AJ2)
+        movns_st(Xmm2, Medx, AJ1)
+        movns_st(Xmm3, Mebx, AJ1)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ2)
@@ -313,6 +361,16 @@ rt_void s_test01(rt_SIMD_INFOX *info)
         subps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ2)
+        movmx_ld(Xmm1, Mecx, AJ0)
+        movmx_rr(Xmm2, Xmm0)
+        addms_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        subms_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ2)
         movss_ld(Xmm1, Mecx, AJ0)
@@ -322,6 +380,16 @@ rt_void s_test01(rt_SIMD_INFOX *info)
         subss_rr(Xmm3, Xmm1)
         movss_st(Xmm2, Medx, AJ2)
         movss_st(Xmm3, Mebx, AJ2)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ2)
+        movns_ld(Xmm1, Mecx, AJ0)
+        movns_rr(Xmm2, Xmm0)
+        addns_rr(Xmm2, Xmm1)
+        movns_rr(Xmm3, Xmm0)
+        subns_rr(Xmm3, Xmm1)
+        movns_st(Xmm2, Medx, AJ2)
+        movns_st(Xmm3, Mebx, AJ2)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
     ASM_LEAVE(info)
@@ -408,6 +476,16 @@ rt_void s_test02(rt_SIMD_INFOX *info)
         divps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ0)
+        movmx_ld(Xmm1, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        mulms_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        divms_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ0)
         movss_ld(Xmm1, Mecx, AJ1)
@@ -417,6 +495,16 @@ rt_void s_test02(rt_SIMD_INFOX *info)
         divss_rr(Xmm3, Xmm1)
         movss_st(Xmm2, Medx, AJ0)
         movss_st(Xmm3, Mebx, AJ0)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ0)
+        movns_ld(Xmm1, Mecx, AJ1)
+        movns_rr(Xmm2, Xmm0)
+        mulns_rr(Xmm2, Xmm1)
+        movns_rr(Xmm3, Xmm0)
+        divns_rr(Xmm3, Xmm1)
+        movns_st(Xmm2, Medx, AJ0)
+        movns_st(Xmm3, Mebx, AJ0)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ1)
@@ -426,6 +514,15 @@ rt_void s_test02(rt_SIMD_INFOX *info)
         divps_ld(Xmm3, Mecx, AJ2)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        mulms_ld(Xmm2, Mecx, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        divms_ld(Xmm3, Mecx, AJ2)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ1)
         movss_rr(Xmm2, Xmm0)
@@ -434,6 +531,15 @@ rt_void s_test02(rt_SIMD_INFOX *info)
         divss_ld(Xmm3, Mecx, AJ2)
         movss_st(Xmm2, Medx, AJ1)
         movss_st(Xmm3, Mebx, AJ1)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ1)
+        movns_rr(Xmm2, Xmm0)
+        mulns_ld(Xmm2, Mecx, AJ2)
+        movns_rr(Xmm3, Xmm0)
+        divns_ld(Xmm3, Mecx, AJ2)
+        movns_st(Xmm2, Medx, AJ1)
+        movns_st(Xmm3, Mebx, AJ1)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ2)
@@ -444,6 +550,16 @@ rt_void s_test02(rt_SIMD_INFOX *info)
         divps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ2)
+        movmx_ld(Xmm1, Mecx, AJ0)
+        movmx_rr(Xmm2, Xmm0)
+        mulms_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        divms_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ2)
         movss_ld(Xmm1, Mecx, AJ0)
@@ -453,6 +569,16 @@ rt_void s_test02(rt_SIMD_INFOX *info)
         divss_rr(Xmm3, Xmm1)
         movss_st(Xmm2, Medx, AJ2)
         movss_st(Xmm3, Mebx, AJ2)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ2)
+        movns_ld(Xmm1, Mecx, AJ0)
+        movns_rr(Xmm2, Xmm0)
+        mulns_rr(Xmm2, Xmm1)
+        movns_rr(Xmm3, Xmm0)
+        divns_rr(Xmm3, Xmm1)
+        movns_st(Xmm2, Medx, AJ2)
+        movns_st(Xmm3, Mebx, AJ2)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
     ASM_LEAVE(info)
@@ -539,6 +665,16 @@ rt_void s_test03(rt_SIMD_INFOX *info)
         cgeps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ0)
+        movmx_ld(Xmm1, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        cgtms_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        cgems_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ0)
         movss_ld(Xmm1, Mecx, AJ1)
@@ -548,6 +684,16 @@ rt_void s_test03(rt_SIMD_INFOX *info)
         cgess_rr(Xmm3, Xmm1)
         movss_st(Xmm2, Medx, AJ0)
         movss_st(Xmm3, Mebx, AJ0)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ0)
+        movns_ld(Xmm1, Mecx, AJ1)
+        movns_rr(Xmm2, Xmm0)
+        cgtns_rr(Xmm2, Xmm1)
+        movns_rr(Xmm3, Xmm0)
+        cgens_rr(Xmm3, Xmm1)
+        movns_st(Xmm2, Medx, AJ0)
+        movns_st(Xmm3, Mebx, AJ0)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ1)
@@ -557,6 +703,15 @@ rt_void s_test03(rt_SIMD_INFOX *info)
         cgeps_ld(Xmm3, Mecx, AJ2)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        cgtms_ld(Xmm2, Mecx, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        cgems_ld(Xmm3, Mecx, AJ2)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ1)
         movss_rr(Xmm2, Xmm0)
@@ -565,6 +720,15 @@ rt_void s_test03(rt_SIMD_INFOX *info)
         cgess_ld(Xmm3, Mecx, AJ2)
         movss_st(Xmm2, Medx, AJ1)
         movss_st(Xmm3, Mebx, AJ1)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ1)
+        movns_rr(Xmm2, Xmm0)
+        cgtns_ld(Xmm2, Mecx, AJ2)
+        movns_rr(Xmm3, Xmm0)
+        cgens_ld(Xmm3, Mecx, AJ2)
+        movns_st(Xmm2, Medx, AJ1)
+        movns_st(Xmm3, Mebx, AJ1)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ2)
@@ -575,6 +739,16 @@ rt_void s_test03(rt_SIMD_INFOX *info)
         cgeps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ2)
+        movmx_ld(Xmm1, Mecx, AJ0)
+        movmx_rr(Xmm2, Xmm0)
+        cgtms_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        cgems_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ2)
         movss_ld(Xmm1, Mecx, AJ0)
@@ -584,6 +758,16 @@ rt_void s_test03(rt_SIMD_INFOX *info)
         cgess_rr(Xmm3, Xmm1)
         movss_st(Xmm2, Medx, AJ2)
         movss_st(Xmm3, Mebx, AJ2)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ2)
+        movns_ld(Xmm1, Mecx, AJ0)
+        movns_rr(Xmm2, Xmm0)
+        cgtns_rr(Xmm2, Xmm1)
+        movns_rr(Xmm3, Xmm0)
+        cgens_rr(Xmm3, Xmm1)
+        movns_st(Xmm2, Medx, AJ2)
+        movns_st(Xmm3, Mebx, AJ2)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
     ASM_LEAVE(info)
@@ -672,6 +856,16 @@ rt_void s_test04(rt_SIMD_INFOX *info)
         cleps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ0)
+        movmx_ld(Xmm1, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        cltms_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        clems_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ0)
         movss_ld(Xmm1, Mecx, AJ1)
@@ -681,6 +875,16 @@ rt_void s_test04(rt_SIMD_INFOX *info)
         cless_rr(Xmm3, Xmm1)
         movss_st(Xmm2, Medx, AJ0)
         movss_st(Xmm3, Mebx, AJ0)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ0)
+        movns_ld(Xmm1, Mecx, AJ1)
+        movns_rr(Xmm2, Xmm0)
+        cltns_rr(Xmm2, Xmm1)
+        movns_rr(Xmm3, Xmm0)
+        clens_rr(Xmm3, Xmm1)
+        movns_st(Xmm2, Medx, AJ0)
+        movns_st(Xmm3, Mebx, AJ0)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ1)
@@ -690,6 +894,15 @@ rt_void s_test04(rt_SIMD_INFOX *info)
         cleps_ld(Xmm3, Mecx, AJ2)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        cltms_ld(Xmm2, Mecx, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        clems_ld(Xmm3, Mecx, AJ2)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ1)
         movss_rr(Xmm2, Xmm0)
@@ -698,6 +911,15 @@ rt_void s_test04(rt_SIMD_INFOX *info)
         cless_ld(Xmm3, Mecx, AJ2)
         movss_st(Xmm2, Medx, AJ1)
         movss_st(Xmm3, Mebx, AJ1)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ1)
+        movns_rr(Xmm2, Xmm0)
+        cltns_ld(Xmm2, Mecx, AJ2)
+        movns_rr(Xmm3, Xmm0)
+        clens_ld(Xmm3, Mecx, AJ2)
+        movns_st(Xmm2, Medx, AJ1)
+        movns_st(Xmm3, Mebx, AJ1)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ2)
@@ -708,6 +930,16 @@ rt_void s_test04(rt_SIMD_INFOX *info)
         cleps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ2)
+        movmx_ld(Xmm1, Mecx, AJ0)
+        movmx_rr(Xmm2, Xmm0)
+        cltms_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        clems_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ2)
         movss_ld(Xmm1, Mecx, AJ0)
@@ -717,6 +949,16 @@ rt_void s_test04(rt_SIMD_INFOX *info)
         cless_rr(Xmm3, Xmm1)
         movss_st(Xmm2, Medx, AJ2)
         movss_st(Xmm3, Mebx, AJ2)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ2)
+        movns_ld(Xmm1, Mecx, AJ0)
+        movns_rr(Xmm2, Xmm0)
+        cltns_rr(Xmm2, Xmm1)
+        movns_rr(Xmm3, Xmm0)
+        clens_rr(Xmm3, Xmm1)
+        movns_st(Xmm2, Medx, AJ2)
+        movns_st(Xmm3, Mebx, AJ2)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
     ASM_LEAVE(info)
@@ -805,6 +1047,16 @@ rt_void s_test05(rt_SIMD_INFOX *info)
         cneps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ0)
+        movmx_ld(Xmm1, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        ceqms_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        cnems_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ0)
         movss_ld(Xmm1, Mecx, AJ1)
@@ -814,6 +1066,16 @@ rt_void s_test05(rt_SIMD_INFOX *info)
         cness_rr(Xmm3, Xmm1)
         movss_st(Xmm2, Medx, AJ0)
         movss_st(Xmm3, Mebx, AJ0)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ0)
+        movns_ld(Xmm1, Mecx, AJ1)
+        movns_rr(Xmm2, Xmm0)
+        ceqns_rr(Xmm2, Xmm1)
+        movns_rr(Xmm3, Xmm0)
+        cnens_rr(Xmm3, Xmm1)
+        movns_st(Xmm2, Medx, AJ0)
+        movns_st(Xmm3, Mebx, AJ0)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ1)
@@ -823,6 +1085,15 @@ rt_void s_test05(rt_SIMD_INFOX *info)
         cneps_ld(Xmm3, Mecx, AJ2)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        ceqms_ld(Xmm2, Mecx, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        cnems_ld(Xmm3, Mecx, AJ2)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ1)
         movss_rr(Xmm2, Xmm0)
@@ -831,6 +1102,15 @@ rt_void s_test05(rt_SIMD_INFOX *info)
         cness_ld(Xmm3, Mecx, AJ2)
         movss_st(Xmm2, Medx, AJ1)
         movss_st(Xmm3, Mebx, AJ1)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ1)
+        movns_rr(Xmm2, Xmm0)
+        ceqns_ld(Xmm2, Mecx, AJ2)
+        movns_rr(Xmm3, Xmm0)
+        cnens_ld(Xmm3, Mecx, AJ2)
+        movns_st(Xmm2, Medx, AJ1)
+        movns_st(Xmm3, Mebx, AJ1)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ2)
@@ -841,6 +1121,16 @@ rt_void s_test05(rt_SIMD_INFOX *info)
         cneps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ2)
+        movmx_ld(Xmm1, Mecx, AJ0)
+        movmx_rr(Xmm2, Xmm0)
+        ceqms_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        cnems_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ2)
         movss_ld(Xmm1, Mecx, AJ0)
@@ -850,6 +1140,16 @@ rt_void s_test05(rt_SIMD_INFOX *info)
         cness_rr(Xmm3, Xmm1)
         movss_st(Xmm2, Medx, AJ2)
         movss_st(Xmm3, Mebx, AJ2)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ2)
+        movns_ld(Xmm1, Mecx, AJ0)
+        movns_rr(Xmm2, Xmm0)
+        ceqns_rr(Xmm2, Xmm1)
+        movns_rr(Xmm3, Xmm0)
+        cnens_rr(Xmm3, Xmm1)
+        movns_st(Xmm2, Medx, AJ2)
+        movns_st(Xmm3, Mebx, AJ2)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
     ASM_LEAVE(info)
@@ -938,11 +1238,25 @@ rt_void s_test06(rt_SIMD_INFOX *info)
         cvnpn_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ0)
+        movmx_ld(Xmm1, Mesi, AJ0)
+        cvzms_rr(Xmm2, Xmm0)
+        cvnmn_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+#endif /* RT_FP16_TEST */
 
         cvzps_ld(Xmm2, Mecx, AJ1)
         cvnpn_ld(Xmm3, Mesi, AJ1)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
+#ifdef RT_FP16_TEST
+        cvzms_ld(Xmm2, Mecx, AJ1)
+        cvnmn_ld(Xmm3, Mesi, AJ1)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+#endif /* RT_FP16_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ2)
         movpx_ld(Xmm1, Mesi, AJ2)
@@ -950,6 +1264,14 @@ rt_void s_test06(rt_SIMD_INFOX *info)
         cvnpn_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ2)
+        movmx_ld(Xmm1, Mesi, AJ2)
+        cvzms_rr(Xmm2, Xmm0)
+        cvnmn_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+#endif /* RT_FP16_TEST */
 
     ASM_LEAVE(info)
 }
@@ -1440,6 +1762,16 @@ rt_void s_test10(rt_SIMD_INFOX *info)
         maxps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ0)
+        movmx_ld(Xmm1, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        minms_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        maxms_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ0)
         movss_ld(Xmm1, Mecx, AJ1)
@@ -1449,6 +1781,16 @@ rt_void s_test10(rt_SIMD_INFOX *info)
         maxss_rr(Xmm3, Xmm1)
         movss_st(Xmm2, Medx, AJ0)
         movss_st(Xmm3, Mebx, AJ0)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ0)
+        movns_ld(Xmm1, Mecx, AJ1)
+        movns_rr(Xmm2, Xmm0)
+        minns_rr(Xmm2, Xmm1)
+        movns_rr(Xmm3, Xmm0)
+        maxns_rr(Xmm3, Xmm1)
+        movns_st(Xmm2, Medx, AJ0)
+        movns_st(Xmm3, Mebx, AJ0)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ1)
@@ -1458,6 +1800,15 @@ rt_void s_test10(rt_SIMD_INFOX *info)
         maxps_ld(Xmm3, Mecx, AJ2)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ1)
+        movmx_rr(Xmm2, Xmm0)
+        minms_ld(Xmm2, Mecx, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        maxms_ld(Xmm3, Mecx, AJ2)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ1)
         movss_rr(Xmm2, Xmm0)
@@ -1466,6 +1817,15 @@ rt_void s_test10(rt_SIMD_INFOX *info)
         maxss_ld(Xmm3, Mecx, AJ2)
         movss_st(Xmm2, Medx, AJ1)
         movss_st(Xmm3, Mebx, AJ1)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ1)
+        movns_rr(Xmm2, Xmm0)
+        minns_ld(Xmm2, Mecx, AJ2)
+        movns_rr(Xmm3, Xmm0)
+        maxns_ld(Xmm3, Mecx, AJ2)
+        movns_st(Xmm2, Medx, AJ1)
+        movns_st(Xmm3, Mebx, AJ1)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ2)
@@ -1476,6 +1836,16 @@ rt_void s_test10(rt_SIMD_INFOX *info)
         maxps_rr(Xmm3, Xmm1)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ2)
+        movmx_ld(Xmm1, Mecx, AJ0)
+        movmx_rr(Xmm2, Xmm0)
+        minms_rr(Xmm2, Xmm1)
+        movmx_rr(Xmm3, Xmm0)
+        maxms_rr(Xmm3, Xmm1)
+        movmx_st(Xmm2, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ2)
         movss_ld(Xmm1, Mecx, AJ0)
@@ -1485,6 +1855,16 @@ rt_void s_test10(rt_SIMD_INFOX *info)
         maxss_rr(Xmm3, Xmm1)
         movss_st(Xmm2, Medx, AJ2)
         movss_st(Xmm3, Mebx, AJ2)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ2)
+        movns_ld(Xmm1, Mecx, AJ0)
+        movns_rr(Xmm2, Xmm0)
+        minns_rr(Xmm2, Xmm1)
+        movns_rr(Xmm3, Xmm0)
+        maxns_rr(Xmm3, Xmm1)
+        movns_st(Xmm2, Medx, AJ2)
+        movns_st(Xmm3, Mebx, AJ2)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
     ASM_LEAVE(info)
@@ -2424,17 +2804,37 @@ rt_void s_test17(rt_SIMD_INFOX *info)
         rnmps_rr(Xmm3, Xmm0)
         movpx_st(Xmm2, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ0)
+        rnpms_rr(Xmm2, Xmm0)
+        rnmms_rr(Xmm3, Xmm0)
+        movmx_st(Xmm2, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+#endif /* RT_FP16_TEST */
 
         rnpps_ld(Xmm2, Mecx, AJ1)
         rnmps_ld(Xmm3, Mecx, AJ1)
         movpx_st(Xmm2, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
+#ifdef RT_FP16_TEST
+        rnpms_ld(Xmm2, Mecx, AJ1)
+        rnmms_ld(Xmm3, Mecx, AJ1)
+        movmx_st(Xmm2, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+#endif /* RT_FP16_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ2)
         rnpps_rr(Xmm2, Xmm0)
         rnmps_rr(Xmm3, Xmm0)
         movpx_st(Xmm2, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ2)
+        rnpms_rr(Xmm2, Xmm0)
+        rnmms_rr(Xmm3, Xmm0)
+        movmx_st(Xmm2, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+#endif /* RT_FP16_TEST */
 
     ASM_LEAVE(info)
 }
@@ -2790,6 +3190,16 @@ rt_void s_test20(rt_SIMD_INFOX *info)
         fmsps_rr(Xmm3, Xmm1, Xmm2)
         movpx_st(Xmm0, Medx, AJ0)
         movpx_st(Xmm3, Mebx, AJ0)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ0)
+        movmx_ld(Xmm1, Mecx, AJ1)
+        movmx_ld(Xmm2, Mecx, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        fmams_rr(Xmm0, Xmm1, Xmm2)
+        fmsms_rr(Xmm3, Xmm1, Xmm2)
+        movmx_st(Xmm0, Medx, AJ0)
+        movmx_st(Xmm3, Mebx, AJ0)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ0)
         movss_ld(Xmm1, Mecx, AJ1)
@@ -2799,6 +3209,16 @@ rt_void s_test20(rt_SIMD_INFOX *info)
         fmsss_rr(Xmm3, Xmm1, Xmm2)
         movss_st(Xmm0, Medx, AJ0)
         movss_st(Xmm3, Mebx, AJ0)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ0)
+        movns_ld(Xmm1, Mecx, AJ1)
+        movns_ld(Xmm2, Mecx, AJ2)
+        movns_rr(Xmm3, Xmm0)
+        fmans_rr(Xmm0, Xmm1, Xmm2)
+        fmsns_rr(Xmm3, Xmm1, Xmm2)
+        movns_st(Xmm0, Medx, AJ0)
+        movns_st(Xmm3, Mebx, AJ0)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ1)
@@ -2808,6 +3228,15 @@ rt_void s_test20(rt_SIMD_INFOX *info)
         fmsps_ld(Xmm3, Xmm1, Mecx, AJ0)
         movpx_st(Xmm0, Medx, AJ1)
         movpx_st(Xmm3, Mebx, AJ1)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ1)
+        movmx_ld(Xmm1, Mecx, AJ2)
+        movmx_rr(Xmm3, Xmm0)
+        fmams_ld(Xmm0, Xmm1, Mecx, AJ0)
+        fmsms_ld(Xmm3, Xmm1, Mecx, AJ0)
+        movmx_st(Xmm0, Medx, AJ1)
+        movmx_st(Xmm3, Mebx, AJ1)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ1)
         movss_ld(Xmm1, Mecx, AJ2)
@@ -2816,6 +3245,15 @@ rt_void s_test20(rt_SIMD_INFOX *info)
         fmsss_ld(Xmm3, Xmm1, Mecx, AJ0)
         movss_st(Xmm0, Medx, AJ1)
         movss_st(Xmm3, Mebx, AJ1)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ1)
+        movns_ld(Xmm1, Mecx, AJ2)
+        movns_rr(Xmm3, Xmm0)
+        fmans_ld(Xmm0, Xmm1, Mecx, AJ0)
+        fmsns_ld(Xmm3, Xmm1, Mecx, AJ0)
+        movns_st(Xmm0, Medx, AJ1)
+        movns_st(Xmm3, Mebx, AJ1)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
         movpx_ld(Xmm0, Mecx, AJ2)
@@ -2826,6 +3264,16 @@ rt_void s_test20(rt_SIMD_INFOX *info)
         fmsps_rr(Xmm3, Xmm1, Xmm2)
         movpx_st(Xmm0, Medx, AJ2)
         movpx_st(Xmm3, Mebx, AJ2)
+#ifdef RT_FP16_TEST
+        movmx_ld(Xmm0, Mecx, AJ2)
+        movmx_ld(Xmm1, Mecx, AJ0)
+        movmx_ld(Xmm2, Mecx, AJ1)
+        movmx_rr(Xmm3, Xmm0)
+        fmams_rr(Xmm0, Xmm1, Xmm2)
+        fmsms_rr(Xmm3, Xmm1, Xmm2)
+        movmx_st(Xmm0, Medx, AJ2)
+        movmx_st(Xmm3, Mebx, AJ2)
+#endif /* RT_FP16_TEST */
 #ifdef RT_ELEM_TEST
         movss_ld(Xmm0, Mecx, AJ2)
         movss_ld(Xmm1, Mecx, AJ0)
@@ -2835,6 +3283,16 @@ rt_void s_test20(rt_SIMD_INFOX *info)
         fmsss_rr(Xmm3, Xmm1, Xmm2)
         movss_st(Xmm0, Medx, AJ2)
         movss_st(Xmm3, Mebx, AJ2)
+#ifdef RT_FP16_TEST
+        movns_ld(Xmm0, Mecx, AJ2)
+        movns_ld(Xmm1, Mecx, AJ0)
+        movns_ld(Xmm2, Mecx, AJ1)
+        movns_rr(Xmm3, Xmm0)
+        fmans_rr(Xmm0, Xmm1, Xmm2)
+        fmsns_rr(Xmm3, Xmm1, Xmm2)
+        movns_st(Xmm0, Medx, AJ2)
+        movns_st(Xmm3, Mebx, AJ2)
+#endif /* RT_FP16_TEST */
 #endif /* RT_ELEM_TEST */
 
     ASM_LEAVE(info)
