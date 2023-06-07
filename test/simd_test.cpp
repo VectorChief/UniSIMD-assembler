@@ -4262,6 +4262,19 @@ rt_void c_test28(rt_SIMD_INFOX *info)
     rt_elem *ico1 = info->ico1 + S*RT_OFFS_SIMD;
     rt_real *fco2 = info->fco2 + S*RT_OFFS_SIMD;
 
+#if L == 2
+
+    ((rt_ui32*)(&ico1[1]))[0] = 0x12345678;
+    ((rt_ui32*)(&ico1[1]))[1] = 0xF2345678;
+
+    ico1[2] = (rt_si64)(((rt_ui32*)(&ico1[1]))[0]);
+    ico1[3] = (rt_si64)(((rt_si32*)(&ico1[1]))[1]);
+
+    ico1[4] = (rt_si64)((rt_ui32)0x12345678);
+    ico1[5] = (rt_si64)((rt_si32)0xF2345678);
+
+#endif /* L == 2 */
+
 #if RT_REGS >= 8
     ico1[0] = 21;
     fco2[0] = 36.0f;
@@ -4288,6 +4301,38 @@ rt_void c_test28(rt_SIMD_INFOX *info)
 rt_void s_test28(rt_SIMD_INFOX *info)
 {
     ASM_ENTER(info)
+
+#if L == 2
+
+        movxx_ld(Reax, Mebp, inf_ISO1)
+        addxx_ri(Reax, IB(8))
+
+        movwx_mi(Oeax, PLAIN, IW(0x12345678)) /* IW only for cmdw* subset */
+        addxx_ri(Reax, IB(4))
+        movwx_mi(Oeax, PLAIN, IW(0xF2345678)) /* IW only for cmdw* subset */
+        subxx_ri(Reax, IB(4))
+
+        movwz_ld(Rebx, Oeax, PLAIN)
+        addxx_ri(Reax, IB(4))
+        movwn_ld(Redx, Oeax, PLAIN)
+        addxx_ri(Reax, IB(4))
+
+        movzx_st(Rebx, Oeax, PLAIN)
+        addxx_ri(Reax, IB(8))
+        movzx_st(Redx, Oeax, PLAIN)
+        addxx_ri(Reax, IB(8))
+
+        movwx_ri(Resi, IW(0x12345678)) /* IW only for cmdw* subset */
+        movwz_rr(Rebx, Resi)
+        movwx_ri(Redi, IW(0xF2345678)) /* IW only for cmdw* subset */
+        movwn_rr(Redx, Redi)
+
+        movzx_st(Rebx, Oeax, PLAIN)
+        addxx_ri(Reax, IB(8))
+        movzx_st(Redx, Oeax, PLAIN)
+        addxx_ri(Reax, IB(8))
+
+#endif /* L == 2 */
 
 #if RT_REGS >= 8
 
@@ -4520,6 +4565,27 @@ rt_void p_test28(rt_SIMD_INFOX *info)
                 j, iso1[j], j, fso2[j]);
 #endif /* RT_PRINT_ASM */
     }
+
+#if L == 2
+
+    j = 2;
+    while (j-->0)
+    {
+        if (IEQ(ico1[j], iso1[j]) && !v_mode)
+        {
+            continue;
+        }
+#ifdef RT_PRINT_CPP
+        RT_LOGI("C iout[%d] = %" PR_L "X, iarr[%d] = %X\n",
+                j, ico1[j], j, ((rt_ui32*)(&ico1[1]))[j]);
+#endif /* RT_PRINT_CPP */
+#ifdef RT_PRINT_ASM
+        RT_LOGI("S iout[%d] = %" PR_L "X, iarr[%d] = %X\n",
+                j, iso1[j], j, ((rt_ui32*)(&iso1[1]))[j]);
+#endif /* RT_PRINT_ASM */
+    }
+
+#endif /* L == 2 */
 }
 
 #endif /* SUB_TEST 28 */
