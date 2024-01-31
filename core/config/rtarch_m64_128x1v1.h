@@ -572,7 +572,7 @@
         ASM_BEG ASM_OP2( bz.v, xs, lb) ASM_END
 
 #define SMF64_128(xs, lb) /* not portable, do not use outside */            \
-        ASM_BEG ASM_OP2(bnz.w, xs, lb) ASM_END
+        ASM_BEG ASM_OP2(bnz.d, xs, lb) ASM_END
 
 #define mkjjx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         AUW(EMPTY, EMPTY, EMPTY, MOD(XS), lb,                               \

@@ -702,7 +702,7 @@
 #define mkjqx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         EMITW(0x04203000 | MXM(TmmM,    REG(XS), RYG(XS)) |                 \
                      (1 - RT_SIMD_MASK_##mask##64_SVE) << 22)               \
-        EMITW(0x04982000 | MXM(TmmM,    TmmM,    0x00) |                    \
+        EMITW(0x04D82000 | MXM(TmmM,    TmmM,    0x00) |                    \
                           RT_SIMD_MASK_##mask##64_SVE << 17)                \
         EMITW(0x0E043C00 | MXM(Teax,    TmmM,    0x00))                     \
         addwxZri(Reax, IB(RT_SIMD_MASK_##mask##64_SVE))                     \

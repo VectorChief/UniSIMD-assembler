@@ -642,7 +642,7 @@
 
 #define SMF64_256(xs, lb) /* not portable, do not use outside */            \
         EMITW(0x7800001E | MXM(TmmM, xs, xs+16))                            \
-        ASM_BEG ASM_OP2(bnz.w, $w31, lb) ASM_END
+        ASM_BEG ASM_OP2(bnz.d, $w31, lb) ASM_END
 
 #define mkjdx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         AUW(EMPTY, EMPTY, EMPTY, REG(XS), lb,                               \

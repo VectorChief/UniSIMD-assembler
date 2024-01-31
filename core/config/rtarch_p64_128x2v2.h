@@ -694,12 +694,12 @@
 
 #define SMN64_256(xs, lb) /* not portable, do not use outside */            \
         EMITW(0xF0000497 | MXM(TmmM,    xs,      xs+16))                    \
-        EMITW(0x10000486 | MXM(TmmM,    TmmM,    TmmQ))                     \
+        EMITW(0x100004C7 | MXM(TmmM,    TmmM,    TmmQ))                     \
         ASM_BEG ASM_OP2(beq, cr6, lb) ASM_END
 
 #define SMF64_256(xs, lb) /* not portable, do not use outside */            \
         EMITW(0xF0000417 | MXM(TmmM,    xs,      xs+16))                    \
-        EMITW(0x10000486 | MXM(TmmM,    TmmM,    TmmQ))                     \
+        EMITW(0x100004C7 | MXM(TmmM,    TmmM,    TmmQ))                     \
         ASM_BEG ASM_OP2(blt, cr6, lb) ASM_END
 
 #define mkjdx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \

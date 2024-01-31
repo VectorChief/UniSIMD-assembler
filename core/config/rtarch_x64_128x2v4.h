@@ -895,12 +895,12 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
 /* mkj (jump to lb) if (S satisfies mask condition) */
 
 #define RT_SIMD_MASK_NONE64_256    0x00     /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL64_256    0x0F     /*  all satisfy the condition */
+#define RT_SIMD_MASK_FULL64_256    0x03     /*  all satisfy the condition */
 
 #define mkjdx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        REX(0,             0) EMITB(0x0F) EMITB(0x50)                       \
+    ESC REX(0,             0) EMITB(0x0F) EMITB(0x50)                       \
         MRM(0x00,    MOD(XS), REG(XS))                                      \
-        REX(1,             1) EMITB(0x0F) EMITB(0x50)                       \
+    ESC REX(1,             1) EMITB(0x0F) EMITB(0x50)                       \
         MRM(0x07,    MOD(XS), REG(XS))                                      \
         REX(0,             1)                                               \
         EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##64_256 & 0x1) << 1)))  \

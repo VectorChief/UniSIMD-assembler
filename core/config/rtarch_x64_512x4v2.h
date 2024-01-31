@@ -1223,30 +1223,29 @@
 /* mkj (jump to lb) if (S satisfies mask condition) */
 
 #define RT_SIMD_MASK_NONE64_2K8    0x0000   /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL64_2K8    0xFFFF   /*  all satisfy the condition */
+#define RT_SIMD_MASK_FULL64_2K8    0x00FF   /*  all satisfy the condition */
 
 /* #define mk1wx_rx(RD)                    (defined in 32_2K8-bit header) */
-/* #define ck1ox_rm(XS, MT, DT)            (defined in 32_2K8-bit header) */
 
 #define mkjqx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        ck1ox_rm(W(XS), Mebp, inf_GPC07)                                    \
+        ck1qx_rm(W(XS), Mebp, inf_GPC07)                                    \
         mk1wx_rx(Reax)                                                      \
         REX(1,             0) EMITB(0x8B)                                   \
         MRM(0x07,       0x03, 0x00)                                         \
-        ck1ox_rm(V(XS), Mebp, inf_GPC07)                                    \
+        ck1qx_rm(V(XS), Mebp, inf_GPC07)                                    \
         mk1wx_rx(Reax)                                                      \
         REX(1,             0)                                               \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##64_2K8 >> 15) << 1)))  \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##64_2K8 >> 7) << 1)))   \
         MRM(0x07,       0x03, 0x00)                                         \
-        ck1ox_rm(X(XS), Mebp, inf_GPC07)                                    \
+        ck1qx_rm(X(XS), Mebp, inf_GPC07)                                    \
         mk1wx_rx(Reax)                                                      \
         REX(1,             0)                                               \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##64_2K8 >> 15) << 1)))  \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##64_2K8 >> 7) << 1)))   \
         MRM(0x07,       0x03, 0x00)                                         \
-        ck1ox_rm(Z(XS), Mebp, inf_GPC07)                                    \
+        ck1qx_rm(Z(XS), Mebp, inf_GPC07)                                    \
         mk1wx_rx(Reax)                                                      \
         REX(0,             1)                                               \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##64_2K8 >> 15) << 1)))  \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##64_2K8 >> 7) << 1)))   \
         MRM(0x00,       0x03, 0x07)                                         \
         cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##64_2K8))                     \
         jeqxx_lb(lb)

@@ -630,7 +630,7 @@
 
 #define mkjjx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         EMITW(0x1000038C | MXM(TmmQ,    0x1F,    0x00))                     \
-        EMITW(0x10000486 | MXM(REG(XS), REG(XS), TmmQ))                     \
+        EMITW(0x100004C7 | MXM(REG(XS), REG(XS), TmmQ))                     \
         AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb,                                 \
         S0(RT_SIMD_MASK_##mask##64_128), EMPTY2)
 

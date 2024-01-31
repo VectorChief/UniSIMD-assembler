@@ -635,13 +635,12 @@
 /* mkj (jump to lb) if (S satisfies mask condition) */
 
 #define RT_SIMD_MASK_NONE64_256    0x00     /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL64_256    0xFF     /*  all satisfy the condition */
+#define RT_SIMD_MASK_FULL64_256    0x0F     /*  all satisfy the condition */
 
 /* #define mk1wx_rx(RD)                    (defined in 32_256-bit header) */
-/* #define ck1cx_rm(XS, MT, DT)            (defined in 32_256-bit header) */
 
 #define mkjdx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
-        ck1cx_rm(W(XS), Mebp, inf_GPC07)                                    \
+        ck1dx_rm(W(XS), Mebp, inf_GPC07)                                    \
         mk1wx_rx(Reax)                                                      \
         cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##64_256))                     \
         jeqxx_lb(lb)
