@@ -353,7 +353,7 @@
 #define Meg9    0x09, 0x02, EMPTY       /* [r9d + DP] */
 #define MegA    0x0A, 0x02, EMPTY       /* [r10d + DP] */
 #define MegB    0x0B, 0x02, EMPTY       /* [r11d + DP] */
-#define MegC    0x0C, 0x02, EMPTY       /* [r12d + DP] */
+#define MegC    0x0C, 0x02, EMITB(0x24) /* [r12d + DP] */
 #define MegD    0x0D, 0x02, EMPTY       /* [r13d + DP] */
 #define MegE    0x0E, 0x02, EMPTY       /* [r14d + DP] */
 
