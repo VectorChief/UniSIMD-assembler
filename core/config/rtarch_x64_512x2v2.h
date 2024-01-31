@@ -915,7 +915,7 @@
         ck1qx_rm(X(XS), Mebp, inf_GPC07)                                    \
         mk1wx_rx(Reax)                                                      \
         REX(0,             1)                                               \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##64_1K4 >> 7) << 1)))   \
+        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##64_1K4 & 0x1) << 1)))  \
         MRM(0x00,       0x03, 0x07)                                         \
         cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##64_1K4))                     \
         jeqxx_lb(lb)
