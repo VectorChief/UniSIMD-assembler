@@ -408,7 +408,7 @@
 #define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), A1(DD), EMPTY2)   \
-        EMITW(0xE5800000 | MDM(Teax,    MOD(MD), VAL(DD), B3(DD), P1(DD)))
+        EMITW(0xE5800000 | MDM(TEax,    MOD(MD), VAL(DD), B3(DD), P1(DD)))
 
 /* RT_SIMD_FAST_FCTRL saves 1 instruction on FCTRL blocks entry
  * and can be enabled if ASM_ENTER(_F)/ASM_LEAVE(_F)/ROUND*(_F)
@@ -673,14 +673,14 @@
 #define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
-        EMITW(0xB8000000 | MDM(Teax,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
+        EMITW(0xB8000000 | MDM(TEax,    MOD(MD), VAL(DD), B1(DD), P1(DD)))
 
 #elif (defined RT_A64)
 
 #define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
-        EMITW(0xF8000000 | MDM(Teax,    MOD(MD), VXL(DD), B1(DD), P1(DD)))
+        EMITW(0xF8000000 | MDM(TEax,    MOD(MD), VXL(DD), B1(DD), P1(DD)))
 
 #endif /* defined (RT_A32, RT_A64) */
 
@@ -953,7 +953,7 @@
 #define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), A1(DD), EMPTY2)   \
-        EMITW(0xAC000000 | MDM(Teax,    MOD(MD), VAL(DD), B3(DD), P1(DD)))
+        EMITW(0xAC000000 | MDM(TEax,    MOD(MD), VAL(DD), B3(DD), P1(DD)))
 
 #elif (defined RT_M64)
 
@@ -963,7 +963,7 @@
 #define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), A1(DD), EMPTY2)   \
-        EMITW(0xFC000000 | MDM(Teax,    MOD(MD), VAL(DD), B3(DD), P1(DD)))
+        EMITW(0xFC000000 | MDM(TEax,    MOD(MD), VAL(DD), B3(DD), P1(DD)))
 
 #endif /* defined (RT_M32, RT_M64) */
 
@@ -1241,7 +1241,7 @@
 #define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
-        EMITW(0x00000000 | MDM(Teax,    MOD(MD), VAL(DD), B1(DD), O1(DD)))
+        EMITW(0x00000000 | MDM(TEax,    MOD(MD), VAL(DD), B1(DD), O1(DD)))
 
 #elif (defined RT_P64)
 
@@ -1255,7 +1255,7 @@
 #define label_st(lb, MD, DD)                                                \
         label_ld(lb)/*Reax*/                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    MOD(MD), VAL(DD), C1(DD), EMPTY2)   \
-        EMITW(0x00000000 | MDM(Teax,    MOD(MD), VAL(DD), B1(DD), Q1(DD)))
+        EMITW(0x00000000 | MDM(TEax,    MOD(MD), VAL(DD), B1(DD), Q1(DD)))
 
 #endif /* defined (RT_P32, RT_P64) */
 

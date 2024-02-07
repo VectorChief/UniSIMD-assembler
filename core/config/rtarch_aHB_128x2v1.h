@@ -828,7 +828,7 @@
         EMITW(0x4E201C00 | MXM(TmmM,    REG(XS), RYG(XS)) |                 \
                   (0x08 - RT_SIMD_MASK_##mask##16_256) << 20)               \
         EMITW(0x4E71B800 | MXM(TmmM,    TmmM,    0x00))                     \
-        EMITW(0x0E022C00 | MXM(Teax,    TmmM,    0x00))                     \
+        EMITW(0x0E022C00 | MXM(TEax,    TmmM,    0x00))                     \
         addwxZri(Reax, IB(RT_SIMD_MASK_##mask##16_256))                     \
         jezxx_lb(lb)
 
@@ -1417,7 +1417,7 @@
         EMITW(0x4E201C00 | MXM(TmmM,    REG(XS), RYG(XS)) |                 \
                   (0x10 - RT_SIMD_MASK_##mask##08_256) << 19)               \
         EMITW(0x4E31B800 | MXM(TmmM,    TmmM,    0x00))                     \
-        EMITW(0x0E012C00 | MXM(Teax,    TmmM,    0x00))                     \
+        EMITW(0x0E012C00 | MXM(TEax,    TmmM,    0x00))                     \
         addwxZri(Reax, IB(RT_SIMD_MASK_##mask##08_256))                     \
         jezxx_lb(lb)
 

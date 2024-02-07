@@ -919,7 +919,7 @@
                      (1 - RT_SIMD_MASK_##mask##16_SVE) << 22)               \
         EMITW(0x04582000 | MXM(TmmM,    TmmM,    0x00) |                    \
                           RT_SIMD_MASK_##mask##16_SVE << 17)                \
-        EMITW(0x0E022C00 | MXM(Teax,    TmmM,    0x00))                     \
+        EMITW(0x0E022C00 | MXM(TEax,    TmmM,    0x00))                     \
         addwxZri(Reax, IB(RT_SIMD_MASK_##mask##16_SVE))                     \
         jezxx_lb(lb)
 
@@ -1600,7 +1600,7 @@
                      (1 - RT_SIMD_MASK_##mask##08_SVE) << 22)               \
         EMITW(0x04182000 | MXM(TmmM,    TmmM,    0x00) |                    \
                           RT_SIMD_MASK_##mask##08_SVE << 17)                \
-        EMITW(0x0E012C00 | MXM(Teax,    TmmM,    0x00))                     \
+        EMITW(0x0E012C00 | MXM(TEax,    TmmM,    0x00))                     \
         addwxZri(Reax, IB(RT_SIMD_MASK_##mask##08_SVE))                     \
         jezxx_lb(lb)
 

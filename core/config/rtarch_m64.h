@@ -754,12 +754,12 @@
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shlzx_rx(RG)                     /* reads Recx for shift count */   \
-        EMITW(0x00000014 | MSM(REG(RG), REG(RG), Tecx))
+        EMITW(0x00000014 | MSM(REG(RG), REG(RG), TEcx))
 
 #define shlzx_mx(MG, DG)                 /* reads Recx for shift count */   \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
-        EMITW(0x00000014 | MSM(TMxx,    TMxx,    Tecx))                     \
+        EMITW(0x00000014 | MSM(TMxx,    TMxx,    TEcx))                     \
         EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define shlzx_ri(RG, IS)                                                    \
@@ -794,13 +794,13 @@
 
 
 #define shlzxZrx(RG)                     /* reads Recx for shift count */   \
-        EMITW(0x00000014 | MSM(REG(RG), REG(RG), Tecx))                     \
+        EMITW(0x00000014 | MSM(REG(RG), REG(RG), TEcx))                     \
         EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
 
 #define shlzxZmx(MG, DG)                 /* reads Recx for shift count */   \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
-        EMITW(0x00000014 | MSM(TMxx,    TMxx,    Tecx))                     \
+        EMITW(0x00000014 | MSM(TMxx,    TMxx,    TEcx))                     \
         EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define shlzxZri(RG, IS)                                                    \
@@ -841,12 +841,12 @@
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrzx_rx(RG)                     /* reads Recx for shift count */   \
-        EMITW(0x00000016 | MSM(REG(RG), REG(RG), Tecx))
+        EMITW(0x00000016 | MSM(REG(RG), REG(RG), TEcx))
 
 #define shrzx_mx(MG, DG)                 /* reads Recx for shift count */   \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
-        EMITW(0x00000016 | MSM(TMxx,    TMxx,    Tecx))                     \
+        EMITW(0x00000016 | MSM(TMxx,    TMxx,    TEcx))                     \
         EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define shrzx_ri(RG, IS)                                                    \
@@ -881,13 +881,13 @@
 
 
 #define shrzxZrx(RG)                     /* reads Recx for shift count */   \
-        EMITW(0x00000016 | MSM(REG(RG), REG(RG), Tecx))                     \
+        EMITW(0x00000016 | MSM(REG(RG), REG(RG), TEcx))                     \
         EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
 
 #define shrzxZmx(MG, DG)                 /* reads Recx for shift count */   \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
-        EMITW(0x00000016 | MSM(TMxx,    TMxx,    Tecx))                     \
+        EMITW(0x00000016 | MSM(TMxx,    TMxx,    TEcx))                     \
         EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define shrzxZri(RG, IS)                                                    \
@@ -928,12 +928,12 @@
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define shrzn_rx(RG)                     /* reads Recx for shift count */   \
-        EMITW(0x00000017 | MSM(REG(RG), REG(RG), Tecx))
+        EMITW(0x00000017 | MSM(REG(RG), REG(RG), TEcx))
 
 #define shrzn_mx(MG, DG)                 /* reads Recx for shift count */   \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
-        EMITW(0x00000017 | MSM(TMxx,    TMxx,    Tecx))                     \
+        EMITW(0x00000017 | MSM(TMxx,    TMxx,    TEcx))                     \
         EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define shrzn_ri(RG, IS)                                                    \
@@ -968,13 +968,13 @@
 
 
 #define shrznZrx(RG)                     /* reads Recx for shift count */   \
-        EMITW(0x00000017 | MSM(REG(RG), REG(RG), Tecx))                     \
+        EMITW(0x00000017 | MSM(REG(RG), REG(RG), TEcx))                     \
         EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
 
 #define shrznZmx(MG, DG)                 /* reads Recx for shift count */   \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
-        EMITW(0x00000017 | MSM(TMxx,    TMxx,    Tecx))                     \
+        EMITW(0x00000017 | MSM(TMxx,    TMxx,    TEcx))                     \
         EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define shrznZri(RG, IS)                                                    \
@@ -1015,12 +1015,12 @@
  * for maximum compatibility: shift count must be modulo elem-size */
 
 #define rorzx_rx(RG)                     /* reads Recx for shift count */   \
-        EMITW(0x00000056 | MSM(REG(RG), REG(RG), Tecx))
+        EMITW(0x00000056 | MSM(REG(RG), REG(RG), TEcx))
 
 #define rorzx_mx(MG, DG)                 /* reads Recx for shift count */   \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
-        EMITW(0x00000056 | MSM(TMxx,    TMxx,    Tecx))                     \
+        EMITW(0x00000056 | MSM(TMxx,    TMxx,    TEcx))                     \
         EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define rorzx_ri(RG, IS)                                                    \
@@ -1055,13 +1055,13 @@
 
 
 #define rorzxZrx(RG)                     /* reads Recx for shift count */   \
-        EMITW(0x00000056 | MSM(REG(RG), REG(RG), Tecx))                     \
+        EMITW(0x00000056 | MSM(REG(RG), REG(RG), TEcx))                     \
         EMITW(0x00000025 | MRM(TLxx,    REG(RG), TZxx))/* <- set flags (Z) */
 
 #define rorzxZmx(MG, DG)                 /* reads Recx for shift count */   \
         AUW(SIB(MG),  EMPTY,  EMPTY,    MOD(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))  \
-        EMITW(0x00000056 | MSM(TMxx,    TMxx,    Tecx))                     \
+        EMITW(0x00000056 | MSM(TMxx,    TMxx,    TEcx))                     \
         EMITW(0xFC000000 | MDM(TMxx,    MOD(MG), VAL(DG), B3(DG), P1(DG)))
 
 #define rorzxZri(RG, IS)                                                    \
@@ -1131,29 +1131,29 @@
 
 
 #define mulzx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
-        EMITW(0x0000001D | MRM(0x00,    Teax,    REG(RS)))                  \
-        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))                     \
-        EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))
+        EMITW(0x0000001D | MRM(0x00,    TEax,    REG(RS)))                  \
+        EMITW(0x00000012 | MRM(TEax,    0x00,    0x00))                     \
+        EMITW(0x00000010 | MRM(TEdx,    0x00,    0x00))
 
 #define mulzx_xm(MS, DS) /* Reax is in/out, Redx is out(high)-zero-ext */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
-        EMITW(0x0000001D | MRM(0x00,    Teax,    TMxx))                     \
-        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))                     \
-        EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))
+        EMITW(0x0000001D | MRM(0x00,    TEax,    TMxx))                     \
+        EMITW(0x00000012 | MRM(TEax,    0x00,    0x00))                     \
+        EMITW(0x00000010 | MRM(TEdx,    0x00,    0x00))
 
 
 #define mulzn_xr(RS)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
-        EMITW(0x0000001C | MRM(0x00,    Teax,    REG(RS)))                  \
-        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))                     \
-        EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))
+        EMITW(0x0000001C | MRM(0x00,    TEax,    REG(RS)))                  \
+        EMITW(0x00000012 | MRM(TEax,    0x00,    0x00))                     \
+        EMITW(0x00000010 | MRM(TEdx,    0x00,    0x00))
 
 #define mulzn_xm(MS, DS) /* Reax is in/out, Redx is out(high)-sign-ext */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
-        EMITW(0x0000001C | MRM(0x00,    Teax,    TMxx))                     \
-        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))                     \
-        EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))
+        EMITW(0x0000001C | MRM(0x00,    TEax,    TMxx))                     \
+        EMITW(0x00000012 | MRM(TEax,    0x00,    0x00))                     \
+        EMITW(0x00000010 | MRM(TEdx,    0x00,    0x00))
 
 
 #define mulzp_xr(RS)     /* Reax is in/out, prepares Redx for divzn_x* */   \
@@ -1205,25 +1205,25 @@
 
 
 #define divzx_xr(RS)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-        EMITW(0x0000001F | MRM(0x00,    Teax,    REG(RS)))                  \
-        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))
+        EMITW(0x0000001F | MRM(0x00,    TEax,    REG(RS)))                  \
+        EMITW(0x00000012 | MRM(TEax,    0x00,    0x00))
 
 #define divzx_xm(MS, DS) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
-        EMITW(0x0000001F | MRM(0x00,    Teax,    TMxx))                     \
-        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))
+        EMITW(0x0000001F | MRM(0x00,    TEax,    TMxx))                     \
+        EMITW(0x00000012 | MRM(TEax,    0x00,    0x00))
 
 
 #define divzn_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        EMITW(0x0000001E | MRM(0x00,    Teax,    REG(RS)))                  \
-        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))
+        EMITW(0x0000001E | MRM(0x00,    TEax,    REG(RS)))                  \
+        EMITW(0x00000012 | MRM(TEax,    0x00,    0x00))
 
 #define divzn_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
-        EMITW(0x0000001E | MRM(0x00,    Teax,    TMxx))                     \
-        EMITW(0x00000012 | MRM(Teax,    0x00,    0x00))
+        EMITW(0x0000001E | MRM(0x00,    TEax,    TMxx))                     \
+        EMITW(0x00000012 | MRM(TEax,    0x00,    0x00))
 
 
 #define divzp_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
@@ -1273,20 +1273,20 @@
                                      /* to prepare for rem calculation */
 
 #define remzx_xr(RS)        /* to be placed immediately after divzx_xr */   \
-        EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))   /* Redx<-rem */
+        EMITW(0x00000010 | MRM(TEdx,    0x00,    0x00))   /* Redx<-rem */
 
 #define remzx_xm(MS, DS)    /* to be placed immediately after divzx_xm */   \
-        EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))   /* Redx<-rem */
+        EMITW(0x00000010 | MRM(TEdx,    0x00,    0x00))   /* Redx<-rem */
 
 
 #define remzn_xx() /* to be placed before divzn_x*, but after prezn_xx */   \
                                      /* to prepare for rem calculation */
 
 #define remzn_xr(RS)        /* to be placed immediately after divzn_xr */   \
-        EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))   /* Redx<-rem */
+        EMITW(0x00000010 | MRM(TEdx,    0x00,    0x00))   /* Redx<-rem */
 
 #define remzn_xm(MS, DS)    /* to be placed immediately after divzn_xm */   \
-        EMITW(0x00000010 | MRM(Tedx,    0x00,    0x00))   /* Redx<-rem */
+        EMITW(0x00000010 | MRM(TEdx,    0x00,    0x00))   /* Redx<-rem */
 
 #else /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
@@ -1317,25 +1317,25 @@
 
 
 #define mulzx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
-        EMITW(0x000000DD | MRM(Tedx,    Teax,    REG(RS)))                  \
-        EMITW(0x0000009D | MRM(Teax,    Teax,    REG(RS)))
+        EMITW(0x000000DD | MRM(TEdx,    TEax,    REG(RS)))                  \
+        EMITW(0x0000009D | MRM(TEax,    TEax,    REG(RS)))
 
 #define mulzx_xm(MS, DS) /* Reax is in/out, Redx is out(high)-zero-ext */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
-        EMITW(0x000000DD | MRM(Tedx,    Teax,    TMxx))                     \
-        EMITW(0x0000009D | MRM(Teax,    Teax,    TMxx))
+        EMITW(0x000000DD | MRM(TEdx,    TEax,    TMxx))                     \
+        EMITW(0x0000009D | MRM(TEax,    TEax,    TMxx))
 
 
 #define mulzn_xr(RS)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
-        EMITW(0x000000DC | MRM(Tedx,    Teax,    REG(RS)))                  \
-        EMITW(0x0000009C | MRM(Teax,    Teax,    REG(RS)))
+        EMITW(0x000000DC | MRM(TEdx,    TEax,    REG(RS)))                  \
+        EMITW(0x0000009C | MRM(TEax,    TEax,    REG(RS)))
 
 #define mulzn_xm(MS, DS) /* Reax is in/out, Redx is out(high)-sign-ext */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
-        EMITW(0x000000DC | MRM(Tedx,    Teax,    TMxx))                     \
-        EMITW(0x0000009C | MRM(Teax,    Teax,    TMxx))
+        EMITW(0x000000DC | MRM(TEdx,    TEax,    TMxx))                     \
+        EMITW(0x0000009C | MRM(TEax,    TEax,    TMxx))
 
 
 #define mulzp_xr(RS)     /* Reax is in/out, prepares Redx for divzn_x* */   \
@@ -1381,21 +1381,21 @@
 
 
 #define divzx_xr(RS)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-        EMITW(0x0000009F | MRM(Teax,    Teax,    REG(RS)))
+        EMITW(0x0000009F | MRM(TEax,    TEax,    REG(RS)))
 
 #define divzx_xm(MS, DS) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
-        EMITW(0x0000009F | MRM(Teax,    Teax,    TMxx))
+        EMITW(0x0000009F | MRM(TEax,    TEax,    TMxx))
 
 
 #define divzn_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        EMITW(0x0000009E | MRM(Teax,    Teax,    REG(RS)))
+        EMITW(0x0000009E | MRM(TEax,    TEax,    REG(RS)))
 
 #define divzn_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMITW(0xDC000000 | MDM(TMxx,    MOD(MS), VAL(DS), B3(DS), P1(DS)))  \
-        EMITW(0x0000009E | MRM(Teax,    Teax,    TMxx))
+        EMITW(0x0000009E | MRM(TEax,    TEax,    TMxx))
 
 
 #define divzp_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
@@ -1439,20 +1439,20 @@
         movzx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
 #define remzx_xr(RS)        /* to be placed immediately after divzx_xr */   \
-        EMITW(0x000000DF | MRM(Tedx,    Tedx,    REG(RS)))/* Redx<-rem */
+        EMITW(0x000000DF | MRM(TEdx,    TEdx,    REG(RS)))/* Redx<-rem */
 
 #define remzx_xm(MS, DS)    /* to be placed immediately after divzx_xm */   \
-        EMITW(0x000000DF | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
+        EMITW(0x000000DF | MRM(TEdx,    TEdx,    TMxx))   /* Redx<-rem */
 
 
 #define remzn_xx() /* to be placed before divzn_x*, but after prezn_xx */   \
         movzx_rr(Redx, Reax)         /* to prepare for rem calculation */
 
 #define remzn_xr(RS)        /* to be placed immediately after divzn_xr */   \
-        EMITW(0x000000DE | MRM(Tedx,    Tedx,    REG(RS)))/* Redx<-rem */
+        EMITW(0x000000DE | MRM(TEdx,    TEdx,    REG(RS)))/* Redx<-rem */
 
 #define remzn_xm(MS, DS)    /* to be placed immediately after divzn_xm */   \
-        EMITW(0x000000DE | MRM(Tedx,    Tedx,    TMxx))   /* Redx<-rem */
+        EMITW(0x000000DE | MRM(TEdx,    TEdx,    TMxx))   /* Redx<-rem */
 
 #endif /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
@@ -1644,20 +1644,20 @@
 
 #define stack_sa()   /* save all, [Reax - RegE] + 8 temps, 22 regs total */ \
         EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (-0xB0 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Tecx) | (+0x08 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Tedx) | (+0x10 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Tebx) | (+0x18 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Tebp) | (+0x20 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Tesi) | (+0x28 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Tedi) | (+0x30 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Teg8) | (+0x38 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    Teg9) | (+0x40 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TegA) | (+0x48 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TegB) | (+0x50 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TegC) | (+0x58 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TegD) | (+0x60 & 0xFFFF))  \
-        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TegE) | (+0x68 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TEax) | (+0x00 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TEcx) | (+0x08 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TEdx) | (+0x10 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TEbx) | (+0x18 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TEbp) | (+0x20 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TEsi) | (+0x28 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TEdi) | (+0x30 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TEg8) | (+0x38 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TEg9) | (+0x40 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TEgA) | (+0x48 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TEgB) | (+0x50 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TEgC) | (+0x58 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TEgD) | (+0x60 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TEgE) | (+0x68 & 0xFFFF))  \
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    TMxx) | (+0x70 & 0xFFFF))  \
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    TIxx) | (+0x78 & 0xFFFF))  \
         EMITW(0xFC000000 | MRM(0x00,    SPxx,    TDxx) | (+0x80 & 0xFFFF))  \
@@ -1676,20 +1676,20 @@
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    TDxx) | (+0x80 & 0xFFFF))  \
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    TIxx) | (+0x78 & 0xFFFF))  \
         EMITW(0xDC000000 | MRM(0x00,    SPxx,    TMxx) | (+0x70 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TegE) | (+0x68 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TegD) | (+0x60 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TegC) | (+0x58 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TegB) | (+0x50 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TegA) | (+0x48 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Teg9) | (+0x40 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Teg8) | (+0x38 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tedi) | (+0x30 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tesi) | (+0x28 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tebp) | (+0x20 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tebx) | (+0x18 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tedx) | (+0x10 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Tecx) | (+0x08 & 0xFFFF))  \
-        EMITW(0xDC000000 | MRM(0x00,    SPxx,    Teax) | (+0x00 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TEgE) | (+0x68 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TEgD) | (+0x60 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TEgC) | (+0x58 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TEgB) | (+0x50 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TEgA) | (+0x48 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TEg9) | (+0x40 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TEg8) | (+0x38 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TEdi) | (+0x30 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TEsi) | (+0x28 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TEbp) | (+0x20 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TEbx) | (+0x18 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TEdx) | (+0x10 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TEcx) | (+0x08 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TEax) | (+0x00 & 0xFFFF))  \
         EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (+0xB0 & 0xFFFF))
 
 /******************************************************************************/
