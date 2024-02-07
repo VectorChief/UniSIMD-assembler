@@ -460,11 +460,11 @@
 
 #if (RT_128X1 < 16)
 
-#if RT_SIMD_COMPAT_FMA == 0
-
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA == 0
 
 #define fmais_rr(XG, XS, XT)                                                \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -479,10 +479,6 @@
         movix_ld(W(XS), Mebp, inf_SCR01(0))
 
 #elif RT_SIMD_COMPAT_FMA == 1
-
-/* fma (G = G + S * T) if (#G != #S && #G != #T)
- * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
- * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
 #define fmais_rr(XG, XS, XT)                                                \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -508,11 +504,11 @@
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
-#if RT_SIMD_COMPAT_FMS == 0
-
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS == 0
 
 #define fmsis_rr(XG, XS, XT)                                                \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -527,10 +523,6 @@
         movix_ld(W(XS), Mebp, inf_SCR01(0))
 
 #elif RT_SIMD_COMPAT_FMS == 1
-
-/* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all POWER systems
- * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #define fmsis_rr(XG, XS, XT)                                                \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -1555,11 +1547,11 @@
 
 #if (RT_128X1 < 16)
 
-#if RT_SIMD_COMPAT_FMA == 0
-
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA == 0
 
 #define fmars_rr(XG, XS, XT)                                                \
         movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -1574,10 +1566,6 @@
         movrs_ld(W(XS), Mebp, inf_SCR01(0))
 
 #elif RT_SIMD_COMPAT_FMA == 1
-
-/* fma (G = G + S * T) if (#G != #S && #G != #T)
- * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
- * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
 #if RT_SIMD_COMPAT_FMR == 0
 
@@ -1633,11 +1621,11 @@
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
-#if RT_SIMD_COMPAT_FMS == 0
-
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS == 0
 
 #define fmsrs_rr(XG, XS, XT)                                                \
         movrs_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -1652,10 +1640,6 @@
         movrs_ld(W(XS), Mebp, inf_SCR01(0))
 
 #elif RT_SIMD_COMPAT_FMS == 1
-
-/* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all POWER systems
- * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #if RT_SIMD_COMPAT_FMR == 0
 

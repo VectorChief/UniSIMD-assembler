@@ -500,11 +500,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
         /* rse, rss, rsq are defined in rtconf.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if RT_SIMD_COMPAT_FMA == 0
-
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA == 0
 
 #define fmads_rr(XG, XS, XT)                                                \
         movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -519,10 +519,6 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
         movdx_ld(W(XS), Mebp, inf_SCR01(0))
 
 #elif RT_SIMD_COMPAT_FMA == 1
-
-/* fma (G = G + S * T) if (#G != #S && #G != #T)
- * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
- * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
 
 #if RT_SIMD_COMPAT_FMR == 0
 
@@ -590,11 +586,11 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
-#if RT_SIMD_COMPAT_FMS == 0
-
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS == 0
 
 #define fmsds_rr(XG, XS, XT)                                                \
         movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
@@ -609,10 +605,6 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
         movdx_ld(W(XS), Mebp, inf_SCR01(0))
 
 #elif RT_SIMD_COMPAT_FMS == 1
-
-/* fms (G = G - S * T) if (#G != #S && #G != #T)
- * NOTE: due to final negation being outside of rounding on all POWER systems
- * only symmetric rounding modes (RN, RZ) are compatible across all targets */
 
 #if RT_SIMD_COMPAT_FMR == 0
 
@@ -1137,13 +1129,13 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
         movdx_ld(W(XD), W(MS), W(DS))                                       \
         cvndn_rr(W(XD), W(XD))
 
-#if (RT_SIMD_COMPAT_SSE < 4)
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
  * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
  * round instructions are only accurate within 64-bit signed int range */
+
+#if (RT_SIMD_COMPAT_SSE < 4)
 
 #define rndds_rr(XD, XS)                                                    \
         cvtds_rr(W(XD), W(XS))                                              \
@@ -1168,12 +1160,6 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
         cvtds_rr(W(XD), W(XD))
 
 #else /* RT_SIMD_COMPAT_SSE >= 4 */
-
-/* cvt (D = fp-to-signed-int S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
 
 #define rndds_rr(XD, XS)                                                    \
     ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \

@@ -133,6 +133,11 @@
         EVX(RXB(XD),       0,    0x00, 0, 2, 2) EMITB(0x38)                 \
         MRM(REG(XD),    0x03,    0x01)
 
+#define mz1rx_ld(XG, MS, DS) /* not portable, do not use outside */         \
+    ADR EZX(RXB(XG), RXB(MS),    0x00, 0, 2, 1) EMITB(0x10)                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -1616,12 +1621,6 @@
         MRM(0x01,    MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
         mz1rx_ld(W(XD), Mebp, inf_GPC07)
-
-
-#define mz1rx_ld(XG, MS, DS) /* not portable, do not use outside */         \
-    ADR EZX(RXB(XG), RXB(MS),    0x00, 0, 2, 1) EMITB(0x10)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
 
 /******************************************************************************/
 /**********************************   MODE   **********************************/

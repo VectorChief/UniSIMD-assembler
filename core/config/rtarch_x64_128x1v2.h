@@ -133,6 +133,11 @@
         EVW(RXB(XD),       0,    0x00, 0, 2, 2) EMITB(0x38)                 \
         MRM(REG(XD),    0x03,    0x01)
 
+#define mz1tx_ld(XG, MS, DS) /* not portable, do not use outside */         \
+    ADR EZW(RXB(XG), RXB(MS),    0x00, 0, 3, 1) EMITB(0x10)                 \
+        MRM(REG(XG), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -1577,12 +1582,6 @@
         MRM(0x01,    MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMITB(0x05))                                  \
         mz1tx_ld(W(XD), Mebp, inf_GPC07)
-
-
-#define mz1tx_ld(XG, MS, DS) /* not portable, do not use outside */         \
-    ADR EZW(RXB(XG), RXB(MS),    0x00, 0, 3, 1) EMITB(0x10)                 \
-        MRM(REG(XG), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
