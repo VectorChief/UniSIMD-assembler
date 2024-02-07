@@ -995,16 +995,16 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
 #endif /* RT_SIMD_COMPAT_SSE >= 4 */
 
 #define cvzcs_rr(XD, XS)     /* round towards zero */                       \
-    xF3 REX(0,             0) EMITB(0x0F) EMITB(0x5B)                       \
+    XF3 REX(0,             0) EMITB(0x0F) EMITB(0x5B)                       \
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-    xF3 REX(1,             1) EMITB(0x0F) EMITB(0x5B)                       \
+    XF3 REX(1,             1) EMITB(0x0F) EMITB(0x5B)                       \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvzcs_ld(XD, MS, DS) /* round towards zero */                       \
-ADR xF3 REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
+ADR XF3 REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
-ADR xF3 REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
+ADR XF3 REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VYL(DS)), EMPTY)
 

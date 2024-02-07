@@ -126,11 +126,11 @@
 #if (RT_128X1 == 4)
 
 /* mandatory escape prefix for some opcodes (must preceed rex) */
-#define xF2                                                                 \
+#define XF2                                                                 \
         EMITB(0xF2)
 
 /* mandatory escape prefix for some opcodes (must preceed rex) */
-#define xF3                                                                 \
+#define XF3                                                                 \
         EMITB(0xF3)
 
 /******************************************************************************/
@@ -364,12 +364,12 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x38) EMITB(0x14)           \
 
 #undef  adpis_rr
 #define adpis_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
-    xF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x7C)                       \
+    XF2 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x7C)                       \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #undef  adpis_ld
 #define adpis_ld(XG, MS, DS)                                                \
-ADR xF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x7C)                       \
+ADR XF2 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x7C)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -883,11 +883,11 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
 #endif /* RT_SIMD_COMPAT_SSE >= 4 */
 
 #define cvzis_rr(XD, XS)     /* round towards zero */                       \
-    xF3 REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x5B)                       \
+    XF3 REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x5B)                       \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvzis_ld(XD, MS, DS) /* round towards zero */                       \
-ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
+ADR XF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -1930,27 +1930,27 @@ ADR ESC REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x66)                       \
 /* mov (D = S) */
 
 #define movrs_rr(XD, XS)                                                    \
-    xF3 REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x10)                       \
+    XF3 REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x10)                       \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define movrs_ld(XD, MS, DS)                                                \
-ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x10)                       \
+ADR XF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x10)                       \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
 #define movrs_st(XS, MD, DD)                                                \
-ADR xF3 REX(RXB(XS), RXB(MD)) EMITB(0x0F) EMITB(0x11)                       \
+ADR XF3 REX(RXB(XS), RXB(MD)) EMITB(0x0F) EMITB(0x11)                       \
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), CMD(DD), EMPTY)
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addrs_rr(XG, XS)                                                    \
-    xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x58)                       \
+    XF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x58)                       \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define addrs_ld(XG, MS, DS)                                                \
-ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x58)                       \
+ADR XF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x58)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -1965,11 +1965,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x58)                       \
 /* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subrs_rr(XG, XS)                                                    \
-    xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5C)                       \
+    XF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5C)                       \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define subrs_ld(XG, MS, DS)                                                \
-ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5C)                       \
+ADR XF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5C)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -1984,11 +1984,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5C)                       \
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
 
 #define mulrs_rr(XG, XS)                                                    \
-    xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x59)                       \
+    XF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x59)                       \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define mulrs_ld(XG, MS, DS)                                                \
-ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
+ADR XF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -2003,11 +2003,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x59)                       \
 /* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divrs_rr(XG, XS)                                                    \
-    xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5E)                       \
+    XF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5E)                       \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define divrs_ld(XG, MS, DS)                                                \
-ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5E)                       \
+ADR XF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5E)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -2022,11 +2022,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5E)                       \
 /* sqr (D = sqrt S) */
 
 #define sqrrs_rr(XD, XS)                                                    \
-    xF3 REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x51)                       \
+    XF3 REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x51)                       \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define sqrrs_ld(XD, MS, DS)                                                \
-ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
+ADR XF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -2036,7 +2036,7 @@ ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 #if RT_SIMD_COMPAT_RCP != 1
 
 #define rcers_rr(XD, XS)                                                    \
-    xF3 REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x53)                       \
+    XF3 REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x53)                       \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define rcsrs_rr(XG, XS) /* destroys XS */                                  \
@@ -2056,7 +2056,7 @@ ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 #if RT_SIMD_COMPAT_RSQ != 1
 
 #define rsers_rr(XD, XS)                                                    \
-    xF3 REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x52)                       \
+    XF3 REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x52)                       \
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define rssrs_rr(XG, XS) /* destroys XS */                                  \
@@ -2224,11 +2224,11 @@ ADR xF3 REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x51)                       \
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
 
 #define minrs_rr(XG, XS)                                                    \
-    xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5D)                       \
+    XF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5D)                       \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define minrs_ld(XG, MS, DS)                                                \
-ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5D)                       \
+ADR XF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5D)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -2243,11 +2243,11 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5D)                       \
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxrs_rr(XG, XS)                                                    \
-    xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5F)                       \
+    XF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0x5F)                       \
         MRM(REG(XG), MOD(XS), REG(XS))
 
 #define maxrs_ld(XG, MS, DS)                                                \
-ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5F)                       \
+ADR XF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5F)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -2262,12 +2262,12 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0x5F)                       \
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqrs_rr(XG, XS)                                                    \
-    xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
+    XF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))
 
 #define ceqrs_ld(XG, MS, DS)                                                \
-ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
+ADR XF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x00))
 
@@ -2282,12 +2282,12 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
 /* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
 #define cners_rr(XG, XS)                                                    \
-    xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
+    XF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x04))
 
 #define cners_ld(XG, MS, DS)                                                \
-ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
+ADR XF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x04))
 
@@ -2302,12 +2302,12 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
 /* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
 
 #define cltrs_rr(XG, XS)                                                    \
-    xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
+    XF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x01))
 
 #define cltrs_ld(XG, MS, DS)                                                \
-ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
+ADR XF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x01))
 
@@ -2322,12 +2322,12 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
 /* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
 #define clers_rr(XG, XS)                                                    \
-    xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
+    XF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x02))
 
 #define clers_ld(XG, MS, DS)                                                \
-ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
+ADR XF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x02))
 
@@ -2342,12 +2342,12 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
 /* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
 #define cgtrs_rr(XG, XS)                                                    \
-    xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
+    XF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x06))
 
 #define cgtrs_ld(XG, MS, DS)                                                \
-ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
+ADR XF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x06))
 
@@ -2362,12 +2362,12 @@ ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
 /* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
 #define cgers_rr(XG, XS)                                                    \
-    xF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
+    XF3 REX(RXB(XG), RXB(XS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x05))
 
 #define cgers_ld(XG, MS, DS)                                                \
-ADR xF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
+ADR XF3 REX(RXB(XG), RXB(MS)) EMITB(0x0F) EMITB(0xC2)                       \
         MRM(REG(XG), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMITB(0x05))
 
