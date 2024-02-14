@@ -1489,6 +1489,24 @@
 #define cvtmn_ld(XD, MS, DS)                                                \
         cvtan_ld(W(XD), W(MS), W(DS))
 
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnmx_rr(XD, XS)     /* round towards near */                       \
+        cvnax_rr(W(XD), W(XS))
+
+#define cvnmx_ld(XD, MS, DS) /* round towards near */                       \
+        cvnax_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from control register (set in FCTRL blocks) */
+
+#define cvtmx_rr(XD, XS)                                                    \
+        cvtax_rr(W(XD), W(XS))
+
+#define cvtmx_ld(XD, MS, DS)                                                \
+        cvtax_ld(W(XD), W(MS), W(DS))
+
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks) */
 
@@ -2723,6 +2741,24 @@
 
 #define cvtmn_ld(XD, MS, DS)                                                \
         cvtgn_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnmx_rr(XD, XS)     /* round towards near */                       \
+        cvngx_rr(W(XD), W(XS))
+
+#define cvnmx_ld(XD, MS, DS) /* round towards near */                       \
+        cvngx_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from control register (set in FCTRL blocks) */
+
+#define cvtmx_rr(XD, XS)                                                    \
+        cvtgx_rr(W(XD), W(XS))
+
+#define cvtmx_ld(XD, MS, DS)                                                \
+        cvtgx_ld(W(XD), W(MS), W(DS))
 
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks) */
@@ -4036,6 +4072,25 @@
 #define cvton_ld(XD, MS, DS)                                                \
         cvtcn_ld(W(XD), W(MS), W(DS))
 
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnox_rr(XD, XS)     /* round towards near */                       \
+        cvncx_rr(W(XD), W(XS))
+
+#define cvnox_ld(XD, MS, DS) /* round towards near */                       \
+        cvncx_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtox_rr(XD, XS)                                                    \
+        cvtcx_rr(W(XD), W(XS))
+
+#define cvtox_ld(XD, MS, DS)                                                \
+        cvtcx_ld(W(XD), W(MS), W(DS))
+
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
@@ -4934,6 +4989,25 @@
 
 #define cvton_ld(XD, MS, DS)                                                \
         cvtin_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnox_rr(XD, XS)     /* round towards near */                       \
+        cvnix_rr(W(XD), W(XS))
+
+#define cvnox_ld(XD, MS, DS) /* round towards near */                       \
+        cvnix_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtox_rr(XD, XS)                                                    \
+        cvtix_rr(W(XD), W(XS))
+
+#define cvtox_ld(XD, MS, DS)                                                \
+        cvtix_ld(W(XD), W(MS), W(DS))
 
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
@@ -5836,6 +5910,25 @@
 #define cvtqn_ld(XD, MS, DS)                                                \
         cvtdn_ld(W(XD), W(MS), W(DS))
 
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnqx_rr(XD, XS)     /* round towards near */                       \
+        cvndx_rr(W(XD), W(XS))
+
+#define cvnqx_ld(XD, MS, DS) /* round towards near */                       \
+        cvndx_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtqx_rr(XD, XS)                                                    \
+        cvtdx_rr(W(XD), W(XS))
+
+#define cvtqx_ld(XD, MS, DS)                                                \
+        cvtdx_ld(W(XD), W(MS), W(DS))
+
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
@@ -6734,6 +6827,25 @@
 
 #define cvtqn_ld(XD, MS, DS)                                                \
         cvtjn_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnqx_rr(XD, XS)     /* round towards near */                       \
+        cvnjx_rr(W(XD), W(XS))
+
+#define cvnqx_ld(XD, MS, DS) /* round towards near */                       \
+        cvnjx_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtqx_rr(XD, XS)                                                    \
+        cvtjx_rr(W(XD), W(XS))
+
+#define cvtqx_ld(XD, MS, DS)                                                \
+        cvtjx_ld(W(XD), W(MS), W(DS))
 
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
@@ -7636,6 +7748,25 @@
 #define cvtpn_ld(XD, MS, DS)                                                \
         cvton_ld(W(XD), W(MS), W(DS))
 
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnpx_rr(XD, XS)     /* round towards near */                       \
+        cvnox_rr(W(XD), W(XS))
+
+#define cvnpx_ld(XD, MS, DS) /* round towards near */                       \
+        cvnox_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtpx_rr(XD, XS)                                                    \
+        cvtox_rr(W(XD), W(XS))
+
+#define cvtpx_ld(XD, MS, DS)                                                \
+        cvtox_ld(W(XD), W(MS), W(DS))
+
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
@@ -8533,6 +8664,25 @@
 #define cvtfn_ld(XD, MS, DS)                                                \
         cvtcn_ld(W(XD), W(MS), W(DS))
 
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnfx_rr(XD, XS)     /* round towards near */                       \
+        cvncx_rr(W(XD), W(XS))
+
+#define cvnfx_ld(XD, MS, DS) /* round towards near */                       \
+        cvncx_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtfx_rr(XD, XS)                                                    \
+        cvtcx_rr(W(XD), W(XS))
+
+#define cvtfx_ld(XD, MS, DS)                                                \
+        cvtcx_ld(W(XD), W(MS), W(DS))
+
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
@@ -9429,6 +9579,25 @@
 
 #define cvtln_ld(XD, MS, DS)                                                \
         cvtin_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnlx_rr(XD, XS)     /* round towards near */                       \
+        cvnix_rr(W(XD), W(XS))
+
+#define cvnlx_ld(XD, MS, DS) /* round towards near */                       \
+        cvnix_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtlx_rr(XD, XS)                                                    \
+        cvtix_rr(W(XD), W(XS))
+
+#define cvtlx_ld(XD, MS, DS)                                                \
+        cvtix_ld(W(XD), W(MS), W(DS))
 
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
@@ -10580,6 +10749,25 @@
 #define cvtpn_ld(XD, MS, DS)                                                \
         cvtqn_ld(W(XD), W(MS), W(DS))
 
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnpx_rr(XD, XS)     /* round towards near */                       \
+        cvnqx_rr(W(XD), W(XS))
+
+#define cvnpx_ld(XD, MS, DS) /* round towards near */                       \
+        cvnqx_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtpx_rr(XD, XS)                                                    \
+        cvtqx_rr(W(XD), W(XS))
+
+#define cvtpx_ld(XD, MS, DS)                                                \
+        cvtqx_ld(W(XD), W(MS), W(DS))
+
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
@@ -11477,6 +11665,25 @@
 #define cvtfn_ld(XD, MS, DS)                                                \
         cvtdn_ld(W(XD), W(MS), W(DS))
 
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnfx_rr(XD, XS)     /* round towards near */                       \
+        cvndx_rr(W(XD), W(XS))
+
+#define cvnfx_ld(XD, MS, DS) /* round towards near */                       \
+        cvndx_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtfx_rr(XD, XS)                                                    \
+        cvtdx_rr(W(XD), W(XS))
+
+#define cvtfx_ld(XD, MS, DS)                                                \
+        cvtdx_ld(W(XD), W(MS), W(DS))
+
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
@@ -12373,6 +12580,25 @@
 
 #define cvtln_ld(XD, MS, DS)                                                \
         cvtjn_ld(W(XD), W(MS), W(DS))
+
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnlx_rr(XD, XS)     /* round towards near */                       \
+        cvnjx_rr(W(XD), W(XS))
+
+#define cvnlx_ld(XD, MS, DS) /* round towards near */                       \
+        cvnjx_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtlx_rr(XD, XS)                                                    \
+        cvtjx_rr(W(XD), W(XS))
+
+#define cvtlx_ld(XD, MS, DS)                                                \
+        cvtjx_ld(W(XD), W(MS), W(DS))
 
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)

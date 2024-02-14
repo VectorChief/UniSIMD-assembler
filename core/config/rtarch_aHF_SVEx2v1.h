@@ -636,6 +636,29 @@
         EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VZL(DS), B3(DS), K1(DS)))  \
         EMITW(0x6552A000 | MXM(RYG(XD), TmmM,    0x00))
 
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnmx_rr(XD, XS)     /* round towards near */                       \
+        cvtmx_rr(W(XD), W(XS))
+
+#define cvnmx_ld(XD, MS, DS) /* round towards near */                       \
+        cvtmx_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from control register (set in FCTRL blocks) */
+
+#define cvtmx_rr(XD, XS)                                                    \
+        EMITW(0x6553A000 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x6553A000 | MXM(RYG(XD), RYG(XS), 0x00))
+
+#define cvtmx_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), K1(DS)))  \
+        EMITW(0x6553A000 | MXM(REG(XD), TmmM,    0x00))                     \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VZL(DS), B3(DS), K1(DS)))  \
+        EMITW(0x6553A000 | MXM(RYG(XD), TmmM,    0x00))
+
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks) */
 

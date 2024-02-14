@@ -745,13 +745,10 @@
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
 #define cvndn_rr(XD, XS)     /* round towards near */                       \
-        EVW(RXB(XD), RXB(XS),    0x00, 1, 2, 1) EMITB(0xE6)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))
+        cvtdn_rr(W(XD), W(XS))
 
 #define cvndn_ld(XD, MS, DS) /* round towards near */                       \
-    ADR EVW(RXB(XD), RXB(MS),    0x00, 1, 2, 1) EMITB(0xE6)                 \
-        MRM(REG(XD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
+        cvtdn_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -774,7 +771,7 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvtds_ld(XD, MS, DS)                                                \
-        EVW(RXB(XD), RXB(MS),    0x00, 1, 1, 1) EMITB(0x7B)                 \
+    ADR EVW(RXB(XD), RXB(MS),    0x00, 1, 1, 1) EMITB(0x7B)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -787,7 +784,29 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvtdn_ld(XD, MS, DS)                                                \
-        EVW(RXB(XD), RXB(MS),    0x00, 1, 2, 1) EMITB(0xE6)                 \
+    ADR EVW(RXB(XD), RXB(MS),    0x00, 1, 2, 1) EMITB(0xE6)                 \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvndx_rr(XD, XS)     /* round towards near */                       \
+        cvtdx_rr(W(XD), W(XS))
+
+#define cvndx_ld(XD, MS, DS) /* round towards near */                       \
+        cvtdx_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtdx_rr(XD, XS)                                                    \
+        EVW(RXB(XD), RXB(XS),    0x00, 1, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define cvtdx_ld(XD, MS, DS)                                                \
+    ADR EVW(RXB(XD), RXB(MS),    0x00, 1, 2, 1) EMITB(0x7A)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 

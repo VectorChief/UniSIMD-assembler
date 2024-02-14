@@ -856,6 +856,31 @@
         EMITW(0x7C000699 | MXM(TmmM,    T1xx,    TPxx))                     \
         EMITW(0xF00007E2 | MXM(REG(XD), 0x00,    TmmM))
 
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvndx_rr(XD, XS)     /* round towards near */                       \
+        cvtdx_rr(W(XD), W(XS))
+
+#define cvndx_ld(XD, MS, DS) /* round towards near */                       \
+        cvtdx_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtdx_rr(XD, XS)                                                    \
+        EMITW(0xF00007A3 | MXM(REG(XD), 0x00,    REG(XS)))                  \
+        EMITW(0xF00007A0 | MXM(REG(XD), 0x00,    REG(XS)))
+
+#define cvtdx_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C000699 | MXM(TmmM,    T0xx,    TPxx))                     \
+        EMITW(0xF00007A3 | MXM(REG(XD), 0x00,    TmmM))                     \
+        EMITW(0x7C000699 | MXM(TmmM,    T1xx,    TPxx))                     \
+        EMITW(0xF00007A2 | MXM(REG(XD), 0x00,    TmmM))
+
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode

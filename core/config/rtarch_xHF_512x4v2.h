@@ -996,6 +996,42 @@
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
 
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnmx_rr(XD, XS)     /* round towards near */                       \
+        cvtmx_rr(W(XD), W(XS))
+
+#define cvnmx_ld(XD, MS, DS) /* round towards near */                       \
+        cvtmx_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from control register (set in FCTRL blocks) */
+
+#define cvtmx_rr(XD, XS)                                                    \
+        EFX(0,             0,    0x00, K, 3, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EFX(1,             1,    0x00, K, 3, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EFX(2,             2,    0x00, K, 3, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EFX(3,             3,    0x00, K, 3, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define cvtmx_ld(XD, MS, DS)                                                \
+    ADR EFX(0,       RXB(MS),    0x00, K, 3, 1) EMITB(0x7D)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EFX(1,       RXB(MS),    0x00, K, 3, 1) EMITB(0x7D)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
+    ADR EFX(2,       RXB(MS),    0x00, K, 3, 1) EMITB(0x7D)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
+    ADR EFX(3,       RXB(MS),    0x00, K, 3, 1) EMITB(0x7D)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks) */
 

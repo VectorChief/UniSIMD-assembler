@@ -1027,6 +1027,28 @@
 #define cvtin_ld(XD, MS, DS)                                                \
         cvnin_ld(W(XD), W(MS), W(DS))                                     /*!*/
 
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnix_rr(XD, XS)     /* round towards near */                       \
+        EMITW(0x1000030A | MXM(REG(XD), 0x00,    REG(XS)))
+
+#define cvnix_ld(XD, MS, DS) /* round towards near */                       \
+        AUW(EMPTY,    EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C0000CE | MXM(TmmM,    TEax & M(MOD(MS) == TPxx), TPxx))   \
+        EMITW(0x1000030A | MXM(REG(XD), 0x00,    TmmM))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtix_rr(XD, XS)                                                    \
+        cvnix_rr(W(XD), W(XS))                                            /*!*/
+
+#define cvtix_ld(XD, MS, DS)                                                \
+        cvnix_ld(W(XD), W(MS), W(DS))                                     /*!*/
+
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode

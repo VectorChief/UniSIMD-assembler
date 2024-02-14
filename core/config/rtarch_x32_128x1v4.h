@@ -1081,6 +1081,57 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnix_rr(XD, XS)                                                    \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        cvnix_rx(W(XD))
+
+#define cvnix_ld(XD, MS, DS)                                                \
+        movix_ld(W(XD), W(MS), W(DS))                                       \
+        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
+        cvnix_rx(W(XD))
+
+#define cvnix_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Reax)                                                      \
+        movwz_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
+        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuws_st(Mebp, inf_SCR01(0x00))                                     \
+        movwz_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
+        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuws_st(Mebp, inf_SCR01(0x04))                                     \
+        movwz_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
+        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuws_st(Mebp, inf_SCR01(0x08))                                     \
+        movwz_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
+        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuws_st(Mebp, inf_SCR01(0x0C))                                     \
+        stack_ld(Reax)                                                      \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtix_rr(XD, XS)                                                    \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        cvnix_rr(W(XD), W(XS))                                              \
+        fpucw_ld(Mebp,  inf_SCR02(4))
+
+#define cvtix_ld(XD, MS, DS)                                                \
+        movix_ld(W(XD), W(MS), W(DS))                                       \
+        cvtix_rr(W(XD), W(XD))
+
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode

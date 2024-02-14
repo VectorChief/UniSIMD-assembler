@@ -1102,11 +1102,36 @@
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
 
-#define cvtin_rr(XD, XS)                                                    \
-        cvnin_rr(W(XD), W(XS))                                            /*!*/
+#define cvtcn_rr(XD, XS)                                                    \
+        cvncn_rr(W(XD), W(XS))                                            /*!*/
 
-#define cvtin_ld(XD, MS, DS)                                                \
-        cvnin_ld(W(XD), W(MS), W(DS))                                     /*!*/
+#define cvtcn_ld(XD, MS, DS)                                                \
+        cvncn_ld(W(XD), W(MS), W(DS))                                     /*!*/
+
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvncx_rr(XD, XS)     /* round towards near */                       \
+        EMITW(0x1000030A | MXM(REG(XD), 0x00,    REG(XS)))                  \
+        EMITW(0x1000030A | MXM(RYG(XD), 0x00,    RYG(XS)))
+
+#define cvncx_ld(XD, MS, DS) /* round towards near */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x38000000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x7C0000CE | MXM(TmmM,    T0xx,    TPxx))                     \
+        EMITW(0x1000030A | MXM(REG(XD), 0x00,    TmmM))                     \
+        EMITW(0x7C0000CE | MXM(TmmM,    T1xx,    TPxx))                     \
+        EMITW(0x1000030A | MXM(RYG(XD), 0x00,    TmmM))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtcx_rr(XD, XS)                                                    \
+        cvncx_rr(W(XD), W(XS))                                            /*!*/
+
+#define cvtcx_ld(XD, MS, DS)                                                \
+        cvncx_ld(W(XD), W(MS), W(DS))                                     /*!*/
 
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)

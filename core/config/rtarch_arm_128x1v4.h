@@ -1396,6 +1396,37 @@
         EMITW(0xEEB80AC0 | MXM(REG(XD)+1, 0x00,  REG(XD)+1)) /* rounding */ \
         EMITW(0xEEF80AE0 | MXM(REG(XD)+1, 0x00,  REG(XD)+1)) /* modes */
 
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnix_rr(XD, XS)     /* round towards near */                       \
+        EMITW(0xF3BB06C0 | MXM(REG(XD), 0x00,    REG(XS)))
+
+#define cvnix_ld(XD, MS, DS) /* round towards near */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3BB06C0 | MXM(REG(XD), 0x00,    TmmM))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtix_rr(XD, XS)     /* fallback to VFP for integer-to-float cvt */ \
+        EMITW(0xEEB80A40 | MXM(REG(XD)+0, 0x00,  REG(XS)+0)) /* due to */   \
+        EMITW(0xEEF80A60 | MXM(REG(XD)+0, 0x00,  REG(XS)+0)) /* lack of */  \
+        EMITW(0xEEB80A40 | MXM(REG(XD)+1, 0x00,  REG(XS)+1)) /* rounding */ \
+        EMITW(0xEEF80A60 | MXM(REG(XD)+1, 0x00,  REG(XS)+1)) /* modes */
+
+#define cvtix_ld(XD, MS, DS) /* fallback to VFP for integer-to-float cvt */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4200AAF | MXM(REG(XD), TPxx,    0x00))                     \
+        EMITW(0xEEB80A40 | MXM(REG(XD)+0, 0x00,  REG(XD)+0)) /* due to */   \
+        EMITW(0xEEF80A60 | MXM(REG(XD)+0, 0x00,  REG(XD)+0)) /* lack of */  \
+        EMITW(0xEEB80A40 | MXM(REG(XD)+1, 0x00,  REG(XD)+1)) /* rounding */ \
+        EMITW(0xEEF80A60 | MXM(REG(XD)+1, 0x00,  REG(XD)+1)) /* modes */
+
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode

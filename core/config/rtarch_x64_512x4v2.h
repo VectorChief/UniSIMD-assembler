@@ -1869,6 +1869,258 @@
 
 #endif /* RT_512X4 >= 2 */
 
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#if (RT_512X4 < 2)
+
+/* #define tstzx_mi(..)                    (defined in 64_128-bit header) */
+
+#define cvnqx_rr(XD, XS)     /* round towards near */                       \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movwx_mi(Mebp, inf_SCR02(0x00), IW(0x5F800000))     /* 2^64 fp32 */ \
+        fpuzn_ld(Mebp, inf_SCR01(0x00))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x00), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x00))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x08))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x08), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x08))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x10))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x10), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x10))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x18))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x18), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x18))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x20))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x20), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x20))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x28))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x28), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x28))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x30))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x30), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x30))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x38))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x38), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x38))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x40))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x40), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x40))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x48))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x48), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x48))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x50))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x50), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x50))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x58))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x58), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x58))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x60))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x60), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x60))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x68))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x68), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x68))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x70))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x70), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x70))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x78))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x78), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x78))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x80))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x80), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x80))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x88))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x88), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x88))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x90))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x90), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x90))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0x98))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0x98), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0x98))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0xA0))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0xA0), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0xA0))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0xA8))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0xA8), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0xA8))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0xB0))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0xB0), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0xB0))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0xB8))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0xB8), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0xB8))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0xC0))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0xC0), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0xC0))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0xC8))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0xC8), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0xC8))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0xD0))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0xD0), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0xD0))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0xD8))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0xD8), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0xD8))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0xE0))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0xE0), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0xE0))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0xE8))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0xE8), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0xE8))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0xF0))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0xF0), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0xF0))                                     \
+        fpuzn_ld(Mebp, inf_SCR01(0xF8))                                     \
+        tstzx_mi(Mebp, inf_SCR01(0xF8), IW(0x80000000))  /* imm-sign-ext */ \
+        EMITB(0x79) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp, inf_SCR02(0x00))                                     \
+        fpuzs_st(Mebp, inf_SCR01(0xF8))                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define cvnqx_ld(XD, MS, DS) /* round towards near */                       \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
+        cvnqx_rr(W(XD), W(XD))
+
+#else /* RT_512X4 >= 2 */
+
+#define cvnqx_rr(XD, XS)     /* round towards near */                       \
+        EVW(0,             0,    0x00, K, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVW(1,             1,    0x00, K, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVW(2,             2,    0x00, K, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVW(3,             3,    0x00, K, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define cvnqx_ld(XD, MS, DS) /* round towards near */                       \
+    ADR EVW(0,       RXB(MS),    0x00, K, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EVW(1,       RXB(MS),    0x00, K, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
+    ADR EVW(2,       RXB(MS),    0x00, K, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
+    ADR EVW(3,       RXB(MS),    0x00, K, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+
+#endif /* RT_512X4 >= 2 */
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#if (RT_512X4 < 2)
+
+#define cvtqx_rr(XD, XS)                                                    \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        cvnqx_rr(W(XD), W(XS))                                              \
+        fpucw_ld(Mebp,  inf_SCR02(4))
+
+#define cvtqx_ld(XD, MS, DS)                                                \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
+        cvtqx_rr(W(XD), W(XD))
+
+#else /* RT_512X4 >= 2 */
+
+#define cvtqx_rr(XD, XS)                                                    \
+        EVW(0,             0,    0x00, K, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVW(1,             1,    0x00, K, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVW(2,             2,    0x00, K, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EVW(3,             3,    0x00, K, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define cvtqx_ld(XD, MS, DS)                                                \
+        EVW(0,       RXB(MS),    0x00, K, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+        EVW(1,       RXB(MS),    0x00, K, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
+        EVW(2,       RXB(MS),    0x00, K, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
+        EVW(3,       RXB(MS),    0x00, K, 2, 1) EMITB(0x7A)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+
+#endif /* RT_512X4 >= 2 */
+
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
