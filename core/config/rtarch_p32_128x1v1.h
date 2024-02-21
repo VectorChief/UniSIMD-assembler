@@ -823,15 +823,6 @@
         rnnis_ld(W(XD), W(MS), W(DS))                                       \
         cvzis_rr(W(XD), W(XD))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnin_rr(XD, XS)     /* round towards near */                       \
-        cvtin_rr(W(XD), W(XS))
-
-#define cvnin_ld(XD, MS, DS) /* round towards near */                       \
-        cvtin_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -854,6 +845,30 @@
 #define cvtis_ld(XD, MS, DS)                                                \
         rndis_ld(W(XD), W(MS), W(DS))                                       \
         cvzis_rr(W(XD), W(XD))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnris_rr(XD, XS, mode)                                              \
+        EMITW(0x1000020A | MXM(REG(XD), 0x00,    REG(XS)) |                 \
+        (RT_SIMD_MODE_##mode&3) << 6)
+
+#define cvris_rr(XD, XS, mode)                                              \
+        rnris_rr(W(XD), W(XS), mode)                                        \
+        cvzis_rr(W(XD), W(XD))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnin_rr(XD, XS)     /* round towards near */                       \
+        cvtin_rr(W(XD), W(XS))
+
+#define cvnin_ld(XD, MS, DS) /* round towards near */                       \
+        cvtin_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -889,21 +904,6 @@
         EMITW(0x38000000 | MPM(TPxx,    REG(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x7C000619 | MXM(TmmM,    TEax & M(MOD(MS) == TPxx), TPxx))   \
         EMITW(0xF00002A3 | MXM(REG(XD), 0x00,    TmmM))
-
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (cannot be used in FCTRL blocks)
- * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
- * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
-
-#define rnris_rr(XD, XS, mode)                                              \
-        EMITW(0x1000020A | MXM(REG(XD), 0x00,    REG(XS)) |                 \
-        (RT_SIMD_MODE_##mode&3) << 6)
-
-#define cvris_rr(XD, XS, mode)                                              \
-        rnris_rr(W(XD), W(XS), mode)                                        \
-        cvzis_rr(W(XD), W(XD))
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
@@ -954,26 +954,15 @@
 #define mulix3rr(XD, XS, XT)                                                \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Recx)                                                      \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x00))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x04))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x04))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x08))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x08))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x0C))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x0C))                              \
-        stack_ld(Recx)                                                      \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
+        mulix_rx(W(XD))
 
 #define mulix3ld(XD, XS, MT, DT)                                            \
         movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movix_ld(W(XD), W(MT), W(DT))                                       \
         movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mulix_rx(W(XD))
+
+#define mulix_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movwx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
         mulwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \

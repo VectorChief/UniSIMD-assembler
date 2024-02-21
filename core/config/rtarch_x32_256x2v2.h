@@ -175,10 +175,10 @@
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
 #define mmvox_rr(XG, XS)                                                    \
-    ADR VEX(0,             0, REG(XG), 1, 1, 3) EMITB(0x4A)                 \
+        VEX(0,             0, REG(XG), 1, 1, 3) EMITB(0x4A)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))                                  \
-    ADR VEX(1,             1, REH(XG), 1, 1, 3) EMITB(0x4A)                 \
+        VEX(1,             1, REH(XG), 1, 1, 3) EMITB(0x4A)                 \
         MRM(REG(XG), MOD(XS), REG(XS))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x80))
 
@@ -659,9 +659,9 @@
 #if RT_SIMD_COMPAT_FMA <= 1
 
 #define fmaos_rr(XG, XS, XT)                                                \
-    ADR VEX(0,             0, REG(XS), 1, 1, 2) EMITB(0xB8)                 \
+        VEX(0,             0, REG(XS), 1, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG), MOD(XT), REG(XT))                                      \
-    ADR VEX(1,             1, REH(XS), 1, 1, 2) EMITB(0xB8)                 \
+        VEX(1,             1, REH(XS), 1, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmaos_ld(XG, XS, MT, DT)                                            \
@@ -681,9 +681,9 @@
 #if RT_SIMD_COMPAT_FMS <= 1
 
 #define fmsos_rr(XG, XS, XT)                                                \
-    ADR VEX(0,             0, REG(XS), 1, 1, 2) EMITB(0xBC)                 \
+        VEX(0,             0, REG(XS), 1, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG), MOD(XT), REG(XT))                                      \
-    ADR VEX(1,             1, REH(XS), 1, 1, 2) EMITB(0xBC)                 \
+        VEX(1,             1, REH(XS), 1, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmsos_ld(XG, XS, MT, DT)                                            \
@@ -1032,15 +1032,6 @@
 #define cvnos_ld(XD, MS, DS) /* round towards near */                       \
         cvtos_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnon_rr(XD, XS)     /* round towards near */                       \
-        cvton_rr(W(XD), W(XS))
-
-#define cvnon_ld(XD, MS, DS) /* round towards near */                       \
-        cvton_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -1077,6 +1068,34 @@
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VXL(DS)), EMPTY)
 
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnros_rr(XD, XS, mode)                                              \
+        VEX(0,             0,    0x00, 1, 1, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
+        VEX(1,             1,    0x00, 1, 1, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
+
+#define cvros_rr(XD, XS, mode)                                              \
+        rnros_rr(W(XD), W(XS), mode)                                        \
+        cvzos_rr(W(XD), W(XD))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnon_rr(XD, XS)     /* round towards near */                       \
+        cvton_rr(W(XD), W(XS))
+
+#define cvnon_ld(XD, MS, DS) /* round towards near */                       \
+        cvton_ld(W(XD), W(MS), W(DS))
+
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
@@ -1098,83 +1117,79 @@
 /* cvn (D = unsigned-int-to-fp S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
-#define cvnox_rr(XD, XS)                                                    \
+#define cvnox_rr(XD, XS)     /* round towards near */                       \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        cvnox_rx(W(XD))
-
-#define cvnox_ld(XD, MS, DS)                                                \
-        movox_ld(W(XD), W(MS), W(DS))                                       \
-        movox_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        cvnox_rx(W(XD))
-
-#define cvnox_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Reax)                                                      \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x00))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x00))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x04))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x04))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x08))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x08))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x0C))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x10))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x10))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x14))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x14))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x18))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x18))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x1C))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x20))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x20))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x24))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x24))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x28))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x28))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x2C))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x2C))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x30))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x30))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x34))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x34))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x38))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x38))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x3C))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x3C))                                     \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x00))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x04))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x04))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x08))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x0C))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x0C))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x10))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x10))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x14))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x14))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x18))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x18))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x1C))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x1C))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x20))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x20))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x24))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x24))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x28))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x28))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x2C))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x2C))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x30))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x30))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x34))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x34))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x38))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x38))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x3C))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x3C))                                    \
         stack_ld(Reax)                                                      \
         movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define cvnox_ld(XD, MS, DS) /* round towards near */                       \
+        movox_ld(W(XD), W(MS), W(DS))                                       \
+        cvnox_rr(W(XD), W(XD))
 
 /* cvt (D = unsigned-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -1193,25 +1208,6 @@
 #define cvtox_ld(XD, MS, DS)                                                \
         movox_ld(W(XD), W(MS), W(DS))                                       \
         cvtox_rr(W(XD), W(XD))
-
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (cannot be used in FCTRL blocks)
- * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
- * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
-
-#define rnros_rr(XD, XS, mode)                                              \
-        VEX(0,             0,    0x00, 1, 1, 3) EMITB(0x08)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
-        VEX(1,             1,    0x00, 1, 1, 3) EMITB(0x08)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
-
-#define cvros_rr(XD, XS, mode)                                              \
-        rnros_rr(W(XD), W(XS), mode)                                        \
-        cvzos_rr(W(XD), W(XD))
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 

@@ -741,15 +741,6 @@
 #define cvnds_ld(XD, MS, DS) /* round towards near */                       \
         cvtds_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvndn_rr(XD, XS)     /* round towards near */                       \
-        cvtdn_rr(W(XD), W(XS))
-
-#define cvndn_ld(XD, MS, DS) /* round towards near */                       \
-        cvtdn_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -777,6 +768,32 @@
         EMITW(0x7B39001E | MXM(REG(XD), TmmM,    0x00))                     \
         EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
         EMITW(0x7B39001E | MXM(RYG(XD), TmmM,    0x00))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrds_rr(XD, XS, mode)                                              \
+        FCTRL_ENTER(mode)                                                   \
+        rndds_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(mode)
+
+#define cvrds_rr(XD, XS, mode)                                              \
+        FCTRL_ENTER(mode)                                                   \
+        cvtds_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(mode)
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvndn_rr(XD, XS)     /* round towards near */                       \
+        cvtdn_rr(W(XD), W(XS))
+
+#define cvndn_ld(XD, MS, DS) /* round towards near */                       \
+        cvtdn_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -816,23 +833,6 @@
         EMITW(0x7B3F001E | MXM(REG(XD), TmmM,    0x00))                     \
         EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
         EMITW(0x7B3F001E | MXM(RYG(XD), TmmM,    0x00))
-
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (cannot be used in FCTRL blocks)
- * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
- * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
-
-#define rnrds_rr(XD, XS, mode)                                              \
-        FCTRL_ENTER(mode)                                                   \
-        rndds_rr(W(XD), W(XS))                                              \
-        FCTRL_LEAVE(mode)
-
-#define cvrds_rr(XD, XS, mode)                                              \
-        FCTRL_ENTER(mode)                                                   \
-        cvtds_rr(W(XD), W(XS))                                              \
-        FCTRL_LEAVE(mode)
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 

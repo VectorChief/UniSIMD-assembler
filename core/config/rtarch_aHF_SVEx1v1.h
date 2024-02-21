@@ -499,15 +499,6 @@
         rnnms_ld(W(XD), W(MS), W(DS))                                       \
         cvzms_rr(W(XD), W(XD))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnmn_rr(XD, XS)     /* round towards near */                       \
-        cvtmn_rr(W(XD), W(XS))
-
-#define cvnmn_ld(XD, MS, DS) /* round towards near */                       \
-        cvtmn_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from control register (set in FCTRL blocks) */
 
@@ -526,6 +517,26 @@
 #define cvtms_ld(XD, MS, DS)                                                \
         rndms_ld(W(XD), W(MS), W(DS))                                       \
         cvzms_rr(W(XD), W(XD))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rnrms_rr(XD, XS, mode)                                              \
+        EMITW(0x6540A000 | MXM(REG(XD), REG(XS), 0x00) |                    \
+                                        RT_SIMD_MODE_##mode << 16)
+
+#define cvrms_rr(XD, XS, mode)                                              \
+        rnrms_rr(W(XD), W(XS), mode)                                        \
+        cvzms_rr(W(XD), W(XD))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnmn_rr(XD, XS)     /* round towards near */                       \
+        cvtmn_rr(W(XD), W(XS))
+
+#define cvnmn_ld(XD, MS, DS) /* round towards near */                       \
+        cvtmn_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from control register (set in FCTRL blocks) */
@@ -557,17 +568,6 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
         EMITW(0x6553A000 | MXM(REG(XD), TmmM,    0x00))
-
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (can be used in FCTRL blocks) */
-
-#define rnrms_rr(XD, XS, mode)                                              \
-        EMITW(0x6540A000 | MXM(REG(XD), REG(XS), 0x00) |                    \
-                                        RT_SIMD_MODE_##mode << 16)
-
-#define cvrms_rr(XD, XS, mode)                                              \
-        rnrms_rr(W(XD), W(XS), mode)                                        \
-        cvzms_rr(W(XD), W(XD))
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

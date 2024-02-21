@@ -552,15 +552,6 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
         EMITW(0x4E79A800 | MXM(RYG(XD), TmmM,    0x00))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnan_rr(XD, XS)     /* round towards near */                       \
-        cvtan_rr(W(XD), W(XS))
-
-#define cvnan_ld(XD, MS, DS) /* round towards near */                       \
-        cvtan_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from control register (set in FCTRL blocks) */
 
@@ -583,20 +574,6 @@
         rndas_ld(W(XD), W(MS), W(DS))                                       \
         cvzas_rr(W(XD), W(XD))
 
-/* cvt (D = signed-int-to-fp S)
- * rounding mode comes from control register (set in FCTRL blocks) */
-
-#define cvtan_rr(XD, XS)                                                    \
-        EMITW(0x4E79D800 | MXM(REG(XD), REG(XS), 0x00))                     \
-        EMITW(0x4E79D800 | MXM(RYG(XD), RYG(XS), 0x00))
-
-#define cvtan_ld(XD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A2(DS), EMPTY2)   \
-        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B4(DS), L2(DS)))  \
-        EMITW(0x4E79D800 | MXM(REG(XD), TmmM,    0x00))                     \
-        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
-        EMITW(0x4E79D800 | MXM(RYG(XD), TmmM,    0x00))
-
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks) */
 
@@ -611,6 +588,52 @@
         (RT_SIMD_MODE_##mode&1) << 23 | (RT_SIMD_MODE_##mode&2) << 11)      \
         EMITW(0x4E79A800 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
         (RT_SIMD_MODE_##mode&1) << 23 | (RT_SIMD_MODE_##mode&2) << 11)
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnan_rr(XD, XS)     /* round towards near */                       \
+        cvtan_rr(W(XD), W(XS))
+
+#define cvnan_ld(XD, MS, DS) /* round towards near */                       \
+        cvtan_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from control register (set in FCTRL blocks) */
+
+#define cvtan_rr(XD, XS)                                                    \
+        EMITW(0x4E79D800 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x4E79D800 | MXM(RYG(XD), RYG(XS), 0x00))
+
+#define cvtan_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x4E79D800 | MXM(REG(XD), TmmM,    0x00))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x4E79D800 | MXM(RYG(XD), TmmM,    0x00))
+
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnax_rr(XD, XS)     /* round towards near */                       \
+        cvtax_rr(W(XD), W(XS))
+
+#define cvnax_ld(XD, MS, DS) /* round towards near */                       \
+        cvtax_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from control register (set in FCTRL blocks) */
+
+#define cvtax_rr(XD, XS)                                                    \
+        EMITW(0x6E79D800 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x6E79D800 | MXM(RYG(XD), RYG(XS), 0x00))
+
+#define cvtax_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x6E79D800 | MXM(REG(XD), TmmM,    0x00))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x6E79D800 | MXM(RYG(XD), TmmM,    0x00))
 
 #endif /* RT_128X2 == 2 */
 

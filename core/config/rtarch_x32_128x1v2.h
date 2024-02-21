@@ -496,7 +496,7 @@
 #if RT_SIMD_COMPAT_FMA <= 1
 
 #define fmais_rr(XG, XS, XT)                                                \
-    ADR EVX(RXB(XG), RXB(XT), REN(XS), 0, 1, 2) EMITB(0xB8)                 \
+        EVX(RXB(XG), RXB(XT), REN(XS), 0, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmais_ld(XG, XS, MT, DT)                                            \
@@ -513,7 +513,7 @@
 #if RT_SIMD_COMPAT_FMS <= 1
 
 #define fmsis_rr(XG, XS, XT)                                                \
-    ADR EVX(RXB(XG), RXB(XT), REN(XS), 0, 1, 2) EMITB(0xBC)                 \
+        EVX(RXB(XG), RXB(XT), REN(XS), 0, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmsis_ld(XG, XS, MT, DT)                                            \
@@ -793,15 +793,6 @@
 #define cvnis_ld(XD, MS, DS) /* round towards near */                       \
         cvtis_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnin_rr(XD, XS)     /* round towards near */                       \
-        cvtin_rr(W(XD), W(XS))
-
-#define cvnin_ld(XD, MS, DS) /* round towards near */                       \
-        cvtin_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -826,6 +817,31 @@
     ADR EVX(RXB(XD), RXB(MS),    0x00, 0, 1, 1) EMITB(0x5B)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnris_rr(XD, XS, mode)                                              \
+        EVX(RXB(XD), RXB(XS),    0x00, 0, 1, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
+
+#define cvris_rr(XD, XS, mode)                                              \
+        ERX(RXB(XD), RXB(XS), 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x5B)\
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnin_rr(XD, XS)     /* round towards near */                       \
+        cvtin_rr(W(XD), W(XS))
+
+#define cvnin_ld(XD, MS, DS) /* round towards near */                       \
+        cvtin_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -861,22 +877,6 @@
     ADR EVX(RXB(XD), RXB(MS),    0x00, 0, 3, 1) EMITB(0x7A)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
-
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (cannot be used in FCTRL blocks)
- * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
- * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
-
-#define rnris_rr(XD, XS, mode)                                              \
-        EVX(RXB(XD), RXB(XS),    0x00, 0, 1, 3) EMITB(0x08)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
-
-#define cvris_rr(XD, XS, mode)                                              \
-        ERX(RXB(XD), RXB(XS), 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x5B)\
-        MRM(REG(XD), MOD(XS), REG(XS))
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
@@ -1461,7 +1461,7 @@
 #if RT_SIMD_COMPAT_FMA <= 1
 
 #define fmars_rr(XG, XS, XT)                                                \
-    ADR EVX(RXB(XG), RXB(XT), REN(XS), 0, 1, 2) EMITB(0xB9)                 \
+        EVX(RXB(XG), RXB(XT), REN(XS), 0, 1, 2) EMITB(0xB9)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmars_ld(XG, XS, MT, DT)                                            \
@@ -1478,7 +1478,7 @@
 #if RT_SIMD_COMPAT_FMS <= 1
 
 #define fmsrs_rr(XG, XS, XT)                                                \
-    ADR EVX(RXB(XG), RXB(XT), REN(XS), 0, 1, 2) EMITB(0xBD)                 \
+        EVX(RXB(XG), RXB(XT), REN(XS), 0, 1, 2) EMITB(0xBD)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmsrs_ld(XG, XS, MT, DT)                                            \

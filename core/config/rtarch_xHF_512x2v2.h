@@ -280,9 +280,9 @@
 /* fma (G = G + S * T) if (#G != #S && #G != #T) */
 
 #define fmams_rr(XG, XS, XT)                                                \
-    ADR EFX(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xB8)                 \
+        EFX(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG), MOD(XT), REG(XT))                                      \
-    ADR EFX(RMB(XG), RMB(XT), REM(XS), K, 1, 2) EMITB(0xB8)                 \
+        EFX(RMB(XG), RMB(XT), REM(XS), K, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmams_ld(XG, XS, MT, DT)                                            \
@@ -296,9 +296,9 @@
 /* fms (G = G - S * T) if (#G != #S && #G != #T) */
 
 #define fmsms_rr(XG, XS, XT)                                                \
-    ADR EFX(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xBC)                 \
+        EFX(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG), MOD(XT), REG(XT))                                      \
-    ADR EFX(RMB(XG), RMB(XT), REM(XS), K, 1, 2) EMITB(0xBC)                 \
+        EFX(RMB(XG), RMB(XT), REM(XS), K, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmsms_ld(XG, XS, MT, DT)                                            \
@@ -645,15 +645,6 @@
 #define cvnms_ld(XD, MS, DS) /* round towards near */                       \
         cvtms_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnmn_rr(XD, XS)     /* round towards near */                       \
-        cvtmn_rr(W(XD), W(XS))
-
-#define cvnmn_ld(XD, MS, DS) /* round towards near */                       \
-        cvtmn_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from control register (set in FCTRL blocks) */
 
@@ -686,6 +677,32 @@
     ADR EFX(RMB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x7D)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rnrms_rr(XD, XS, mode)                                              \
+        EVX(RXB(XD), RXB(XS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
+        EVX(RMB(XD), RMB(XS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
+
+#define cvrms_rr(XD, XS, mode)                                              \
+        EGX(RXB(XD), RXB(XS), 0x00, RT_SIMD_MODE_##mode&3, 2, 1) EMITB(0x7D)\
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EGX(RMB(XD), RMB(XS), 0x00, RT_SIMD_MODE_##mode&3, 2, 1) EMITB(0x7D)\
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnmn_rr(XD, XS)     /* round towards near */                       \
+        cvtmn_rr(W(XD), W(XS))
+
+#define cvnmn_ld(XD, MS, DS) /* round towards near */                       \
+        cvtmn_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from control register (set in FCTRL blocks) */
@@ -729,23 +746,6 @@
     ADR EFX(RMB(XD), RXB(MS),    0x00, K, 3, 1) EMITB(0x7D)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
-
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (can be used in FCTRL blocks) */
-
-#define rnrms_rr(XD, XS, mode)                                              \
-        EVX(RXB(XD), RXB(XS),    0x00, K, 0, 3) EMITB(0x08)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
-        EVX(RMB(XD), RMB(XS),    0x00, K, 0, 3) EMITB(0x08)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
-
-#define cvrms_rr(XD, XS, mode)                                              \
-        EGX(RXB(XD), RXB(XS), 0x00, RT_SIMD_MODE_##mode&3, 2, 1) EMITB(0x7D)\
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EGX(RMB(XD), RMB(XS), 0x00, RT_SIMD_MODE_##mode&3, 2, 1) EMITB(0x7D)\
-        MRM(REG(XD), MOD(XS), REG(XS))
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

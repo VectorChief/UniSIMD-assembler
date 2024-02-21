@@ -717,15 +717,6 @@
         rnnjs_ld(W(XD), W(MS), W(DS))                                       \
         cvzjs_rr(W(XD), W(XD))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnjn_rr(XD, XS)     /* round towards near */                       \
-        cvtjn_rr(W(XD), W(XS))
-
-#define cvnjn_ld(XD, MS, DS) /* round towards near */                       \
-        cvtjn_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -748,6 +739,31 @@
 #define cvtjs_ld(XD, MS, DS)                                                \
         rndjs_ld(W(XD), W(MS), W(DS))                                       \
         cvzjs_rr(W(XD), W(XD))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrjs_rr(XD, XS, mode)                                              \
+        FCTRL_ENTER(mode)                                                   \
+        rndjs_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(mode)
+
+#define cvrjs_rr(XD, XS, mode)                                              \
+        rnrjs_rr(W(XD), W(XS), mode)                                        \
+        cvzjs_rr(W(XD), W(XD))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnjn_rr(XD, XS)     /* round towards near */                       \
+        cvtjn_rr(W(XD), W(XS))
+
+#define cvnjn_ld(XD, MS, DS) /* round towards near */                       \
+        cvtjn_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -784,22 +800,6 @@
         EMITW(0x7C000699 | MXM(TmmM,    TEax & M(MOD(MS) == TPxx), TPxx))   \
         EMITW(0xF00007A3 | MXM(REG(XD), 0x00,    TmmM))
 
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (cannot be used in FCTRL blocks)
- * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
- * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
-
-#define rnrjs_rr(XD, XS, mode)                                              \
-        FCTRL_ENTER(mode)                                                   \
-        rndjs_rr(W(XD), W(XS))                                              \
-        FCTRL_LEAVE(mode)
-
-#define cvrjs_rr(XD, XS, mode)                                              \
-        rnrjs_rr(W(XD), W(XS), mode)                                        \
-        cvzjs_rr(W(XD), W(XD))
-
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
 #if (RT_SIMD_COMPAT_PW8 == 0)
@@ -815,18 +815,15 @@
 #define addjx3rr(XD, XS, XT)                                                \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Reax)                                                      \
-        movzx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
-        addzx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
-        addzx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
-        stack_ld(Reax)                                                      \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+        addjx_rx(W(XD))
 
 #define addjx3ld(XD, XS, MT, DT)                                            \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_ld(W(XD), W(MT), W(DT))                                       \
         movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        addjx_rx(W(XD))
+
+#define addjx_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Reax)                                                      \
         movzx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
         addzx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
@@ -846,18 +843,15 @@
 #define subjx3rr(XD, XS, XT)                                                \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Reax)                                                      \
-        movzx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
-        subzx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
-        movzx_ld(Reax,  Mebp, inf_SCR02(0x08))                              \
-        subzx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
-        stack_ld(Reax)                                                      \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+        subjx_rx(W(XD))
 
 #define subjx3ld(XD, XS, MT, DT)                                            \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_ld(W(XD), W(MT), W(DT))                                       \
         movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        subjx_rx(W(XD))
+
+#define subjx_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Reax)                                                      \
         movzx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
         subzx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
@@ -877,20 +871,15 @@
 #define muljx3rr(XD, XS, XT)                                                \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Recx)                                                      \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x00))                              \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x08))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x08))                              \
-        stack_ld(Recx)                                                      \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+        muljx_rx(W(XD))
 
 #define muljx3ld(XD, XS, MT, DT)                                            \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_ld(W(XD), W(MT), W(DT))                                       \
         movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        muljx_rx(W(XD))
+
+#define muljx_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movzx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
         mulzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
@@ -985,18 +974,15 @@
 #define svljx3rr(XD, XS, XT)                                                \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Recx)                                                      \
-        movzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
-        shlzx_mx(Mebp,  inf_SCR01(0x00))                                    \
-        movzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
-        shlzx_mx(Mebp,  inf_SCR01(0x08))                                    \
-        stack_ld(Recx)                                                      \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+        svljx_rx(W(XD))
 
 #define svljx3ld(XD, XS, MT, DT)                                            \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_ld(W(XD), W(MT), W(DT))                                       \
         movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svljx_rx(W(XD))
+
+#define svljx_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
         shlzx_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -1017,18 +1003,15 @@
 #define svrjx3rr(XD, XS, XT)                                                \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Recx)                                                      \
-        movzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
-        shrzx_mx(Mebp,  inf_SCR01(0x00))                                    \
-        movzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
-        shrzx_mx(Mebp,  inf_SCR01(0x08))                                    \
-        stack_ld(Recx)                                                      \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+        svrjx_rx(W(XD))
 
 #define svrjx3ld(XD, XS, MT, DT)                                            \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_ld(W(XD), W(MT), W(DT))                                       \
         movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svrjx_rx(W(XD))
+
+#define svrjx_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
         shrzx_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -1049,18 +1032,15 @@
 #define svrjn3rr(XD, XS, XT)                                                \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Recx)                                                      \
-        movzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
-        shrzn_mx(Mebp,  inf_SCR01(0x00))                                    \
-        movzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
-        shrzn_mx(Mebp,  inf_SCR01(0x08))                                    \
-        stack_ld(Recx)                                                      \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+        svrjn_rx(W(XD))
 
 #define svrjn3ld(XD, XS, MT, DT)                                            \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_ld(W(XD), W(MT), W(DT))                                       \
         movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svrjn_rx(W(XD))
+
+#define svrjn_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
         shrzn_mx(Mebp,  inf_SCR01(0x00))                                    \
@@ -1116,20 +1096,15 @@
 #define muljx3rr(XD, XS, XT)                                                \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Recx)                                                      \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x00))                              \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x08))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x08))                              \
-        stack_ld(Recx)                                                      \
-        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+        muljx_rx(W(XD))
 
 #define muljx3ld(XD, XS, MT, DT)                                            \
         movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movjx_ld(W(XD), W(MT), W(DT))                                       \
         movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        muljx_rx(W(XD))
+
+#define muljx_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movzx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
         mulzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \

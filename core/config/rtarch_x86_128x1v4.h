@@ -1201,25 +1201,6 @@
         movix_ld(W(XD), W(MS), W(DS))                                       \
         cvnis_rr(W(XD), W(XD))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnin_rr(XD, XS)     /* round towards near */                       \
-        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        fpuwn_ld(Mebp,  inf_SCR01(0x00))                                    \
-        fpuws_st(Mebp,  inf_SCR01(0x00))                                    \
-        fpuwn_ld(Mebp,  inf_SCR01(0x04))                                    \
-        fpuws_st(Mebp,  inf_SCR01(0x04))                                    \
-        fpuwn_ld(Mebp,  inf_SCR01(0x08))                                    \
-        fpuws_st(Mebp,  inf_SCR01(0x08))                                    \
-        fpuwn_ld(Mebp,  inf_SCR01(0x0C))                                    \
-        fpuws_st(Mebp,  inf_SCR01(0x0C))                                    \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define cvnin_ld(XD, MS, DS) /* round towards near */                       \
-        movix_ld(W(XD), W(MS), W(DS))                                       \
-        cvnin_rr(W(XD), W(XD))
-
 #else /* RT_128X1 >= 2 */
 
 /* cvz (D = fp-to-signed-int S)
@@ -1389,15 +1370,6 @@
 #define cvnis_ld(XD, MS, DS) /* round towards near */                       \
         cvtis_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnin_rr(XD, XS)     /* round towards near */                       \
-        cvtin_rr(W(XD), W(XS))
-
-#define cvnin_ld(XD, MS, DS) /* round towards near */                       \
-        cvtin_ld(W(XD), W(MS), W(DS))
-
 #endif /* RT_128X1 >= 2 */
 
 #if (RT_128X1 < 2)
@@ -1429,6 +1401,25 @@
 #define cvtis_ld(XD, MS, DS)                                                \
         movix_ld(W(XD), W(MS), W(DS))                                       \
         cvtis_rr(W(XD), W(XD))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnin_rr(XD, XS)     /* round towards near */                       \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        fpuwn_ld(Mebp,  inf_SCR01(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x00))                                    \
+        fpuwn_ld(Mebp,  inf_SCR01(0x04))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x04))                                    \
+        fpuwn_ld(Mebp,  inf_SCR01(0x08))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x08))                                    \
+        fpuwn_ld(Mebp,  inf_SCR01(0x0C))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x0C))                                    \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define cvnin_ld(XD, MS, DS) /* round towards near */                       \
+        movix_ld(W(XD), W(MS), W(DS))                                       \
+        cvnin_rr(W(XD), W(XD))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -1489,72 +1480,6 @@
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-/* cvt (D = signed-int-to-fp S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
-
-#define cvtin_rr(XD, XS)                                                    \
-        EMITB(0x0F) EMITB(0x5B)                                             \
-        MRM(REG(XD), MOD(XS), REG(XS))
-
-#define cvtin_ld(XD, MS, DS)                                                \
-        EMITB(0x0F) EMITB(0x5B)                                             \
-        MRM(REG(XD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#endif /* RT_128X1 >= 2 */
-
-/* cvn (D = unsigned-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnix_rr(XD, XS)                                                    \
-        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        cvnix_rx(W(XD))
-
-#define cvnix_ld(XD, MS, DS)                                                \
-        movix_ld(W(XD), W(MS), W(DS))                                       \
-        movix_st(W(XD), Mebp, inf_SCR01(0))                                 \
-        cvnix_rx(W(XD))
-
-#define cvnix_rx(XD) /* not portable, do not use outside */                 \
-        stack_st(Reax)                                                      \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x00))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x00))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x04))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x04))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x08))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x08))                                     \
-        movwz_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
-        movzx_st(Reax, Mebp, inf_SCR02(0x00))                               \
-        fpuzn_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuws_st(Mebp, inf_SCR01(0x0C))                                     \
-        stack_ld(Reax)                                                      \
-        movix_ld(W(XD), Mebp, inf_SCR01(0))
-
-/* cvt (D = unsigned-int-to-fp S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
-
-#define cvtix_rr(XD, XS)                                                    \
-        fpucw_st(Mebp,  inf_SCR02(4))                                       \
-        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
-        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
-        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
-        orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
-        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
-        cvnix_rr(W(XD), W(XS))                                              \
-        fpucw_ld(Mebp,  inf_SCR02(4))
-
-#define cvtix_ld(XD, MS, DS)                                                \
-        movix_ld(W(XD), W(MS), W(DS))                                       \
-        cvtix_rr(W(XD), W(XD))
-
 /* cvr (D = fp-to-signed-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
@@ -1585,6 +1510,77 @@
         cvzis_rr(W(XD), W(XD))
 
 #endif /* RT_128X1 >= 4 */
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnin_rr(XD, XS)     /* round towards near */                       \
+        cvtin_rr(W(XD), W(XS))
+
+#define cvnin_ld(XD, MS, DS) /* round towards near */                       \
+        cvtin_ld(W(XD), W(MS), W(DS))
+
+/* cvt (D = signed-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtin_rr(XD, XS)                                                    \
+        EMITB(0x0F) EMITB(0x5B)                                             \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define cvtin_ld(XD, MS, DS)                                                \
+        EMITB(0x0F) EMITB(0x5B)                                             \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#endif /* RT_128X1 >= 2 */
+
+/* cvn (D = unsigned-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnix_rr(XD, XS)     /* round towards near */                       \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Reax)                                                      \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x00))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x00))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x04))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x04))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x08))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x08))                                    \
+        movwz_ld(Reax,  Mebp, inf_SCR01(0x0C))                              \
+        movzx_st(Reax,  Mebp, inf_SCR02(0x00))                              \
+        fpuzn_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuws_st(Mebp,  inf_SCR01(0x0C))                                    \
+        stack_ld(Reax)                                                      \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define cvnix_ld(XD, MS, DS) /* round towards near */                       \
+        movix_ld(W(XD), W(MS), W(DS))                                       \
+        cvnix_rr(W(XD), W(XD))
+
+/* cvt (D = unsigned-int-to-fp S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
+
+#define cvtix_rr(XD, XS)                                                    \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        cvnix_rr(W(XD), W(XS))                                              \
+        fpucw_ld(Mebp,  inf_SCR02(4))
+
+#define cvtix_ld(XD, MS, DS)                                                \
+        movix_ld(W(XD), W(MS), W(DS))                                       \
+        cvtix_rr(W(XD), W(XD))
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 

@@ -1059,15 +1059,6 @@
         rnnqs_ld(W(XD), W(MS), W(DS))                                       \
         cvzqs_rr(W(XD), W(XD))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnqn_rr(XD, XS)     /* round towards near */                       \
-        cvtqn_rr(W(XD), W(XS))
-
-#define cvnqn_ld(XD, MS, DS) /* round towards near */                       \
-        cvtqn_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -1102,6 +1093,31 @@
 #define cvtqs_ld(XD, MS, DS)                                                \
         rndqs_ld(W(XD), W(MS), W(DS))                                       \
         cvzqs_rr(W(XD), W(XD))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrqs_rr(XD, XS, mode)                                              \
+        FCTRL_ENTER(mode)                                                   \
+        rndqs_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(mode)
+
+#define cvrqs_rr(XD, XS, mode)                                              \
+        rnrqs_rr(W(XD), W(XS), mode)                                        \
+        cvzqs_rr(W(XD), W(XD))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnqn_rr(XD, XS)     /* round towards near */                       \
+        cvtqn_rr(W(XD), W(XS))
+
+#define cvnqn_ld(XD, MS, DS) /* round towards near */                       \
+        cvtqn_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -1161,22 +1177,6 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VZL(DS), B4(DS), L4(DS)))  \
     SJF(EMITW(0xF0000257 | MXM(TmmM,    TmmM,    TmmM)))                    \
         EMITW(0xF00007A2 | MXM(RYG(XD), 0x00,    TmmM))
-
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (cannot be used in FCTRL blocks)
- * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
- * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
-
-#define rnrqs_rr(XD, XS, mode)                                              \
-        FCTRL_ENTER(mode)                                                   \
-        rndqs_rr(W(XD), W(XS))                                              \
-        FCTRL_LEAVE(mode)
-
-#define cvrqs_rr(XD, XS, mode)                                              \
-        rnrqs_rr(W(XD), W(XS), mode)                                        \
-        cvzqs_rr(W(XD), W(XD))
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
@@ -1269,38 +1269,15 @@
 #define mulqx3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Recx)                                                      \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x00))                              \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x08))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x08))                              \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x10))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x10))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x10))                              \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x18))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x18))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x18))                              \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x20))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x20))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x20))                              \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x28))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x28))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x28))                              \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x30))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x30))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x30))                              \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x38))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x38))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x38))                              \
-        stack_ld(Recx)                                                      \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        mulqx_rx(W(XD))
 
 #define mulqx3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mulqx_rx(W(XD))
+
+#define mulqx_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movzx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
         mulzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \

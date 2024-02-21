@@ -551,7 +551,7 @@
 #if RT_SIMD_COMPAT_FMA <= 1
 
 #define fmaqs_rr(XG, XS, XT)                                                \
-    ADR EVW(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xB8)                 \
+        EVW(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xB8)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmaqs_ld(XG, XS, MT, DT)                                            \
@@ -568,7 +568,7 @@
 #if RT_SIMD_COMPAT_FMS <= 1
 
 #define fmsqs_rr(XG, XS, XT)                                                \
-    ADR EVW(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xBC)                 \
+        EVW(RXB(XG), RXB(XT), REN(XS), K, 1, 2) EMITB(0xBC)                 \
         MRM(REG(XG), MOD(XT), REG(XT))
 
 #define fmsqs_ld(XG, XS, MT, DT)                                            \
@@ -937,6 +937,71 @@
 
 #endif /* RT_512X1 == 2, 8 */
 
+/* cvt (D = fp-to-signed-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rndqs_rr(XD, XS)                                                    \
+        EVW(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x09)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define rndqs_ld(XD, MS, DS)                                                \
+    ADR EVW(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x09)                 \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x04))
+
+#if (RT_512X1 == 1 || RT_512X1 == 4)
+
+#define cvtqs_rr(XD, XS)                                                    \
+        rndqs_rr(W(XD), W(XS))                                              \
+        cvzqs_rr(W(XD), W(XD))
+
+#define cvtqs_ld(XD, MS, DS)                                                \
+        rndqs_ld(W(XD), W(MS), W(DS))                                       \
+        cvzqs_rr(W(XD), W(XD))
+
+#else /* RT_512X1 == 2, 8 */
+
+#define cvtqs_rr(XD, XS)                                                    \
+        EVW(RXB(XD), RXB(XS),    0x00, K, 1, 1) EMITB(0x7B)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define cvtqs_ld(XD, MS, DS)                                                \
+    ADR EVW(RXB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x7B)                 \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#endif /* RT_512X1 == 2, 8 */
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrqs_rr(XD, XS, mode)                                              \
+        EVW(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x09)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
+
+#if (RT_512X1 == 1 || RT_512X1 == 4)
+
+#define cvrqs_rr(XD, XS, mode)                                              \
+        rnrqs_rr(W(XD), W(XS), mode)                                        \
+        cvzqs_rr(W(XD), W(XD))
+
+#else /* RT_512X1 == 2, 8 */
+
+#define cvrqs_rr(XD, XS, mode)                                              \
+        ERW(RXB(XD), RXB(XS), 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x7B)\
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#endif /* RT_512X1 == 2, 8 */
+
 /* cvn (D = signed-int-to-fp S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks) */
 
@@ -979,45 +1044,6 @@
 
 #endif /* RT_512X1 == 2, 8 */
 
-/* cvt (D = fp-to-signed-int S)
- * rounding mode comes from fp control register (set in FCTRL blocks)
- * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
-
-#define rndqs_rr(XD, XS)                                                    \
-        EVW(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x09)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(0x04))
-
-#define rndqs_ld(XD, MS, DS)                                                \
-    ADR EVW(RXB(XD), RXB(MS),    0x00, K, 1, 3) EMITB(0x09)                 \
-        MRM(REG(XD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMITB(0x04))
-
-#if (RT_512X1 == 1 || RT_512X1 == 4)
-
-#define cvtqs_rr(XD, XS)                                                    \
-        rndqs_rr(W(XD), W(XS))                                              \
-        cvzqs_rr(W(XD), W(XD))
-
-#define cvtqs_ld(XD, MS, DS)                                                \
-        rndqs_ld(W(XD), W(MS), W(DS))                                       \
-        cvzqs_rr(W(XD), W(XD))
-
-#else /* RT_512X1 == 2, 8 */
-
-#define cvtqs_rr(XD, XS)                                                    \
-        EVW(RXB(XD), RXB(XS),    0x00, K, 1, 1) EMITB(0x7B)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))
-
-#define cvtqs_ld(XD, MS, DS)                                                \
-        EVW(RXB(XD), RXB(MS),    0x00, K, 1, 1) EMITB(0x7B)                 \
-        MRM(REG(XD), MOD(MS), REG(MS))                                      \
-        AUX(SIB(MS), CMD(DS), EMPTY)
-
-#endif /* RT_512X1 == 2, 8 */
-
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
@@ -1045,7 +1071,7 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvtqn_ld(XD, MS, DS)                                                \
-        EVW(RXB(XD), RXB(MS),    0x00, K, 2, 1) EMITB(0xE6)                 \
+    ADR EVW(RXB(XD), RXB(MS),    0x00, K, 2, 1) EMITB(0xE6)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
@@ -1056,51 +1082,49 @@
 
 #if (RT_512X1 == 1 || RT_512X1 == 4)
 
-/* #define tstzx_mi(..)                    (defined in 64_128-bit header) */
-
 #define cvnqx_rr(XD, XS)     /* round towards near */                       \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movwx_mi(Mebp, inf_SCR02(0x00), IW(0x5F800000))     /* 2^64 fp32 */ \
-        fpuzn_ld(Mebp, inf_SCR01(0x00))                                     \
-        tstzx_mi(Mebp, inf_SCR01(0x00), IW(0x80000000))  /* imm-sign-ext */ \
-        EMITB(0x79) EMITB(0x07 + x67)                                       \
-        addws_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuzs_st(Mebp, inf_SCR01(0x00))                                     \
-        fpuzn_ld(Mebp, inf_SCR01(0x08))                                     \
-        tstzx_mi(Mebp, inf_SCR01(0x08), IW(0x80000000))  /* imm-sign-ext */ \
-        EMITB(0x79) EMITB(0x07 + x67)                                       \
-        addws_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuzs_st(Mebp, inf_SCR01(0x08))                                     \
-        fpuzn_ld(Mebp, inf_SCR01(0x10))                                     \
-        tstzx_mi(Mebp, inf_SCR01(0x10), IW(0x80000000))  /* imm-sign-ext */ \
-        EMITB(0x79) EMITB(0x07 + x67)                                       \
-        addws_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuzs_st(Mebp, inf_SCR01(0x10))                                     \
-        fpuzn_ld(Mebp, inf_SCR01(0x18))                                     \
-        tstzx_mi(Mebp, inf_SCR01(0x18), IW(0x80000000))  /* imm-sign-ext */ \
-        EMITB(0x79) EMITB(0x07 + x67)                                       \
-        addws_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuzs_st(Mebp, inf_SCR01(0x18))                                     \
-        fpuzn_ld(Mebp, inf_SCR01(0x20))                                     \
-        tstzx_mi(Mebp, inf_SCR01(0x20), IW(0x80000000))  /* imm-sign-ext */ \
-        EMITB(0x79) EMITB(0x07 + x67)                                       \
-        addws_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuzs_st(Mebp, inf_SCR01(0x20))                                     \
-        fpuzn_ld(Mebp, inf_SCR01(0x28))                                     \
-        tstzx_mi(Mebp, inf_SCR01(0x28), IW(0x80000000))  /* imm-sign-ext */ \
-        EMITB(0x79) EMITB(0x07 + x67)                                       \
-        addws_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuzs_st(Mebp, inf_SCR01(0x28))                                     \
-        fpuzn_ld(Mebp, inf_SCR01(0x30))                                     \
-        tstzx_mi(Mebp, inf_SCR01(0x30), IW(0x80000000))  /* imm-sign-ext */ \
-        EMITB(0x79) EMITB(0x07 + x67)                                       \
-        addws_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuzs_st(Mebp, inf_SCR01(0x30))                                     \
-        fpuzn_ld(Mebp, inf_SCR01(0x38))                                     \
-        tstzx_mi(Mebp, inf_SCR01(0x38), IW(0x80000000))  /* imm-sign-ext */ \
-        EMITB(0x79) EMITB(0x07 + x67)                                       \
-        addws_ld(Mebp, inf_SCR02(0x00))                                     \
-        fpuzs_st(Mebp, inf_SCR01(0x38))                                     \
+        movwx_mi(Mebp,  inf_SCR02(0x00), IW(0x5F800000))    /* 2^64 fp32 */ \
+        fpuzn_ld(Mebp,  inf_SCR01(0x00))                                    \
+        cmpwx_mi(Mebp,  inf_SCR01(0x04), IC(0))                             \
+        EMITB(0x7D) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_st(Mebp,  inf_SCR01(0x00))                                    \
+        fpuzn_ld(Mebp,  inf_SCR01(0x08))                                    \
+        cmpwx_mi(Mebp,  inf_SCR01(0x0C), IC(0))                             \
+        EMITB(0x7D) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_st(Mebp,  inf_SCR01(0x08))                                    \
+        fpuzn_ld(Mebp,  inf_SCR01(0x10))                                    \
+        cmpwx_mi(Mebp,  inf_SCR01(0x14), IC(0))                             \
+        EMITB(0x7D) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_st(Mebp,  inf_SCR01(0x10))                                    \
+        fpuzn_ld(Mebp,  inf_SCR01(0x18))                                    \
+        cmpwx_mi(Mebp,  inf_SCR01(0x1C), IC(0))                             \
+        EMITB(0x7D) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_st(Mebp,  inf_SCR01(0x18))                                    \
+        fpuzn_ld(Mebp,  inf_SCR01(0x20))                                    \
+        cmpwx_mi(Mebp,  inf_SCR01(0x24), IC(0))                             \
+        EMITB(0x7D) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_st(Mebp,  inf_SCR01(0x20))                                    \
+        fpuzn_ld(Mebp,  inf_SCR01(0x28))                                    \
+        cmpwx_mi(Mebp,  inf_SCR01(0x2C), IC(0))                             \
+        EMITB(0x7D) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_st(Mebp,  inf_SCR01(0x28))                                    \
+        fpuzn_ld(Mebp,  inf_SCR01(0x30))                                    \
+        cmpwx_mi(Mebp,  inf_SCR01(0x34), IC(0))                             \
+        EMITB(0x7D) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_st(Mebp,  inf_SCR01(0x30))                                    \
+        fpuzn_ld(Mebp,  inf_SCR01(0x38))                                    \
+        cmpwx_mi(Mebp,  inf_SCR01(0x3C), IC(0))                             \
+        EMITB(0x7D) EMITB(0x07 + x67)                                       \
+        addws_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_st(Mebp,  inf_SCR01(0x38))                                    \
         movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
 #define cvnqx_ld(XD, MS, DS) /* round towards near */                       \
@@ -1147,35 +1171,9 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvtqx_ld(XD, MS, DS)                                                \
-        EVW(RXB(XD), RXB(MS),    0x00, K, 2, 1) EMITB(0x7A)                 \
+    ADR EVW(RXB(XD), RXB(MS),    0x00, K, 2, 1) EMITB(0x7A)                 \
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
-
-#endif /* RT_512X1 == 2, 8 */
-
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (cannot be used in FCTRL blocks)
- * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
- * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
-
-#define rnrqs_rr(XD, XS, mode)                                              \
-        EVW(RXB(XD), RXB(XS),    0x00, K, 1, 3) EMITB(0x09)                 \
-        MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
-
-#if (RT_512X1 == 1 || RT_512X1 == 4)
-
-#define cvrqs_rr(XD, XS, mode)                                              \
-        rnrqs_rr(W(XD), W(XS), mode)                                        \
-        cvzqs_rr(W(XD), W(XD))
-
-#else /* RT_512X1 == 2, 8 */
-
-#define cvrqs_rr(XD, XS, mode)                                              \
-        ERW(RXB(XD), RXB(XS), 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x7B)\
-        MRM(REG(XD), MOD(XS), REG(XS))
 
 #endif /* RT_512X1 == 2, 8 */
 
@@ -1228,38 +1226,15 @@
 #define mulqx3rr(XD, XS, XT)                                                \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Recx)                                                      \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x00))                              \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x08))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x08))                              \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x10))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x10))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x10))                              \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x18))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x18))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x18))                              \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x20))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x20))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x20))                              \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x28))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x28))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x28))                              \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x30))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x30))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x30))                              \
-        movzx_ld(Recx,  Mebp, inf_SCR01(0x38))                              \
-        mulzx_ld(Recx,  Mebp, inf_SCR02(0x38))                              \
-        movzx_st(Recx,  Mebp, inf_SCR01(0x38))                              \
-        stack_ld(Recx)                                                      \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+        mulqx_rx(W(XD))
 
 #define mulqx3ld(XD, XS, MT, DT)                                            \
         movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movqx_ld(W(XD), W(MT), W(DT))                                       \
         movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mulqx_rx(W(XD))
+
+#define mulqx_rx(XD)                                                        \
         stack_st(Recx)                                                      \
         movzx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
         mulzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \

@@ -421,7 +421,6 @@
 #define subos_ld(XG, MS, DS)                                                \
         subos3ld(W(XG), W(XG), W(MS), W(DS))
 
-
 #define subos3rr(XD, XS, XT)                                                \
         EMITW(0xF0000247 | MXM(REG(XD), REG(XS), REG(XT)))                  \
         EMITW(0xF0000247 | MXM(RYG(XD), RYG(XS), RYG(XT)))                  \
@@ -1020,15 +1019,6 @@
         rnnos_ld(W(XD), W(MS), W(DS))                                       \
         cvzos_rr(W(XD), W(XD))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnon_rr(XD, XS)     /* round towards near */                       \
-        cvton_rr(W(XD), W(XS))
-
-#define cvnon_ld(XD, MS, DS) /* round towards near */                       \
-        cvton_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -1060,6 +1050,42 @@
 #define cvtos_ld(XD, MS, DS)                                                \
         rndos_ld(W(XD), W(MS), W(DS))                                       \
         cvzos_rr(W(XD), W(XD))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnros_rr(XD, XS, mode)                                              \
+        EMITW(0x1000020A | MXM(REG(XD), 0x00,    REG(XS)) |                 \
+        (RT_SIMD_MODE_##mode&3) << 6)                                       \
+        EMITW(0x1000020A | MXM(RYG(XD), 0x00,    RYG(XS)) |                 \
+        (RT_SIMD_MODE_##mode&3) << 6)                                       \
+        EMITW(0xF0000491 | MXM(TmmQ,    REG(XD), REG(XD)))                  \
+        EMITW(0xF0000491 | MXM(TmmM,    REG(XS), REG(XS)))                  \
+        EMITW(0x1000020A | MXM(TmmQ,    0x00,    TmmM)    |                 \
+        (RT_SIMD_MODE_##mode&3) << 6)                                       \
+        EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
+        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XD), RYG(XD)))                  \
+        EMITW(0xF0000491 | MXM(TmmM,    RYG(XS), RYG(XS)))                  \
+        EMITW(0x1000020A | MXM(TmmQ,    0x00,    TmmM)    |                 \
+        (RT_SIMD_MODE_##mode&3) << 6)                                       \
+        EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
+
+#define cvros_rr(XD, XS, mode)                                              \
+        rnros_rr(W(XD), W(XS), mode)                                        \
+        cvzos_rr(W(XD), W(XD))
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnon_rr(XD, XS)     /* round towards near */                       \
+        cvton_rr(W(XD), W(XS))
+
+#define cvnon_ld(XD, MS, DS) /* round towards near */                       \
+        cvton_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -1113,33 +1139,6 @@
         EMITW(0xF00002A2 | MXM(REG(XD), 0x00,    TmmM))                     \
         EMITW(0x7C000619 | MXM(TmmM,    T3xx,    TPxx))                     \
         EMITW(0xF00002A2 | MXM(RYG(XD), 0x00,    TmmM))
-
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (cannot be used in FCTRL blocks)
- * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
- * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
-
-#define rnros_rr(XD, XS, mode)                                              \
-        EMITW(0x1000020A | MXM(REG(XD), 0x00,    REG(XS)) |                 \
-        (RT_SIMD_MODE_##mode&3) << 6)                                       \
-        EMITW(0x1000020A | MXM(RYG(XD), 0x00,    RYG(XS)) |                 \
-        (RT_SIMD_MODE_##mode&3) << 6)                                       \
-        EMITW(0xF0000491 | MXM(TmmQ,    REG(XD), REG(XD)))                  \
-        EMITW(0xF0000491 | MXM(TmmM,    REG(XS), REG(XS)))                  \
-        EMITW(0x1000020A | MXM(TmmQ,    0x00,    TmmM)    |                 \
-        (RT_SIMD_MODE_##mode&3) << 6)                                       \
-        EMITW(0xF0000496 | MXM(REG(XD), TmmQ,    TmmQ))                     \
-        EMITW(0xF0000491 | MXM(TmmQ,    RYG(XD), RYG(XD)))                  \
-        EMITW(0xF0000491 | MXM(TmmM,    RYG(XS), RYG(XS)))                  \
-        EMITW(0x1000020A | MXM(TmmQ,    0x00,    TmmM)    |                 \
-        (RT_SIMD_MODE_##mode&3) << 6)                                       \
-        EMITW(0xF0000496 | MXM(RYG(XD), TmmQ,    TmmQ))
-
-#define cvros_rr(XD, XS, mode)                                              \
-        rnros_rr(W(XD), W(XS), mode)                                        \
-        cvzos_rr(W(XD), W(XD))
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
@@ -1228,62 +1227,15 @@
 #define mulox3rr(XD, XS, XT)                                                \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        stack_st(Recx)                                                      \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x00))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x04))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x04))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x08))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x08))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x0C))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x0C))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x10))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x10))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x10))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x14))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x14))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x14))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x18))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x18))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x18))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x1C))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x1C))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x1C))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x20))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x20))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x20))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x24))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x24))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x24))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x28))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x28))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x28))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x2C))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x2C))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x2C))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x30))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x30))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x30))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x34))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x34))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x34))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x38))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x38))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x38))                              \
-        movwx_ld(Recx,  Mebp, inf_SCR01(0x3C))                              \
-        mulwx_ld(Recx,  Mebp, inf_SCR02(0x3C))                              \
-        movwx_st(Recx,  Mebp, inf_SCR01(0x3C))                              \
-        stack_ld(Recx)                                                      \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
+        mulox_rx(W(XD))
 
 #define mulox3ld(XD, XS, MT, DT)                                            \
         movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
         movox_ld(W(XD), W(MT), W(DT))                                       \
         movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mulox_rx(W(XD))
+
+#define mulox_rx(XD) /* not portable, do not use outside */                 \
         stack_st(Recx)                                                      \
         movwx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
         mulwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \

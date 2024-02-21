@@ -1315,18 +1315,6 @@
 
 #endif /* RT_128X1 >= 4 */
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnin_rr(XD, XS)     /* round towards near */                       \
-        EMITW(0xF3BB0640 | MXM(REG(XD), 0x00,    REG(XS)))
-
-#define cvnin_ld(XD, MS, DS) /* round towards near */                       \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
-        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
-        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
-        EMITW(0xF3BB0640 | MXM(REG(XD), 0x00,    TmmM))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -1377,6 +1365,48 @@
         EMITW(0xEEBD0A40 | MXM(REG(XD)+1, 0x00,  REG(XD)+1)) /* rounding */ \
         EMITW(0xEEFD0A60 | MXM(REG(XD)+1, 0x00,  REG(XD)+1)) /* modes */
 
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#if (RT_128X1 < 4) /* ASIMDv4 is used here for ARMv8:AArch32 processors */
+
+#define rnris_rr(XD, XS, mode)                                              \
+        cvris_rr(W(XD), W(XS), mode)                                        \
+        cvnin_rr(W(XD), W(XD))
+
+#define cvris_rr(XD, XS, mode)                                              \
+        FCTRL_ENTER(mode)                                                   \
+        cvtis_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(mode)
+
+#else /* RT_128X1 >= 4 */
+
+#define rnris_rr(XD, XS, mode)                                              \
+        cvris_rr(W(XD), W(XS), mode)                                        \
+        cvnin_rr(W(XD), W(XD))
+
+#define cvris_rr(XD, XS, mode)                                              \
+        EMITW(0xF3BB0040 | MXM(REG(XD), 0x00,    REG(XS)) |                 \
+        ((RT_SIMD_MODE_##mode&3)+1 + 3*(((RT_SIMD_MODE_##mode&3)+1) >> 2)) << 8)
+
+#endif /* RT_128X1 >= 4 */
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnin_rr(XD, XS)     /* round towards near */                       \
+        EMITW(0xF3BB0640 | MXM(REG(XD), 0x00,    REG(XS)))
+
+#define cvnin_ld(XD, MS, DS) /* round towards near */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0xE0800000 | MPM(TPxx,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0xF4200AAF | MXM(TmmM,    TPxx,    0x00))                     \
+        EMITW(0xF3BB0640 | MXM(REG(XD), 0x00,    TmmM))
+
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: only default ROUNDN is supported on pre-VSX POWER systems */
@@ -1426,36 +1456,6 @@
         EMITW(0xEEF80A60 | MXM(REG(XD)+0, 0x00,  REG(XD)+0)) /* lack of */  \
         EMITW(0xEEB80A40 | MXM(REG(XD)+1, 0x00,  REG(XD)+1)) /* rounding */ \
         EMITW(0xEEF80A60 | MXM(REG(XD)+1, 0x00,  REG(XD)+1)) /* modes */
-
-/* cvr (D = fp-to-signed-int S)
- * rounding mode is encoded directly (cannot be used in FCTRL blocks)
- * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
- * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
-
-#if (RT_128X1 < 4) /* ASIMDv4 is used here for ARMv8:AArch32 processors */
-
-#define rnris_rr(XD, XS, mode)                                              \
-        cvris_rr(W(XD), W(XS), mode)                                        \
-        cvnin_rr(W(XD), W(XD))
-
-#define cvris_rr(XD, XS, mode)                                              \
-        FCTRL_ENTER(mode)                                                   \
-        cvtis_rr(W(XD), W(XS))                                              \
-        FCTRL_LEAVE(mode)
-
-#else /* RT_128X1 >= 4 */
-
-#define rnris_rr(XD, XS, mode)                                              \
-        cvris_rr(W(XD), W(XS), mode)                                        \
-        cvnin_rr(W(XD), W(XD))
-
-#define cvris_rr(XD, XS, mode)                                              \
-        EMITW(0xF3BB0040 | MXM(REG(XD), 0x00,    REG(XS)) |                 \
-        ((RT_SIMD_MODE_##mode&3)+1 + 3*(((RT_SIMD_MODE_##mode&3)+1) >> 2)) << 8)
-
-#endif /* RT_128X1 >= 4 */
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
