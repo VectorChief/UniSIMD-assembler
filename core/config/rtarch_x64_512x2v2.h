@@ -1043,7 +1043,7 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvpqs_ld(XD, MS, DS) /* round towards +inf */                       \
-        movqs_ld(W(XD), W(MS), W(DS))                                       \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
         cvpqs_rr(W(XD), W(XD))
 
 #endif /* RT_512X2 >= 2 */
@@ -1088,7 +1088,7 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvmqs_ld(XD, MS, DS) /* round towards -inf */                       \
-        movqs_ld(W(XD), W(MS), W(DS))                                       \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
         cvmqs_rr(W(XD), W(XD))
 
 #endif /* RT_512X2 >= 2 */
@@ -1726,7 +1726,7 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cupqs_ld(XD, MS, DS) /* round towards +inf */                       \
-        movqs_ld(W(XD), W(MS), W(DS))                                       \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
         cupqs_rr(W(XD), W(XD))
 
 #endif /* RT_512X2 >= 2 */
@@ -1771,7 +1771,7 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cumqs_ld(XD, MS, DS) /* round towards -inf */                       \
-        movqs_ld(W(XD), W(MS), W(DS))                                       \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
         cumqs_rr(W(XD), W(XD))
 
 #endif /* RT_512X2 >= 2 */

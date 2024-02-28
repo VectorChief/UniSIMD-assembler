@@ -691,7 +691,7 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvpds_ld(XD, MS, DS) /* round towards +inf */                       \
-        movds_ld(W(XD), W(MS), W(DS))                                       \
+        movdx_ld(W(XD), W(MS), W(DS))                                       \
         cvpds_rr(W(XD), W(XD))
 
 /* cvm (D = fp-to-signed-int S)
@@ -714,7 +714,7 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvmds_ld(XD, MS, DS) /* round towards -inf */                       \
-        movds_ld(W(XD), W(MS), W(DS))                                       \
+        movdx_ld(W(XD), W(MS), W(DS))                                       \
         cvmds_rr(W(XD), W(XD))
 
 /* cvn (D = fp-to-signed-int S)
@@ -870,7 +870,7 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cupds_ld(XD, MS, DS) /* round towards +inf */                       \
-        movds_ld(W(XD), W(MS), W(DS))                                       \
+        movdx_ld(W(XD), W(MS), W(DS))                                       \
         cupds_rr(W(XD), W(XD))
 
 /* cum (D = fp-to-unsigned-int S)
@@ -893,7 +893,7 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cumds_ld(XD, MS, DS) /* round towards -inf */                       \
-        movds_ld(W(XD), W(MS), W(DS))                                       \
+        movdx_ld(W(XD), W(MS), W(DS))                                       \
         cumds_rr(W(XD), W(XD))
 
 /* cun (D = fp-to-unsigned-int S)

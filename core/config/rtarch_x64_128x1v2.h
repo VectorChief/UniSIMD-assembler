@@ -707,7 +707,7 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvpjs_ld(XD, MS, DS) /* round towards +inf */                       \
-        movjs_ld(W(XD), W(MS), W(DS))                                       \
+        movjx_ld(W(XD), W(MS), W(DS))                                       \
         cvpjs_rr(W(XD), W(XD))
 
 /* cvm (D = fp-to-signed-int S)
@@ -730,7 +730,7 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cvmjs_ld(XD, MS, DS) /* round towards -inf */                       \
-        movjs_ld(W(XD), W(MS), W(DS))                                       \
+        movjx_ld(W(XD), W(MS), W(DS))                                       \
         cvmjs_rr(W(XD), W(XD))
 
 /* cvn (D = fp-to-signed-int S)
@@ -886,7 +886,7 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cupjs_ld(XD, MS, DS) /* round towards +inf */                       \
-        movjs_ld(W(XD), W(MS), W(DS))                                       \
+        movjx_ld(W(XD), W(MS), W(DS))                                       \
         cupjs_rr(W(XD), W(XD))
 
 /* cum (D = fp-to-unsigned-int S)
@@ -909,7 +909,7 @@
         MRM(REG(XD), MOD(XS), REG(XS))
 
 #define cumjs_ld(XD, MS, DS) /* round towards -inf */                       \
-        movjs_ld(W(XD), W(MS), W(DS))                                       \
+        movjx_ld(W(XD), W(MS), W(DS))                                       \
         cumjs_rr(W(XD), W(XD))
 
 /* cun (D = fp-to-unsigned-int S)
