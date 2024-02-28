@@ -1456,15 +1456,6 @@
 #define cvnms_ld(XD, MS, DS) /* round towards near */                       \
         cvnas_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnmn_rr(XD, XS)     /* round towards near */                       \
-        cvnan_rr(W(XD), W(XS))
-
-#define cvnmn_ld(XD, MS, DS) /* round towards near */                       \
-        cvnan_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from control register (set in FCTRL blocks) */
 
@@ -1479,6 +1470,24 @@
 
 #define cvtms_ld(XD, MS, DS)                                                \
         cvtas_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rnrms_rr(XD, XS, mode)                                              \
+        rnras_rr(W(XD), W(XS), mode)
+
+#define cvrms_rr(XD, XS, mode)                                              \
+        cvras_rr(W(XD), W(XS), mode)
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnmn_rr(XD, XS)     /* round towards near */                       \
+        cvnan_rr(W(XD), W(XS))
+
+#define cvnmn_ld(XD, MS, DS) /* round towards near */                       \
+        cvnan_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from control register (set in FCTRL blocks) */
@@ -1507,14 +1516,89 @@
 #define cvtmx_ld(XD, MS, DS)                                                \
         cvtax_ld(W(XD), W(MS), W(DS))
 
-/* cvr (D = fp-to-signed-int S)
+/* cuz (D = fp-to-unsigned-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks) */
 
-#define rnrms_rr(XD, XS, mode)                                              \
-        rnras_rr(W(XD), W(XS), mode)
+#define ruzms_rr(XD, XS)     /* round towards zero */                       \
+        ruzas_rr(W(XD), W(XS))
 
-#define cvrms_rr(XD, XS, mode)                                              \
-        cvras_rr(W(XD), W(XS), mode)
+#define ruzms_ld(XD, MS, DS) /* round towards zero */                       \
+        ruzas_ld(W(XD), W(MS), W(DS))
+
+#define cuzms_rr(XD, XS)     /* round towards zero */                       \
+        cuzas_rr(W(XD), W(XS))
+
+#define cuzms_ld(XD, MS, DS) /* round towards zero */                       \
+        cuzas_ld(W(XD), W(MS), W(DS))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rupms_rr(XD, XS)     /* round towards +inf */                       \
+        rupas_rr(W(XD), W(XS))
+
+#define rupms_ld(XD, MS, DS) /* round towards +inf */                       \
+        rupas_ld(W(XD), W(MS), W(DS))
+
+#define cupms_rr(XD, XS)     /* round towards +inf */                       \
+        cupas_rr(W(XD), W(XS))
+
+#define cupms_ld(XD, MS, DS) /* round towards +inf */                       \
+        cupas_ld(W(XD), W(MS), W(DS))
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rumms_rr(XD, XS)     /* round towards -inf */                       \
+        rumas_rr(W(XD), W(XS))
+
+#define rumms_ld(XD, MS, DS) /* round towards -inf */                       \
+        rumas_ld(W(XD), W(MS), W(DS))
+
+#define cumms_rr(XD, XS)     /* round towards -inf */                       \
+        cumas_rr(W(XD), W(XS))
+
+#define cumms_ld(XD, MS, DS) /* round towards -inf */                       \
+        cumas_ld(W(XD), W(MS), W(DS))
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define runms_rr(XD, XS)     /* round towards near */                       \
+        runas_rr(W(XD), W(XS))
+
+#define runms_ld(XD, MS, DS) /* round towards near */                       \
+        runas_ld(W(XD), W(MS), W(DS))
+
+#define cunms_rr(XD, XS)     /* round towards near */                       \
+        cunas_rr(W(XD), W(XS))
+
+#define cunms_ld(XD, MS, DS) /* round towards near */                       \
+        cunas_ld(W(XD), W(MS), W(DS))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from control register (set in FCTRL blocks) */
+
+#define rudms_rr(XD, XS)                                                    \
+        rudas_rr(W(XD), W(XS))
+
+#define rudms_ld(XD, MS, DS)                                                \
+        rudas_ld(W(XD), W(MS), W(DS))
+
+#define cutms_rr(XD, XS)                                                    \
+        cutas_rr(W(XD), W(XS))
+
+#define cutms_ld(XD, MS, DS)                                                \
+        cutas_ld(W(XD), W(MS), W(DS))
+
+/* cur (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rurms_rr(XD, XS, mode)                                              \
+        ruras_rr(W(XD), W(XS), mode)
+
+#define curms_rr(XD, XS, mode)                                              \
+        curas_rr(W(XD), W(XS), mode)
 
 /*************   packed half-precision integer arithmetic/shifts   ************/
 
@@ -2709,15 +2793,6 @@
 #define cvnms_ld(XD, MS, DS) /* round towards near */                       \
         cvngs_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnmn_rr(XD, XS)     /* round towards near */                       \
-        cvngn_rr(W(XD), W(XS))
-
-#define cvnmn_ld(XD, MS, DS) /* round towards near */                       \
-        cvngn_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from control register (set in FCTRL blocks) */
 
@@ -2732,6 +2807,24 @@
 
 #define cvtms_ld(XD, MS, DS)                                                \
         cvtgs_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rnrms_rr(XD, XS, mode)                                              \
+        rnrgs_rr(W(XD), W(XS), mode)
+
+#define cvrms_rr(XD, XS, mode)                                              \
+        cvrgs_rr(W(XD), W(XS), mode)
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnmn_rr(XD, XS)     /* round towards near */                       \
+        cvngn_rr(W(XD), W(XS))
+
+#define cvnmn_ld(XD, MS, DS) /* round towards near */                       \
+        cvngn_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from control register (set in FCTRL blocks) */
@@ -2760,14 +2853,89 @@
 #define cvtmx_ld(XD, MS, DS)                                                \
         cvtgx_ld(W(XD), W(MS), W(DS))
 
-/* cvr (D = fp-to-signed-int S)
+/* cuz (D = fp-to-unsigned-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks) */
 
-#define rnrms_rr(XD, XS, mode)                                              \
-        rnrgs_rr(W(XD), W(XS), mode)
+#define ruzms_rr(XD, XS)     /* round towards zero */                       \
+        ruzgs_rr(W(XD), W(XS))
 
-#define cvrms_rr(XD, XS, mode)                                              \
-        cvrgs_rr(W(XD), W(XS), mode)
+#define ruzms_ld(XD, MS, DS) /* round towards zero */                       \
+        ruzgs_ld(W(XD), W(MS), W(DS))
+
+#define cuzms_rr(XD, XS)     /* round towards zero */                       \
+        cuzgs_rr(W(XD), W(XS))
+
+#define cuzms_ld(XD, MS, DS) /* round towards zero */                       \
+        cuzgs_ld(W(XD), W(MS), W(DS))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rupms_rr(XD, XS)     /* round towards +inf */                       \
+        rupgs_rr(W(XD), W(XS))
+
+#define rupms_ld(XD, MS, DS) /* round towards +inf */                       \
+        rupgs_ld(W(XD), W(MS), W(DS))
+
+#define cupms_rr(XD, XS)     /* round towards +inf */                       \
+        cupgs_rr(W(XD), W(XS))
+
+#define cupms_ld(XD, MS, DS) /* round towards +inf */                       \
+        cupgs_ld(W(XD), W(MS), W(DS))
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rumms_rr(XD, XS)     /* round towards -inf */                       \
+        rumgs_rr(W(XD), W(XS))
+
+#define rumms_ld(XD, MS, DS) /* round towards -inf */                       \
+        rumgs_ld(W(XD), W(MS), W(DS))
+
+#define cumms_rr(XD, XS)     /* round towards -inf */                       \
+        cumgs_rr(W(XD), W(XS))
+
+#define cumms_ld(XD, MS, DS) /* round towards -inf */                       \
+        cumgs_ld(W(XD), W(MS), W(DS))
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define runms_rr(XD, XS)     /* round towards near */                       \
+        rungs_rr(W(XD), W(XS))
+
+#define runms_ld(XD, MS, DS) /* round towards near */                       \
+        rungs_ld(W(XD), W(MS), W(DS))
+
+#define cunms_rr(XD, XS)     /* round towards near */                       \
+        cungs_rr(W(XD), W(XS))
+
+#define cunms_ld(XD, MS, DS) /* round towards near */                       \
+        cungs_ld(W(XD), W(MS), W(DS))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from control register (set in FCTRL blocks) */
+
+#define rudms_rr(XD, XS)                                                    \
+        rudgs_rr(W(XD), W(XS))
+
+#define rudms_ld(XD, MS, DS)                                                \
+        rudgs_ld(W(XD), W(MS), W(DS))
+
+#define cutms_rr(XD, XS)                                                    \
+        cutgs_rr(W(XD), W(XS))
+
+#define cutms_ld(XD, MS, DS)                                                \
+        cutgs_ld(W(XD), W(MS), W(DS))
+
+/* cur (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rurms_rr(XD, XS, mode)                                              \
+        rurgs_rr(W(XD), W(XS), mode)
+
+#define curms_rr(XD, XS, mode)                                              \
+        curgs_rr(W(XD), W(XS), mode)
 
 /*************   packed half-precision integer arithmetic/shifts   ************/
 
@@ -4035,15 +4203,6 @@
 #define cvnos_ld(XD, MS, DS) /* round towards near */                       \
         cvncs_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnon_rr(XD, XS)     /* round towards near */                       \
-        cvncn_rr(W(XD), W(XS))
-
-#define cvnon_ld(XD, MS, DS) /* round towards near */                       \
-        cvncn_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -4061,6 +4220,28 @@
 
 #define cvtos_ld(XD, MS, DS)                                                \
         cvtcs_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnros_rr(XD, XS, mode)                                              \
+        rnrcs_rr(W(XD), W(XS), mode)
+
+#define cvros_rr(XD, XS, mode)                                              \
+        cvrcs_rr(W(XD), W(XS), mode)
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnon_rr(XD, XS)     /* round towards near */                       \
+        cvncn_rr(W(XD), W(XS))
+
+#define cvnon_ld(XD, MS, DS) /* round towards near */                       \
+        cvncn_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -4091,18 +4272,104 @@
 #define cvtox_ld(XD, MS, DS)                                                \
         cvtcx_ld(W(XD), W(MS), W(DS))
 
-/* cvr (D = fp-to-signed-int S)
+/* cuz (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define ruzos_rr(XD, XS)     /* round towards zero */                       \
+        ruzcs_rr(W(XD), W(XS))
+
+#define ruzos_ld(XD, MS, DS) /* round towards zero */                       \
+        ruzcs_ld(W(XD), W(MS), W(DS))
+
+#define cuzos_rr(XD, XS)     /* round towards zero */                       \
+        cuzcs_rr(W(XD), W(XS))
+
+#define cuzos_ld(XD, MS, DS) /* round towards zero */                       \
+        cuzcs_ld(W(XD), W(MS), W(DS))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rupos_rr(XD, XS)     /* round towards +inf */                       \
+        rupcs_rr(W(XD), W(XS))
+
+#define rupos_ld(XD, MS, DS) /* round towards +inf */                       \
+        rupcs_ld(W(XD), W(MS), W(DS))
+
+#define cupos_rr(XD, XS)     /* round towards +inf */                       \
+        cupcs_rr(W(XD), W(XS))
+
+#define cupos_ld(XD, MS, DS) /* round towards +inf */                       \
+        cupcs_ld(W(XD), W(MS), W(DS))
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rumos_rr(XD, XS)     /* round towards -inf */                       \
+        rumcs_rr(W(XD), W(XS))
+
+#define rumos_ld(XD, MS, DS) /* round towards -inf */                       \
+        rumcs_ld(W(XD), W(MS), W(DS))
+
+#define cumos_rr(XD, XS)     /* round towards -inf */                       \
+        cumcs_rr(W(XD), W(XS))
+
+#define cumos_ld(XD, MS, DS) /* round towards -inf */                       \
+        cumcs_ld(W(XD), W(MS), W(DS))
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define runos_rr(XD, XS)     /* round towards near */                       \
+        runcs_rr(W(XD), W(XS))
+
+#define runos_ld(XD, MS, DS) /* round towards near */                       \
+        runcs_ld(W(XD), W(MS), W(DS))
+
+#define cunos_rr(XD, XS)     /* round towards near */                       \
+        cuncs_rr(W(XD), W(XS))
+
+#define cunos_ld(XD, MS, DS) /* round towards near */                       \
+        cuncs_ld(W(XD), W(MS), W(DS))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cuz
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rudos_rr(XD, XS)                                                    \
+        rudcs_rr(W(XD), W(XS))
+
+#define rudos_ld(XD, MS, DS)                                                \
+        rudcs_ld(W(XD), W(MS), W(DS))
+
+#define cutos_rr(XD, XS)                                                    \
+        cutcs_rr(W(XD), W(XS))
+
+#define cutos_ld(XD, MS, DS)                                                \
+        cutcs_ld(W(XD), W(MS), W(DS))
+
+/* cur (D = fp-to-unsigned-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
  * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
+ * round instructions are only accurate within 32-bit unsigned int range */
 
-#define rnros_rr(XD, XS, mode)                                              \
-        rnrcs_rr(W(XD), W(XS), mode)
+#define ruros_rr(XD, XS, mode)                                              \
+        rurcs_rr(W(XD), W(XS), mode)
 
-#define cvros_rr(XD, XS, mode)                                              \
-        cvrcs_rr(W(XD), W(XS), mode)
+#define curos_rr(XD, XS, mode)                                              \
+        curcs_rr(W(XD), W(XS), mode)
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
@@ -4953,15 +5220,6 @@
 #define cvnos_ld(XD, MS, DS) /* round towards near */                       \
         cvnis_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnon_rr(XD, XS)     /* round towards near */                       \
-        cvnin_rr(W(XD), W(XS))
-
-#define cvnon_ld(XD, MS, DS) /* round towards near */                       \
-        cvnin_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -4979,6 +5237,28 @@
 
 #define cvtos_ld(XD, MS, DS)                                                \
         cvtis_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnros_rr(XD, XS, mode)                                              \
+        rnris_rr(W(XD), W(XS), mode)
+
+#define cvros_rr(XD, XS, mode)                                              \
+        cvris_rr(W(XD), W(XS), mode)
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnon_rr(XD, XS)     /* round towards near */                       \
+        cvnin_rr(W(XD), W(XS))
+
+#define cvnon_ld(XD, MS, DS) /* round towards near */                       \
+        cvnin_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -5009,18 +5289,104 @@
 #define cvtox_ld(XD, MS, DS)                                                \
         cvtix_ld(W(XD), W(MS), W(DS))
 
-/* cvr (D = fp-to-signed-int S)
+/* cuz (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define ruzos_rr(XD, XS)     /* round towards zero */                       \
+        ruzis_rr(W(XD), W(XS))
+
+#define ruzos_ld(XD, MS, DS) /* round towards zero */                       \
+        ruzis_ld(W(XD), W(MS), W(DS))
+
+#define cuzos_rr(XD, XS)     /* round towards zero */                       \
+        cuzis_rr(W(XD), W(XS))
+
+#define cuzos_ld(XD, MS, DS) /* round towards zero */                       \
+        cuzis_ld(W(XD), W(MS), W(DS))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rupos_rr(XD, XS)     /* round towards +inf */                       \
+        rupis_rr(W(XD), W(XS))
+
+#define rupos_ld(XD, MS, DS) /* round towards +inf */                       \
+        rupis_ld(W(XD), W(MS), W(DS))
+
+#define cupos_rr(XD, XS)     /* round towards +inf */                       \
+        cupis_rr(W(XD), W(XS))
+
+#define cupos_ld(XD, MS, DS) /* round towards +inf */                       \
+        cupis_ld(W(XD), W(MS), W(DS))
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rumos_rr(XD, XS)     /* round towards -inf */                       \
+        rumis_rr(W(XD), W(XS))
+
+#define rumos_ld(XD, MS, DS) /* round towards -inf */                       \
+        rumis_ld(W(XD), W(MS), W(DS))
+
+#define cumos_rr(XD, XS)     /* round towards -inf */                       \
+        cumis_rr(W(XD), W(XS))
+
+#define cumos_ld(XD, MS, DS) /* round towards -inf */                       \
+        cumis_ld(W(XD), W(MS), W(DS))
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define runos_rr(XD, XS)     /* round towards near */                       \
+        runis_rr(W(XD), W(XS))
+
+#define runos_ld(XD, MS, DS) /* round towards near */                       \
+        runis_ld(W(XD), W(MS), W(DS))
+
+#define cunos_rr(XD, XS)     /* round towards near */                       \
+        cunis_rr(W(XD), W(XS))
+
+#define cunos_ld(XD, MS, DS) /* round towards near */                       \
+        cunis_ld(W(XD), W(MS), W(DS))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cuz
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rudos_rr(XD, XS)                                                    \
+        rudis_rr(W(XD), W(XS))
+
+#define rudos_ld(XD, MS, DS)                                                \
+        rudis_ld(W(XD), W(MS), W(DS))
+
+#define cutos_rr(XD, XS)                                                    \
+        cutis_rr(W(XD), W(XS))
+
+#define cutos_ld(XD, MS, DS)                                                \
+        cutis_ld(W(XD), W(MS), W(DS))
+
+/* cur (D = fp-to-unsigned-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
  * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
+ * round instructions are only accurate within 32-bit unsigned int range */
 
-#define rnros_rr(XD, XS, mode)                                              \
-        rnris_rr(W(XD), W(XS), mode)
+#define ruros_rr(XD, XS, mode)                                              \
+        ruris_rr(W(XD), W(XS), mode)
 
-#define cvros_rr(XD, XS, mode)                                              \
-        cvris_rr(W(XD), W(XS), mode)
+#define curos_rr(XD, XS, mode)                                              \
+        curis_rr(W(XD), W(XS), mode)
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
@@ -5873,15 +6239,6 @@
 #define cvnqs_ld(XD, MS, DS) /* round towards near */                       \
         cvnds_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnqn_rr(XD, XS)     /* round towards near */                       \
-        cvndn_rr(W(XD), W(XS))
-
-#define cvnqn_ld(XD, MS, DS) /* round towards near */                       \
-        cvndn_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -5899,6 +6256,28 @@
 
 #define cvtqs_ld(XD, MS, DS)                                                \
         cvtds_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrqs_rr(XD, XS, mode)                                              \
+        rnrds_rr(W(XD), W(XS), mode)
+
+#define cvrqs_rr(XD, XS, mode)                                              \
+        cvrds_rr(W(XD), W(XS), mode)
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnqn_rr(XD, XS)     /* round towards near */                       \
+        cvndn_rr(W(XD), W(XS))
+
+#define cvnqn_ld(XD, MS, DS) /* round towards near */                       \
+        cvndn_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -5929,18 +6308,104 @@
 #define cvtqx_ld(XD, MS, DS)                                                \
         cvtdx_ld(W(XD), W(MS), W(DS))
 
-/* cvr (D = fp-to-signed-int S)
+/* cuz (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define ruzqs_rr(XD, XS)     /* round towards zero */                       \
+        ruzds_rr(W(XD), W(XS))
+
+#define ruzqs_ld(XD, MS, DS) /* round towards zero */                       \
+        ruzds_ld(W(XD), W(MS), W(DS))
+
+#define cuzqs_rr(XD, XS)     /* round towards zero */                       \
+        cuzds_rr(W(XD), W(XS))
+
+#define cuzqs_ld(XD, MS, DS) /* round towards zero */                       \
+        cuzds_ld(W(XD), W(MS), W(DS))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rupqs_rr(XD, XS)     /* round towards +inf */                       \
+        rupds_rr(W(XD), W(XS))
+
+#define rupqs_ld(XD, MS, DS) /* round towards +inf */                       \
+        rupds_ld(W(XD), W(MS), W(DS))
+
+#define cupqs_rr(XD, XS)     /* round towards +inf */                       \
+        cupds_rr(W(XD), W(XS))
+
+#define cupqs_ld(XD, MS, DS) /* round towards +inf */                       \
+        cupds_ld(W(XD), W(MS), W(DS))
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rumqs_rr(XD, XS)     /* round towards -inf */                       \
+        rumds_rr(W(XD), W(XS))
+
+#define rumqs_ld(XD, MS, DS) /* round towards -inf */                       \
+        rumds_ld(W(XD), W(MS), W(DS))
+
+#define cumqs_rr(XD, XS)     /* round towards -inf */                       \
+        cumds_rr(W(XD), W(XS))
+
+#define cumqs_ld(XD, MS, DS) /* round towards -inf */                       \
+        cumds_ld(W(XD), W(MS), W(DS))
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define runqs_rr(XD, XS)     /* round towards near */                       \
+        runds_rr(W(XD), W(XS))
+
+#define runqs_ld(XD, MS, DS) /* round towards near */                       \
+        runds_ld(W(XD), W(MS), W(DS))
+
+#define cunqs_rr(XD, XS)     /* round towards near */                       \
+        cunds_rr(W(XD), W(XS))
+
+#define cunqs_ld(XD, MS, DS) /* round towards near */                       \
+        cunds_ld(W(XD), W(MS), W(DS))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cuz
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rudqs_rr(XD, XS)                                                    \
+        rudds_rr(W(XD), W(XS))
+
+#define rudqs_ld(XD, MS, DS)                                                \
+        rudds_ld(W(XD), W(MS), W(DS))
+
+#define cutqs_rr(XD, XS)                                                    \
+        cutds_rr(W(XD), W(XS))
+
+#define cutqs_ld(XD, MS, DS)                                                \
+        cutds_ld(W(XD), W(MS), W(DS))
+
+/* cur (D = fp-to-unsigned-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
  * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * round instructions are only accurate within 64-bit unsigned int range */
 
-#define rnrqs_rr(XD, XS, mode)                                              \
-        rnrds_rr(W(XD), W(XS), mode)
+#define rurqs_rr(XD, XS, mode)                                              \
+        rurds_rr(W(XD), W(XS), mode)
 
-#define cvrqs_rr(XD, XS, mode)                                              \
-        cvrds_rr(W(XD), W(XS), mode)
+#define curqs_rr(XD, XS, mode)                                              \
+        curds_rr(W(XD), W(XS), mode)
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
@@ -6791,15 +7256,6 @@
 #define cvnqs_ld(XD, MS, DS) /* round towards near */                       \
         cvnjs_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnqn_rr(XD, XS)     /* round towards near */                       \
-        cvnjn_rr(W(XD), W(XS))
-
-#define cvnqn_ld(XD, MS, DS) /* round towards near */                       \
-        cvnjn_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -6817,6 +7273,28 @@
 
 #define cvtqs_ld(XD, MS, DS)                                                \
         cvtjs_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrqs_rr(XD, XS, mode)                                              \
+        rnrjs_rr(W(XD), W(XS), mode)
+
+#define cvrqs_rr(XD, XS, mode)                                              \
+        cvrjs_rr(W(XD), W(XS), mode)
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnqn_rr(XD, XS)     /* round towards near */                       \
+        cvnjn_rr(W(XD), W(XS))
+
+#define cvnqn_ld(XD, MS, DS) /* round towards near */                       \
+        cvnjn_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -6847,18 +7325,104 @@
 #define cvtqx_ld(XD, MS, DS)                                                \
         cvtjx_ld(W(XD), W(MS), W(DS))
 
-/* cvr (D = fp-to-signed-int S)
+/* cuz (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define ruzqs_rr(XD, XS)     /* round towards zero */                       \
+        ruzjs_rr(W(XD), W(XS))
+
+#define ruzqs_ld(XD, MS, DS) /* round towards zero */                       \
+        ruzjs_ld(W(XD), W(MS), W(DS))
+
+#define cuzqs_rr(XD, XS)     /* round towards zero */                       \
+        cuzjs_rr(W(XD), W(XS))
+
+#define cuzqs_ld(XD, MS, DS) /* round towards zero */                       \
+        cuzjs_ld(W(XD), W(MS), W(DS))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rupqs_rr(XD, XS)     /* round towards +inf */                       \
+        rupjs_rr(W(XD), W(XS))
+
+#define rupqs_ld(XD, MS, DS) /* round towards +inf */                       \
+        rupjs_ld(W(XD), W(MS), W(DS))
+
+#define cupqs_rr(XD, XS)     /* round towards +inf */                       \
+        cupjs_rr(W(XD), W(XS))
+
+#define cupqs_ld(XD, MS, DS) /* round towards +inf */                       \
+        cupjs_ld(W(XD), W(MS), W(DS))
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rumqs_rr(XD, XS)     /* round towards -inf */                       \
+        rumjs_rr(W(XD), W(XS))
+
+#define rumqs_ld(XD, MS, DS) /* round towards -inf */                       \
+        rumjs_ld(W(XD), W(MS), W(DS))
+
+#define cumqs_rr(XD, XS)     /* round towards -inf */                       \
+        cumjs_rr(W(XD), W(XS))
+
+#define cumqs_ld(XD, MS, DS) /* round towards -inf */                       \
+        cumjs_ld(W(XD), W(MS), W(DS))
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define runqs_rr(XD, XS)     /* round towards near */                       \
+        runjs_rr(W(XD), W(XS))
+
+#define runqs_ld(XD, MS, DS) /* round towards near */                       \
+        runjs_ld(W(XD), W(MS), W(DS))
+
+#define cunqs_rr(XD, XS)     /* round towards near */                       \
+        cunjs_rr(W(XD), W(XS))
+
+#define cunqs_ld(XD, MS, DS) /* round towards near */                       \
+        cunjs_ld(W(XD), W(MS), W(DS))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cuz
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rudqs_rr(XD, XS)                                                    \
+        rudjs_rr(W(XD), W(XS))
+
+#define rudqs_ld(XD, MS, DS)                                                \
+        rudjs_ld(W(XD), W(MS), W(DS))
+
+#define cutqs_rr(XD, XS)                                                    \
+        cutjs_rr(W(XD), W(XS))
+
+#define cutqs_ld(XD, MS, DS)                                                \
+        cutjs_ld(W(XD), W(MS), W(DS))
+
+/* cur (D = fp-to-unsigned-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
  * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * round instructions are only accurate within 64-bit unsigned int range */
 
-#define rnrqs_rr(XD, XS, mode)                                              \
-        rnrjs_rr(W(XD), W(XS), mode)
+#define rurqs_rr(XD, XS, mode)                                              \
+        rurjs_rr(W(XD), W(XS), mode)
 
-#define cvrqs_rr(XD, XS, mode)                                              \
-        cvrjs_rr(W(XD), W(XS), mode)
+#define curqs_rr(XD, XS, mode)                                              \
+        curjs_rr(W(XD), W(XS), mode)
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
@@ -7711,15 +8275,6 @@
 #define cvnps_ld(XD, MS, DS) /* round towards near */                       \
         cvnos_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnpn_rr(XD, XS)     /* round towards near */                       \
-        cvnon_rr(W(XD), W(XS))
-
-#define cvnpn_ld(XD, MS, DS) /* round towards near */                       \
-        cvnon_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -7737,6 +8292,28 @@
 
 #define cvtps_ld(XD, MS, DS)                                                \
         cvtos_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnrps_rr(XD, XS, mode)                                              \
+        rnros_rr(W(XD), W(XS), mode)
+
+#define cvrps_rr(XD, XS, mode)                                              \
+        cvros_rr(W(XD), W(XS), mode)
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnpn_rr(XD, XS)     /* round towards near */                       \
+        cvnon_rr(W(XD), W(XS))
+
+#define cvnpn_ld(XD, MS, DS) /* round towards near */                       \
+        cvnon_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -7767,18 +8344,104 @@
 #define cvtpx_ld(XD, MS, DS)                                                \
         cvtox_ld(W(XD), W(MS), W(DS))
 
-/* cvr (D = fp-to-signed-int S)
+/* cuz (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define ruzps_rr(XD, XS)     /* round towards zero */                       \
+        ruzos_rr(W(XD), W(XS))
+
+#define ruzps_ld(XD, MS, DS) /* round towards zero */                       \
+        ruzos_ld(W(XD), W(MS), W(DS))
+
+#define cuzps_rr(XD, XS)     /* round towards zero */                       \
+        cuzos_rr(W(XD), W(XS))
+
+#define cuzps_ld(XD, MS, DS) /* round towards zero */                       \
+        cuzos_ld(W(XD), W(MS), W(DS))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rupps_rr(XD, XS)     /* round towards +inf */                       \
+        rupos_rr(W(XD), W(XS))
+
+#define rupps_ld(XD, MS, DS) /* round towards +inf */                       \
+        rupos_ld(W(XD), W(MS), W(DS))
+
+#define cupps_rr(XD, XS)     /* round towards +inf */                       \
+        cupos_rr(W(XD), W(XS))
+
+#define cupps_ld(XD, MS, DS) /* round towards +inf */                       \
+        cupos_ld(W(XD), W(MS), W(DS))
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rumps_rr(XD, XS)     /* round towards -inf */                       \
+        rumos_rr(W(XD), W(XS))
+
+#define rumps_ld(XD, MS, DS) /* round towards -inf */                       \
+        rumos_ld(W(XD), W(MS), W(DS))
+
+#define cumps_rr(XD, XS)     /* round towards -inf */                       \
+        cumos_rr(W(XD), W(XS))
+
+#define cumps_ld(XD, MS, DS) /* round towards -inf */                       \
+        cumos_ld(W(XD), W(MS), W(DS))
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define runps_rr(XD, XS)     /* round towards near */                       \
+        runos_rr(W(XD), W(XS))
+
+#define runps_ld(XD, MS, DS) /* round towards near */                       \
+        runos_ld(W(XD), W(MS), W(DS))
+
+#define cunps_rr(XD, XS)     /* round towards near */                       \
+        cunos_rr(W(XD), W(XS))
+
+#define cunps_ld(XD, MS, DS) /* round towards near */                       \
+        cunos_ld(W(XD), W(MS), W(DS))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cuz
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rudps_rr(XD, XS)                                                    \
+        rudos_rr(W(XD), W(XS))
+
+#define rudps_ld(XD, MS, DS)                                                \
+        rudos_ld(W(XD), W(MS), W(DS))
+
+#define cutps_rr(XD, XS)                                                    \
+        cutos_rr(W(XD), W(XS))
+
+#define cutps_ld(XD, MS, DS)                                                \
+        cutos_ld(W(XD), W(MS), W(DS))
+
+/* cur (D = fp-to-unsigned-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
  * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
+ * round instructions are only accurate within 32-bit unsigned int range */
 
-#define rnrps_rr(XD, XS, mode)                                              \
-        rnros_rr(W(XD), W(XS), mode)
+#define rurps_rr(XD, XS, mode)                                              \
+        ruros_rr(W(XD), W(XS), mode)
 
-#define cvrps_rr(XD, XS, mode)                                              \
-        cvros_rr(W(XD), W(XS), mode)
+#define curps_rr(XD, XS, mode)                                              \
+        curos_rr(W(XD), W(XS), mode)
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
@@ -8627,15 +9290,6 @@
 #define cvnfs_ld(XD, MS, DS) /* round towards near */                       \
         cvncs_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnfn_rr(XD, XS)     /* round towards near */                       \
-        cvncn_rr(W(XD), W(XS))
-
-#define cvnfn_ld(XD, MS, DS) /* round towards near */                       \
-        cvncn_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -8653,6 +9307,28 @@
 
 #define cvtfs_ld(XD, MS, DS)                                                \
         cvtcs_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnrfs_rr(XD, XS, mode)                                              \
+        rnrcs_rr(W(XD), W(XS), mode)
+
+#define cvrfs_rr(XD, XS, mode)                                              \
+        cvrcs_rr(W(XD), W(XS), mode)
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnfn_rr(XD, XS)     /* round towards near */                       \
+        cvncn_rr(W(XD), W(XS))
+
+#define cvnfn_ld(XD, MS, DS) /* round towards near */                       \
+        cvncn_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -8683,18 +9359,104 @@
 #define cvtfx_ld(XD, MS, DS)                                                \
         cvtcx_ld(W(XD), W(MS), W(DS))
 
-/* cvr (D = fp-to-signed-int S)
+/* cuz (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define ruzfs_rr(XD, XS)     /* round towards zero */                       \
+        ruzcs_rr(W(XD), W(XS))
+
+#define ruzfs_ld(XD, MS, DS) /* round towards zero */                       \
+        ruzcs_ld(W(XD), W(MS), W(DS))
+
+#define cuzfs_rr(XD, XS)     /* round towards zero */                       \
+        cuzcs_rr(W(XD), W(XS))
+
+#define cuzfs_ld(XD, MS, DS) /* round towards zero */                       \
+        cuzcs_ld(W(XD), W(MS), W(DS))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rupfs_rr(XD, XS)     /* round towards +inf */                       \
+        rupcs_rr(W(XD), W(XS))
+
+#define rupfs_ld(XD, MS, DS) /* round towards +inf */                       \
+        rupcs_ld(W(XD), W(MS), W(DS))
+
+#define cupfs_rr(XD, XS)     /* round towards +inf */                       \
+        cupcs_rr(W(XD), W(XS))
+
+#define cupfs_ld(XD, MS, DS) /* round towards +inf */                       \
+        cupcs_ld(W(XD), W(MS), W(DS))
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rumfs_rr(XD, XS)     /* round towards -inf */                       \
+        rumcs_rr(W(XD), W(XS))
+
+#define rumfs_ld(XD, MS, DS) /* round towards -inf */                       \
+        rumcs_ld(W(XD), W(MS), W(DS))
+
+#define cumfs_rr(XD, XS)     /* round towards -inf */                       \
+        cumcs_rr(W(XD), W(XS))
+
+#define cumfs_ld(XD, MS, DS) /* round towards -inf */                       \
+        cumcs_ld(W(XD), W(MS), W(DS))
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define runfs_rr(XD, XS)     /* round towards near */                       \
+        runcs_rr(W(XD), W(XS))
+
+#define runfs_ld(XD, MS, DS) /* round towards near */                       \
+        runcs_ld(W(XD), W(MS), W(DS))
+
+#define cunfs_rr(XD, XS)     /* round towards near */                       \
+        cuncs_rr(W(XD), W(XS))
+
+#define cunfs_ld(XD, MS, DS) /* round towards near */                       \
+        cuncs_ld(W(XD), W(MS), W(DS))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cuz
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rudfs_rr(XD, XS)                                                    \
+        rudcs_rr(W(XD), W(XS))
+
+#define rudfs_ld(XD, MS, DS)                                                \
+        rudcs_ld(W(XD), W(MS), W(DS))
+
+#define cutfs_rr(XD, XS)                                                    \
+        cutcs_rr(W(XD), W(XS))
+
+#define cutfs_ld(XD, MS, DS)                                                \
+        cutcs_ld(W(XD), W(MS), W(DS))
+
+/* cur (D = fp-to-unsigned-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
  * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
+ * round instructions are only accurate within 32-bit unsigned int range */
 
-#define rnrfs_rr(XD, XS, mode)                                              \
-        rnrcs_rr(W(XD), W(XS), mode)
+#define rurfs_rr(XD, XS, mode)                                              \
+        rurcs_rr(W(XD), W(XS), mode)
 
-#define cvrfs_rr(XD, XS, mode)                                              \
-        cvrcs_rr(W(XD), W(XS), mode)
+#define curfs_rr(XD, XS, mode)                                              \
+        curcs_rr(W(XD), W(XS), mode)
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
@@ -9543,15 +10305,6 @@
 #define cvnls_ld(XD, MS, DS) /* round towards near */                       \
         cvnis_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnln_rr(XD, XS)     /* round towards near */                       \
-        cvnin_rr(W(XD), W(XS))
-
-#define cvnln_ld(XD, MS, DS) /* round towards near */                       \
-        cvnin_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -9569,6 +10322,28 @@
 
 #define cvtls_ld(XD, MS, DS)                                                \
         cvtis_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit signed int range */
+
+#define rnrls_rr(XD, XS, mode)                                              \
+        rnris_rr(W(XD), W(XS), mode)
+
+#define cvrls_rr(XD, XS, mode)                                              \
+        cvris_rr(W(XD), W(XS), mode)
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnln_rr(XD, XS)     /* round towards near */                       \
+        cvnin_rr(W(XD), W(XS))
+
+#define cvnln_ld(XD, MS, DS) /* round towards near */                       \
+        cvnin_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -9599,18 +10374,104 @@
 #define cvtlx_ld(XD, MS, DS)                                                \
         cvtix_ld(W(XD), W(MS), W(DS))
 
-/* cvr (D = fp-to-signed-int S)
+/* cuz (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define ruzls_rr(XD, XS)     /* round towards zero */                       \
+        ruzis_rr(W(XD), W(XS))
+
+#define ruzls_ld(XD, MS, DS) /* round towards zero */                       \
+        ruzis_ld(W(XD), W(MS), W(DS))
+
+#define cuzls_rr(XD, XS)     /* round towards zero */                       \
+        cuzis_rr(W(XD), W(XS))
+
+#define cuzls_ld(XD, MS, DS) /* round towards zero */                       \
+        cuzis_ld(W(XD), W(MS), W(DS))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rupls_rr(XD, XS)     /* round towards +inf */                       \
+        rupis_rr(W(XD), W(XS))
+
+#define rupls_ld(XD, MS, DS) /* round towards +inf */                       \
+        rupis_ld(W(XD), W(MS), W(DS))
+
+#define cupls_rr(XD, XS)     /* round towards +inf */                       \
+        cupis_rr(W(XD), W(XS))
+
+#define cupls_ld(XD, MS, DS) /* round towards +inf */                       \
+        cupis_ld(W(XD), W(MS), W(DS))
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rumls_rr(XD, XS)     /* round towards -inf */                       \
+        rumis_rr(W(XD), W(XS))
+
+#define rumls_ld(XD, MS, DS) /* round towards -inf */                       \
+        rumis_ld(W(XD), W(MS), W(DS))
+
+#define cumls_rr(XD, XS)     /* round towards -inf */                       \
+        cumis_rr(W(XD), W(XS))
+
+#define cumls_ld(XD, MS, DS) /* round towards -inf */                       \
+        cumis_ld(W(XD), W(MS), W(DS))
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define runls_rr(XD, XS)     /* round towards near */                       \
+        runis_rr(W(XD), W(XS))
+
+#define runls_ld(XD, MS, DS) /* round towards near */                       \
+        runis_ld(W(XD), W(MS), W(DS))
+
+#define cunls_rr(XD, XS)     /* round towards near */                       \
+        cunis_rr(W(XD), W(XS))
+
+#define cunls_ld(XD, MS, DS) /* round towards near */                       \
+        cunis_ld(W(XD), W(MS), W(DS))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cuz
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rudls_rr(XD, XS)                                                    \
+        rudis_rr(W(XD), W(XS))
+
+#define rudls_ld(XD, MS, DS)                                                \
+        rudis_ld(W(XD), W(MS), W(DS))
+
+#define cutls_rr(XD, XS)                                                    \
+        cutis_rr(W(XD), W(XS))
+
+#define cutls_ld(XD, MS, DS)                                                \
+        cutis_ld(W(XD), W(MS), W(DS))
+
+/* cur (D = fp-to-unsigned-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
  * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
+ * round instructions are only accurate within 32-bit unsigned int range */
 
-#define rnrls_rr(XD, XS, mode)                                              \
-        rnris_rr(W(XD), W(XS), mode)
+#define rurls_rr(XD, XS, mode)                                              \
+        ruris_rr(W(XD), W(XS), mode)
 
-#define cvrls_rr(XD, XS, mode)                                              \
-        cvris_rr(W(XD), W(XS), mode)
+#define curls_rr(XD, XS, mode)                                              \
+        curis_rr(W(XD), W(XS), mode)
 
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
@@ -10712,15 +11573,6 @@
 #define cvnps_ld(XD, MS, DS) /* round towards near */                       \
         cvnqs_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnpn_rr(XD, XS)     /* round towards near */                       \
-        cvnqn_rr(W(XD), W(XS))
-
-#define cvnpn_ld(XD, MS, DS) /* round towards near */                       \
-        cvnqn_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -10738,6 +11590,28 @@
 
 #define cvtps_ld(XD, MS, DS)                                                \
         cvtqs_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrps_rr(XD, XS, mode)                                              \
+        rnrqs_rr(W(XD), W(XS), mode)
+
+#define cvrps_rr(XD, XS, mode)                                              \
+        cvrqs_rr(W(XD), W(XS), mode)
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnpn_rr(XD, XS)     /* round towards near */                       \
+        cvnqn_rr(W(XD), W(XS))
+
+#define cvnpn_ld(XD, MS, DS) /* round towards near */                       \
+        cvnqn_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -10768,18 +11642,104 @@
 #define cvtpx_ld(XD, MS, DS)                                                \
         cvtqx_ld(W(XD), W(MS), W(DS))
 
-/* cvr (D = fp-to-signed-int S)
+/* cuz (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define ruzps_rr(XD, XS)     /* round towards zero */                       \
+        ruzqs_rr(W(XD), W(XS))
+
+#define ruzps_ld(XD, MS, DS) /* round towards zero */                       \
+        ruzqs_ld(W(XD), W(MS), W(DS))
+
+#define cuzps_rr(XD, XS)     /* round towards zero */                       \
+        cuzqs_rr(W(XD), W(XS))
+
+#define cuzps_ld(XD, MS, DS) /* round towards zero */                       \
+        cuzqs_ld(W(XD), W(MS), W(DS))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rupps_rr(XD, XS)     /* round towards +inf */                       \
+        rupqs_rr(W(XD), W(XS))
+
+#define rupps_ld(XD, MS, DS) /* round towards +inf */                       \
+        rupqs_ld(W(XD), W(MS), W(DS))
+
+#define cupps_rr(XD, XS)     /* round towards +inf */                       \
+        cupqs_rr(W(XD), W(XS))
+
+#define cupps_ld(XD, MS, DS) /* round towards +inf */                       \
+        cupqs_ld(W(XD), W(MS), W(DS))
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rumps_rr(XD, XS)     /* round towards -inf */                       \
+        rumqs_rr(W(XD), W(XS))
+
+#define rumps_ld(XD, MS, DS) /* round towards -inf */                       \
+        rumqs_ld(W(XD), W(MS), W(DS))
+
+#define cumps_rr(XD, XS)     /* round towards -inf */                       \
+        cumqs_rr(W(XD), W(XS))
+
+#define cumps_ld(XD, MS, DS) /* round towards -inf */                       \
+        cumqs_ld(W(XD), W(MS), W(DS))
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define runps_rr(XD, XS)     /* round towards near */                       \
+        runqs_rr(W(XD), W(XS))
+
+#define runps_ld(XD, MS, DS) /* round towards near */                       \
+        runqs_ld(W(XD), W(MS), W(DS))
+
+#define cunps_rr(XD, XS)     /* round towards near */                       \
+        cunqs_rr(W(XD), W(XS))
+
+#define cunps_ld(XD, MS, DS) /* round towards near */                       \
+        cunqs_ld(W(XD), W(MS), W(DS))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cuz
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rudps_rr(XD, XS)                                                    \
+        rudqs_rr(W(XD), W(XS))
+
+#define rudps_ld(XD, MS, DS)                                                \
+        rudqs_ld(W(XD), W(MS), W(DS))
+
+#define cutps_rr(XD, XS)                                                    \
+        cutqs_rr(W(XD), W(XS))
+
+#define cutps_ld(XD, MS, DS)                                                \
+        cutqs_ld(W(XD), W(MS), W(DS))
+
+/* cur (D = fp-to-unsigned-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
  * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * round instructions are only accurate within 64-bit unsigned int range */
 
-#define rnrps_rr(XD, XS, mode)                                              \
-        rnrqs_rr(W(XD), W(XS), mode)
+#define rurps_rr(XD, XS, mode)                                              \
+        rurqs_rr(W(XD), W(XS), mode)
 
-#define cvrps_rr(XD, XS, mode)                                              \
-        cvrqs_rr(W(XD), W(XS), mode)
+#define curps_rr(XD, XS, mode)                                              \
+        curqs_rr(W(XD), W(XS), mode)
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
@@ -11628,15 +12588,6 @@
 #define cvnfs_ld(XD, MS, DS) /* round towards near */                       \
         cvnds_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnfn_rr(XD, XS)     /* round towards near */                       \
-        cvndn_rr(W(XD), W(XS))
-
-#define cvnfn_ld(XD, MS, DS) /* round towards near */                       \
-        cvndn_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -11654,6 +12605,28 @@
 
 #define cvtfs_ld(XD, MS, DS)                                                \
         cvtds_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrfs_rr(XD, XS, mode)                                              \
+        rnrds_rr(W(XD), W(XS), mode)
+
+#define cvrfs_rr(XD, XS, mode)                                              \
+        cvrds_rr(W(XD), W(XS), mode)
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnfn_rr(XD, XS)     /* round towards near */                       \
+        cvndn_rr(W(XD), W(XS))
+
+#define cvnfn_ld(XD, MS, DS) /* round towards near */                       \
+        cvndn_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -11684,18 +12657,104 @@
 #define cvtfx_ld(XD, MS, DS)                                                \
         cvtdx_ld(W(XD), W(MS), W(DS))
 
-/* cvr (D = fp-to-signed-int S)
+/* cuz (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define ruzfs_rr(XD, XS)     /* round towards zero */                       \
+        ruzds_rr(W(XD), W(XS))
+
+#define ruzfs_ld(XD, MS, DS) /* round towards zero */                       \
+        ruzds_ld(W(XD), W(MS), W(DS))
+
+#define cuzfs_rr(XD, XS)     /* round towards zero */                       \
+        cuzds_rr(W(XD), W(XS))
+
+#define cuzfs_ld(XD, MS, DS) /* round towards zero */                       \
+        cuzds_ld(W(XD), W(MS), W(DS))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rupfs_rr(XD, XS)     /* round towards +inf */                       \
+        rupds_rr(W(XD), W(XS))
+
+#define rupfs_ld(XD, MS, DS) /* round towards +inf */                       \
+        rupds_ld(W(XD), W(MS), W(DS))
+
+#define cupfs_rr(XD, XS)     /* round towards +inf */                       \
+        cupds_rr(W(XD), W(XS))
+
+#define cupfs_ld(XD, MS, DS) /* round towards +inf */                       \
+        cupds_ld(W(XD), W(MS), W(DS))
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rumfs_rr(XD, XS)     /* round towards -inf */                       \
+        rumds_rr(W(XD), W(XS))
+
+#define rumfs_ld(XD, MS, DS) /* round towards -inf */                       \
+        rumds_ld(W(XD), W(MS), W(DS))
+
+#define cumfs_rr(XD, XS)     /* round towards -inf */                       \
+        cumds_rr(W(XD), W(XS))
+
+#define cumfs_ld(XD, MS, DS) /* round towards -inf */                       \
+        cumds_ld(W(XD), W(MS), W(DS))
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define runfs_rr(XD, XS)     /* round towards near */                       \
+        runds_rr(W(XD), W(XS))
+
+#define runfs_ld(XD, MS, DS) /* round towards near */                       \
+        runds_ld(W(XD), W(MS), W(DS))
+
+#define cunfs_rr(XD, XS)     /* round towards near */                       \
+        cunds_rr(W(XD), W(XS))
+
+#define cunfs_ld(XD, MS, DS) /* round towards near */                       \
+        cunds_ld(W(XD), W(MS), W(DS))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cuz
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rudfs_rr(XD, XS)                                                    \
+        rudds_rr(W(XD), W(XS))
+
+#define rudfs_ld(XD, MS, DS)                                                \
+        rudds_ld(W(XD), W(MS), W(DS))
+
+#define cutfs_rr(XD, XS)                                                    \
+        cutds_rr(W(XD), W(XS))
+
+#define cutfs_ld(XD, MS, DS)                                                \
+        cutds_ld(W(XD), W(MS), W(DS))
+
+/* cur (D = fp-to-unsigned-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
  * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * round instructions are only accurate within 64-bit unsigned int range */
 
-#define rnrfs_rr(XD, XS, mode)                                              \
-        rnrds_rr(W(XD), W(XS), mode)
+#define rurfs_rr(XD, XS, mode)                                              \
+        rurds_rr(W(XD), W(XS), mode)
 
-#define cvrfs_rr(XD, XS, mode)                                              \
-        cvrds_rr(W(XD), W(XS), mode)
+#define curfs_rr(XD, XS, mode)                                              \
+        curds_rr(W(XD), W(XS), mode)
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
@@ -12544,15 +13603,6 @@
 #define cvnls_ld(XD, MS, DS) /* round towards near */                       \
         cvnjs_ld(W(XD), W(MS), W(DS))
 
-/* cvn (D = signed-int-to-fp S)
- * rounding mode encoded directly (cannot be used in FCTRL blocks) */
-
-#define cvnln_rr(XD, XS)     /* round towards near */                       \
-        cvnjn_rr(W(XD), W(XS))
-
-#define cvnln_ld(XD, MS, DS) /* round towards near */                       \
-        cvnjn_ld(W(XD), W(MS), W(DS))
-
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
@@ -12570,6 +13620,28 @@
 
 #define cvtls_ld(XD, MS, DS)                                                \
         cvtjs_ld(W(XD), W(MS), W(DS))
+
+/* cvr (D = fp-to-signed-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit signed int range */
+
+#define rnrls_rr(XD, XS, mode)                                              \
+        rnrjs_rr(W(XD), W(XS), mode)
+
+#define cvrls_rr(XD, XS, mode)                                              \
+        cvrjs_rr(W(XD), W(XS), mode)
+
+/* cvn (D = signed-int-to-fp S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks) */
+
+#define cvnln_rr(XD, XS)     /* round towards near */                       \
+        cvnjn_rr(W(XD), W(XS))
+
+#define cvnln_ld(XD, MS, DS) /* round towards near */                       \
+        cvnjn_ld(W(XD), W(MS), W(DS))
 
 /* cvt (D = signed-int-to-fp S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
@@ -12600,18 +13672,104 @@
 #define cvtlx_ld(XD, MS, DS)                                                \
         cvtjx_ld(W(XD), W(MS), W(DS))
 
-/* cvr (D = fp-to-signed-int S)
+/* cuz (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define ruzls_rr(XD, XS)     /* round towards zero */                       \
+        ruzjs_rr(W(XD), W(XS))
+
+#define ruzls_ld(XD, MS, DS) /* round towards zero */                       \
+        ruzjs_ld(W(XD), W(MS), W(DS))
+
+#define cuzls_rr(XD, XS)     /* round towards zero */                       \
+        cuzjs_rr(W(XD), W(XS))
+
+#define cuzls_ld(XD, MS, DS) /* round towards zero */                       \
+        cuzjs_ld(W(XD), W(MS), W(DS))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rupls_rr(XD, XS)     /* round towards +inf */                       \
+        rupjs_rr(W(XD), W(XS))
+
+#define rupls_ld(XD, MS, DS) /* round towards +inf */                       \
+        rupjs_ld(W(XD), W(MS), W(DS))
+
+#define cupls_rr(XD, XS)     /* round towards +inf */                       \
+        cupjs_rr(W(XD), W(XS))
+
+#define cupls_ld(XD, MS, DS) /* round towards +inf */                       \
+        cupjs_ld(W(XD), W(MS), W(DS))
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rumls_rr(XD, XS)     /* round towards -inf */                       \
+        rumjs_rr(W(XD), W(XS))
+
+#define rumls_ld(XD, MS, DS) /* round towards -inf */                       \
+        rumjs_ld(W(XD), W(MS), W(DS))
+
+#define cumls_rr(XD, XS)     /* round towards -inf */                       \
+        cumjs_rr(W(XD), W(XS))
+
+#define cumls_ld(XD, MS, DS) /* round towards -inf */                       \
+        cumjs_ld(W(XD), W(MS), W(DS))
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define runls_rr(XD, XS)     /* round towards near */                       \
+        runjs_rr(W(XD), W(XS))
+
+#define runls_ld(XD, MS, DS) /* round towards near */                       \
+        runjs_ld(W(XD), W(MS), W(DS))
+
+#define cunls_rr(XD, XS)     /* round towards near */                       \
+        cunjs_rr(W(XD), W(XS))
+
+#define cunls_ld(XD, MS, DS) /* round towards near */                       \
+        cunjs_ld(W(XD), W(MS), W(DS))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cuz
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rudls_rr(XD, XS)                                                    \
+        rudjs_rr(W(XD), W(XS))
+
+#define rudls_ld(XD, MS, DS)                                                \
+        rudjs_ld(W(XD), W(MS), W(DS))
+
+#define cutls_rr(XD, XS)                                                    \
+        cutjs_rr(W(XD), W(XS))
+
+#define cutls_ld(XD, MS, DS)                                                \
+        cutjs_ld(W(XD), W(MS), W(DS))
+
+/* cur (D = fp-to-unsigned-int S)
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
  * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 64-bit signed int range */
+ * round instructions are only accurate within 64-bit unsigned int range */
 
-#define rnrls_rr(XD, XS, mode)                                              \
-        rnrjs_rr(W(XD), W(XS), mode)
+#define rurls_rr(XD, XS, mode)                                              \
+        rurjs_rr(W(XD), W(XS), mode)
 
-#define cvrls_rr(XD, XS, mode)                                              \
-        cvrjs_rr(W(XD), W(XS), mode)
+#define curls_rr(XD, XS, mode)                                              \
+        curjs_rr(W(XD), W(XS), mode)
 
 /************   packed double-precision integer arithmetic/shifts   ***********/
 

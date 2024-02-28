@@ -2294,6 +2294,12 @@
 #define cmpes_pn(n)      /* flags = ST(0) ? ST(n), pop stack */             \
         EMITB(0xDF) EMITB(0xF0+(n))
 
+#define cmues_xn(n)      /* flags = ST(0) ? ST(n), don't pop, unordered */  \
+        EMITB(0xDB) EMITB(0xE8+(n))
+
+#define cmues_pn(n)      /* flags = ST(0) ? ST(n), pop stack, unordered */  \
+        EMITB(0xDF) EMITB(0xE8+(n))
+
 #define moves_nx(n)      /* ST(n) = ST(0), don't pop */                     \
         EMITB(0xDD) EMITB(0xD0+(n))
 

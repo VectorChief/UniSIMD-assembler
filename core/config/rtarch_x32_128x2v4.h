@@ -1329,6 +1329,350 @@ ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x5B)                       \
         movcx_ld(W(XD), W(MS), W(DS))                                       \
         cvtcx_rr(W(XD), W(XD))
 
+/* cuz (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+#define ruzcs_rr(XD, XS)     /* round towards zero */                       \
+        cuzcs_rr(W(XD), W(XS))                                              \
+        cvncx_rr(W(XD), W(XD))
+
+#define ruzcs_ld(XD, MS, DS) /* round towards zero */                       \
+        cuzcs_ld(W(XD), W(MS), W(DS))                                       \
+        cvncx_rr(W(XD), W(XD))
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define ruzcs_rr(XD, XS)     /* round towards zero */                       \
+    ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x03))                                  \
+    ESC REX(1,             1) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x03))
+
+#define ruzcs_ld(XD, MS, DS) /* round towards zero */                       \
+ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x03))                           \
+ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VYL(DS)), EMITB(0x03))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define cuzcs_rr(XD, XS)     /* round towards zero */                       \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Reax)                                                      \
+        fpuws_ld(Mebp,  inf_SCR01(0x00))                                    \
+        fpuzt_st(Mebp,  inf_SCR02(0x00))                                    \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
+        fpuws_ld(Mebp,  inf_SCR01(0x04))                                    \
+        fpuzt_st(Mebp,  inf_SCR02(0x00))                                    \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Reax,  Mebp, inf_SCR01(0x04))                              \
+        fpuws_ld(Mebp,  inf_SCR01(0x08))                                    \
+        fpuzt_st(Mebp,  inf_SCR02(0x00))                                    \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
+        fpuws_ld(Mebp,  inf_SCR01(0x0C))                                    \
+        fpuzt_st(Mebp,  inf_SCR02(0x00))                                    \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Reax,  Mebp, inf_SCR01(0x0C))                              \
+        fpuws_ld(Mebp,  inf_SCR01(0x10))                                    \
+        fpuzt_st(Mebp,  inf_SCR02(0x00))                                    \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Reax,  Mebp, inf_SCR01(0x10))                              \
+        fpuws_ld(Mebp,  inf_SCR01(0x14))                                    \
+        fpuzt_st(Mebp,  inf_SCR02(0x00))                                    \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Reax,  Mebp, inf_SCR01(0x14))                              \
+        fpuws_ld(Mebp,  inf_SCR01(0x18))                                    \
+        fpuzt_st(Mebp,  inf_SCR02(0x00))                                    \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Reax,  Mebp, inf_SCR01(0x18))                              \
+        fpuws_ld(Mebp,  inf_SCR01(0x1C))                                    \
+        fpuzt_st(Mebp,  inf_SCR02(0x00))                                    \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Reax,  Mebp, inf_SCR01(0x1C))                              \
+        stack_ld(Reax)                                                      \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define cuzcs_ld(XD, MS, DS) /* round towards zero */                       \
+        movcx_ld(W(XD), W(MS), W(DS))                                       \
+        cuzcs_rr(W(XD), W(XD))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+#define rupcs_rr(XD, XS)     /* round towards +inf */                       \
+        cupcs_rr(W(XD), W(XS))                                              \
+        cvncx_rr(W(XD), W(XD))
+
+#define rupcs_ld(XD, MS, DS) /* round towards +inf */                       \
+        cupcs_ld(W(XD), W(MS), W(DS))                                       \
+        cvncx_rr(W(XD), W(XD))
+
+#define cupcs_rr(XD, XS)     /* round towards +inf */                       \
+        FCTRL_ENTER(ROUNDP)                                                 \
+        cutcs_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(ROUNDP)
+
+#define cupcs_ld(XD, MS, DS) /* round towards +inf */                       \
+        FCTRL_ENTER(ROUNDP)                                                 \
+        cutcs_ld(W(XD), W(MS), W(DS))                                       \
+        FCTRL_LEAVE(ROUNDP)
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define rupcs_rr(XD, XS)     /* round towards +inf */                       \
+    ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
+    ESC REX(1,             1) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+
+#define rupcs_ld(XD, MS, DS) /* round towards +inf */                       \
+ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x02))                           \
+ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VYL(DS)), EMITB(0x02))
+
+#define cupcs_rr(XD, XS)     /* round towards +inf */                       \
+        rupcs_rr(W(XD), W(XS))                                              \
+        cuzcs_rr(W(XD), W(XD))
+
+#define cupcs_ld(XD, MS, DS) /* round towards +inf */                       \
+        rupcs_ld(W(XD), W(MS), W(DS))                                       \
+        cuzcs_rr(W(XD), W(XD))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+#define rumcs_rr(XD, XS)     /* round towards -inf */                       \
+        cumcs_rr(W(XD), W(XS))                                              \
+        cvncx_rr(W(XD), W(XD))
+
+#define rumcs_ld(XD, MS, DS) /* round towards -inf */                       \
+        cumcs_ld(W(XD), W(MS), W(DS))                                       \
+        cvncx_rr(W(XD), W(XD))
+
+#define cumcs_rr(XD, XS)     /* round towards -inf */                       \
+        FCTRL_ENTER(ROUNDM)                                                 \
+        cutcs_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(ROUNDM)
+
+#define cumcs_ld(XD, MS, DS) /* round towards -inf */                       \
+        FCTRL_ENTER(ROUNDM)                                                 \
+        cutcs_ld(W(XD), W(MS), W(DS))                                       \
+        FCTRL_LEAVE(ROUNDM)
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define rumcs_rr(XD, XS)     /* round towards -inf */                       \
+    ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
+    ESC REX(1,             1) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+
+#define rumcs_ld(XD, MS, DS) /* round towards -inf */                       \
+ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x01))                           \
+ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VYL(DS)), EMITB(0x01))
+
+#define cumcs_rr(XD, XS)     /* round towards -inf */                       \
+        rumcs_rr(W(XD), W(XS))                                              \
+        cuzcs_rr(W(XD), W(XD))
+
+#define cumcs_ld(XD, MS, DS) /* round towards -inf */                       \
+        rumcs_ld(W(XD), W(MS), W(DS))                                       \
+        cuzcs_rr(W(XD), W(XD))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+#define runcs_rr(XD, XS)     /* round towards near */                       \
+        cuncs_rr(W(XD), W(XS))                                              \
+        cvncx_rr(W(XD), W(XD))
+
+#define runcs_ld(XD, MS, DS) /* round towards near */                       \
+        cuncs_ld(W(XD), W(MS), W(DS))                                       \
+        cvncx_rr(W(XD), W(XD))
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define runcs_rr(XD, XS)     /* round towards near */                       \
+    ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))                                  \
+    ESC REX(1,             1) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+
+#define runcs_ld(XD, MS, DS) /* round towards near */                       \
+ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x00))                           \
+ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VYL(DS)), EMITB(0x00))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define cuncs_rr(XD, XS)     /* round towards near */                       \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Reax)                                                      \
+        fpuws_ld(Mebp,  inf_SCR01(0x00))                                    \
+        fpuzn_st(Mebp,  inf_SCR02(0x00))                                    \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Reax,  Mebp, inf_SCR01(0x00))                              \
+        fpuws_ld(Mebp,  inf_SCR01(0x04))                                    \
+        fpuzn_st(Mebp,  inf_SCR02(0x00))                                    \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Reax,  Mebp, inf_SCR01(0x04))                              \
+        fpuws_ld(Mebp,  inf_SCR01(0x08))                                    \
+        fpuzn_st(Mebp,  inf_SCR02(0x00))                                    \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Reax,  Mebp, inf_SCR01(0x08))                              \
+        fpuws_ld(Mebp,  inf_SCR01(0x0C))                                    \
+        fpuzn_st(Mebp,  inf_SCR02(0x00))                                    \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Reax,  Mebp, inf_SCR01(0x0C))                              \
+        fpuws_ld(Mebp,  inf_SCR01(0x10))                                    \
+        fpuzn_st(Mebp,  inf_SCR02(0x00))                                    \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Reax,  Mebp, inf_SCR01(0x10))                              \
+        fpuws_ld(Mebp,  inf_SCR01(0x14))                                    \
+        fpuzn_st(Mebp,  inf_SCR02(0x00))                                    \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Reax,  Mebp, inf_SCR01(0x14))                              \
+        fpuws_ld(Mebp,  inf_SCR01(0x18))                                    \
+        fpuzn_st(Mebp,  inf_SCR02(0x00))                                    \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Reax,  Mebp, inf_SCR01(0x18))                              \
+        fpuws_ld(Mebp,  inf_SCR01(0x1C))                                    \
+        fpuzn_st(Mebp,  inf_SCR02(0x00))                                    \
+        movwx_ld(Reax,  Mebp, inf_SCR02(0x00))                              \
+        movwx_st(Reax,  Mebp, inf_SCR01(0x1C))                              \
+        stack_ld(Reax)                                                      \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define cuncs_ld(XD, MS, DS) /* round towards near */                       \
+        movcx_ld(W(XD), W(MS), W(DS))                                       \
+        cuncs_rr(W(XD), W(XD))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cuz
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+#define rudcs_rr(XD, XS)                                                    \
+        cutcs_rr(W(XD), W(XS))                                              \
+        cvncx_rr(W(XD), W(XD))
+
+#define rudcs_ld(XD, MS, DS)                                                \
+        cutcs_ld(W(XD), W(MS), W(DS))                                       \
+        cvncx_rr(W(XD), W(XD))
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define rudcs_rr(XD, XS)                                                    \
+    ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+    ESC REX(1,             1) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define rudcs_ld(XD, MS, DS)                                                \
+ADR ESC REX(0,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x04))                           \
+ADR ESC REX(1,       RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VYL(DS)), EMITB(0x04))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define cutcs_rr(XD, XS)                                                    \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        cuncs_rr(W(XD), W(XS))                                              \
+        fpucw_ld(Mebp,  inf_SCR02(4))
+
+#define cutcs_ld(XD, MS, DS)                                                \
+        movcx_ld(W(XD), W(MS), W(DS))                                       \
+        cutcs_rr(W(XD), W(XD))
+
+/* cur (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+#define rurcs_rr(XD, XS, mode)                                              \
+        curcs_rr(W(XD), W(XS), mode)                                        \
+        cvncx_rr(W(XD), W(XD))
+
+#define curcs_rr(XD, XS, mode)                                              \
+        FCTRL_ENTER(mode)                                                   \
+        cutcs_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(mode)
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define rurcs_rr(XD, XS, mode)                                              \
+    ESC REX(0,             0) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
+    ESC REX(1,             1) EMITB(0x0F) EMITB(0x3A) EMITB(0x08)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
+
+#define curcs_rr(XD, XS, mode)                                              \
+        rurcs_rr(W(XD), W(XS), mode)                                        \
+        cuzcs_rr(W(XD), W(XD))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */

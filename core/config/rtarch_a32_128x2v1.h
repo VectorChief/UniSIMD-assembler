@@ -873,6 +873,158 @@
         EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
         EMITW(0x6E21D800 | MXM(RYG(XD), TmmM,    0x00))
 
+/* cuz (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define ruzcs_rr(XD, XS)     /* round towards zero */                       \
+        EMITW(0x4EA19800 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x4EA19800 | MXM(RYG(XD), RYG(XS), 0x00))
+
+#define ruzcs_ld(XD, MS, DS) /* round towards zero */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x4EA19800 | MXM(REG(XD), TmmM,    0x00))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x4EA19800 | MXM(RYG(XD), TmmM,    0x00))
+
+#define cuzcs_rr(XD, XS)     /* round towards zero */                       \
+        EMITW(0x6EA1B800 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x6EA1B800 | MXM(RYG(XD), RYG(XS), 0x00))
+
+#define cuzcs_ld(XD, MS, DS) /* round towards zero */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x6EA1B800 | MXM(REG(XD), TmmM,    0x00))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x6EA1B800 | MXM(RYG(XD), TmmM,    0x00))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rupcs_rr(XD, XS)     /* round towards +inf */                       \
+        EMITW(0x4EA18800 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x4EA18800 | MXM(RYG(XD), RYG(XS), 0x00))
+
+#define rupcs_ld(XD, MS, DS) /* round towards +inf */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x4EA18800 | MXM(REG(XD), TmmM,    0x00))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x4EA18800 | MXM(RYG(XD), TmmM,    0x00))
+
+#define cupcs_rr(XD, XS)     /* round towards +inf */                       \
+        EMITW(0x6EA1A800 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x6EA1A800 | MXM(RYG(XD), RYG(XS), 0x00))
+
+#define cupcs_ld(XD, MS, DS) /* round towards +inf */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x6EA1A800 | MXM(REG(XD), TmmM,    0x00))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x6EA1A800 | MXM(RYG(XD), TmmM,    0x00))
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rumcs_rr(XD, XS)     /* round towards -inf */                       \
+        EMITW(0x4E219800 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x4E219800 | MXM(RYG(XD), RYG(XS), 0x00))
+
+#define rumcs_ld(XD, MS, DS) /* round towards -inf */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x4E219800 | MXM(REG(XD), TmmM,    0x00))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x4E219800 | MXM(RYG(XD), TmmM,    0x00))
+
+#define cumcs_rr(XD, XS)     /* round towards -inf */                       \
+        EMITW(0x6E21B800 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x6E21B800 | MXM(RYG(XD), RYG(XS), 0x00))
+
+#define cumcs_ld(XD, MS, DS) /* round towards -inf */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x6E21B800 | MXM(REG(XD), TmmM,    0x00))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x6E21B800 | MXM(RYG(XD), TmmM,    0x00))
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define runcs_rr(XD, XS)     /* round towards near */                       \
+        EMITW(0x4E218800 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x4E218800 | MXM(RYG(XD), RYG(XS), 0x00))
+
+#define runcs_ld(XD, MS, DS) /* round towards near */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x4E218800 | MXM(REG(XD), TmmM,    0x00))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x4E218800 | MXM(RYG(XD), TmmM,    0x00))
+
+#define cuncs_rr(XD, XS)     /* round towards near */                       \
+        EMITW(0x6E21A800 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x6E21A800 | MXM(RYG(XD), RYG(XS), 0x00))
+
+#define cuncs_ld(XD, MS, DS) /* round towards near */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x6E21A800 | MXM(REG(XD), TmmM,    0x00))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x6E21A800 | MXM(RYG(XD), TmmM,    0x00))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cuz
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rudcs_rr(XD, XS)                                                    \
+        EMITW(0x6EA19800 | MXM(REG(XD), REG(XS), 0x00))                     \
+        EMITW(0x6EA19800 | MXM(RYG(XD), RYG(XS), 0x00))
+
+#define rudcs_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x6EA19800 | MXM(REG(XD), TmmM,    0x00))                     \
+        EMITW(0x3DC00000 | MPM(TmmM,    MOD(MS), VYL(DS), B4(DS), L2(DS)))  \
+        EMITW(0x6EA19800 | MXM(RYG(XD), TmmM,    0x00))
+
+#define cutcs_rr(XD, XS)                                                    \
+        rudcs_rr(W(XD), W(XS))                                              \
+        cuzcs_rr(W(XD), W(XD))
+
+#define cutcs_ld(XD, MS, DS)                                                \
+        rudcs_ld(W(XD), W(MS), W(DS))                                       \
+        cuzcs_rr(W(XD), W(XD))
+
+/* cur (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp32 SIMD fp-to-int
+ * round instructions are only accurate within 32-bit unsigned int range */
+
+#define rurcs_rr(XD, XS, mode)                                              \
+        EMITW(0x4E218800 | MXM(REG(XD), REG(XS), 0x00) |                    \
+        (RT_SIMD_MODE_##mode&1) << 23 | (RT_SIMD_MODE_##mode&2) << 11)      \
+        EMITW(0x4E218800 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
+        (RT_SIMD_MODE_##mode&1) << 23 | (RT_SIMD_MODE_##mode&2) << 11)
+
+#define curcs_rr(XD, XS, mode)                                              \
+        EMITW(0x6E21A800 | MXM(REG(XD), REG(XS), 0x00) |                    \
+        (RT_SIMD_MODE_##mode&1) << 23 | (RT_SIMD_MODE_##mode&2) << 11)      \
+        EMITW(0x6E21A800 | MXM(RYG(XD), RYG(XS), 0x00) |                    \
+        (RT_SIMD_MODE_##mode&1) << 23 | (RT_SIMD_MODE_##mode&2) << 11)
+
 /************   packed single-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */

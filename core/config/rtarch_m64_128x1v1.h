@@ -749,6 +749,133 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B4(DS), P2(DS)))  \
         EMITW(0x7B3F001E | MXM(REG(XD), TmmM,    0x00))
 
+/* cuz (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define ruzjs_rr(XD, XS)     /* round towards zero */                       \
+        cuzjs_rr(W(XD), W(XS))                                              \
+        cvnjx_rr(W(XD), W(XD))
+
+#define ruzjs_ld(XD, MS, DS) /* round towards zero */                       \
+        cuzjs_ld(W(XD), W(MS), W(DS))                                       \
+        cvnjx_rr(W(XD), W(XD))
+
+#define cuzjs_rr(XD, XS)     /* round towards zero */                       \
+        EMITW(0x7B25001E | MXM(REG(XD), REG(XS), 0x00))
+
+#define cuzjs_ld(XD, MS, DS) /* round towards zero */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B4(DS), P2(DS)))  \
+        EMITW(0x7B25001E | MXM(REG(XD), TmmM,    0x00))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rupjs_rr(XD, XS)     /* round towards +inf */                       \
+        FCTRL_ENTER(ROUNDP)                                                 \
+        rudjs_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(ROUNDP)
+
+#define rupjs_ld(XD, MS, DS) /* round towards +inf */                       \
+        FCTRL_ENTER(ROUNDP)                                                 \
+        rudjs_ld(W(XD), W(MS), W(DS))                                       \
+        FCTRL_LEAVE(ROUNDP)
+
+#define cupjs_rr(XD, XS)     /* round towards +inf */                       \
+        FCTRL_ENTER(ROUNDP)                                                 \
+        cutjs_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(ROUNDP)
+
+#define cupjs_ld(XD, MS, DS) /* round towards +inf */                       \
+        FCTRL_ENTER(ROUNDP)                                                 \
+        cutjs_ld(W(XD), W(MS), W(DS))                                       \
+        FCTRL_LEAVE(ROUNDP)
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rumjs_rr(XD, XS)     /* round towards -inf */                       \
+        FCTRL_ENTER(ROUNDM)                                                 \
+        rudjs_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(ROUNDM)
+
+#define rumjs_ld(XD, MS, DS) /* round towards -inf */                       \
+        FCTRL_ENTER(ROUNDM)                                                 \
+        rudjs_ld(W(XD), W(MS), W(DS))                                       \
+        FCTRL_LEAVE(ROUNDM)
+
+#define cumjs_rr(XD, XS)     /* round towards -inf */                       \
+        FCTRL_ENTER(ROUNDM)                                                 \
+        cutjs_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(ROUNDM)
+
+#define cumjs_ld(XD, MS, DS) /* round towards -inf */                       \
+        FCTRL_ENTER(ROUNDM)                                                 \
+        cutjs_ld(W(XD), W(MS), W(DS))                                       \
+        FCTRL_LEAVE(ROUNDM)
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define runjs_rr(XD, XS)     /* round towards near */                       \
+        rudjs_rr(W(XD), W(XS))
+
+#define runjs_ld(XD, MS, DS) /* round towards near */                       \
+        rudjs_ld(W(XD), W(MS), W(DS))
+
+#define cunjs_rr(XD, XS)     /* round towards near */                       \
+        cutjs_rr(W(XD), W(XS))
+
+#define cunjs_ld(XD, MS, DS) /* round towards near */                       \
+        cutjs_ld(W(XD), W(MS), W(DS))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cuz
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rudjs_rr(XD, XS)                                                    \
+        EMITW(0x7B2D001E | MXM(REG(XD), REG(XS), 0x00))
+
+#define rudjs_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B4(DS), P2(DS)))  \
+        EMITW(0x7B2D001E | MXM(REG(XD), TmmM,    0x00))
+
+#define cutjs_rr(XD, XS)                                                    \
+        EMITW(0x7B3B001E | MXM(REG(XD), REG(XS), 0x00))
+
+#define cutjs_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MS), VAL(DS), B4(DS), P2(DS)))  \
+        EMITW(0x7B3B001E | MXM(REG(XD), TmmM,    0x00))
+
+/* cur (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#define rurjs_rr(XD, XS, mode)                                              \
+        FCTRL_ENTER(mode)                                                   \
+        rudjs_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(mode)
+
+#define curjs_rr(XD, XS, mode)                                              \
+        FCTRL_ENTER(mode)                                                   \
+        cutjs_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(mode)
+
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */

@@ -1131,6 +1131,295 @@ ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
         movjx_ld(W(XD), W(MS), W(DS))                                       \
         cvtjx_rr(W(XD), W(XD))
 
+/* cuz (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+#define ruzjs_rr(XD, XS)     /* round towards zero */                       \
+        cuzjs_rr(W(XD), W(XS))                                              \
+        cvnjx_rr(W(XD), W(XD))
+
+#define ruzjs_ld(XD, MS, DS) /* round towards zero */                       \
+        cuzjs_ld(W(XD), W(MS), W(DS))                                       \
+        cvnjx_rr(W(XD), W(XD))
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define ruzjs_rr(XD, XS)     /* round towards zero */                       \
+    ESC REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x03))
+
+#define ruzjs_ld(XD, MS, DS) /* round towards zero */                       \
+ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x03))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define cuzjs_rr(XD, XS)     /* round towards zero */                       \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movwx_mi(Mebp,  inf_SCR02(0x00), IW(0x5F000000))    /* 2^63 fp32 */ \
+        fpuws_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_ld(Mebp,  inf_SCR01(0x00))                                    \
+        cmues_xn(1)                                                         \
+        EMITB(0x73) EMITB(0x09 + x67)                                       \
+        fpuzt_st(Mebp,  inf_SCR01(0x00))                                    \
+        EMITB(0xEB) EMITB(0x14 + x67*2)                                     \
+        subes_xn(1)                                                         \
+        fpuzt_st(Mebp,  inf_SCR01(0x00))                                    \
+        addwx_mi(Mebp,  inf_SCR01(0x04), IW(0x80000000))                    \
+        fpuzs_ld(Mebp,  inf_SCR01(0x08))                                    \
+        cmues_xn(1)                                                         \
+        EMITB(0x73) EMITB(0x09 + x67)                                       \
+        fpuzt_st(Mebp,  inf_SCR01(0x08))                                    \
+        EMITB(0xEB) EMITB(0x14 + x67*2)                                     \
+        subes_xn(1)                                                         \
+        fpuzt_st(Mebp,  inf_SCR01(0x08))                                    \
+        addwx_mi(Mebp,  inf_SCR01(0x0C), IW(0x80000000))                    \
+        fpuws_st(Mebp,  inf_SCR02(0x00))                                    \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define cuzjs_ld(XD, MS, DS) /* round towards zero */                       \
+        movjx_ld(W(XD), W(MS), W(DS))                                       \
+        cuzjs_rr(W(XD), W(XD))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+#define rupjs_rr(XD, XS)     /* round towards +inf */                       \
+        cupjs_rr(W(XD), W(XS))                                              \
+        cvnjx_rr(W(XD), W(XD))
+
+#define rupjs_ld(XD, MS, DS) /* round towards +inf */                       \
+        cupjs_ld(W(XD), W(MS), W(DS))                                       \
+        cvnjx_rr(W(XD), W(XD))
+
+#define cupjs_rr(XD, XS)     /* round towards +inf */                       \
+        fpurp_xx()                                                          \
+        cunjs_rr(W(XD), W(XS))                                              \
+        fpurn_xx()
+
+#define cupjs_ld(XD, MS, DS) /* round towards +inf */                       \
+        fpurp_xx()                                                          \
+        cunjs_ld(W(XD), W(MS), W(DS))                                       \
+        fpurn_xx()
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define rupjs_rr(XD, XS)     /* round towards +inf */                       \
+    ESC REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+
+#define rupjs_ld(XD, MS, DS) /* round towards +inf */                       \
+ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x02))
+
+#define cupjs_rr(XD, XS)     /* round towards +inf */                       \
+        rupjs_rr(W(XD), W(XS))                                              \
+        cuzjs_rr(W(XD), W(XD))
+
+#define cupjs_ld(XD, MS, DS) /* round towards +inf */                       \
+        rupjs_ld(W(XD), W(MS), W(DS))                                       \
+        cuzjs_rr(W(XD), W(XD))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+#define rumjs_rr(XD, XS)     /* round towards -inf */                       \
+        cumjs_rr(W(XD), W(XS))                                              \
+        cvnjx_rr(W(XD), W(XD))
+
+#define rumjs_ld(XD, MS, DS) /* round towards -inf */                       \
+        cumjs_ld(W(XD), W(MS), W(DS))                                       \
+        cvnjx_rr(W(XD), W(XD))
+
+#define cumjs_rr(XD, XS)     /* round towards -inf */                       \
+        fpurm_xx()                                                          \
+        cunjs_rr(W(XD), W(XS))                                              \
+        fpurn_xx()
+
+#define cumjs_ld(XD, MS, DS) /* round towards -inf */                       \
+        fpurm_xx()                                                          \
+        cunjs_ld(W(XD), W(MS), W(DS))                                       \
+        fpurn_xx()
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define rumjs_rr(XD, XS)     /* round towards -inf */                       \
+    ESC REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+
+#define rumjs_ld(XD, MS, DS) /* round towards -inf */                       \
+ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x01))
+
+#define cumjs_rr(XD, XS)     /* round towards -inf */                       \
+        rumjs_rr(W(XD), W(XS))                                              \
+        cuzjs_rr(W(XD), W(XD))
+
+#define cumjs_ld(XD, MS, DS) /* round towards -inf */                       \
+        rumjs_ld(W(XD), W(MS), W(DS))                                       \
+        cuzjs_rr(W(XD), W(XD))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+#define runjs_rr(XD, XS)     /* round towards near */                       \
+        cunjs_rr(W(XD), W(XS))                                              \
+        cvnjx_rr(W(XD), W(XD))
+
+#define runjs_ld(XD, MS, DS) /* round towards near */                       \
+        cunjs_ld(W(XD), W(MS), W(DS))                                       \
+        cvnjx_rr(W(XD), W(XD))
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define runjs_rr(XD, XS)     /* round towards near */                       \
+    ESC REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+
+#define runjs_ld(XD, MS, DS) /* round towards near */                       \
+ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x00))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define cunjs_rr(XD, XS)     /* round towards near */                       \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movwx_mi(Mebp,  inf_SCR02(0x00), IW(0x5F000000))    /* 2^63 fp32 */ \
+        fpuws_ld(Mebp,  inf_SCR02(0x00))                                    \
+        fpuzs_ld(Mebp,  inf_SCR01(0x00))                                    \
+        cmues_xn(1)                                                         \
+        EMITB(0x73) EMITB(0x09 + x67)                                       \
+        fpuzn_st(Mebp,  inf_SCR01(0x00))                                    \
+        EMITB(0xEB) EMITB(0x14 + x67*2)                                     \
+        subes_xn(1)                                                         \
+        fpuzn_st(Mebp,  inf_SCR01(0x00))                                    \
+        addwx_mi(Mebp,  inf_SCR01(0x04), IW(0x80000000))                    \
+        fpuzs_ld(Mebp,  inf_SCR01(0x08))                                    \
+        cmues_xn(1)                                                         \
+        EMITB(0x73) EMITB(0x09 + x67)                                       \
+        fpuzn_st(Mebp,  inf_SCR01(0x08))                                    \
+        EMITB(0xEB) EMITB(0x14 + x67*2)                                     \
+        subes_xn(1)                                                         \
+        fpuzn_st(Mebp,  inf_SCR01(0x08))                                    \
+        addwx_mi(Mebp,  inf_SCR01(0x0C), IW(0x80000000))                    \
+        fpuws_st(Mebp,  inf_SCR02(0x00))                                    \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define cunjs_ld(XD, MS, DS) /* round towards near */                       \
+        movjx_ld(W(XD), W(MS), W(DS))                                       \
+        cunjs_rr(W(XD), W(XD))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from fp control register (set in FCTRL blocks)
+ * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cuz
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+#define rudjs_rr(XD, XS)                                                    \
+        cutjs_rr(W(XD), W(XS))                                              \
+        cvnjx_rr(W(XD), W(XD))
+
+#define rudjs_ld(XD, MS, DS)                                                \
+        cutjs_ld(W(XD), W(MS), W(DS))                                       \
+        cvnjx_rr(W(XD), W(XD))
+
+#define cutjs_rr(XD, XS)                                                    \
+        fpucw_st(Mebp,  inf_SCR02(4))                                       \
+        mxcsr_st(Mebp,  inf_SCR02(0))                                       \
+        shrwx_mi(Mebp,  inf_SCR02(0), IB(3))                                \
+        andwx_mi(Mebp,  inf_SCR02(0), IH(0x0C00))                           \
+        orrwx_mi(Mebp,  inf_SCR02(0), IB(0x7F))                             \
+        fpucw_ld(Mebp,  inf_SCR02(0))                                       \
+        cunjs_rr(W(XD), W(XS))                                              \
+        fpucw_ld(Mebp,  inf_SCR02(4))
+
+#define cutjs_ld(XD, MS, DS)                                                \
+        movjx_ld(W(XD), W(MS), W(DS))                                       \
+        cutjs_rr(W(XD), W(XD))
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define rudjs_rr(XD, XS)                                                    \
+    ESC REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define rudjs_ld(XD, MS, DS)                                                \
+ADR ESC REX(RXB(XD), RXB(MS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMITB(0x04))
+
+#define cutjs_rr(XD, XS)                                                    \
+        rudjs_rr(W(XD), W(XS))                                              \
+        cuzjs_rr(W(XD), W(XD))
+
+#define cutjs_ld(XD, MS, DS)                                                \
+        rudjs_ld(W(XD), W(MS), W(DS))                                       \
+        cuzjs_rr(W(XD), W(XD))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
+/* cur (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (cannot be used in FCTRL blocks)
+ * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
+ * isn't always taken into account when used within full-IEEE ASM block
+ * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
+ * round instructions are only accurate within 64-bit unsigned int range */
+
+#if (RT_SIMD_COMPAT_SSE < 4)
+
+#define rurjs_rr(XD, XS, mode)                                              \
+        curjs_rr(W(XD), W(XS), mode)                                        \
+        cvnjx_rr(W(XD), W(XD))
+
+#define curjs_rr(XD, XS, mode)                                              \
+        FCTRL_ENTER(mode)                                                   \
+        cutjs_rr(W(XD), W(XS))                                              \
+        FCTRL_LEAVE(mode)
+
+#else /* RT_SIMD_COMPAT_SSE >= 4 */
+
+#define rurjs_rr(XD, XS, mode)                                              \
+    ESC REX(RXB(XD), RXB(XS)) EMITB(0x0F) EMITB(0x3A) EMITB(0x09)           \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
+
+#define curjs_rr(XD, XS, mode)                                              \
+        rurjs_rr(W(XD), W(XS), mode)                                        \
+        cuzjs_rr(W(XD), W(XD))
+
+#endif /* RT_SIMD_COMPAT_SSE >= 4 */
+
 /************   packed double-precision integer arithmetic/shifts   ***********/
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */

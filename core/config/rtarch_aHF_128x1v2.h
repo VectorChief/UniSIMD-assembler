@@ -543,6 +543,112 @@
         EMITW(0x3CC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0x6E79D800 | MXM(REG(XD), TmmM,    0x00))
 
+/* cuz (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define ruzgs_rr(XD, XS)     /* round towards zero */                       \
+        EMITW(0x4EF99800 | MXM(REG(XD), REG(XS), 0x00))
+
+#define ruzgs_ld(XD, MS, DS) /* round towards zero */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3CC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x4EF99800 | MXM(REG(XD), TmmM,    0x00))
+
+#define cuzgs_rr(XD, XS)     /* round towards zero */                       \
+        EMITW(0x6EF9B800 | MXM(REG(XD), REG(XS), 0x00))
+
+#define cuzgs_ld(XD, MS, DS) /* round towards zero */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3CC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x6EF9B800 | MXM(REG(XD), TmmM,    0x00))
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rupgs_rr(XD, XS)     /* round towards +inf */                       \
+        EMITW(0x4EF98800 | MXM(REG(XD), REG(XS), 0x00))
+
+#define rupgs_ld(XD, MS, DS) /* round towards +inf */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3CC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x4EF98800 | MXM(REG(XD), TmmM,    0x00))
+
+#define cupgs_rr(XD, XS)     /* round towards +inf */                       \
+        EMITW(0x6EF9A800 | MXM(REG(XD), REG(XS), 0x00))
+
+#define cupgs_ld(XD, MS, DS) /* round towards +inf */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3CC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x6EF9A800 | MXM(REG(XD), TmmM,    0x00))
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rumgs_rr(XD, XS)     /* round towards -inf */                       \
+        EMITW(0x4E799800 | MXM(REG(XD), REG(XS), 0x00))
+
+#define rumgs_ld(XD, MS, DS) /* round towards -inf */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3CC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x4E799800 | MXM(REG(XD), TmmM,    0x00))
+
+#define cumgs_rr(XD, XS)     /* round towards -inf */                       \
+        EMITW(0x6E79B800 | MXM(REG(XD), REG(XS), 0x00))
+
+#define cumgs_ld(XD, MS, DS) /* round towards -inf */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3CC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x6E79B800 | MXM(REG(XD), TmmM,    0x00))
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rungs_rr(XD, XS)     /* round towards near */                       \
+        EMITW(0x4E798800 | MXM(REG(XD), REG(XS), 0x00))
+
+#define rungs_ld(XD, MS, DS) /* round towards near */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3CC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x4E798800 | MXM(REG(XD), TmmM,    0x00))
+
+#define cungs_rr(XD, XS)     /* round towards near */                       \
+        EMITW(0x6E79A800 | MXM(REG(XD), REG(XS), 0x00))
+
+#define cungs_ld(XD, MS, DS) /* round towards near */                       \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3CC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x6E79A800 | MXM(REG(XD), TmmM,    0x00))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from control register (set in FCTRL blocks) */
+
+#define rudgs_rr(XD, XS)                                                    \
+        EMITW(0x6EF99800 | MXM(REG(XD), REG(XS), 0x00))
+
+#define rudgs_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C2(DS), EMPTY2)   \
+        EMITW(0x3CC00000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMITW(0x6EF99800 | MXM(REG(XD), TmmM,    0x00))
+
+#define cutgs_rr(XD, XS)                                                    \
+        rudgs_rr(W(XD), W(XS))                                              \
+        cuzgs_rr(W(XD), W(XD))
+
+#define cutgs_ld(XD, MS, DS)                                                \
+        rudgs_ld(W(XD), W(MS), W(DS))                                       \
+        cuzgs_rr(W(XD), W(XD))
+
+/* cur (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rurgs_rr(XD, XS, mode)                                              \
+        EMITW(0x4E798800 | MXM(REG(XD), REG(XS), 0x00) |                    \
+        (RT_SIMD_MODE_##mode&1) << 23 | (RT_SIMD_MODE_##mode&2) << 11)
+
+#define curgs_rr(XD, XS, mode)                                              \
+        EMITW(0x6E79A800 | MXM(REG(XD), REG(XS), 0x00) |                    \
+        (RT_SIMD_MODE_##mode&1) << 23 | (RT_SIMD_MODE_##mode&2) << 11)
+
 #endif /* RT_128X1 == 2, 8 */
 
 /******************************************************************************/

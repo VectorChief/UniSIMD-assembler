@@ -978,13 +978,13 @@
         AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
 
 #define cvrms_rr(XD, XS, mode)                                              \
-        EGX(0,             0, 0x00, RT_SIMD_MODE_##mode&3, 2, 1) EMITB(0x7D)\
+        EGX(0,             0, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x7D)\
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EGX(1,             1, 0x00, RT_SIMD_MODE_##mode&3, 2, 1) EMITB(0x7D)\
+        EGX(1,             1, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x7D)\
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EGX(2,             2, 0x00, RT_SIMD_MODE_##mode&3, 2, 1) EMITB(0x7D)\
+        EGX(2,             2, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x7D)\
         MRM(REG(XD), MOD(XS), REG(XS))                                      \
-        EGX(3,             3, 0x00, RT_SIMD_MODE_##mode&3, 2, 1) EMITB(0x7D)\
+        EGX(3,             3, 0x00, RT_SIMD_MODE_##mode&3, 1, 1) EMITB(0x7D)\
         MRM(REG(XD), MOD(XS), REG(XS))
 
 /* cvn (D = signed-int-to-fp S)
@@ -1058,6 +1058,270 @@
     ADR EFX(3,       RXB(MS),    0x00, K, 3, 1) EMITB(0x7D)                 \
         MRM(REG(XD),    0x02, REG(MS))                                      \
         AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+
+/* cuz (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define ruzms_rr(XD, XS)     /* round towards zero */                       \
+        EVX(0,             0,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x03))                                  \
+        EVX(1,             1,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x03))                                  \
+        EVX(2,             2,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x03))                                  \
+        EVX(3,             3,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x03))
+
+#define ruzms_ld(XD, MS, DS) /* round towards zero */                       \
+    ADR EVX(0,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x03))                           \
+    ADR EVX(1,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x03))                           \
+    ADR EVX(2,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VSL(DS)), EMITB(0x03))                           \
+    ADR EVX(3,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VTL(DS)), EMITB(0x03))
+
+#define cuzms_rr(XD, XS)     /* round towards zero */                       \
+        EFX(0,             0,    0x00, K, 0, 1) EMITB(0x7C)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EFX(1,             1,    0x00, K, 0, 1) EMITB(0x7C)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EFX(2,             2,    0x00, K, 0, 1) EMITB(0x7C)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EFX(3,             3,    0x00, K, 0, 1) EMITB(0x7C)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define cuzms_ld(XD, MS, DS) /* round towards zero */                       \
+    ADR EFX(0,       RXB(MS),    0x00, K, 0, 1) EMITB(0x7C)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EFX(1,       RXB(MS),    0x00, K, 0, 1) EMITB(0x7C)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
+    ADR EFX(2,       RXB(MS),    0x00, K, 0, 1) EMITB(0x7C)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
+    ADR EFX(3,       RXB(MS),    0x00, K, 0, 1) EMITB(0x7C)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+
+/* cup (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rupms_rr(XD, XS)     /* round towards +inf */                       \
+        EVX(0,             0,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
+        EVX(1,             1,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
+        EVX(2,             2,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
+        EVX(3,             3,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+
+#define rupms_ld(XD, MS, DS) /* round towards +inf */                       \
+    ADR EVX(0,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x02))                           \
+    ADR EVX(1,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x02))                           \
+    ADR EVX(2,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VSL(DS)), EMITB(0x02))                           \
+    ADR EVX(3,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VTL(DS)), EMITB(0x02))
+
+#define cupms_rr(XD, XS)     /* round towards +inf */                       \
+        EGX(0,             0,    0x00, 2, 0, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EGX(1,             1,    0x00, 2, 0, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EGX(2,             2,    0x00, 2, 0, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EGX(3,             3,    0x00, 2, 0, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define cupms_ld(XD, MS, DS) /* round towards +inf */                       \
+        movmx_ld(W(XD), W(MS), W(DS))                                       \
+        cupms_rr(W(XD), W(XD))
+
+/* cum (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rumms_rr(XD, XS)     /* round towards -inf */                       \
+        EVX(0,             0,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
+        EVX(1,             1,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
+        EVX(2,             2,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
+        EVX(3,             3,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+
+#define rumms_ld(XD, MS, DS) /* round towards -inf */                       \
+    ADR EVX(0,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x01))                           \
+    ADR EVX(1,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x01))                           \
+    ADR EVX(2,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VSL(DS)), EMITB(0x01))                           \
+    ADR EVX(3,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VTL(DS)), EMITB(0x01))
+
+#define cumms_rr(XD, XS)     /* round towards -inf */                       \
+        EGX(0,             0,    0x00, 1, 0, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EGX(1,             1,    0x00, 1, 0, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EGX(2,             2,    0x00, 1, 0, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EGX(3,             3,    0x00, 1, 0, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define cumms_ld(XD, MS, DS) /* round towards -inf */                       \
+        movmx_ld(W(XD), W(MS), W(DS))                                       \
+        cumms_rr(W(XD), W(XD))
+
+/* cun (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define runms_rr(XD, XS)     /* round towards near */                       \
+        EVX(0,             0,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))                                  \
+        EVX(1,             1,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))                                  \
+        EVX(2,             2,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))                                  \
+        EVX(3,             3,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+
+#define runms_ld(XD, MS, DS) /* round towards near */                       \
+    ADR EVX(0,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x00))                           \
+    ADR EVX(1,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x00))                           \
+    ADR EVX(2,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VSL(DS)), EMITB(0x00))                           \
+    ADR EVX(3,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VTL(DS)), EMITB(0x00))
+
+#define cunms_rr(XD, XS)     /* round towards near */                       \
+        cutms_rr(W(XD), W(XS))
+
+#define cunms_ld(XD, MS, DS) /* round towards near */                       \
+        cutms_ld(W(XD), W(MS), W(DS))
+
+/* cut (D = fp-to-unsigned-int S)
+ * rounding mode comes from control register (set in FCTRL blocks) */
+
+#define rudms_rr(XD, XS)                                                    \
+        EVX(0,             0,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+        EVX(1,             1,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+        EVX(2,             2,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+        EVX(3,             3,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define rudms_ld(XD, MS, DS)                                                \
+    ADR EVX(0,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMITB(0x04))                           \
+    ADR EVX(1,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMITB(0x04))                           \
+    ADR EVX(2,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VSL(DS)), EMITB(0x04))                           \
+    ADR EVX(3,       RXB(MS),    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VTL(DS)), EMITB(0x04))
+
+#define cutms_rr(XD, XS)                                                    \
+        EFX(0,             0,    0x00, K, 0, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EFX(1,             1,    0x00, K, 0, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EFX(2,             2,    0x00, K, 0, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EFX(3,             3,    0x00, K, 0, 1) EMITB(0x7D)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define cutms_ld(XD, MS, DS)                                                \
+    ADR EFX(0,       RXB(MS),    0x00, K, 0, 1) EMITB(0x7D)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EFX(1,       RXB(MS),    0x00, K, 0, 1) EMITB(0x7D)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)                                 \
+    ADR EFX(2,       RXB(MS),    0x00, K, 0, 1) EMITB(0x7D)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VSL(DS)), EMPTY)                                 \
+    ADR EFX(3,       RXB(MS),    0x00, K, 0, 1) EMITB(0x7D)                 \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VTL(DS)), EMPTY)
+
+/* cur (D = fp-to-unsigned-int S)
+ * rounding mode is encoded directly (can be used in FCTRL blocks) */
+
+#define rurms_rr(XD, XS, mode)                                              \
+        EVX(0,             0,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
+        EVX(1,             1,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
+        EVX(2,             2,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))                 \
+        EVX(3,             3,    0x00, K, 0, 3) EMITB(0x08)                 \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(RT_SIMD_MODE_##mode&3))
+
+#define curms_rr(XD, XS, mode)                                              \
+        EGX(0,             0, 0x00, RT_SIMD_MODE_##mode&3, 0, 1) EMITB(0x7D)\
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EGX(1,             1, 0x00, RT_SIMD_MODE_##mode&3, 0, 1) EMITB(0x7D)\
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EGX(2,             2, 0x00, RT_SIMD_MODE_##mode&3, 0, 1) EMITB(0x7D)\
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EGX(3,             3, 0x00, RT_SIMD_MODE_##mode&3, 0, 1) EMITB(0x7D)\
+        MRM(REG(XD), MOD(XS), REG(XS))
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
