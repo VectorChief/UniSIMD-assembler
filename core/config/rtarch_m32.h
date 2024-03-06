@@ -328,146 +328,68 @@
 #define MegD    TEgD, TEgD, EMPTY
 #define MegE    TEgE, TEgE, EMPTY
 
-#define Iecx    TEcx, TPxx, EMITW(0x00000021 | MRM(TPxx, TEcx, TEax) | ADR)
-#define Iedx    TEdx, TPxx, EMITW(0x00000021 | MRM(TPxx, TEdx, TEax) | ADR)
-#define Iebx    TEbx, TPxx, EMITW(0x00000021 | MRM(TPxx, TEbx, TEax) | ADR)
-#define Iebp    TEbp, TPxx, EMITW(0x00000021 | MRM(TPxx, TEbp, TEax) | ADR)
-#define Iesi    TEsi, TPxx, EMITW(0x00000021 | MRM(TPxx, TEsi, TEax) | ADR)
-#define Iedi    TEdi, TPxx, EMITW(0x00000021 | MRM(TPxx, TEdi, TEax) | ADR)
-#define Ieg8    TEg8, TPxx, EMITW(0x00000021 | MRM(TPxx, TEg8, TEax) | ADR)
-#define Ieg9    TEg9, TPxx, EMITW(0x00000021 | MRM(TPxx, TEg9, TEax) | ADR)
-#define IegA    TEgA, TPxx, EMITW(0x00000021 | MRM(TPxx, TEgA, TEax) | ADR)
-#define IegB    TEgB, TPxx, EMITW(0x00000021 | MRM(TPxx, TEgB, TEax) | ADR)
-#define IegC    TEgC, TPxx, EMITW(0x00000021 | MRM(TPxx, TEgC, TEax) | ADR)
-#define IegD    TEgD, TPxx, EMITW(0x00000021 | MRM(TPxx, TEgD, TEax) | ADR)
-#define IegE    TEgE, TPxx, EMITW(0x00000021 | MRM(TPxx, TEgE, TEax) | ADR)
+/* public scalable I/J/K/L*** definitions are now provided in rtbase.h */
+/* public scalable S/T/U/V*** definitions accept any register as index */
+/* fully explicit N*** takes index register and scale (1,2,3) for 2x/4x/8x */
+
+#define Secx(R) TEcx, TPxx, EMITW(0x00000021 | MRM(TPxx, TEcx, REG(R)) | ADR)
+#define Sedx(R) TEdx, TPxx, EMITW(0x00000021 | MRM(TPxx, TEdx, REG(R)) | ADR)
+#define Sebx(R) TEbx, TPxx, EMITW(0x00000021 | MRM(TPxx, TEbx, REG(R)) | ADR)
+#define Sebp(R) TEbp, TPxx, EMITW(0x00000021 | MRM(TPxx, TEbp, REG(R)) | ADR)
+#define Sesi(R) TEsi, TPxx, EMITW(0x00000021 | MRM(TPxx, TEsi, REG(R)) | ADR)
+#define Sedi(R) TEdi, TPxx, EMITW(0x00000021 | MRM(TPxx, TEdi, REG(R)) | ADR)
+#define Seg8(R) TEg8, TPxx, EMITW(0x00000021 | MRM(TPxx, TEg8, REG(R)) | ADR)
+#define Seg9(R) TEg9, TPxx, EMITW(0x00000021 | MRM(TPxx, TEg9, REG(R)) | ADR)
+#define SegA(R) TEgA, TPxx, EMITW(0x00000021 | MRM(TPxx, TEgA, REG(R)) | ADR)
+#define SegB(R) TEgB, TPxx, EMITW(0x00000021 | MRM(TPxx, TEgB, REG(R)) | ADR)
+#define SegC(R) TEgC, TPxx, EMITW(0x00000021 | MRM(TPxx, TEgC, REG(R)) | ADR)
+#define SegD(R) TEgD, TPxx, EMITW(0x00000021 | MRM(TPxx, TEgD, REG(R)) | ADR)
+#define SegE(R) TEgE, TPxx, EMITW(0x00000021 | MRM(TPxx, TEgE, REG(R)) | ADR)
 
 #if (RT_BASE_COMPAT_REV < 6) /* pre-r6 */
 
-#define Jecx    TEcx, TPxx, EMITW(0x00000040 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEcx, TPxx) | ADR)
-#define Jedx    TEdx, TPxx, EMITW(0x00000040 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEdx, TPxx) | ADR)
-#define Jebx    TEbx, TPxx, EMITW(0x00000040 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEbx, TPxx) | ADR)
-#define Jebp    TEbp, TPxx, EMITW(0x00000040 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEbp, TPxx) | ADR)
-#define Jesi    TEsi, TPxx, EMITW(0x00000040 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEsi, TPxx) | ADR)
-#define Jedi    TEdi, TPxx, EMITW(0x00000040 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEdi, TPxx) | ADR)
-#define Jeg8    TEg8, TPxx, EMITW(0x00000040 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEg8, TPxx) | ADR)
-#define Jeg9    TEg9, TPxx, EMITW(0x00000040 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEg9, TPxx) | ADR)
-#define JegA    TEgA, TPxx, EMITW(0x00000040 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEgA, TPxx) | ADR)
-#define JegB    TEgB, TPxx, EMITW(0x00000040 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEgB, TPxx) | ADR)
-#define JegC    TEgC, TPxx, EMITW(0x00000040 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEgC, TPxx) | ADR)
-#define JegD    TEgD, TPxx, EMITW(0x00000040 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEgD, TPxx) | ADR)
-#define JegE    TEgE, TPxx, EMITW(0x00000040 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEgE, TPxx) | ADR)
-
-#define Kecx    TEcx, TPxx, EMITW(0x00000080 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEcx, TPxx) | ADR)
-#define Kedx    TEdx, TPxx, EMITW(0x00000080 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEdx, TPxx) | ADR)
-#define Kebx    TEbx, TPxx, EMITW(0x00000080 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEbx, TPxx) | ADR)
-#define Kebp    TEbp, TPxx, EMITW(0x00000080 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEbp, TPxx) | ADR)
-#define Kesi    TEsi, TPxx, EMITW(0x00000080 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEsi, TPxx) | ADR)
-#define Kedi    TEdi, TPxx, EMITW(0x00000080 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEdi, TPxx) | ADR)
-#define Keg8    TEg8, TPxx, EMITW(0x00000080 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEg8, TPxx) | ADR)
-#define Keg9    TEg9, TPxx, EMITW(0x00000080 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEg9, TPxx) | ADR)
-#define KegA    TEgA, TPxx, EMITW(0x00000080 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEgA, TPxx) | ADR)
-#define KegB    TEgB, TPxx, EMITW(0x00000080 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEgB, TPxx) | ADR)
-#define KegC    TEgC, TPxx, EMITW(0x00000080 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEgC, TPxx) | ADR)
-#define KegD    TEgD, TPxx, EMITW(0x00000080 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEgD, TPxx) | ADR)
-#define KegE    TEgE, TPxx, EMITW(0x00000080 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEgE, TPxx) | ADR)
-
-#define Lecx    TEcx, TPxx, EMITW(0x000000C0 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEcx, TPxx) | ADR)
-#define Ledx    TEdx, TPxx, EMITW(0x000000C0 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEdx, TPxx) | ADR)
-#define Lebx    TEbx, TPxx, EMITW(0x000000C0 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEbx, TPxx) | ADR)
-#define Lebp    TEbp, TPxx, EMITW(0x000000C0 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEbp, TPxx) | ADR)
-#define Lesi    TEsi, TPxx, EMITW(0x000000C0 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEsi, TPxx) | ADR)
-#define Ledi    TEdi, TPxx, EMITW(0x000000C0 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEdi, TPxx) | ADR)
-#define Leg8    TEg8, TPxx, EMITW(0x000000C0 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEg8, TPxx) | ADR)
-#define Leg9    TEg9, TPxx, EMITW(0x000000C0 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEg9, TPxx) | ADR)
-#define LegA    TEgA, TPxx, EMITW(0x000000C0 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEgA, TPxx) | ADR)
-#define LegB    TEgB, TPxx, EMITW(0x000000C0 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEgB, TPxx) | ADR)
-#define LegC    TEgC, TPxx, EMITW(0x000000C0 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEgC, TPxx) | ADR)
-#define LegD    TEgD, TPxx, EMITW(0x000000C0 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEgD, TPxx) | ADR)
-#define LegE    TEgE, TPxx, EMITW(0x000000C0 | MSM(TPxx, TEax, 0x00) | SLL) \
-                            EMITW(0x00000021 | MRM(TPxx, TEgE, TPxx) | ADR)
+#define Necx(R,n) TEcx,TPxx,EMITW(0x00000000|MSM(TPxx,REG(R),0x00)|SLL|(n)<<6) \
+                            EMITW(0x00000021|MRM(TPxx, TEcx, TPxx)|ADR)
+#define Nedx(R,n) TEdx,TPxx,EMITW(0x00000000|MSM(TPxx,REG(R),0x00)|SLL|(n)<<6) \
+                            EMITW(0x00000021|MRM(TPxx, TEdx, TPxx)|ADR)
+#define Nebx(R,n) TEbx,TPxx,EMITW(0x00000000|MSM(TPxx,REG(R),0x00)|SLL|(n)<<6) \
+                            EMITW(0x00000021|MRM(TPxx, TEbx, TPxx)|ADR)
+#define Nebp(R,n) TEbp,TPxx,EMITW(0x00000000|MSM(TPxx,REG(R),0x00)|SLL|(n)<<6) \
+                            EMITW(0x00000021|MRM(TPxx, TEbp, TPxx)|ADR)
+#define Nesi(R,n) TEsi,TPxx,EMITW(0x00000000|MSM(TPxx,REG(R),0x00)|SLL|(n)<<6) \
+                            EMITW(0x00000021|MRM(TPxx, TEsi, TPxx)|ADR)
+#define Nedi(R,n) TEdi,TPxx,EMITW(0x00000000|MSM(TPxx,REG(R),0x00)|SLL|(n)<<6) \
+                            EMITW(0x00000021|MRM(TPxx, TEdi, TPxx)|ADR)
+#define Neg8(R,n) TEg8,TPxx,EMITW(0x00000000|MSM(TPxx,REG(R),0x00)|SLL|(n)<<6) \
+                            EMITW(0x00000021|MRM(TPxx, TEg8, TPxx)|ADR)
+#define Neg9(R,n) TEg9,TPxx,EMITW(0x00000000|MSM(TPxx,REG(R),0x00)|SLL|(n)<<6) \
+                            EMITW(0x00000021|MRM(TPxx, TEg9, TPxx)|ADR)
+#define NegA(R,n) TEgA,TPxx,EMITW(0x00000000|MSM(TPxx,REG(R),0x00)|SLL|(n)<<6) \
+                            EMITW(0x00000021|MRM(TPxx, TEgA, TPxx)|ADR)
+#define NegB(R,n) TEgB,TPxx,EMITW(0x00000000|MSM(TPxx,REG(R),0x00)|SLL|(n)<<6) \
+                            EMITW(0x00000021|MRM(TPxx, TEgB, TPxx)|ADR)
+#define NegC(R,n) TEgC,TPxx,EMITW(0x00000000|MSM(TPxx,REG(R),0x00)|SLL|(n)<<6) \
+                            EMITW(0x00000021|MRM(TPxx, TEgC, TPxx)|ADR)
+#define NegD(R,n) TEgD,TPxx,EMITW(0x00000000|MSM(TPxx,REG(R),0x00)|SLL|(n)<<6) \
+                            EMITW(0x00000021|MRM(TPxx, TEgD, TPxx)|ADR)
+#define NegE(R,n) TEgE,TPxx,EMITW(0x00000000|MSM(TPxx,REG(R),0x00)|SLL|(n)<<6) \
+                            EMITW(0x00000021|MRM(TPxx, TEgE, TPxx)|ADR)
 
 #else /* RT_BASE_COMPAT_REV >= 6 : r6 */
 
-#define Jecx    TEcx, TPxx, EMITW(0x00000005 | MSM(TPxx, TEcx, TEax) | LSA)
-#define Jedx    TEdx, TPxx, EMITW(0x00000005 | MSM(TPxx, TEdx, TEax) | LSA)
-#define Jebx    TEbx, TPxx, EMITW(0x00000005 | MSM(TPxx, TEbx, TEax) | LSA)
-#define Jebp    TEbp, TPxx, EMITW(0x00000005 | MSM(TPxx, TEbp, TEax) | LSA)
-#define Jesi    TEsi, TPxx, EMITW(0x00000005 | MSM(TPxx, TEsi, TEax) | LSA)
-#define Jedi    TEdi, TPxx, EMITW(0x00000005 | MSM(TPxx, TEdi, TEax) | LSA)
-#define Jeg8    TEg8, TPxx, EMITW(0x00000005 | MSM(TPxx, TEg8, TEax) | LSA)
-#define Jeg9    TEg9, TPxx, EMITW(0x00000005 | MSM(TPxx, TEg9, TEax) | LSA)
-#define JegA    TEgA, TPxx, EMITW(0x00000005 | MSM(TPxx, TEgA, TEax) | LSA)
-#define JegB    TEgB, TPxx, EMITW(0x00000005 | MSM(TPxx, TEgB, TEax) | LSA)
-#define JegC    TEgC, TPxx, EMITW(0x00000005 | MSM(TPxx, TEgC, TEax) | LSA)
-#define JegD    TEgD, TPxx, EMITW(0x00000005 | MSM(TPxx, TEgD, TEax) | LSA)
-#define JegE    TEgE, TPxx, EMITW(0x00000005 | MSM(TPxx, TEgE, TEax) | LSA)
-
-#define Kecx    TEcx, TPxx, EMITW(0x00000045 | MSM(TPxx, TEcx, TEax) | LSA)
-#define Kedx    TEdx, TPxx, EMITW(0x00000045 | MSM(TPxx, TEdx, TEax) | LSA)
-#define Kebx    TEbx, TPxx, EMITW(0x00000045 | MSM(TPxx, TEbx, TEax) | LSA)
-#define Kebp    TEbp, TPxx, EMITW(0x00000045 | MSM(TPxx, TEbp, TEax) | LSA)
-#define Kesi    TEsi, TPxx, EMITW(0x00000045 | MSM(TPxx, TEsi, TEax) | LSA)
-#define Kedi    TEdi, TPxx, EMITW(0x00000045 | MSM(TPxx, TEdi, TEax) | LSA)
-#define Keg8    TEg8, TPxx, EMITW(0x00000045 | MSM(TPxx, TEg8, TEax) | LSA)
-#define Keg9    TEg9, TPxx, EMITW(0x00000045 | MSM(TPxx, TEg9, TEax) | LSA)
-#define KegA    TEgA, TPxx, EMITW(0x00000045 | MSM(TPxx, TEgA, TEax) | LSA)
-#define KegB    TEgB, TPxx, EMITW(0x00000045 | MSM(TPxx, TEgB, TEax) | LSA)
-#define KegC    TEgC, TPxx, EMITW(0x00000045 | MSM(TPxx, TEgC, TEax) | LSA)
-#define KegD    TEgD, TPxx, EMITW(0x00000045 | MSM(TPxx, TEgD, TEax) | LSA)
-#define KegE    TEgE, TPxx, EMITW(0x00000045 | MSM(TPxx, TEgE, TEax) | LSA)
-
-#define Lecx    TEcx, TPxx, EMITW(0x00000085 | MSM(TPxx, TEcx, TEax) | LSA)
-#define Ledx    TEdx, TPxx, EMITW(0x00000085 | MSM(TPxx, TEdx, TEax) | LSA)
-#define Lebx    TEbx, TPxx, EMITW(0x00000085 | MSM(TPxx, TEbx, TEax) | LSA)
-#define Lebp    TEbp, TPxx, EMITW(0x00000085 | MSM(TPxx, TEbp, TEax) | LSA)
-#define Lesi    TEsi, TPxx, EMITW(0x00000085 | MSM(TPxx, TEsi, TEax) | LSA)
-#define Ledi    TEdi, TPxx, EMITW(0x00000085 | MSM(TPxx, TEdi, TEax) | LSA)
-#define Leg8    TEg8, TPxx, EMITW(0x00000085 | MSM(TPxx, TEg8, TEax) | LSA)
-#define Leg9    TEg9, TPxx, EMITW(0x00000085 | MSM(TPxx, TEg9, TEax) | LSA)
-#define LegA    TEgA, TPxx, EMITW(0x00000085 | MSM(TPxx, TEgA, TEax) | LSA)
-#define LegB    TEgB, TPxx, EMITW(0x00000085 | MSM(TPxx, TEgB, TEax) | LSA)
-#define LegC    TEgC, TPxx, EMITW(0x00000085 | MSM(TPxx, TEgC, TEax) | LSA)
-#define LegD    TEgD, TPxx, EMITW(0x00000085 | MSM(TPxx, TEgD, TEax) | LSA)
-#define LegE    TEgE, TPxx, EMITW(0x00000085 | MSM(TPxx, TEgE, TEax) | LSA)
+#define Necx(R,n) TEcx,TPxx,EMITW(0x000005|MSM(TPxx,TEcx,REG(R))|LSA|((n)-1)<<6)
+#define Nedx(R,n) TEdx,TPxx,EMITW(0x000005|MSM(TPxx,TEdx,REG(R))|LSA|((n)-1)<<6)
+#define Nebx(R,n) TEbx,TPxx,EMITW(0x000005|MSM(TPxx,TEbx,REG(R))|LSA|((n)-1)<<6)
+#define Nebp(R,n) TEbp,TPxx,EMITW(0x000005|MSM(TPxx,TEbp,REG(R))|LSA|((n)-1)<<6)
+#define Nesi(R,n) TEsi,TPxx,EMITW(0x000005|MSM(TPxx,TEsi,REG(R))|LSA|((n)-1)<<6)
+#define Nedi(R,n) TEdi,TPxx,EMITW(0x000005|MSM(TPxx,TEdi,REG(R))|LSA|((n)-1)<<6)
+#define Neg8(R,n) TEg8,TPxx,EMITW(0x000005|MSM(TPxx,TEg8,REG(R))|LSA|((n)-1)<<6)
+#define Neg9(R,n) TEg9,TPxx,EMITW(0x000005|MSM(TPxx,TEg9,REG(R))|LSA|((n)-1)<<6)
+#define NegA(R,n) TEgA,TPxx,EMITW(0x000005|MSM(TPxx,TEgA,REG(R))|LSA|((n)-1)<<6)
+#define NegB(R,n) TEgB,TPxx,EMITW(0x000005|MSM(TPxx,TEgB,REG(R))|LSA|((n)-1)<<6)
+#define NegC(R,n) TEgC,TPxx,EMITW(0x000005|MSM(TPxx,TEgC,REG(R))|LSA|((n)-1)<<6)
+#define NegD(R,n) TEgD,TPxx,EMITW(0x000005|MSM(TPxx,TEgD,REG(R))|LSA|((n)-1)<<6)
+#define NegE(R,n) TEgE,TPxx,EMITW(0x000005|MSM(TPxx,TEgE,REG(R))|LSA|((n)-1)<<6)
 
 #endif /* RT_BASE_COMPAT_REV >= 6 : r6 */
 

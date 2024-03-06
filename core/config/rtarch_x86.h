@@ -241,33 +241,23 @@
 #define Mesi    0x06, 0x02, EMPTY       /* [esi + DP] */
 #define Medi    0x07, 0x02, EMPTY       /* [edi + DP] */
 
-#define Iecx    0x04, 0x02, EMITB(0x01) /* [ecx + eax*1 + DP] */
-#define Iedx    0x04, 0x02, EMITB(0x02) /* [edx + eax*1 + DP] */
-#define Iebx    0x04, 0x02, EMITB(0x03) /* [ebx + eax*1 + DP] */
-#define Iebp    0x04, 0x02, EMITB(0x05) /* [ebp + eax*1 + DP] */
-#define Iesi    0x04, 0x02, EMITB(0x06) /* [esi + eax*1 + DP] */
-#define Iedi    0x04, 0x02, EMITB(0x07) /* [edi + eax*1 + DP] */
+/* public scalable I/J/K/L*** definitions are now provided in rtbase.h */
+/* public scalable S/T/U/V*** definitions accept any register as index */
+/* fully explicit N*** takes index register and scale (1,2,3) for 2x/4x/8x */
 
-#define Jecx    0x04, 0x02, EMITB(0x41) /* [ecx + eax*2 + DP] */
-#define Jedx    0x04, 0x02, EMITB(0x42) /* [edx + eax*2 + DP] */
-#define Jebx    0x04, 0x02, EMITB(0x43) /* [ebx + eax*2 + DP] */
-#define Jebp    0x04, 0x02, EMITB(0x45) /* [ebp + eax*2 + DP] */
-#define Jesi    0x04, 0x02, EMITB(0x46) /* [esi + eax*2 + DP] */
-#define Jedi    0x04, 0x02, EMITB(0x47) /* [edi + eax*2 + DP] */
+#define Secx(R) 0x04, 0x02, EMITB(0x01|REG(R)<<3) /* [ecx + eax*1 + DP] */
+#define Sedx(R) 0x04, 0x02, EMITB(0x02|REG(R)<<3) /* [edx + eax*1 + DP] */
+#define Sebx(R) 0x04, 0x02, EMITB(0x03|REG(R)<<3) /* [ebx + eax*1 + DP] */
+#define Sebp(R) 0x04, 0x02, EMITB(0x05|REG(R)<<3) /* [ebp + eax*1 + DP] */
+#define Sesi(R) 0x04, 0x02, EMITB(0x06|REG(R)<<3) /* [esi + eax*1 + DP] */
+#define Sedi(R) 0x04, 0x02, EMITB(0x07|REG(R)<<3) /* [edi + eax*1 + DP] */
 
-#define Kecx    0x04, 0x02, EMITB(0x81) /* [ecx + eax*4 + DP] */
-#define Kedx    0x04, 0x02, EMITB(0x82) /* [edx + eax*4 + DP] */
-#define Kebx    0x04, 0x02, EMITB(0x83) /* [ebx + eax*4 + DP] */
-#define Kebp    0x04, 0x02, EMITB(0x85) /* [ebp + eax*4 + DP] */
-#define Kesi    0x04, 0x02, EMITB(0x86) /* [esi + eax*4 + DP] */
-#define Kedi    0x04, 0x02, EMITB(0x87) /* [edi + eax*4 + DP] */
-
-#define Lecx    0x04, 0x02, EMITB(0xC1) /* [ecx + eax*8 + DP] */
-#define Ledx    0x04, 0x02, EMITB(0xC2) /* [edx + eax*8 + DP] */
-#define Lebx    0x04, 0x02, EMITB(0xC3) /* [ebx + eax*8 + DP] */
-#define Lebp    0x04, 0x02, EMITB(0xC5) /* [ebp + eax*8 + DP] */
-#define Lesi    0x04, 0x02, EMITB(0xC6) /* [esi + eax*8 + DP] */
-#define Ledi    0x04, 0x02, EMITB(0xC7) /* [edi + eax*8 + DP] */
+#define Necx(R,n) 0x04,0x02,EMITB(0x01|REG(R)<<3|(n)<<6) /* [ecx + R*n + DP] */
+#define Nedx(R,n) 0x04,0x02,EMITB(0x02|REG(R)<<3|(n)<<6) /* [edx + R*n + DP] */
+#define Nebx(R,n) 0x04,0x02,EMITB(0x03|REG(R)<<3|(n)<<6) /* [ebx + R*n + DP] */
+#define Nebp(R,n) 0x04,0x02,EMITB(0x05|REG(R)<<3|(n)<<6) /* [ebp + R*n + DP] */
+#define Nesi(R,n) 0x04,0x02,EMITB(0x06|REG(R)<<3|(n)<<6) /* [esi + R*n + DP] */
+#define Nedi(R,n) 0x04,0x02,EMITB(0x07|REG(R)<<3|(n)<<6) /* [edi + R*n + DP] */
 
 /* immediate    VAL,  TYP,  CMD            (all immediate types are unsigned) */
 /* full-size IW type is only applicable within cmdw* subset, can set sign-bit */

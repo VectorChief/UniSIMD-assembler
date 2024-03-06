@@ -317,33 +317,23 @@
 #define Mesi    TEsi, TEsi, EMPTY
 #define Medi    TEdi, TEdi, EMPTY
 
-#define Iecx    TEcx, TPxx, EMITW(0xE0800000 | MRM(TPxx,    TEcx,    TEax))
-#define Iedx    TEdx, TPxx, EMITW(0xE0800000 | MRM(TPxx,    TEdx,    TEax))
-#define Iebx    TEbx, TPxx, EMITW(0xE0800000 | MRM(TPxx,    TEbx,    TEax))
-#define Iebp    TEbp, TPxx, EMITW(0xE0800000 | MRM(TPxx,    TEbp,    TEax))
-#define Iesi    TEsi, TPxx, EMITW(0xE0800000 | MRM(TPxx,    TEsi,    TEax))
-#define Iedi    TEdi, TPxx, EMITW(0xE0800000 | MRM(TPxx,    TEdi,    TEax))
+/* public scalable I/J/K/L*** definitions are now provided in rtbase.h */
+/* public scalable S/T/U/V*** definitions accept any register as index */
+/* fully explicit N*** takes index register and scale (1,2,3) for 2x/4x/8x */
 
-#define Jecx    TEcx, TPxx, EMITW(0xE0800080 | MRM(TPxx,    TEcx,    TEax))
-#define Jedx    TEdx, TPxx, EMITW(0xE0800080 | MRM(TPxx,    TEdx,    TEax))
-#define Jebx    TEbx, TPxx, EMITW(0xE0800080 | MRM(TPxx,    TEbx,    TEax))
-#define Jebp    TEbp, TPxx, EMITW(0xE0800080 | MRM(TPxx,    TEbp,    TEax))
-#define Jesi    TEsi, TPxx, EMITW(0xE0800080 | MRM(TPxx,    TEsi,    TEax))
-#define Jedi    TEdi, TPxx, EMITW(0xE0800080 | MRM(TPxx,    TEdi,    TEax))
+#define Secx(R) TEcx, TPxx, EMITW(0xE0800000 | MRM(TPxx,    TEcx,  REG(R)))
+#define Sedx(R) TEdx, TPxx, EMITW(0xE0800000 | MRM(TPxx,    TEdx,  REG(R)))
+#define Sebx(R) TEbx, TPxx, EMITW(0xE0800000 | MRM(TPxx,    TEbx,  REG(R)))
+#define Sebp(R) TEbp, TPxx, EMITW(0xE0800000 | MRM(TPxx,    TEbp,  REG(R)))
+#define Sesi(R) TEsi, TPxx, EMITW(0xE0800000 | MRM(TPxx,    TEsi,  REG(R)))
+#define Sedi(R) TEdi, TPxx, EMITW(0xE0800000 | MRM(TPxx,    TEdi,  REG(R)))
 
-#define Kecx    TEcx, TPxx, EMITW(0xE0800100 | MRM(TPxx,    TEcx,    TEax))
-#define Kedx    TEdx, TPxx, EMITW(0xE0800100 | MRM(TPxx,    TEdx,    TEax))
-#define Kebx    TEbx, TPxx, EMITW(0xE0800100 | MRM(TPxx,    TEbx,    TEax))
-#define Kebp    TEbp, TPxx, EMITW(0xE0800100 | MRM(TPxx,    TEbp,    TEax))
-#define Kesi    TEsi, TPxx, EMITW(0xE0800100 | MRM(TPxx,    TEsi,    TEax))
-#define Kedi    TEdi, TPxx, EMITW(0xE0800100 | MRM(TPxx,    TEdi,    TEax))
-
-#define Lecx    TEcx, TPxx, EMITW(0xE0800180 | MRM(TPxx,    TEcx,    TEax))
-#define Ledx    TEdx, TPxx, EMITW(0xE0800180 | MRM(TPxx,    TEdx,    TEax))
-#define Lebx    TEbx, TPxx, EMITW(0xE0800180 | MRM(TPxx,    TEbx,    TEax))
-#define Lebp    TEbp, TPxx, EMITW(0xE0800180 | MRM(TPxx,    TEbp,    TEax))
-#define Lesi    TEsi, TPxx, EMITW(0xE0800180 | MRM(TPxx,    TEsi,    TEax))
-#define Ledi    TEdi, TPxx, EMITW(0xE0800180 | MRM(TPxx,    TEdi,    TEax))
+#define Necx(R,n) TEcx,TPxx,EMITW(0xE0800000 | MRM(TPxx, TEcx,  REG(R))|(n)<<11)
+#define Nedx(R,n) TEdx,TPxx,EMITW(0xE0800000 | MRM(TPxx, TEdx,  REG(R))|(n)<<11)
+#define Nebx(R,n) TEbx,TPxx,EMITW(0xE0800000 | MRM(TPxx, TEbx,  REG(R))|(n)<<11)
+#define Nebp(R,n) TEbp,TPxx,EMITW(0xE0800000 | MRM(TPxx, TEbp,  REG(R))|(n)<<11)
+#define Nesi(R,n) TEsi,TPxx,EMITW(0xE0800000 | MRM(TPxx, TEsi,  REG(R))|(n)<<11)
+#define Nedi(R,n) TEdi,TPxx,EMITW(0xE0800000 | MRM(TPxx, TEdi,  REG(R))|(n)<<11)
 
 /* immediate    VAL,  TP1,  TP2            (all immediate types are unsigned) */
 /* full-size IW type is only applicable within cmdw* subset, can set sign-bit */

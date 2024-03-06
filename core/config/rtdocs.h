@@ -220,9 +220,11 @@
  * (like Iebx, Iecx, Iedx, ...) in which case the address is calculated as a sum
  * of R*** + Reax + displacement, where R*** is the BASE register encoded in the
  * addressing mode. Scaled indexed addressing modes are supported as J***, K***,
- * L*** definitions. Reax is also used for plain addressing mode (Oeax) without
- * displacement in which case PLAIN is passed as a displacement to cmd**_ld/st
- * instructions.
+ * L*** (with Reax), while S***, T***, U***, V*** accept any BASE register index
+ * maintaining the same built-in scaling factors 1x/2x/4x/8x respectively.
+ * Fully configurable N*** takes index register and scale (1,2,3) for 2x/4x/8x.
+ * Reax is also used for plain addressing mode (Oeax) without displacement
+ * in which case PLAIN is passed as a displacement to cmd**_ld/st instructions.
  */
 
 /******************************************************************************/
