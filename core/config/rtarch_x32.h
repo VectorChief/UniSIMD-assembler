@@ -206,6 +206,20 @@
         EMITB(0x00 | (1 - (rxg)) << 7 | 1 << 6 | (1 - (rxm)) << 5 | (aux))  \
         EMITB(0x80 | (len) << 2 | (0x0F - (ren)) << 3 | (pfx))
 
+/* 4-byte EVEX prefix with full customization (W0, KX) */
+#define EPX(pre, mod, rxg, rxm, ren, len, pfx, aux)                         \
+        EMITB(0x62)                                                         \
+        EMITB(0x00 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
+        EMITB(0x04 | (15-((ren)&15))<<3 | (pfx))                            \
+        EMITB(0x00 | (16-((ren)&16))>>1 | (len) << 5 | (mod) << 7 | (pre))
+
+/* 4-byte EVEX prefix with full customization (W1, KX) */
+#define EPW(pre, mod, rxg, rxm, ren, len, pfx, aux)                         \
+        EMITB(0x62)                                                         \
+        EMITB(0x00 | (1-((rxg)&1))<<7|(2-((rxg)&2))<<3|(3-(rxm))<<5|(aux))  \
+        EMITB(0x84 | (15-((ren)&15))<<3 | (pfx))                            \
+        EMITB(0x00 | (16-((ren)&16))>>1 | (len) << 5 | (mod) << 7 | (pre))
+
 /* 4-byte EVEX prefix with full customization (W0, K0) */
 #define EVX(rxg, rxm, ren, len, pfx, aux)                                   \
         EMITB(0x62)                                                         \
@@ -293,6 +307,7 @@
 /* selectors  */
 
 #define RXB(reg, mod, sib)  ((reg) >> 3 & 0x03) /* full-reg-extension-bit */
+#define R1B(reg, mod, sib)  ((reg) >> 3 & 0x01) /* reg-bank-extension-bit */
 #define RMB(reg, mod, sib)  ((reg) >> 3 | 0x02) /* reg-bank-extension-bit */
 #define REG(reg, mod, sib)  ((reg) >> 0 & 0x07) /* register, lower 3-bits */
 #define REH(reg, mod, sib)  (((reg) & 0x07)+ 8) /* 2nd 8-reg-bank, 4-bits */
@@ -301,6 +316,8 @@
 #define REN(reg, mod, sib)  (reg) /* 3rd operand, full-reg-bank, 4/5-bits */
 #define REM(reg, mod, sib)  (((reg) & 0x0F)+16) /* 2nd 16-reg-bank 5-bits */
 #define RIB(reg, mod, sib)  (((reg) & 0x08)<<1) /* index-xreg-bit-shifted */
+#define RE2(reg, mod, sib)  ((reg) >> 0 & 0x10) /* 2nd bank-extension-bit */
+#define REP(reg, mod, sib)  ((reg)+3) /* 2nd 3-reg-predicate-bank, paired */
 #define MOD(reg, mod, sib)  mod
 #define SIB(reg, mod, sib)  sib
 
@@ -314,6 +331,8 @@
 #define CMD(val, typ, cmd)  cmd
 
 /* register-bank pass-through selectors */
+
+#define Y(reg, mod, sib)   (reg+3), mod, sib
 
 #define V(reg, mod, sib)   (reg+8), mod, sib
 #define X(reg, mod, sib)  (reg+16), mod, sib

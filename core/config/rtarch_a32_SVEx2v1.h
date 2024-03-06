@@ -147,6 +147,307 @@
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
 
+/* preliminary implementation of predicated targets: ARM-SVE and AVX-512 only
+ * for regular (unpredicated) cross-compatible SIMD refer to the next section */
+
+/* predicates   REG,  MOD,  SIB */
+
+#define X1      0x02, 0x00, EMPTY
+#define X2      0x03, 0x00, EMPTY
+#define X3      0x04, 0x00, EMPTY
+
+#define Z1      0x02, 0x01, EMPTY
+#define Z2      0x03, 0x01, EMPTY
+#define Z3      0x04, 0x01, EMPTY
+
+/* add (G = G + S), (D = S + T) if (#D != #T) */
+
+#define addosPrr(XG, PS, XS)                                                \
+        addos4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define addosPld(XG, PS, MS, DS)                                            \
+        addos4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define addos4rr(XD, PS, XS, XT)                                            \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
+        EMITW(0x65808000 | MTM(REG(XD), REG(XT), REG(PS)))                  \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(RYG(XD), RYG(XS), REP(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(RYG(XD), RYG(XS), 0x00))))     \
+        EMITW(0x65808000 | MTM(RYG(XD), RYG(XT), REP(PS)))
+
+#define addos4ld(XD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
+        EMITW(0x65808000 | MTM(REG(XD), TmmM,    REG(PS)))                  \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(RYG(XD), RYG(XS), REP(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(RYG(XD), RYG(XS), 0x00))))     \
+        EMITW(0x65808000 | MTM(RYG(XD), TmmM,    REP(PS)))
+
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
+
+#define subosPrr(XG, PS, XS)                                                \
+        subos4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define subosPld(XG, PS, MS, DS)                                            \
+        subos4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define subos4rr(XD, PS, XS, XT)                                            \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
+        EMITW(0x65818000 | MTM(REG(XD), REG(XT), REG(PS)))                  \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(RYG(XD), RYG(XS), RYG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(RYG(XD), RYG(XS), 0x00))))     \
+        EMITW(0x65818000 | MTM(RYG(XD), RYG(XT), REP(PS)))
+
+#define subos4ld(XD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
+        EMITW(0x65818000 | MTM(REG(XD), TmmM,    REG(PS)))                  \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(RYG(XD), RYG(XS), REP(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(RYG(XD), RYG(XS), 0x00))))     \
+        EMITW(0x65818000 | MTM(RYG(XD), TmmM,    REP(PS)))
+
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
+
+#define mulosPrr(XG, PS, XS)                                                \
+        mulos4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define mulosPld(XG, PS, MS, DS)                                            \
+        mulos4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define mulos4rr(XD, PS, XS, XT)                                            \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
+        EMITW(0x65828000 | MTM(REG(XD), REG(XT), REG(PS)))                  \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(RYG(XD), RYG(XS), REP(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(RYG(XD), RYG(XS), 0x00))))     \
+        EMITW(0x65828000 | MTM(RYG(XD), RYG(XT), REP(PS)))
+
+#define mulos4ld(XD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
+        EMITW(0x65828000 | MTM(REG(XD), TmmM,    REG(PS)))                  \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(RYG(XD), RYG(XS), REP(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(RYG(XD), RYG(XS), 0x00))))     \
+        EMITW(0x65828000 | MTM(RYG(XD), TmmM,    REP(PS)))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) */
+
+#define divosPrr(XG, PS, XS)                                                \
+        divos4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define divosPld(XG, PS, MS, DS)                                            \
+        divos4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define divos4rr(XD, PS, XS, XT)                                            \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
+        EMITW(0x658D8000 | MTM(REG(XD), REG(XT), REG(PS)))                  \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(RYG(XD), RYG(XS), REP(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(RYG(XD), RYG(XS), 0x00))))     \
+        EMITW(0x658D8000 | MTM(RYG(XD), RYG(XT), REP(PS)))
+
+#define divos4ld(XD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(REG(XD), REG(XS), REG(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(REG(XD), REG(XS), 0x00))))     \
+        EMITW(0x658D8000 | MTM(REG(XD), TmmM,    REG(PS)))                  \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x04000000 |                                                  \
+        (M(MOD(PS) != 0) & (0x00902000 | MTM(RYG(XD), RYG(XS), REP(PS)))) | \
+        (M(MOD(PS) == 0) & (0x0020BC00 | MTM(RYG(XD), RYG(XS), 0x00))))     \
+        EMITW(0x658D8000 | MTM(RYG(XD), TmmM,    REP(PS)))
+
+/* ceq (D = S == T ? 1 : 0) if (#D != #T), zeroing-masking only */
+
+#define ceqosPrr(PD, XS, XT)                                                \
+        EMITW(0x65806000 | MXM(REG(PD), REG(XS), REG(XT)))                  \
+        EMITW(0x65806000 | MXM(REP(PD), RYG(XS), RYG(XT)))
+
+#define ceqosPld(PD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65806000 | MXM(REG(PD), REG(XS), TmmM))                     \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65806000 | MXM(REP(PD), RYG(XS), TmmM))
+
+#define ceqos4rr(PD, PS, XS, XT)                                            \
+        EMITW(0x65806000 | MXM(REG(PD), REG(XS), REG(XT)) | REG(PS) << 10)  \
+        EMITW(0x65806000 | MXM(REP(PD), RYG(XS), RYG(XT)) | REP(PS) << 10)
+
+#define ceqos4ld(PD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65806000 | MXM(REG(PD), REG(XS), TmmM) | REG(PS) << 10)     \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65806000 | MXM(REP(PD), RYG(XS), TmmM) | RYG(PS) << 10)
+
+/* cne (D = S != T ? 1 : 0) if (#D != #T), zeroing-masking only */
+
+#define cneosPrr(PD, XS, XT)                                                \
+        EMITW(0x65806010 | MXM(REG(PD), REG(XS), REG(XT)))                  \
+        EMITW(0x65806010 | MXM(REP(PD), RYG(XS), RYG(XT)))
+
+#define cneosPld(PD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65806010 | MXM(REG(PD), REG(XS), TmmM))                     \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65806010 | MXM(REP(PD), RYG(XS), TmmM))
+
+#define cneos4rr(PD, PS, XS, XT)                                            \
+        EMITW(0x65806010 | MXM(REG(PD), REG(XS), REG(XT)) | REG(PS) << 10)  \
+        EMITW(0x65806010 | MXM(REP(PD), RYG(XS), RYG(XT)) | REP(PS) << 10)
+
+#define cneos4ld(PD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65806010 | MXM(REG(PD), REG(XS), TmmM) | REG(PS) << 10)     \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65806010 | MXM(REP(PD), RYG(XS), TmmM) | REP(PS) << 10)
+
+/* clt (D = S < T ? 1 : 0) if (#D != #T), zeroing-masking only */
+
+#define cltosPrr(PD, XS, XT)                                                \
+        EMITW(0x65804010 | MXM(REG(PD), REG(XT), REG(XS)))                  \
+        EMITW(0x65804010 | MXM(REP(PD), RYG(XT), RYG(XS)))
+
+#define cltosPld(PD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65804010 | MXM(REG(PD), TmmM,    REG(XS)))                  \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65804010 | MXM(REP(PD), TmmM,    RYG(XS)))
+
+#define cltos4rr(PD, PS, XS, XT)                                            \
+        EMITW(0x65804010 | MXM(REG(PD), REG(XT), REG(XS)) | REG(PS) << 10)  \
+        EMITW(0x65804010 | MXM(REP(PD), RYG(XT), RYG(XS)) | REP(PS) << 10)
+
+#define cltos4ld(PD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65804010 | MXM(REG(PD), TmmM,    REG(XS)) | REG(PS) << 10)  \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65804010 | MXM(REP(PD), TmmM,    RYG(XS)) | REP(PS) << 10)
+
+/* cle (D = S <= T ? 1 : 0) if (#D != #T), zeroing-masking only */
+
+#define cleosPrr(PD, XS, XT)                                                \
+        EMITW(0x65804000 | MXM(REG(PD), REG(XT), REG(XS)))                  \
+        EMITW(0x65804000 | MXM(REP(PD), RYG(XT), RYG(XS)))
+
+#define cleosPld(PD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65804000 | MXM(REG(PD), TmmM,    REG(XS)))                  \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65804000 | MXM(REP(PD), TmmM,    RYG(XS)))
+
+#define cleos4rr(PD, PS, XS, XT)                                            \
+        EMITW(0x65804000 | MXM(REG(PD), REG(XT), REG(XS)) | REG(PS) << 10)  \
+        EMITW(0x65804000 | MXM(REP(PD), RYG(XT), RYG(XS)) | REP(PS) << 10)
+
+#define cleos4ld(PD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65804000 | MXM(REG(PD), TmmM,    REG(XS)) | REG(PS) << 10)  \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65804000 | MXM(REP(PD), TmmM,    RYG(XS)) | REP(PS) << 10)
+
+/* cgt (D = S > T ? 1 : 0) if (#D != #T), zeroing-masking only */
+
+#define cgtosPrr(PD, XS, XT)                                                \
+        EMITW(0x65804010 | MXM(REG(PD), REG(XS), REG(XT)))                  \
+        EMITW(0x65804010 | MXM(REP(PD), RYG(XS), RYG(XT)))
+
+#define cgtosPld(PD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65804010 | MXM(REG(PD), REG(XS), TmmM))                     \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65804010 | MXM(REP(PD), RYG(XS), TmmM))
+
+#define cgtos4rr(PD, PS, XS, XT)                                            \
+        EMITW(0x65804010 | MXM(REG(PD), REG(XS), REG(XT)) | REG(PS) << 10)  \
+        EMITW(0x65804010 | MXM(REP(PD), RYG(XS), RYG(XT)) | REG(PS) << 10)
+
+#define cgtos4ld(PD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65804010 | MXM(REG(PD), REG(XS), TmmM) | REG(PS) << 10)     \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65804010 | MXM(REP(PD), RYG(XS), TmmM) | REP(PS) << 10)
+
+/* cge (D = S >= T ? 1 : 0) if (#D != #T), zeroing-masking only */
+
+#define cgeosPrr(PD, XS, XT)                                                \
+        EMITW(0x65804000 | MXM(REG(PD), REG(XS), REG(XT)))                  \
+        EMITW(0x65804000 | MXM(REP(PD), RYG(XS), RYG(XT)))
+
+#define cgeosPld(PD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65804000 | MXM(REG(PD), REG(XS), TmmM))                     \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65804000 | MXM(REP(PD), RYG(XS), TmmM))
+
+#define cgeos4rr(PD, PS, XS, XT)                                            \
+        EMITW(0x65804000 | MXM(REG(PD), REG(XS), REG(XT)) | REG(PS) << 10)  \
+        EMITW(0x65804000 | MXM(REP(PD), RYG(XS), RYG(XT)) | REP(PS) << 10)
+
+#define cgeos4ld(PD, PS, XS, MT, DT)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VAL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65804000 | MXM(REG(PD), REG(XS), TmmM) | REG(PS) << 10)     \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
+        EMITW(0x65804000 | MXM(REP(PD), RYG(XS), TmmM) | REP(PS) << 10)
+
+/* mxx (D = mask-from-predicate S), (D = predicate-from-mask S) */
+
+#define mmxox_rr(XD, PS)                                                    \
+        EMITW(0x04A03000 | MXM(REG(XD), REG(XD), REG(XD)))                  \
+        EMITW(0x05A0C000 | MXM(REG(XD), TmmQ,    REG(XD)) | REG(PS) << 10)  \
+        EMITW(0x04A03000 | MXM(RYG(XD), RYG(XD), RYG(XD)))                  \
+        EMITW(0x05A0C000 | MXM(RYG(XD), TmmQ,    RYG(XD)) | REP(PS) << 10)
+
+#define mxmox_rr(PD, XS)                                                    \
+        EMITW(0x2480A000 | MXM(REG(PD), REG(XS), TmmQ))                     \
+        EMITW(0x2480A000 | MXM(REP(PD), RYG(XS), TmmQ))
+
+/* mxj (jump to lb) if (S satisfies mask condition) - NONE, FULL */
+
+#define mxjox_rx(PS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        EMITW(0x25A08000 | MXM(Teax,    REG(PS), 0x00))                     \
+        EMITW(0x25AC8800 | MXM(Teax,    REP(PS), 0x00))                     \
+        xorwxZri(Reax, IM(RT_SIMD_MASK_##mask##32_SVE*RT_SIMD_WIDTH32))     \
+        jezxx_lb(lb)
+
 /******************************************************************************/
 /**********************************   SIMD   **********************************/
 /******************************************************************************/
