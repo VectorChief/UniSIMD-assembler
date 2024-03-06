@@ -1061,6 +1061,9 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VYL(DT), B4(DT), L2(DT)))  \
         EMITW(0x10000089 | MXM(RYG(XD), RYG(XS), TmmM))
 
+        /* div, rem are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 

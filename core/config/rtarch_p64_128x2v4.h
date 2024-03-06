@@ -1147,6 +1147,9 @@
         stack_ld(Recx)                                                      \
         movdx_ld(W(XD), Mebp, inf_SCR01(0))
 
+        /* div, rem are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -1417,6 +1420,9 @@
         movzx_st(Recx,  Mebp, inf_SCR01(0x18))                              \
         stack_ld(Recx)                                                      \
         movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+        /* div, rem are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */

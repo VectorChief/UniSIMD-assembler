@@ -1125,6 +1125,9 @@
 
 #endif /* RT_SIMD_COMPAT_PW8 == 1 */
 
+        /* div, rem are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 

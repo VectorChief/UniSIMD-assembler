@@ -1081,6 +1081,110 @@
         movqx_rr(W(XD), W(XS))                                              \
         mulqx_ld(W(XD), W(MT), W(DT))
 
+/* div (G = G / S), (D = S / T) if (#D != #T) */
+
+#undef  divqx_rr
+#undef  divqx_ld
+#undef  divqx3rr
+#undef  divqx3ld
+
+#define divqx_rr(XG, XS)                                                    \
+        EMITW(0x04D50000 | MXM(REG(XG), REG(XS), 0x00))
+
+#define divqx_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
+        EMITW(0x04D50000 | MXM(REG(XG), TmmM,    0x00))
+
+#define divqx3rr(XD, XS, XT)                                                \
+        movqx_rr(W(XD), W(XS))                                              \
+        divqx_rr(W(XD), W(XT))
+
+#define divqx3ld(XD, XS, MT, DT)                                            \
+        movqx_rr(W(XD), W(XS))                                              \
+        divqx_ld(W(XD), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) */
+
+#undef  divqn_rr
+#undef  divqn_ld
+#undef  divqn3rr
+#undef  divqn3ld
+
+#define divqn_rr(XG, XS)                                                    \
+        EMITW(0x04D40000 | MXM(REG(XG), REG(XS), 0x00))
+
+#define divqn_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
+        EMITW(0x04D40000 | MXM(REG(XG), TmmM,    0x00))
+
+#define divqn3rr(XD, XS, XT)                                                \
+        movqx_rr(W(XD), W(XS))                                              \
+        divqn_rr(W(XD), W(XT))
+
+#define divqn3ld(XD, XS, MT, DT)                                            \
+        movqx_rr(W(XD), W(XS))                                              \
+        divqn_ld(W(XD), W(MT), W(DT))
+
+/* rem (G = G % S), (D = S % T) if (#D != #T) */
+
+#undef  remqx_rr
+#undef  remqx_ld
+#undef  remqx3rr
+#undef  remqx3ld
+
+#define remqx_rr(XG, XS)                                                    \
+        EMITW(0x04603000 | MXM(TmmM,    REG(XG), REG(XG)))                  \
+        EMITW(0x04D50000 | MXM(REG(XG), REG(XS), 0x00))                     \
+        EMITW(0x04C0E000 | MXM(REG(XG), TmmM,    REG(XS)))
+
+#define remqx_ld(XG, MS, DS)                                                \
+        movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
+        EMITW(0x04D50000 | MXM(REG(XG), TmmM,    0x00))                     \
+        EMITW(0x04D00000 | MXM(TmmM, REG(XG),    0x00))                     \
+        movqx_ld(W(XG), Mebp, inf_SCR01(0))                                 \
+        EMITW(0x04E00400 | MXM(REG(XG), REG(XG), TmmM))
+
+#define remqx3rr(XD, XS, XT)                                                \
+        movqx_rr(W(XD), W(XS))                                              \
+        remqx_rr(W(XD), W(XT))
+
+#define remqx3ld(XD, XS, MT, DT)                                            \
+        movqx_rr(W(XD), W(XS))                                              \
+        remqx_ld(W(XD), W(MT), W(DT))
+
+/* rem (G = G % S), (D = S % T) if (#D != #T) */
+
+#undef  remqn_rr
+#undef  remqn_ld
+#undef  remqn3rr
+#undef  remqn3ld
+
+#define remqn_rr(XG, XS)                                                    \
+        EMITW(0x04603000 | MXM(TmmM,    REG(XG), REG(XG)))                  \
+        EMITW(0x04D40000 | MXM(REG(XG), REG(XS), 0x00))                     \
+        EMITW(0x04C0E000 | MXM(REG(XG), TmmM,    REG(XS)))
+
+#define remqn_ld(XG, MS, DS)                                                \
+        movqx_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
+        EMITW(0x04D40000 | MXM(REG(XG), TmmM,    0x00))                     \
+        EMITW(0x04D00000 | MXM(TmmM, REG(XG),    0x00))                     \
+        movqx_ld(W(XG), Mebp, inf_SCR01(0))                                 \
+        EMITW(0x04E00400 | MXM(REG(XG), REG(XG), TmmM))
+
+#define remqn3rr(XD, XS, XT)                                                \
+        movqx_rr(W(XD), W(XS))                                              \
+        remqn_rr(W(XD), W(XT))
+
+#define remqn3ld(XD, XS, MT, DT)                                            \
+        movqx_rr(W(XD), W(XS))                                              \
+        remqn_ld(W(XD), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 

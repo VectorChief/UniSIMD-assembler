@@ -1618,6 +1618,9 @@
         movix_st(W(XD), Mebp, inf_SCR01(0x30))                              \
         movox_ld(W(XD), Mebp, inf_SCR01(0))
 
+        /* div, rem are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -1973,6 +1976,9 @@
     ADR VEX(1,       RXB(MT), REH(XS), 1, 1, 2) EMITB(0x40)                 \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VXL(DT)), EMPTY)
+
+        /* div, rem are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */

@@ -1030,6 +1030,9 @@
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
 
+        /* div, rem are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 

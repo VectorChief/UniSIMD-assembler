@@ -4415,6 +4415,62 @@
 #define mulox3ld(XD, XS, MT, DT)                                            \
         mulcx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* div (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define divox_rr(XG, XS)                                                    \
+        divcx_rr(W(XG), W(XS))
+
+#define divox_ld(XG, MS, DS)                                                \
+        divcx_ld(W(XG), W(MS), W(DS))
+
+#define divox3rr(XD, XS, XT)                                                \
+        divcx3rr(W(XD), W(XS), W(XT))
+
+#define divox3ld(XD, XS, MT, DT)                                            \
+        divcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define divon_rr(XG, XS)                                                    \
+        divcn_rr(W(XG), W(XS))
+
+#define divon_ld(XG, MS, DS)                                                \
+        divcn_ld(W(XG), W(MS), W(DS))
+
+#define divon3rr(XD, XS, XT)                                                \
+        divcn3rr(W(XD), W(XS), W(XT))
+
+#define divon3ld(XD, XS, MT, DT)                                            \
+        divcn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define remox_rr(XG, XS)                                                    \
+        remcx_rr(W(XG), W(XS))
+
+#define remox_ld(XG, MS, DS)                                                \
+        remcx_ld(W(XG), W(MS), W(DS))
+
+#define remox3rr(XD, XS, XT)                                                \
+        remcx3rr(W(XD), W(XS), W(XT))
+
+#define remox3ld(XD, XS, MT, DT)                                            \
+        remcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define remon_rr(XG, XS)                                                    \
+        remcn_rr(W(XG), W(XS))
+
+#define remon_ld(XG, MS, DS)                                                \
+        remcn_ld(W(XG), W(MS), W(DS))
+
+#define remon3rr(XD, XS, XT)                                                \
+        remcn3rr(W(XD), W(XS), W(XT))
+
+#define remon3ld(XD, XS, MT, DT)                                            \
+        remcn3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -5431,6 +5487,62 @@
 
 #define mulox3ld(XD, XS, MT, DT)                                            \
         mulix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define divox_rr(XG, XS)                                                    \
+        divix_rr(W(XG), W(XS))
+
+#define divox_ld(XG, MS, DS)                                                \
+        divix_ld(W(XG), W(MS), W(DS))
+
+#define divox3rr(XD, XS, XT)                                                \
+        divix3rr(W(XD), W(XS), W(XT))
+
+#define divox3ld(XD, XS, MT, DT)                                            \
+        divix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define divon_rr(XG, XS)                                                    \
+        divin_rr(W(XG), W(XS))
+
+#define divon_ld(XG, MS, DS)                                                \
+        divin_ld(W(XG), W(MS), W(DS))
+
+#define divon3rr(XD, XS, XT)                                                \
+        divin3rr(W(XD), W(XS), W(XT))
+
+#define divon3ld(XD, XS, MT, DT)                                            \
+        divin3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define remox_rr(XG, XS)                                                    \
+        remix_rr(W(XG), W(XS))
+
+#define remox_ld(XG, MS, DS)                                                \
+        remix_ld(W(XG), W(MS), W(DS))
+
+#define remox3rr(XD, XS, XT)                                                \
+        remix3rr(W(XD), W(XS), W(XT))
+
+#define remox3ld(XD, XS, MT, DT)                                            \
+        remix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define remon_rr(XG, XS)                                                    \
+        remin_rr(W(XG), W(XS))
+
+#define remon_ld(XG, MS, DS)                                                \
+        remin_ld(W(XG), W(MS), W(DS))
+
+#define remon3rr(XD, XS, XT)                                                \
+        remin3rr(W(XD), W(XS), W(XT))
+
+#define remon3ld(XD, XS, MT, DT)                                            \
+        remin3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -6451,6 +6563,62 @@
 #define mulqx3ld(XD, XS, MT, DT)                                            \
         muldx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* div (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define divqx_rr(XG, XS)                                                    \
+        divdx_rr(W(XG), W(XS))
+
+#define divqx_ld(XG, MS, DS)                                                \
+        divdx_ld(W(XG), W(MS), W(DS))
+
+#define divqx3rr(XD, XS, XT)                                                \
+        divdx3rr(W(XD), W(XS), W(XT))
+
+#define divqx3ld(XD, XS, MT, DT)                                            \
+        divdx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define divqn_rr(XG, XS)                                                    \
+        divdn_rr(W(XG), W(XS))
+
+#define divqn_ld(XG, MS, DS)                                                \
+        divdn_ld(W(XG), W(MS), W(DS))
+
+#define divqn3rr(XD, XS, XT)                                                \
+        divdn3rr(W(XD), W(XS), W(XT))
+
+#define divqn3ld(XD, XS, MT, DT)                                            \
+        divdn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define remqx_rr(XG, XS)                                                    \
+        remdx_rr(W(XG), W(XS))
+
+#define remqx_ld(XG, MS, DS)                                                \
+        remdx_ld(W(XG), W(MS), W(DS))
+
+#define remqx3rr(XD, XS, XT)                                                \
+        remdx3rr(W(XD), W(XS), W(XT))
+
+#define remqx3ld(XD, XS, MT, DT)                                            \
+        remdx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define remqn_rr(XG, XS)                                                    \
+        remdn_rr(W(XG), W(XS))
+
+#define remqn_ld(XG, MS, DS)                                                \
+        remdn_ld(W(XG), W(MS), W(DS))
+
+#define remqn3rr(XD, XS, XT)                                                \
+        remdn3rr(W(XD), W(XS), W(XT))
+
+#define remqn3ld(XD, XS, MT, DT)                                            \
+        remdn3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -7467,6 +7635,62 @@
 
 #define mulqx3ld(XD, XS, MT, DT)                                            \
         muljx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define divqx_rr(XG, XS)                                                    \
+        divjx_rr(W(XG), W(XS))
+
+#define divqx_ld(XG, MS, DS)                                                \
+        divjx_ld(W(XG), W(MS), W(DS))
+
+#define divqx3rr(XD, XS, XT)                                                \
+        divjx3rr(W(XD), W(XS), W(XT))
+
+#define divqx3ld(XD, XS, MT, DT)                                            \
+        divjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define divqn_rr(XG, XS)                                                    \
+        divjn_rr(W(XG), W(XS))
+
+#define divqn_ld(XG, MS, DS)                                                \
+        divjn_ld(W(XG), W(MS), W(DS))
+
+#define divqn3rr(XD, XS, XT)                                                \
+        divjn3rr(W(XD), W(XS), W(XT))
+
+#define divqn3ld(XD, XS, MT, DT)                                            \
+        divjn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define remqx_rr(XG, XS)                                                    \
+        remjx_rr(W(XG), W(XS))
+
+#define remqx_ld(XG, MS, DS)                                                \
+        remjx_ld(W(XG), W(MS), W(DS))
+
+#define remqx3rr(XD, XS, XT)                                                \
+        remjx3rr(W(XD), W(XS), W(XT))
+
+#define remqx3ld(XD, XS, MT, DT)                                            \
+        remjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define remqn_rr(XG, XS)                                                    \
+        remjn_rr(W(XG), W(XS))
+
+#define remqn_ld(XG, MS, DS)                                                \
+        remjn_ld(W(XG), W(MS), W(DS))
+
+#define remqn3rr(XD, XS, XT)                                                \
+        remjn3rr(W(XD), W(XS), W(XT))
+
+#define remqn3ld(XD, XS, MT, DT)                                            \
+        remjn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -8487,6 +8711,62 @@
 #define mulpx3ld(XD, XS, MT, DT)                                            \
         mulox3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* div (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define divpx_rr(XG, XS)                                                    \
+        divox_rr(W(XG), W(XS))
+
+#define divpx_ld(XG, MS, DS)                                                \
+        divox_ld(W(XG), W(MS), W(DS))
+
+#define divpx3rr(XD, XS, XT)                                                \
+        divox3rr(W(XD), W(XS), W(XT))
+
+#define divpx3ld(XD, XS, MT, DT)                                            \
+        divox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define divpn_rr(XG, XS)                                                    \
+        divon_rr(W(XG), W(XS))
+
+#define divpn_ld(XG, MS, DS)                                                \
+        divon_ld(W(XG), W(MS), W(DS))
+
+#define divpn3rr(XD, XS, XT)                                                \
+        divon3rr(W(XD), W(XS), W(XT))
+
+#define divpn3ld(XD, XS, MT, DT)                                            \
+        divon3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define rempx_rr(XG, XS)                                                    \
+        remox_rr(W(XG), W(XS))
+
+#define rempx_ld(XG, MS, DS)                                                \
+        remox_ld(W(XG), W(MS), W(DS))
+
+#define rempx3rr(XD, XS, XT)                                                \
+        remox3rr(W(XD), W(XS), W(XT))
+
+#define rempx3ld(XD, XS, MT, DT)                                            \
+        remox3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define rempn_rr(XG, XS)                                                    \
+        remon_rr(W(XG), W(XS))
+
+#define rempn_ld(XG, MS, DS)                                                \
+        remon_ld(W(XG), W(MS), W(DS))
+
+#define rempn3rr(XD, XS, XT)                                                \
+        remon3rr(W(XD), W(XS), W(XT))
+
+#define rempn3ld(XD, XS, MT, DT)                                            \
+        remon3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -9502,6 +9782,62 @@
 #define mulfx3ld(XD, XS, MT, DT)                                            \
         mulcx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* div (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define divfx_rr(XG, XS)                                                    \
+        divcx_rr(W(XG), W(XS))
+
+#define divfx_ld(XG, MS, DS)                                                \
+        divcx_ld(W(XG), W(MS), W(DS))
+
+#define divfx3rr(XD, XS, XT)                                                \
+        divcx3rr(W(XD), W(XS), W(XT))
+
+#define divfx3ld(XD, XS, MT, DT)                                            \
+        divcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define divfn_rr(XG, XS)                                                    \
+        divcn_rr(W(XG), W(XS))
+
+#define divfn_ld(XG, MS, DS)                                                \
+        divcn_ld(W(XG), W(MS), W(DS))
+
+#define divfn3rr(XD, XS, XT)                                                \
+        divcn3rr(W(XD), W(XS), W(XT))
+
+#define divfn3ld(XD, XS, MT, DT)                                            \
+        divcn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define remfx_rr(XG, XS)                                                    \
+        remcx_rr(W(XG), W(XS))
+
+#define remfx_ld(XG, MS, DS)                                                \
+        remcx_ld(W(XG), W(MS), W(DS))
+
+#define remfx3rr(XD, XS, XT)                                                \
+        remcx3rr(W(XD), W(XS), W(XT))
+
+#define remfx3ld(XD, XS, MT, DT)                                            \
+        remcx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define remfn_rr(XG, XS)                                                    \
+        remcn_rr(W(XG), W(XS))
+
+#define remfn_ld(XG, MS, DS)                                                \
+        remcn_ld(W(XG), W(MS), W(DS))
+
+#define remfn3rr(XD, XS, XT)                                                \
+        remcn3rr(W(XD), W(XS), W(XT))
+
+#define remfn3ld(XD, XS, MT, DT)                                            \
+        remcn3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -10516,6 +10852,62 @@
 
 #define mullx3ld(XD, XS, MT, DT)                                            \
         mulix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define divlx_rr(XG, XS)                                                    \
+        divix_rr(W(XG), W(XS))
+
+#define divlx_ld(XG, MS, DS)                                                \
+        divix_ld(W(XG), W(MS), W(DS))
+
+#define divlx3rr(XD, XS, XT)                                                \
+        divix3rr(W(XD), W(XS), W(XT))
+
+#define divlx3ld(XD, XS, MT, DT)                                            \
+        divix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define divln_rr(XG, XS)                                                    \
+        divin_rr(W(XG), W(XS))
+
+#define divln_ld(XG, MS, DS)                                                \
+        divin_ld(W(XG), W(MS), W(DS))
+
+#define divln3rr(XD, XS, XT)                                                \
+        divin3rr(W(XD), W(XS), W(XT))
+
+#define divln3ld(XD, XS, MT, DT)                                            \
+        divin3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define remlx_rr(XG, XS)                                                    \
+        remix_rr(W(XG), W(XS))
+
+#define remlx_ld(XG, MS, DS)                                                \
+        remix_ld(W(XG), W(MS), W(DS))
+
+#define remlx3rr(XD, XS, XT)                                                \
+        remix3rr(W(XD), W(XS), W(XT))
+
+#define remlx3ld(XD, XS, MT, DT)                                            \
+        remix3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define remln_rr(XG, XS)                                                    \
+        remin_rr(W(XG), W(XS))
+
+#define remln_ld(XG, MS, DS)                                                \
+        remin_ld(W(XG), W(MS), W(DS))
+
+#define remln3rr(XD, XS, XT)                                                \
+        remin3rr(W(XD), W(XS), W(XT))
+
+#define remln3ld(XD, XS, MT, DT)                                            \
+        remin3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -11785,6 +12177,62 @@
 #define mulpx3ld(XD, XS, MT, DT)                                            \
         mulqx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* div (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define divpx_rr(XG, XS)                                                    \
+        divqx_rr(W(XG), W(XS))
+
+#define divpx_ld(XG, MS, DS)                                                \
+        divqx_ld(W(XG), W(MS), W(DS))
+
+#define divpx3rr(XD, XS, XT)                                                \
+        divqx3rr(W(XD), W(XS), W(XT))
+
+#define divpx3ld(XD, XS, MT, DT)                                            \
+        divqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define divpn_rr(XG, XS)                                                    \
+        divqn_rr(W(XG), W(XS))
+
+#define divpn_ld(XG, MS, DS)                                                \
+        divqn_ld(W(XG), W(MS), W(DS))
+
+#define divpn3rr(XD, XS, XT)                                                \
+        divqn3rr(W(XD), W(XS), W(XT))
+
+#define divpn3ld(XD, XS, MT, DT)                                            \
+        divqn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define rempx_rr(XG, XS)                                                    \
+        remqx_rr(W(XG), W(XS))
+
+#define rempx_ld(XG, MS, DS)                                                \
+        remqx_ld(W(XG), W(MS), W(DS))
+
+#define rempx3rr(XD, XS, XT)                                                \
+        remqx3rr(W(XD), W(XS), W(XT))
+
+#define rempx3ld(XD, XS, MT, DT)                                            \
+        remqx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define rempn_rr(XG, XS)                                                    \
+        remqn_rr(W(XG), W(XS))
+
+#define rempn_ld(XG, MS, DS)                                                \
+        remqn_ld(W(XG), W(MS), W(DS))
+
+#define rempn3rr(XD, XS, XT)                                                \
+        remqn3rr(W(XD), W(XS), W(XT))
+
+#define rempn3ld(XD, XS, MT, DT)                                            \
+        remqn3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -12800,6 +13248,62 @@
 #define mulfx3ld(XD, XS, MT, DT)                                            \
         muldx3ld(W(XD), W(XS), W(MT), W(DT))
 
+/* div (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define divfx_rr(XG, XS)                                                    \
+        divdx_rr(W(XG), W(XS))
+
+#define divfx_ld(XG, MS, DS)                                                \
+        divdx_ld(W(XG), W(MS), W(DS))
+
+#define divfx3rr(XD, XS, XT)                                                \
+        divdx3rr(W(XD), W(XS), W(XT))
+
+#define divfx3ld(XD, XS, MT, DT)                                            \
+        divdx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define divfn_rr(XG, XS)                                                    \
+        divdn_rr(W(XG), W(XS))
+
+#define divfn_ld(XG, MS, DS)                                                \
+        divdn_ld(W(XG), W(MS), W(DS))
+
+#define divfn3rr(XD, XS, XT)                                                \
+        divdn3rr(W(XD), W(XS), W(XT))
+
+#define divfn3ld(XD, XS, MT, DT)                                            \
+        divdn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define remfx_rr(XG, XS)                                                    \
+        remdx_rr(W(XG), W(XS))
+
+#define remfx_ld(XG, MS, DS)                                                \
+        remdx_ld(W(XG), W(MS), W(DS))
+
+#define remfx3rr(XD, XS, XT)                                                \
+        remdx3rr(W(XD), W(XS), W(XT))
+
+#define remfx3ld(XD, XS, MT, DT)                                            \
+        remdx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define remfn_rr(XG, XS)                                                    \
+        remdn_rr(W(XG), W(XS))
+
+#define remfn_ld(XG, MS, DS)                                                \
+        remdn_ld(W(XG), W(MS), W(DS))
+
+#define remfn3rr(XD, XS, XT)                                                \
+        remdn3rr(W(XD), W(XS), W(XT))
+
+#define remfn3ld(XD, XS, MT, DT)                                            \
+        remdn3ld(W(XD), W(XS), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -13814,6 +14318,62 @@
 
 #define mullx3ld(XD, XS, MT, DT)                                            \
         muljx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define divlx_rr(XG, XS)                                                    \
+        divjx_rr(W(XG), W(XS))
+
+#define divlx_ld(XG, MS, DS)                                                \
+        divjx_ld(W(XG), W(MS), W(DS))
+
+#define divlx3rr(XD, XS, XT)                                                \
+        divjx3rr(W(XD), W(XS), W(XT))
+
+#define divlx3ld(XD, XS, MT, DT)                                            \
+        divjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define divln_rr(XG, XS)                                                    \
+        divjn_rr(W(XG), W(XS))
+
+#define divln_ld(XG, MS, DS)                                                \
+        divjn_ld(W(XG), W(MS), W(DS))
+
+#define divln3rr(XD, XS, XT)                                                \
+        divjn3rr(W(XD), W(XS), W(XT))
+
+#define divln3ld(XD, XS, MT, DT)                                            \
+        divjn3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - unsigned */
+
+#define remlx_rr(XG, XS)                                                    \
+        remjx_rr(W(XG), W(XS))
+
+#define remlx_ld(XG, MS, DS)                                                \
+        remjx_ld(W(XG), W(MS), W(DS))
+
+#define remlx3rr(XD, XS, XT)                                                \
+        remjx3rr(W(XD), W(XS), W(XT))
+
+#define remlx3ld(XD, XS, MT, DT)                                            \
+        remjx3ld(W(XD), W(XS), W(MT), W(DT))
+
+/* rem (G = G / S), (D = S / T) if (#D != #T) - signed */
+
+#define remln_rr(XG, XS)                                                    \
+        remjn_rr(W(XG), W(XS))
+
+#define remln_ld(XG, MS, DS)                                                \
+        remjn_ld(W(XG), W(MS), W(DS))
+
+#define remln3rr(XD, XS, XT)                                                \
+        remjn3rr(W(XD), W(XS), W(XT))
+
+#define remln3ld(XD, XS, MT, DT)                                            \
+        remjn3ld(W(XD), W(XS), W(MT), W(DT))
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */

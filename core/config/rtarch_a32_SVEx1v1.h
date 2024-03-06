@@ -1103,6 +1103,110 @@
         movox_rr(W(XD), W(XS))                                              \
         mulox_ld(W(XD), W(MT), W(DT))
 
+/* div (G = G / S), (D = S / T) if (#D != #T) */
+
+#undef  divox_rr
+#undef  divox_ld
+#undef  divox3rr
+#undef  divox3ld
+
+#define divox_rr(XG, XS)                                                    \
+        EMITW(0x04950000 | MXM(REG(XG), REG(XS), 0x00))
+
+#define divox_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
+        EMITW(0x04950000 | MXM(REG(XG), TmmM,    0x00))
+
+#define divox3rr(XD, XS, XT)                                                \
+        movox_rr(W(XD), W(XS))                                              \
+        divox_rr(W(XD), W(XT))
+
+#define divox3ld(XD, XS, MT, DT)                                            \
+        movox_rr(W(XD), W(XS))                                              \
+        divox_ld(W(XD), W(MT), W(DT))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) */
+
+#undef  divon_rr
+#undef  divon_ld
+#undef  divon3rr
+#undef  divon3ld
+
+#define divon_rr(XG, XS)                                                    \
+        EMITW(0x04940000 | MXM(REG(XG), REG(XS), 0x00))
+
+#define divon_ld(XG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
+        EMITW(0x04940000 | MXM(REG(XG), TmmM,    0x00))
+
+#define divon3rr(XD, XS, XT)                                                \
+        movox_rr(W(XD), W(XS))                                              \
+        divon_rr(W(XD), W(XT))
+
+#define divon3ld(XD, XS, MT, DT)                                            \
+        movox_rr(W(XD), W(XS))                                              \
+        divon_ld(W(XD), W(MT), W(DT))
+
+/* rem (G = G % S), (D = S % T) if (#D != #T) */
+
+#undef  remox_rr
+#undef  remox_ld
+#undef  remox3rr
+#undef  remox3ld
+
+#define remox_rr(XG, XS)                                                    \
+        EMITW(0x04603000 | MXM(TmmM,    REG(XG), REG(XG)))                  \
+        EMITW(0x04950000 | MXM(REG(XG), REG(XS), 0x00))                     \
+        EMITW(0x0480E000 | MXM(REG(XG), TmmM,    REG(XS)))
+
+#define remox_ld(XG, MS, DS)                                                \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
+        EMITW(0x04950000 | MXM(REG(XG), TmmM,    0x00))                     \
+        EMITW(0x04900000 | MXM(TmmM, REG(XG),    0x00))                     \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))                                 \
+        EMITW(0x04A00400 | MXM(REG(XG), REG(XG), TmmM))
+
+#define remox3rr(XD, XS, XT)                                                \
+        movox_rr(W(XD), W(XS))                                              \
+        remox_rr(W(XD), W(XT))
+
+#define remox3ld(XD, XS, MT, DT)                                            \
+        movox_rr(W(XD), W(XS))                                              \
+        remox_ld(W(XD), W(MT), W(DT))
+
+/* rem (G = G % S), (D = S % T) if (#D != #T) */
+
+#undef  remon_rr
+#undef  remon_ld
+#undef  remon3rr
+#undef  remon3ld
+
+#define remon_rr(XG, XS)                                                    \
+        EMITW(0x04603000 | MXM(TmmM,    REG(XG), REG(XG)))                  \
+        EMITW(0x04940000 | MXM(REG(XG), REG(XS), 0x00))                     \
+        EMITW(0x0480E000 | MXM(REG(XG), TmmM,    REG(XS)))
+
+#define remon_ld(XG, MS, DS)                                                \
+        movox_st(W(XG), Mebp, inf_SCR01(0))                                 \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), F1(DS)))  \
+        EMITW(0x04940000 | MXM(REG(XG), TmmM,    0x00))                     \
+        EMITW(0x04900000 | MXM(TmmM, REG(XG),    0x00))                     \
+        movox_ld(W(XG), Mebp, inf_SCR01(0))                                 \
+        EMITW(0x04A00400 | MXM(REG(XG), REG(XG), TmmM))
+
+#define remon3rr(XD, XS, XT)                                                \
+        movox_rr(W(XD), W(XS))                                              \
+        remon_rr(W(XD), W(XT))
+
+#define remon3ld(XD, XS, MT, DT)                                            \
+        movox_rr(W(XD), W(XS))                                              \
+        remon_ld(W(XD), W(MT), W(DT))
+
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 

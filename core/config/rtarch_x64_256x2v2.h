@@ -1968,6 +1968,9 @@
         stack_ld(Recx)                                                      \
         movqx_ld(W(XD), Mebp, inf_SCR01(0))
 
+        /* div, rem are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
 /* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
  * for maximum compatibility: shift count must be modulo elem-size */
 

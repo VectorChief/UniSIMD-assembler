@@ -1091,6 +1091,94 @@
     SHF(EMITW(0x7AB10002 | MXM(TmmM,    TmmM,    0x00)))                    \
         EMITW(0x78400012 | MXM(REG(XD), REG(XS), TmmM))
 
+/* div (G = G / S), (D = S / T) if (#D != #T) */
+
+#undef  divix_rr
+#undef  divix_ld
+#undef  divix3rr
+#undef  divix3ld
+
+#define divix_rr(XG, XS)                                                    \
+        divix3rr(W(XG), W(XG), W(XS))
+
+#define divix_ld(XG, MS, DS)                                                \
+        divix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divix3rr(XD, XS, XT)                                                \
+        EMITW(0x7AC00012 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define divix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x78000022 | MFM(TmmM,    MOD(MT), VAL(DT), B4(DT), F2(DT)))  \
+    SHF(EMITW(0x7AB10002 | MXM(TmmM,    TmmM,    0x00)))                    \
+        EMITW(0x7AC00012 | MXM(REG(XD), REG(XS), TmmM))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) */
+
+#undef  divin_rr
+#undef  divin_ld
+#undef  divin3rr
+#undef  divin3ld
+
+#define divin_rr(XG, XS)                                                    \
+        divin3rr(W(XG), W(XG), W(XS))
+
+#define divin_ld(XG, MS, DS)                                                \
+        divin3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divin3rr(XD, XS, XT)                                                \
+        EMITW(0x7A400012 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define divin3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x78000022 | MFM(TmmM,    MOD(MT), VAL(DT), B4(DT), F2(DT)))  \
+    SHF(EMITW(0x7AB10002 | MXM(TmmM,    TmmM,    0x00)))                    \
+        EMITW(0x7A400012 | MXM(REG(XD), REG(XS), TmmM))
+
+/* rem (G = G % S), (D = S % T) if (#D != #T) */
+
+#undef  remix_rr
+#undef  remix_ld
+#undef  remix3rr
+#undef  remix3ld
+
+#define remix_rr(XG, XS)                                                    \
+        remix3rr(W(XG), W(XG), W(XS))
+
+#define remix_ld(XG, MS, DS)                                                \
+        remix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remix3rr(XD, XS, XT)                                                \
+        EMITW(0x7BC00012 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define remix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x78000022 | MFM(TmmM,    MOD(MT), VAL(DT), B4(DT), F2(DT)))  \
+    SHF(EMITW(0x7AB10002 | MXM(TmmM,    TmmM,    0x00)))                    \
+        EMITW(0x7BC00012 | MXM(REG(XD), REG(XS), TmmM))
+
+/* rem (G = G % S), (D = S % T) if (#D != #T) */
+
+#undef  remin_rr
+#undef  remin_ld
+#undef  remin3rr
+#undef  remin3ld
+
+#define remin_rr(XG, XS)                                                    \
+        remin3rr(W(XG), W(XG), W(XS))
+
+#define remin_ld(XG, MS, DS)                                                \
+        remin3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remin3rr(XD, XS, XT)                                                \
+        EMITW(0x7B400012 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define remin3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x78000022 | MFM(TmmM,    MOD(MT), VAL(DT), B4(DT), F2(DT)))  \
+    SHF(EMITW(0x7AB10002 | MXM(TmmM,    TmmM,    0x00)))                    \
+        EMITW(0x7B400012 | MXM(REG(XD), REG(XS), TmmM))
+
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 

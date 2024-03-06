@@ -363,6 +363,90 @@
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), P2(DT)))  \
         EMITW(0x78200012 | MXM(REG(XD), REG(XS), TmmM))
 
+/* div (G = G / S), (D = S / T) if (#D != #T) */
+
+#undef  divgx_rr
+#undef  divgx_ld
+#undef  divgx3rr
+#undef  divgx3ld
+
+#define divgx_rr(XG, XS)                                                    \
+        divgx3rr(W(XG), W(XG), W(XS))
+
+#define divgx_ld(XG, MS, DS)                                                \
+        divgx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divgx3rr(XD, XS, XT)                                                \
+        EMITW(0x7AA00012 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define divgx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), P2(DT)))  \
+        EMITW(0x7AA00012 | MXM(REG(XD), REG(XS), TmmM))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) */
+
+#undef  divgn_rr
+#undef  divgn_ld
+#undef  divgn3rr
+#undef  divgn3ld
+
+#define divgn_rr(XG, XS)                                                    \
+        divgn3rr(W(XG), W(XG), W(XS))
+
+#define divgn_ld(XG, MS, DS)                                                \
+        divgn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divgn3rr(XD, XS, XT)                                                \
+        EMITW(0x7A200012 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define divgn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), P2(DT)))  \
+        EMITW(0x7A200012 | MXM(REG(XD), REG(XS), TmmM))
+
+/* rem (G = G % S), (D = S % T) if (#D != #T) */
+
+#undef  remgx_rr
+#undef  remgx_ld
+#undef  remgx3rr
+#undef  remgx3ld
+
+#define remgx_rr(XG, XS)                                                    \
+        remgx3rr(W(XG), W(XG), W(XS))
+
+#define remgx_ld(XG, MS, DS)                                                \
+        remgx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remgx3rr(XD, XS, XT)                                                \
+        EMITW(0x7BA00012 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define remgx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), P2(DT)))  \
+        EMITW(0x7BA00012 | MXM(REG(XD), REG(XS), TmmM))
+
+/* rem (G = G % S), (D = S % T) if (#D != #T) */
+
+#undef  remgn_rr
+#undef  remgn_ld
+#undef  remgn3rr
+#undef  remgn3ld
+
+#define remgn_rr(XG, XS)                                                    \
+        remgn3rr(W(XG), W(XG), W(XS))
+
+#define remgn_ld(XG, MS, DS)                                                \
+        remgn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remgn3rr(XD, XS, XT)                                                \
+        EMITW(0x7B200012 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define remgn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), P2(DT)))  \
+        EMITW(0x7B200012 | MXM(REG(XD), REG(XS), TmmM))
+
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */
 
@@ -849,6 +933,90 @@
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), P2(DT)))  \
         EMITW(0x78000012 | MXM(REG(XD), REG(XS), TmmM))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) */
+
+#undef  divgb_rr
+#undef  divgb_ld
+#undef  divgb3rr
+#undef  divgb3ld
+
+#define divgb_rr(XG, XS)                                                    \
+        divgb3rr(W(XG), W(XG), W(XS))
+
+#define divgb_ld(XG, MS, DS)                                                \
+        divgb3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divgb3rr(XD, XS, XT)                                                \
+        EMITW(0x7A800012 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define divgb3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), P2(DT)))  \
+        EMITW(0x7A800012 | MXM(REG(XD), REG(XS), TmmM))
+
+/* div (G = G / S), (D = S / T) if (#D != #T) */
+
+#undef  divgc_rr
+#undef  divgc_ld
+#undef  divgc3rr
+#undef  divgc3ld
+
+#define divgc_rr(XG, XS)                                                    \
+        divgc3rr(W(XG), W(XG), W(XS))
+
+#define divgc_ld(XG, MS, DS)                                                \
+        divgc3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divgc3rr(XD, XS, XT)                                                \
+        EMITW(0x7A000012 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define divgc3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), P2(DT)))  \
+        EMITW(0x7A000012 | MXM(REG(XD), REG(XS), TmmM))
+
+/* rem (G = G % S), (D = S % T) if (#D != #T) */
+
+#undef  remgb_rr
+#undef  remgb_ld
+#undef  remgb3rr
+#undef  remgb3ld
+
+#define remgb_rr(XG, XS)                                                    \
+        remgb3rr(W(XG), W(XG), W(XS))
+
+#define remgb_ld(XG, MS, DS)                                                \
+        remgb3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remgb3rr(XD, XS, XT)                                                \
+        EMITW(0x7B800012 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define remgb3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), P2(DT)))  \
+        EMITW(0x7B800012 | MXM(REG(XD), REG(XS), TmmM))
+
+/* rem (G = G % S), (D = S % T) if (#D != #T) */
+
+#undef  remgc_rr
+#undef  remgc_ld
+#undef  remgc3rr
+#undef  remgc3ld
+
+#define remgc_rr(XG, XS)                                                    \
+        remgc3rr(W(XG), W(XG), W(XS))
+
+#define remgc_ld(XG, MS, DS)                                                \
+        remgc3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remgc3rr(XD, XS, XT)                                                \
+        EMITW(0x7B000012 | MXM(REG(XD), REG(XS), REG(XT)))
+
+#define remgc3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMITW(0x78000023 | MPM(TmmM,    MOD(MT), VAL(DT), B4(DT), P2(DT)))  \
+        EMITW(0x7B000012 | MXM(REG(XD), REG(XS), TmmM))
 
 /* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
  * for maximum compatibility: shift count must be modulo elem-size */

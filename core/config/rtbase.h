@@ -63,12 +63,22 @@
 /**** 128-bit **** (cbr/cbe/cbs/...) with fixed-64-bit element ****************/
 
 /**** var-len **** (horizontal SIMD) with fixed-32-bit element ****************/
+/**** 2K8-bit **** (vertical-int-div/rem SIMD) with fixed-32-bit element ******/
+/**** 1K4-bit **** (vertical-int-div/rem SIMD) with fixed-32-bit element ******/
+/**** 512-bit **** (vertical-int-div/rem SIMD) with fixed-32-bit element ******/
 /**** 256-bit **** (horizontal SIMD) with fixed-32-bit element ****************/
+/**** 256-bit **** (vertical-int-div/rem SIMD) with fixed-32-bit element ******/
 /**** 128-bit **** (horizontal SIMD) with fixed-32-bit element ****************/
+/**** 128-bit **** (vertical-int-div/rem SIMD) with fixed-32-bit element ******/
 
 /**** var-len **** (horizontal SIMD) with fixed-64-bit element ****************/
+/**** 2K8-bit **** (vertical-int-div/rem SIMD) with fixed-64-bit element ******/
+/**** 1K4-bit **** (vertical-int-div/rem SIMD) with fixed-64-bit element ******/
+/**** 512-bit **** (vertical-int-div/rem SIMD) with fixed-64-bit element ******/
 /**** 256-bit **** (horizontal SIMD) with fixed-64-bit element ****************/
+/**** 256-bit **** (vertical-int-div/rem SIMD) with fixed-64-bit element ******/
 /**** 128-bit **** (horizontal SIMD) with fixed-64-bit element ****************/
+/**** 128-bit **** (vertical-int-div/rem SIMD) with fixed-64-bit element ******/
 
 /************************   COMMON BASE INSTRUCTIONS   ************************/
 
@@ -2749,6 +2759,1388 @@ rt_si32 from_mask(rt_si32 mask)
         maxrs_ld(W(XD), Mebp, inf_SCR02(0xFC))                              \
         movrs_st(W(XD), Mebp, inf_SCR01(0xFC))
 
+/**** 2K8-bit **** (vertical-int-div/rem SIMD) with fixed-32-bit element ******/
+
+#define divox_rr(XG, XS) /* vertical integer div, unsigned */               \
+        divox3rr(W(XG), W(XG), W(XS))
+
+#define divox_ld(XG, MS, DS)                                                \
+        divox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divox3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divox_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divox3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divox_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divox_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x10))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x14))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x14))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x14))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x18))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x1C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x1C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x20))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x24))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x24))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x24))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x28))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x2C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x2C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x2C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x30))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x34))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x34))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x34))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x38))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x3C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x3C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x3C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x40))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x40))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x40))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x44))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x44))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x44))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x48))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x48))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x48))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x4C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x4C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x4C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x50))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x50))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x50))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x54))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x54))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x54))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x58))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x58))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x58))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x5C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x5C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x5C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x60))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x60))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x60))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x64))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x64))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x64))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x68))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x68))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x68))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x6C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x6C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x6C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x70))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x70))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x70))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x74))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x74))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x74))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x78))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x78))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x78))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x7C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x7C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x7C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x80))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x80))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x80))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x84))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x84))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x84))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x88))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x88))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x88))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x8C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x8C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x8C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x90))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x90))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x90))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x94))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x94))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x94))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x98))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x98))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x98))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x9C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x9C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x9C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xA0))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xA0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xA0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xA4))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xA4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xA4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xA8))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xA8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xA8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xAC))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xAC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xAC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xB0))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xB0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xB0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xB4))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xB4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xB4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xB8))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xB8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xB8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xBC))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xBC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xBC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xC0))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xC0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xC0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xC4))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xC4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xC4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xC8))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xC8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xC8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xCC))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xCC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xCC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xD0))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xD0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xD0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xD4))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xD4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xD4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xD8))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xD8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xD8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xDC))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xDC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xDC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xE0))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xE0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xE0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xE4))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xE4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xE4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xE8))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xE8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xE8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xEC))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xEC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xEC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xF0))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xF0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xF0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xF4))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xF4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xF4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xF8))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xF8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xF8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xFC))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xFC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xFC))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define divon_rr(XG, XS) /* vertical integer div, signed */                 \
+        divon3rr(W(XG), W(XG), W(XS))
+
+#define divon_ld(XG, MS, DS)                                                \
+        divon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divon3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divon_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divon3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divon_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divon_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x10))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x14))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x14))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x14))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x18))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x1C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x1C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x20))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x24))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x24))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x24))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x28))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x2C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x2C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x2C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x30))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x34))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x34))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x34))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x38))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x3C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x3C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x3C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x40))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x40))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x40))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x44))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x44))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x44))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x48))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x48))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x48))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x4C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x4C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x4C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x50))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x50))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x50))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x54))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x54))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x54))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x58))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x58))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x58))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x5C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x5C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x5C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x60))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x60))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x60))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x64))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x64))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x64))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x68))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x68))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x68))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x6C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x6C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x6C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x70))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x70))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x70))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x74))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x74))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x74))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x78))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x78))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x78))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x7C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x7C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x7C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x80))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x80))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x80))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x84))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x84))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x84))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x88))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x88))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x88))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x8C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x8C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x8C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x90))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x90))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x90))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x94))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x94))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x94))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x98))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x98))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x98))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x9C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x9C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x9C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xA0))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xA0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xA0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xA4))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xA4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xA4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xA8))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xA8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xA8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xAC))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xAC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xAC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xB0))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xB0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xB0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xB4))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xB4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xB4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xB8))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xB8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xB8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xBC))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xBC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xBC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xC0))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xC0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xC0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xC4))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xC4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xC4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xC8))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xC8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xC8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xCC))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xCC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xCC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xD0))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xD0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xD0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xD4))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xD4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xD4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xD8))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xD8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xD8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xDC))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xDC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xDC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xE0))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xE0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xE0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xE4))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xE4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xE4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xE8))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xE8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xE8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xEC))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xEC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xEC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xF0))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xF0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xF0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xF4))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xF4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xF4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xF8))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xF8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xF8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xFC))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xFC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xFC))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remox_rr(XG, XS) /* vertical integer rem, unsigned */               \
+        remox3rr(W(XG), W(XG), W(XS))
+
+#define remox_ld(XG, MS, DS)                                                \
+        remox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remox3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remox_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remox3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remox_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remox_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x00))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x04))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x08))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x0C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x10))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x10))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x14))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x14))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x14))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x14))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x18))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x18))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x1C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x1C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x1C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x20))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x20))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x24))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x24))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x24))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x24))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x28))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x28))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x2C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x2C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x2C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x2C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x30))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x30))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x34))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x34))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x34))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x34))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x38))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x38))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x3C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x3C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x3C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x3C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x40))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x40))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x40))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x40))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x44))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x44))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x44))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x44))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x48))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x48))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x48))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x48))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x4C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x4C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x4C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x4C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x50))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x50))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x50))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x50))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x54))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x54))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x54))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x54))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x58))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x58))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x58))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x58))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x5C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x5C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x5C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x5C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x60))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x60))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x60))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x60))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x64))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x64))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x64))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x64))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x68))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x68))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x68))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x68))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x6C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x6C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x6C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x6C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x70))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x70))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x70))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x70))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x74))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x74))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x74))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x74))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x78))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x78))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x78))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x78))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x7C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x7C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x7C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x7C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x80))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x80))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x80))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x80))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x84))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x84))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x84))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x84))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x88))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x88))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x88))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x88))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x8C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x8C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x8C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x8C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x90))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x90))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x90))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x90))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x94))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x94))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x94))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x94))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x98))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x98))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x98))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x98))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x9C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x9C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x9C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x9C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xA0))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xA0))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xA0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xA0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xA4))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xA4))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xA4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xA4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xA8))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xA8))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xA8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xA8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xAC))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xAC))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xAC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xAC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xB0))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xB0))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xB0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xB0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xB4))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xB4))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xB4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xB4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xB8))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xB8))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xB8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xB8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xBC))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xBC))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xBC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xBC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xC0))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xC0))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xC0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xC0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xC4))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xC4))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xC4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xC4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xC8))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xC8))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xC8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xC8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xCC))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xCC))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xCC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xCC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xD0))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xD0))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xD0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xD0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xD4))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xD4))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xD4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xD4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xD8))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xD8))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xD8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xD8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xDC))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xDC))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xDC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xDC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xE0))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xE0))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xE0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xE0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xE4))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xE4))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xE4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xE4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xE8))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xE8))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xE8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xE8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xEC))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xEC))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xEC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xEC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xF0))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xF0))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xF0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xF0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xF4))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xF4))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xF4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xF4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xF8))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xF8))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xF8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xF8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xFC))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0xFC))                                     \
+        remwx_xm(Mebp, inf_SCR02(0xFC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xFC))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remon_rr(XG, XS) /* vertical integer rem, signed */                 \
+        remon3rr(W(XG), W(XG), W(XS))
+
+#define remon_ld(XG, MS, DS)                                                \
+        remon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remon3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remon_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remon3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remon_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remon_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x00))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x04))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x08))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x0C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x10))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x10))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x14))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x14))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x14))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x14))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x18))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x18))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x1C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x1C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x1C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x20))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x20))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x24))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x24))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x24))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x24))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x28))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x28))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x2C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x2C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x2C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x2C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x30))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x30))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x34))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x34))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x34))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x34))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x38))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x38))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x3C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x3C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x3C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x3C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x40))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x40))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x40))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x40))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x44))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x44))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x44))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x44))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x48))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x48))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x48))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x48))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x4C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x4C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x4C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x4C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x50))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x50))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x50))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x50))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x54))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x54))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x54))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x54))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x58))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x58))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x58))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x58))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x5C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x5C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x5C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x5C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x60))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x60))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x60))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x60))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x64))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x64))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x64))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x64))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x68))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x68))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x68))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x68))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x6C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x6C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x6C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x6C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x70))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x70))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x70))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x70))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x74))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x74))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x74))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x74))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x78))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x78))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x78))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x78))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x7C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x7C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x7C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x7C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x80))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x80))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x80))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x80))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x84))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x84))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x84))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x84))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x88))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x88))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x88))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x88))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x8C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x8C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x8C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x8C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x90))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x90))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x90))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x90))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x94))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x94))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x94))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x94))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x98))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x98))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x98))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x98))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x9C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x9C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x9C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x9C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xA0))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xA0))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xA0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xA0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xA4))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xA4))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xA4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xA4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xA8))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xA8))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xA8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xA8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xAC))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xAC))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xAC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xAC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xB0))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xB0))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xB0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xB0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xB4))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xB4))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xB4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xB4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xB8))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xB8))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xB8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xB8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xBC))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xBC))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xBC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xBC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xC0))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xC0))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xC0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xC0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xC4))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xC4))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xC4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xC4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xC8))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xC8))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xC8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xC8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xCC))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xCC))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xCC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xCC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xD0))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xD0))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xD0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xD0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xD4))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xD4))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xD4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xD4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xD8))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xD8))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xD8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xD8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xDC))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xDC))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xDC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xDC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xE0))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xE0))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xE0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xE0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xE4))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xE4))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xE4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xE4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xE8))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xE8))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xE8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xE8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xEC))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xEC))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xEC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xEC))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xF0))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xF0))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xF0))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xF0))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xF4))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xF4))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xF4))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xF4))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xF8))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xF8))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xF8))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xF8))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0xFC))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0xFC))                                     \
+        remwn_xm(Mebp, inf_SCR02(0xFC))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0xFC))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
 #elif (RT_SIMD == 1024)
 
 #define adpos_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
@@ -3295,6 +4687,748 @@ rt_si32 from_mask(rt_si32 mask)
         maxrs_ld(W(XD), Mebp, inf_SCR02(0x7C))                              \
         movrs_st(W(XD), Mebp, inf_SCR01(0x7C))
 
+/**** 1K4-bit **** (vertical-int-div/rem SIMD) with fixed-32-bit element ******/
+
+#define divox_rr(XG, XS) /* vertical integer div, unsigned */               \
+        divox3rr(W(XG), W(XG), W(XS))
+
+#define divox_ld(XG, MS, DS)                                                \
+        divox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divox3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divox_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divox3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divox_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divox_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x10))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x14))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x14))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x14))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x18))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x1C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x1C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x20))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x24))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x24))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x24))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x28))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x2C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x2C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x2C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x30))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x34))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x34))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x34))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x38))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x3C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x3C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x3C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x40))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x40))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x40))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x44))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x44))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x44))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x48))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x48))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x48))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x4C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x4C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x4C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x50))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x50))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x50))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x54))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x54))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x54))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x58))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x58))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x58))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x5C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x5C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x5C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x60))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x60))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x60))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x64))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x64))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x64))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x68))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x68))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x68))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x6C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x6C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x6C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x70))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x70))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x70))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x74))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x74))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x74))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x78))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x78))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x78))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x7C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x7C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x7C))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define divon_rr(XG, XS) /* vertical integer div, signed */                 \
+        divon3rr(W(XG), W(XG), W(XS))
+
+#define divon_ld(XG, MS, DS)                                                \
+        divon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divon3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divon_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divon3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divon_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divon_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x10))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x14))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x14))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x14))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x18))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x1C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x1C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x20))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x24))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x24))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x24))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x28))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x2C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x2C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x2C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x30))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x34))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x34))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x34))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x38))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x3C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x3C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x3C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x40))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x40))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x40))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x44))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x44))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x44))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x48))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x48))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x48))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x4C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x4C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x4C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x50))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x50))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x50))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x54))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x54))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x54))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x58))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x58))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x58))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x5C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x5C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x5C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x60))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x60))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x60))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x64))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x64))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x64))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x68))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x68))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x68))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x6C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x6C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x6C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x70))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x70))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x70))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x74))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x74))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x74))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x78))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x78))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x78))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x7C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x7C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x7C))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remox_rr(XG, XS) /* vertical integer rem, unsigned */               \
+        remox3rr(W(XG), W(XG), W(XS))
+
+#define remox_ld(XG, MS, DS)                                                \
+        remox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remox3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remox_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remox3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remox_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remox_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x00))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x04))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x08))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x0C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x10))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x10))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x14))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x14))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x14))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x14))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x18))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x18))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x1C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x1C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x1C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x20))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x20))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x24))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x24))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x24))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x24))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x28))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x28))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x2C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x2C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x2C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x2C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x30))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x30))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x34))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x34))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x34))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x34))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x38))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x38))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x3C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x3C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x3C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x3C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x40))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x40))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x40))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x40))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x44))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x44))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x44))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x44))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x48))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x48))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x48))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x48))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x4C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x4C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x4C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x4C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x50))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x50))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x50))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x50))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x54))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x54))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x54))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x54))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x58))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x58))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x58))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x58))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x5C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x5C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x5C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x5C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x60))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x60))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x60))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x60))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x64))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x64))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x64))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x64))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x68))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x68))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x68))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x68))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x6C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x6C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x6C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x6C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x70))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x70))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x70))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x70))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x74))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x74))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x74))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x74))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x78))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x78))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x78))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x78))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x7C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x7C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x7C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x7C))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remon_rr(XG, XS) /* vertical integer rem, signed */                 \
+        remon3rr(W(XG), W(XG), W(XS))
+
+#define remon_ld(XG, MS, DS)                                                \
+        remon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remon3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remon_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remon3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remon_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remon_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x00))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x04))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x08))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x0C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x10))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x10))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x14))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x14))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x14))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x14))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x18))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x18))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x1C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x1C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x1C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x20))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x20))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x24))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x24))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x24))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x24))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x28))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x28))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x2C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x2C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x2C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x2C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x30))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x30))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x34))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x34))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x34))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x34))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x38))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x38))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x3C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x3C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x3C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x3C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x40))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x40))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x40))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x40))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x44))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x44))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x44))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x44))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x48))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x48))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x48))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x48))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x4C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x4C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x4C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x4C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x50))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x50))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x50))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x50))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x54))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x54))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x54))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x54))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x58))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x58))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x58))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x58))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x5C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x5C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x5C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x5C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x60))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x60))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x60))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x60))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x64))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x64))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x64))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x64))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x68))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x68))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x68))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x68))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x6C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x6C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x6C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x6C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x70))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x70))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x70))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x70))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x74))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x74))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x74))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x74))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x78))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x78))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x78))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x78))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x7C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x7C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x7C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x7C))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
 #elif (RT_SIMD == 512)
 
 #define adpos_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
@@ -3633,6 +5767,428 @@ rt_si32 from_mask(rt_si32 mask)
         maxrs_ld(W(XD), Mebp, inf_SCR02(0x3C))                              \
         movrs_st(W(XD), Mebp, inf_SCR01(0x3C))
 
+/**** 512-bit **** (vertical-int-div/rem SIMD) with fixed-32-bit element ******/
+
+#define divox_rr(XG, XS) /* vertical integer div, unsigned */               \
+        divox3rr(W(XG), W(XG), W(XS))
+
+#define divox_ld(XG, MS, DS)                                                \
+        divox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divox3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divox_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divox3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divox_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divox_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x10))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x14))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x14))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x14))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x18))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x1C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x1C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x20))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x24))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x24))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x24))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x28))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x2C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x2C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x2C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x30))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x34))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x34))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x34))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x38))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x3C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x3C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x3C))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define divon_rr(XG, XS) /* vertical integer div, signed */                 \
+        divon3rr(W(XG), W(XG), W(XS))
+
+#define divon_ld(XG, MS, DS)                                                \
+        divon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divon3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divon_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divon3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divon_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divon_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x10))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x14))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x14))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x14))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x18))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x1C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x1C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x20))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x24))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x24))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x24))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x28))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x2C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x2C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x2C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x30))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x34))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x34))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x34))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x38))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x3C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x3C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x3C))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remox_rr(XG, XS) /* vertical integer rem, unsigned */               \
+        remox3rr(W(XG), W(XG), W(XS))
+
+#define remox_ld(XG, MS, DS)                                                \
+        remox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remox3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remox_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remox3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remox_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remox_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x00))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x04))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x08))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x0C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x10))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x10))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x14))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x14))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x14))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x14))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x18))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x18))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x1C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x1C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x1C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x20))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x20))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x24))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x24))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x24))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x24))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x28))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x28))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x2C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x2C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x2C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x2C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x30))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x30))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x34))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x34))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x34))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x34))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x38))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x38))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x3C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x3C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x3C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x3C))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remon_rr(XG, XS) /* vertical integer rem, signed */                 \
+        remon3rr(W(XG), W(XG), W(XS))
+
+#define remon_ld(XG, MS, DS)                                                \
+        remon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remon3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remon_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remon3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remon_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remon_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x00))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x04))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x08))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x0C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x10))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x10))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x14))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x14))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x14))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x14))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x18))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x18))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x1C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x1C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x1C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x20))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x20))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x24))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x24))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x24))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x24))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x28))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x28))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x2C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x2C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x2C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x2C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x30))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x30))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x34))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x34))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x34))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x34))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x38))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x38))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x3C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x3C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x3C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x3C))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
 /******************************************************************************/
@@ -3869,6 +6425,268 @@ rt_si32 from_mask(rt_si32 mask)
         maxrs_ld(W(XD), Mebp, inf_SCR02(0x1C))                              \
         movrs_st(W(XD), Mebp, inf_SCR01(0x1C))
 
+/**** 256-bit **** (vertical-int-div/rem SIMD) with fixed-32-bit element ******/
+
+#define divcx_rr(XG, XS) /* vertical integer div, unsigned */               \
+        divcx3rr(W(XG), W(XG), W(XS))
+
+#define divcx_ld(XG, MS, DS)                                                \
+        divcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divcx3rr(XD, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divcx_xx()                                                          \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divcx3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_ld(W(XD), W(MT), W(DT))                                       \
+        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divcx_xx()                                                          \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divcx_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x10))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x14))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x14))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x14))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x18))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x1C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x1C))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define divcn_rr(XG, XS) /* vertical integer div, signed */                 \
+        divcn3rr(W(XG), W(XG), W(XS))
+
+#define divcn_ld(XG, MS, DS)                                                \
+        divcn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divcn3rr(XD, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divcn_xx()                                                          \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divcn3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_ld(W(XD), W(MT), W(DT))                                       \
+        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divcn_xx()                                                          \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divcn_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x10))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x14))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x14))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x14))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x18))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x1C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x1C))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remcx_rr(XG, XS) /* vertical integer rem, unsigned */               \
+        remcx3rr(W(XG), W(XG), W(XS))
+
+#define remcx_ld(XG, MS, DS)                                                \
+        remcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remcx3rr(XD, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remcx_xx()                                                          \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remcx3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_ld(W(XD), W(MT), W(DT))                                       \
+        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remcx_xx()                                                          \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remcx_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x00))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x04))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x08))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x0C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x10))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x10))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x14))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x14))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x14))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x14))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x18))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x18))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x1C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x1C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x1C))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remcn_rr(XG, XS) /* vertical integer rem, signed */                 \
+        remcn3rr(W(XG), W(XG), W(XS))
+
+#define remcn_ld(XG, MS, DS)                                                \
+        remcn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remcn3rr(XD, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remcn_xx()                                                          \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remcn3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_ld(W(XD), W(MT), W(DT))                                       \
+        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remcn_xx()                                                          \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remcn_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x00))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x04))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x08))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x0C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x10))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x10))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x14))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x14))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x14))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x14))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x18))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x18))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x1C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x1C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x1C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x1C))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
 /******************************************************************************/
 /**** 128-bit **** (horizontal SIMD) with fixed-32-bit element ****************/
 /******************************************************************************/
@@ -4036,6 +6854,188 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
         maxrs_ld(W(XD), Mebp, inf_SCR02(0x0C))                              \
         movrs_st(W(XD), Mebp, inf_SCR01(0x0C))
+
+/**** 128-bit **** (vertical-int-div/rem SIMD) with fixed-32-bit element ******/
+
+#define divix_rr(XG, XS) /* vertical integer div, unsigned */               \
+        divix3rr(W(XG), W(XG), W(XS))
+
+#define divix_ld(XG, MS, DS)                                                \
+        divix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divix3rr(XD, XS, XT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divix_xx()                                                          \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divix3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XD), W(MT), W(DT))                                       \
+        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divix_xx()                                                          \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divix_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define divin_rr(XG, XS) /* vertical integer div, signed */                 \
+        divin3rr(W(XG), W(XG), W(XS))
+
+#define divin_ld(XG, MS, DS)                                                \
+        divin3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divin3rr(XD, XS, XT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divin_xx()                                                          \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divin3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XD), W(MT), W(DT))                                       \
+        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divin_xx()                                                          \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divin_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remix_rr(XG, XS) /* vertical integer rem, unsigned */               \
+        remix3rr(W(XG), W(XG), W(XS))
+
+#define remix_ld(XG, MS, DS)                                                \
+        remix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remix3rr(XD, XS, XT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remix_xx()                                                          \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remix3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XD), W(MT), W(DT))                                       \
+        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remix_xx()                                                          \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remix_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x00))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x04))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x08))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewx_xx() /* Redx <- 0 */                                          \
+        remwx_xx() /* prep  rem */                                          \
+        divwx_xm(Mebp, inf_SCR02(0x0C))                                     \
+        remwx_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remin_rr(XG, XS) /* vertical integer rem, signed */                 \
+        remin3rr(W(XG), W(XG), W(XS))
+
+#define remin_ld(XG, MS, DS)                                                \
+        remin3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remin3rr(XD, XS, XT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remin_xx()                                                          \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remin3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XD), W(MT), W(DT))                                       \
+        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remin_xx()                                                          \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remin_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x00))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x04))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x04))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x04))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x04))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x08))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movwx_ld(Reax, Mebp, inf_SCR01(0x0C))                               \
+        prewn_xx() /* Redx sign */                                          \
+        remwn_xx() /* prep  rem */                                          \
+        divwn_xm(Mebp, inf_SCR02(0x0C))                                     \
+        remwn_xm(Mebp, inf_SCR02(0x0C))                                     \
+        movwx_st(Reax, Mebp, inf_SCR01(0x0C))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
 
 /******************************************************************************/
 /**** var-len **** (horizontal SIMD) with fixed-64-bit element ****************/
@@ -4611,6 +7611,748 @@ rt_si32 from_mask(rt_si32 mask)
         maxts_ld(W(XD), Mebp, inf_SCR02(0xF8))                              \
         movts_st(W(XD), Mebp, inf_SCR01(0xF8))
 
+/**** 2K8-bit **** (vertical-int-div/rem SIMD) with fixed-64-bit element ******/
+
+#define divqx_rr(XG, XS) /* vertical integer div, unsigned */               \
+        divqx3rr(W(XG), W(XG), W(XS))
+
+#define divqx_ld(XG, MS, DS)                                                \
+        divqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divqx3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divqx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqx3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divqx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqx_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x10))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x18))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x20))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x28))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x30))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x38))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x40))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x40))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x40))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x48))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x48))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x48))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x50))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x50))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x50))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x58))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x58))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x58))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x60))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x60))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x60))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x68))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x68))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x68))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x70))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x70))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x70))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x78))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x78))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x78))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x80))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x80))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x80))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x88))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x88))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x88))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x90))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x90))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x90))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x98))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x98))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x98))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xA0))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xA0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xA0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xA8))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xA8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xA8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xB0))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xB0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xB0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xB8))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xB8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xB8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xC0))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xC0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xC0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xC8))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xC8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xC8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xD0))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xD0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xD0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xD8))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xD8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xD8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xE0))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xE0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xE0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xE8))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xE8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xE8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xF0))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xF0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xF0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xF8))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xF8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xF8))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define divqn_rr(XG, XS) /* vertical integer div, signed */                 \
+        divqn3rr(W(XG), W(XG), W(XS))
+
+#define divqn_ld(XG, MS, DS)                                                \
+        divqn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divqn3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divqn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqn3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divqn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqn_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x10))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x18))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x20))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x28))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x30))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x38))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x40))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x40))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x40))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x48))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x48))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x48))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x50))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x50))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x50))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x58))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x58))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x58))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x60))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x60))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x60))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x68))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x68))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x68))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x70))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x70))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x70))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x78))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x78))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x78))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x80))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x80))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x80))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x88))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x88))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x88))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x90))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x90))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x90))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x98))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x98))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x98))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xA0))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xA0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xA0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xA8))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xA8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xA8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xB0))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xB0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xB0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xB8))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xB8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xB8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xC0))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xC0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xC0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xC8))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xC8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xC8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xD0))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xD0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xD0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xD8))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xD8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xD8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xE0))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xE0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xE0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xE8))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xE8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xE8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xF0))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xF0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xF0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xF8))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xF8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xF8))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remqx_rr(XG, XS) /* vertical integer rem, unsigned */               \
+        remqx3rr(W(XG), W(XG), W(XS))
+
+#define remqx_ld(XG, MS, DS)                                                \
+        remqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remqx3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remqx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqx3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remqx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqx_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x00))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x08))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x10))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x10))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x18))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x18))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x20))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x20))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x28))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x28))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x30))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x30))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x38))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x38))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x40))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x40))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x40))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x40))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x48))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x48))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x48))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x48))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x50))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x50))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x50))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x50))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x58))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x58))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x58))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x58))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x60))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x60))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x60))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x60))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x68))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x68))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x68))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x68))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x70))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x70))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x70))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x70))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x78))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x78))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x78))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x78))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x80))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x80))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x80))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x80))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x88))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x88))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x88))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x88))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x90))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x90))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x90))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x90))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x98))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x98))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x98))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x98))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xA0))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xA0))                                     \
+        remzx_xm(Mebp, inf_SCR02(0xA0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xA0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xA8))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xA8))                                     \
+        remzx_xm(Mebp, inf_SCR02(0xA8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xA8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xB0))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xB0))                                     \
+        remzx_xm(Mebp, inf_SCR02(0xB0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xB0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xB8))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xB8))                                     \
+        remzx_xm(Mebp, inf_SCR02(0xB8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xB8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xC0))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xC0))                                     \
+        remzx_xm(Mebp, inf_SCR02(0xC0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xC0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xC8))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xC8))                                     \
+        remzx_xm(Mebp, inf_SCR02(0xC8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xC8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xD0))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xD0))                                     \
+        remzx_xm(Mebp, inf_SCR02(0xD0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xD0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xD8))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xD8))                                     \
+        remzx_xm(Mebp, inf_SCR02(0xD8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xD8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xE0))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xE0))                                     \
+        remzx_xm(Mebp, inf_SCR02(0xE0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xE0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xE8))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xE8))                                     \
+        remzx_xm(Mebp, inf_SCR02(0xE8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xE8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xF0))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xF0))                                     \
+        remzx_xm(Mebp, inf_SCR02(0xF0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xF0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xF8))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0xF8))                                     \
+        remzx_xm(Mebp, inf_SCR02(0xF8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xF8))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remqn_rr(XG, XS) /* vertical integer rem, signed */                 \
+        remqn3rr(W(XG), W(XG), W(XS))
+
+#define remqn_ld(XG, MS, DS)                                                \
+        remqn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remqn3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remqn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqn3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remqn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqn_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x00))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x08))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x10))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x10))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x18))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x18))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x20))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x20))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x28))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x28))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x30))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x30))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x38))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x38))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x40))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x40))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x40))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x40))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x48))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x48))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x48))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x48))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x50))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x50))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x50))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x50))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x58))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x58))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x58))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x58))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x60))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x60))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x60))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x60))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x68))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x68))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x68))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x68))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x70))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x70))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x70))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x70))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x78))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x78))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x78))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x78))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x80))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x80))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x80))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x80))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x88))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x88))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x88))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x88))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x90))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x90))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x90))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x90))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x98))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x98))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x98))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x98))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xA0))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xA0))                                     \
+        remzn_xm(Mebp, inf_SCR02(0xA0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xA0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xA8))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xA8))                                     \
+        remzn_xm(Mebp, inf_SCR02(0xA8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xA8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xB0))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xB0))                                     \
+        remzn_xm(Mebp, inf_SCR02(0xB0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xB0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xB8))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xB8))                                     \
+        remzn_xm(Mebp, inf_SCR02(0xB8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xB8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xC0))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xC0))                                     \
+        remzn_xm(Mebp, inf_SCR02(0xC0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xC0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xC8))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xC8))                                     \
+        remzn_xm(Mebp, inf_SCR02(0xC8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xC8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xD0))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xD0))                                     \
+        remzn_xm(Mebp, inf_SCR02(0xD0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xD0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xD8))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xD8))                                     \
+        remzn_xm(Mebp, inf_SCR02(0xD8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xD8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xE0))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xE0))                                     \
+        remzn_xm(Mebp, inf_SCR02(0xE0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xE0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xE8))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xE8))                                     \
+        remzn_xm(Mebp, inf_SCR02(0xE8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xE8))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xF0))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xF0))                                     \
+        remzn_xm(Mebp, inf_SCR02(0xF0))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xF0))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0xF8))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0xF8))                                     \
+        remzn_xm(Mebp, inf_SCR02(0xF8))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0xF8))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
 #elif (RT_SIMD == 1024)
 
 #define adpqs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
@@ -4961,6 +8703,428 @@ rt_si32 from_mask(rt_si32 mask)
         maxts_ld(W(XD), Mebp, inf_SCR02(0x78))                              \
         movts_st(W(XD), Mebp, inf_SCR01(0x78))
 
+/**** 1K4-bit **** (vertical-int-div/rem SIMD) with fixed-64-bit element ******/
+
+#define divqx_rr(XG, XS) /* vertical integer div, unsigned */               \
+        divqx3rr(W(XG), W(XG), W(XS))
+
+#define divqx_ld(XG, MS, DS)                                                \
+        divqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divqx3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divqx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqx3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divqx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqx_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x10))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x18))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x20))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x28))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x30))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x38))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x40))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x40))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x40))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x48))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x48))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x48))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x50))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x50))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x50))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x58))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x58))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x58))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x60))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x60))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x60))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x68))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x68))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x68))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x70))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x70))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x70))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x78))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x78))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x78))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define divqn_rr(XG, XS) /* vertical integer div, signed */                 \
+        divqn3rr(W(XG), W(XG), W(XS))
+
+#define divqn_ld(XG, MS, DS)                                                \
+        divqn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divqn3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divqn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqn3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divqn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqn_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x10))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x18))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x20))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x28))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x30))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x38))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x40))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x40))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x40))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x48))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x48))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x48))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x50))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x50))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x50))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x58))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x58))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x58))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x60))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x60))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x60))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x68))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x68))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x68))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x70))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x70))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x70))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x78))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x78))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x78))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remqx_rr(XG, XS) /* vertical integer rem, unsigned */               \
+        remqx3rr(W(XG), W(XG), W(XS))
+
+#define remqx_ld(XG, MS, DS)                                                \
+        remqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remqx3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remqx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqx3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remqx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqx_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x00))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x08))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x10))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x10))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x18))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x18))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x20))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x20))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x28))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x28))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x30))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x30))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x38))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x38))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x40))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x40))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x40))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x40))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x48))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x48))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x48))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x48))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x50))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x50))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x50))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x50))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x58))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x58))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x58))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x58))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x60))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x60))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x60))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x60))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x68))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x68))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x68))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x68))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x70))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x70))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x70))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x70))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x78))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x78))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x78))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x78))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remqn_rr(XG, XS) /* vertical integer rem, signed */                 \
+        remqn3rr(W(XG), W(XG), W(XS))
+
+#define remqn_ld(XG, MS, DS)                                                \
+        remqn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remqn3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remqn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqn3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remqn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqn_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x00))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x08))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x10))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x10))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x18))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x18))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x20))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x20))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x28))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x28))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x30))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x30))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x38))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x38))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x40))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x40))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x40))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x40))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x48))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x48))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x48))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x48))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x50))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x50))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x50))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x50))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x58))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x58))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x58))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x58))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x60))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x60))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x60))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x60))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x68))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x68))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x68))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x68))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x70))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x70))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x70))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x70))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x78))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x78))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x78))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x78))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
 #elif (RT_SIMD == 512)
 
 #define adpqs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
@@ -5199,6 +9363,268 @@ rt_si32 from_mask(rt_si32 mask)
         maxts_ld(W(XD), Mebp, inf_SCR02(0x38))                              \
         movts_st(W(XD), Mebp, inf_SCR01(0x38))
 
+/**** 512-bit **** (vertical-int-div/rem SIMD) with fixed-64-bit element ******/
+
+#define divqx_rr(XG, XS) /* vertical integer div, unsigned */               \
+        divqx3rr(W(XG), W(XG), W(XS))
+
+#define divqx_ld(XG, MS, DS)                                                \
+        divqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divqx3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divqx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqx3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divqx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqx_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x10))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x18))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x20))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x28))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x30))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x38))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define divqn_rr(XG, XS) /* vertical integer div, signed */                 \
+        divqn3rr(W(XG), W(XG), W(XS))
+
+#define divqn_ld(XG, MS, DS)                                                \
+        divqn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divqn3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divqn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqn3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divqn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqn_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x10))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x18))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x20))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x28))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x30))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x38))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remqx_rr(XG, XS) /* vertical integer rem, unsigned */               \
+        remqx3rr(W(XG), W(XG), W(XS))
+
+#define remqx_ld(XG, MS, DS)                                                \
+        remqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remqx3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remqx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqx3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remqx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqx_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x00))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x08))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x10))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x10))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x18))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x18))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x20))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x20))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x28))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x28))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x30))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x30))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x38))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x38))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remqn_rr(XG, XS) /* vertical integer rem, signed */                 \
+        remqn3rr(W(XG), W(XG), W(XS))
+
+#define remqn_ld(XG, MS, DS)                                                \
+        remqn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remqn3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remqn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqn3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remqn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqn_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x00))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x08))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x10))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x10))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x18))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x18))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x20))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x20))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x20))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x20))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x28))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x28))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x28))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x28))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x30))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x30))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x30))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x30))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x38))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x38))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x38))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x38))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
 #endif /* RT_SIMD: 2K8, 1K4, 512 */
 
 /******************************************************************************/
@@ -5383,6 +9809,188 @@ rt_si32 from_mask(rt_si32 mask)
         maxts_ld(W(XD), Mebp, inf_SCR02(0x18))                              \
         movts_st(W(XD), Mebp, inf_SCR01(0x18))
 
+/**** 256-bit **** (vertical-int-div/rem SIMD) with fixed-64-bit element ******/
+
+#define divdx_rr(XG, XS) /* vertical integer div, unsigned */               \
+        divdx3rr(W(XG), W(XG), W(XS))
+
+#define divdx_ld(XG, MS, DS)                                                \
+        divdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divdx3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divdx_xx()                                                          \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divdx3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divdx_xx()                                                          \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divdx_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x10))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x18))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define divdn_rr(XG, XS) /* vertical integer div, signed */                 \
+        divdn3rr(W(XG), W(XG), W(XS))
+
+#define divdn_ld(XG, MS, DS)                                                \
+        divdn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divdn3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divdn_xx()                                                          \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divdn3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divdn_xx()                                                          \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divdn_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x10))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x18))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remdx_rr(XG, XS) /* vertical integer rem, unsigned */               \
+        remdx3rr(W(XG), W(XG), W(XS))
+
+#define remdx_ld(XG, MS, DS)                                                \
+        remdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remdx3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remdx_xx()                                                          \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remdx3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remdx_xx()                                                          \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remdx_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x00))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x08))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x10))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x10))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x18))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x18))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remdn_rr(XG, XS) /* vertical integer rem, signed */                 \
+        remdn3rr(W(XG), W(XG), W(XS))
+
+#define remdn_ld(XG, MS, DS)                                                \
+        remdn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remdn3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remdn_xx()                                                          \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remdn3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remdn_xx()                                                          \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remdn_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x00))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x08))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x10))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x10))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x10))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x10))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x18))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x18))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x18))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x18))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
 /******************************************************************************/
 /**** 128-bit **** (horizontal SIMD) with fixed-64-bit element ****************/
 /******************************************************************************/
@@ -5522,6 +10130,148 @@ rt_si32 from_mask(rt_si32 mask)
         movts_ld(W(XD), Mebp, inf_SCR02(0x00))                              \
         maxts_ld(W(XD), Mebp, inf_SCR02(0x08))                              \
         movts_st(W(XD), Mebp, inf_SCR01(0x08))
+
+/**** 128-bit **** (vertical-int-div/rem SIMD) with fixed-64-bit element ******/
+
+#define divjx_rr(XG, XS) /* vertical integer div, unsigned */               \
+        divjx3rr(W(XG), W(XG), W(XS))
+
+#define divjx_ld(XG, MS, DS)                                                \
+        divjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divjx3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divjx_xx()                                                          \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divjx3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divjx_xx()                                                          \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divjx_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define divjn_rr(XG, XS) /* vertical integer div, signed */                 \
+        divjn3rr(W(XG), W(XG), W(XS))
+
+#define divjn_ld(XG, MS, DS)                                                \
+        divjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divjn3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divjn_xx()                                                          \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divjn3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divjn_xx()                                                          \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divjn_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezn_xx() /* Redx sign */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remjx_rr(XG, XS) /* vertical integer rem, unsigned */               \
+        remjx3rr(W(XG), W(XG), W(XS))
+
+#define remjx_ld(XG, MS, DS)                                                \
+        remjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remjx3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remjx_xx()                                                          \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remjx3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remjx_xx()                                                          \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remjx_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x00))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezx_xx() /* Redx <- 0 */                                          \
+        remzx_xx() /* prep  rem */                                          \
+        divzx_xm(Mebp, inf_SCR02(0x08))                                     \
+        remzx_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
+
+#define remjn_rr(XG, XS) /* vertical integer rem, signed */                 \
+        remjn3rr(W(XG), W(XG), W(XS))
+
+#define remjn_ld(XG, MS, DS)                                                \
+        remjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remjn3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remjn_xx()                                                          \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remjn3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remjn_xx()                                                          \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remjn_xx() /* not portable, do not use outside */                   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x00))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x00))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x00))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x00))                               \
+        movzx_ld(Reax, Mebp, inf_SCR01(0x08))                               \
+        prezn_xx() /* Redx sign */                                          \
+        remzn_xx() /* prep  rem */                                          \
+        divzn_xm(Mebp, inf_SCR02(0x08))                                     \
+        remzn_xm(Mebp, inf_SCR02(0x08))                                     \
+        movzx_st(Reax, Mebp, inf_SCR01(0x08))                               \
+        stack_ld(Redx)                                                      \
+        stack_ld(Reax)
 
 #endif /* RT_SIMD_CODE */
 
