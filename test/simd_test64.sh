@@ -5,8 +5,8 @@
 
 touch test64; rm test64
 
-# fully successful test pass results in test64 file of  91098 bytes (51 tests)
-# test pass on AVX2-only CPU results in test64 file of  63574 bytes (51 tests)
+# fully successful test pass results in test64 file of  99666 bytes (51 tests)
+# test pass on AVX2-only CPU results in test64 file of  69286 bytes (51 tests)
 # for any other CPU check the output or use Intel SDE within script
 
 
@@ -63,8 +63,8 @@ echo "========================================================" | tee -a test64
 
 
 echo "========================================================"
-echo "fully successful test pass writes  91098 bytes to test64"
-echo "test pass on AVX2-only CPU writes  63574 bytes to test64"
+echo "fully successful test pass writes  99666 bytes to test64"
+echo "test pass on AVX2-only CPU writes  69286 bytes to test64"
 echo "for other CPUs check the output, use Intel SDE in script"
 echo "========================================================"
 echo "the actual file size after the test run is listed below:"

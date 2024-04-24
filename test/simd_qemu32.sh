@@ -5,7 +5,7 @@
 
 touch qemu32; rm qemu32
 
-# fully successful test pass results in qemu32 file of  37954 bytes (51 tests)
+# fully successful test pass results in qemu32 file of  41524 bytes (51 tests)
 # unlike simd_test64/86.sh the result is the same on all CPU types  (51 tests)
 # check the output if qemu32 file size differs, look for printouts
 
@@ -31,7 +31,7 @@ qemu-mips   -cpu P5600 simd_test.m32Br5 -c 1 | tee -a qemu32
 
 
 # ppc64abi32 targets are deprecated since QEMU 5.2.0 (dropped in Ubuntu 22.04)
-# fully successful test pass writes 60730 bytes to qemu32 with ppc64abi32 runs
+# fully successful test pass writes 66442 bytes to qemu32 with ppc64abi32 runs
 
 echo "========================================================" | tee -a qemu32
 echo "Testing p32Bg4 target (PPC G4 VMX     big-endian)" | tee -a qemu32
@@ -52,7 +52,7 @@ qemu-ppc        -cpu G4     simd_test.p32Bg4 -c 1 | tee -a qemu32
 
 
 echo "========================================================"
-echo "fully successful test pass writes  37954 bytes to qemu32"
+echo "fully successful test pass writes  41524 bytes to qemu32"
 echo "the result doesn't depend on CPU type (unlike test64/86)"
 echo "check the output if qemu32 size differs, check printouts"
 echo "========================================================"

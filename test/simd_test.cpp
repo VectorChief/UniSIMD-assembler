@@ -8671,7 +8671,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
         time2 = get_time();
         tC = time2 - time1;
 #ifdef RT_PRINT_NUM
-        RT_LOGI("Time C = %d\n", (rt_si32)tC);
+        RT_LOGI("Time C   = %6d\n", (rt_si32)tC);
 #endif /* RT_PRINT_NUM */
 
         /* --------------------------------- */
@@ -8684,7 +8684,7 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
         time2 = get_time();
         tS = time2 - time1;
 #ifdef RT_PRINT_NUM
-        RT_LOGI("Time S = %d\n", (rt_si32)tS);
+        RT_LOGI("Time S   = %6d\n", (rt_si32)tS);
 #endif /* RT_PRINT_NUM */
 
         /* --------------------------------- */
