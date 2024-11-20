@@ -575,38 +575,6 @@
         /* adp, adh are defined in rtbase.h (first 15-regs only)
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (RT_SIMD == 256)
-
-#define adpos_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
-        adpos3rr(W(XG), W(XG), W(XS))
-
-#define adpos_ld(XG, MS, DS)                                                \
-        adpos3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define adpos3rr(XD, XS, XT)                                                \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpcs_rx(W(XD))                                                     \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define adpos3ld(XD, XS, MT, DT)                                            \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_ld(W(XD), W(MT), W(DT))                                       \
-        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpcs_rx(W(XD))                                                     \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define adhos_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
-        adpos3rr(W(XD), W(XS), W(XS))                                       \
-        adpos3rr(W(XD), W(XD), W(XD))                                       \
-        adpos3rr(W(XD), W(XD), W(XD))
-
-#define adhos_ld(XD, MS, DS)                                                \
-        movox_ld(W(XD), W(MS), W(DS))                                       \
-        adhos_rr(W(XD), W(XD))
-
-#endif /* RT_SIMD: 256 */
-
 #undef  adhos_rr
 #define adhos_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
         EMITW(0x65802000 | MXM(REG(XD), REG(XS), 0x00))                     \
@@ -646,38 +614,6 @@
 
         /* mlp, mlh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
-
-#if (RT_SIMD == 256)
-
-#define mlpos_rr(XG, XS) /* horizontal pairwise mul */                      \
-        mlpos3rr(W(XG), W(XG), W(XS))
-
-#define mlpos_ld(XG, MS, DS)                                                \
-        mlpos3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mlpos3rr(XD, XS, XT)                                                \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mlpcs_rx(W(XD))                                                     \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define mlpos3ld(XD, XS, MT, DT)                                            \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_ld(W(XD), W(MT), W(DT))                                       \
-        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mlpcs_rx(W(XD))                                                     \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define mlhos_rr(XD, XS) /* horizontal reductive mul */                     \
-        mlpos3rr(W(XD), W(XS), W(XS))                                       \
-        mlpos3rr(W(XD), W(XD), W(XD))                                       \
-        mlpos3rr(W(XD), W(XD), W(XD))
-
-#define mlhos_ld(XD, MS, DS)                                                \
-        movox_ld(W(XD), W(MS), W(DS))                                       \
-        mlhos_rr(W(XD), W(XD))
-
-#endif /* RT_SIMD: 256 */
 
 /* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
@@ -802,38 +738,6 @@
         /* mnp, mnh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (RT_SIMD == 256)
-
-#define mnpos_rr(XG, XS) /* horizontal pairwise min */                      \
-        mnpos3rr(W(XG), W(XG), W(XS))
-
-#define mnpos_ld(XG, MS, DS)                                                \
-        mnpos3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mnpos3rr(XD, XS, XT)                                                \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mnpcs_rx(W(XD))                                                     \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define mnpos3ld(XD, XS, MT, DT)                                            \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_ld(W(XD), W(MT), W(DT))                                       \
-        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mnpcs_rx(W(XD))                                                     \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define mnhos_rr(XD, XS) /* horizontal reductive min */                     \
-        mnpos3rr(W(XD), W(XS), W(XS))                                       \
-        mnpos3rr(W(XD), W(XD), W(XD))                                       \
-        mnpos3rr(W(XD), W(XD), W(XD))
-
-#define mnhos_ld(XD, MS, DS)                                                \
-        movox_ld(W(XD), W(MS), W(DS))                                       \
-        mnhos_rr(W(XD), W(XD))
-
-#endif /* RT_SIMD: 256 */
-
 #undef  mnhos_rr
 #define mnhos_rr(XD, XS) /* horizontal reductive min */                     \
         EMITW(0x65872000 | MXM(REG(XD), REG(XS), 0x00))                     \
@@ -859,38 +763,6 @@
 
         /* mxp, mxh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
-
-#if (RT_SIMD == 256)
-
-#define mxpos_rr(XG, XS) /* horizontal pairwise max */                      \
-        mxpos3rr(W(XG), W(XG), W(XS))
-
-#define mxpos_ld(XG, MS, DS)                                                \
-        mxpos3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mxpos3rr(XD, XS, XT)                                                \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpcs_rx(W(XD))                                                     \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define mxpos3ld(XD, XS, MT, DT)                                            \
-        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movox_ld(W(XD), W(MT), W(DT))                                       \
-        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpcs_rx(W(XD))                                                     \
-        movox_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define mxhos_rr(XD, XS) /* horizontal reductive max */                     \
-        mxpos3rr(W(XD), W(XS), W(XS))                                       \
-        mxpos3rr(W(XD), W(XD), W(XD))                                       \
-        mxpos3rr(W(XD), W(XD), W(XD))
-
-#define mxhos_ld(XD, MS, DS)                                                \
-        movox_ld(W(XD), W(MS), W(DS))                                       \
-        mxhos_rr(W(XD), W(XD))
-
-#endif /* RT_SIMD: 256 */
 
 #undef  mxhos_rr
 #define mxhos_rr(XD, XS) /* horizontal reductive max */                     \

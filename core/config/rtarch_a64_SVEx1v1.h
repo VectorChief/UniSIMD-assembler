@@ -541,37 +541,6 @@
         /* adp, adh are defined in rtbase.h (first 15-regs only)
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (RT_SIMD == 256)
-
-#define adpqs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
-        adpqs3rr(W(XG), W(XG), W(XS))
-
-#define adpqs_ld(XG, MS, DS)                                                \
-        adpqs3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define adpqs3rr(XD, XS, XT)                                                \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        adpds_rx(W(XD))                                                     \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define adpqs3ld(XD, XS, MT, DT)                                            \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_ld(W(XD), W(MT), W(DT))                                       \
-        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        adpds_rx(W(XD))                                                     \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define adhqs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
-        adpqs3rr(W(XD), W(XS), W(XS))                                       \
-        adpqs3rr(W(XD), W(XD), W(XD))
-
-#define adhqs_ld(XD, MS, DS)                                                \
-        movqx_ld(W(XD), W(MS), W(DS))                                       \
-        adhqs_rr(W(XD), W(XD))
-
-#endif /* RT_SIMD: 256 */
-
 #undef  adhqs_rr
 #define adhqs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
         EMITW(0x65C02000 | MXM(REG(XD), REG(XS), 0x00))                     \
@@ -611,37 +580,6 @@
 
         /* mlp, mlh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
-
-#if (RT_SIMD == 256)
-
-#define mlpqs_rr(XG, XS) /* horizontal pairwise mul */                      \
-        mlpqs3rr(W(XG), W(XG), W(XS))
-
-#define mlpqs_ld(XG, MS, DS)                                                \
-        mlpqs3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mlpqs3rr(XD, XS, XT)                                                \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mlpds_rx(W(XD))                                                     \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define mlpqs3ld(XD, XS, MT, DT)                                            \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_ld(W(XD), W(MT), W(DT))                                       \
-        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mlpds_rx(W(XD))                                                     \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define mlhqs_rr(XD, XS) /* horizontal reductive mul */                     \
-        mlpqs3rr(W(XD), W(XS), W(XS))                                       \
-        mlpqs3rr(W(XD), W(XD), W(XD))
-
-#define mlhqs_ld(XD, MS, DS)                                                \
-        movqx_ld(W(XD), W(MS), W(DS))                                       \
-        mlhqs_rr(W(XD), W(XD))
-
-#endif /* RT_SIMD: 256 */
 
 /* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
@@ -766,37 +704,6 @@
         /* mnp, mnh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
 
-#if (RT_SIMD == 256)
-
-#define mnpqs_rr(XG, XS) /* horizontal pairwise min */                      \
-        mnpqs3rr(W(XG), W(XG), W(XS))
-
-#define mnpqs_ld(XG, MS, DS)                                                \
-        mnpqs3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mnpqs3rr(XD, XS, XT)                                                \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mnpds_rx(W(XD))                                                     \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define mnpqs3ld(XD, XS, MT, DT)                                            \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_ld(W(XD), W(MT), W(DT))                                       \
-        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mnpds_rx(W(XD))                                                     \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define mnhqs_rr(XD, XS) /* horizontal reductive min */                     \
-        mnpqs3rr(W(XD), W(XS), W(XS))                                       \
-        mnpqs3rr(W(XD), W(XD), W(XD))
-
-#define mnhqs_ld(XD, MS, DS)                                                \
-        movqx_ld(W(XD), W(MS), W(DS))                                       \
-        mnhqs_rr(W(XD), W(XD))
-
-#endif /* RT_SIMD: 256 */
-
 #undef  mnhqs_rr
 #define mnhqs_rr(XD, XS) /* horizontal reductive min */                     \
         EMITW(0x65C72000 | MXM(REG(XD), REG(XS), 0x00))                     \
@@ -822,37 +729,6 @@
 
         /* mxp, mxh are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
-
-#if (RT_SIMD == 256)
-
-#define mxpqs_rr(XG, XS) /* horizontal pairwise max */                      \
-        mxpqs3rr(W(XG), W(XG), W(XS))
-
-#define mxpqs_ld(XG, MS, DS)                                                \
-        mxpqs3ld(W(XG), W(XG), W(MS), W(DS))
-
-#define mxpqs3rr(XD, XS, XT)                                                \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
-        mxpds_rx(W(XD))                                                     \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define mxpqs3ld(XD, XS, MT, DT)                                            \
-        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
-        movqx_ld(W(XD), W(MT), W(DT))                                       \
-        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
-        mxpds_rx(W(XD))                                                     \
-        movqx_ld(W(XD), Mebp, inf_SCR01(0))
-
-#define mxhqs_rr(XD, XS) /* horizontal reductive max */                     \
-        mxpqs3rr(W(XD), W(XS), W(XS))                                       \
-        mxpqs3rr(W(XD), W(XD), W(XD))
-
-#define mxhqs_ld(XD, MS, DS)                                                \
-        movqx_ld(W(XD), W(MS), W(DS))                                       \
-        mxhqs_rr(W(XD), W(XD))
-
-#endif /* RT_SIMD: 256 */
 
 #undef  mxhqs_rr
 #define mxhqs_rr(XD, XS) /* horizontal reductive max */                     \

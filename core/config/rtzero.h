@@ -513,11 +513,19 @@
 #define         RT_256X1     (RT_256)
 #define         RT_SVEX1     (RT_256)
 #endif
+#if   !(defined RT_SVEX2) && (RT_256) & 0x2 && (RT_256_RX) & 0x2
+#define         RT_128X2     (RT_256)
+#define         RT_SVEX2     (RT_256)
+#endif
 #if   !(defined RT_128X2) && (RT_256) & 0x3
 #define         RT_128X2     (RT_256)
 #endif
 #if   !(defined RT_128X2) && (RT_256_R8)
 #define         RT_128X2     (RT_256_R8)
+#endif
+#if   !(defined RT_SVEX1) && (RT_128) & 0x2 && (RT_128_RX) & 0x2
+#define         RT_128X1     (RT_128)
+#define         RT_SVEX1     (RT_128)
 #endif
 #if   !(defined RT_128X1) && (RT_128)
 #define         RT_128X1     (RT_128)

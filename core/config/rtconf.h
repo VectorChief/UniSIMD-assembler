@@ -158,7 +158,7 @@
 /**** var-len **** (rcp/rsq/fma/fms) with fixed-32-bit element ****************/
 /******************************************************************************/
 
-#if   (RT_SIMD >= 512) || (RT_SIMD == 256 && defined RT_SVEX1)
+#if   (RT_SIMD >= 512) || (defined RT_SVEX1 || defined RT_SVEX2)
 
 /* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
@@ -586,7 +586,7 @@
 /**** var-len **** (rcp/rsq/fma/fms) with fixed-64-bit element ****************/
 /******************************************************************************/
 
-#if   (RT_SIMD >= 512) || (RT_SIMD == 256 && defined RT_SVEX1)
+#if   (RT_SIMD >= 512) || (defined RT_SVEX1 || defined RT_SVEX2)
 
 /* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
@@ -1014,7 +1014,7 @@
 /**** var-len **** SIMD instructions with fixed-16-bit element **** 256-bit ***/
 /******************************************************************************/
 
-#if   (RT_SIMD == 256) && !(defined RT_SVEX1)
+#if   (RT_SIMD == 256) && !(defined RT_SVEX1 || defined RT_SVEX2)
 
 /* elm (D = S), store first SIMD element with natural alignment
  * allows to decouple scalar subset from SIMD where appropriate */
@@ -1038,8 +1038,8 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
-#define mmvmx_rr(XD, XS)                                                    \
-        mmvax_rr(W(XD), W(XS))
+#define mmvmx_rr(XG, XS)                                                    \
+        mmvax_rr(W(XG), W(XS))
 
 #define mmvmx_ld(XG, MS, DS)                                                \
         mmvax_ld(W(XG), W(MS), W(DS))
@@ -1048,8 +1048,8 @@
         mmvax_st(W(XS), W(MG), W(DG))
 
 
-#define mmvmb_rr(XD, XS)                                                    \
-        mmvab_rr(W(XD), W(XS))
+#define mmvmb_rr(XG, XS)                                                    \
+        mmvab_rr(W(XG), W(XS))
 
 #define mmvmb_ld(XG, MS, DS)                                                \
         mmvab_ld(W(XG), W(MS), W(DS))
@@ -2351,7 +2351,7 @@
 /**** var-len **** SIMD instructions with fixed-16-bit element **** 128-bit ***/
 /******************************************************************************/
 
-#elif (RT_SIMD == 128)
+#elif (RT_SIMD == 128) && !(defined RT_SVEX1)
 
 /* elm (D = S), store first SIMD element with natural alignment
  * allows to decouple scalar subset from SIMD where appropriate */
@@ -2375,8 +2375,8 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
-#define mmvmx_rr(XD, XS)                                                    \
-        mmvgx_rr(W(XD), W(XS))
+#define mmvmx_rr(XG, XS)                                                    \
+        mmvgx_rr(W(XG), W(XS))
 
 #define mmvmx_ld(XG, MS, DS)                                                \
         mmvgx_ld(W(XG), W(MS), W(DS))
@@ -2385,8 +2385,8 @@
         mmvgx_st(W(XS), W(MG), W(DG))
 
 
-#define mmvmb_rr(XD, XS)                                                    \
-        mmvgb_rr(W(XD), W(XS))
+#define mmvmb_rr(XG, XS)                                                    \
+        mmvgb_rr(W(XG), W(XS))
 
 #define mmvmb_ld(XG, MS, DS)                                                \
         mmvgb_ld(W(XG), W(MS), W(DS))
@@ -3690,7 +3690,7 @@
 /**** var-len **** SIMD instructions with fixed-32-bit element **** 256-bit ***/
 /******************************************************************************/
 
-#if   (RT_SIMD == 256) && !(defined RT_SVEX1)
+#if   (RT_SIMD == 256) && !(defined RT_SVEX1 || defined RT_SVEX2)
 
 /* elm (D = S), store first SIMD element with natural alignment
  * allows to decouple scalar subset from SIMD where appropriate */
@@ -3714,8 +3714,8 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
-#define mmvox_rr(XD, XS)                                                    \
-        mmvcx_rr(W(XD), W(XS))
+#define mmvox_rr(XG, XS)                                                    \
+        mmvcx_rr(W(XG), W(XS))
 
 #define mmvox_ld(XG, MS, DS)                                                \
         mmvcx_ld(W(XG), W(MS), W(DS))
@@ -4763,7 +4763,7 @@
 /**** var-len **** SIMD instructions with fixed-32-bit element **** 128-bit ***/
 /******************************************************************************/
 
-#elif (RT_SIMD == 128)
+#elif (RT_SIMD == 128) && !(defined RT_SVEX1)
 
 /* elm (D = S), store first SIMD element with natural alignment
  * allows to decouple scalar subset from SIMD where appropriate */
@@ -4787,8 +4787,8 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
-#define mmvox_rr(XD, XS)                                                    \
-        mmvix_rr(W(XD), W(XS))
+#define mmvox_rr(XG, XS)                                                    \
+        mmvix_rr(W(XG), W(XS))
 
 #define mmvox_ld(XG, MS, DS)                                                \
         mmvix_ld(W(XG), W(MS), W(DS))
@@ -5838,7 +5838,7 @@
 /**** var-len **** SIMD instructions with fixed-64-bit element **** 256-bit ***/
 /******************************************************************************/
 
-#if   (RT_SIMD == 256) && !(defined RT_SVEX1)
+#if   (RT_SIMD == 256) && !(defined RT_SVEX1 || defined RT_SVEX2)
 
 /* elm (D = S), store first SIMD element with natural alignment
  * allows to decouple scalar subset from SIMD where appropriate */
@@ -5862,8 +5862,8 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
-#define mmvqx_rr(XD, XS)                                                    \
-        mmvdx_rr(W(XD), W(XS))
+#define mmvqx_rr(XG, XS)                                                    \
+        mmvdx_rr(W(XG), W(XS))
 
 #define mmvqx_ld(XG, MS, DS)                                                \
         mmvdx_ld(W(XG), W(MS), W(DS))
@@ -6911,7 +6911,7 @@
 /**** var-len **** SIMD instructions with fixed-64-bit element **** 128-bit ***/
 /******************************************************************************/
 
-#elif (RT_SIMD == 128)
+#elif (RT_SIMD == 128) && !(defined RT_SVEX1)
 
 /* elm (D = S), store first SIMD element with natural alignment
  * allows to decouple scalar subset from SIMD where appropriate */
@@ -6935,8 +6935,8 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
-#define mmvqx_rr(XD, XS)                                                    \
-        mmvjx_rr(W(XD), W(XS))
+#define mmvqx_rr(XG, XS)                                                    \
+        mmvjx_rr(W(XG), W(XS))
 
 #define mmvqx_ld(XG, MS, DS)                                                \
         mmvjx_ld(W(XG), W(MS), W(DS))
@@ -8168,8 +8168,8 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
-#define mmvpx_rr(XD, XS)                                                    \
-        mmvox_rr(W(XD), W(XS))
+#define mmvpx_rr(XG, XS)                                                    \
+        mmvox_rr(W(XG), W(XS))
 
 #define mmvpx_ld(XG, MS, DS)                                                \
         mmvox_ld(W(XG), W(MS), W(DS))
@@ -9239,8 +9239,8 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
-#define mmvfx_rr(XD, XS)                                                    \
-        mmvcx_rr(W(XD), W(XS))
+#define mmvfx_rr(XG, XS)                                                    \
+        mmvcx_rr(W(XG), W(XS))
 
 #define mmvfx_ld(XG, MS, DS)                                                \
         mmvcx_ld(W(XG), W(MS), W(DS))
@@ -10310,8 +10310,8 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
-#define mmvlx_rr(XD, XS)                                                    \
-        mmvix_rr(W(XD), W(XS))
+#define mmvlx_rr(XG, XS)                                                    \
+        mmvix_rr(W(XG), W(XS))
 
 #define mmvlx_ld(XG, MS, DS)                                                \
         mmvix_ld(W(XG), W(MS), W(DS))
@@ -11792,8 +11792,8 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
-#define mmvpx_rr(XD, XS)                                                    \
-        mmvqx_rr(W(XD), W(XS))
+#define mmvpx_rr(XG, XS)                                                    \
+        mmvqx_rr(W(XG), W(XS))
 
 #define mmvpx_ld(XG, MS, DS)                                                \
         mmvqx_ld(W(XG), W(MS), W(DS))
@@ -12863,8 +12863,8 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
-#define mmvfx_rr(XD, XS)                                                    \
-        mmvdx_rr(W(XD), W(XS))
+#define mmvfx_rr(XG, XS)                                                    \
+        mmvdx_rr(W(XG), W(XS))
 
 #define mmvfx_ld(XG, MS, DS)                                                \
         mmvdx_ld(W(XG), W(MS), W(DS))
@@ -13934,8 +13934,8 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
-#define mmvlx_rr(XD, XS)                                                    \
-        mmvjx_rr(W(XD), W(XS))
+#define mmvlx_rr(XG, XS)                                                    \
+        mmvjx_rr(W(XG), W(XS))
 
 #define mmvlx_ld(XG, MS, DS)                                                \
         mmvjx_ld(W(XG), W(MS), W(DS))

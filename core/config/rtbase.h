@@ -426,7 +426,7 @@
                             s[48]=s[49]=s[50]=s[51]=s[52]=s[53]=s[54]=s[55]=\
                             s[56]=s[57]=s[58]=s[59]=s[60]=s[61]=s[62]=s[63]=v
 
-#elif (RT_SIMD == 256) && !(defined RT_SVEX1)
+#elif (RT_SIMD == 256) && !(defined RT_SVEX1) && !(defined RT_SVEX2)
 
 #define RT_SIMD_REGS            RT_SIMD_REGS_256
 #define RT_SIMD_ALIGN           RT_SIMD_ALIGN_256
@@ -451,9 +451,21 @@
 #define RT_SIMD_WIDTH08         RT_SIMD_WIDTH08_256
 #define RT_SIMD_SET08(s, v)     RT_SIMD_SET08_256(s, v)
 
-#elif (RT_SIMD == 128)
+#elif (RT_SIMD == 128) && !(defined RT_SVEX1)
 
 #define RT_SIMD_REGS            RT_SIMD_REGS_128
+#define RT_SIMD_ALIGN           RT_SIMD_ALIGN_128
+#define RT_SIMD_WIDTH64         RT_SIMD_WIDTH64_128
+#define RT_SIMD_SET64(s, v)     RT_SIMD_SET64_128(s, v)
+#define RT_SIMD_WIDTH32         RT_SIMD_WIDTH32_128
+#define RT_SIMD_SET32(s, v)     RT_SIMD_SET32_128(s, v)
+#define RT_SIMD_WIDTH16         RT_SIMD_WIDTH16_128
+#define RT_SIMD_SET16(s, v)     RT_SIMD_SET16_128(s, v)
+#define RT_SIMD_WIDTH08         RT_SIMD_WIDTH08_128
+#define RT_SIMD_SET08(s, v)     RT_SIMD_SET08_128(s, v)
+
+#elif (RT_SIMD == 128)
+
 #define RT_SIMD_ALIGN           RT_SIMD_ALIGN_128
 #define RT_SIMD_WIDTH64         RT_SIMD_WIDTH64_128
 #define RT_SIMD_SET64(s, v)     RT_SIMD_SET64_128(s, v)
@@ -1487,7 +1499,7 @@ rt_si32 from_mask(rt_si32 mask)
 /**** var-len **** (cbr/cbe/cbs/...) with fixed-32-bit element ****************/
 /******************************************************************************/
 
-#if   (RT_SIMD >= 512) || (RT_SIMD == 256 && defined RT_SVEX1)
+#if   (RT_SIMD >= 512) || (defined RT_SVEX1 || defined RT_SVEX2)
 
 /* cbr (D = cbrt S) */
 
@@ -1644,7 +1656,7 @@ rt_si32 from_mask(rt_si32 mask)
 /**** var-len **** (cbr/cbe/cbs/...) with fixed-64-bit element ****************/
 /******************************************************************************/
 
-#if   (RT_SIMD >= 512) || (RT_SIMD == 256 && defined RT_SVEX1)
+#if   (RT_SIMD >= 512) || (defined RT_SVEX1 || defined RT_SVEX2)
 
 /* cbr (D = cbrt S) */
 
@@ -6195,6 +6207,122 @@ rt_si32 from_mask(rt_si32 mask)
 /**** 256-bit **** (horizontal SIMD) with fixed-32-bit element ****************/
 /******************************************************************************/
 
+#if   (RT_SIMD == 256) && (defined RT_SVEX1 || defined RT_SVEX2)
+
+#define adpos_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpos3rr(W(XG), W(XG), W(XS))
+
+#define adpos_ld(XG, MS, DS)                                                \
+        adpos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adpos3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        adpcs_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adpos3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        adpcs_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adhos_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
+        adpos3rr(W(XD), W(XS), W(XS))                                       \
+        adpos3rr(W(XD), W(XD), W(XD))                                       \
+        adpos3rr(W(XD), W(XD), W(XD))
+
+#define adhos_ld(XD, MS, DS)                                                \
+        movox_ld(W(XD), W(MS), W(DS))                                       \
+        adhos_rr(W(XD), W(XD))
+
+#define mlpos_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpos3rr(W(XG), W(XG), W(XS))
+
+#define mlpos_ld(XG, MS, DS)                                                \
+        mlpos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mlpos3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mlpcs_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mlpos3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mlpcs_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mlhos_rr(XD, XS) /* horizontal reductive mul */                     \
+        mlpos3rr(W(XD), W(XS), W(XS))                                       \
+        mlpos3rr(W(XD), W(XD), W(XD))                                       \
+        mlpos3rr(W(XD), W(XD), W(XD))
+
+#define mlhos_ld(XD, MS, DS)                                                \
+        movox_ld(W(XD), W(MS), W(DS))                                       \
+        mlhos_rr(W(XD), W(XD))
+
+#define mnpos_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpos3rr(W(XG), W(XG), W(XS))
+
+#define mnpos_ld(XG, MS, DS)                                                \
+        mnpos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mnpos3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mnpcs_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mnpos3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mnpcs_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mnhos_rr(XD, XS) /* horizontal reductive min */                     \
+        mnpos3rr(W(XD), W(XS), W(XS))                                       \
+        mnpos3rr(W(XD), W(XD), W(XD))                                       \
+        mnpos3rr(W(XD), W(XD), W(XD))
+
+#define mnhos_ld(XD, MS, DS)                                                \
+        movox_ld(W(XD), W(MS), W(DS))                                       \
+        mnhos_rr(W(XD), W(XD))
+
+#define mxpos_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpos3rr(W(XG), W(XG), W(XS))
+
+#define mxpos_ld(XG, MS, DS)                                                \
+        mxpos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mxpos3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mxpcs_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mxpos3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mxpcs_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mxhos_rr(XD, XS) /* horizontal reductive max */                     \
+        mxpos3rr(W(XD), W(XS), W(XS))                                       \
+        mxpos3rr(W(XD), W(XD), W(XD))                                       \
+        mxpos3rr(W(XD), W(XD), W(XD))
+
+#define mxhos_ld(XD, MS, DS)                                                \
+        movox_ld(W(XD), W(MS), W(DS))                                       \
+        mxhos_rr(W(XD), W(XD))
+
+#endif /* RT_SIMD: 256, SVE */
+
 #define adpcs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
         adpcs3rr(W(XG), W(XG), W(XS))
 
@@ -6426,6 +6554,86 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x1C))
 
 /**** 256-bit **** (vertical-int-div/rem SIMD) with fixed-32-bit element ******/
+
+#if   (RT_SIMD == 256) && (defined RT_SVEX1 || defined RT_SVEX2)
+
+#define divox_rr(XG, XS) /* vertical integer div, unsigned */               \
+        divox3rr(W(XG), W(XG), W(XS))
+
+#define divox_ld(XG, MS, DS)                                                \
+        divox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divox3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divcx_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divox3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divcx_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divon_rr(XG, XS) /* vertical integer div, signed */                 \
+        divon3rr(W(XG), W(XG), W(XS))
+
+#define divon_ld(XG, MS, DS)                                                \
+        divon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divon3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divcn_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divon3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divcn_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remox_rr(XG, XS) /* vertical integer rem, unsigned */               \
+        remox3rr(W(XG), W(XG), W(XS))
+
+#define remox_ld(XG, MS, DS)                                                \
+        remox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remox3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remcx_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remox3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remcx_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remon_rr(XG, XS) /* vertical integer rem, signed */                 \
+        remon3rr(W(XG), W(XG), W(XS))
+
+#define remon_ld(XG, MS, DS)                                                \
+        remon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remon3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remcn_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remon3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remcn_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD: 256, SVE */
 
 #define divcx_rr(XG, XS) /* vertical integer div, unsigned */               \
         divcx3rr(W(XG), W(XG), W(XS))
@@ -6691,6 +6899,118 @@ rt_si32 from_mask(rt_si32 mask)
 /**** 128-bit **** (horizontal SIMD) with fixed-32-bit element ****************/
 /******************************************************************************/
 
+#if   (RT_SIMD == 128) && (defined RT_SVEX1)
+
+#define adpos_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpos3rr(W(XG), W(XG), W(XS))
+
+#define adpos_ld(XG, MS, DS)                                                \
+        adpos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adpos3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        adpis_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adpos3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        adpis_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adhos_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
+        adpos3rr(W(XD), W(XS), W(XS))                                       \
+        adpos3rr(W(XD), W(XD), W(XD))
+
+#define adhos_ld(XD, MS, DS)                                                \
+        movox_ld(W(XD), W(MS), W(DS))                                       \
+        adhos_rr(W(XD), W(XD))
+
+#define mlpos_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpos3rr(W(XG), W(XG), W(XS))
+
+#define mlpos_ld(XG, MS, DS)                                                \
+        mlpos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mlpos3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mlpis_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mlpos3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mlpis_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mlhos_rr(XD, XS) /* horizontal reductive mul */                     \
+        mlpos3rr(W(XD), W(XS), W(XS))                                       \
+        mlpos3rr(W(XD), W(XD), W(XD))
+
+#define mlhos_ld(XD, MS, DS)                                                \
+        movox_ld(W(XD), W(MS), W(DS))                                       \
+        mlhos_rr(W(XD), W(XD))
+
+#define mnpos_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpos3rr(W(XG), W(XG), W(XS))
+
+#define mnpos_ld(XG, MS, DS)                                                \
+        mnpos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mnpos3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mnpis_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mnpos3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mnpis_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mnhos_rr(XD, XS) /* horizontal reductive min */                     \
+        mnpos3rr(W(XD), W(XS), W(XS))                                       \
+        mnpos3rr(W(XD), W(XD), W(XD))
+
+#define mnhos_ld(XD, MS, DS)                                                \
+        movox_ld(W(XD), W(MS), W(DS))                                       \
+        mnhos_rr(W(XD), W(XD))
+
+#define mxpos_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpos3rr(W(XG), W(XG), W(XS))
+
+#define mxpos_ld(XG, MS, DS)                                                \
+        mxpos3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mxpos3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mxpis_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mxpos3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mxpis_rx(W(XD))                                                     \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mxhos_rr(XD, XS) /* horizontal reductive max */                     \
+        mxpos3rr(W(XD), W(XS), W(XS))                                       \
+        mxpos3rr(W(XD), W(XD), W(XD))
+
+#define mxhos_ld(XD, MS, DS)                                                \
+        movox_ld(W(XD), W(MS), W(DS))                                       \
+        mxhos_rr(W(XD), W(XD))
+
+#endif /* RT_SIMD: 128, SVE */
+
 #define adpis_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
         adpis3rr(W(XG), W(XG), W(XS))
 
@@ -6856,6 +7176,86 @@ rt_si32 from_mask(rt_si32 mask)
         movrs_st(W(XD), Mebp, inf_SCR01(0x0C))
 
 /**** 128-bit **** (vertical-int-div/rem SIMD) with fixed-32-bit element ******/
+
+#if   (RT_SIMD == 128) && (defined RT_SVEX1)
+
+#define divox_rr(XG, XS) /* vertical integer div, unsigned */               \
+        divox3rr(W(XG), W(XG), W(XS))
+
+#define divox_ld(XG, MS, DS)                                                \
+        divox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divox3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divix_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divox3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divix_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divon_rr(XG, XS) /* vertical integer div, signed */                 \
+        divon3rr(W(XG), W(XG), W(XS))
+
+#define divon_ld(XG, MS, DS)                                                \
+        divon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divon3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divin_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divon3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divin_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remox_rr(XG, XS) /* vertical integer rem, unsigned */               \
+        remox3rr(W(XG), W(XG), W(XS))
+
+#define remox_ld(XG, MS, DS)                                                \
+        remox3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remox3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remix_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remox3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remix_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remon_rr(XG, XS) /* vertical integer rem, signed */                 \
+        remon3rr(W(XG), W(XG), W(XS))
+
+#define remon_ld(XG, MS, DS)                                                \
+        remon3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remon3rr(XD, XS, XT)                                                \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remin_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remon3ld(XD, XS, MT, DT)                                            \
+        movox_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movox_ld(W(XD), W(MT), W(DT))                                       \
+        movox_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remin_xx()                                                          \
+        movox_ld(W(XD), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD: 128, SVE */
 
 #define divix_rr(XG, XS) /* vertical integer div, unsigned */               \
         divix3rr(W(XG), W(XG), W(XS))
@@ -9631,6 +10031,118 @@ rt_si32 from_mask(rt_si32 mask)
 /**** 256-bit **** (horizontal SIMD) with fixed-64-bit element ****************/
 /******************************************************************************/
 
+#if   (RT_SIMD == 256) && (defined RT_SVEX1 || defined RT_SVEX2)
+
+#define adpqs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpqs3rr(W(XG), W(XG), W(XS))
+
+#define adpqs_ld(XG, MS, DS)                                                \
+        adpqs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adpqs3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        adpds_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adpqs3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        adpds_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adhqs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
+        adpqs3rr(W(XD), W(XS), W(XS))                                       \
+        adpqs3rr(W(XD), W(XD), W(XD))
+
+#define adhqs_ld(XD, MS, DS)                                                \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
+        adhqs_rr(W(XD), W(XD))
+
+#define mlpqs_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpqs3rr(W(XG), W(XG), W(XS))
+
+#define mlpqs_ld(XG, MS, DS)                                                \
+        mlpqs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mlpqs3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mlpds_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mlpqs3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mlpds_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mlhqs_rr(XD, XS) /* horizontal reductive mul */                     \
+        mlpqs3rr(W(XD), W(XS), W(XS))                                       \
+        mlpqs3rr(W(XD), W(XD), W(XD))
+
+#define mlhqs_ld(XD, MS, DS)                                                \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
+        mlhqs_rr(W(XD), W(XD))
+
+#define mnpqs_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpqs3rr(W(XG), W(XG), W(XS))
+
+#define mnpqs_ld(XG, MS, DS)                                                \
+        mnpqs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mnpqs3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mnpds_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mnpqs3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mnpds_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mnhqs_rr(XD, XS) /* horizontal reductive min */                     \
+        mnpqs3rr(W(XD), W(XS), W(XS))                                       \
+        mnpqs3rr(W(XD), W(XD), W(XD))
+
+#define mnhqs_ld(XD, MS, DS)                                                \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
+        mnhqs_rr(W(XD), W(XD))
+
+#define mxpqs_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpqs3rr(W(XG), W(XG), W(XS))
+
+#define mxpqs_ld(XG, MS, DS)                                                \
+        mxpqs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mxpqs3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mxpds_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mxpqs3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mxpds_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mxhqs_rr(XD, XS) /* horizontal reductive max */                     \
+        mxpqs3rr(W(XD), W(XS), W(XS))                                       \
+        mxpqs3rr(W(XD), W(XD), W(XD))
+
+#define mxhqs_ld(XD, MS, DS)                                                \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
+        mxhqs_rr(W(XD), W(XD))
+
+#endif /* RT_SIMD: 256, SVE */
+
 #define adpds_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
         adpds3rr(W(XG), W(XG), W(XS))
 
@@ -9810,6 +10322,86 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x18))
 
 /**** 256-bit **** (vertical-int-div/rem SIMD) with fixed-64-bit element ******/
+
+#if   (RT_SIMD == 256) && (defined RT_SVEX1 || defined RT_SVEX2)
+
+#define divqx_rr(XG, XS) /* vertical integer div, unsigned */               \
+        divqx3rr(W(XG), W(XG), W(XS))
+
+#define divqx_ld(XG, MS, DS)                                                \
+        divqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divqx3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divdx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqx3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divdx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqn_rr(XG, XS) /* vertical integer div, signed */                 \
+        divqn3rr(W(XG), W(XG), W(XS))
+
+#define divqn_ld(XG, MS, DS)                                                \
+        divqn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divqn3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divdn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqn3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divdn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqx_rr(XG, XS) /* vertical integer rem, unsigned */               \
+        remqx3rr(W(XG), W(XG), W(XS))
+
+#define remqx_ld(XG, MS, DS)                                                \
+        remqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remqx3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remdx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqx3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remdx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqn_rr(XG, XS) /* vertical integer rem, signed */                 \
+        remqn3rr(W(XG), W(XG), W(XS))
+
+#define remqn_ld(XG, MS, DS)                                                \
+        remqn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remqn3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remdn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqn3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remdn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD: 256, SVE */
 
 #define divdx_rr(XG, XS) /* vertical integer div, unsigned */               \
         divdx3rr(W(XG), W(XG), W(XS))
@@ -9995,6 +10587,114 @@ rt_si32 from_mask(rt_si32 mask)
 /**** 128-bit **** (horizontal SIMD) with fixed-64-bit element ****************/
 /******************************************************************************/
 
+#if   (RT_SIMD == 128) && (defined RT_SVEX1)
+
+#define adpqs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
+        adpqs3rr(W(XG), W(XG), W(XS))
+
+#define adpqs_ld(XG, MS, DS)                                                \
+        adpqs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adpqs3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        adpjs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adpqs3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        adpjs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define adhqs_rr(XD, XS) /* horizontal reductive add, first 15-regs only */ \
+        adpqs3rr(W(XD), W(XS), W(XS))
+
+#define adhqs_ld(XD, MS, DS)                                                \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
+        adhqs_rr(W(XD), W(XD))
+
+#define mlpqs_rr(XG, XS) /* horizontal pairwise mul */                      \
+        mlpqs3rr(W(XG), W(XG), W(XS))
+
+#define mlpqs_ld(XG, MS, DS)                                                \
+        mlpqs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mlpqs3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mlpjs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mlpqs3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mlpjs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mlhqs_rr(XD, XS) /* horizontal reductive mul */                     \
+        mlpqs3rr(W(XD), W(XS), W(XS))
+
+#define mlhqs_ld(XD, MS, DS)                                                \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
+        mlhqs_rr(W(XD), W(XD))
+
+#define mnpqs_rr(XG, XS) /* horizontal pairwise min */                      \
+        mnpqs3rr(W(XG), W(XG), W(XS))
+
+#define mnpqs_ld(XG, MS, DS)                                                \
+        mnpqs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mnpqs3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mnpjs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mnpqs3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mnpjs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mnhqs_rr(XD, XS) /* horizontal reductive min */                     \
+        mnpqs3rr(W(XD), W(XS), W(XS))
+
+#define mnhqs_ld(XD, MS, DS)                                                \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
+        mnhqs_rr(W(XD), W(XD))
+
+#define mxpqs_rr(XG, XS) /* horizontal pairwise max */                      \
+        mxpqs3rr(W(XG), W(XG), W(XS))
+
+#define mxpqs_ld(XG, MS, DS)                                                \
+        mxpqs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mxpqs3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        mxpjs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mxpqs3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        mxpjs_rx(W(XD))                                                     \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define mxhqs_rr(XD, XS) /* horizontal reductive max */                     \
+        mxpqs3rr(W(XD), W(XS), W(XS))
+
+#define mxhqs_ld(XD, MS, DS)                                                \
+        movqx_ld(W(XD), W(MS), W(DS))                                       \
+        mxhqs_rr(W(XD), W(XD))
+
+#endif /* RT_SIMD: 128, SVE */
+
 #define adpjs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
         adpjs3rr(W(XG), W(XG), W(XS))
 
@@ -10132,6 +10832,86 @@ rt_si32 from_mask(rt_si32 mask)
         movts_st(W(XD), Mebp, inf_SCR01(0x08))
 
 /**** 128-bit **** (vertical-int-div/rem SIMD) with fixed-64-bit element ******/
+
+#if   (RT_SIMD == 128) && (defined RT_SVEX1)
+
+#define divqx_rr(XG, XS) /* vertical integer div, unsigned */               \
+        divqx3rr(W(XG), W(XG), W(XS))
+
+#define divqx_ld(XG, MS, DS)                                                \
+        divqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divqx3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divjx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqx3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divjx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqn_rr(XG, XS) /* vertical integer div, signed */                 \
+        divqn3rr(W(XG), W(XG), W(XS))
+
+#define divqn_ld(XG, MS, DS)                                                \
+        divqn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divqn3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        divjn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define divqn3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        divjn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqx_rr(XG, XS) /* vertical integer rem, unsigned */               \
+        remqx3rr(W(XG), W(XG), W(XS))
+
+#define remqx_ld(XG, MS, DS)                                                \
+        remqx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remqx3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remjx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqx3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remjx_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqn_rr(XG, XS) /* vertical integer rem, signed */                 \
+        remqn3rr(W(XG), W(XG), W(XS))
+
+#define remqn_ld(XG, MS, DS)                                                \
+        remqn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define remqn3rr(XD, XS, XT)                                                \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        remjn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define remqn3ld(XD, XS, MT, DT)                                            \
+        movqx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movqx_ld(W(XD), W(MT), W(DT))                                       \
+        movqx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        remjn_xx()                                                          \
+        movqx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD: 128, SVE */
 
 #define divjx_rr(XG, XS) /* vertical integer div, unsigned */               \
         divjx3rr(W(XG), W(XG), W(XS))

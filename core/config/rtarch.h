@@ -747,8 +747,12 @@
 #error "AArch64 doesn't support quaded SIMD backends, check build flags"
 #elif (RT_256X1 >= 1) && (RT_SIMD == 256) && (RT_REGS <= 32)
 #include "rtarch_a64_SVEx1v1.h"
+#elif (RT_128X2 >= 1) && (RT_SIMD == 256) && (RT_REGS <= 16) && (RT_SVEX2 >= 1)
+#include "rtarch_a64_SVEx2v1.h"
 #elif (RT_128X2 >= 1) && (RT_SIMD == 256) && (RT_REGS <= 16)
 #include "rtarch_a64_128x2v1.h"
+#elif (RT_128X1 >= 1) && (RT_SIMD == 128) && (RT_REGS <= 32) && (RT_SVEX1 >= 1)
+#include "rtarch_a64_SVEx1v1.h"
 #elif (RT_128X1 >= 1) && (RT_SIMD == 128) && (RT_REGS <= 32)
 #include "rtarch_a64_128x1v1.h"
 #else  /* report an error if header file is not selected */

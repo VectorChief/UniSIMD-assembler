@@ -172,6 +172,10 @@ simd_test.a64f64sve:
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64_64 -c 1
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64f32 -c 1
 # qemu-aarch64 -cpu cortex-a57 simd_test.a64f64 -c 1
+# qemu-aarch64 -cpu max,sve-max-vq=1 simd_test.a64_32sve -c 1  (RT_128=2/*_RX=2)
+# qemu-aarch64 -cpu max,sve-max-vq=1 simd_test.a64_64sve -c 1  (RT_128=2/*_RX=2)
+# qemu-aarch64 -cpu max,sve-max-vq=1 simd_test.a64f32sve -c 1  (RT_256=2/*_RX=2)
+# qemu-aarch64 -cpu max,sve-max-vq=1 simd_test.a64f64sve -c 1  (RT_256=2/*_RX=2)
 # qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64_32sve -c 1  (for RT_256=4)
 # qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64_64sve -c 1  (for RT_256=4)
 # qemu-aarch64 -cpu max,sve-max-vq=2 simd_test.a64f32sve -c 1  (for RT_512=1)
@@ -197,10 +201,12 @@ simd_test.a64f64sve:
 
 # For 128-bit NEON build use (replace): RT_128=1            (30 SIMD registers)
 # For 128-bit ARMv8.2 build use (replace): RT_128=2 (adds new fp16 ops) (30 rs)
+# For 128-bit SVE2x1 build use (replace): RT_128=2 RT_128_RX=2 (X regs) (30 rs)
 # For 128-bit NEON build use (replace): RT_128=4            (15 SIMD registers)
 # For 128-bit ARMv8.2 build use (replace): RT_128=8 (adds new fp16 ops) (15 rs)
 # For 256-bit NEON build use (replace): RT_256=1            (15 SIMD reg-pairs)
 # For 256-bit ARMv8.2 build use (replace): RT_256=2 (adds new fp16 ops) (15 rp)
+# For 256-bit SVE2x2 build use (replace): RT_256=2 RT_256_RX=2 (X regs) (15 rp)
 
 # For 256-bit  SVEx1 build use (replace): RT_256=4          (30 SIMD registers)
 # For 512-bit  SVEx2 build use (replace): RT_512=1          (15 SIMD reg-pairs)
