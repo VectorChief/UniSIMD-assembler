@@ -1698,6 +1698,8 @@
 #include "rtarch_x64_512x2v2.h"
 #elif (RT_256X4 != 0) && (RT_SIMD == 1024)
 #error "x86_64: doesn't support quaded AVXx backends, check build flags"
+#elif (RT_256X2 &  2) && (RT_SIMD == 512) && (RT_REGS <= 16) && (RT_AWEX2 &  2)
+#include "rtarch_x64_512x2v2.h"
 #elif (RT_512X1 >= 1) && (RT_SIMD == 512) && (RT_REGS <= 32)
 #include "rtarch_x64_512x1v8.h"
 #elif (RT_256X2 >= 1) && (RT_SIMD == 512) && (RT_REGS <= 8)
@@ -1706,10 +1708,14 @@
 #error "x86_64: doesn't support quaded SSEx backends, check build flags"
 #elif (RT_256X1 &  4) && (RT_SIMD == 256) && (RT_REGS <= 32)
 #error "x86_64: doesn't yet support emulated 30-regs, check build flags"
+#elif (RT_256X1 >= 8) && (RT_SIMD == 256) && (RT_REGS <= 32) && (RT_AWEX1 >= 8)
+#include "rtarch_x64_512x1v8.h"
 #elif (RT_256X1 >= 8) && (RT_SIMD == 256) && (RT_REGS <= 32)
 #include "rtarch_x64_256x1v8.h"
 #elif (RT_256X1 >= 1) && (RT_SIMD == 256) && (RT_REGS <= 16)
 #include "rtarch_x64_256x1v2.h"
+#elif (RT_128X2 &  2) && (RT_SIMD == 256) && (RT_REGS <= 16) && (RT_AWEX2 &  2)
+#include "rtarch_x64_512x2v2.h"
 #elif (RT_128X2 >= 1) && (RT_SIMD == 256) && (RT_REGS <= 8)
 #include "rtarch_x64_128x2v4.h"
 #elif (RT_128X1 &  1) && (RT_SIMD == 128) && (RT_REGS <= 32)
@@ -1718,6 +1724,8 @@
 #include "rtarch_x64_128x1v8.h"
 #elif (RT_128X1 >= 4) && (RT_SIMD == 128) && (RT_REGS <= 16)
 #include "rtarch_x64_128x1v4.h"
+#elif (RT_128X1 &  2) && (RT_SIMD == 128) && (RT_REGS <= 32) && (RT_AWEX1 &  2)
+#include "rtarch_x64_512x1v8.h"
 #elif (RT_128X1 >= 2) && (RT_SIMD == 128) && (RT_REGS <= 32)
 #include "rtarch_x64_128x1v2.h"
 #else  /* report an error if header file is not selected */

@@ -324,9 +324,9 @@
 #define VAL(val, typ, cmd)  val
 #define VYL(val, typ, cmd)  ((val) | 0x10)
 #define VXL(val, typ, cmd)  ((val) | 0x20)
-#define VZL(val, typ, cmd)  ((val) | 0x40)
-#define VSL(val, typ, cmd)  ((val) | 0x80)
-#define VTL(val, typ, cmd)  ((val) | 0xC0)
+#define VZL(val, typ, cmd)  ((val) | 0x40/(512/(RT_SIMD/(32/RT_SIMD_REGS))))
+#define VSL(val, typ, cmd)  ((val) | 0x80/(512/(RT_SIMD/(32/RT_SIMD_REGS))))
+#define VTL(val, typ, cmd)  ((val) | 0xC0/(512/(RT_SIMD/(32/RT_SIMD_REGS))))
 #define TYP(val, typ, cmd)  typ
 #define CMD(val, typ, cmd)  cmd
 

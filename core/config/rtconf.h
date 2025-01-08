@@ -158,7 +158,7 @@
 /**** var-len **** (rcp/rsq/fma/fms) with fixed-32-bit element ****************/
 /******************************************************************************/
 
-#if   (RT_SIMD >= 512) || (defined RT_SVEX1 || defined RT_SVEX2)
+#if   (RT_SIMD >= 512) || (defined RT_SWEX1 || defined RT_SWEX2)
 
 /* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
@@ -586,7 +586,7 @@
 /**** var-len **** (rcp/rsq/fma/fms) with fixed-64-bit element ****************/
 /******************************************************************************/
 
-#if   (RT_SIMD >= 512) || (defined RT_SVEX1 || defined RT_SVEX2)
+#if   (RT_SIMD >= 512) || (defined RT_SWEX1 || defined RT_SWEX2)
 
 /* rcp (D = 1.0 / S)
  * accuracy/behavior may vary across supported targets, use accordingly */
@@ -1014,7 +1014,7 @@
 /**** var-len **** SIMD instructions with fixed-16-bit element **** 256-bit ***/
 /******************************************************************************/
 
-#if   (RT_SIMD == 256) && !(defined RT_SVEX1 || defined RT_SVEX2)
+#if   (RT_SIMD == 256) && !(defined RT_SWEX1 || defined RT_SWEX2)
 
 /* elm (D = S), store first SIMD element with natural alignment
  * allows to decouple scalar subset from SIMD where appropriate */
@@ -2351,7 +2351,7 @@
 /**** var-len **** SIMD instructions with fixed-16-bit element **** 128-bit ***/
 /******************************************************************************/
 
-#elif (RT_SIMD == 128) && !(defined RT_SVEX1)
+#elif (RT_SIMD == 128) && !(defined RT_SWEX1)
 
 /* elm (D = S), store first SIMD element with natural alignment
  * allows to decouple scalar subset from SIMD where appropriate */
@@ -3690,7 +3690,7 @@
 /**** var-len **** SIMD instructions with fixed-32-bit element **** 256-bit ***/
 /******************************************************************************/
 
-#if   (RT_SIMD == 256) && !(defined RT_SVEX1 || defined RT_SVEX2)
+#if   (RT_SIMD == 256) && !(defined RT_SWEX1 || defined RT_SWEX2)
 
 /* elm (D = S), store first SIMD element with natural alignment
  * allows to decouple scalar subset from SIMD where appropriate */
@@ -4763,7 +4763,7 @@
 /**** var-len **** SIMD instructions with fixed-32-bit element **** 128-bit ***/
 /******************************************************************************/
 
-#elif (RT_SIMD == 128) && !(defined RT_SVEX1)
+#elif (RT_SIMD == 128) && !(defined RT_SWEX1)
 
 /* elm (D = S), store first SIMD element with natural alignment
  * allows to decouple scalar subset from SIMD where appropriate */
@@ -5838,7 +5838,7 @@
 /**** var-len **** SIMD instructions with fixed-64-bit element **** 256-bit ***/
 /******************************************************************************/
 
-#if   (RT_SIMD == 256) && !(defined RT_SVEX1 || defined RT_SVEX2)
+#if   (RT_SIMD == 256) && !(defined RT_SWEX1 || defined RT_SWEX2)
 
 /* elm (D = S), store first SIMD element with natural alignment
  * allows to decouple scalar subset from SIMD where appropriate */
@@ -6911,7 +6911,7 @@
 /**** var-len **** SIMD instructions with fixed-64-bit element **** 128-bit ***/
 /******************************************************************************/
 
-#elif (RT_SIMD == 128) && !(defined RT_SVEX1)
+#elif (RT_SIMD == 128) && !(defined RT_SWEX1)
 
 /* elm (D = S), store first SIMD element with natural alignment
  * allows to decouple scalar subset from SIMD where appropriate */

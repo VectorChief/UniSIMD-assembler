@@ -189,8 +189,24 @@
 
 #endif /* (RT_512X2 == 2) */
 
+#if   (RT_SIMD == 128*2)
+#undef  K
+#define K 0
+#define M0 _128
+#elif (RT_SIMD == 256*2)
+#undef  K
+#define K 1
+#define M1 _256
+#elif (RT_SIMD == 512*2)
 #undef  K
 #define K 2
+#define M2 _512
+#endif /* RT_SIMD: 128*2, 256*2, 512*2 */
+
+#define S0(mask, bits, k)   S1(mask, bits, k)
+#define S1(mask, bits, k)   S2(mask, bits, M##k)
+#define S2(mask, bits, k)   S3(mask, bits, k)
+#define S3(mask, bits, k)   RT_SIMD_MASK_##mask##bits##k
 
 #define XmmG    0x10, 0x03, EMPTY
 
@@ -523,9 +539,9 @@
         MRM(0x07,       0x03, 0x00)                                         \
         mkxwx_rx(Reax, Y(PS))                                               \
         REX(0,             1)                                               \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##32_1K4 & 0x1) << 1)))  \
+        EMITB(0x03 | (0x08 << ((S0(mask, K) & 0x1) << 1)))                  \
         MRM(0x00,       0x03, 0x07)                                         \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##32_1K4))                     \
+        cmpwx_ri(Reax, IH(S0(mask, K)))                                     \
         jeqxx_lb(lb)
 
 /******************************************************************************/
@@ -1277,8 +1293,8 @@
 
 /* mkj (jump to lb) if (S satisfies mask condition) */
 
-#define RT_SIMD_MASK_NONE32_1K4    0x0000   /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL32_1K4    0xFFFF   /*  all satisfy the condition */
+#define RT_SIMD_MASK_NONE32_512    0x0000   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL32_512    0xFFFF   /*  all satisfy the condition */
 
 #define mk1wx_rx(RD)         /* not portable, do not use outside */         \
         VEX(RXB(RD),       0,    0x00, 0, 0, 1) EMITB(0x93)                 \
@@ -1292,9 +1308,9 @@
         ck1ox_rm(X(XS), Mebp, inf_GPC07)                                    \
         mk1wx_rx(Reax)                                                      \
         REX(0,             1)                                               \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##32_1K4 & 0x1) << 1)))  \
+        EMITB(0x03 | (0x08 << ((S0(mask, 32, K) & 0x1) << 1)))              \
         MRM(0x00,       0x03, 0x07)                                         \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##32_1K4))                     \
+        cmpwx_ri(Reax, IH(S0(mask, 32, K)))                                 \
         jeqxx_lb(lb)
 
 /*************   packed single-precision floating-point convert   *************/

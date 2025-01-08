@@ -116,6 +116,18 @@
 #define RT_SIMD 128
 #endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
+#if   (defined RT_SVEX1)
+#define RT_SWEX1 RT_SVEX1
+#elif (defined RT_AWEX1)
+#define RT_SWEX1 RT_AWEX1
+#endif /* SWEX1: SVEX1, AWEX1 */
+
+#if   (defined RT_SVEX2)
+#define RT_SWEX2 RT_SVEX2
+#elif (defined RT_AWEX2)
+#define RT_SWEX2 RT_AWEX2
+#endif /* SWEX2: SVEX2, AWEX2 */
+
 /*
  * Determine SIMD total-quads for backend structs (maximal for a given build).
  */
@@ -426,7 +438,7 @@
                             s[48]=s[49]=s[50]=s[51]=s[52]=s[53]=s[54]=s[55]=\
                             s[56]=s[57]=s[58]=s[59]=s[60]=s[61]=s[62]=s[63]=v
 
-#elif (RT_SIMD == 256) && !(defined RT_SVEX1) && !(defined RT_SVEX2)
+#elif (RT_SIMD == 256) && !(defined RT_SWEX1) && !(defined RT_SWEX2)
 
 #define RT_SIMD_REGS            RT_SIMD_REGS_256
 #define RT_SIMD_ALIGN           RT_SIMD_ALIGN_256
@@ -451,7 +463,7 @@
 #define RT_SIMD_WIDTH08         RT_SIMD_WIDTH08_256
 #define RT_SIMD_SET08(s, v)     RT_SIMD_SET08_256(s, v)
 
-#elif (RT_SIMD == 128) && !(defined RT_SVEX1)
+#elif (RT_SIMD == 128) && !(defined RT_SWEX1)
 
 #define RT_SIMD_REGS            RT_SIMD_REGS_128
 #define RT_SIMD_ALIGN           RT_SIMD_ALIGN_128
@@ -1499,7 +1511,7 @@ rt_si32 from_mask(rt_si32 mask)
 /**** var-len **** (cbr/cbe/cbs/...) with fixed-32-bit element ****************/
 /******************************************************************************/
 
-#if   (RT_SIMD >= 512) || (defined RT_SVEX1 || defined RT_SVEX2)
+#if   (RT_SIMD >= 512) || (defined RT_SWEX1 || defined RT_SWEX2)
 
 /* cbr (D = cbrt S) */
 
@@ -1656,7 +1668,7 @@ rt_si32 from_mask(rt_si32 mask)
 /**** var-len **** (cbr/cbe/cbs/...) with fixed-64-bit element ****************/
 /******************************************************************************/
 
-#if   (RT_SIMD >= 512) || (defined RT_SVEX1 || defined RT_SVEX2)
+#if   (RT_SIMD >= 512) || (defined RT_SWEX1 || defined RT_SWEX2)
 
 /* cbr (D = cbrt S) */
 
@@ -6207,7 +6219,7 @@ rt_si32 from_mask(rt_si32 mask)
 /**** 256-bit **** (horizontal SIMD) with fixed-32-bit element ****************/
 /******************************************************************************/
 
-#if   (RT_SIMD == 256) && (defined RT_SVEX1 || defined RT_SVEX2)
+#if   (RT_SIMD == 256) && (defined RT_SWEX1 || defined RT_SWEX2)
 
 #define adpos_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
         adpos3rr(W(XG), W(XG), W(XS))
@@ -6555,7 +6567,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /**** 256-bit **** (vertical-int-div/rem SIMD) with fixed-32-bit element ******/
 
-#if   (RT_SIMD == 256) && (defined RT_SVEX1 || defined RT_SVEX2)
+#if   (RT_SIMD == 256) && (defined RT_SWEX1 || defined RT_SWEX2)
 
 #define divox_rr(XG, XS) /* vertical integer div, unsigned */               \
         divox3rr(W(XG), W(XG), W(XS))
@@ -6899,7 +6911,7 @@ rt_si32 from_mask(rt_si32 mask)
 /**** 128-bit **** (horizontal SIMD) with fixed-32-bit element ****************/
 /******************************************************************************/
 
-#if   (RT_SIMD == 128) && (defined RT_SVEX1)
+#if   (RT_SIMD == 128) && (defined RT_SWEX1)
 
 #define adpos_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
         adpos3rr(W(XG), W(XG), W(XS))
@@ -7177,7 +7189,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /**** 128-bit **** (vertical-int-div/rem SIMD) with fixed-32-bit element ******/
 
-#if   (RT_SIMD == 128) && (defined RT_SVEX1)
+#if   (RT_SIMD == 128) && (defined RT_SWEX1)
 
 #define divox_rr(XG, XS) /* vertical integer div, unsigned */               \
         divox3rr(W(XG), W(XG), W(XS))
@@ -10031,7 +10043,7 @@ rt_si32 from_mask(rt_si32 mask)
 /**** 256-bit **** (horizontal SIMD) with fixed-64-bit element ****************/
 /******************************************************************************/
 
-#if   (RT_SIMD == 256) && (defined RT_SVEX1 || defined RT_SVEX2)
+#if   (RT_SIMD == 256) && (defined RT_SWEX1 || defined RT_SWEX2)
 
 #define adpqs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
         adpqs3rr(W(XG), W(XG), W(XS))
@@ -10323,7 +10335,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /**** 256-bit **** (vertical-int-div/rem SIMD) with fixed-64-bit element ******/
 
-#if   (RT_SIMD == 256) && (defined RT_SVEX1 || defined RT_SVEX2)
+#if   (RT_SIMD == 256) && (defined RT_SWEX1 || defined RT_SWEX2)
 
 #define divqx_rr(XG, XS) /* vertical integer div, unsigned */               \
         divqx3rr(W(XG), W(XG), W(XS))
@@ -10587,7 +10599,7 @@ rt_si32 from_mask(rt_si32 mask)
 /**** 128-bit **** (horizontal SIMD) with fixed-64-bit element ****************/
 /******************************************************************************/
 
-#if   (RT_SIMD == 128) && (defined RT_SVEX1)
+#if   (RT_SIMD == 128) && (defined RT_SWEX1)
 
 #define adpqs_rr(XG, XS) /* horizontal pairwise add, first 15-regs only */  \
         adpqs3rr(W(XG), W(XG), W(XS))
@@ -10833,7 +10845,7 @@ rt_si32 from_mask(rt_si32 mask)
 
 /**** 128-bit **** (vertical-int-div/rem SIMD) with fixed-64-bit element ******/
 
-#if   (RT_SIMD == 128) && (defined RT_SVEX1)
+#if   (RT_SIMD == 128) && (defined RT_SWEX1)
 
 #define divqx_rr(XG, XS) /* vertical integer div, unsigned */               \
         divqx3rr(W(XG), W(XG), W(XS))

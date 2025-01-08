@@ -1041,7 +1041,7 @@
 #define mkjqx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         ck1qx_rm(W(XS), Mebp, inf_GPC07)                                    \
         mk1wx_rx(Reax)                                                      \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##64_512))                     \
+        cmpwx_ri(Reax, IH(S0(mask, 64, K)))                                 \
         jeqxx_lb(lb)
 
 /*************   packed double-precision floating-point convert   *************/

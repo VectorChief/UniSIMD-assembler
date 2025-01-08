@@ -125,7 +125,8 @@ simd_test_w64f64avx512:
 # The 30-reg targets on top of AVX1+2/SSEx below will require in-mem emulation.
 
 # For 128-bit 30-reg build use (replace): RT_128=1   (reserved for AVX1+2/SSEx)
-# For 128-bit 30-reg build use (replace): RT_128=2   (Skylake-X w/ AVX512DQ+VL)
+# For 128-bit AVX512 build use (replace): RT_128=2   (Skylake-X w/ AVX512DQ+VL)
+# For 128-bit AVX512 build use (replace): RT_128=2 RT_128_RX=2 (X regs) (30 rs)
 # For 128-bit SSE2 build use (replace): RT_128=4 RT_SIMD_COMPAT_SSE=2 (15 regs)
 # For 128-bit SSE4 build use (replace): RT_128=4            (15 SIMD registers)
 # For 128-bit AVX1 build use (replace): RT_128=8            (15 SIMD registers)
@@ -136,13 +137,15 @@ simd_test_w64f64avx512:
 # For 256-bit SSE4 build use (replace): RT_256_R8=4          (8 SIMD reg-pairs)
 # For 256-bit AVX1 build use (replace): RT_256=1            (15 SIMD registers)
 # For 256-bit AVX2 build use (replace): RT_256=2            (15 SIMD registers)
+# For 256-bit AVX512 build use (replace): RT_256=2 RT_256_RX=2 (X regs) (15 rp)
 # For 256-bit 30-reg build use (replace): RT_256=4   (reserved for AVX1+2/SSEx)
-# For 256-bit 30-reg build use (replace): RT_256=8   (Skylake-X w/ AVX512DQ+VL)
+# For 256-bit AVX512 build use (replace): RT_256=8   (Skylake-X w/ AVX512DQ+VL)
 
 # For 512-bit AVX1 build use (replace): RT_512_R8=1          (8 SIMD reg-pairs)
 # For 512-bit AVX2 build use (replace): RT_512_R8=2          (8 SIMD reg-pairs)
 # For 512-bit AVX512F  build use (replace): RT_512=1        (15 SIMD registers)
 # For 512-bit AVX512DQ build use (replace): RT_512=2        (15 SIMD registers)
+# For 512-bit AVX512 build use (replace): RT_512=2 RT_512_RX=2 (X regs) (15 rp)
 # For 512-bit AVX512F  build use (replace): RT_512=4        (30 SIMD registers)
 # For 512-bit AVX512DQ build use (replace): RT_512=8        (30 SIMD registers)
 

@@ -179,8 +179,24 @@
 
 #endif /* (RT_512X1 == 2 || RT_512X1 == 8) */
 
+#if   (RT_SIMD == 128*1)
+#undef  K
+#define K 0
+#define M0 _128
+#elif (RT_SIMD == 256*1)
+#undef  K
+#define K 1
+#define M1 _256
+#elif (RT_SIMD == 512*1)
 #undef  K
 #define K 2
+#define M2 _512
+#endif /* RT_SIMD: 128*1, 256*1, 512*1 */
+
+#define S0(mask, bits, k)   S1(mask, bits, k)
+#define S1(mask, bits, k)   S2(mask, bits, M##k)
+#define S2(mask, bits, k)   S3(mask, bits, k)
+#define S3(mask, bits, k)   RT_SIMD_MASK_##mask##bits##k
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -421,7 +437,7 @@
 
 #define mxjox_rx(PS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         mkxwx_rx(Reax, W(PS))                                               \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##32_512))                     \
+        cmpwx_ri(Reax, IH(S0(mask, K)))                                     \
         jeqxx_lb(lb)
 
 /* mov (D = S), predicated */
@@ -1076,7 +1092,7 @@
 #define mkjox_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         ck1ox_rm(W(XS), Mebp, inf_GPC07)                                    \
         mk1wx_rx(Reax)                                                      \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##32_512))                     \
+        cmpwx_ri(Reax, IH(S0(mask, 32, K)))                                 \
         jeqxx_lb(lb)
 
 /*************   packed single-precision floating-point convert   *************/
