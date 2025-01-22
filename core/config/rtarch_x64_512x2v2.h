@@ -494,9 +494,9 @@
         MRM(0x07,       0x03, 0x00)                                         \
         mkxwx_rx(Reax, Y(PS))                                               \
         REX(0,             1)                                               \
-        EMITB(0x03 | (0x08 << ((RT_SIMD_MASK_##mask##64_1K4 & 0x1) << 1)))  \
+        EMITB(0x03 | (0x08 << ((S0(mask, 64, K) & 0x1) << 1)))              \
         MRM(0x00,       0x03, 0x07)                                         \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##64_1K4))                     \
+        cmpwx_ri(Reax, IH(S0(mask, 64, K)))                                 \
         jeqxx_lb(lb)
 
 /******************************************************************************/
@@ -1248,8 +1248,8 @@
 
 /* mkj (jump to lb) if (S satisfies mask condition) */
 
-#define RT_SIMD_MASK_NONE64_1K4    0x0000   /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL64_1K4    0x00FF   /*  all satisfy the condition */
+#define RT_SIMD_MASK_NONE64_512    0x0000   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL64_512    0x00FF   /*  all satisfy the condition */
 
 /* #define mk1wx_rx(RD)                    (defined in 32_1K4-bit header) */
 

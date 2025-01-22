@@ -388,7 +388,7 @@
 
 #define mxjqx_rx(PS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         mkxwx_rx(Reax, W(PS))                                               \
-        cmpwx_ri(Reax, IH(RT_SIMD_MASK_##mask##64_512))                     \
+        cmpwx_ri(Reax, IH(S0(mask, 64, K)))                                 \
         jeqxx_lb(lb)
 
 /* mov (D = S), predicated */

@@ -437,7 +437,7 @@
 
 #define mxjox_rx(PS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         mkxwx_rx(Reax, W(PS))                                               \
-        cmpwx_ri(Reax, IH(S0(mask, K)))                                     \
+        cmpwx_ri(Reax, IH(S0(mask, 32, K)))                                 \
         jeqxx_lb(lb)
 
 /* mov (D = S), predicated */

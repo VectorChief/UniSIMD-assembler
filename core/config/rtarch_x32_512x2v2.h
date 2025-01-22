@@ -539,9 +539,9 @@
         MRM(0x07,       0x03, 0x00)                                         \
         mkxwx_rx(Reax, Y(PS))                                               \
         REX(0,             1)                                               \
-        EMITB(0x03 | (0x08 << ((S0(mask, K) & 0x1) << 1)))                  \
+        EMITB(0x03 | (0x08 << ((S0(mask, 32, K) & 0x1) << 1)))              \
         MRM(0x00,       0x03, 0x07)                                         \
-        cmpwx_ri(Reax, IH(S0(mask, K)))                                     \
+        cmpwx_ri(Reax, IH(S0(mask, 32, K)))                                 \
         jeqxx_lb(lb)
 
 /******************************************************************************/

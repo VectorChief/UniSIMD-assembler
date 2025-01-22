@@ -1222,8 +1222,8 @@
 
 /* mkj (jump to lb) if (S satisfies mask condition) */
 
-#define RT_SIMD_MASK_NONE64_2K8    0x0000   /* none satisfy the condition */
-#define RT_SIMD_MASK_FULL64_2K8    0x00FF   /*  all satisfy the condition */
+#define RT_SIMD_MASK_NONE64_512    0x0000   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL64_512    0x00FF   /*  all satisfy the condition */
 
 /* #define mk1wx_rx(RD)                    (defined in 32_2K8-bit header) */
 
