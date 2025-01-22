@@ -595,7 +595,7 @@
 #if   !(defined RT_256X2) && (RT_512_R8)
 #define         RT_256X2     (RT_512_R8)
 #endif
-#if   !(defined RT_AWEX1) && (RT_256) & 0x8
+#if   !(defined RT_AWEX1) && (RT_256) & 0x8 && (RT_256_RX) & 0x8
 #define         RT_256X1     (RT_256)
 #define         RT_AWEX1     (RT_256)
 #define         RT_512X1     (RT_256)

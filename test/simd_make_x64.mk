@@ -256,6 +256,7 @@ simd_test.x64f64avx512:
 # For 256-bit AVX512 build use (replace): RT_256=2 RT_256_RX=2 (X regs) (15 rp)
 # For 256-bit 30-reg build use (replace): RT_256=4   (reserved for AVX1+2/SSEx)
 # For 256-bit AVX512 build use (replace): RT_256=8   (Skylake-X w/ AVX512DQ+VL)
+# For 256-bit AVX512 build use (replace): RT_256=8 RT_256_RX=8 (X regs) (30 rs)
 
 # For 512-bit AVX1 build use (replace): RT_512_R8=1          (8 SIMD reg-pairs)
 # For 512-bit AVX2 build use (replace): RT_512_R8=2          (8 SIMD reg-pairs)
