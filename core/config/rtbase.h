@@ -1224,9 +1224,13 @@ rt_si32 mask_init(rt_si32 simd)
             {
                 mask |= s_type << 16;
             }
-            if (k_size == 2 && n_simd == 2 && v_regs <= 16)
+            if (k_size == 2 && n_simd == 2 && v_regs <= 16 && v_regs > 8)
             {
                 mask |= s_type << 16;
+            }
+            if (k_size == 2 && n_simd == 1 && v_regs <= 16 && v_regs > 8)
+            {
+                mask |= s_type << 8;
             }
             if (k_size == 2 && n_simd <= 4 && v_regs <= 8)
             {
@@ -1236,11 +1240,11 @@ rt_si32 mask_init(rt_si32 simd)
             {
                 mask |= s_type << (8*(n_simd/2)) | (n_simd == 1 ? s_fma3 : 0);
             }
-            if (k_size == 1 && n_simd == 1 && v_regs <= 30 && s_type == 2)
+            if (k_size == 1 && n_simd == 2 && v_regs <= 30 && s_type == 8)
             {
                 mask |= s_type << (8*(n_simd/2));
             }
-            if (k_size == 1 && n_simd == 2 && v_regs <= 30 && s_type == 8)
+            if (k_size == 1 && n_simd == 1 && v_regs <= 30 && s_type == 2)
             {
                 mask |= s_type << (8*(n_simd/2));
             }
@@ -1363,6 +1367,10 @@ rt_si32 from_mask(rt_si32 mask)
         v_regs = 30;
     }
     if (n_simd == 2 && k_size == 2 && s_type == 2)
+    {
+        v_regs = 16;
+    }
+    if (n_simd == 1 && k_size == 2 && s_type == 2)
     {
         v_regs = 16;
     }
