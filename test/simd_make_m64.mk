@@ -77,7 +77,7 @@ simd_test_m64f64Br6:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64f64Br6
 
 
-# On Ubuntu (MATE) 16.04-22.04 add "universe multiverse" to "main restricted"
+# On Ubuntu (MATE) 16.04-26.04 add "universe multiverse" to "main restricted"
 # in /etc/apt/sources.list (sudo nano /etc/apt/sources.list) then run:
 # sudo apt-get update
 # (Ubuntu MATE is set up for an update without a need to edit the file)
@@ -99,7 +99,7 @@ simd_test_m64f64Br6:
 # (replace mipsisa64r6-linux-gnuabi64 with mips-mti-linux-gnu, ...-g++ -EB)
 #
 # Prerequisites for emulation:
-# recent QEMU(-2.7) is installed or built from source and in the PATH variable.
+# recent QEMU(-8.2) is installed or built from source and in the PATH variable.
 # standalone toolchain from 2020.06-01 comes with QEMU 4.1.0 for MIPS in PATH.
 # sudo apt-get install qemu-user
 #

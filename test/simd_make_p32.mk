@@ -45,7 +45,7 @@ simd_test_p32Bp9:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.p32Bp9
 
 
-# On Ubuntu (MATE) 16.04-22.04 add "universe multiverse" to "main restricted"
+# On Ubuntu (MATE) 16.04-26.04 add "universe multiverse" to "main restricted"
 # in /etc/apt/sources.list (sudo nano /etc/apt/sources.list) then run:
 # sudo apt-get update
 # (Ubuntu MATE is set up for an update without a need to edit the file)
@@ -56,9 +56,7 @@ simd_test_p32Bp9:
 # sudo apt-get install make g++-powerpc-linux-gnu
 #
 # Prerequisites for emulation:
-# recent QEMU(-2.5) is installed or built from source and in the PATH variable.
-# POWER9 target requires more recent QEMU, tested with 3.x.y series and 4.2.0.
-# QEMU versions 4.x.y prior to 4.2.0 show issues with POWER8/9 fp32 LE targets.
+# recent QEMU(-8.2) is installed or built from source and in the PATH variable.
 # sudo apt-get install qemu-user
 #
 # Compiling/running SIMD test:

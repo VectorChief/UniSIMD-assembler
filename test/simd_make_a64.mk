@@ -150,7 +150,7 @@ simd_test.a64f64sve:
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.a64f64sve
 
 
-# On Ubuntu (MATE) 16.04-22.04 add "universe multiverse" to "main restricted"
+# On Ubuntu (MATE) 16.04-26.04 add "universe multiverse" to "main restricted"
 # in /etc/apt/sources.list (sudo nano /etc/apt/sources.list) then run:
 # sudo apt-get update
 # (Ubuntu MATE is set up for an update without a need to edit the file)
@@ -161,9 +161,7 @@ simd_test.a64f64sve:
 # sudo apt-get install make g++-aarch64-linux-gnu
 #
 # Prerequisites for emulation:
-# recent QEMU(-2.5) is installed or built from source and in the PATH variable.
-# SVE targets require QEMU 3.x.y (or 3.0.0 with sve-max-vq cpu property patch).
-# recent QEMU 4.x.y work well with SVE, but only 4.2.0 is good for all targets.
+# recent QEMU(-8.2) is installed or built from source and in the PATH variable.
 # sudo apt-get install qemu-user
 #
 # Compiling/running SIMD test:
