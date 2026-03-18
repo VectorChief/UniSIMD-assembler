@@ -56,10 +56,10 @@ To build QEMU emulator from source on Linux, download the latest version from:
 unpack the archive, open terminal window, go to QEMU's root folder,
 make sure necessary tools and libraries are installed:
     sudo apt-get update
-    sudo apt-get install make g++ ninja-build
+    sudo apt-get install make g++ ninja-build python3-venv
     sudo apt-get install pkg-config libglib2.0-dev libpixman-1-dev zlib1g-dev
 when building QEMU on RPM-based systems like openSUSE:
-    sudo zypper install make gcc-c++ ninja
+    sudo zypper install make gcc-c++ ninja python3
     sudo zypper install patch glib2-devel libpixman-1-0-devel zlib-devel
 to build a reduced set of targets for linux-user mode emulation only, use:
     ./configure --target-list=arm-linux-user,aarch64-linux-user,\
