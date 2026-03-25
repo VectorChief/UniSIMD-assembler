@@ -1862,6 +1862,12 @@
  * 0th byte - 128-bit version, 1st byte - 256-bit version, | plus _R8/_RX slots
  * 2nd byte - 512-bit version, 3rd byte - 1K4-bit version, | in upper halves */
 
+#ifdef RT_256_RX
+#define RT_AVX_RX RT_256_RX
+#else /* RT_256_RX */
+#define RT_AVX_RX 0
+#endif /* RT_256_RX */
+
 #define cpuid_xx() /* destroys Reax, Recx, Rebx, Redx, reads Reax, Recx */  \
         EMITB(0x0F) EMITB(0xA2)     /* not portable, do not use outside */
 
@@ -1967,6 +1973,13 @@
         andwx_ri(Recx, IV(0x00000800))  /* <- AVX512DQ+VL to bit11 */       \
         andwx_rr(Recx, Reax)                                                \
         orrwx_rr(Resi, Recx)                                                \
+        movwx_ri(Redx, IB((RT_AVX_RX) & 0x2)) /* <- AVX2 to AVX512VL */     \
+        shlwx_ri(Redx, IB(8))                                               \
+        notwx_rx(Redx)                                                      \
+        andwx_rr(Resi, Redx)                                                \
+        notwx_rx(Redx)                                                      \
+        andwx_rr(Redx, Reax)                                                \
+        orrwx_rr(Resi, Redx)                                                \
         movwx_st(Resi, Mebp, inf_VER)
 
 /************************* address-sized instructions *************************/
