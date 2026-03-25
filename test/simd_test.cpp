@@ -8643,10 +8643,10 @@ rt_si32 main(rt_si32 argc, rt_char *argv[])
     simd = (2 << 16) | (RT_256X2 << 8) | 2;
 #elif (RT_128X4)  && (RT_SIMD == 512)
     simd = (4 << 16) | (RT_128X4 << 8) | 1;
-#elif (RT_256X1)  && (RT_SIMD == 256)
-    simd = (1 << 16) | (RT_256X1 << 8) | 2;
 #elif (RT_128X2)  && (RT_SIMD == 256)
     simd = (2 << 16) | (RT_128X2 << 8) | 1;
+#elif (RT_256X1)  && (RT_SIMD == 256)
+    simd = (1 << 16) | (RT_256X1 << 8) | 2;
 #elif (RT_128X1)  && (RT_SIMD == 128)
     simd = (1 << 16) | (RT_128X1 << 8) | 1;
 #endif /* RT_128 */
