@@ -123,9 +123,9 @@
 
 #if (defined RT_SIMD_CODE)
 
-#if (RT_512X2 >= 1 && RT_512X2 <= 2)
+#if (RT_AWEX2 >= 1 && RT_AWEX2 <= 2)
 
-#if (RT_512X2 == 1)
+#if (RT_AWEX2 == 1)
 
 #ifndef RT_RTARCH_X64_256X1V2_H
 #undef  RT_256X1
@@ -159,7 +159,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
-#else  /* (RT_512X2 == 2) */
+#else  /* (RT_AWEX2 == 2) */
 
 #ifndef RT_RTARCH_X64_256X1V8_H
 #undef  RT_256X1
@@ -187,7 +187,7 @@
         EVX(RMB(XD),       0,    0x00, K, 2, 2) EMITB(0x38)                 \
         MRM(REG(XD),    0x03, REP(PS))
 
-#endif /* (RT_512X2 == 2) */
+#endif /* (RT_AWEX2 == 2) */
 
 #if   (RT_SIMD == 128*2)
 #undef  K
@@ -611,7 +611,7 @@
         MRM(REG(XS),    0x02, REG(MG))                                      \
         AUX(SIB(MG), EMITW(VZL(DG)), EMPTY)
 
-#if (RT_512X2 < 2)
+#if (RT_AWEX2 < 2)
 
 /* and (G = G & S), (D = S & T) if (#D != #T) */
 
@@ -719,7 +719,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
-#else /* RT_512X2 >= 2 */
+#else /* RT_AWEX2 >= 2 */
 
 /* and (G = G & S), (D = S & T) if (#D != #T) */
 
@@ -827,7 +827,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
-#endif /* RT_512X2 >= 2 */
+#endif /* RT_AWEX2 >= 2 */
 
 /* not (G = ~G), (D = ~S) */
 
@@ -2428,7 +2428,7 @@
         stack_ld(Recx)                                                      \
         stack_ld(Redx)
 
-#endif /* RT_512X2 */
+#endif /* RT_AWEX2 */
 
 #endif /* RT_SIMD_CODE */
 

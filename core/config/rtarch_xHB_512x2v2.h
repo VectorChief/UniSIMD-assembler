@@ -115,9 +115,9 @@
 
 #if (defined RT_SIMD_CODE)
 
-#if (RT_512X2 >= 1 && RT_512X2 <= 2)
+#if (RT_AWEX2 >= 1 && RT_AWEX2 <= 2)
 
-#if (RT_512X2 == 1) /* instructions below require AVX512BW (not in AVX512F) */
+#if (RT_AWEX2 == 1) /* instructions below require AVX512BW (not in AVX512F) */
 
 #define ck1mx_rm(XS, MT, DT) /* not portable, do not use outside */         \
     ADR EVX(0,       RXB(MT), REN(XS), K, 1, 1) EMITB(0x75)                 \
@@ -139,7 +139,7 @@
         MRM(REG(XD), MOD(MS), REG(MS))                                      \
         AUX(SIB(MS), CMD(DS), EMPTY)
 
-#else  /* (RT_512X2 == 2) */
+#else  /* (RT_AWEX2 == 2) */
 
 #define ck1mx_rm(XS, MT, DT) /* not portable, do not use outside */         \
         EVW(0,       RXB(XS),    0x00, K, 2, 2) EMITB(0x29)                 \
@@ -157,7 +157,7 @@
         EVX(RXB(XD),       0,    0x00, K, 2, 2) EMITB(0x28)                 \
         MRM(REG(XD),    0x03,    0x01)
 
-#endif /* (RT_512X2 == 2) */
+#endif /* (RT_AWEX2 == 2) */
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -196,7 +196,7 @@
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
-#if (RT_512X2 == 1)
+#if (RT_AWEX2 == 1)
 
 #define mmvmx_rr(XG, XS)                                                    \
         andmx_rr(W(XS), Xmm0)                                               \
@@ -216,7 +216,7 @@
         orrmx_rr(Xmm0, W(XS))                                               \
         movmx_st(Xmm0, W(MG), W(DG))
 
-#else /* RT_512X2 == 2 */
+#else /* RT_AWEX2 == 2 */
 
 #define mmvmx_rr(XG, XS)                                                    \
         ck1mx_rm(Xmm0, Mebp, inf_GPC07)                                     \
@@ -246,7 +246,7 @@
         MRM(REG(XS),    0x02, REG(MG))                                      \
         AUX(SIB(MG), EMITW(VZL(DG)), EMPTY)
 
-#endif /* RT_512X2 == 2 */
+#endif /* RT_AWEX2 == 2 */
 
 /* and (G = G & S), (D = S & T) if (#D != #T) */
 
@@ -364,7 +364,7 @@
 
 /*************   packed half-precision integer arithmetic/shifts   ************/
 
-#if (RT_512X2 < 2)
+#if (RT_AWEX2 < 2)
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
@@ -1180,7 +1180,7 @@
         stack_ld(Recx)                                                      \
         movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
-#else /* RT_512X2 >= 2 */
+#else /* RT_AWEX2 >= 2 */
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
@@ -1480,11 +1480,11 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
-#endif /* RT_512X2 >= 2 */
+#endif /* RT_AWEX2 >= 2 */
 
 /*****************   packed half-precision integer compare   ******************/
 
-#if (RT_512X2 < 2)
+#if (RT_AWEX2 < 2)
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
 
@@ -1846,7 +1846,7 @@
         cmpwx_mi(Mebp, inf_SCR02(0), IW(RT_SIMD_MASK_##mask##16_1K4))       \
         jeqxx_lb(lb)
 
-#else /* RT_512X2 >= 2 */
+#else /* RT_AWEX2 >= 2 */
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
 
@@ -2238,14 +2238,14 @@
         cmpwx_ri(Reax, IW(RT_SIMD_MASK_##mask##16_1K4))                     \
         jeqxx_lb(lb)
 
-#endif /* RT_512X2 >= 2 */
+#endif /* RT_AWEX2 >= 2 */
 
 /****************   packed byte-precision generic move/logic   ****************/
 
 /* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
  * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
 
-#if (RT_512X2 == 1)
+#if (RT_AWEX2 == 1)
 
 #define mmvmb_rr(XG, XS)                                                    \
         andmx_rr(W(XS), Xmm0)                                               \
@@ -2265,7 +2265,7 @@
         orrmx_rr(Xmm0, W(XS))                                               \
         movmx_st(Xmm0, W(MG), W(DG))
 
-#else /* RT_512X2 == 2 */
+#else /* RT_AWEX2 == 2 */
 
 #define mmvmb_rr(XG, XS)                                                    \
         ck1mb_rm(Xmm0, Mebp, inf_GPC07)                                     \
@@ -2295,13 +2295,13 @@
         MRM(REG(XS),    0x02, REG(MG))                                      \
         AUX(SIB(MG), EMITW(VZL(DG)), EMPTY)
 
-#endif /* RT_512X2 == 2 */
+#endif /* RT_AWEX2 == 2 */
 
 /* move/logic instructions are sizeless and provided in 16-bit subset above */
 
 /*************   packed byte-precision integer arithmetic/shifts   ************/
 
-#if (RT_512X2 < 2)
+#if (RT_AWEX2 < 2)
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
@@ -2507,7 +2507,7 @@
         movax_st(W(XD), Mebp, inf_SCR01(0x60))                              \
         movmx_ld(W(XD), Mebp, inf_SCR01(0))
 
-#else /* RT_512X2 >= 2 */
+#else /* RT_AWEX2 >= 2 */
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
@@ -2641,7 +2641,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
-#endif /* RT_512X2 >= 2 */
+#endif /* RT_AWEX2 >= 2 */
 
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
 
@@ -4361,7 +4361,7 @@
 
 /*****************   packed byte-precision integer compare   ******************/
 
-#if (RT_512X2 < 2)
+#if (RT_AWEX2 < 2)
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
 
@@ -4769,7 +4769,7 @@
         cmpwx_ri(Reax, IB(RT_SIMD_MASK_##mask##08_1K4))                     \
         jeqxx_lb(lb)
 
-#else /* RT_512X2 >= 2 */
+#else /* RT_AWEX2 >= 2 */
 
 /* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
 
@@ -5163,13 +5163,13 @@
         cmpzx_rm(Reax, Mebp, inf_SCR02(0))                                  \
         jeqxx_lb(lb)
 
-#endif /* RT_512X2 >= 2 */
+#endif /* RT_AWEX2 >= 2 */
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
-#endif /* RT_512X2 */
+#endif /* RT_AWEX2 */
 
 #endif /* RT_SIMD_CODE */
 
