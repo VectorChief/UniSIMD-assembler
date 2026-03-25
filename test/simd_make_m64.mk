@@ -25,25 +25,25 @@ build_le: simd_test_m64_32Lr6 simd_test_m64_64Lr6 \
           simd_test_m64f32Lr6 simd_test_m64f64Lr6
 
 simd_test_m64_32Lr6:
-	mipsisa64r6el-linux-gnuabi64-g++ -O3 -g -static -mips64r6 -mmsa -mabi=64 \
+	mipsisa64r6el-linux-gnuabi64-g++ -O3 -g -static -mmsa \
         -DRT_LINUX -DRT_M64=6 -DRT_128=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64_32Lr6
 
 simd_test_m64_64Lr6:
-	mipsisa64r6el-linux-gnuabi64-g++ -O3 -g -static -mips64r6 -mmsa -mabi=64 \
+	mipsisa64r6el-linux-gnuabi64-g++ -O3 -g -static -mmsa \
         -DRT_LINUX -DRT_M64=6 -DRT_128=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64_64Lr6
 
 simd_test_m64f32Lr6:
-	mipsisa64r6el-linux-gnuabi64-g++ -O3 -g -static -mips64r6 -mmsa -mabi=64 \
+	mipsisa64r6el-linux-gnuabi64-g++ -O3 -g -static -mmsa \
         -DRT_LINUX -DRT_M64=6 -DRT_256=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64f32Lr6
 
 simd_test_m64f64Lr6:
-	mipsisa64r6el-linux-gnuabi64-g++ -O3 -g -static -mips64r6 -mmsa -mabi=64 \
+	mipsisa64r6el-linux-gnuabi64-g++ -O3 -g -static -mmsa \
         -DRT_LINUX -DRT_M64=6 -DRT_256=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=0 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64f64Lr6
@@ -53,25 +53,25 @@ build_be: simd_test_m64_32Br6 simd_test_m64_64Br6 \
           simd_test_m64f32Br6 simd_test_m64f64Br6
 
 simd_test_m64_32Br6:
-	mipsisa64r6-linux-gnuabi64-g++ -O3 -g -static -mips64r6 -mmsa -mabi=64 \
+	mipsisa64r6-linux-gnuabi64-g++ -O3 -g -static -mmsa \
         -DRT_LINUX -DRT_M64=6 -DRT_128=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64_32Br6
 
 simd_test_m64_64Br6:
-	mipsisa64r6-linux-gnuabi64-g++ -O3 -g -static -mips64r6 -mmsa -mabi=64 \
+	mipsisa64r6-linux-gnuabi64-g++ -O3 -g -static -mmsa \
         -DRT_LINUX -DRT_M64=6 -DRT_128=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64_64Br6
 
 simd_test_m64f32Br6:
-	mipsisa64r6-linux-gnuabi64-g++ -O3 -g -static -mips64r6 -mmsa -mabi=64 \
+	mipsisa64r6-linux-gnuabi64-g++ -O3 -g -static -mmsa \
         -DRT_LINUX -DRT_M64=6 -DRT_256=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64f32Br6
 
 simd_test_m64f64Br6:
-	mipsisa64r6-linux-gnuabi64-g++ -O3 -g -static -mips64r6 -mmsa -mabi=64 \
+	mipsisa64r6-linux-gnuabi64-g++ -O3 -g -static -mmsa \
         -DRT_LINUX -DRT_M64=6 -DRT_256=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.m64f64Br6
@@ -97,6 +97,7 @@ simd_test_m64f64Br6:
 # PATH=/home/ubuntu-mate/Downloads/mips-mti-linux-gnu/2020.06-01/bin:$PATH
 # (replace mipsisa64r6el-linux-gnuabi64 with mips-mti-linux-gnu, ...-g++ -EL)
 # (replace mipsisa64r6-linux-gnuabi64 with mips-mti-linux-gnu, ...-g++ -EB)
+# (add -mips64r6 -mabi=64 to ...-g++ ... -mmsa)
 #
 # Prerequisites for emulation:
 # recent QEMU(-8.2) is installed or built from source and in the PATH variable.
