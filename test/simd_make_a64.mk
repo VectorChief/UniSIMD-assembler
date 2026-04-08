@@ -160,6 +160,9 @@ simd_test.a64f64sve:
 # (cross-)compiler for AArch64 is installed and in the PATH variable.
 # sudo apt-get install make g++-aarch64-linux-gnu
 #
+# When building on macOS install Command Line Tools first.
+# https://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/
+#
 # Prerequisites for emulation:
 # recent QEMU(-8.2) is installed or built from source and in the PATH variable.
 # sudo apt-get install qemu-user

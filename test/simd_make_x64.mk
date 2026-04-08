@@ -218,10 +218,10 @@ simd_test.x64f64avx512:
 # sudo apt-get install make g++
 #
 # When building on macOS install Command Line Tools first.
-# http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/
+# https://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/
 #
 # Prerequisites for emulation:
-# http://software.intel.com/en-us/articles/intel-software-development-emulator
+# https://software.intel.com/en-us/articles/intel-software-development-emulator
 # Intel SDE is downloaded, unpacked and in the PATH variable.
 #
 # Compiling/running SIMD test:

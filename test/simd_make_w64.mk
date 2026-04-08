@@ -108,6 +108,10 @@ simd_test_w64f64avx512:
 # Download tdm64-gcc-5.1.0-2.exe from sourceforge and run the installer.
 # Alternatively download and install tdm64-gcc-10.3.0-2.exe from github.
 #
+# Prerequisites for emulation:
+# https://software.intel.com/en-us/articles/intel-software-development-emulator
+# Intel SDE is downloaded, unpacked and in the PATH variable.
+#
 # Compiling/running SIMD test:
 # run simd_make_w64.bat from Windows Explorer or
 # run the following from Command Prompt "cmd":
@@ -115,6 +119,8 @@ simd_test_w64f64avx512:
 # simd_test_w64f32.exe
 # simd_test_w64f32avx.exe
 # simd_test_w64f32avx512.exe
+# sde -hsw -- simd_test.w64f32avx -c 1
+# sde -skx -- simd_test.w64f32avx512 -c 1
 # Use "-c 1" option to reduce test time when emulating with Intel SDE
 
 # Clang native build should theoretically work too (not tested), use (replace):

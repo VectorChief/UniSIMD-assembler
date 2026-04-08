@@ -52,7 +52,7 @@ simd_test_x86avx512:
 # (installation of g++-multilib removes any g++ cross-compilers)
 #
 # Prerequisites for emulation:
-# http://software.intel.com/en-us/articles/intel-software-development-emulator
+# https://software.intel.com/en-us/articles/intel-software-development-emulator
 # Intel SDE is downloaded, unpacked and in the PATH variable.
 #
 # Compiling/running SIMD test:
