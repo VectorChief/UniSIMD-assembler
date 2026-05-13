@@ -116,6 +116,9 @@
 #define RT_SIMD 128
 #endif /* RT_SIMD: 2048, 1024, 512, 256, 128 */
 
+/*
+ * Determine presence of predicated SIMD targets (X1 & X2 - ARM-SVE, AVX-512).
+ */
 #if   (defined RT_SVEX1)
 #define RT_SWEX1 RT_SVEX1
 #elif (defined RT_AWEX1)
@@ -127,6 +130,11 @@
 #elif (defined RT_AWEX2)
 #define RT_SWEX2 RT_AWEX2
 #endif /* SWEX2: SVEX2, AWEX2 */
+
+/*
+ * Public flag for predicated SIMD code (application level, ARM-SVE, AVX-512).
+ */
+#define RT_RX (defined RT_SWEX1 || defined RT_SWEX2)
 
 /*
  * Determine SIMD total-quads for backend structs (maximal for a given build).

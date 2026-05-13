@@ -186,6 +186,20 @@
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
+#define addqsMrr(XG, PS, XS)     /* merging-masking only */                 \
+        EPW(REG(PS), 0,       RXB(XG), RXB(XS), REN(XG), K,1,1) EMITB(0x58) \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+        EPW(REP(PS), 0,       RMB(XG), RMB(XS), REM(XG), K,1,1) EMITB(0x58) \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define addqsMld(XG, PS, MS, DS) /* merging-masking only */                 \
+    ADR EPW(REG(PS), 0,       RXB(XG), RXB(MS), REN(XG), K,1,1) EMITB(0x58) \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EPW(REP(PS), 0,       RMB(XG), RXB(MS), REM(XG), K,1,1) EMITB(0x58) \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
+
 #define addqsPrr(XG, PS, XS)                                                \
         addqs4rr(W(XG), W(PS), W(XG), W(XS))
 
@@ -207,6 +221,20 @@
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
 /* sub (G = G - S), (D = S - T) if (#D != #T) */
+
+#define subqsMrr(XG, PS, XS)     /* merging-masking only */                 \
+        EPW(REG(PS), 0,       RXB(XG), RXB(XS), REN(XG), K,1,1) EMITB(0x5C) \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+        EPW(REP(PS), 0,       RMB(XG), RMB(XS), REM(XG), K,1,1) EMITB(0x5C) \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define subqsMld(XG, PS, MS, DS) /* merging-masking only */                 \
+    ADR EPW(REG(PS), 0,       RXB(XG), RXB(MS), REN(XG), K,1,1) EMITB(0x5C) \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EPW(REP(PS), 0,       RMB(XG), RXB(MS), REM(XG), K,1,1) EMITB(0x5C) \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 #define subqsPrr(XG, PS, XS)                                                \
         subqs4rr(W(XG), W(PS), W(XG), W(XS))
@@ -230,6 +258,20 @@
 
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
 
+#define mulqsMrr(XG, PS, XS)     /* merging-masking only */                 \
+        EPW(REG(PS), 0,       RXB(XG), RXB(XS), REN(XG), K,1,1) EMITB(0x59) \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+        EPW(REP(PS), 0,       RMB(XG), RMB(XS), REM(XG), K,1,1) EMITB(0x59) \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define mulqsMld(XG, PS, MS, DS) /* merging-masking only */                 \
+    ADR EPW(REG(PS), 0,       RXB(XG), RXB(MS), REN(XG), K,1,1) EMITB(0x59) \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EPW(REP(PS), 0,       RMB(XG), RXB(MS), REM(XG), K,1,1) EMITB(0x59) \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
+
 #define mulqsPrr(XG, PS, XS)                                                \
         mulqs4rr(W(XG), W(PS), W(XG), W(XS))
 
@@ -251,6 +293,20 @@
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
 /* div (G = G / S), (D = S / T) if (#D != #T) */
+
+#define divqsMrr(XG, PS, XS)     /* merging-masking only */                 \
+        EPW(REG(PS), 0,       RXB(XG), RXB(XS), REN(XG), K,1,1) EMITB(0x5E) \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+        EPW(REP(PS), 0,       RMB(XG), RMB(XS), REM(XG), K,1,1) EMITB(0x5E) \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define divqsMld(XG, PS, MS, DS) /* merging-masking only */                 \
+    ADR EPW(REG(PS), 0,       RXB(XG), RXB(MS), REN(XG), K,1,1) EMITB(0x5E) \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EPW(REP(PS), 0,       RMB(XG), RXB(MS), REM(XG), K,1,1) EMITB(0x5E) \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 #define divqsPrr(XG, PS, XS)                                                \
         divqs4rr(W(XG), W(PS), W(XG), W(XS))
@@ -498,6 +554,206 @@
         MRM(0x00,       0x03, 0x07)                                         \
         cmpwx_ri(Reax, IH(S0(mask, 64, K)))                                 \
         jeqxx_lb(lb)
+
+/* mov (D = S), predicated */
+
+#define mxvqx_rr(XD, PS, XS)     /* merging-masking only */                 \
+        EPW(REG(PS), 0,       RXB(XD), RXB(XS), 0x00, K,1,1) EMITB(0x28)    \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EPW(REP(PS), 0,       RMB(XD), RMB(XS), 0x00, K,1,1) EMITB(0x28)    \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define mxvqx_ld(XD, PS, MS, DS) /* zeroing-masking only */                 \
+    ADR EPW(REG(PS), 1,       RXB(XD), RXB(MS), 0x00, K,1,1) EMITB(0x28)    \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EPW(REP(PS), 1,       RMB(XD), RXB(MS), 0x00, K,1,1) EMITB(0x28)    \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
+
+#define mxvqx_st(XS, PS, MD, DD) /* merging-masking only */                 \
+    ADR EPW(REG(PS), 0,       RXB(XS), RXB(MD), 0x00, K,1,1) EMITB(0x29)    \
+        MRM(REG(XS), MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EPW(REP(PS), 0,       RMB(XS), RXB(MD), 0x00, K,1,1) EMITB(0x29)    \
+        MRM(REG(XS), MOD(MD), REG(MD))                                      \
+        AUX(SIB(MD), EMITW(VZL(DS)), EMPTY)
+
+#define selqx_rr(XD, PS, XS, XT)                                            \
+        EPW(REG(PS), 0,       RXB(XD), RXB(XT), REN(XS), K,1,2) EMITB(0x65) \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EPW(REP(PS), 0,       RMB(XD), RMB(XT), REM(XS), K,1,2) EMITB(0x65) \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define selqx_ld(XD, PS, XS, MT, DT)                                        \
+        EPW(REG(PS), 0,       RXB(XD), RXB(MT), REN(XS), K,1,2) EMITB(0x65) \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DS)), EMPTY)                                 \
+        EPW(REP(PS), 0,       RMB(XD), RXB(MT), REM(XS), K,1,2) EMITB(0x65) \
+        MRM(REG(XD), MOD(MT), REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DS)), EMPTY)
+
+#define gthqx_ld(XD, PS, MS, XT) /* zeroing-masking only */                 \
+        VEX(0,             0,    0x00, 0, 0, 1) EMITB(0x90)                 \
+        MRM(1,          0x03, REG(PS))                                      \
+    ADR EPW(1,  1, RXB(XD), R1B(MS)|R1B(XT)<<1,    0x00, K,1,2) EMITB(0x93) \
+        MRM(REG(XD),    0x00,(REN(MS)&0x08)|0x04)                           \
+        EMITB(0x0<<6|REG(XT)<<3|REG(MS)) /* <- VSIB */                      \
+        VEX(0,             0,    0x00, 0, 0, 1) EMITB(0x90)                 \
+        MRM(1,          0x03, REP(PS))                                      \
+    ADR EPW(1,  1, RMB(XD), R1B(MS)|R1B(XT)<<1,    0x10, K,1,2) EMITB(0x93) \
+        MRM(REG(XD),    0x00,(REN(MS)&0x08)|0x04)                           \
+        EMITB(0x0<<6|REG(XT)<<3|REG(MS)) /* <- VSIB */
+
+#define gtiqx_ld(XD, PS, MS, XT) /* zeroing-masking only */                 \
+        VEX(0,             0,    0x00, 0, 0, 1) EMITB(0x90)                 \
+        MRM(1,          0x03, REG(PS))                                      \
+    ADR EPW(1,  1, RXB(XD), R1B(MS)|R1B(XT)<<1,    0x00, K,1,2) EMITB(0x93) \
+        MRM(REG(XD),    0x00,(REN(MS)&0x08)|0x04)                           \
+        EMITB(0x3<<6|REG(XT)<<3|REG(MS)) /* <- VSIB */                      \
+        VEX(0,             0,    0x00, 0, 0, 1) EMITB(0x90)                 \
+        MRM(1,          0x03, REP(PS))                                      \
+    ADR EPW(1,  1, RMB(XD), R1B(MS)|R1B(XT)<<1,    0x10, K,1,2) EMITB(0x93) \
+        MRM(REG(XD),    0x00,(REN(MS)&0x08)|0x04)                           \
+        EMITB(0x3<<6|REG(XT)<<3|REG(MS)) /* <- VSIB */
+
+#define sctqx_st(XS, PS, MD, XT) /* merging-masking only */                 \
+        VEX(0,             0,    0x00, 0, 0, 1) EMITB(0x90)                 \
+        MRM(1,          0x03, REG(PS))                                      \
+    ADR EPW(1,  0, RXB(XS), R1B(MD)|R1B(XT)<<1,    0x00, K,1,2) EMITB(0xA3) \
+        MRM(REG(XS),    0x00,(REN(MD)&0x08)|0x04)                           \
+        EMITB(0x0<<6|REG(XT)<<3|REG(MD)) /* <- VSIB */                      \
+        VEX(0,             0,    0x00, 0, 0, 1) EMITB(0x90)                 \
+        MRM(1,          0x03, REP(PS))                                      \
+    ADR EPW(1,  0, RMB(XS), R1B(MD)|R1B(XT)<<1,    0x10, K,1,2) EMITB(0xA3) \
+        MRM(REG(XS),    0x00,(REN(MD)&0x08)|0x04)                           \
+        EMITB(0x0<<6|REG(XT)<<3|REG(MD)) /* <- VSIB */
+
+#define sciqx_st(XS, PS, MD, XT) /* merging-masking only */                 \
+        VEX(0,             0,    0x00, 0, 0, 1) EMITB(0x90)                 \
+        MRM(1,          0x03, REG(PS))                                      \
+    ADR EPW(1,  0, RXB(XS), R1B(MD)|R1B(XT)<<1,    0x00, K,1,2) EMITB(0xA3) \
+        MRM(REG(XS),    0x00,(REN(MD)&0x08)|0x04)                           \
+        EMITB(0x3<<6|REG(XT)<<3|REG(MD)) /* <- VSIB */                      \
+        VEX(0,             0,    0x00, 0, 0, 1) EMITB(0x90)                 \
+        MRM(1,          0x03, REP(PS))                                      \
+    ADR EPW(1,  0, RMB(XS), R1B(MD)|R1B(XT)<<1,    0x10, K,1,2) EMITB(0xA3) \
+        MRM(REG(XS),    0x00,(REN(MD)&0x08)|0x04)                           \
+        EMITB(0x3<<6|REG(XT)<<3|REG(MD)) /* <- VSIB */
+
+/* add (G = G + S), (D = S + T) if (#D != #T) */
+
+#define addqxMrr(XG, PS, XS)     /* merging-masking only */                 \
+        EPW(REG(PS), 0,       RXB(XG), RXB(XS), REN(XG), K,1,1) EMITB(0xD4) \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+        EPW(REP(PS), 0,       RMB(XG), RMB(XS), REM(XG), K,1,1) EMITB(0xD4) \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define addqxMld(XG, PS, MS, DS) /* merging-masking only */                 \
+    ADR EPW(REG(PS), 0,       RXB(XG), RXB(MS), REN(XG), K,1,1) EMITB(0xD4) \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EPW(REP(PS), 0,       RMB(XG), RXB(MS), REM(XG), K,1,1) EMITB(0xD4) \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
+
+#define addqxPrr(XG, PS, XS)                                                \
+        addqx4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define addqxPld(XG, PS, MS, DS)                                            \
+        addqx4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define addqx4rr(XD, PS, XS, XT)                                            \
+        EPW(REG(PS), MOD(PS), RXB(XD), RXB(XT), REN(XS), K,1,1) EMITB(0xD4) \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EPW(REP(PS), MOD(PS), RMB(XD), RMB(XT), REM(XS), K,1,1) EMITB(0xD4) \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define addqx4ld(XD, PS, XS, MT, DT)                                        \
+    ADR EPW(REG(PS), MOD(PS), RXB(XD), RXB(MT), REN(XS), K,1,1) EMITB(0xD4) \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EPW(REP(PS), MOD(PS), RMB(XD), RXB(MT), REM(XS), K,1,1) EMITB(0xD4) \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
+
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
+
+#define subqxMrr(XG, PS, XS)     /* merging-masking only */                 \
+        EPW(REG(PS), 0,       RXB(XG), RXB(XS), REN(XG), K,1,1) EMITB(0xFB) \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+        EPW(REP(PS), 0,       RMB(XG), RMB(XS), REM(XG), K,1,1) EMITB(0xFB) \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define subqxMld(XG, PS, MS, DS) /* merging-masking only */                 \
+    ADR EPW(REG(PS), 0,       RXB(XG), RXB(MS), REN(XG), K,1,1) EMITB(0xFB) \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EPW(REP(PS), 0,       RMB(XG), RXB(MS), REM(XG), K,1,1) EMITB(0xFB) \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
+
+#define subqxPrr(XG, PS, XS)                                                \
+        subqx4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define subqxPld(XG, PS, MS, DS)                                            \
+        subqx4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define subqx4rr(XD, PS, XS, XT)                                            \
+        EPW(REG(PS), MOD(PS), RXB(XD), RXB(XT), REN(XS), K,1,1) EMITB(0xFB) \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EPW(REP(PS), MOD(PS), RMB(XD), RMB(XT), REM(XS), K,1,1) EMITB(0xFB) \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define subqx4ld(XD, PS, XS, MT, DT)                                        \
+    ADR EPW(REG(PS), MOD(PS), RXB(XD), RXB(MT), REN(XS), K,1,1) EMITB(0xFB) \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EPW(REP(PS), MOD(PS), RMB(XD), RXB(MT), REM(XS), K,1,1) EMITB(0xFB) \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
+
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
+
+#if (RT_AWEX2 < 2)
+
+#else /* RT_AWEX2 >= 2 */
+
+#define mulqxMrr(XG, PS, XS)     /* merging-masking only */                 \
+        EPW(REG(PS), 0,       RXB(XG), RXB(XS), REN(XG), K,1,2) EMITB(0x40) \
+        MRM(REG(XG), MOD(XS), REG(XS))                                      \
+        EPW(REP(PS), 0,       RMB(XG), RMB(XS), REM(XG), K,1,2) EMITB(0x40) \
+        MRM(REG(XG), MOD(XS), REG(XS))
+
+#define mulqxMld(XG, PS, MS, DS) /* merging-masking only */                 \
+    ADR EPW(REG(PS), 0,       RXB(XG), RXB(MS), REN(XG), K,1,2) EMITB(0x40) \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EPW(REP(PS), 0,       RMB(XG), RXB(MS), REM(XG), K,1,2) EMITB(0x40) \
+        MRM(REG(XG),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
+
+#define mulqxPrr(XG, PS, XS)                                                \
+        mulqx4rr(W(XG), W(PS), W(XG), W(XS))
+
+#define mulqxPld(XG, PS, MS, DS)                                            \
+        mulqx4ld(W(XG), W(PS), W(XG), W(MS), W(DS))
+
+#define mulqx4rr(XD, PS, XS, XT)                                            \
+        EPW(REG(PS), MOD(PS), RXB(XD), RXB(XT), REN(XS), K,1,2) EMITB(0x40) \
+        MRM(REG(XD), MOD(XT), REG(XT))                                      \
+        EPW(REP(PS), MOD(PS), RMB(XD), RMB(XT), REM(XS), K,1,2) EMITB(0x40) \
+        MRM(REG(XD), MOD(XT), REG(XT))
+
+#define mulqx4ld(XD, PS, XS, MT, DT)                                        \
+    ADR EPW(REG(PS), MOD(PS), RXB(XD), RXB(MT), REN(XS), K,1,2) EMITB(0x40) \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMPTY)                                 \
+    ADR EPW(REP(PS), MOD(PS), RMB(XD), RXB(MT), REM(XS), K,1,2) EMITB(0x40) \
+        MRM(REG(XD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
+
+#endif /* RT_AWEX2 >= 2 */
 
 /******************************************************************************/
 /**********************************   SIMD   **********************************/

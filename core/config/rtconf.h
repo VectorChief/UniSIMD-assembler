@@ -7993,6 +7993,12 @@
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
+#define addpsMrr(XG, PS, XS)     /* merging-masking only */                 \
+        addosMrr(W(XG), W(PS), W(XS))
+
+#define addpsMld(XG, PS, MS, DS) /* merging-masking only */                 \
+        addosMld(W(XG), W(PS), W(MS), W(DS))
+
 #define addpsPrr(XG, PS, XS)                                                \
         addosPrr(W(XG), W(PS), W(XS))
 
@@ -8006,6 +8012,12 @@
         addos4ld(W(XD), W(PS), W(XS), W(MT), W(DT))
 
 /* sub (G = G - S), (D = S - T) if (#D != #T) */
+
+#define subpsMrr(XG, PS, XS)     /* merging-masking only */                 \
+        subosMrr(W(XG), W(PS), W(XS))
+
+#define subpsMld(XG, PS, MS, DS) /* merging-masking only */                 \
+        subosMld(W(XG), W(PS), W(MS), W(DS))
 
 #define subpsPrr(XG, PS, XS)                                                \
         subosPrr(W(XG), W(PS), W(XS))
@@ -8021,6 +8033,12 @@
 
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
 
+#define mulpsMrr(XG, PS, XS)     /* merging-masking only */                 \
+        mulosMrr(W(XG), W(PS), W(XS))
+
+#define mulpsMld(XG, PS, MS, DS) /* merging-masking only */                 \
+        mulosMld(W(XG), W(PS), W(MS), W(DS))
+
 #define mulpsPrr(XG, PS, XS)                                                \
         mulosPrr(W(XG), W(PS), W(XS))
 
@@ -8034,6 +8052,12 @@
         mulos4ld(W(XD), W(PS), W(XS), W(MT), W(DT))
 
 /* div (G = G / S), (D = S / T) if (#D != #T) */
+
+#define divpsMrr(XG, PS, XS)     /* merging-masking only */                 \
+        divosMrr(W(XG), W(PS), W(XS))
+
+#define divpsMld(XG, PS, MS, DS) /* merging-masking only */                 \
+        divosMld(W(XG), W(PS), W(MS), W(DS))
 
 #define divpsPrr(XG, PS, XS)                                                \
         divosPrr(W(XG), W(PS), W(XS))
@@ -8143,6 +8167,95 @@
 
 #define mxjpx_rx(PS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         mxjox_rx(W(PS), mask, lb)
+
+/* mov (D = S), predicated */
+
+#define mxvpx_rr(XD, PS, XS)     /* merging-masking only */                 \
+        mxvox_rr(W(XD), W(PS), W(XS))
+
+#define mxvpx_ld(XD, PS, MS, DS) /* zeroing-masking only */                 \
+        mxvox_ld(W(XD), W(PS), W(MS), W(DS))
+
+#define mxvpx_st(XS, PS, MD, DD) /* merging-masking only */                 \
+        mxvox_st(W(XS), W(PS), W(MD), W(DD))
+
+#define selpx_rr(XD, PS, XS, XT)                                            \
+        selox_rr(W(XD), W(PS), W(XS), W(XT))
+
+#define selpx_ld(XD, PS, XS, MT, DT)                                        \
+        selox_ld(W(XD), W(PS), W(XS), W(MT), W(DT))
+
+#define gthpx_ld(XD, PS, MS, XT) /* zeroing-masking only */                 \
+        gthox_ld(W(XD), W(PS), W(MS), W(XT))
+
+#define gtipx_ld(XD, PS, MS, XT) /* zeroing-masking only */                 \
+        gtiox_ld(W(XD), W(PS), W(MS), W(XT))
+
+#define sctpx_st(XS, PS, MD, XT) /* merging-masking only */                 \
+        sctox_st(W(XS), W(PS), W(MD), W(XT))
+
+#define scipx_st(XS, PS, MD, XT) /* merging-masking only */                 \
+        sciox_st(W(XS), W(PS), W(MD), W(XT))
+
+/* add (G = G + S), (D = S + T) if (#D != #T) */
+
+#define addpxMrr(XG, PS, XS)     /* merging-masking only */                 \
+        addoxMrr(W(XG), W(PS), W(XS))
+
+#define addpxMld(XG, PS, MS, DS) /* merging-masking only */                 \
+        addoxMld(W(XG), W(PS), W(MS), W(DS))
+
+#define addpxPrr(XG, PS, XS)                                                \
+        addoxPrr(W(XG), W(PS), W(XS))
+
+#define addpxPld(XG, PS, MS, DS)                                            \
+        addoxPld(W(XG), W(PS), W(MS), W(DS))
+
+#define addpx4rr(XD, PS, XS, XT)                                            \
+        addox4rr(W(XD), W(PS), W(XS), W(XT))
+
+#define addpx4ld(XD, PS, XS, MT, DT)                                        \
+        addox4ld(W(XD), W(PS), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
+
+#define subpxMrr(XG, PS, XS)     /* merging-masking only */                 \
+        suboxMrr(W(XG), W(PS), W(XS))
+
+#define subpxMld(XG, PS, MS, DS) /* merging-masking only */                 \
+        suboxMld(W(XG), W(PS), W(MS), W(DS))
+
+#define subpxPrr(XG, PS, XS)                                                \
+        suboxPrr(W(XG), W(PS), W(XS))
+
+#define subpxPld(XG, PS, MS, DS)                                            \
+        suboxPld(W(XG), W(PS), W(MS), W(DS))
+
+#define subpx4rr(XD, PS, XS, XT)                                            \
+        subox4rr(W(XD), W(PS), W(XS), W(XT))
+
+#define subpx4ld(XD, PS, XS, MT, DT)                                        \
+        subox4ld(W(XD), W(PS), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
+
+#define mulpxMrr(XG, PS, XS)     /* merging-masking only */                 \
+        muloxMrr(W(XG), W(PS), W(XS))
+
+#define mulpxMld(XG, PS, MS, DS) /* merging-masking only */                 \
+        muloxMld(W(XG), W(PS), W(MS), W(DS))
+
+#define mulpxPrr(XG, PS, XS)                                                \
+        muloxPrr(W(XG), W(PS), W(XS))
+
+#define mulpxPld(XG, PS, MS, DS)                                            \
+        muloxPld(W(XG), W(PS), W(MS), W(DS))
+
+#define mulpx4rr(XD, PS, XS, XT)                                            \
+        mulox4rr(W(XD), W(PS), W(XS), W(XT))
+
+#define mulpx4ld(XD, PS, XS, MT, DT)                                        \
+        mulox4ld(W(XD), W(PS), W(XS), W(MT), W(DT))
 
 /**********************************   SIMD   **********************************/
 
@@ -11617,6 +11730,12 @@
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
+#define addpsMrr(XG, PS, XS)     /* merging-masking only */                 \
+        addqsMrr(W(XG), W(PS), W(XS))
+
+#define addpsMld(XG, PS, MS, DS) /* merging-masking only */                 \
+        addqsMld(W(XG), W(PS), W(MS), W(DS))
+
 #define addpsPrr(XG, PS, XS)                                                \
         addqsPrr(W(XG), W(PS), W(XS))
 
@@ -11630,6 +11749,12 @@
         addqs4ld(W(XD), W(PS), W(XS), W(MT), W(DT))
 
 /* sub (G = G - S), (D = S - T) if (#D != #T) */
+
+#define subpsMrr(XG, PS, XS)     /* merging-masking only */                 \
+        subqsMrr(W(XG), W(PS), W(XS))
+
+#define subpsMld(XG, PS, MS, DS) /* merging-masking only */                 \
+        subqsMld(W(XG), W(PS), W(MS), W(DS))
 
 #define subpsPrr(XG, PS, XS)                                                \
         subqsPrr(W(XG), W(PS), W(XS))
@@ -11645,6 +11770,12 @@
 
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
 
+#define mulpsMrr(XG, PS, XS)     /* merging-masking only */                 \
+        mulqsMrr(W(XG), W(PS), W(XS))
+
+#define mulpsMld(XG, PS, MS, DS) /* merging-masking only */                 \
+        mulqsMld(W(XG), W(PS), W(MS), W(DS))
+
 #define mulpsPrr(XG, PS, XS)                                                \
         mulqsPrr(W(XG), W(PS), W(XS))
 
@@ -11658,6 +11789,12 @@
         mulqs4ld(W(XD), W(PS), W(XS), W(MT), W(DT))
 
 /* div (G = G / S), (D = S / T) if (#D != #T) */
+
+#define divpsMrr(XG, PS, XS)     /* merging-masking only */                 \
+        divqsMrr(W(XG), W(PS), W(XS))
+
+#define divpsMld(XG, PS, MS, DS) /* merging-masking only */                 \
+        divqsMld(W(XG), W(PS), W(MS), W(DS))
 
 #define divpsPrr(XG, PS, XS)                                                \
         divqsPrr(W(XG), W(PS), W(XS))
@@ -11767,6 +11904,95 @@
 
 #define mxjpx_rx(PS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         mxjqx_rx(W(PS), mask, lb)
+
+/* mov (D = S), predicated */
+
+#define mxvpx_rr(XD, PS, XS)     /* merging-masking only */                 \
+        mxvqx_rr(W(XD), W(PS), W(XS))
+
+#define mxvpx_ld(XD, PS, MS, DS) /* zeroing-masking only */                 \
+        mxvqx_ld(W(XD), W(PS), W(MS), W(DS))
+
+#define mxvpx_st(XS, PS, MD, DD) /* merging-masking only */                 \
+        mxvqx_st(W(XS), W(PS), W(MD), W(DD))
+
+#define selpx_rr(XD, PS, XS, XT)                                            \
+        selqx_rr(W(XD), W(PS), W(XS), W(XT))
+
+#define selpx_ld(XD, PS, XS, MT, DT)                                        \
+        selqx_ld(W(XD), W(PS), W(XS), W(MT), W(DT))
+
+#define gthpx_ld(XD, PS, MS, XT) /* zeroing-masking only */                 \
+        gthqx_ld(W(XD), W(PS), W(MS), W(XT))
+
+#define gtipx_ld(XD, PS, MS, XT) /* zeroing-masking only */                 \
+        gtiqx_ld(W(XD), W(PS), W(MS), W(XT))
+
+#define sctpx_st(XS, PS, MD, XT) /* merging-masking only */                 \
+        sctqx_st(W(XS), W(PS), W(MD), W(XT))
+
+#define scipx_st(XS, PS, MD, XT) /* merging-masking only */                 \
+        sciqx_st(W(XS), W(PS), W(MD), W(XT))
+
+/* add (G = G + S), (D = S + T) if (#D != #T) */
+
+#define addpxMrr(XG, PS, XS)     /* merging-masking only */                 \
+        addqxMrr(W(XG), W(PS), W(XS))
+
+#define addpxMld(XG, PS, MS, DS) /* merging-masking only */                 \
+        addqxMld(W(XG), W(PS), W(MS), W(DS))
+
+#define addpxPrr(XG, PS, XS)                                                \
+        addqxPrr(W(XG), W(PS), W(XS))
+
+#define addpxPld(XG, PS, MS, DS)                                            \
+        addqxPld(W(XG), W(PS), W(MS), W(DS))
+
+#define addpx4rr(XD, PS, XS, XT)                                            \
+        addqx4rr(W(XD), W(PS), W(XS), W(XT))
+
+#define addpx4ld(XD, PS, XS, MT, DT)                                        \
+        addqx4ld(W(XD), W(PS), W(XS), W(MT), W(DT))
+
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
+
+#define subpxMrr(XG, PS, XS)     /* merging-masking only */                 \
+        subqxMrr(W(XG), W(PS), W(XS))
+
+#define subpxMld(XG, PS, MS, DS) /* merging-masking only */                 \
+        subqxMld(W(XG), W(PS), W(MS), W(DS))
+
+#define subpxPrr(XG, PS, XS)                                                \
+        subqxPrr(W(XG), W(PS), W(XS))
+
+#define subpxPld(XG, PS, MS, DS)                                            \
+        subqxPld(W(XG), W(PS), W(MS), W(DS))
+
+#define subpx4rr(XD, PS, XS, XT)                                            \
+        subqx4rr(W(XD), W(PS), W(XS), W(XT))
+
+#define subpx4ld(XD, PS, XS, MT, DT)                                        \
+        subqx4ld(W(XD), W(PS), W(XS), W(MT), W(DT))
+
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
+
+#define mulpxMrr(XG, PS, XS)     /* merging-masking only */                 \
+        mulqxMrr(W(XG), W(PS), W(XS))
+
+#define mulpxMld(XG, PS, MS, DS) /* merging-masking only */                 \
+        mulqxMld(W(XG), W(PS), W(MS), W(DS))
+
+#define mulpxPrr(XG, PS, XS)                                                \
+        mulqxPrr(W(XG), W(PS), W(XS))
+
+#define mulpxPld(XG, PS, MS, DS)                                            \
+        mulqxPld(W(XG), W(PS), W(MS), W(DS))
+
+#define mulpx4rr(XD, PS, XS, XT)                                            \
+        mulqx4rr(W(XD), W(PS), W(XS), W(XT))
+
+#define mulpx4ld(XD, PS, XS, MT, DT)                                        \
+        mulqx4ld(W(XD), W(PS), W(XS), W(MT), W(DT))
 
 /**********************************   SIMD   **********************************/
 
