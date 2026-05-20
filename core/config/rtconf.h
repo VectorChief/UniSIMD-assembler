@@ -8071,7 +8071,7 @@
 #define divps4ld(XD, PS, XS, MT, DT)                                        \
         divos4ld(W(XD), W(PS), W(XS), W(MT), W(DT))
 
-/* ceq (D = S == T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* ceq (D = S == T ? 1 : 0) */
 
 #define ceqpsPrr(PD, XS, XT)                                                \
         ceqosPrr(W(PD), W(XS), W(XT))
@@ -8079,13 +8079,13 @@
 #define ceqpsPld(PD, XS, MT, DT)                                            \
         ceqosPld(W(PD), W(XS), W(MT), W(DT))
 
-#define ceqps4rr(PD, PS, XS, XT)                                            \
+#define ceqps4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         ceqos4rr(W(PD), W(PS), W(XS), W(XT))
 
-#define ceqps4ld(PD, PS, XS, MT, DT)                                        \
+#define ceqps4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
         ceqos4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
 
-/* cne (D = S != T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* cne (D = S != T ? 1 : 0) */
 
 #define cnepsPrr(PD, XS, XT)                                                \
         cneosPrr(W(PD), W(XS), W(XT))
@@ -8093,13 +8093,13 @@
 #define cnepsPld(PD, XS, MT, DT)                                            \
         cneosPld(W(PD), W(XS), W(MT), W(DT))
 
-#define cneps4rr(PD, PS, XS, XT)                                            \
+#define cneps4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         cneos4rr(W(PD), W(PS), W(XS), W(XT))
 
-#define cneps4ld(PD, PS, XS, MT, DT)                                        \
+#define cneps4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
         cneos4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
 
-/* clt (D = S < T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* clt (D = S < T ? 1 : 0) */
 
 #define cltpsPrr(PD, XS, XT)                                                \
         cltosPrr(W(PD), W(XS), W(XT))
@@ -8107,13 +8107,13 @@
 #define cltpsPld(PD, XS, MT, DT)                                            \
         cltosPld(W(PD), W(XS), W(MT), W(DT))
 
-#define cltps4rr(PD, PS, XS, XT)                                            \
+#define cltps4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         cltos4rr(W(PD), W(PS), W(XS), W(XT))
 
-#define cltps4ld(PD, PS, XS, MT, DT)                                        \
+#define cltps4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
         cltos4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
 
-/* cle (D = S <= T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* cle (D = S <= T ? 1 : 0) */
 
 #define clepsPrr(PD, XS, XT)                                                \
         cleosPrr(W(PD), W(XS), W(XT))
@@ -8121,13 +8121,13 @@
 #define clepsPld(PD, XS, MT, DT)                                            \
         cleosPld(W(PD), W(XS), W(MT), W(DT))
 
-#define cleps4rr(PD, PS, XS, XT)                                            \
+#define cleps4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         cleos4rr(W(PD), W(PS), W(XS), W(XT))
 
-#define cleps4ld(PD, PS, XS, MT, DT)                                        \
+#define cleps4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
         cleos4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
 
-/* cgt (D = S > T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* cgt (D = S > T ? 1 : 0) */
 
 #define cgtpsPrr(PD, XS, XT)                                                \
         cgtosPrr(W(PD), W(XS), W(XT))
@@ -8135,13 +8135,13 @@
 #define cgtpsPld(PD, XS, MT, DT)                                            \
         cgtosPld(W(PD), W(XS), W(MT), W(DT))
 
-#define cgtps4rr(PD, PS, XS, XT)                                            \
+#define cgtps4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         cgtos4rr(W(PD), W(PS), W(XS), W(XT))
 
-#define cgtps4ld(PD, PS, XS, MT, DT)                                        \
+#define cgtps4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
         cgtos4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
 
-/* cge (D = S >= T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* cge (D = S >= T ? 1 : 0) */
 
 #define cgepsPrr(PD, XS, XT)                                                \
         cgeosPrr(W(PD), W(XS), W(XT))
@@ -8149,10 +8149,10 @@
 #define cgepsPld(PD, XS, MT, DT)                                            \
         cgeosPld(W(PD), W(XS), W(MT), W(DT))
 
-#define cgeps4rr(PD, PS, XS, XT)                                            \
+#define cgeps4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         cgeos4rr(W(PD), W(PS), W(XS), W(XT))
 
-#define cgeps4ld(PD, PS, XS, MT, DT)                                        \
+#define cgeps4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
         cgeos4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
 
 /* mxx (D = mask-from-predicate S), (D = predicate-from-mask S) */
@@ -8179,7 +8179,7 @@
 #define mxvpx_st(XS, PS, MD, DD) /* merging-masking only */                 \
         mxvox_st(W(XS), W(PS), W(MD), W(DD))
 
-#define selpx_rr(XD, PS, XS, XT)                                            \
+#define selpx_rr(XD, PS, XS, XT) /* (D = P == 0 ? S : T) */                 \
         selox_rr(W(XD), W(PS), W(XS), W(XT))
 
 #define selpx_ld(XD, PS, XS, MT, DT)                                        \
@@ -8256,6 +8256,146 @@
 
 #define mulpx4ld(XD, PS, XS, MT, DT)                                        \
         mulox4ld(W(XD), W(PS), W(XS), W(MT), W(DT))
+
+/* ceq (D = S == T ? 1 : 0) */
+
+#define ceqpxPrr(PD, XS, XT)                                                \
+        ceqoxPrr(W(PD), W(XS), W(XT))
+
+#define ceqpxPld(PD, XS, MT, DT)                                            \
+        ceqoxPld(W(PD), W(XS), W(MT), W(DT))
+
+#define ceqpx4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        ceqox4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define ceqpx4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        ceqox4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* cne (D = S != T ? 1 : 0) */
+
+#define cnepxPrr(PD, XS, XT)                                                \
+        cneoxPrr(W(PD), W(XS), W(XT))
+
+#define cnepxPld(PD, XS, MT, DT)                                            \
+        cneoxPld(W(PD), W(XS), W(MT), W(DT))
+
+#define cnepx4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cneox4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define cnepx4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cneox4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* clt (D = S < T ? 1 : 0), unsigned */
+
+#define cltpxPrr(PD, XS, XT)                                                \
+        cltoxPrr(W(PD), W(XS), W(XT))
+
+#define cltpxPld(PD, XS, MT, DT)                                            \
+        cltoxPld(W(PD), W(XS), W(MT), W(DT))
+
+#define cltpx4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cltox4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define cltpx4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cltox4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* clt (D = S < T ? 1 : 0), signed */
+
+#define cltpnPrr(PD, XS, XT)                                                \
+        cltonPrr(W(PD), W(XS), W(XT))
+
+#define cltpnPld(PD, XS, MT, DT)                                            \
+        cltonPld(W(PD), W(XS), W(MT), W(DT))
+
+#define cltpn4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        clton4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define cltpn4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        clton4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* cle (D = S <= T ? 1 : 0), unsigned */
+
+#define clepxPrr(PD, XS, XT)                                                \
+        cleoxPrr(W(PD), W(XS), W(XT))
+
+#define clepxPld(PD, XS, MT, DT)                                            \
+        cleoxPld(W(PD), W(XS), W(MT), W(DT))
+
+#define clepx4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cleox4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define clepx4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cleox4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* cle (D = S <= T ? 1 : 0), signed */
+
+#define clepnPrr(PD, XS, XT)                                                \
+        cleonPrr(W(PD), W(XS), W(XT))
+
+#define clepnPld(PD, XS, MT, DT)                                            \
+        cleonPld(W(PD), W(XS), W(MT), W(DT))
+
+#define clepn4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cleon4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define clepn4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cleon4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* cgt (D = S > T ? 1 : 0), unsigned */
+
+#define cgtpxPrr(PD, XS, XT)                                                \
+        cgtoxPrr(W(PD), W(XS), W(XT))
+
+#define cgtpxPld(PD, XS, MT, DT)                                            \
+        cgtoxPld(W(PD), W(XS), W(MT), W(DT))
+
+#define cgtpx4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cgtox4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define cgtpx4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cgtox4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* cgt (D = S > T ? 1 : 0), signed */
+
+#define cgtpnPrr(PD, XS, XT)                                                \
+        cgtonPrr(W(PD), W(XS), W(XT))
+
+#define cgtpnPld(PD, XS, MT, DT)                                            \
+        cgtonPld(W(PD), W(XS), W(MT), W(DT))
+
+#define cgtpn4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cgton4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define cgtpn4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cgton4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* cge (D = S >= T ? 1 : 0), unsigned */
+
+#define cgepxPrr(PD, XS, XT)                                                \
+        cgeoxPrr(W(PD), W(XS), W(XT))
+
+#define cgepxPld(PD, XS, MT, DT)                                            \
+        cgeoxPld(W(PD), W(XS), W(MT), W(DT))
+
+#define cgepx4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cgeox4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define cgepx4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cgeox4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* cge (D = S >= T ? 1 : 0), signed */
+
+#define cgepnPrr(PD, XS, XT)                                                \
+        cgeonPrr(W(PD), W(XS), W(XT))
+
+#define cgepnPld(PD, XS, MT, DT)                                            \
+        cgeonPld(W(PD), W(XS), W(MT), W(DT))
+
+#define cgepn4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cgeon4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define cgepn4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cgeon4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
 
 /**********************************   SIMD   **********************************/
 
@@ -11808,7 +11948,7 @@
 #define divps4ld(XD, PS, XS, MT, DT)                                        \
         divqs4ld(W(XD), W(PS), W(XS), W(MT), W(DT))
 
-/* ceq (D = S == T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* ceq (D = S == T ? 1 : 0) */
 
 #define ceqpsPrr(PD, XS, XT)                                                \
         ceqqsPrr(W(PD), W(XS), W(XT))
@@ -11816,13 +11956,13 @@
 #define ceqpsPld(PD, XS, MT, DT)                                            \
         ceqqsPld(W(PD), W(XS), W(MT), W(DT))
 
-#define ceqps4rr(PD, PS, XS, XT)                                            \
+#define ceqps4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         ceqqs4rr(W(PD), W(PS), W(XS), W(XT))
 
-#define ceqps4ld(PD, PS, XS, MT, DT)                                        \
+#define ceqps4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
         ceqqs4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
 
-/* cne (D = S != T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* cne (D = S != T ? 1 : 0) */
 
 #define cnepsPrr(PD, XS, XT)                                                \
         cneqsPrr(W(PD), W(XS), W(XT))
@@ -11830,13 +11970,13 @@
 #define cnepsPld(PD, XS, MT, DT)                                            \
         cneqsPld(W(PD), W(XS), W(MT), W(DT))
 
-#define cneps4rr(PD, PS, XS, XT)                                            \
+#define cneps4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         cneqs4rr(W(PD), W(PS), W(XS), W(XT))
 
-#define cneps4ld(PD, PS, XS, MT, DT)                                        \
+#define cneps4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
         cneqs4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
 
-/* clt (D = S < T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* clt (D = S < T ? 1 : 0) */
 
 #define cltpsPrr(PD, XS, XT)                                                \
         cltqsPrr(W(PD), W(XS), W(XT))
@@ -11844,13 +11984,13 @@
 #define cltpsPld(PD, XS, MT, DT)                                            \
         cltqsPld(W(PD), W(XS), W(MT), W(DT))
 
-#define cltps4rr(PD, PS, XS, XT)                                            \
+#define cltps4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         cltqs4rr(W(PD), W(PS), W(XS), W(XT))
 
-#define cltps4ld(PD, PS, XS, MT, DT)                                        \
+#define cltps4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
         cltqs4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
 
-/* cle (D = S <= T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* cle (D = S <= T ? 1 : 0) */
 
 #define clepsPrr(PD, XS, XT)                                                \
         cleqsPrr(W(PD), W(XS), W(XT))
@@ -11858,13 +11998,13 @@
 #define clepsPld(PD, XS, MT, DT)                                            \
         cleqsPld(W(PD), W(XS), W(MT), W(DT))
 
-#define cleps4rr(PD, PS, XS, XT)                                            \
+#define cleps4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         cleqs4rr(W(PD), W(PS), W(XS), W(XT))
 
-#define cleps4ld(PD, PS, XS, MT, DT)                                        \
+#define cleps4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
         cleqs4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
 
-/* cgt (D = S > T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* cgt (D = S > T ? 1 : 0) */
 
 #define cgtpsPrr(PD, XS, XT)                                                \
         cgtqsPrr(W(PD), W(XS), W(XT))
@@ -11872,13 +12012,13 @@
 #define cgtpsPld(PD, XS, MT, DT)                                            \
         cgtqsPld(W(PD), W(XS), W(MT), W(DT))
 
-#define cgtps4rr(PD, PS, XS, XT)                                            \
+#define cgtps4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         cgtqs4rr(W(PD), W(PS), W(XS), W(XT))
 
-#define cgtps4ld(PD, PS, XS, MT, DT)                                        \
+#define cgtps4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
         cgtqs4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
 
-/* cge (D = S >= T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* cge (D = S >= T ? 1 : 0) */
 
 #define cgepsPrr(PD, XS, XT)                                                \
         cgeqsPrr(W(PD), W(XS), W(XT))
@@ -11886,10 +12026,10 @@
 #define cgepsPld(PD, XS, MT, DT)                                            \
         cgeqsPld(W(PD), W(XS), W(MT), W(DT))
 
-#define cgeps4rr(PD, PS, XS, XT)                                            \
+#define cgeps4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         cgeqs4rr(W(PD), W(PS), W(XS), W(XT))
 
-#define cgeps4ld(PD, PS, XS, MT, DT)                                        \
+#define cgeps4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
         cgeqs4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
 
 /* mxx (D = mask-from-predicate S), (D = predicate-from-mask S) */
@@ -11916,7 +12056,7 @@
 #define mxvpx_st(XS, PS, MD, DD) /* merging-masking only */                 \
         mxvqx_st(W(XS), W(PS), W(MD), W(DD))
 
-#define selpx_rr(XD, PS, XS, XT)                                            \
+#define selpx_rr(XD, PS, XS, XT) /* (D = P == 0 ? S : T) */                 \
         selqx_rr(W(XD), W(PS), W(XS), W(XT))
 
 #define selpx_ld(XD, PS, XS, MT, DT)                                        \
@@ -11993,6 +12133,146 @@
 
 #define mulpx4ld(XD, PS, XS, MT, DT)                                        \
         mulqx4ld(W(XD), W(PS), W(XS), W(MT), W(DT))
+
+/* ceq (D = S == T ? 1 : 0) */
+
+#define ceqpxPrr(PD, XS, XT)                                                \
+        ceqqxPrr(W(PD), W(XS), W(XT))
+
+#define ceqpxPld(PD, XS, MT, DT)                                            \
+        ceqqxPld(W(PD), W(XS), W(MT), W(DT))
+
+#define ceqpx4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        ceqqx4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define ceqpx4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        ceqqx4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* cne (D = S != T ? 1 : 0) */
+
+#define cnepxPrr(PD, XS, XT)                                                \
+        cneqxPrr(W(PD), W(XS), W(XT))
+
+#define cnepxPld(PD, XS, MT, DT)                                            \
+        cneqxPld(W(PD), W(XS), W(MT), W(DT))
+
+#define cnepx4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cneqx4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define cnepx4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cneqx4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* clt (D = S < T ? 1 : 0), unsigned */
+
+#define cltpxPrr(PD, XS, XT)                                                \
+        cltqxPrr(W(PD), W(XS), W(XT))
+
+#define cltpxPld(PD, XS, MT, DT)                                            \
+        cltqxPld(W(PD), W(XS), W(MT), W(DT))
+
+#define cltpx4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cltqx4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define cltpx4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cltqx4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* clt (D = S < T ? 1 : 0), signed */
+
+#define cltpnPrr(PD, XS, XT)                                                \
+        cltqnPrr(W(PD), W(XS), W(XT))
+
+#define cltpnPld(PD, XS, MT, DT)                                            \
+        cltqnPld(W(PD), W(XS), W(MT), W(DT))
+
+#define cltpn4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cltqn4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define cltpn4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cltqn4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* cle (D = S <= T ? 1 : 0), unsigned */
+
+#define clepxPrr(PD, XS, XT)                                                \
+        cleqxPrr(W(PD), W(XS), W(XT))
+
+#define clepxPld(PD, XS, MT, DT)                                            \
+        cleqxPld(W(PD), W(XS), W(MT), W(DT))
+
+#define clepx4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cleqx4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define clepx4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cleqx4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* cle (D = S <= T ? 1 : 0), signed */
+
+#define clepnPrr(PD, XS, XT)                                                \
+        cleqnPrr(W(PD), W(XS), W(XT))
+
+#define clepnPld(PD, XS, MT, DT)                                            \
+        cleqnPld(W(PD), W(XS), W(MT), W(DT))
+
+#define clepn4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cleqn4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define clepn4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cleqn4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* cgt (D = S > T ? 1 : 0), unsigned */
+
+#define cgtpxPrr(PD, XS, XT)                                                \
+        cgtqxPrr(W(PD), W(XS), W(XT))
+
+#define cgtpxPld(PD, XS, MT, DT)                                            \
+        cgtqxPld(W(PD), W(XS), W(MT), W(DT))
+
+#define cgtpx4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cgtqx4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define cgtpx4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cgtqx4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* cgt (D = S > T ? 1 : 0), signed */
+
+#define cgtpnPrr(PD, XS, XT)                                                \
+        cgtqnPrr(W(PD), W(XS), W(XT))
+
+#define cgtpnPld(PD, XS, MT, DT)                                            \
+        cgtqnPld(W(PD), W(XS), W(MT), W(DT))
+
+#define cgtpn4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cgtqn4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define cgtpn4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cgtqn4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* cge (D = S >= T ? 1 : 0), unsigned */
+
+#define cgepxPrr(PD, XS, XT)                                                \
+        cgeqxPrr(W(PD), W(XS), W(XT))
+
+#define cgepxPld(PD, XS, MT, DT)                                            \
+        cgeqxPld(W(PD), W(XS), W(MT), W(DT))
+
+#define cgepx4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cgeqx4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define cgepx4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cgeqx4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
+
+/* cge (D = S >= T ? 1 : 0), signed */
+
+#define cgepnPrr(PD, XS, XT)                                                \
+        cgeqnPrr(W(PD), W(XS), W(XT))
+
+#define cgepnPld(PD, XS, MT, DT)                                            \
+        cgeqnPld(W(PD), W(XS), W(MT), W(DT))
+
+#define cgepn4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        cgeqn4rr(W(PD), W(PS), W(XS), W(XT))
+
+#define cgepn4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+        cgeqn4ld(W(PD), W(PS), W(XS), W(MT), W(DT))
 
 /**********************************   SIMD   **********************************/
 

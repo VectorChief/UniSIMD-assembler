@@ -371,7 +371,7 @@
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
 
-/* ceq (D = S == T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* ceq (D = S == T ? 1 : 0) */
 
 #define ceqosPrr(PD, XS, XT)                                                \
         EVX(0,       RXB(XT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
@@ -389,7 +389,7 @@
         MRM(REP(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x00))
 
-#define ceqos4rr(PD, PS, XS, XT)                                            \
+#define ceqos4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,0,1) EMITB(0xC2) \
         MRM(REG(PD), MOD(XT), REG(XT))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))                                  \
@@ -397,7 +397,7 @@
         MRM(REP(PD), MOD(XT), REG(XT))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x00))
 
-#define ceqos4ld(PD, PS, XS, MT, DT)                                        \
+#define ceqos4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
     ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,0,1) EMITB(0xC2) \
         MRM(REG(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x00))                           \
@@ -405,7 +405,7 @@
         MRM(REP(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x00))
 
-/* cne (D = S != T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* cne (D = S != T ? 1 : 0) */
 
 #define cneosPrr(PD, XS, XT)                                                \
         EVX(0,       RXB(XT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
@@ -423,7 +423,7 @@
         MRM(REP(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x04))
 
-#define cneos4rr(PD, PS, XS, XT)                                            \
+#define cneos4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,0,1) EMITB(0xC2) \
         MRM(REG(PD), MOD(XT), REG(XT))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
@@ -431,7 +431,7 @@
         MRM(REP(PD), MOD(XT), REG(XT))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x04))
 
-#define cneos4ld(PD, PS, XS, MT, DT)                                        \
+#define cneos4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
     ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,0,1) EMITB(0xC2) \
         MRM(REG(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x04))                           \
@@ -439,7 +439,7 @@
         MRM(REP(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x04))
 
-/* clt (D = S < T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* clt (D = S < T ? 1 : 0) */
 
 #define cltosPrr(PD, XS, XT)                                                \
         EVX(0,       RXB(XT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
@@ -457,7 +457,7 @@
         MRM(REP(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x01))
 
-#define cltos4rr(PD, PS, XS, XT)                                            \
+#define cltos4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,0,1) EMITB(0xC2) \
         MRM(REG(PD), MOD(XT), REG(XT))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
@@ -465,7 +465,7 @@
         MRM(REP(PD), MOD(XT), REG(XT))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x01))
 
-#define cltos4ld(PD, PS, XS, MT, DT)                                        \
+#define cltos4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
     ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,0,1) EMITB(0xC2) \
         MRM(REG(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x01))                           \
@@ -473,7 +473,7 @@
         MRM(REP(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x01))
 
-/* cle (D = S <= T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* cle (D = S <= T ? 1 : 0) */
 
 #define cleosPrr(PD, XS, XT)                                                \
         EVX(0,       RXB(XT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
@@ -491,7 +491,7 @@
         MRM(REP(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x02))
 
-#define cleos4rr(PD, PS, XS, XT)                                            \
+#define cleos4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,0,1) EMITB(0xC2) \
         MRM(REG(PD), MOD(XT), REG(XT))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
@@ -499,7 +499,7 @@
         MRM(REP(PD), MOD(XT), REG(XT))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x02))
 
-#define cleos4ld(PD, PS, XS, MT, DT)                                        \
+#define cleos4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
     ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,0,1) EMITB(0xC2) \
         MRM(REG(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x02))                           \
@@ -507,7 +507,7 @@
         MRM(REP(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x02))
 
-/* cgt (D = S > T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* cgt (D = S > T ? 1 : 0) */
 
 #define cgtosPrr(PD, XS, XT)                                                \
         EVX(0,       RXB(XT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
@@ -525,7 +525,7 @@
         MRM(REP(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x06))
 
-#define cgtos4rr(PD, PS, XS, XT)                                            \
+#define cgtos4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,0,1) EMITB(0xC2) \
         MRM(REG(PD), MOD(XT), REG(XT))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x06))                                  \
@@ -533,7 +533,7 @@
         MRM(REP(PD), MOD(XT), REG(XT))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x06))
 
-#define cgtos4ld(PD, PS, XS, MT, DT)                                        \
+#define cgtos4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
     ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,0,1) EMITB(0xC2) \
         MRM(REG(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x06))                           \
@@ -541,7 +541,7 @@
         MRM(REP(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x06))
 
-/* cge (D = S >= T ? 1 : 0) if (#D != #T), zeroing-masking only */
+/* cge (D = S >= T ? 1 : 0) */
 
 #define cgeosPrr(PD, XS, XT)                                                \
         EVX(0,       RXB(XT), REN(XS), K, 0, 1) EMITB(0xC2)                 \
@@ -559,7 +559,7 @@
         MRM(REP(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x05))
 
-#define cgeos4rr(PD, PS, XS, XT)                                            \
+#define cgeos4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
         EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,0,1) EMITB(0xC2) \
         MRM(REG(PD), MOD(XT), REG(XT))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x05))                                  \
@@ -567,7 +567,7 @@
         MRM(REP(PD), MOD(XT), REG(XT))                                      \
         AUX(EMPTY,   EMPTY,   EMITB(0x05))
 
-#define cgeos4ld(PD, PS, XS, MT, DT)                                        \
+#define cgeos4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
     ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,0,1) EMITB(0xC2) \
         MRM(REG(PD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x05))                           \
@@ -624,7 +624,7 @@
         MRM(REG(XS), MOD(MD), REG(MD))                                      \
         AUX(SIB(MD), EMITW(VZL(DD)), EMPTY)
 
-#define selox_rr(XD, PS, XS, XT)                                            \
+#define selox_rr(XD, PS, XS, XT) /* (D = P == 0 ? S : T) */                 \
         EPX(REG(PS), 0,       RXB(XD), RXB(XT), REN(XS), K,1,2) EMITB(0x65) \
         MRM(REG(XD), MOD(XT), REG(XT))                                      \
         EPX(REP(PS), 0,       RMB(XD), RMB(XT), REM(XS), K,1,2) EMITB(0x65) \
@@ -793,6 +793,346 @@
     ADR EPX(REP(PS), MOD(PS), RMB(XD), RXB(MT), REM(XS), K,1,2) EMITB(0x40) \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
+
+/* ceq (D = S == T ? 1 : 0) */
+
+#define ceqoxPrr(PD, XS, XT)                                                \
+        EVX(0,       RXB(XT), REN(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))                                  \
+        EVX(0,       RMB(XT), REM(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+
+#define ceqoxPld(PD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x00))                           \
+    ADR EVX(0,       RXB(MT), REM(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x00))
+
+#define ceqox4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,1,3) EMITB(0x1E) \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))                                  \
+        EPX(REP(PS), 1,       0,       RMB(XT), REM(XS), K,1,3) EMITB(0x1E) \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x00))
+
+#define ceqox4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+    ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,1,3) EMITB(0x1E) \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x00))                           \
+    ADR EPX(REP(PS), 1,       0,       RXB(MT), REM(XS), K,1,3) EMITB(0x1E) \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x00))
+
+/* cne (D = S != T ? 1 : 0) */
+
+#define cneoxPrr(PD, XS, XT)                                                \
+        EVX(0,       RXB(XT), REN(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+        EVX(0,       RMB(XT), REM(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define cneoxPld(PD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x04))                           \
+    ADR EVX(0,       RXB(MT), REM(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x04))
+
+#define cneox4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,1,3) EMITB(0x1E) \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))                                  \
+        EPX(REP(PS), 1,       0,       RMB(XT), REM(XS), K,1,3) EMITB(0x1E) \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x04))
+
+#define cneox4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+    ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,1,3) EMITB(0x1E) \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x04))                           \
+    ADR EPX(REP(PS), 1,       0,       RXB(MT), REM(XS), K,1,3) EMITB(0x1E) \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x04))
+
+/* clt (D = S < T ? 1 : 0), unsigned */
+
+#define cltoxPrr(PD, XS, XT)                                                \
+        EVX(0,       RXB(XT), REN(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
+        EVX(0,       RMB(XT), REM(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+
+#define cltoxPld(PD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x01))                           \
+    ADR EVX(0,       RXB(MT), REM(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x01))
+
+#define cltox4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,1,3) EMITB(0x1E) \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
+        EPX(REP(PS), 1,       0,       RMB(XT), REM(XS), K,1,3) EMITB(0x1E) \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+
+#define cltox4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+    ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,1,3) EMITB(0x1E) \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x01))                           \
+    ADR EPX(REP(PS), 1,       0,       RXB(MT), REM(XS), K,1,3) EMITB(0x1E) \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x01))
+
+/* clt (D = S < T ? 1 : 0), signed */
+
+#define cltonPrr(PD, XS, XT)                                                \
+        EVX(0,       RXB(XT), REN(XS), K, 1, 3) EMITB(0x1F)                 \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
+        EVX(0,       RMB(XT), REM(XS), K, 1, 3) EMITB(0x1F)                 \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+
+#define cltonPld(PD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 1, 3) EMITB(0x1F)                 \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x01))                           \
+    ADR EVX(0,       RXB(MT), REM(XS), K, 1, 3) EMITB(0x1F)                 \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x01))
+
+#define clton4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,1,3) EMITB(0x1F) \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))                                  \
+        EPX(REP(PS), 1,       0,       RMB(XT), REM(XS), K,1,3) EMITB(0x1F) \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x01))
+
+#define clton4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+    ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,1,3) EMITB(0x1F) \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x01))                           \
+    ADR EPX(REP(PS), 1,       0,       RXB(MT), REM(XS), K,1,3) EMITB(0x1F) \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x01))
+
+/* cle (D = S <= T ? 1 : 0), unsigned */
+
+#define cleoxPrr(PD, XS, XT)                                                \
+        EVX(0,       RXB(XT), REN(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
+        EVX(0,       RMB(XT), REM(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+
+#define cleoxPld(PD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x02))                           \
+    ADR EVX(0,       RXB(MT), REM(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x02))
+
+#define cleox4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,1,3) EMITB(0x1E) \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
+        EPX(REP(PS), 1,       0,       RMB(XT), REM(XS), K,1,3) EMITB(0x1E) \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+
+#define cleox4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+    ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,1,3) EMITB(0x1E) \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x02))                           \
+    ADR EPX(REP(PS), 1,       0,       RXB(MT), REM(XS), K,1,3) EMITB(0x1E) \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x02))
+
+/* cle (D = S <= T ? 1 : 0), signed */
+
+#define cleonPrr(PD, XS, XT)                                                \
+        EVX(0,       RXB(XT), REN(XS), K, 1, 3) EMITB(0x1F)                 \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
+        EVX(0,       RMB(XT), REM(XS), K, 1, 3) EMITB(0x1F)                 \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+
+#define cleonPld(PD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 1, 3) EMITB(0x1F)                 \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x02))                           \
+    ADR EVX(0,       RXB(MT), REM(XS), K, 1, 3) EMITB(0x1F)                 \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x02))
+
+#define cleon4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,1,3) EMITB(0x1F) \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))                                  \
+        EPX(REP(PS), 1,       0,       RMB(XT), REM(XS), K,1,3) EMITB(0x1F) \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x02))
+
+#define cleon4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+    ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,1,3) EMITB(0x1F) \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x02))                           \
+    ADR EPX(REP(PS), 1,       0,       RXB(MT), REM(XS), K,1,3) EMITB(0x1F) \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x02))
+
+/* cgt (D = S > T ? 1 : 0), unsigned */
+
+#define cgtoxPrr(PD, XS, XT)                                                \
+        EVX(0,       RXB(XT), REN(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))                                  \
+        EVX(0,       RMB(XT), REM(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))
+
+#define cgtoxPld(PD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x06))                           \
+    ADR EVX(0,       RXB(MT), REM(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x06))
+
+#define cgtox4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,1,3) EMITB(0x1E) \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))                                  \
+        EPX(REP(PS), 1,       0,       RMB(XT), REM(XS), K,1,3) EMITB(0x1E) \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))
+
+#define cgtox4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+    ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,1,3) EMITB(0x1E) \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x06))                           \
+    ADR EPX(REP(PS), 1,       0,       RXB(MT), REM(XS), K,1,3) EMITB(0x1E) \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x06))
+
+/* cgt (D = S > T ? 1 : 0), signed */
+
+#define cgtonPrr(PD, XS, XT)                                                \
+        EVX(0,       RXB(XT), REN(XS), K, 1, 3) EMITB(0x1F)                 \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))                                  \
+        EVX(0,       RMB(XT), REM(XS), K, 1, 3) EMITB(0x1F)                 \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))
+
+#define cgtonPld(PD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 1, 3) EMITB(0x1F)                 \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x06))                           \
+    ADR EVX(0,       RXB(MT), REM(XS), K, 1, 3) EMITB(0x1F)                 \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x06))
+
+#define cgton4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,1,3) EMITB(0x1F) \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))                                  \
+        EPX(REP(PS), 1,       0,       RMB(XT), REM(XS), K,1,3) EMITB(0x1F) \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x06))
+
+#define cgton4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+    ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,1,3) EMITB(0x1F) \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x06))                           \
+    ADR EPX(REP(PS), 1,       0,       RXB(MT), REM(XS), K,1,3) EMITB(0x1F) \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x06))
+
+/* cge (D = S >= T ? 1 : 0), unsigned */
+
+#define cgeoxPrr(PD, XS, XT)                                                \
+        EVX(0,       RXB(XT), REN(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))                                  \
+        EVX(0,       RMB(XT), REM(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))
+
+#define cgeoxPld(PD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x05))                           \
+    ADR EVX(0,       RXB(MT), REM(XS), K, 1, 3) EMITB(0x1E)                 \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x05))
+
+#define cgeox4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,1,3) EMITB(0x1E) \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))                                  \
+        EPX(REP(PS), 1,       0,       RMB(XT), REM(XS), K,1,3) EMITB(0x1E) \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))
+
+#define cgeox4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+    ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,1,3) EMITB(0x1E) \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x05))                           \
+    ADR EPX(REP(PS), 1,       0,       RXB(MT), REM(XS), K,1,3) EMITB(0x1E) \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x05))
+
+/* cge (D = S >= T ? 1 : 0), signed */
+
+#define cgeonPrr(PD, XS, XT)                                                \
+        EVX(0,       RXB(XT), REN(XS), K, 1, 3) EMITB(0x1F)                 \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))                                  \
+        EVX(0,       RMB(XT), REM(XS), K, 1, 3) EMITB(0x1F)                 \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))
+
+#define cgeonPld(PD, XS, MT, DT)                                            \
+    ADR EVX(0,       RXB(MT), REN(XS), K, 1, 3) EMITB(0x1F)                 \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x05))                           \
+    ADR EVX(0,       RXB(MT), REM(XS), K, 1, 3) EMITB(0x1F)                 \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x05))
+
+#define cgeon4rr(PD, PS, XS, XT)     /* zeroing-masking only */             \
+        EPX(REG(PS), 1,       0,       RXB(XT), REN(XS), K,1,3) EMITB(0x1F) \
+        MRM(REG(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))                                  \
+        EPX(REP(PS), 1,       0,       RMB(XT), REM(XS), K,1,3) EMITB(0x1F) \
+        MRM(REP(PD), MOD(XT), REG(XT))                                      \
+        AUX(EMPTY,   EMPTY,   EMITB(0x05))
+
+#define cgeon4ld(PD, PS, XS, MT, DT) /* zeroing-masking only */             \
+    ADR EPX(REG(PS), 1,       0,       RXB(MT), REN(XS), K,1,3) EMITB(0x1F) \
+        MRM(REG(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VAL(DT)), EMITB(0x05))                           \
+    ADR EPX(REP(PS), 1,       0,       RXB(MT), REM(XS), K,1,3) EMITB(0x1F) \
+        MRM(REP(PD),    0x02, REG(MT))                                      \
+        AUX(SIB(MT), EMITW(VZL(DT)), EMITB(0x05))
 
 /******************************************************************************/
 /**********************************   SIMD   **********************************/
