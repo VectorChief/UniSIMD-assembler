@@ -7989,7 +7989,8 @@
 #if   RT_ELEMENT == 32
 
 /* preliminary implementation of predicated targets: ARM-SVE and AVX-512 only
- * for regular (unpredicated) cross-compatible SIMD refer to the next section */
+ * for regular (unpredicated) cross-compatible SIMD refer to the next section
+ * use RT_RX flag defined in rtbase.h for predicated SIMD in app code-base */
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
@@ -8070,6 +8071,20 @@
 
 #define divps4ld(XD, PS, XS, MT, DT)                                        \
         divos4ld(W(XD), W(PS), W(XS), W(MT), W(DT))
+
+/* sqr (D = sqrt S) */
+
+#define sqrpsMrr(XD, PS, XS)     /* merging-masking only */                 \
+        sqrosMrr(W(XD), W(PS), W(XS))
+
+#define sqrpsMld(XD, PS, MS, DS) /* merging-masking only */                 \
+        sqrosMld(W(XD), W(PS), W(MS), W(DS))
+
+#define sqrpsPrr(XD, PS, XS)                                                \
+        sqrosPrr(W(XD), W(PS), W(XS))
+
+#define sqrpsPld(XD, PS, MS, DS)                                            \
+        sqrosPld(W(XD), W(PS), W(MS), W(DS))
 
 /* ceq (D = S == T ? 1 : 0) */
 
@@ -11866,7 +11881,8 @@
 #elif RT_ELEMENT == 64
 
 /* preliminary implementation of predicated targets: ARM-SVE and AVX-512 only
- * for regular (unpredicated) cross-compatible SIMD refer to the next section */
+ * for regular (unpredicated) cross-compatible SIMD refer to the next section
+ * use RT_RX flag defined in rtbase.h for predicated SIMD in app code-base */
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
@@ -11947,6 +11963,20 @@
 
 #define divps4ld(XD, PS, XS, MT, DT)                                        \
         divqs4ld(W(XD), W(PS), W(XS), W(MT), W(DT))
+
+/* sqr (D = sqrt S) */
+
+#define sqrpsMrr(XD, PS, XS)     /* merging-masking only */                 \
+        sqrqsMrr(W(XD), W(PS), W(XS))
+
+#define sqrpsMld(XD, PS, MS, DS) /* merging-masking only */                 \
+        sqrqsMld(W(XD), W(PS), W(MS), W(DS))
+
+#define sqrpsPrr(XD, PS, XS)                                                \
+        sqrqsPrr(W(XD), W(PS), W(XS))
+
+#define sqrpsPld(XD, PS, MS, DS)                                            \
+        sqrqsPld(W(XD), W(PS), W(MS), W(DS))
 
 /* ceq (D = S == T ? 1 : 0) */
 

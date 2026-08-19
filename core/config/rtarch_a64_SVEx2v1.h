@@ -130,7 +130,8 @@
 /******************************************************************************/
 
 /* preliminary implementation of predicated targets: ARM-SVE and AVX-512 only
- * for regular (unpredicated) cross-compatible SIMD refer to the next section */
+ * for regular (unpredicated) cross-compatible SIMD refer to the next section
+ * use RT_RX flag defined in rtbase.h for predicated SIMD in app code-base */
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
@@ -267,6 +268,34 @@
         EMITW(0x85804000 | MPM(TmmM,    MOD(MT), VZL(DT), B3(DT), K1(DT)))  \
         EMITW(0x04D02000 | MTM(RYG(XD), RYG(XS), REP(PS)) | MOD(PS) << 16)  \
         EMITW(0x65CD8000 | MTM(RYG(XD), TmmM,    REP(PS)))
+
+/* sqr (D = sqrt S) */
+
+#define sqrqsMrr(XD, PS, XS)     /* merging-masking only */                 \
+        EMITW(0x65CDA000 | MTM(REG(XD), REG(XS), REG(PS)))                  \
+        EMITW(0x65CDA000 | MTM(RYG(XD), RYG(XS), REP(PS)))
+
+#define sqrqsMld(XD, PS, MS, DS) /* merging-masking only */                 \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), K1(DS)))  \
+        EMITW(0x65CDA000 | MTM(REG(XD), TmmM,    REG(PS)))                  \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VZL(DS), B3(DS), K1(DS)))  \
+        EMITW(0x65CDA000 | MTM(RYG(XD), TmmM,    REP(PS)))
+
+#define sqrqsPrr(XD, PS, XS)                                                \
+        EMITW(0x04D02000 | MTM(REG(XD), REG(XS), REG(PS)) | MOD(PS) << 16)  \
+        EMITW(0x65CDA000 | MTM(REG(XD), REG(XS), REG(PS)))                  \
+        EMITW(0x04D02000 | MTM(RYG(XD), RYG(XS), REP(PS)) | MOD(PS) << 16)  \
+        EMITW(0x65CDA000 | MTM(RYG(XD), RYG(XS), REP(PS)))
+
+#define sqrqsPld(XD, PS, MS, DS)                                            \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VAL(DS), B3(DS), K1(DS)))  \
+        EMITW(0x04D02000 | MTM(REG(XD), TmmM,    REG(PS)) | MOD(PS) << 16)  \
+        EMITW(0x65CDA000 | MTM(REG(XD), TmmM,    REG(PS)))                  \
+        EMITW(0x85804000 | MPM(TmmM,    MOD(MS), VZL(DS), B3(DS), K1(DS)))  \
+        EMITW(0x04D02000 | MTM(RYG(XD), TmmM,    REP(PS)) | MOD(PS) << 16)  \
+        EMITW(0x65CDA000 | MTM(RYG(XD), TmmM,    REP(PS)))
 
 /* ceq (D = S == T ? 1 : 0) */
 

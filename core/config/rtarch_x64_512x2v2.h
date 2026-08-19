@@ -182,7 +182,8 @@
 /******************************************************************************/
 
 /* preliminary implementation of predicated targets: ARM-SVE and AVX-512 only
- * for regular (unpredicated) cross-compatible SIMD refer to the next section */
+ * for regular (unpredicated) cross-compatible SIMD refer to the next section
+ * use RT_RX flag defined in rtbase.h for predicated SIMD in app code-base */
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
@@ -327,6 +328,36 @@
     ADR EPW(REP(PS), MOD(PS), RMB(XD), RXB(MT), REM(XS), K,1,1) EMITB(0x5E) \
         MRM(REG(XD),    0x02, REG(MT))                                      \
         AUX(SIB(MT), EMITW(VZL(DT)), EMPTY)
+
+/* sqr (D = sqrt S) */
+
+#define sqrqsMrr(XD, PS, XS)     /* merging-masking only */                 \
+        EPW(REG(PS), 0,       RXB(XD), RXB(XS),    0x00, K,1,1) EMITB(0x51) \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EPW(REP(PS), 0,       RMB(XD), RMB(XS),    0x00, K,1,1) EMITB(0x51) \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define sqrqsMld(XD, PS, MS, DS) /* merging-masking only */                 \
+    ADR EPW(REG(PS), 0,       RXB(XD), RXB(MS),    0x00, K,1,1) EMITB(0x51) \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EPW(REP(PS), 0,       RMB(XD), RXB(MS),    0x00, K,1,1) EMITB(0x51) \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
+
+#define sqrqsPrr(XD, PS, XS)                                                \
+        EPW(REG(PS), MOD(PS), RXB(XD), RXB(XS),    0x00, K,1,1) EMITB(0x51) \
+        MRM(REG(XD), MOD(XS), REG(XS))                                      \
+        EPW(REP(PS), MOD(PS), RMB(XD), RMB(XS),    0x00, K,1,1) EMITB(0x51) \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define sqrqsPld(XD, PS, MS, DS)                                            \
+    ADR EPW(REG(PS), MOD(PS), RXB(XD), RXB(MS),    0x00, K,1,1) EMITB(0x51) \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VAL(DS)), EMPTY)                                 \
+    ADR EPW(REP(PS), MOD(PS), RMB(XD), RXB(MS),    0x00, K,1,1) EMITB(0x51) \
+        MRM(REG(XD),    0x02, REG(MS))                                      \
+        AUX(SIB(MS), EMITW(VZL(DS)), EMPTY)
 
 /* ceq (D = S == T ? 1 : 0) */
 

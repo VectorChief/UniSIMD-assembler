@@ -172,7 +172,8 @@
 /******************************************************************************/
 
 /* preliminary implementation of predicated targets: ARM-SVE and AVX-512 only
- * for regular (unpredicated) cross-compatible SIMD refer to the next section */
+ * for regular (unpredicated) cross-compatible SIMD refer to the next section
+ * use RT_RX flag defined in rtbase.h for predicated SIMD in app code-base */
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
@@ -277,6 +278,26 @@
     ADR EPW(REG(PS), MOD(PS), RXB(XD), RXB(MT), REN(XS), K,1,1) EMITB(0x5E) \
         MRM(REG(XD), MOD(MT), REG(MT))                                      \
         AUX(SIB(MT), CMD(DT), EMPTY)
+
+/* sqr (D = sqrt S) */
+
+#define sqrqsMrr(XD, PS, XS)     /* merging-masking only */                 \
+        EPW(REG(PS), 0,       RXB(XD), RXB(XS),    0x00, K,1,1) EMITB(0x51) \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define sqrqsMld(XD, PS, MS, DS) /* merging-masking only */                 \
+    ADR EPW(REG(PS), 0,       RXB(XD), RXB(MS),    0x00, K,1,1) EMITB(0x51) \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
+
+#define sqrqsPrr(XD, PS, XS)                                                \
+        EPW(REG(PS), MOD(PS), RXB(XD), RXB(XS),    0x00, K,1,1) EMITB(0x51) \
+        MRM(REG(XD), MOD(XS), REG(XS))
+
+#define sqrqsPld(XD, PS, MS, DS)                                            \
+    ADR EPW(REG(PS), MOD(PS), RXB(XD), RXB(MS),    0x00, K,1,1) EMITB(0x51) \
+        MRM(REG(XD), MOD(MS), REG(MS))                                      \
+        AUX(SIB(MS), CMD(DS), EMPTY)
 
 /* ceq (D = S == T ? 1 : 0) */
 
