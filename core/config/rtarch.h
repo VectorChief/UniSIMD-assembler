@@ -936,8 +936,8 @@
 
 #define ASM_OP0(op)             #op
 #define ASM_OP1(op, p1)         #op"  "#p1
-#define ASM_OP2(op, p1, p2)     #op"  "#p2", "#p1
-#define ASM_OP3(op, p1, p2, p3) #op"  "#p3", "#p2", "#p1
+#define ASM_OP2(op, p1, p2)     #op"  "#p1", "#p2
+#define ASM_OP3(op, p1, p2, p3) #op"  "#p1", "#p2", "#p3
 
 #define ASM_BEG /*internal*/    ""
 #define ASM_END /*internal*/    "\n"
@@ -958,8 +958,8 @@
         EMITB((h) >> 0x08 & 0xFF)                                           \
         EMITB((h) >> 0x00 & 0xFF)
 
-#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lg, %r4, lb) ASM_END
-#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(stg, lb, %r4) ASM_END
+#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lgr, %%r4, lb) ASM_END
+#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(lgr, lb, %%r4) ASM_END
 
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
@@ -1003,19 +1003,19 @@
 
 #define MBM(cod, reg, bmd, brm, vdp, bxx, pxx)                              \
         (pxx(vdp) | (bmd) << 32 | bxx(brm) << 28 | (reg & 0x0F) << 36 |     \
-         0xE70000000100 | (cod) | (reg & 0x10) <<  7))
+         0xE70000000100 | (cod) | (reg & 0x10) <<  7)
 
 #define MHM(cod, reg, bmd, brm, vdp, bxx, pxx)                              \
         (pxx(vdp) | (bmd) << 32 | bxx(brm) << 28 | (reg & 0x0F) << 36 |     \
-         0xE70000000200 | (cod) | (reg & 0x10) <<  7))
+         0xE70000000200 | (cod) | (reg & 0x10) <<  7)
 
 #define MPM(cod, reg, bmd, brm, vdp, bxx, pxx)                              \
         (pxx(vdp) | (bmd) << 32 | bxx(brm) << 28 | (reg & 0x0F) << 36 |     \
-         0xE70000000400 | (cod) | (reg & 0x10) <<  7))
+         0xE70000000400 | (cod) | (reg & 0x10) <<  7)
 
 #define MQM(cod, reg, bmd, brm, vdp, bxx, pxx)                              \
         (pxx(vdp) | (bmd) << 32 | bxx(brm) << 28 | (reg & 0x0F) << 36 |     \
-         0xE70000000800 | (cod) | (reg & 0x10) <<  7))
+         0xE70000000800 | (cod) | (reg & 0x10) <<  7)
 
 #define MXM(cod, reg, ren, rem, bit)                                        \
         ((reg & 0x0F) << 36 | (ren & 0x0F) << 32 | (rem & 0x0F) << 28 |     \
@@ -1208,7 +1208,8 @@
 
 #define W(p1, p2, p3)       p1,  p2,  p3
 
-#if 1
+
+/* instructions */
 
 #define addwx_ri(RD, IS)                                                    \
         EMIT6(MIM(0xC2, REG(RD),0x09,VAL(IS)))
@@ -1244,6 +1245,12 @@
         EMIT6(MDM(0x50, REG(RS),MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
 
 
+#define addis_rr(XG, XS)                                                    \
+        addis3rr(W(XG), W(XG), W(XS))
+
+#define addis_ld(XG, MS, DS)                                                \
+        addis3ld(W(XG), W(XG), W(MS), W(DS))
+
 #define addis3rr(XD, XS, XT)                                                \
         EMIT6(MXM(0xE3, REG(XD),REG(XS),REG(XT), 0x02))
 
@@ -1252,6 +1259,12 @@
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B1(DT), P1(DT)))  \
         EMIT6(MXM(0xE3, REG(XD),REG(XS),   TmmM, 0x02))
 
+
+#define subis_rr(XG, XS)                                                    \
+        subis3rr(W(XG), W(XG), W(XS))
+
+#define subis_ld(XG, MS, DS)                                                \
+        subis3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define subis3rr(XD, XS, XT)                                                \
         EMIT6(MXM(0xE2, REG(XD),REG(XS),REG(XT), 0x02))
@@ -1263,7 +1276,7 @@
 
 
 #define movix_rr(XD, XS)                                                    \
-        EMIT6(MXM(0x56, REG(XD),REG(XS),REG(XT), 0x02))
+        EMIT6(MXM(0x56, REG(XD),REG(XS),   0x00, 0x00))
 
 #define movix_ld(XD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
@@ -1308,6 +1321,12 @@
         EMIT6(MDM(0x24, REG(RS),MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
 
 
+#define addjs_rr(XG, XS)                                                    \
+        addjs3rr(W(XG), W(XG), W(XS))
+
+#define addjs_ld(XG, MS, DS)                                                \
+        addjs3ld(W(XG), W(XG), W(MS), W(DS))
+
 #define addjs3rr(XD, XS, XT)                                                \
         EMIT6(MXM(0xE3, REG(XD),REG(XS),REG(XT), 0x03))
 
@@ -1316,6 +1335,12 @@
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B1(DT), P1(DT)))  \
         EMIT6(MXM(0xE3, REG(XD),REG(XS),   TmmM, 0x03))
 
+
+#define subjs_rr(XG, XS)                                                    \
+        subjs3rr(W(XG), W(XG), W(XS))
+
+#define subjs_ld(XG, MS, DS)                                                \
+        subjs3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define subjs3rr(XD, XS, XT)                                                \
         EMIT6(MXM(0xE2, REG(XD),REG(XS),REG(XT), 0x03))
@@ -1327,38 +1352,16 @@
 
 
 #define movjx_rr(XD, XS)                                                    \
-        EMIT6(MXM(0x56, REG(XD),REG(XS),REG(XT), 0x03))
+        EMIT6(MXM(0x56, REG(XD),REG(XS),   0x00, 0x00))
 
 #define movjx_ld(XD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MQM(0x06, REG(XD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+        EMIT6(MPM(0x06, REG(XD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
 
 #define movjx_st(XS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A1(DD), EMPTY2)   \
-        EMIT6(MQM(0x0E, REG(XS),MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
+        EMIT6(MPM(0x0E, REG(XS),MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
 
-
-#elif 1
-
-#define movwx_ld(RD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(REG(RD), MOD(MS), REG(MS), VAL(DS), B1(DS), P1(DS), 0x58))
-
-#define movzx_ld(RD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(REG(RD), MOD(MS), REG(MS), VAL(DS), B1(DS), P1(DS), 0x04))
-
-#else
-
-#define movwx_ld(RD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        MDM(REG(RD), MOD(MS), REG(MS),  VAL(DS), B1(DS), P1(DS), 0x58)
-
-#define movzx_ld(RD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        MDM(REG(RD), MOD(MS), REG(MS),  VAL(DS), B1(DS), P1(DS), 0x04)
-
-#endif
 
 /* stack (push stack = S, D = pop stack)
  * set-flags: no (sequence cmp/stack_la/jmp is not allowed on MIPS & POWER)
@@ -1481,6 +1484,13 @@
         movix_ld(XmmF, Oeax, PLAIN)                                         \
         addxx_ri(Reax, IB(RT_SIMD_WIDTH32_128*4))                           \
         EMIT6(0xE70000000806 | MSM(TmmM,  TEax,  0x00))
+
+/* verxx */
+
+#define verxx_xx()                                                          \
+        subxx_rr(Reax, Reax)                                                \
+        addwx_ri(Reax, IV(0x00000F))                                        \
+        movwx_st(Reax, Mebp, inf_VER)
 
 /* ------------------------------   M32, M64   ------------------------------ */
 
