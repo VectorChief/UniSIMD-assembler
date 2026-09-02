@@ -1001,21 +1001,14 @@
 #define MDM(cod, reg, bmd, brm, vdp, bxx, pxx)                              \
         (pxx(vdp) | (bmd) << 32 | bxx(brm) << 28 | (reg) << 36 | (cod))
 
-#define MBM(cod, reg, bmd, brm, vdp, bxx, pxx)                              \
-        (pxx(vdp) | (bmd) << 32 | bxx(brm) << 28 | (reg & 0x0F) << 36 |     \
-         0xE70000000100 | (cod) | (reg & 0x10) <<  7)
-
-#define MHM(cod, reg, bmd, brm, vdp, bxx, pxx)                              \
-        (pxx(vdp) | (bmd) << 32 | bxx(brm) << 28 | (reg & 0x0F) << 36 |     \
-         0xE70000000200 | (cod) | (reg & 0x10) <<  7)
-
 #define MPM(cod, reg, bmd, brm, vdp, bxx, pxx)                              \
         (pxx(vdp) | (bmd) << 32 | bxx(brm) << 28 | (reg & 0x0F) << 36 |     \
-         0xE70000000400 | (cod) | (reg & 0x10) <<  7)
+         0xE70000000000 | (cod) | (reg & 0x10) <<  7)
 
-#define MQM(cod, reg, bmd, brm, vdp, bxx, pxx)                              \
-        (pxx(vdp) | (bmd) << 32 | bxx(brm) << 28 | (reg & 0x0F) << 36 |     \
-         0xE70000000800 | (cod) | (reg & 0x10) <<  7)
+#define MQM(cod, reg, ren, rem, bit)                                        \
+        ((reg & 0x0F) << 36 | (ren & 0x0F) << 32 | (rem & 0x0F) << 28 |     \
+         (reg & 0x10) <<  7 | (ren & 0x10) <<  6 | (rem & 0x10) <<  5 |     \
+         0xE70000080000 | (bit) << 12 | (cod))
 
 #define MXM(cod, reg, ren, rem, bit)                                        \
         ((reg & 0x0F) << 36 | (ren & 0x0F) << 32 | (rem & 0x0F) << 28 |     \
@@ -1275,6 +1268,36 @@
         EMIT6(MXM(0xE2, REG(XD),REG(XS),   TmmM, 0x02))
 
 
+#define mulis_rr(XG, XS)                                                    \
+        mulis3rr(W(XG), W(XG), W(XS))
+
+#define mulis_ld(XG, MS, DS)                                                \
+        mulis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulis3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xE7, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define mulis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMIT6(MXM(0xE7, REG(XD),REG(XS),   TmmM, 0x02))
+
+
+#define divis_rr(XG, XS)                                                    \
+        divis3rr(W(XG), W(XG), W(XS))
+
+#define divis_ld(XG, MS, DS)                                                \
+        divis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divis3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xE5, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define divis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMIT6(MXM(0xE5, REG(XD),REG(XS),   TmmM, 0x02))
+
+
 #define movix_rr(XD, XS)                                                    \
         EMIT6(MXM(0x56, REG(XD),REG(XS),   0x00, 0x00))
 
@@ -1285,6 +1308,78 @@
 #define movix_st(XS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A1(DD), EMPTY2)   \
         EMIT6(MPM(0x0E, REG(XS),MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
+
+
+#define addrs_rr(XG, XS)                                                    \
+        addrs3rr(W(XG), W(XG), W(XS))
+
+#define addrs_ld(XG, MS, DS)                                                \
+        addrs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define addrs3rr(XD, XS, XT)                                                \
+        EMIT6(MQM(0xE3, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define addrs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMIT6(MQM(0xE3, REG(XD),REG(XS),   TmmM, 0x02))
+
+
+#define subrs_rr(XG, XS)                                                    \
+        subrs3rr(W(XG), W(XG), W(XS))
+
+#define subrs_ld(XG, MS, DS)                                                \
+        subrs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subrs3rr(XD, XS, XT)                                                \
+        EMIT6(MQM(0xE2, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define subrs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMIT6(MQM(0xE2, REG(XD),REG(XS),   TmmM, 0x02))
+
+
+#define mulrs_rr(XG, XS)                                                    \
+        mulrs3rr(W(XG), W(XG), W(XS))
+
+#define mulrs_ld(XG, MS, DS)                                                \
+        mulrs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulrs3rr(XD, XS, XT)                                                \
+        EMIT6(MQM(0xE7, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define mulrs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMIT6(MQM(0xE7, REG(XD),REG(XS),   TmmM, 0x02))
+
+
+#define divrs_rr(XG, XS)                                                    \
+        divrs3rr(W(XG), W(XG), W(XS))
+
+#define divrs_ld(XG, MS, DS)                                                \
+        divrs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divrs3rr(XD, XS, XT)                                                \
+        EMIT6(MQM(0xE5, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define divrs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMIT6(MQM(0xE5, REG(XD),REG(XS),   TmmM, 0x02))
+
+
+#define movrs_rr(XD, XS)                                                    \
+        EMIT6(MXM(0x56, REG(XD),REG(XS),   0x00, 0x00))
+
+#define movrs_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MPM(0x03, REG(XD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define movrs_st(XS, MD, DD)                                                \
+        AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A1(DD), EMPTY2)   \
+        EMIT6(MPM(0x0B, REG(XS),MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
 
 
 #define addzx_ri(RD, IS)                                                    \
@@ -1351,6 +1446,36 @@
         EMIT6(MXM(0xE2, REG(XD),REG(XS),   TmmM, 0x03))
 
 
+#define muljs_rr(XG, XS)                                                    \
+        muljs3rr(W(XG), W(XG), W(XS))
+
+#define muljs_ld(XG, MS, DS)                                                \
+        muljs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define muljs3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xE7, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define muljs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMIT6(MXM(0xE7, REG(XD),REG(XS),   TmmM, 0x03))
+
+
+#define divjs_rr(XG, XS)                                                    \
+        divjs3rr(W(XG), W(XG), W(XS))
+
+#define divjs_ld(XG, MS, DS)                                                \
+        divjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divjs3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xE5, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define divjs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMIT6(MXM(0xE5, REG(XD),REG(XS),   TmmM, 0x03))
+
+
 #define movjx_rr(XD, XS)                                                    \
         EMIT6(MXM(0x56, REG(XD),REG(XS),   0x00, 0x00))
 
@@ -1361,6 +1486,78 @@
 #define movjx_st(XS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A1(DD), EMPTY2)   \
         EMIT6(MPM(0x0E, REG(XS),MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
+
+
+#define addts_rr(XG, XS)                                                    \
+        addts3rr(W(XG), W(XG), W(XS))
+
+#define addts_ld(XG, MS, DS)                                                \
+        addts3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define addts3rr(XD, XS, XT)                                                \
+        EMIT6(MQM(0xE3, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define addts3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMIT6(MQM(0xE3, REG(XD),REG(XS),   TmmM, 0x03))
+
+
+#define subts_rr(XG, XS)                                                    \
+        subts3rr(W(XG), W(XG), W(XS))
+
+#define subts_ld(XG, MS, DS)                                                \
+        subts3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subts3rr(XD, XS, XT)                                                \
+        EMIT6(MQM(0xE2, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define subts3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMIT6(MQM(0xE2, REG(XD),REG(XS),   TmmM, 0x03))
+
+
+#define mults_rr(XG, XS)                                                    \
+        mults3rr(W(XG), W(XG), W(XS))
+
+#define mults_ld(XG, MS, DS)                                                \
+        mults3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mults3rr(XD, XS, XT)                                                \
+        EMIT6(MQM(0xE7, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define mults3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMIT6(MQM(0xE7, REG(XD),REG(XS),   TmmM, 0x03))
+
+
+#define divts_rr(XG, XS)                                                    \
+        divts3rr(W(XG), W(XG), W(XS))
+
+#define divts_ld(XG, MS, DS)                                                \
+        divts3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divts3rr(XD, XS, XT)                                                \
+        EMIT6(MQM(0xE5, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define divts3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMIT6(MQM(0xE5, REG(XD),REG(XS),   TmmM, 0x03))
+
+
+#define movts_rr(XD, XS)                                                    \
+        EMIT6(MXM(0x56, REG(XD),REG(XS),   0x00, 0x00))
+
+#define movts_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MPM(0x02, REG(XD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define movts_st(XS, MD, DD)                                                \
+        AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A1(DD), EMPTY2)   \
+        EMIT6(MPM(0x0A, REG(XS),MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
 
 
 /* stack (push stack = S, D = pop stack)
