@@ -531,6 +531,29 @@
 #define         RT_128X1     (RT_128)
 #endif /* RT_2K8_R8, RT_1K4/_R8, RT_512/_R8, RT_256/_R8, RT_128 */
 
+/* ------------------------------   Z32, Z64   ------------------------------ */
+
+#elif (defined RT_Z32) || (defined RT_Z64)
+
+#if   !(defined RT_512X4) && (RT_2K8_R8)
+#error "IBMs390 doesn't support SIMD wider than 128-bit, check build flags"
+#endif
+#if   !(defined RT_512X2) && (RT_1K4 || RT_1K4_R8)
+#error "IBMs390 doesn't support SIMD wider than 128-bit, check build flags"
+#endif
+#if   !(defined RT_512X1) && (RT_512)
+#error "IBMs390 doesn't support SIMD wider than 128-bit, check build flags"
+#endif
+#if   !(defined RT_256X2) && (RT_512_R8)
+#error "IBMs390 doesn't support SIMD wider than 128-bit, check build flags"
+#endif
+#if   !(defined RT_128X2) && (RT_256 || RT_256_R8)
+#define         RT_128X2     (RT_256 |  RT_256_R8)
+#endif
+#if   !(defined RT_128X1) && (RT_128)
+#define         RT_128X1     (RT_128)
+#endif /* RT_2K8_R8, RT_1K4/_R8, RT_512/_R8, RT_256/_R8, RT_128 */
+
 /* ------------------------------   M32, M64   ------------------------------ */
 
 #elif (defined RT_M32) || (defined RT_M64)
