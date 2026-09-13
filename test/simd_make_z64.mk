@@ -37,13 +37,13 @@ simd_test_z64_64:
 
 simd_test_z64f32:
 	s390x-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_Z64 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_Z64 -DRT_256=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.z64f32
 
 simd_test_z64f64:
 	s390x-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_Z64 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_Z64 -DRT_256=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.z64f64
 

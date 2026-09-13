@@ -169,7 +169,7 @@
         (pxx(vdp) | (bmd) << 32 | bxx(brm) << 28 | (reg & 0x0F) << 36 |     \
          0xE70000000000 | (cod) | (reg & 0x10) <<  7)
 
-#define MQM(cod, reg, ren, rem, bit)                                        \
+#define MWM(cod, reg, ren, rem, bit)                                        \
         ((reg & 0x0F) << 36 | (ren & 0x0F) << 32 | (rem & 0x0F) << 28 |     \
          (reg & 0x10) <<  7 | (ren & 0x10) <<  6 | (rem & 0x10) <<  5 |     \
          0xE70000080000 | (bit) << 12 | (cod))
@@ -207,9 +207,9 @@
 #define  B2(val, tp1, tp2)  B2##tp2
 #define  B4(val, tp1, tp2)  B4##tp2
 #define  P2(val, tp1, tp2)  P2##tp2
+#define  L2(val, tp1, tp2)  L2##tp2
 #define  C2(val, tp1, tp2)  C2##tp2
 #define  A2(val, tp1, tp2)  A2##tp2
-#define  C4(val, tp1, tp2)  C4##tp2 /* <- "C4##tp2" not a bug */
 
 /* displacement encoding BASE(TP1), adr(TP3) */
 
@@ -233,6 +233,7 @@
 #define B20(br) (br)
 #define B40(br) (br)
 #define P20(dp) (0xE30000000000 | (0x0FFF & (dp))<<16)
+#define L20(dp) (0xE30000000000 | (0x0FFF & (dp))<<16)
 #define C20(br, dp) EMPTY
 #define A20(br, dp) EMPTY
 #define C40(br, dp) EMIT6(0xC00100000000 | TDxx << 36 | (0x7FFFFFFF & (dp)))
@@ -240,13 +241,14 @@
 #define B21(br) TDxx
 #define B41(br) TPxx
 #define P21(dp) (0xE30000000000)
-#define C21(br, dp) C41(br, dp)
+#define L21(dp) (0xE30000000000 | (0x0010 & (dp))<<16)
+#define C21(br, dp) EMIT6(0xC00100000000 | TDxx << 36 | (0x7FFFFFFF & (dp)))
 #define A21(br, dp) C41(br, dp)                                             \
                     EMITW(0xB9080000 | TDxx << 4 | (br))
-#define C41(br, dp) EMIT6(0xC00100000000 | TDxx << 36 | (0x7FFFFFFF & (dp)))
 
 /* internal     REG */
 
+#define TMxx    0x00  /* r0 */
 #define TDxx    0x01  /* r1 */
 #define TPxx    0x02  /* r2 */
 #define SPxx    0x0F  /* r15 */
@@ -279,7 +281,22 @@
 #define TmmC    0x0C  /* v12 */
 #define TmmD    0x0D  /* v13 */
 #define TmmE    0x0E  /* v14 */
+
 #define TmmF    0x0F  /* v15 */
+#define TmmG    0x10  /* v16 */
+#define TmmH    0x11  /* v17 */
+#define TmmI    0x12  /* v18 */
+#define TmmJ    0x13  /* v19 */
+#define TmmK    0x14  /* v20 */
+#define TmmL    0x15  /* v21 */
+#define TmmW    0x16  /* v22 */
+#define TmmN    0x17  /* v23 */
+#define TmmO    0x18  /* v24 */
+#define TmmP    0x19  /* v25 */
+#define TmmQ    0x1A  /* v26 */
+#define TmmR    0x1B  /* v27 */
+#define TmmS    0x1C  /* v28 */
+#define TmmT    0x1D  /* v29 */
 
 #define TmmM    0x1F  /* v31 */
 
@@ -387,7 +404,25 @@
 #define XmmC    TmmC, 0x00, EMPTY
 #define XmmD    TmmD, 0x00, EMPTY
 #define XmmE    TmmE, 0x00, EMPTY
+
+/* only for 128-bit instructions (save/restore in 256-bit header)
+ * provided as an extension to common baseline of 15 registers */
+
 #define XmmF    TmmF, 0x00, EMPTY
+#define XmmG    TmmG, 0x00, EMPTY
+#define XmmH    TmmH, 0x00, EMPTY
+#define XmmI    TmmI, 0x00, EMPTY
+#define XmmJ    TmmJ, 0x00, EMPTY
+#define XmmK    TmmK, 0x00, EMPTY
+#define XmmL    TmmL, 0x00, EMPTY
+#define XmmM    TmmW, 0x00, EMPTY
+#define XmmN    TmmN, 0x00, EMPTY
+#define XmmO    TmmO, 0x00, EMPTY
+#define XmmP    TmmP, 0x00, EMPTY
+#define XmmQ    TmmQ, 0x00, EMPTY
+#define XmmR    TmmR, 0x00, EMPTY
+#define XmmS    TmmS, 0x00, EMPTY
+#define XmmT    TmmT, 0x00, EMPTY
 
 /* triplet pass-through wrapper */
 
@@ -399,73 +434,241 @@
 
 /*--------------------------------   32-bit   --------------------------------*/
 
+/* mov (D = S)
+ * set-flags: no */
+
+#define movwx_ri(RD, IS)                                                    \
+        EMIT6(MIM(0xC0, REG(RD),0x01,VAL(IS)))
+
+#define movwx_mi(MD, DD, IS)                                                \
+        AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A1(DD), EMPTY2)   \
+        EMIT6(MIM(0xC0, TMxx,   0x01,VAL(IS)))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
+
 #define movwx_rr(RD, RS)                                                    \
         EMITH(MRM(0x18, REG(RD),REG(RS),0x00))
+
+#define movhn_rr(RD, RS)      /* move 16-bit to 32/64-bit w/ sign-extend */ \
+        EMITW(MGM(0x07, REG(RD),REG(RS),0x00))
+
+#define movhz_rr(RD, RS)      /* move 16-bit to 32/64-bit w/ zero-extend */ \
+        EMITW(MGM(0x85, REG(RD),REG(RS),0x00))
+
+#define movbn_rr(RD, RS)      /* move  8-bit to 32/64-bit w/ sign-extend */ \
+        EMITW(MGM(0x06, REG(RD),REG(RS),0x00))
+
+#define movbz_rr(RD, RS)      /* move  8-bit to 32/64-bit w/ zero-extend */ \
+        EMITW(MGM(0x84, REG(RD),REG(RS),0x00))
 
 #define movwx_ld(RD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x58, REG(RD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define movhn_ld(RD, MS, DS)  /* load 16-bit to 32/64-bit w/ sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x15, REG(RD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define movhz_ld(RD, MS, DS)  /* load 16-bit to 32/64-bit w/ zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x91, REG(RD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define movbn_ld(RD, MS, DS)  /* load  8-bit to 32/64-bit w/ sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x77, REG(RD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define movbz_ld(RD, MS, DS)  /* load  8-bit to 32/64-bit w/ zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x90, REG(RD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
 
 #define movwx_st(RS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A1(DD), EMPTY2)   \
         EMIT6(MDM(0x50, REG(RS),MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
 
 
-#define addwx_ri(RD, IS)                                                    \
-        EMIT6(MIM(0xC2, REG(RD),0x09,VAL(IS)))
+#define movwx_rj(RD, IT, IS)     /* IT - upper 32-bit, IS - lower 32-bit */ \
+        movwx_ri(W(RD), W(IS))
 
-#define addwx_rr(RD, RS)                                                    \
-        EMITH(MRM(0x1A, REG(RD),REG(RS),0x00))
+#define movwx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
+        movwx_mi(W(MD), W(DD), W(IS))
 
-#define addwx_ld(RD, MS, DS)                                                \
+/* add (G = G + S)
+ * set-flags: undefined (*_*), yes (*Z*) */
+
+#define addwx_ri(RG, IS)                                                    \
+        EMIT6(MIM(0xC2, REG(RG),0x09,VAL(IS)))
+
+#define addwx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC2, TMxx,   0x09,VAL(IS)))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define addwx_rr(RG, RS)                                                    \
+        EMITH(MRM(0x1A, REG(RG),REG(RS),0x00))
+
+#define addwx_ld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x5A, REG(RD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+        EMIT6(MDM(0x5A, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
 
-
-#define subwx_ri(RD, IS)                                                    \
-        EMIT6(MIM(0xC2, REG(RD),0x05,VAL(IS)))
-
-#define subwx_rr(RD, RS)                                                    \
-        EMITH(MRM(0x1B, REG(RD),REG(RS),0x00))
-
-#define subwx_ld(RD, MS, DS)                                                \
+#define addhn_ld(RG, MS, DS)    /* add 16-bit to 32-bit with sign-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x5B, REG(RD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+        EMIT6(MDM(0x7A, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define addhz_ld(RG, MS, DS)    /* add 16-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x91, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITH(MRM(0x1A, REG(RG),TMxx,   0x00))
+
+#define addbn_ld(RG, MS, DS)    /* add  8-bit to 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x77, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITH(MRM(0x1A, REG(RG),TMxx,   0x00))
+
+#define addbz_ld(RG, MS, DS)    /* add  8-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x90, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITH(MRM(0x1A, REG(RG),TMxx,   0x00))
+
+/* sub (G = G - S)
+ * set-flags: undefined (*_*), yes (*Z*) */
+
+#define subwx_ri(RG, IS)                                                    \
+        EMIT6(MIM(0xC2, REG(RG),0x05,VAL(IS)))
+
+#define subwx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC2, TMxx,   0x05,VAL(IS)))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define subwx_rr(RG, RS)                                                    \
+        EMITH(MRM(0x1B, REG(RG),REG(RS),0x00))
+
+#define subwx_ld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x5B, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define subhn_ld(RG, MS, DS)    /* add 16-bit to 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x7B, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define subhz_ld(RG, MS, DS)    /* add 16-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x91, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITH(MRM(0x1B, REG(RG),TMxx,   0x00))
+
+#define subbn_ld(RG, MS, DS)    /* add  8-bit to 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x77, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITH(MRM(0x1B, REG(RG),TMxx,   0x00))
+
+#define subbz_ld(RG, MS, DS)    /* add  8-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x90, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITH(MRM(0x1B, REG(RG),TMxx,   0x00))
 
 /*--------------------------------   64-bit   --------------------------------*/
 
-#define addzx_ri(RD, IS)                                                    \
-        EMIT6(MIM(0xC2, REG(RD),0x08,VAL(IS)))
+/* mov (D = S)
+ * set-flags: no */
 
-#define addzx_rr(RD, RS)                                                    \
-        EMITW(MGM(0x08, REG(RD),REG(RS),0x00))
+#define movzx_ri(RD, IS)                                                    \
+        EMIT6(MIM(0xC0, REG(RD),0x01,VAL(IS)))
 
-#define addzx_ld(RD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x08, REG(RD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
-
-
-#define subzx_ri(RD, IS)                                                    \
-        EMIT6(MIM(0xC2, REG(RD),0x04,VAL(IS)))
-
-#define subzx_rr(RD, RS)                                                    \
-        EMITW(MGM(0x09, REG(RD),REG(RS),0x00))
-
-#define subzx_ld(RD, MS, DS)                                                \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x09, REG(RD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
-
+#define movzx_mi(MD, DD, IS)                                                \
+        AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A1(DD), EMPTY2)   \
+        EMIT6(MIM(0xC0, TMxx,   0x01,VAL(IS)))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
 
 #define movzx_rr(RD, RS)                                                    \
         EMITW(MGM(0x04, REG(RD),REG(RS),0x00))
+
+#define movwn_rr(RD, RS)       /* move 32-bit to 64-bit with sign-extend */ \
+        EMITW(MGM(0x14, REG(RD),REG(RS),0x00))
+
+#define movwz_rr(RD, RS)       /* move 32-bit to 64-bit with zero-extend */ \
+        EMITW(MGM(0x16, REG(RD),REG(RS),0x00))
 
 #define movzx_ld(RD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x04, REG(RD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
 
+#define movwn_ld(RD, MS, DS)   /* load 32-bit to 64-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x14, REG(RD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define movwz_ld(RD, MS, DS)   /* load 32-bit to 64-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x16, REG(RD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
 #define movzx_st(RS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A1(DD), EMPTY2)   \
         EMIT6(MDM(0x24, REG(RS),MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
+
+
+#define movzx_rj(RD, IT, IS)     /* IT - upper 32-bit, IS - lower 32-bit */ \
+        EMIT6(MIM(0xC0, REG(RD),0x01,VAL(IS)))                              \
+        EMIT6(MIM(0xC0, REG(RD),0x08,VAL(IT)))
+
+#define movzx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
+        AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A1(DD), EMPTY2)   \
+        EMIT6(MIM(0xC0, TMxx,   0x01,VAL(IS)))                              \
+        EMIT6(MIM(0xC0, TMxx,   0x08,VAL(IT)))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
+
+/* add (G = G + S)
+ * set-flags: undefined (*_*), yes (*Z*) */
+
+#define addzx_ri(RG, IS)                                                    \
+        EMIT6(MIM(0xC2, REG(RG),0x08,VAL(IS)))
+
+#define addzx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC2, TMxx,   0x08,VAL(IS)))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define addzx_rr(RG, RS)                                                    \
+        EMITW(MGM(0x08, REG(RG),REG(RS),0x00))
+
+#define addzx_ld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x08, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define addwn_ld(RG, MS, DS)    /* add 32-bit to 64-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x18, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define addwz_ld(RG, MS, DS)    /* add 32-bit to 64-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x1A, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+/* sub (G = G - S)
+ * set-flags: undefined (*_*), yes (*Z*) */
+
+#define subzx_ri(RG, IS)                                                    \
+        EMIT6(MIM(0xC2, REG(RG),0x04,VAL(IS)))
+
+#define subzx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC2, TMxx,   0x04,VAL(IS)))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define subzx_rr(RG, RS)                                                    \
+        EMITW(MGM(0x09, REG(RG),REG(RS),0x00))
+
+#define subzx_ld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x09, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define subwn_ld(RG, MS, DS)  /* sub 32-bit from 64-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x19, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define subwz_ld(RG, MS, DS)  /* sub 32-bit from 64-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x1B, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
 
 /************************* register-size instructions *************************/
 
@@ -519,7 +722,7 @@
 /**********************************   SIMD   **********************************/
 /******************************************************************************/
 
-/*--------------------------------   32-bit   --------------------------------*/
+/*--------------------------------   32-bit   -------------------- 128-bit ---*/
 
 /* mov (D = S) */
 
@@ -790,7 +993,7 @@
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMIT6(MXM(0xEA, REG(XD),REG(XS),   TmmM, 0x02))
 
-/*--------------------------------   64-bit   --------------------------------*/
+/*--------------------------------   64-bit   -------------------- 128-bit ---*/
 
 /* mov (D = S) */
 
@@ -1061,6 +1264,646 @@
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMIT6(MXM(0xEA, REG(XD),REG(XS),   TmmM, 0x03))
 
+/*--------------------------------   32-bit   -------------------- 256-bit ---*/
+
+/* mov (D = S) */
+
+#define movcx_rr(XD, XS)                                                    \
+        EMIT6(MXM(0x56, REG(XD),REG(XS),   0x00, 0x00))                     \
+        EMIT6(MXM(0x56, RYG(XD),RYG(XS),   0x00, 0x00))
+
+#define movcx_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMIT6(MPM(0x06, REG(XD),MOD(MS),REG(MS), VAL(DS), B2(DS), L2(DS)))  \
+        EMIT6(MPM(0x06, RYG(XD),MOD(MS),REG(MS), VYL(DS), B2(DS), L2(DS)))
+
+#define movcx_st(XS, MD, DD)                                                \
+        AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A2(DD), EMPTY2)   \
+        EMIT6(MPM(0x0E, REG(XS),MOD(MD),REG(MD), VAL(DD), B2(DD), L2(DD)))  \
+        EMIT6(MPM(0x0E, RYG(XS),MOD(MD),REG(MD), VYL(DD), B2(DD), L2(DD)))
+
+/* and (G = G & S), (D = S & T) if (#D != #T) */
+
+#define andcx_rr(XG, XS)                                                    \
+        andcx3rr(W(XG), W(XG), W(XS))
+
+#define andcx_ld(XG, MS, DS)                                                \
+        andcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define andcx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0x68, REG(XD),REG(XS),REG(XT), 0x00))                     \
+        EMIT6(MXM(0x68, RYG(XD),RYG(XS),RYG(XT), 0x00))
+
+#define andcx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x68, REG(XD),REG(XS),   TmmM, 0x00))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x68, RYG(XD),RYG(XS),   TmmM, 0x00))
+
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
+
+#define anncx_rr(XG, XS)                                                    \
+        anncx3rr(W(XG), W(XG), W(XS))
+
+#define anncx_ld(XG, MS, DS)                                                \
+        anncx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define anncx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0x69, REG(XD),REG(XT),REG(XS), 0x00))                     \
+        EMIT6(MXM(0x69, RYG(XD),RYG(XT),RYG(XS), 0x00))
+
+#define anncx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x69, REG(XD),TmmM,   REG(XS), 0x00))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x69, RYG(XD),TmmM,   RYG(XS), 0x00))
+
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
+
+#define orrcx_rr(XG, XS)                                                    \
+        orrcx3rr(W(XG), W(XG), W(XS))
+
+#define orrcx_ld(XG, MS, DS)                                                \
+        orrcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define orrcx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0x6A, REG(XD),REG(XS),REG(XT), 0x00))                     \
+        EMIT6(MXM(0x6A, RYG(XD),RYG(XS),RYG(XT), 0x00))
+
+#define orrcx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x6A, REG(XD),REG(XS),   TmmM, 0x00))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x6A, RYG(XD),RYG(XS),   TmmM, 0x00))
+
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
+
+#define orncx_rr(XG, XS)                                                    \
+        orncx3rr(W(XG), W(XG), W(XS))
+
+#define orncx_ld(XG, MS, DS)                                                \
+        orncx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define orncx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0x6F, REG(XD),REG(XT),REG(XS), 0x00))                     \
+        EMIT6(MXM(0x6F, RYG(XD),RYG(XT),RYG(XS), 0x00))
+
+#define orncx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x6F, REG(XD),TmmM,   REG(XS), 0x00))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x6F, RYG(XD),TmmM,   RYG(XS), 0x00))
+
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
+
+#define xorcx_rr(XG, XS)                                                    \
+        xorcx3rr(W(XG), W(XG), W(XS))
+
+#define xorcx_ld(XG, MS, DS)                                                \
+        xorcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define xorcx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0x6D, REG(XD),REG(XS),REG(XT), 0x00))                     \
+        EMIT6(MXM(0x6D, RYG(XD),RYG(XS),RYG(XT), 0x00))
+
+#define xorcx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x6D, REG(XD),REG(XS),   TmmM, 0x00))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x6D, RYG(XD),RYG(XS),   TmmM, 0x00))
+
+/* not (G = ~G), (D = ~S) */
+
+#define notcx_rx(XG)                                                        \
+        notcx_rr(W(XG), W(XG))
+
+#define notcx_rr(XD, XS)                                                    \
+        EMIT6(MXM(0x6B, REG(XD),REG(XS),REG(XS), 0x00))                     \
+        EMIT6(MXM(0x6B, RYG(XD),RYG(XS),RYG(XS), 0x00))
+
+/* add (G = G + S), (D = S + T) if (#D != #T) */
+
+#define addcs_rr(XG, XS)                                                    \
+        addcs3rr(W(XG), W(XG), W(XS))
+
+#define addcs_ld(XG, MS, DS)                                                \
+        addcs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define addcs3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xE3, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xE3, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define addcs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE3, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE3, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+        /* adp, adh are defined in rtbase.h (first 15-regs only)
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
+
+#define subcs_rr(XG, XS)                                                    \
+        subcs3rr(W(XG), W(XG), W(XS))
+
+#define subcs_ld(XG, MS, DS)                                                \
+        subcs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subcs3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xE2, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xE2, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define subcs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE2, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE2, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
+
+#define mulcs_rr(XG, XS)                                                    \
+        mulcs3rr(W(XG), W(XG), W(XS))
+
+#define mulcs_ld(XG, MS, DS)                                                \
+        mulcs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulcs3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xE7, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xE7, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define mulcs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE7, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE7, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+        /* mlp, mlh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
+
+#define divcs_rr(XG, XS)                                                    \
+        divcs3rr(W(XG), W(XG), W(XS))
+
+#define divcs_ld(XG, MS, DS)                                                \
+        divcs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divcs3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xE5, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xE5, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define divcs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE5, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE5, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqcs_rr(XG, XS)                                                    \
+        ceqcs3rr(W(XG), W(XG), W(XS))
+
+#define ceqcs_ld(XG, MS, DS)                                                \
+        ceqcs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqcs3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xE8, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xE8, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define ceqcs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE8, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE8, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cnecs_rr(XG, XS)                                                    \
+        cnecs3rr(W(XG), W(XG), W(XS))
+
+#define cnecs_ld(XG, MS, DS)                                                \
+        cnecs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cnecs3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xE8, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xE8, RYG(XD),RYG(XS),RYG(XT), 0x02))                     \
+        notcx_rx(W(XD))
+
+#define cnecs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE8, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE8, RYG(XD),RYG(XS),   TmmM, 0x02))                     \
+        notcx_rx(W(XD))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
+
+#define cltcs_rr(XG, XS)                                                    \
+        cltcs3rr(W(XG), W(XG), W(XS))
+
+#define cltcs_ld(XG, MS, DS)                                                \
+        cltcs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltcs3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xEB, REG(XD),REG(XT),REG(XS), 0x02))                     \
+        EMIT6(MXM(0xEB, RYG(XD),RYG(XT),RYG(XS), 0x02))
+
+#define cltcs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEB, REG(XD),TmmM,   REG(XS), 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEB, RYG(XD),TmmM,   RYG(XS), 0x02))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
+
+#define clecs_rr(XG, XS)                                                    \
+        clecs3rr(W(XG), W(XG), W(XS))
+
+#define clecs_ld(XG, MS, DS)                                                \
+        clecs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clecs3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xEA, REG(XD),REG(XT),REG(XS), 0x02))                     \
+        EMIT6(MXM(0xEA, RYG(XD),RYG(XT),RYG(XS), 0x02))
+
+#define clecs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEA, REG(XD),TmmM,   REG(XS), 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEA, RYG(XD),TmmM,   RYG(XS), 0x02))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
+
+#define cgtcs_rr(XG, XS)                                                    \
+        cgtcs3rr(W(XG), W(XG), W(XS))
+
+#define cgtcs_ld(XG, MS, DS)                                                \
+        cgtcs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtcs3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xEB, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xEB, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define cgtcs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEB, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEB, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
+
+#define cgecs_rr(XG, XS)                                                    \
+        cgecs3rr(W(XG), W(XG), W(XS))
+
+#define cgecs_ld(XG, MS, DS)                                                \
+        cgecs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgecs3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xEA, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xEA, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define cgecs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEA, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEA, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+/*--------------------------------   64-bit   -------------------- 256-bit ---*/
+
+/* mov (D = S) */
+
+#define movdx_rr(XD, XS)                                                    \
+        EMIT6(MXM(0x56, REG(XD),REG(XS),   0x00, 0x00))                     \
+        EMIT6(MXM(0x56, RYG(XD),RYG(XS),   0x00, 0x00))
+
+#define movdx_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMIT6(MPM(0x06, REG(XD),MOD(MS),REG(MS), VAL(DS), B2(DS), L2(DS)))  \
+        EMIT6(MPM(0x06, RYG(XD),MOD(MS),REG(MS), VYL(DS), B2(DS), L2(DS)))
+
+#define movdx_st(XS, MD, DD)                                                \
+        AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A2(DD), EMPTY2)   \
+        EMIT6(MPM(0x0E, REG(XS),MOD(MD),REG(MD), VAL(DD), B2(DD), L2(DD)))  \
+        EMIT6(MPM(0x0E, RYG(XS),MOD(MD),REG(MD), VYL(DD), B2(DD), L2(DD)))
+
+/* and (G = G & S), (D = S & T) if (#D != #T) */
+
+#define anddx_rr(XG, XS)                                                    \
+        anddx3rr(W(XG), W(XG), W(XS))
+
+#define anddx_ld(XG, MS, DS)                                                \
+        anddx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define anddx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0x68, REG(XD),REG(XS),REG(XT), 0x00))                     \
+        EMIT6(MXM(0x68, RYG(XD),RYG(XS),RYG(XT), 0x00))
+
+#define anddx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x68, REG(XD),REG(XS),   TmmM, 0x00))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x68, RYG(XD),RYG(XS),   TmmM, 0x00))
+
+/* ann (G = ~G & S), (D = ~S & T) if (#D != #T) */
+
+#define anndx_rr(XG, XS)                                                    \
+        anndx3rr(W(XG), W(XG), W(XS))
+
+#define anndx_ld(XG, MS, DS)                                                \
+        anndx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define anndx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0x69, REG(XD),REG(XT),REG(XS), 0x00))                     \
+        EMIT6(MXM(0x69, RYG(XD),RYG(XT),RYG(XS), 0x00))
+
+#define anndx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x69, REG(XD),TmmM,   REG(XS), 0x00))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x69, RYG(XD),TmmM,   RYG(XS), 0x00))
+
+/* orr (G = G | S), (D = S | T) if (#D != #T) */
+
+#define orrdx_rr(XG, XS)                                                    \
+        orrdx3rr(W(XG), W(XG), W(XS))
+
+#define orrdx_ld(XG, MS, DS)                                                \
+        orrdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define orrdx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0x6A, REG(XD),REG(XS),REG(XT), 0x00))                     \
+        EMIT6(MXM(0x6A, RYG(XD),RYG(XS),RYG(XT), 0x00))
+
+#define orrdx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x6A, REG(XD),REG(XS),   TmmM, 0x00))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x6A, RYG(XD),RYG(XS),   TmmM, 0x00))
+
+/* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
+
+#define orndx_rr(XG, XS)                                                    \
+        orndx3rr(W(XG), W(XG), W(XS))
+
+#define orndx_ld(XG, MS, DS)                                                \
+        orndx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define orndx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0x6F, REG(XD),REG(XT),REG(XS), 0x00))                     \
+        EMIT6(MXM(0x6F, RYG(XD),RYG(XT),RYG(XS), 0x00))
+
+#define orndx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x6F, REG(XD),TmmM,   REG(XS), 0x00))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x6F, RYG(XD),TmmM,   RYG(XS), 0x00))
+
+/* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
+
+#define xordx_rr(XG, XS)                                                    \
+        xordx3rr(W(XG), W(XG), W(XS))
+
+#define xordx_ld(XG, MS, DS)                                                \
+        xordx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define xordx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0x6D, REG(XD),REG(XS),REG(XT), 0x00))                     \
+        EMIT6(MXM(0x6D, RYG(XD),RYG(XS),RYG(XT), 0x00))
+
+#define xordx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x6D, REG(XD),REG(XS),   TmmM, 0x00))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x6D, RYG(XD),RYG(XS),   TmmM, 0x00))
+
+/* not (G = ~G), (D = ~S) */
+
+#define notdx_rx(XG)                                                        \
+        notdx_rr(W(XG), W(XG))
+
+#define notdx_rr(XD, XS)                                                    \
+        EMIT6(MXM(0x6B, REG(XD),REG(XS),REG(XS), 0x00))                     \
+        EMIT6(MXM(0x6B, RYG(XD),RYG(XS),RYG(XS), 0x00))
+
+/* add (G = G + S), (D = S + T) if (#D != #T) */
+
+#define addds_rr(XG, XS)                                                    \
+        addds3rr(W(XG), W(XG), W(XS))
+
+#define addds_ld(XG, MS, DS)                                                \
+        addds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define addds3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xE3, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xE3, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define addds3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE3, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE3, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+        /* adp, adh are defined in rtbase.h (first 15-regs only)
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
+
+#define subds_rr(XG, XS)                                                    \
+        subds3rr(W(XG), W(XG), W(XS))
+
+#define subds_ld(XG, MS, DS)                                                \
+        subds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subds3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xE2, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xE2, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define subds3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE2, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE2, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
+
+#define mulds_rr(XG, XS)                                                    \
+        mulds3rr(W(XG), W(XG), W(XS))
+
+#define mulds_ld(XG, MS, DS)                                                \
+        mulds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulds3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xE7, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xE7, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define mulds3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE7, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE7, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+        /* mlp, mlh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
+
+#define divds_rr(XG, XS)                                                    \
+        divds3rr(W(XG), W(XG), W(XS))
+
+#define divds_ld(XG, MS, DS)                                                \
+        divds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define divds3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xE5, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xE5, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define divds3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE5, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE5, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqds_rr(XG, XS)                                                    \
+        ceqds3rr(W(XG), W(XG), W(XS))
+
+#define ceqds_ld(XG, MS, DS)                                                \
+        ceqds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqds3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xE8, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xE8, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define ceqds3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE8, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE8, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cneds_rr(XG, XS)                                                    \
+        cneds3rr(W(XG), W(XG), W(XS))
+
+#define cneds_ld(XG, MS, DS)                                                \
+        cneds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cneds3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xE8, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xE8, RYG(XD),RYG(XS),RYG(XT), 0x03))                     \
+        notdx_rx(W(XD))
+
+#define cneds3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE8, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xE8, RYG(XD),RYG(XS),   TmmM, 0x03))                     \
+        notdx_rx(W(XD))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
+
+#define cltds_rr(XG, XS)                                                    \
+        cltds3rr(W(XG), W(XG), W(XS))
+
+#define cltds_ld(XG, MS, DS)                                                \
+        cltds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltds3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xEB, REG(XD),REG(XT),REG(XS), 0x03))                     \
+        EMIT6(MXM(0xEB, RYG(XD),RYG(XT),RYG(XS), 0x03))
+
+#define cltds3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEB, REG(XD),TmmM,   REG(XS), 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEB, RYG(XD),TmmM,   RYG(XS), 0x03))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
+
+#define cleds_rr(XG, XS)                                                    \
+        cleds3rr(W(XG), W(XG), W(XS))
+
+#define cleds_ld(XG, MS, DS)                                                \
+        cleds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cleds3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xEA, REG(XD),REG(XT),REG(XS), 0x03))                     \
+        EMIT6(MXM(0xEA, RYG(XD),RYG(XT),RYG(XS), 0x03))
+
+#define cleds3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEA, REG(XD),TmmM,   REG(XS), 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEA, RYG(XD),TmmM,   RYG(XS), 0x03))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
+
+#define cgtds_rr(XG, XS)                                                    \
+        cgtds3rr(W(XG), W(XG), W(XS))
+
+#define cgtds_ld(XG, MS, DS)                                                \
+        cgtds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtds3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xEB, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xEB, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define cgtds3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEB, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEB, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
+
+#define cgeds_rr(XG, XS)                                                    \
+        cgeds3rr(W(XG), W(XG), W(XS))
+
+#define cgeds_ld(XG, MS, DS)                                                \
+        cgeds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgeds3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xEA, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xEA, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define cgeds3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEA, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEA, RYG(XD),RYG(XS),   TmmM, 0x03))
+
 /******************************************************************************/
 /**********************************   ELEM   **********************************/
 /******************************************************************************/
@@ -1089,12 +1932,12 @@
         addrs3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define addrs3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xE3, REG(XD),REG(XS),REG(XT), 0x02))
+        EMIT6(MWM(0xE3, REG(XD),REG(XS),REG(XT), 0x02))
 
 #define addrs3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xE3, REG(XD),REG(XS),   TmmM, 0x02))
+        EMIT6(MWM(0xE3, REG(XD),REG(XS),   TmmM, 0x02))
 
 /* sub (G = G - S), (D = S - T) if (#D != #T) */
 
@@ -1105,12 +1948,12 @@
         subrs3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define subrs3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xE2, REG(XD),REG(XS),REG(XT), 0x02))
+        EMIT6(MWM(0xE2, REG(XD),REG(XS),REG(XT), 0x02))
 
 #define subrs3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xE2, REG(XD),REG(XS),   TmmM, 0x02))
+        EMIT6(MWM(0xE2, REG(XD),REG(XS),   TmmM, 0x02))
 
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
 
@@ -1121,12 +1964,12 @@
         mulrs3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define mulrs3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xE7, REG(XD),REG(XS),REG(XT), 0x02))
+        EMIT6(MWM(0xE7, REG(XD),REG(XS),REG(XT), 0x02))
 
 #define mulrs3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xE7, REG(XD),REG(XS),   TmmM, 0x02))
+        EMIT6(MWM(0xE7, REG(XD),REG(XS),   TmmM, 0x02))
 
 /* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
@@ -1137,12 +1980,12 @@
         divrs3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define divrs3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xE5, REG(XD),REG(XS),REG(XT), 0x02))
+        EMIT6(MWM(0xE5, REG(XD),REG(XS),REG(XT), 0x02))
 
 #define divrs3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xE5, REG(XD),REG(XS),   TmmM, 0x02))
+        EMIT6(MWM(0xE5, REG(XD),REG(XS),   TmmM, 0x02))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
@@ -1153,12 +1996,12 @@
         ceqrs3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define ceqrs3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xE8, REG(XD),REG(XS),REG(XT), 0x02))
+        EMIT6(MWM(0xE8, REG(XD),REG(XS),REG(XT), 0x02))
 
 #define ceqrs3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xE8, REG(XD),REG(XS),   TmmM, 0x02))
+        EMIT6(MWM(0xE8, REG(XD),REG(XS),   TmmM, 0x02))
 
 /* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
@@ -1169,13 +2012,13 @@
         cners3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cners3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xE8, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MWM(0xE8, REG(XD),REG(XS),REG(XT), 0x02))                     \
         notix_rx(W(XD))
 
 #define cners3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xE8, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MWM(0xE8, REG(XD),REG(XS),   TmmM, 0x02))                     \
         notix_rx(W(XD))
 
 /* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
@@ -1187,12 +2030,12 @@
         cltrs3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cltrs3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xEB, REG(XD),REG(XT),REG(XS), 0x02))
+        EMIT6(MWM(0xEB, REG(XD),REG(XT),REG(XS), 0x02))
 
 #define cltrs3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xEB, REG(XD),TmmM,   REG(XS), 0x02))
+        EMIT6(MWM(0xEB, REG(XD),TmmM,   REG(XS), 0x02))
 
 /* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
@@ -1203,12 +2046,12 @@
         clers3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define clers3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xEA, REG(XD),REG(XT),REG(XS), 0x02))
+        EMIT6(MWM(0xEA, REG(XD),REG(XT),REG(XS), 0x02))
 
 #define clers3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xEA, REG(XD),TmmM,   REG(XS), 0x02))
+        EMIT6(MWM(0xEA, REG(XD),TmmM,   REG(XS), 0x02))
 
 /* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
@@ -1219,12 +2062,12 @@
         cgtrs3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cgtrs3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xEB, REG(XD),REG(XS),REG(XT), 0x02))
+        EMIT6(MWM(0xEB, REG(XD),REG(XS),REG(XT), 0x02))
 
 #define cgtrs3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xEB, REG(XD),REG(XS),   TmmM, 0x02))
+        EMIT6(MWM(0xEB, REG(XD),REG(XS),   TmmM, 0x02))
 
 /* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
@@ -1235,12 +2078,12 @@
         cgers3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cgers3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xEA, REG(XD),REG(XS),REG(XT), 0x02))
+        EMIT6(MWM(0xEA, REG(XD),REG(XS),REG(XT), 0x02))
 
 #define cgers3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xEA, REG(XD),REG(XS),   TmmM, 0x02))
+        EMIT6(MWM(0xEA, REG(XD),REG(XS),   TmmM, 0x02))
 
 /*--------------------------------   64-bit   --------------------------------*/
 
@@ -1266,12 +2109,12 @@
         addts3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define addts3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xE3, REG(XD),REG(XS),REG(XT), 0x03))
+        EMIT6(MWM(0xE3, REG(XD),REG(XS),REG(XT), 0x03))
 
 #define addts3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xE3, REG(XD),REG(XS),   TmmM, 0x03))
+        EMIT6(MWM(0xE3, REG(XD),REG(XS),   TmmM, 0x03))
 
 /* sub (G = G - S), (D = S - T) if (#D != #T) */
 
@@ -1282,12 +2125,12 @@
         subts3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define subts3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xE2, REG(XD),REG(XS),REG(XT), 0x03))
+        EMIT6(MWM(0xE2, REG(XD),REG(XS),REG(XT), 0x03))
 
 #define subts3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xE2, REG(XD),REG(XS),   TmmM, 0x03))
+        EMIT6(MWM(0xE2, REG(XD),REG(XS),   TmmM, 0x03))
 
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
 
@@ -1298,12 +2141,12 @@
         mults3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define mults3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xE7, REG(XD),REG(XS),REG(XT), 0x03))
+        EMIT6(MWM(0xE7, REG(XD),REG(XS),REG(XT), 0x03))
 
 #define mults3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xE7, REG(XD),REG(XS),   TmmM, 0x03))
+        EMIT6(MWM(0xE7, REG(XD),REG(XS),   TmmM, 0x03))
 
 /* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
@@ -1314,12 +2157,12 @@
         divts3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define divts3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xE5, REG(XD),REG(XS),REG(XT), 0x03))
+        EMIT6(MWM(0xE5, REG(XD),REG(XS),REG(XT), 0x03))
 
 #define divts3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xE5, REG(XD),REG(XS),   TmmM, 0x03))
+        EMIT6(MWM(0xE5, REG(XD),REG(XS),   TmmM, 0x03))
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
@@ -1330,12 +2173,12 @@
         ceqts3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define ceqts3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xE8, REG(XD),REG(XS),REG(XT), 0x03))
+        EMIT6(MWM(0xE8, REG(XD),REG(XS),REG(XT), 0x03))
 
 #define ceqts3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xE8, REG(XD),REG(XS),   TmmM, 0x03))
+        EMIT6(MWM(0xE8, REG(XD),REG(XS),   TmmM, 0x03))
 
 /* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
 
@@ -1346,13 +2189,13 @@
         cnets3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cnets3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xE8, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MWM(0xE8, REG(XD),REG(XS),REG(XT), 0x03))                     \
         notjx_rx(W(XD))
 
 #define cnets3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xE8, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MWM(0xE8, REG(XD),REG(XS),   TmmM, 0x03))                     \
         notjx_rx(W(XD))
 
 /* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T) */
@@ -1364,12 +2207,12 @@
         cltts3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cltts3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xEB, REG(XD),REG(XT),REG(XS), 0x03))
+        EMIT6(MWM(0xEB, REG(XD),REG(XT),REG(XS), 0x03))
 
 #define cltts3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xEB, REG(XD),TmmM,   REG(XS), 0x03))
+        EMIT6(MWM(0xEB, REG(XD),TmmM,   REG(XS), 0x03))
 
 /* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T) */
 
@@ -1380,12 +2223,12 @@
         clets3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define clets3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xEA, REG(XD),REG(XT),REG(XS), 0x03))
+        EMIT6(MWM(0xEA, REG(XD),REG(XT),REG(XS), 0x03))
 
 #define clets3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xEA, REG(XD),TmmM,   REG(XS), 0x03))
+        EMIT6(MWM(0xEA, REG(XD),TmmM,   REG(XS), 0x03))
 
 /* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T) */
 
@@ -1396,12 +2239,12 @@
         cgtts3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cgtts3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xEB, REG(XD),REG(XS),REG(XT), 0x03))
+        EMIT6(MWM(0xEB, REG(XD),REG(XS),REG(XT), 0x03))
 
 #define cgtts3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xEB, REG(XD),REG(XS),   TmmM, 0x03))
+        EMIT6(MWM(0xEB, REG(XD),REG(XS),   TmmM, 0x03))
 
 /* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T) */
 
@@ -1412,12 +2255,12 @@
         cgets3ld(W(XG), W(XG), W(MS), W(DS))
 
 #define cgets3rr(XD, XS, XT)                                                \
-        EMIT6(MQM(0xEA, REG(XD),REG(XS),REG(XT), 0x03))
+        EMIT6(MWM(0xEA, REG(XD),REG(XS),REG(XT), 0x03))
 
 #define cgets3ld(XD, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0xEA, REG(XD),REG(XS),   TmmM, 0x03))
+        EMIT6(MWM(0xEA, REG(XD),REG(XS),   TmmM, 0x03))
 
 /************************* register-size instructions *************************/
 
@@ -1501,7 +2344,7 @@
 
 #define verxx_xx()                                                          \
         subxx_rr(Reax, Reax)                                                \
-        addwx_ri(Reax, IV(0x00000F))                                        \
+        addwx_ri(Reax, IV(0x00030F))                                        \
         movwx_st(Reax, Mebp, inf_VER)
 
 /******************************************************************************/
