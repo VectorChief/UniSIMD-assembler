@@ -169,6 +169,18 @@
         (pxx(vdp) | (bmd) << 32 | bxx(brm) << 28 | (reg & 0x0F) << 36 |     \
          0xE70000000000 | (cod) | (reg & 0x10) <<  7)
 
+#define MQM(cod, reg, ren, rem, bit)                                        \
+        ((reg & 0x0F) << 36 | (ren & 0x0F) << 32 | (rem & 0x0F) << 28 |     \
+         (reg & 0x10) <<  7 | (ren & 0x10) <<  6 | (rem & 0x10) <<  5 |     \
+         (reg & 0x0F) << 12 | (reg & 0x10) <<  4 |                          \
+         0xE70000080000 | (bit) << 24 | (cod))
+
+#define MVM(cod, reg, ren, rem, bit)                                        \
+        ((reg & 0x0F) << 36 | (ren & 0x0F) << 32 | (rem & 0x0F) << 28 |     \
+         (reg & 0x10) <<  7 | (ren & 0x10) <<  6 | (rem & 0x10) <<  5 |     \
+         (reg & 0x0F) << 12 | (reg & 0x10) <<  4 |                          \
+         0xE70000000000 | (bit) << 24 | (cod))
+
 #define MWM(cod, reg, ren, rem, bit)                                        \
         ((reg & 0x0F) << 36 | (ren & 0x0F) << 32 | (rem & 0x0F) << 28 |     \
          (reg & 0x10) <<  7 | (ren & 0x10) <<  6 | (rem & 0x10) <<  5 |     \
@@ -905,6 +917,67 @@
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMIT6(MXM(0xE5, REG(XD),REG(XS),   TmmM, 0x02))
 
+/* sqr (D = sqrt S) */
+
+#define sqris_rr(XD, XS)                                                    \
+        EMIT6(MXM(0xCE, REG(XD),REG(XS),   0x00, 0x02))
+
+#define sqris_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MS),  REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMIT6(MXM(0xCE, REG(XD),TmmM,      0x00, 0x02))
+
+/* cbr (D = cbrt S) */
+
+        /* cbe, cbs, cbr are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+        /* rce, rcs, rcp are defined in rtconf.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+        /* rse, rss, rsq are defined in rtconf.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA <= 1
+
+#define fmais_rr(XG, XS, XT)                                                \
+        EMIT6(MVM(0x8F, REG(XG),REG(XS),REG(XT), 0x02))
+
+#define fmais_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MVM(0x8F, REG(XG),REG(XS),   TmmM, 0x02))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
+ * NOTE: due to final negation being outside of rounding on all POWER systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS <= 1
+
+#define fmsis_rr(XG, XS, XT)                                                \
+        EMIT6(MVM(0x9E, REG(XG),REG(XS),REG(XT), 0x02))
+
+#define fmsis_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MVM(0x9E, REG(XG),REG(XS),   TmmM, 0x02))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/*************   packed single-precision floating-point compare   *************/
+
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqis_rr(XG, XS)                                                    \
@@ -1465,6 +1538,67 @@
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMIT6(MXM(0xE5, REG(XD),REG(XS),   TmmM, 0x03))
+
+/* sqr (D = sqrt S) */
+
+#define sqrjs_rr(XD, XS)                                                    \
+        EMIT6(MXM(0xCE, REG(XD),REG(XS),   0x00, 0x03))
+
+#define sqrjs_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MS),  REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMIT6(MXM(0xCE, REG(XD),TmmM,      0x00, 0x03))
+
+/* cbr (D = cbrt S) */
+
+        /* cbe, cbs, cbr are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+        /* rce, rcs, rcp are defined in rtconf.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+        /* rse, rss, rsq are defined in rtconf.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA <= 1
+
+#define fmajs_rr(XG, XS, XT)                                                \
+        EMIT6(MVM(0x8F, REG(XG),REG(XS),REG(XT), 0x03))
+
+#define fmajs_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MVM(0x8F, REG(XG),REG(XS),   TmmM, 0x03))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
+ * NOTE: due to final negation being outside of rounding on all POWER systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS <= 1
+
+#define fmsjs_rr(XG, XS, XT)                                                \
+        EMIT6(MVM(0x9E, REG(XG),REG(XS),REG(XT), 0x03))
+
+#define fmsjs_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MVM(0x9E, REG(XG),REG(XS),   TmmM, 0x03))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/*************   packed double-precision floating-point compare   *************/
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
@@ -2057,6 +2191,76 @@
         EMIT6(MXM(0xE5, REG(XD),REG(XS),   TmmM, 0x02))                     \
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
         EMIT6(MXM(0xE5, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+/* sqr (D = sqrt S) */
+
+#define sqrcs_rr(XD, XS)                                                    \
+        EMIT6(MXM(0xCE, REG(XD),REG(XS),   0x00, 0x02))                     \
+        EMIT6(MXM(0xCE, RYG(XD),RYG(XS),   0x00, 0x02))
+
+#define sqrcs_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MS),  REG(MS), VAL(DS), B2(DS), L2(DS)))  \
+        EMIT6(MXM(0xCE, REG(XD),TmmM,      0x00, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MS),  REG(MS), VYL(DS), B2(DS), L2(DS)))  \
+        EMIT6(MXM(0xCE, RYG(XD),TmmM,      0x00, 0x02))
+
+/* cbr (D = cbrt S) */
+
+        /* cbe, cbs, cbr are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+        /* rce, rcs, rcp are defined in rtconf.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+        /* rse, rss, rsq are defined in rtconf.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA <= 1
+
+#define fmacs_rr(XG, XS, XT)                                                \
+        EMIT6(MVM(0x8F, REG(XG),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MVM(0x8F, RYG(XG),RYG(XS),RYG(XT), 0x02))
+
+#define fmacs_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MVM(0x8F, REG(XG),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MVM(0x8F, RYG(XG),RYG(XS),   TmmM, 0x02))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
+ * NOTE: due to final negation being outside of rounding on all POWER systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS <= 1
+
+#define fmscs_rr(XG, XS, XT)                                                \
+        EMIT6(MVM(0x9E, REG(XG),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MVM(0x9E, RYG(XG),RYG(XS),RYG(XT), 0x02))
+
+#define fmscs_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MVM(0x9E, REG(XG),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MVM(0x9E, RYG(XG),RYG(XS),   TmmM, 0x02))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/*************   packed single-precision floating-point compare   *************/
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
@@ -2746,6 +2950,76 @@
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
         EMIT6(MXM(0xE5, RYG(XD),RYG(XS),   TmmM, 0x03))
 
+/* sqr (D = sqrt S) */
+
+#define sqrds_rr(XD, XS)                                                    \
+        EMIT6(MXM(0xCE, REG(XD),REG(XS),   0x00, 0x03))                     \
+        EMIT6(MXM(0xCE, RYG(XD),RYG(XS),   0x00, 0x03))
+
+#define sqrds_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MS),  REG(MS), VAL(DS), B2(DS), L2(DS)))  \
+        EMIT6(MXM(0xCE, REG(XD),TmmM,      0x00, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MS),  REG(MS), VYL(DS), B2(DS), L2(DS)))  \
+        EMIT6(MXM(0xCE, RYG(XD),TmmM,      0x00, 0x03))
+
+/* cbr (D = cbrt S) */
+
+        /* cbe, cbs, cbr are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+        /* rce, rcs, rcp are defined in rtconf.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+        /* rse, rss, rsq are defined in rtconf.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA <= 1
+
+#define fmads_rr(XG, XS, XT)                                                \
+        EMIT6(MVM(0x8F, REG(XG),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MVM(0x8F, RYG(XG),RYG(XS),RYG(XT), 0x03))
+
+#define fmads_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MVM(0x8F, REG(XG),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MVM(0x8F, RYG(XG),RYG(XS),   TmmM, 0x03))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
+ * NOTE: due to final negation being outside of rounding on all POWER systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS <= 1
+
+#define fmsds_rr(XG, XS, XT)                                                \
+        EMIT6(MVM(0x9E, REG(XG),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MVM(0x9E, RYG(XG),RYG(XS),RYG(XT), 0x03))
+
+#define fmsds_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MVM(0x9E, REG(XG),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MVM(0x9E, RYG(XG),RYG(XS),   TmmM, 0x03))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/*************   packed double-precision floating-point compare   *************/
+
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqds_rr(XG, XS)                                                    \
@@ -3313,6 +3587,67 @@
         EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMIT6(MWM(0xE5, REG(XD),REG(XS),   TmmM, 0x02))
 
+/* sqr (D = sqrt S) */
+
+#define sqrrs_rr(XD, XS)                                                    \
+        EMIT6(MWM(0xCE, REG(XD),REG(XS),   0x00, 0x02))
+
+#define sqrrs_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMIT6(MPM(0x03, TmmM, MOD(MS),  REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMIT6(MWM(0xCE, REG(XD),TmmM,      0x00, 0x02))
+
+/* cbr (D = cbrt S) */
+
+        /* cbe, cbs, cbr are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+        /* rce, rcs, rcp are defined in rtconf.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+        /* rse, rss, rsq are defined in rtconf.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA <= 1
+
+#define fmars_rr(XG, XS, XT)                                                \
+        EMIT6(MQM(0x8F, REG(XG),REG(XS),REG(XT), 0x02))
+
+#define fmars_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MQM(0x8F, REG(XG),REG(XS),   TmmM, 0x02))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
+ * NOTE: due to final negation being outside of rounding on all POWER systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS <= 1
+
+#define fmsrs_rr(XG, XS, XT)                                                \
+        EMIT6(MQM(0x9E, REG(XG),REG(XS),REG(XT), 0x02))
+
+#define fmsrs_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MQM(0x9E, REG(XG),REG(XS),   TmmM, 0x02))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/*************   scalar single-precision floating-point compare   *************/
+
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqrs_rr(XG, XS)                                                    \
@@ -3779,6 +4114,67 @@
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMIT6(MWM(0xE5, REG(XD),REG(XS),   TmmM, 0x03))
+
+/* sqr (D = sqrt S) */
+
+#define sqrts_rr(XD, XS)                                                    \
+        EMIT6(MWM(0xCE, REG(XD),REG(XS),   0x00, 0x03))
+
+#define sqrts_ld(XD, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A2(DS), EMPTY2)   \
+        EMIT6(MPM(0x02, TmmM, MOD(MS),  REG(MS), VAL(DS), B2(DS), P2(DS)))  \
+        EMIT6(MWM(0xCE, REG(XD),TmmM,      0x00, 0x03))
+
+/* cbr (D = cbrt S) */
+
+        /* cbe, cbs, cbr are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rcp (D = 1.0 / S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+        /* rce, rcs, rcp are defined in rtconf.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* rsq (D = 1.0 / sqrt S)
+ * accuracy/behavior may vary across supported targets, use accordingly */
+
+        /* rse, rss, rsq are defined in rtconf.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA <= 1
+
+#define fmats_rr(XG, XS, XT)                                                \
+        EMIT6(MQM(0x8F, REG(XG),REG(XS),REG(XT), 0x03))
+
+#define fmats_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MQM(0x8F, REG(XG),REG(XS),   TmmM, 0x03))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
+ * NOTE: due to final negation being outside of rounding on all POWER systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS <= 1
+
+#define fmsts_rr(XG, XS, XT)                                                \
+        EMIT6(MQM(0x9E, REG(XG),REG(XS),REG(XT), 0x03))
+
+#define fmsts_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MQM(0x9E, REG(XG),REG(XS),   TmmM, 0x03))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+/*************   scalar double-precision floating-point compare   *************/
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
@@ -4269,6 +4665,18 @@
 #define RT_SIMD_MODE_ROUNDM     0x07    /* round towards -inf */
 #define RT_SIMD_MODE_ROUNDP     0x06    /* round towards +inf */
 #define RT_SIMD_MODE_ROUNDZ     0x05    /* round towards zero */
+
+#define fpscr_ld(RS) /* not portable, do not use outside */                 \
+        EMITW(0xB3840000 | MRM(0x00, REG(RS),0x00,0x00))
+
+#define fpscr_st(RD) /* not portable, do not use outside */                 \
+        EMITW(0xB38C0000 | MRM(0x00, REG(RD),0x00,0x00))
+
+#define FCTRL_SET(mode)   /* sets given mode into fp control register */    \
+        EMITW(0xB2990000 | (RT_SIMD_MODE_##mode & 3))
+
+#define FCTRL_RESET()     /* resumes default mode (ROUNDN) upon leave */    \
+        EMITW(0xB2990000)
 
 /******************************************************************************/
 /********************************   INTERNAL   ********************************/

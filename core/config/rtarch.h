@@ -961,6 +961,36 @@
 #define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lgr, %%r4, lb) ASM_END
 #define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(lgr, lb, %%r4) ASM_END
 
+/* RT_SIMD_COMPAT_XMM distinguishes between SIMD reg-file sizes
+ * with current top values: 0 - 16, 1 - 15, 2 - 14 SIMD regs */
+#ifndef RT_SIMD_COMPAT_XMM
+#define RT_SIMD_COMPAT_XMM      RT_SIMD_COMPAT_XMM_MASTER
+#endif /* RT_SIMD_COMPAT_XMM */
+
+/* RT_SIMD_COMPAT_RCP when enabled changes the default behavior
+ * of rcpps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RCP
+#define RT_SIMD_COMPAT_RCP      RT_SIMD_COMPAT_RCP_MASTER
+#endif /* RT_SIMD_COMPAT_RCP */
+
+/* RT_SIMD_COMPAT_RSQ when enabled changes the default behavior
+ * of rsqps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_RSQ
+#define RT_SIMD_COMPAT_RSQ      RT_SIMD_COMPAT_RSQ_MASTER
+#endif /* RT_SIMD_COMPAT_RSQ */
+
+/* RT_SIMD_COMPAT_FMA when enabled changes the default behavior
+ * of fmaps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMA
+#define RT_SIMD_COMPAT_FMA      RT_SIMD_COMPAT_FMA_MASTER
+#endif /* RT_SIMD_COMPAT_FMA */
+
+/* RT_SIMD_COMPAT_FMS when enabled changes the default behavior
+ * of fmsps_** instructions to their full-precision fallback */
+#ifndef RT_SIMD_COMPAT_FMS
+#define RT_SIMD_COMPAT_FMS      RT_SIMD_COMPAT_FMS_MASTER
+#endif /* RT_SIMD_COMPAT_FMS */
+
 /* use 1 local to fix optimized builds, where locals are referenced via SP,
  * while stack ops from within the asm block aren't counted into offsets */
 #define ASM_ENTER(__Info__)                                                 \
