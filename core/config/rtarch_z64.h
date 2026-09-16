@@ -162,6 +162,10 @@
 #define MSM(reg, ren, rem) /* logic, shifts */                              \
         ((reg) << 36 | (ren) << 32 | (rem) << 28)
 
+#define MTM(cod, reg, ren, imm) /* shiftIM */                               \
+        ((reg) << 36 | (ren) << 28 | (imm) << 16 | (reg) << 32 |            \
+         0xEB0000000000 | (cod))
+
 #define MDM(cod, reg, bmd, brm, vdp, bxx, pxx)                              \
         (pxx(vdp) | (bmd) << 32 | bxx(brm) << 28 | (reg) << 36 | (cod))
 
@@ -169,7 +173,7 @@
         (pxx(vdp) | (bmd) << 32 | bxx(brm) << 28 | (reg & 0x0F) << 36 |     \
          0xE70000000000 | (cod) | (reg & 0x10) <<  7)
 
-#define MQM(cod, reg, ren, rem, bit)                                        \
+#define MUM(cod, reg, ren, rem, bit)                                        \
         ((reg & 0x0F) << 36 | (ren & 0x0F) << 32 | (rem & 0x0F) << 28 |     \
          (reg & 0x10) <<  7 | (ren & 0x10) <<  6 | (rem & 0x10) <<  5 |     \
          (reg & 0x0F) << 12 | (reg & 0x10) <<  4 |                          \
@@ -258,14 +262,13 @@
 #define L20(dp) (0xE30000000000 | (0x0FFF & (dp))<<16)
 #define C20(br, dp) EMPTY
 #define A20(br, dp) EMPTY
-#define C40(br, dp) EMIT6(0xC00100000000 | TDxx << 36 | (0x7FFFFFFF & (dp)))
 
 #define B21(br) TDxx
 #define B41(br) TPxx
 #define P21(dp) (0xE30000000000)
 #define L21(dp) (0xE30000000000 | (0x0010 & (dp))<<16)
 #define C21(br, dp) EMIT6(0xC00100000000 | TDxx << 36 | (0x7FFFFFFF & (dp)))
-#define A21(br, dp) C41(br, dp)                                             \
+#define A21(br, dp) C21(br, dp)                                             \
                     EMITW(0xB9080000 | TDxx << 4 | (br))
 
 /* internal     REG */
@@ -589,6 +592,123 @@
         EMIT6(MDM(0x90, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITH(MRM(0x1B, REG(RG),TMxx,   0x00))
 
+/* shl (G = G << S)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shlwx_rx(RG)                     /* reads Recx for shift count */   \
+        EMIT6(MTM(0xDF, REG(RG),TEcx,   0x00))
+
+#define shlwx_mx(MG, DG)                 /* reads Recx for shift count */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0xDF, TMxx,   TEcx,   0x00))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shlwx_ri(RG, IS)                                                    \
+        EMIT6(MTM(0xDF, REG(RG),0x00,VAL(IS)))
+
+#define shlwx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0xDF, TMxx,   0x00,VAL(IS)))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shlwx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        EMIT6(MTM(0xDF, REG(RG),REG(RS),0x00))
+
+#define shlwx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0xDF, REG(RG),TMxx,   0x00))
+
+#define shlwx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0xDF, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shlwx_mr(MG, DG, RS)                                                \
+        shlwx_st(W(RS), W(MG), W(DG))
+
+/* shr (G = G >> S), unsigned (logical)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrwx_rx(RG)                     /* reads Recx for shift count */   \
+        EMIT6(MTM(0xDE, REG(RG),TEcx,   0x00))
+
+#define shrwx_mx(MG, DG)                 /* reads Recx for shift count */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0xDE, TMxx,   TEcx,   0x00))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shrwx_ri(RG, IS)                                                    \
+        EMIT6(MTM(0xDE, REG(RG),0x00,VAL(IS)))
+
+#define shrwx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0xDE, TMxx,   0x00,VAL(IS)))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shrwx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        EMIT6(MTM(0xDE, REG(RG),REG(RS),0x00))
+
+#define shrwx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0xDE, REG(RG),TMxx,   0x00))
+
+#define shrwx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0xDE, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shrwx_mr(MG, DG, RS)                                                \
+        shrwx_st(W(RS), W(MG), W(DG))
+
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrwn_rx(RG)                     /* reads Recx for shift count */   \
+        EMIT6(MTM(0xDC, REG(RG),TEcx,   0x00))
+
+#define shrwn_mx(MG, DG)                 /* reads Recx for shift count */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0xDC, TMxx,   TEcx,   0x00))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shrwn_ri(RG, IS)                                                    \
+        EMIT6(MTM(0xDC, REG(RG),0x00,VAL(IS)))
+
+#define shrwn_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0xDC, TMxx,   0x00,VAL(IS)))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shrwn_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        EMIT6(MTM(0xDC, REG(RG),REG(RS),0x00))
+
+#define shrwn_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0xDC, REG(RG),TMxx,   0x00))
+
+#define shrwn_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0xDC, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shrwn_mr(MG, DG, RS)                                                \
+        shrwn_st(W(RS), W(MG), W(DG))
+
 /*--------------------------------   64-bit   --------------------------------*/
 
 /* mov (D = S)
@@ -691,6 +811,123 @@
 #define subwz_ld(RG, MS, DS)  /* sub 32-bit from 64-bit with zero-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x1B, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+/* shl (G = G << S)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shlzx_rx(RG)                     /* reads Recx for shift count */   \
+        EMIT6(MTM(0x0D, REG(RG),TEcx,   0x00))
+
+#define shlzx_mx(MG, DG)                 /* reads Recx for shift count */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0x0D, TMxx,   TEcx,   0x00))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shlzx_ri(RG, IS)                                                    \
+        EMIT6(MTM(0x0D, REG(RG),0x00,VAL(IS)))
+
+#define shlzx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0x0D, TMxx,   0x00,VAL(IS)))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shlzx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        EMIT6(MTM(0x0D, REG(RG),REG(RS),0x00))
+
+#define shlzx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0x0D, REG(RG),TMxx,   0x00))
+
+#define shlzx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0x0D, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shlzx_mr(MG, DG, RS)                                                \
+        shlzx_st(W(RS), W(MG), W(DG))
+
+/* shr (G = G >> S), unsigned (logical)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrzx_rx(RG)                     /* reads Recx for shift count */   \
+        EMIT6(MTM(0x0C, REG(RG),TEcx,   0x00))
+
+#define shrzx_mx(MG, DG)                 /* reads Recx for shift count */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0x0C, TMxx,   TEcx,   0x00))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shrzx_ri(RG, IS)                                                    \
+        EMIT6(MTM(0x0C, REG(RG),0x00,VAL(IS)))
+
+#define shrzx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0x0C, TMxx,   0x00,VAL(IS)))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shrzx_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        EMIT6(MTM(0x0C, REG(RG),REG(RS),0x00))
+
+#define shrzx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0x0C, REG(RG),TMxx,   0x00))
+
+#define shrzx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0x0C, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shrzx_mr(MG, DG, RS)                                                \
+        shrzx_st(W(RS), W(MG), W(DG))
+
+/* shr (G = G >> S), signed (arithmetic)
+ * set-flags: undefined (*_*), yes (*Z*)
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrzn_rx(RG)                     /* reads Recx for shift count */   \
+        EMIT6(MTM(0x0A, REG(RG),TEcx,   0x00))
+
+#define shrzn_mx(MG, DG)                 /* reads Recx for shift count */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0x0A, TMxx,   TEcx,   0x00))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shrzn_ri(RG, IS)                                                    \
+        EMIT6(MTM(0x0A, REG(RG),0x00,VAL(IS)))
+
+#define shrzn_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0x0A, TMxx,   0x00,VAL(IS)))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shrzn_rr(RG, RS)       /* Recx cannot be used as first operand */   \
+        EMIT6(MTM(0x0A, REG(RG),REG(RS),0x00))
+
+#define shrzn_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0x0A, REG(RG),TMxx,   0x00))
+
+#define shrzn_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MTM(0x0A, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define shrzn_mr(MG, DG, RS)                                                \
+        shrzn_st(W(RS), W(MG), W(DG))
 
 /************************* register-size instructions *************************/
 
@@ -1366,6 +1603,143 @@
         EMIT6(MPM(0x06, TmmM, MOD(MS),  REG(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMIT6(MZM(0xC0, REG(XD),TmmM,   (RT_SIMD_MODE_##mode&3), 0x02))
 
+/************   packed single-precision integer arithmetic/shifts   ***********/
+
+/* add (G = G + S), (D = S + T) if (#D != #T) */
+
+#define addix_rr(XG, XS)                                                    \
+        addix3rr(W(XG), W(XG), W(XS))
+
+#define addix_ld(XG, MS, DS)                                                \
+        addix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define addix3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF3, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define addix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xF3, REG(XD),REG(XS),   TmmM, 0x02))
+
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
+
+#define subix_rr(XG, XS)                                                    \
+        subix3rr(W(XG), W(XG), W(XS))
+
+#define subix_ld(XG, MS, DS)                                                \
+        subix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subix3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF7, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define subix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xF7, REG(XD),REG(XS),   TmmM, 0x02))
+
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
+
+#define mulix_rr(XG, XS)                                                    \
+        mulix3rr(W(XG), W(XG), W(XS))
+
+#define mulix_ld(XG, MS, DS)                                                \
+        mulix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulix3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xA2, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define mulix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xA2, REG(XD),REG(XS),   TmmM, 0x02))
+
+        /* div, rem are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shlix_ri(XG, IS)                                                    \
+        shlix3ri(W(XG), W(XG), W(IS))
+
+#define shlix_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shlix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shlix3ri(XD, XS, IT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        shlwx_mi(Mebp,  inf_SCR01(0x00), W(IT))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x04), W(IT))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x08), W(IT))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x0C), W(IT))                             \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define shlix3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  W(MT), W(DT))                                       \
+        shlwx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shlwx_mx(Mebp,  inf_SCR01(0x04))                                    \
+        shlwx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        shlwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        stack_ld(Recx)                                                      \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrix_ri(XG, IS)                                                    \
+        shrix3ri(W(XG), W(XG), W(IS))
+
+#define shrix_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shrix3ri(XD, XS, IT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        shrwx_mi(Mebp,  inf_SCR01(0x00), W(IT))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x04), W(IT))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x08), W(IT))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x0C), W(IT))                             \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define shrix3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  W(MT), W(DT))                                       \
+        shrwx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shrwx_mx(Mebp,  inf_SCR01(0x04))                                    \
+        shrwx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        shrwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        stack_ld(Recx)                                                      \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrin_ri(XG, IS)                                                    \
+        shrin3ri(W(XG), W(XG), W(IS))
+
+#define shrin_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrin3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shrin3ri(XD, XS, IT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        shrwn_mi(Mebp,  inf_SCR01(0x00), W(IT))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x04), W(IT))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x08), W(IT))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x0C), W(IT))                             \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define shrin3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  W(MT), W(DT))                                       \
+        shrwn_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shrwn_mx(Mebp,  inf_SCR01(0x04))                                    \
+        shrwn_mx(Mebp,  inf_SCR01(0x08))                                    \
+        shrwn_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        stack_ld(Recx)                                                      \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
 /*--------------------------------   64-bit   -------------------- 128-bit ---*/
 
 /* mov (D = S) */
@@ -1987,6 +2361,145 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A2(DS), EMPTY2)   \
         EMIT6(MPM(0x06, TmmM, MOD(MS),  REG(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMIT6(MZM(0xC0, REG(XD),TmmM,   (RT_SIMD_MODE_##mode&3), 0x03))
+
+/************   packed double-precision integer arithmetic/shifts   ***********/
+
+/* add (G = G + S), (D = S + T) if (#D != #T) */
+
+#define addjx_rr(XG, XS)                                                    \
+        addjx3rr(W(XG), W(XG), W(XS))
+
+#define addjx_ld(XG, MS, DS)                                                \
+        addjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define addjx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF3, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define addjx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xF3, REG(XD),REG(XS),   TmmM, 0x03))
+
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
+
+#define subjx_rr(XG, XS)                                                    \
+        subjx3rr(W(XG), W(XG), W(XS))
+
+#define subjx_ld(XG, MS, DS)                                                \
+        subjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subjx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF7, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define subjx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xF7, REG(XD),REG(XS),   TmmM, 0x03))
+
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
+
+#define muljx_rr(XG, XS)                                                    \
+        muljx3rr(W(XG), W(XG), W(XS))
+
+#define muljx_ld(XG, MS, DS)                                                \
+        muljx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define muljx3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        muljx_rx(W(XD))
+
+#define muljx3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        muljx_rx(W(XD))
+
+#define muljx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
+        mulzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movzx_st(Recx,  Mebp, inf_SCR01(0x00))                              \
+        movzx_ld(Recx,  Mebp, inf_SCR01(0x08))                              \
+        mulzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        movzx_st(Recx,  Mebp, inf_SCR01(0x08))                              \
+        stack_ld(Recx)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+        /* div, rem are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shljx_ri(XG, IS)                                                    \
+        shljx3ri(W(XG), W(XG), W(IS))
+
+#define shljx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shljx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shljx3ri(XD, XS, IT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        shlzx_mi(Mebp,  inf_SCR01(0x00), W(IT))                             \
+        shlzx_mi(Mebp,  inf_SCR01(0x08), W(IT))                             \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define shljx3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  W(MT), W(DT))                                       \
+        shlzx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shlzx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        stack_ld(Recx)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrjx_ri(XG, IS)                                                    \
+        shrjx3ri(W(XG), W(XG), W(IS))
+
+#define shrjx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shrjx3ri(XD, XS, IT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        shrzx_mi(Mebp,  inf_SCR01(0x00), W(IT))                             \
+        shrzx_mi(Mebp,  inf_SCR01(0x08), W(IT))                             \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define shrjx3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  W(MT), W(DT))                                       \
+        shrzx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shrzx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        stack_ld(Recx)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrjn_ri(XG, IS)                                                    \
+        shrjn3ri(W(XG), W(XG), W(IS))
+
+#define shrjn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shrjn3ri(XD, XS, IT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        shrzn_mi(Mebp,  inf_SCR01(0x00), W(IT))                             \
+        shrzn_mi(Mebp,  inf_SCR01(0x08), W(IT))                             \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define shrjn3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  W(MT), W(DT))                                       \
+        shrzn_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shrzn_mx(Mebp,  inf_SCR01(0x08))                                    \
+        stack_ld(Recx)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
 /*--------------------------------   32-bit   -------------------- 256-bit ---*/
 
@@ -2746,6 +3259,176 @@
         EMIT6(MPM(0x06, TmmM, MOD(MS),  REG(MS), VYL(DS), B2(DS), L2(DS)))  \
         EMIT6(MZM(0xC0, RYG(XD),TmmM,   (RT_SIMD_MODE_##mode&3), 0x02))
 
+/************   packed single-precision integer arithmetic/shifts   ***********/
+
+/* add (G = G + S), (D = S + T) if (#D != #T) */
+
+#define addcx_rr(XG, XS)                                                    \
+        addcx3rr(W(XG), W(XG), W(XS))
+
+#define addcx_ld(XG, MS, DS)                                                \
+        addcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define addcx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF3, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xF3, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define addcx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF3, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF3, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
+
+#define subcx_rr(XG, XS)                                                    \
+        subcx3rr(W(XG), W(XG), W(XS))
+
+#define subcx_ld(XG, MS, DS)                                                \
+        subcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subcx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF7, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xF7, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define subcx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF7, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF7, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
+
+#define mulcx_rr(XG, XS)                                                    \
+        mulcx3rr(W(XG), W(XG), W(XS))
+
+#define mulcx_ld(XG, MS, DS)                                                \
+        mulcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mulcx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xA2, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xA2, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define mulcx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xA2, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xA2, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+        /* div, rem are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shlcx_ri(XG, IS)                                                    \
+        shlcx3ri(W(XG), W(XG), W(IS))
+
+#define shlcx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shlcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shlcx3ri(XD, XS, IT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        shlwx_mi(Mebp,  inf_SCR01(0x00), W(IT))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x04), W(IT))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x08), W(IT))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x0C), W(IT))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x10), W(IT))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x14), W(IT))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x18), W(IT))                             \
+        shlwx_mi(Mebp,  inf_SCR01(0x1C), W(IT))                             \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define shlcx3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  W(MT), W(DT))                                       \
+        shlwx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shlwx_mx(Mebp,  inf_SCR01(0x04))                                    \
+        shlwx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        shlwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        shlwx_mx(Mebp,  inf_SCR01(0x10))                                    \
+        shlwx_mx(Mebp,  inf_SCR01(0x14))                                    \
+        shlwx_mx(Mebp,  inf_SCR01(0x18))                                    \
+        shlwx_mx(Mebp,  inf_SCR01(0x1C))                                    \
+        stack_ld(Recx)                                                      \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrcx_ri(XG, IS)                                                    \
+        shrcx3ri(W(XG), W(XG), W(IS))
+
+#define shrcx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shrcx3ri(XD, XS, IT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        shrwx_mi(Mebp,  inf_SCR01(0x00), W(IT))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x04), W(IT))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x08), W(IT))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x0C), W(IT))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x10), W(IT))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x14), W(IT))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x18), W(IT))                             \
+        shrwx_mi(Mebp,  inf_SCR01(0x1C), W(IT))                             \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define shrcx3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  W(MT), W(DT))                                       \
+        shrwx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shrwx_mx(Mebp,  inf_SCR01(0x04))                                    \
+        shrwx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        shrwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        shrwx_mx(Mebp,  inf_SCR01(0x10))                                    \
+        shrwx_mx(Mebp,  inf_SCR01(0x14))                                    \
+        shrwx_mx(Mebp,  inf_SCR01(0x18))                                    \
+        shrwx_mx(Mebp,  inf_SCR01(0x1C))                                    \
+        stack_ld(Recx)                                                      \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrcn_ri(XG, IS)                                                    \
+        shrcn3ri(W(XG), W(XG), W(IS))
+
+#define shrcn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrcn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shrcn3ri(XD, XS, IT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        shrwn_mi(Mebp,  inf_SCR01(0x00), W(IT))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x04), W(IT))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x08), W(IT))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x0C), W(IT))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x10), W(IT))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x14), W(IT))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x18), W(IT))                             \
+        shrwn_mi(Mebp,  inf_SCR01(0x1C), W(IT))                             \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define shrcn3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  W(MT), W(DT))                                       \
+        shrwn_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shrwn_mx(Mebp,  inf_SCR01(0x04))                                    \
+        shrwn_mx(Mebp,  inf_SCR01(0x08))                                    \
+        shrwn_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        shrwn_mx(Mebp,  inf_SCR01(0x10))                                    \
+        shrwn_mx(Mebp,  inf_SCR01(0x14))                                    \
+        shrwn_mx(Mebp,  inf_SCR01(0x18))                                    \
+        shrwn_mx(Mebp,  inf_SCR01(0x1C))                                    \
+        stack_ld(Recx)                                                      \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
 /*--------------------------------   64-bit   -------------------- 256-bit ---*/
 
 /* mov (D = S) */
@@ -3504,6 +4187,169 @@
         EMIT6(MPM(0x06, TmmM, MOD(MS),  REG(MS), VYL(DS), B2(DS), L2(DS)))  \
         EMIT6(MZM(0xC0, RYG(XD),TmmM,   (RT_SIMD_MODE_##mode&3), 0x03))
 
+/************   packed double-precision integer arithmetic/shifts   ***********/
+
+/* add (G = G + S), (D = S + T) if (#D != #T) */
+
+#define adddx_rr(XG, XS)                                                    \
+        adddx3rr(W(XG), W(XG), W(XS))
+
+#define adddx_ld(XG, MS, DS)                                                \
+        adddx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define adddx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF3, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xF3, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define adddx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF3, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF3, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+/* sub (G = G - S), (D = S - T) if (#D != #T) */
+
+#define subdx_rr(XG, XS)                                                    \
+        subdx3rr(W(XG), W(XG), W(XS))
+
+#define subdx_ld(XG, MS, DS)                                                \
+        subdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define subdx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF7, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xF7, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define subdx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF7, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF7, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+/* mul (G = G * S), (D = S * T) if (#D != #T) */
+
+#define muldx_rr(XG, XS)                                                    \
+        muldx3rr(W(XG), W(XG), W(XS))
+
+#define muldx_ld(XG, MS, DS)                                                \
+        muldx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define muldx3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        muldx_rx(W(XD))
+
+#define muldx3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        muldx_rx(W(XD))
+
+#define muldx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_SCR01(0x00))                              \
+        mulzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        movzx_st(Recx,  Mebp, inf_SCR01(0x00))                              \
+        movzx_ld(Recx,  Mebp, inf_SCR01(0x08))                              \
+        mulzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        movzx_st(Recx,  Mebp, inf_SCR01(0x08))                              \
+        movzx_ld(Recx,  Mebp, inf_SCR01(0x10))                              \
+        mulzx_ld(Recx,  Mebp, inf_SCR02(0x10))                              \
+        movzx_st(Recx,  Mebp, inf_SCR01(0x10))                              \
+        movzx_ld(Recx,  Mebp, inf_SCR01(0x18))                              \
+        mulzx_ld(Recx,  Mebp, inf_SCR02(0x18))                              \
+        movzx_st(Recx,  Mebp, inf_SCR01(0x18))                              \
+        stack_ld(Recx)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+        /* div, rem are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* shl (G = G << S), (D = S << T) if (#D != #T) - plain, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shldx_ri(XG, IS)                                                    \
+        shldx3ri(W(XG), W(XG), W(IS))
+
+#define shldx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shldx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shldx3ri(XD, XS, IT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        shlzx_mi(Mebp,  inf_SCR01(0x00), W(IT))                             \
+        shlzx_mi(Mebp,  inf_SCR01(0x08), W(IT))                             \
+        shlzx_mi(Mebp,  inf_SCR01(0x10), W(IT))                             \
+        shlzx_mi(Mebp,  inf_SCR01(0x18), W(IT))                             \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define shldx3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  W(MT), W(DT))                                       \
+        shlzx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shlzx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        shlzx_mx(Mebp,  inf_SCR01(0x10))                                    \
+        shlzx_mx(Mebp,  inf_SCR01(0x18))                                    \
+        stack_ld(Recx)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrdx_ri(XG, IS)                                                    \
+        shrdx3ri(W(XG), W(XG), W(IS))
+
+#define shrdx_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shrdx3ri(XD, XS, IT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        shrzx_mi(Mebp,  inf_SCR01(0x00), W(IT))                             \
+        shrzx_mi(Mebp,  inf_SCR01(0x08), W(IT))                             \
+        shrzx_mi(Mebp,  inf_SCR01(0x10), W(IT))                             \
+        shrzx_mi(Mebp,  inf_SCR01(0x18), W(IT))                             \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define shrdx3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  W(MT), W(DT))                                       \
+        shrzx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shrzx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        shrzx_mx(Mebp,  inf_SCR01(0x10))                                    \
+        shrzx_mx(Mebp,  inf_SCR01(0x18))                                    \
+        stack_ld(Recx)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* shr (G = G >> S), (D = S >> T) if (#D != #T) - plain, signed
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define shrdn_ri(XG, IS)                                                    \
+        shrdn3ri(W(XG), W(XG), W(IS))
+
+#define shrdn_ld(XG, MS, DS) /* loads SIMD, uses first elem, rest zeroed */ \
+        shrdn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define shrdn3ri(XD, XS, IT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        shrzn_mi(Mebp,  inf_SCR01(0x00), W(IT))                             \
+        shrzn_mi(Mebp,  inf_SCR01(0x08), W(IT))                             \
+        shrzn_mi(Mebp,  inf_SCR01(0x10), W(IT))                             \
+        shrzn_mi(Mebp,  inf_SCR01(0x18), W(IT))                             \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#define shrdn3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  W(MT), W(DT))                                       \
+        shrzn_mx(Mebp,  inf_SCR01(0x00))                                    \
+        shrzn_mx(Mebp,  inf_SCR01(0x08))                                    \
+        shrzn_mx(Mebp,  inf_SCR01(0x10))                                    \
+        shrzn_mx(Mebp,  inf_SCR01(0x18))                                    \
+        stack_ld(Recx)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
 /******************************************************************************/
 /**********************************   ELEM   **********************************/
 /******************************************************************************/
@@ -3621,12 +4467,12 @@
 #if RT_SIMD_COMPAT_FMA <= 1
 
 #define fmars_rr(XG, XS, XT)                                                \
-        EMIT6(MQM(0x8F, REG(XG),REG(XS),REG(XT), 0x02))
+        EMIT6(MUM(0x8F, REG(XG),REG(XS),REG(XT), 0x02))
 
 #define fmars_ld(XG, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0x8F, REG(XG),REG(XS),   TmmM, 0x02))
+        EMIT6(MUM(0x8F, REG(XG),REG(XS),   TmmM, 0x02))
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
@@ -3637,12 +4483,12 @@
 #if RT_SIMD_COMPAT_FMS <= 1
 
 #define fmsrs_rr(XG, XS, XT)                                                \
-        EMIT6(MQM(0x9E, REG(XG),REG(XS),REG(XT), 0x02))
+        EMIT6(MUM(0x9E, REG(XG),REG(XS),REG(XT), 0x02))
 
 #define fmsrs_ld(XG, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0x9E, REG(XG),REG(XS),   TmmM, 0x02))
+        EMIT6(MUM(0x9E, REG(XG),REG(XS),   TmmM, 0x02))
 
 #endif /* RT_SIMD_COMPAT_FMS */
 
@@ -4149,12 +4995,12 @@
 #if RT_SIMD_COMPAT_FMA <= 1
 
 #define fmats_rr(XG, XS, XT)                                                \
-        EMIT6(MQM(0x8F, REG(XG),REG(XS),REG(XT), 0x03))
+        EMIT6(MUM(0x8F, REG(XG),REG(XS),REG(XT), 0x03))
 
 #define fmats_ld(XG, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0x8F, REG(XG),REG(XS),   TmmM, 0x03))
+        EMIT6(MUM(0x8F, REG(XG),REG(XS),   TmmM, 0x03))
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
@@ -4165,12 +5011,12 @@
 #if RT_SIMD_COMPAT_FMS <= 1
 
 #define fmsts_rr(XG, XS, XT)                                                \
-        EMIT6(MQM(0x9E, REG(XG),REG(XS),REG(XT), 0x03))
+        EMIT6(MUM(0x9E, REG(XG),REG(XS),REG(XT), 0x03))
 
 #define fmsts_ld(XG, XS, MT, DT)                                            \
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
-        EMIT6(MQM(0x9E, REG(XG),REG(XS),   TmmM, 0x03))
+        EMIT6(MUM(0x9E, REG(XG),REG(XS),   TmmM, 0x03))
 
 #endif /* RT_SIMD_COMPAT_FMS */
 

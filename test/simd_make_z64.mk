@@ -56,7 +56,7 @@ simd_test_z64f64:
 #
 # Prerequisites for the build:
 # (cross-)compiler for s390x is installed and in the PATH variable.
-# in simd_test.cpp set SUB_TEST to 7
+# in simd_test.cpp comment out RT_BASE_TEST and set SUB_TEST to 8
 # sudo apt-get install make g++-s390x-linux-gnu
 #
 # Prerequisites for emulation:
