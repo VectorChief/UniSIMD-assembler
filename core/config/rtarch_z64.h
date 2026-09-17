@@ -516,6 +516,32 @@
 #define movwx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
         movwx_mi(W(MD), W(DD), W(IS))
 
+/* not (G = ~G)
+ * set-flags: no */
+
+#define notwx_rx(RG)                                                        \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))
+
+#define notwx_mx(MG, DG)                                                    \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+/* neg (G = -G)
+ * set-flags: undefined (*_*), yes (*Z*) */
+
+#define negwx_rx(RG)                                                        \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC2, REG(RG),0x09,0x01))
+
+#define negwx_mx(MG, DG)                                                    \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC2, TMxx,   0x09,0x01))                                 \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
 /* add (G = G + S)
  * set-flags: undefined (*_*), yes (*Z*) */
 
@@ -553,6 +579,15 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x90, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITH(MRM(0x1A, REG(RG),TMxx,   0x00))
+
+#define addwx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITH(MRM(0x1A, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define addwx_mr(MG, DG, RS)                                                \
+        addwx_st(W(RS), W(MG), W(DG))
 
 /* sub (G = G - S)
  * set-flags: undefined (*_*), yes (*Z*) */
@@ -592,6 +627,15 @@
         EMIT6(MDM(0x90, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITH(MRM(0x1B, REG(RG),TMxx,   0x00))
 
+#define subwx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITH(MRM(0x1B, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define subwx_mr(MG, DG, RS)                                                \
+        subwx_st(W(RS), W(MG), W(DG))
+
 /* shl (G = G << S)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -618,9 +662,9 @@
         EMIT6(MTM(0xDF, REG(RG),REG(RS),0x00))
 
 #define shlwx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
-        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMIT6(MTM(0xDF, REG(RG),TMxx,   0x00))
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x58, TDxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMIT6(MTM(0xDF, REG(RG),TDxx,   0x00))
 
 #define shlwx_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
@@ -657,9 +701,9 @@
         EMIT6(MTM(0xDE, REG(RG),REG(RS),0x00))
 
 #define shrwx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
-        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMIT6(MTM(0xDE, REG(RG),TMxx,   0x00))
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x58, TDxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMIT6(MTM(0xDE, REG(RG),TDxx,   0x00))
 
 #define shrwx_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
@@ -696,9 +740,9 @@
         EMIT6(MTM(0xDC, REG(RG),REG(RS),0x00))
 
 #define shrwn_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
-        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMIT6(MTM(0xDC, REG(RG),TMxx,   0x00))
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x58, TDxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMIT6(MTM(0xDC, REG(RG),TDxx,   0x00))
 
 #define shrwn_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
@@ -758,6 +802,36 @@
         EMIT6(MIM(0xC0, TMxx,   0x08,VAL(IT)))                              \
         EMIT6(MDM(0x24, TMxx,   MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
 
+/* not (G = ~G)
+ * set-flags: no */
+
+#define notzx_rx(RG)                                                        \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, REG(RG),0x06,0xFFFFFFFF))
+
+#define notzx_mx(MG, DG)                                                    \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, TMxx,   0x06,0xFFFFFFFF))                           \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+/* neg (G = -G)
+ * set-flags: undefined (*_*), yes (*Z*) */
+
+#define negzx_rx(RG)                                                        \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, REG(RG),0x06,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC2, REG(RG),0x08,0x01))
+
+#define negzx_mx(MG, DG)                                                    \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, TMxx,   0x06,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC2, TMxx,   0x08,0x01))                                 \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
 /* add (G = G + S)
  * set-flags: undefined (*_*), yes (*Z*) */
 
@@ -784,6 +858,15 @@
 #define addwz_ld(RG, MS, DS)    /* add 32-bit to 64-bit with zero-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x1A, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define addzx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(MGM(0x08, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define addzx_mr(MG, DG, RS)                                                \
+        addzx_st(W(RS), W(MG), W(DG))
 
 /* sub (G = G - S)
  * set-flags: undefined (*_*), yes (*Z*) */
@@ -812,6 +895,15 @@
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x1B, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
 
+#define subzx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(MGM(0x09, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define subzx_mr(MG, DG, RS)                                                \
+        subzx_st(W(RS), W(MG), W(DG))
+
 /* shl (G = G << S)
  * set-flags: undefined (*_*), yes (*Z*)
  * for maximum compatibility: shift count must be modulo elem-size */
@@ -838,9 +930,9 @@
         EMIT6(MTM(0x0D, REG(RG),REG(RS),0x00))
 
 #define shlzx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
-        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMIT6(MTM(0x0D, REG(RG),TMxx,   0x00))
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x04, TDxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMIT6(MTM(0x0D, REG(RG),TDxx,   0x00))
 
 #define shlzx_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
@@ -877,9 +969,9 @@
         EMIT6(MTM(0x0C, REG(RG),REG(RS),0x00))
 
 #define shrzx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
-        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMIT6(MTM(0x0C, REG(RG),TMxx,   0x00))
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x04, TDxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMIT6(MTM(0x0C, REG(RG),TDxx,   0x00))
 
 #define shrzx_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
@@ -916,9 +1008,9 @@
         EMIT6(MTM(0x0A, REG(RG),REG(RS),0x00))
 
 #define shrzn_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
-        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
-        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMIT6(MTM(0x0A, REG(RG),TMxx,   0x00))
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x04, TDxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMIT6(MTM(0x0A, REG(RG),TDxx,   0x00))
 
 #define shrzn_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
