@@ -958,8 +958,8 @@
         EMITB((h) >> 0x08 & 0xFF)                                           \
         EMITB((h) >> 0x00 & 0xFF)
 
-#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lgr, %%r4, lb) ASM_END
-#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(lgr, lb, %%r4) ASM_END
+#define movlb_ld(lb)/*Reax*/    ASM_BEG ASM_OP2(lgr, %%r3, lb) ASM_END
+#define movlb_st(lb)/*Reax*/    ASM_BEG ASM_OP2(lgr, lb, %%r3) ASM_END
 
 /* RT_SIMD_COMPAT_XMM distinguishes between SIMD reg-file sizes
  * with current top values: 0 - 16, 1 - 15, 2 - 14 SIMD regs */

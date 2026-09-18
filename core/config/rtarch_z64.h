@@ -273,15 +273,17 @@
 
 /* internal     REG */
 
+#define TLxx    0x00  /* r0,  left  arg for compare */
+#define TRxx    0x0D  /* r13, right arg for compare */
 #define TMxx    0x00  /* r0 */
-#define TDxx    0x01  /* r1 */
-#define TPxx    0x02  /* r2 */
+#define TDxx    0x0D  /* r13, must be non-zero reg-index */
+#define TPxx    0x0E  /* r14, must be non-zero reg-index */
 #define SPxx    0x0F  /* r15 */
 
-#define TEax    0x04  /* r4, must be non-zero reg-index */
-#define TEcx    0x0D  /* r13 */
-#define TEdx    0x0E  /* r14 */
-#define TEbx    0x03  /* r3 */
+#define TEax    0x03  /* r3 */
+#define TEcx    0x01  /* r1 */
+#define TEdx    0x02  /* r2 */
+#define TEbx    0x04  /* r4 */
 #define TEbp    0x05  /* r5 */
 #define TEsi    0x06  /* r6 */
 #define TEdi    0x07  /* r7 */
@@ -331,10 +333,10 @@
 
 /* registers    REG,  MOD,  SIB */
 
-#define Reax    TEax, %r4,  EMPTY
-#define Recx    TEcx, %r13, EMPTY
-#define Redx    TEdx, %r14, EMPTY
-#define Rebx    TEbx, %r3,  EMPTY
+#define Reax    TEax, %r3,  EMPTY
+#define Recx    TEcx, %r1,  EMPTY
+#define Redx    TEdx, %r2,  EMPTY
+#define Rebx    TEbx, %r4,  EMPTY
 #define Rebp    TEbp, %r5,  EMPTY
 #define Resi    TEsi, %r6,  EMPTY
 #define Redi    TEdi, %r7,  EMPTY
@@ -463,7 +465,7 @@
  * set-flags: no */
 
 #define movwx_ri(RD, IS)                                                    \
-        EMIT6(MIM(0xC0, REG(RD),0x01,VAL(IS)))
+        EMIT6(MIM(0xC0, REG(RD),0x0F,VAL(IS)))
 
 #define movwx_mi(MD, DD, IS)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A1(DD), EMPTY2)   \
@@ -471,7 +473,7 @@
         EMIT6(MDM(0x50, TMxx,   MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
 
 #define movwx_rr(RD, RS)                                                    \
-        EMITH(MRM(0x18, REG(RD),REG(RS),0x00))
+        EMITW(MGM(0x16, REG(RD),REG(RS),0x00))
 
 #define movhn_rr(RD, RS)      /* move 16-bit to 32/64-bit w/ sign-extend */ \
         EMITW(MGM(0x07, REG(RD),REG(RS),0x00))
@@ -487,7 +489,7 @@
 
 #define movwx_ld(RD, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x58, REG(RD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+        EMIT6(MDM(0x16, REG(RD),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
 
 #define movhn_ld(RD, MS, DS)  /* load 16-bit to 32/64-bit w/ sign-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
@@ -752,6 +754,399 @@
 
 #define shrwn_mr(MG, DG, RS)                                                \
         shrwn_st(W(RS), W(MG), W(DG))
+
+/* mul (G = G * S)
+ * set-flags: undefined */
+
+#define mulwx_ri(RG, IS)                                                    \
+        EMIT6(MIM(0xC2, REG(RG),0x01,VAL(IS)))
+
+#define mulwx_rr(RG, RS)                                                    \
+        EMITW(MGM(0xFD, REG(RG),REG(RS),REG(RG)))
+
+#define mulwx_ld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x51, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define mulhn_ld(RG, MS, DS)  /* mul 32-bit with 16-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x7C, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define mulhz_ld(RG, MS, DS)  /* mul 32-bit with 16-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x91, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0xFD, REG(RG),TMxx,   REG(RG)))
+
+#define mulbn_ld(RG, MS, DS)  /* mul 32-bit with  8-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x77, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0xFD, REG(RG),TMxx,   REG(RG)))
+
+#define mulbz_ld(RG, MS, DS)  /* mul 32-bit with  8-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x90, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0xFD, REG(RG),TMxx,   REG(RG)))
+
+
+#define mulwx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
+        EMITW(MGM(0x96, TEdx,REG(RS),   0x00))
+
+#define mulwx_xm(MS, DS) /* Reax is in/out, Redx is out(high)-zero-ext */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x96, TEdx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+
+#define mulwn_xr(RS)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
+        EMITH(MRM(0x1C, TEdx,REG(RS),   0x00))
+
+#define mulwn_xm(MS, DS) /* Reax is in/out, Redx is out(high)-sign-ext */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x5C, TEdx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+
+#define mulwp_xr(RS)     /* Reax is in/out, prepares Redx for divwn_x* */   \
+        mulwx_rr(Reax, W(RS)) /* product must not exceed operands size */
+
+#define mulwp_xm(MS, DS) /* Reax is in/out, prepares Redx for divwn_x* */   \
+        mulwx_ld(Reax, W(MS), W(DS))  /* must not exceed operands size */
+
+/* div (G = G / S)
+ * set-flags: undefined */
+
+#define divwx_ri(RG, IS)       /* Reax cannot be used as first operand */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
+        movwx_rr(Reax, W(RG))                                               \
+        prewx_xx()                                                          \
+        divwx_xm(Mebp, inf_SCR01(0))                                        \
+        stack_ld(Redx)                                                      \
+        movwx_rr(W(RG), Reax)                                               \
+        stack_ld(Reax)
+
+#define divwx_rr(RG, RS)                /* RG no Reax, RS no Reax/Redx */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_rr(Reax, W(RG))                                               \
+        prewx_xx()                                                          \
+        divwx_xr(W(RS))                                                     \
+        stack_ld(Redx)                                                      \
+        movwx_rr(W(RG), Reax)                                               \
+        stack_ld(Reax)
+
+#define divwx_ld(RG, MS, DS)            /* RG no Reax, MS no Oeax/Medx */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_rr(Reax, W(RG))                                               \
+        prewx_xx()                                                          \
+        divwx_xm(W(MS), W(DS))                                              \
+        stack_ld(Redx)                                                      \
+        movwx_rr(W(RG), Reax)                                               \
+        stack_ld(Reax)
+
+
+#define divwn_ri(RG, IS)       /* Reax cannot be used as first operand */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
+        movwx_rr(Reax, W(RG))                                               \
+        prewn_xx()                                                          \
+        divwn_xm(Mebp, inf_SCR01(0))                                        \
+        stack_ld(Redx)                                                      \
+        movwx_rr(W(RG), Reax)                                               \
+        stack_ld(Reax)
+
+#define divwn_rr(RG, RS)                /* RG no Reax, RS no Reax/Redx */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_rr(Reax, W(RG))                                               \
+        prewn_xx()                                                          \
+        divwn_xr(W(RS))                                                     \
+        stack_ld(Redx)                                                      \
+        movwx_rr(W(RG), Reax)                                               \
+        stack_ld(Reax)
+
+#define divwn_ld(RG, MS, DS)            /* RG no Reax, MS no Oeax/Medx */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movwx_rr(Reax, W(RG))                                               \
+        prewn_xx()                                                          \
+        divwn_xm(W(MS), W(DS))                                              \
+        stack_ld(Redx)                                                      \
+        movwx_rr(W(RG), Reax)                                               \
+        stack_ld(Reax)
+
+
+#define prewx_xx()   /* to be placed right before divwx_x* or remwx_xx */   \
+        movwx_ri(Redx, IC(0))        /* to prepare Redx for int-divide */
+
+#define prewn_xx()   /* to be placed right before divwn_x* or remwn_xx */   \
+        movwx_rr(Redx, Reax)         /* to prepare Redx for int-divide */   \
+        shrwn_ri(Redx, IC(31))
+
+
+#define divwx_xr(RS)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+        EMITW(MGM(0x97, TEdx,REG(RS),   0x00))
+
+#define divwx_xm(MS, DS) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x97, TEdx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+
+#define divwn_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        EMITH(MRM(0x1D, TEdx,REG(RS),   0x00))
+
+#define divwn_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITH(MRM(0x1D, TEdx,TMxx,      0x00))
+
+
+#define divwp_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divwn_xr(W(RS))              /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
+
+#define divwp_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divwn_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
+
+/* rem (G = G % S)
+ * set-flags: undefined */
+
+#define remwx_ri(RG, IS)       /* Redx cannot be used as first operand */   \
+        stack_st(Redx)                                                      \
+        stack_st(Reax)                                                      \
+        movwx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
+        movwx_rr(Reax, W(RG))                                               \
+        prewx_xx()                                                          \
+        divwx_xm(Mebp, inf_SCR01(0))                                        \
+        stack_ld(Reax)                                                      \
+        movwx_rr(W(RG), Redx)                                               \
+        stack_ld(Redx)
+
+#define remwx_rr(RG, RS)                /* RG no Redx, RS no Reax/Redx */   \
+        stack_st(Redx)                                                      \
+        stack_st(Reax)                                                      \
+        movwx_rr(Reax, W(RG))                                               \
+        prewx_xx()                                                          \
+        divwx_xr(W(RS))                                                     \
+        stack_ld(Reax)                                                      \
+        movwx_rr(W(RG), Redx)                                               \
+        stack_ld(Redx)
+
+#define remwx_ld(RG, MS, DS)            /* RG no Redx, MS no Oeax/Medx */   \
+        stack_st(Redx)                                                      \
+        stack_st(Reax)                                                      \
+        movwx_rr(Reax, W(RG))                                               \
+        prewx_xx()                                                          \
+        divwx_xm(W(MS), W(DS))                                              \
+        stack_ld(Reax)                                                      \
+        movwx_rr(W(RG), Redx)                                               \
+        stack_ld(Redx)
+
+
+#define remwn_ri(RG, IS)       /* Redx cannot be used as first operand */   \
+        stack_st(Redx)                                                      \
+        stack_st(Reax)                                                      \
+        movwx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
+        movwx_rr(Reax, W(RG))                                               \
+        prewn_xx()                                                          \
+        divwn_xm(Mebp, inf_SCR01(0))                                        \
+        stack_ld(Reax)                                                      \
+        movwx_rr(W(RG), Redx)                                               \
+        stack_ld(Redx)
+
+#define remwn_rr(RG, RS)                /* RG no Redx, RS no Reax/Redx */   \
+        stack_st(Redx)                                                      \
+        stack_st(Reax)                                                      \
+        movwx_rr(Reax, W(RG))                                               \
+        prewn_xx()                                                          \
+        divwn_xr(W(RS))                                                     \
+        stack_ld(Reax)                                                      \
+        movwx_rr(W(RG), Redx)                                               \
+        stack_ld(Redx)
+
+#define remwn_ld(RG, MS, DS)            /* RG no Redx, MS no Oeax/Medx */   \
+        stack_st(Redx)                                                      \
+        stack_st(Reax)                                                      \
+        movwx_rr(Reax, W(RG))                                               \
+        prewn_xx()                                                          \
+        divwn_xm(W(MS), W(DS))                                              \
+        stack_ld(Reax)                                                      \
+        movwx_rr(W(RG), Redx)                                               \
+        stack_ld(Redx)
+
+
+#define remwx_xx() /* to be placed before divwx_x*, but after prewx_xx */   \
+                                     /* to prepare for rem calculation */
+
+#define remwx_xr(RS)        /* to be placed immediately after divwx_xr */   \
+                                     /* to produce remainder Redx<-rem */
+
+#define remwx_xm(MS, DS)    /* to be placed immediately after divwx_xm */   \
+                                     /* to produce remainder Redx<-rem */
+
+
+#define remwn_xx() /* to be placed before divwn_x*, but after prewn_xx */   \
+                                     /* to prepare for rem calculation */
+
+#define remwn_xr(RS)        /* to be placed immediately after divwn_xr */   \
+                                     /* to produce remainder Redx<-rem */
+
+#define remwn_xm(MS, DS)    /* to be placed immediately after divwn_xm */   \
+                                     /* to produce remainder Redx<-rem */
+
+/* cmj (flags = S ? T, if cc flags then jump lb)
+ * set-flags: undefined */
+
+#define EQ_x    J0
+#define NE_x    J1
+
+#define LT_x    J2
+#define LE_x    J3
+#define GT_x    J4
+#define GE_x    J5
+
+#define LT_n    J6
+#define LE_n    J7
+#define GT_n    J8
+#define GE_n    J9
+
+#define cmjwx_rz(RS, cc, lb)                                                \
+        cmjwx_ri(W(RS), IC(0), cc, lb)
+
+#define cmjwx_mz(MS, DS, cc, lb)                                            \
+        cmjwx_mi(W(MS), W(DS), IC(0), cc, lb)
+
+#define cmjwx_ri(RS, IT, cc, lb)                                            \
+        EMITW(MGM(0x14, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MIM(0xC0, TDxx,   0x01,VAL(IT)))                              \
+        CWR(cc, %%r0,   %%r13,   lb)
+
+#define cmjwx_mi(MS, DS, IT, cc, lb)                                        \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x14, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMIT6(MIM(0xC0, TDxx,   0x01,VAL(IT)))                              \
+        CWR(cc, %%r0,   %%r13,   lb)
+
+#define cmjwx_rr(RS, RT, cc, lb)                                            \
+        CWR(cc, MOD(RS), MOD(RT), lb)
+
+#define cmjwx_rm(RS, MT, DT, cc, lb)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MDM(0x14, TMxx,   MOD(MT),REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        CWR(cc, MOD(RS), %%r0,   lb)
+
+#define cmjhn_rm(RS, MT, DT, cc, lb)   /* cmj 32/16-bit with sign-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MDM(0x15, TMxx,   MOD(MT),REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        CWR(cc, MOD(RS), %%r0,   lb)
+
+#define cmjhz_rm(RS, MT, DT, cc, lb)   /* cmj 32/16-bit with zero-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MDM(0x91, TMxx,   MOD(MT),REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        CWR(cc, MOD(RS), %%r0,   lb)
+
+#define cmjbn_rm(RS, MT, DT, cc, lb)   /* cmj 32/8-bit  with sign-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MDM(0x77, TMxx,   MOD(MT),REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        CWR(cc, MOD(RS), %%r0,   lb)
+
+#define cmjbz_rm(RS, MT, DT, cc, lb)   /* cmj 32/8-bit  with zero-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MDM(0x90, TMxx,   MOD(MT),REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        CWR(cc, MOD(RS), %%r0,   lb)
+
+#define cmjwx_mr(MS, DS, RT, cc, lb)                                        \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x14, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        CWR(cc, %%r0,   MOD(RT), lb)
+
+#define cmjhn_mr(MS, DS, RT, cc, lb)   /* cmj 16/32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x15, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        CWR(cc, %%r0,   MOD(RT), lb)
+
+#define cmjhz_mr(MS, DS, RT, cc, lb)   /* cmj 16/32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x91, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        CWR(cc, %%r0,   MOD(RT), lb)
+
+#define cmjbn_mr(MS, DS, RT, cc, lb)   /* cmj  8/32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x77, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        CWR(cc, %%r0,   MOD(RT), lb)
+
+#define cmjbz_mr(MS, DS, RT, cc, lb)   /* cmj  8/32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x90, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        CWR(cc, %%r0,   MOD(RT), lb)
+
+/* cmp (flags = S ? T)
+ * set-flags: yes */
+
+#define cmpwx_ri(RS, IT)                                                    \
+        EMITW(MGM(0x14, TLxx,   REG(RS),0x00))                              \
+        EMIT6(MIM(0xC0, TRxx,   0x01,VAL(IT)))
+
+#define cmpwx_mi(MS, DS, IT)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x14, TLxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMIT6(MIM(0xC0, TRxx,   0x01,VAL(IT)))
+
+#define cmpwx_rr(RS, RT)                                                    \
+        EMITW(MGM(0x14, TRxx,   REG(RT),0x00))                              \
+        EMITW(MGM(0x14, TLxx,   REG(RS),0x00))
+
+#define cmpwx_rm(RS, MT, DT)                                                \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MDM(0x14, TRxx,   MOD(MT),REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMITW(MGM(0x14, TLxx,   REG(RS),0x00))
+
+#define cmphn_rm(RS, MT, DT)    /* cmp 32-bit to 16-bit with sign-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MDM(0x15, TRxx,   MOD(MT),REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMITW(MGM(0x14, TLxx,   REG(RS),0x00))
+
+#define cmphz_rm(RS, MT, DT)    /* cmp 32-bit to 16-bit with zero-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MDM(0x91, TRxx,   MOD(MT),REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMITW(MGM(0x14, TLxx,   REG(RS),0x00))
+
+#define cmpbn_rm(RS, MT, DT)    /* cmp 32-bit to  8-bit with sign-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MDM(0x77, TRxx,   MOD(MT),REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMITW(MGM(0x14, TLxx,   REG(RS),0x00))
+
+#define cmpbz_rm(RS, MT, DT)    /* cmp 32-bit to  8-bit with zero-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MDM(0x90, TRxx,   MOD(MT),REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMITW(MGM(0x14, TLxx,   REG(RS),0x00))
+
+#define cmpwx_mr(MS, DS, RT)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x14, TLxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x14, TRxx,   REG(RT),0x00))
+
+#define cmphn_mr(MS, DS, RT)    /* cmp 16-bit to 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x15, TLxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x14, TRxx,   REG(RT),0x00))
+
+#define cmphz_mr(MS, DS, RT)    /* cmp 16-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x91, TLxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x14, TRxx,   REG(RT),0x00))
+
+#define cmpbn_mr(MS, DS, RT)    /* cmp  8-bit to 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x77, TLxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x14, TRxx,   REG(RT),0x00))
+
+#define cmpbz_mr(MS, DS, RT)    /* cmp  8-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x90, TLxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x14, TRxx,   REG(RT),0x00))
 
 /*--------------------------------   64-bit   --------------------------------*/
 
@@ -1020,6 +1415,456 @@
 
 #define shrzn_mr(MG, DG, RS)                                                \
         shrzn_st(W(RS), W(MG), W(DG))
+
+/* mul (G = G * S)
+ * set-flags: undefined */
+
+#define mulzx_ri(RG, IS)                                                    \
+        EMIT6(MIM(0xC2, REG(RG),0x00,VAL(IS)))
+
+#define mulzx_rr(RG, RS)                                                    \
+        EMITW(MGM(0xED, REG(RG),REG(RS),REG(RG)))
+
+#define mulzx_ld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x0C, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define mulwn_ld(RG, MS, DS)  /* mul 64-bit with 32-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x1C, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define mulwz_ld(RG, MS, DS)  /* mul 64-bit with 32-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x51, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0xED, REG(RG),TMxx,   REG(RG)))
+
+
+#define mulzx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
+        EMITW(MGM(0x86, TEdx,REG(RS),   0x00))
+
+#define mulzx_xm(MS, DS) /* Reax is in/out, Redx is out(high)-zero-ext */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x86, TEdx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+
+#define mulzn_xr(RS)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
+        EMITW(MGM(0xEC, TEdx,REG(RS),   TEdx))
+
+#define mulzn_xm(MS, DS) /* Reax is in/out, Redx is out(high)-sign-ext */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x84, TEdx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+
+#define mulzp_xr(RS)     /* Reax is in/out, prepares Redx for divzn_x* */   \
+        mulzn_xr(W(RS))       /* product must not exceed operands size */
+
+#define mulzp_xm(MS, DS) /* Reax is in/out, prepares Redx for divzn_x* */   \
+        mulzn_xm(W(MS), W(DS))/* product must not exceed operands size */
+
+/* div (G = G / S)
+ * set-flags: undefined */
+
+#define divzx_ri(RG, IS)       /* Reax cannot be used as first operand */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
+        movzx_rr(Reax, W(RG))                                               \
+        prezx_xx()                                                          \
+        divzx_xm(Mebp, inf_SCR01(0))                                        \
+        stack_ld(Redx)                                                      \
+        movzx_rr(W(RG), Reax)                                               \
+        stack_ld(Reax)
+
+#define divzx_rr(RG, RS)                /* RG no Reax, RS no Reax/Redx */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_rr(Reax, W(RG))                                               \
+        prezx_xx()                                                          \
+        divzx_xr(W(RS))                                                     \
+        stack_ld(Redx)                                                      \
+        movzx_rr(W(RG), Reax)                                               \
+        stack_ld(Reax)
+
+#define divzx_ld(RG, MS, DS)            /* RG no Reax, MS no Oeax/Medx */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_rr(Reax, W(RG))                                               \
+        prezx_xx()                                                          \
+        divzx_xm(W(MS), W(DS))                                              \
+        stack_ld(Redx)                                                      \
+        movzx_rr(W(RG), Reax)                                               \
+        stack_ld(Reax)
+
+
+#define divzn_ri(RG, IS)       /* Reax cannot be used as first operand */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
+        movzx_rr(Reax, W(RG))                                               \
+        prezn_xx()                                                          \
+        divzn_xm(Mebp, inf_SCR01(0))                                        \
+        stack_ld(Redx)                                                      \
+        movzx_rr(W(RG), Reax)                                               \
+        stack_ld(Reax)
+
+#define divzn_rr(RG, RS)                /* RG no Reax, RS no Reax/Redx */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_rr(Reax, W(RG))                                               \
+        prezn_xx()                                                          \
+        divzn_xr(W(RS))                                                     \
+        stack_ld(Redx)                                                      \
+        movzx_rr(W(RG), Reax)                                               \
+        stack_ld(Reax)
+
+#define divzn_ld(RG, MS, DS)            /* RG no Reax, MS no Oeax/Medx */   \
+        stack_st(Reax)                                                      \
+        stack_st(Redx)                                                      \
+        movzx_rr(Reax, W(RG))                                               \
+        prezn_xx()                                                          \
+        divzn_xm(W(MS), W(DS))                                              \
+        stack_ld(Redx)                                                      \
+        movzx_rr(W(RG), Reax)                                               \
+        stack_ld(Reax)
+
+
+#define prezx_xx()   /* to be placed right before divzx_x* or remzx_xx */   \
+        movzx_ri(Redx, IC(0))        /* to prepare Redx for int-divide */
+
+#define prezn_xx()   /* to be placed right before divzn_x* or remzn_xx */   \
+                                     /* to prepare Redx for int-divide */
+
+
+#define divzx_xr(RS)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+        EMITW(MGM(0x87, TEdx,REG(RS),   0x00))
+
+#define divzx_xm(MS, DS) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x87, TEdx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+
+#define divzn_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        EMITW(MGM(0x0D, TEdx,REG(RS),   0x00))
+
+#define divzn_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x0D, TEdx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+
+#define divzp_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divzn_xr(W(RS))              /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
+
+#define divzp_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        divzn_xm(W(MS), W(DS))       /* destroys Redx, Xmm0 (in ARMv7) */   \
+                                     /* 24-bit int (fp32 div in ARMv7) */
+
+/* rem (G = G % S)
+ * set-flags: undefined */
+
+#define remzx_ri(RG, IS)       /* Redx cannot be used as first operand */   \
+        stack_st(Redx)                                                      \
+        stack_st(Reax)                                                      \
+        movzx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
+        movzx_rr(Reax, W(RG))                                               \
+        prezx_xx()                                                          \
+        divzx_xm(Mebp, inf_SCR01(0))                                        \
+        stack_ld(Reax)                                                      \
+        movzx_rr(W(RG), Redx)                                               \
+        stack_ld(Redx)
+
+#define remzx_rr(RG, RS)                /* RG no Redx, RS no Reax/Redx */   \
+        stack_st(Redx)                                                      \
+        stack_st(Reax)                                                      \
+        movzx_rr(Reax, W(RG))                                               \
+        prezx_xx()                                                          \
+        divzx_xr(W(RS))                                                     \
+        stack_ld(Reax)                                                      \
+        movzx_rr(W(RG), Redx)                                               \
+        stack_ld(Redx)
+
+#define remzx_ld(RG, MS, DS)            /* RG no Redx, MS no Oeax/Medx */   \
+        stack_st(Redx)                                                      \
+        stack_st(Reax)                                                      \
+        movzx_rr(Reax, W(RG))                                               \
+        prezx_xx()                                                          \
+        divzx_xm(W(MS), W(DS))                                              \
+        stack_ld(Reax)                                                      \
+        movzx_rr(W(RG), Redx)                                               \
+        stack_ld(Redx)
+
+
+#define remzn_ri(RG, IS)       /* Redx cannot be used as first operand */   \
+        stack_st(Redx)                                                      \
+        stack_st(Reax)                                                      \
+        movzx_mi(Mebp, inf_SCR01(0), W(IS))                                 \
+        movzx_rr(Reax, W(RG))                                               \
+        prezn_xx()                                                          \
+        divzn_xm(Mebp, inf_SCR01(0))                                        \
+        stack_ld(Reax)                                                      \
+        movzx_rr(W(RG), Redx)                                               \
+        stack_ld(Redx)
+
+#define remzn_rr(RG, RS)                /* RG no Redx, RS no Reax/Redx */   \
+        stack_st(Redx)                                                      \
+        stack_st(Reax)                                                      \
+        movzx_rr(Reax, W(RG))                                               \
+        prezn_xx()                                                          \
+        divzn_xr(W(RS))                                                     \
+        stack_ld(Reax)                                                      \
+        movzx_rr(W(RG), Redx)                                               \
+        stack_ld(Redx)
+
+#define remzn_ld(RG, MS, DS)            /* RG no Redx, MS no Oeax/Medx */   \
+        stack_st(Redx)                                                      \
+        stack_st(Reax)                                                      \
+        movzx_rr(Reax, W(RG))                                               \
+        prezn_xx()                                                          \
+        divzn_xm(W(MS), W(DS))                                              \
+        stack_ld(Reax)                                                      \
+        movzx_rr(W(RG), Redx)                                               \
+        stack_ld(Redx)
+
+
+#define remzx_xx() /* to be placed before divzx_x*, but after prezx_xx */   \
+                                     /* to prepare for rem calculation */
+
+#define remzx_xr(RS)        /* to be placed immediately after divzx_xr */   \
+                                     /* to produce remainder Redx<-rem */
+
+#define remzx_xm(MS, DS)    /* to be placed immediately after divzx_xm */   \
+                                     /* to produce remainder Redx<-rem */
+
+
+#define remzn_xx() /* to be placed before divzn_x*, but after prezn_xx */   \
+                                     /* to prepare for rem calculation */
+
+#define remzn_xr(RS)        /* to be placed immediately after divzn_xr */   \
+                                     /* to produce remainder Redx<-rem */
+
+#define remzn_xm(MS, DS)    /* to be placed immediately after divzn_xm */   \
+                                     /* to produce remainder Redx<-rem */
+
+/* cmj (flags = S ? T, if cc flags then jump lb)
+ * set-flags: undefined */
+
+     /* Definitions for cmj's "cc" parameter
+      * are provided in 32-bit rtarch_***.h files. */
+
+#define cmjzx_rz(RS, cc, lb)                                                \
+        cmjzx_ri(W(RS), IC(0), cc, lb)
+
+#define cmjzx_mz(MS, DS, cc, lb)                                            \
+        cmjzx_mi(W(MS), W(DS), IC(0), cc, lb)
+
+#define cmjzx_ri(RS, IT, cc, lb)                                            \
+        EMIT6(MIM(0xC0, TDxx,   0x01,VAL(IT)))                              \
+        CXR(cc, MOD(RS), TDxx,   lb)
+
+#define cmjzx_mi(MS, DS, IT, cc, lb)                                        \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMIT6(MIM(0xC0, TDxx,   0x01,VAL(IT)))                              \
+        CXR(cc, %%r0,   TDxx,    lb)
+
+#define cmjzx_rr(RS, RT, cc, lb)                                            \
+        CXR(cc, MOD(RS), MOD(RT), lb)
+
+#define cmjzx_rm(RS, MT, DT, cc, lb)                                        \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MT),REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        CXR(cc, MOD(RS), %%r0,   lb)
+
+#define cmjwn_rm(RS, MT, DT, cc, lb)   /* cmj 64/32-bit with sign-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MDM(0x14, TMxx,   MOD(MT),REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        CXR(cc, MOD(RS), %%r0,   lb)
+
+#define cmjwz_rm(RS, MT, DT, cc, lb)   /* cmj 64/32-bit with zero-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MDM(0x16, TMxx,   MOD(MT),REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        CXR(cc, MOD(RS), %%r0,   lb)
+
+#define cmjzx_mr(MS, DS, RT, cc, lb)                                        \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        CXR(cc, %%r0,   MOD(RT), lb)
+
+#define cmjwn_mr(MS, DS, RT, cc, lb)   /* cmj 32/64-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x14, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        CXR(cc, %%r0,   MOD(RT), lb)
+
+#define cmjwz_mr(MS, DS, RT, cc, lb)   /* cmj 32/64-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x16, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        CXR(cc, %%r0,   MOD(RT), lb)
+
+/* cmp (flags = S ? T)
+ * set-flags: yes */
+
+#define cmpzx_ri(RS, IT)                                                    \
+        EMITW(MGM(0x04, TLxx,   REG(RS),0x00))                              \
+        EMIT6(MIM(0xC0, TRxx,   0x01,VAL(IT)))
+
+#define cmpzx_mi(MS, DS, IT)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x04, TLxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMIT6(MIM(0xC0, TRxx,   0x01,VAL(IT)))
+
+#define cmpzx_rr(RS, RT)                                                    \
+        EMITW(MGM(0x04, TRxx,   REG(RT),0x00))                              \
+        EMITW(MGM(0x04, TLxx,   REG(RS),0x00))
+
+#define cmpzx_rm(RS, MT, DT)                                                \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MDM(0x04, TRxx,   MOD(MT),REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMITW(MGM(0x04, TLxx,   REG(RS),0x00))
+
+#define cmpwn_rm(RS, MT, DT)    /* cmp 64-bit to 32-bit with sign-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MDM(0x14, TRxx,   MOD(MT),REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMITW(MGM(0x04, TLxx,   REG(RS),0x00))
+
+#define cmpwz_rm(RS, MT, DT)    /* cmp 64-bit to 32-bit with zero-extend */ \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A1(DT), EMPTY2)   \
+        EMIT6(MDM(0x16, TRxx,   MOD(MT),REG(MT), VAL(DT), B1(DT), P1(DT)))  \
+        EMITW(MGM(0x04, TLxx,   REG(RS),0x00))
+
+#define cmpzx_mr(MS, DS, RT)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x04, TLxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x04, TRxx,   REG(RT),0x00))
+
+#define cmpwn_mr(MS, DS, RT)    /* cmp 32-bit to 64-bit with sign-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x14, TLxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x04, TRxx,   REG(RT),0x00))
+
+#define cmpwz_mr(MS, DS, RT)    /* cmp 32-bit to 64-bit with zero-extend */ \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x16, TLxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x04, TRxx,   REG(RT),0x00))
+
+/************************* pointer-sized instructions *************************/
+
+/* jmp (if unconditional jump S/lb, else if cc flags then jump lb)
+ * set-flags: no
+ * maximum byte-address-range for un/conditional jumps is signed 18/16-bit
+ * based on minimum natively-encoded offset across supported targets (u/c)
+ * MIPS:18-bit, POWER:26-bit, AArch32:26-bit, AArch64:28-bit, x86:32-bit /
+ * MIPS:18-bit, POWER:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
+
+#define jmpxx_lb(lb)              /* label-targeted unconditional jump */   \
+        ASM_BEG ASM_OP1(j, lb) ASM_END
+
+#define jezxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
+        ASM_BEG ASM_OP1(je,    lb) ASM_END
+
+#define jnzxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
+        ASM_BEG ASM_OP1(jne,   lb) ASM_END
+
+#define jeqxx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(clgrje,  %%r0, %%r13, lb) ASM_END
+
+#define jnexx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(clgrjne, %%r0, %%r13, lb) ASM_END
+
+#define jltxx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(clgrjl,  %%r0, %%r13, lb) ASM_END
+
+#define jlexx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(clgrjle, %%r0, %%r13, lb) ASM_END
+
+#define jgtxx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(clgrjh,  %%r0, %%r13, lb) ASM_END
+
+#define jgexx_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(clgrjhe, %%r0, %%r13, lb) ASM_END
+
+#define jltxn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(cgrjl,   %%r0, %%r13, lb) ASM_END
+
+#define jlexn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(cgrjle,  %%r0, %%r13, lb) ASM_END
+
+#define jgtxn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(cgrjh,   %%r0, %%r13, lb) ASM_END
+
+#define jgexn_lb(lb)                                /* compare -> jump */   \
+        ASM_BEG ASM_OP3(cgrjhe,  %%r0, %%r13, lb) ASM_END
+
+#define LBL(lb)                                          /* code label */   \
+        ASM_BEG ASM_OP0(lb:) ASM_END
+
+/************************ internal definitions for cmj ************************/
+
+#define RWJ0(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(crje,    r1, r2, lb) ASM_END
+
+#define RWJ1(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(crjne,   r1, r2, lb) ASM_END
+
+#define RWJ2(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(clrjl,   r1, r2, lb) ASM_END
+
+#define RWJ3(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(clrjle,  r1, r2, lb) ASM_END
+
+#define RWJ4(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(clrjh,   r1, r2, lb) ASM_END
+
+#define RWJ5(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(clrjhe,  r1, r2, lb) ASM_END
+
+#define RWJ6(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(crjl,    r1, r2, lb) ASM_END
+
+#define RWJ7(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(crjle,   r1, r2, lb) ASM_END
+
+#define RWJ8(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(crjh,    r1, r2, lb) ASM_END
+
+#define RWJ9(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(crjhe,   r1, r2, lb) ASM_END
+
+#define CWR(cc, r1, r2, lb)                                                 \
+        RW##cc(r1, r2, lb)
+
+
+#define RXJ0(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(cgrje,   r1, r2, lb) ASM_END
+
+#define RXJ1(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(cgrjne,  r1, r2, lb) ASM_END
+
+#define RXJ2(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(clgrjl,  r1, r2, lb) ASM_END
+
+#define RXJ3(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(clgrjle, r1, r2, lb) ASM_END
+
+#define RXJ4(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(clgrjh,  r1, r2, lb) ASM_END
+
+#define RXJ5(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(clgrjhe, r1, r2, lb) ASM_END
+
+#define RXJ6(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(cgrjl,   r1, r2, lb) ASM_END
+
+#define RXJ7(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(cgrjle,  r1, r2, lb) ASM_END
+
+#define RXJ8(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(cgrjh,   r1, r2, lb) ASM_END
+
+#define RXJ9(r1, r2, lb)                                                    \
+        ASM_BEG ASM_OP3(cgrjhe,  r1, r2, lb) ASM_END
+
+#define CXR(cc, r1, r2, lb)                                                 \
+        RX##cc(r1, r2, lb)
 
 /************************* register-size instructions *************************/
 
