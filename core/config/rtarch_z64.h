@@ -518,6 +518,162 @@
 #define movwx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
         movwx_mi(W(MD), W(DD), W(IS))
 
+/* and (G = G & S)
+ * set-flags: undefined (*_*), yes (*Z*) */
+
+#define andwx_ri(RG, IS)                                                    \
+        EMIT6(MIM(0xC0, REG(RG),0x0B,VAL(IS)))                              \
+        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))
+
+#define andwx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x0B,VAL(IS)))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define andwx_rr(RG, RS)                                                    \
+        EMITH(MRM(0x14, REG(RG),REG(RS),0x00))                              \
+        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))
+
+#define andwx_ld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x54, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))
+
+#define andwx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITH(MRM(0x14, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define andwx_mr(MG, DG, RS)                                                \
+        andwx_st(W(RS), W(MG), W(DG))
+
+/* ann (G = ~G & S)
+ * set-flags: undefined (*_*), yes (*Z*) */
+
+#define annwx_ri(RG, IS)                                                    \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, REG(RG),0x0B,VAL(IS)))                              \
+        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))
+
+#define annwx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, TMxx,   0x0B,VAL(IS)))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define annwx_rr(RG, RS)                                                    \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
+        EMITH(MRM(0x14, REG(RG),REG(RS),0x00))                              \
+        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))
+
+#define annwx_ld(RG, MS, DS)                                                \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x54, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))
+
+#define annwx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
+        EMITH(MRM(0x14, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define annwx_mr(MG, DG, RS)                                                \
+        annwx_st(W(RS), W(MG), W(DG))
+
+/* orr (G = G | S)
+ * set-flags: undefined (*_*), yes (*Z*) */
+
+#define orrwx_ri(RG, IS)                                                    \
+        EMIT6(MIM(0xC0, REG(RG),0x0D,VAL(IS)))
+
+#define orrwx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x0D,VAL(IS)))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define orrwx_rr(RG, RS)                                                    \
+        EMITH(MRM(0x16, REG(RG),REG(RS),0x00))
+
+#define orrwx_ld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x56, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define orrwx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITH(MRM(0x16, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define orrwx_mr(MG, DG, RS)                                                \
+        orrwx_st(W(RS), W(MG), W(DG))
+
+/* orn (G = ~G | S)
+ * set-flags: undefined (*_*), yes (*Z*) */
+
+#define ornwx_ri(RG, IS)                                                    \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, REG(RG),0x0D,VAL(IS)))
+
+#define ornwx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, TMxx,   0x0D,VAL(IS)))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define ornwx_rr(RG, RS)                                                    \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
+        EMITH(MRM(0x16, REG(RG),REG(RS),0x00))
+
+#define ornwx_ld(RG, MS, DS)                                                \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x56, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define ornwx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
+        EMITH(MRM(0x16, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define ornwx_mr(MG, DG, RS)                                                \
+        ornwx_st(W(RS), W(MG), W(DG))
+
+/* xor (G = G ^ S)
+ * set-flags: undefined (*_*), yes (*Z*) */
+
+#define xorwx_ri(RG, IS)                                                    \
+        EMIT6(MIM(0xC0, REG(RG),0x07,VAL(IS)))
+
+#define xorwx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x07,VAL(IS)))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define xorwx_rr(RG, RS)                                                    \
+        EMITH(MRM(0x17, REG(RG),REG(RS),0x00))
+
+#define xorwx_ld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x57, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define xorwx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITH(MRM(0x17, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define xorwx_mr(MG, DG, RS)                                                \
+        xorwx_st(W(RS), W(MG), W(DG))
+
 /* not (G = ~G)
  * set-flags: no */
 
@@ -1196,6 +1352,170 @@
         EMIT6(MIM(0xC0, TMxx,   0x01,VAL(IS)))                              \
         EMIT6(MIM(0xC0, TMxx,   0x08,VAL(IT)))                              \
         EMIT6(MDM(0x24, TMxx,   MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
+
+/* and (G = G & S)
+ * set-flags: undefined (*_*), yes (*Z*) */
+
+#define andzx_ri(RG, IS)                                                    \
+        EMIT6(MIM(0xC0, REG(RG),0x0B,VAL(IS)))                              \
+        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))
+
+#define andzx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x0B,VAL(IS)))                              \
+        EMIT6(MIM(0xC0, TMxx,   0x0A,   0x00))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define andzx_rr(RG, RS)                                                    \
+        EMITW(MGM(0x80, REG(RG),REG(RS),0x00))
+
+#define andzx_ld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x80, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define andzx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(MGM(0x80, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define andzx_mr(MG, DG, RS)                                                \
+        andzx_st(W(RS), W(MG), W(DG))
+
+/* ann (G = ~G & S)
+ * set-flags: undefined (*_*), yes (*Z*) */
+
+#define annzx_ri(RG, IS)                                                    \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, REG(RG),0x06,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, REG(RG),0x0B,VAL(IS)))                              \
+        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))
+
+#define annzx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, TMxx,   0x06,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, TMxx,   0x0B,VAL(IS)))                              \
+        EMIT6(MIM(0xC0, TMxx,   0x0A,   0x00))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define annzx_rr(RG, RS)                                                    \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, REG(RG),0x06,0xFFFFFFFF))                           \
+        EMITW(MGM(0x80, REG(RG),REG(RS),0x00))
+
+#define annzx_ld(RG, MS, DS)                                                \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, REG(RG),0x06,0xFFFFFFFF))                           \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x80, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define annzx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, TMxx,   0x06,0xFFFFFFFF))                           \
+        EMITW(MGM(0x80, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define annzx_mr(MG, DG, RS)                                                \
+        annzx_st(W(RS), W(MG), W(DG))
+
+/* orr (G = G | S)
+ * set-flags: undefined (*_*), yes (*Z*) */
+
+#define orrzx_ri(RG, IS)                                                    \
+        EMIT6(MIM(0xC0, REG(RG),0x0D,VAL(IS)))
+
+#define orrzx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x0D,VAL(IS)))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define orrzx_rr(RG, RS)                                                    \
+        EMITW(MGM(0x81, REG(RG),REG(RS),0x00))
+
+#define orrzx_ld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x81, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define orrzx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(MGM(0x81, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define orrzx_mr(MG, DG, RS)                                                \
+        orrzx_st(W(RS), W(MG), W(DG))
+
+/* orn (G = ~G | S)
+ * set-flags: undefined (*_*), yes (*Z*) */
+
+#define ornzx_ri(RG, IS)                                                    \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, REG(RG),0x06,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, REG(RG),0x0D,VAL(IS)))
+
+#define ornzx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, TMxx,   0x06,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, TMxx,   0x0D,VAL(IS)))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define ornzx_rr(RG, RS)                                                    \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, REG(RG),0x06,0xFFFFFFFF))                           \
+        EMITW(MGM(0x81, REG(RG),REG(RS),0x00))
+
+#define ornzx_ld(RG, MS, DS)                                                \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, REG(RG),0x06,0xFFFFFFFF))                           \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x81, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define ornzx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
+        EMIT6(MIM(0xC0, TMxx,   0x06,0xFFFFFFFF))                           \
+        EMITW(MGM(0x81, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define ornzx_mr(MG, DG, RS)                                                \
+        ornzx_st(W(RS), W(MG), W(DG))
+
+/* xor (G = G ^ S)
+ * set-flags: undefined (*_*), yes (*Z*) */
+
+#define xorzx_ri(RG, IS)                                                    \
+        EMIT6(MIM(0xC0, REG(RG),0x07,VAL(IS)))
+
+#define xorzx_mi(MG, DG, IS)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(MIM(0xC0, TMxx,   0x07,VAL(IS)))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define xorzx_rr(RG, RS)                                                    \
+        EMITW(MGM(0x82, REG(RG),REG(RS),0x00))
+
+#define xorzx_ld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x82, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+
+#define xorzx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(MGM(0x82, TMxx,   REG(RS),0x00))                              \
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#define xorzx_mr(MG, DG, RS)                                                \
+        xorzx_st(W(RS), W(MG), W(DG))
 
 /* not (G = ~G)
  * set-flags: no */
@@ -2021,6 +2341,17 @@
 #define notix_rr(XD, XS)                                                    \
         EMIT6(MXM(0x6B, REG(XD),REG(XS),REG(XS), 0x00))
 
+/************   packed single-precision floating-point arithmetic   ***********/
+
+/* neg (G = -G), (D = -S) */
+
+#define negis_rx(XG)                                                        \
+        xorix_ld(W(XG), Mebp, inf_GPC06_32)
+
+#define negis_rr(XD, XS)                                                    \
+        movix_rr(W(XD), W(XS))                                              \
+        negis_rx(W(XD))
+
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addis_rr(XG, XS)                                                    \
@@ -2151,6 +2482,44 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /*************   packed single-precision floating-point compare   *************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
+
+#define minis_rr(XG, XS)                                                    \
+        minis3rr(W(XG), W(XG), W(XS))
+
+#define minis_ld(XG, MS, DS)                                                \
+        minis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minis3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xEE, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define minis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xEE, REG(XD),REG(XS),   TmmM, 0x02))
+
+        /* mnp, mnh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
+
+#define maxis_rr(XG, XS)                                                    \
+        maxis3rr(W(XG), W(XG), W(XS))
+
+#define maxis_ld(XG, MS, DS)                                                \
+        maxis3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxis3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xEF, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define maxis3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xEF, REG(XD),REG(XS),   TmmM, 0x02))
+
+        /* mxp, mxh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
@@ -2780,6 +3149,17 @@
 #define notjx_rr(XD, XS)                                                    \
         EMIT6(MXM(0x6B, REG(XD),REG(XS),REG(XS), 0x00))
 
+/************   packed double-precision floating-point arithmetic   ***********/
+
+/* neg (G = -G), (D = -S) */
+
+#define negjs_rx(XG)                                                        \
+        xorjx_ld(W(XG), Mebp, inf_GPC06_32)
+
+#define negjs_rr(XD, XS)                                                    \
+        movjx_rr(W(XD), W(XS))                                              \
+        negjs_rx(W(XD))
+
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addjs_rr(XG, XS)                                                    \
@@ -2910,6 +3290,44 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /*************   packed double-precision floating-point compare   *************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
+
+#define minjs_rr(XG, XS)                                                    \
+        minjs3rr(W(XG), W(XG), W(XS))
+
+#define minjs_ld(XG, MS, DS)                                                \
+        minjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minjs3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xEE, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define minjs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xEE, REG(XD),REG(XS),   TmmM, 0x03))
+
+        /* mnp, mnh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
+
+#define maxjs_rr(XG, XS)                                                    \
+        maxjs3rr(W(XG), W(XG), W(XS))
+
+#define maxjs_ld(XG, MS, DS)                                                \
+        maxjs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxjs3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xEF, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define maxjs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xEF, REG(XD),REG(XS),   TmmM, 0x03))
+
+        /* mxp, mxh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
@@ -3560,6 +3978,17 @@
         EMIT6(MXM(0x6B, REG(XD),REG(XS),REG(XS), 0x00))                     \
         EMIT6(MXM(0x6B, RYG(XD),RYG(XS),RYG(XS), 0x00))
 
+/************   packed single-precision floating-point arithmetic   ***********/
+
+/* neg (G = -G), (D = -S) */
+
+#define negcs_rx(XG)                                                        \
+        xorcx_ld(W(XG), Mebp, inf_GPC06_32)
+
+#define negcs_rr(XD, XS)                                                    \
+        movcx_rr(W(XD), W(XS))                                              \
+        negcs_rx(W(XD))
+
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addcs_rr(XG, XS)                                                    \
@@ -3711,6 +4140,50 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /*************   packed single-precision floating-point compare   *************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
+
+#define mincs_rr(XG, XS)                                                    \
+        mincs3rr(W(XG), W(XG), W(XS))
+
+#define mincs_ld(XG, MS, DS)                                                \
+        mincs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mincs3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xEE, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xEE, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define mincs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEE, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEE, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+        /* mnp, mnh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
+
+#define maxcs_rr(XG, XS)                                                    \
+        maxcs3rr(W(XG), W(XG), W(XS))
+
+#define maxcs_ld(XG, MS, DS)                                                \
+        maxcs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxcs3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xEF, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xEF, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define maxcs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEF, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEF, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+        /* mxp, mxh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
@@ -4488,6 +4961,17 @@
         EMIT6(MXM(0x6B, REG(XD),REG(XS),REG(XS), 0x00))                     \
         EMIT6(MXM(0x6B, RYG(XD),RYG(XS),RYG(XS), 0x00))
 
+/************   packed double-precision floating-point arithmetic   ***********/
+
+/* neg (G = -G), (D = -S) */
+
+#define negds_rx(XG)                                                        \
+        xordx_ld(W(XG), Mebp, inf_GPC06_32)
+
+#define negds_rr(XD, XS)                                                    \
+        movdx_rr(W(XD), W(XS))                                              \
+        negds_rx(W(XD))
+
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
 #define addds_rr(XG, XS)                                                    \
@@ -4639,6 +5123,50 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /*************   packed double-precision floating-point compare   *************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
+
+#define minds_rr(XG, XS)                                                    \
+        minds3rr(W(XG), W(XG), W(XS))
+
+#define minds_ld(XG, MS, DS)                                                \
+        minds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minds3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xEE, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xEE, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define minds3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEE, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEE, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+        /* mnp, mnh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
+
+#define maxds_rr(XG, XS)                                                    \
+        maxds3rr(W(XG), W(XG), W(XS))
+
+#define maxds_ld(XG, MS, DS)                                                \
+        maxds3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxds3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xEF, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xEF, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define maxds3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEF, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xEF, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+        /* mxp, mxh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
@@ -5431,6 +5959,44 @@
 
 /*************   scalar single-precision floating-point compare   *************/
 
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
+
+#define minrs_rr(XG, XS)                                                    \
+        minrs3rr(W(XG), W(XG), W(XS))
+
+#define minrs_ld(XG, MS, DS)                                                \
+        minrs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minrs3rr(XD, XS, XT)                                                \
+        EMIT6(MWM(0xEE, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define minrs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MWM(0xEE, REG(XD),REG(XS),   TmmM, 0x02))
+
+        /* mnp, mnh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
+
+#define maxrs_rr(XG, XS)                                                    \
+        maxrs3rr(W(XG), W(XG), W(XS))
+
+#define maxrs_ld(XG, MS, DS)                                                \
+        maxrs3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxrs3rr(XD, XS, XT)                                                \
+        EMIT6(MWM(0xEF, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define maxrs3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x03, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MWM(0xEF, REG(XD),REG(XS),   TmmM, 0x02))
+
+        /* mxp, mxh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqrs_rr(XG, XS)                                                    \
@@ -5958,6 +6524,44 @@
 #endif /* RT_SIMD_COMPAT_FMS */
 
 /*************   scalar double-precision floating-point compare   *************/
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T) */
+
+#define mints_rr(XG, XS)                                                    \
+        mints3rr(W(XG), W(XG), W(XS))
+
+#define mints_ld(XG, MS, DS)                                                \
+        mints3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mints3rr(XD, XS, XT)                                                \
+        EMIT6(MWM(0xEE, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define mints3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MWM(0xEE, REG(XD),REG(XS),   TmmM, 0x03))
+
+        /* mnp, mnh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
+
+#define maxts_rr(XG, XS)                                                    \
+        maxts3rr(W(XG), W(XG), W(XS))
+
+#define maxts_ld(XG, MS, DS)                                                \
+        maxts3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxts3rr(XD, XS, XT)                                                \
+        EMIT6(MWM(0xEF, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define maxts3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x02, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MWM(0xEF, REG(XD),REG(XS),   TmmM, 0x03))
+
+        /* mxp, mxh are defined in rtbase.h
+         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
