@@ -2619,6 +2619,26 @@
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMIT6(MXM(0xEA, REG(XD),REG(XS),   TmmM, 0x02))
 
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE32_128  MN32_128   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL32_128  MF32_128   /*  all satisfy the condition */
+
+#define S0(mask)    S1(mask)
+#define S1(mask)    S##mask
+
+#define SMN32_128(xs, lb) /* not portable, do not use outside */            \
+        ASM_BEG ASM_OP3(cgije, %%r0,  0, lb) ASM_END
+
+#define SMF32_128(xs, lb) /* not portable, do not use outside */            \
+        ASM_BEG ASM_OP3(cgije, %%r0, -1, lb) ASM_END
+
+#define mkjix_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        EMIT6(MXM(0x94, TmmM,   REG(XS),REG(XS), 0x02))                     \
+        EMIT6(MXM(0x21, TMxx,   TmmM,   0x00,    0x03))                     \
+        AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb,                                 \
+        S0(RT_SIMD_MASK_##mask##32_128), EMPTY2)
+
 /*************   packed single-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -3154,7 +3174,7 @@
 /* neg (G = -G), (D = -S) */
 
 #define negjs_rx(XG)                                                        \
-        xorjx_ld(W(XG), Mebp, inf_GPC06_32)
+        xorjx_ld(W(XG), Mebp, inf_GPC06_64)
 
 #define negjs_rr(XD, XS)                                                    \
         movjx_rr(W(XD), W(XS))                                              \
@@ -3426,6 +3446,26 @@
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMIT6(MXM(0xEA, REG(XD),REG(XS),   TmmM, 0x03))
+
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE64_128  MN64_128   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL64_128  MF64_128   /*  all satisfy the condition */
+
+#define S0(mask)    S1(mask)
+#define S1(mask)    S##mask
+
+#define SMN64_128(xs, lb) /* not portable, do not use outside */            \
+        ASM_BEG ASM_OP3(cgije, %%r0,  0, lb) ASM_END
+
+#define SMF64_128(xs, lb) /* not portable, do not use outside */            \
+        ASM_BEG ASM_OP3(cgije, %%r0, -1, lb) ASM_END
+
+#define mkjjx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        EMIT6(MXM(0x94, TmmM,   REG(XS),REG(XS), 0x03))                     \
+        EMIT6(MXM(0x21, TMxx,   TmmM,   0x00,    0x03))                     \
+        AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb,                                 \
+        S0(RT_SIMD_MASK_##mask##64_128), EMPTY2)
 
 /*************   packed double-precision floating-point convert   *************/
 
@@ -4301,6 +4341,27 @@
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
         EMIT6(MXM(0xEA, RYG(XD),RYG(XS),   TmmM, 0x02))
 
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE32_256  MN32_256   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL32_256  MF32_256   /*  all satisfy the condition */
+
+#define S0(mask)    S1(mask)
+#define S1(mask)    S##mask
+
+#define SMN32_256(xs, lb) /* not portable, do not use outside */            \
+        ASM_BEG ASM_OP3(cgije, %%r0,  0, lb) ASM_END
+
+#define SMF32_256(xs, lb) /* not portable, do not use outside */            \
+        ASM_BEG ASM_OP3(cgije, %%r0, -1, lb) ASM_END
+
+#define mkjcx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        EMIT6(MXM(0x94, TmmM,   REG(XS),RYG(XS), 0x02))                     \
+        EMIT6(MXM(0x94, TmmM,   TmmM,   TmmM,    0x02))                     \
+        EMIT6(MXM(0x21, TMxx,   TmmM,   0x00,    0x03))                     \
+        AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb,                                 \
+        S0(RT_SIMD_MASK_##mask##32_256), EMPTY2)
+
 /*************   packed single-precision floating-point convert   *************/
 
 /* cvz (D = fp-to-signed-int S)
@@ -4966,7 +5027,7 @@
 /* neg (G = -G), (D = -S) */
 
 #define negds_rx(XG)                                                        \
-        xordx_ld(W(XG), Mebp, inf_GPC06_32)
+        xordx_ld(W(XG), Mebp, inf_GPC06_64)
 
 #define negds_rr(XD, XS)                                                    \
         movdx_rr(W(XD), W(XS))                                              \
@@ -5283,6 +5344,27 @@
         EMIT6(MXM(0xEA, REG(XD),REG(XS),   TmmM, 0x03))                     \
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
         EMIT6(MXM(0xEA, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+/* mkj (jump to lb) if (S satisfies mask condition) */
+
+#define RT_SIMD_MASK_NONE64_256  MN64_256   /* none satisfy the condition */
+#define RT_SIMD_MASK_FULL64_256  MF64_256   /*  all satisfy the condition */
+
+#define S0(mask)    S1(mask)
+#define S1(mask)    S##mask
+
+#define SMN64_256(xs, lb) /* not portable, do not use outside */            \
+        ASM_BEG ASM_OP3(cgije, %%r0,  0, lb) ASM_END
+
+#define SMF64_256(xs, lb) /* not portable, do not use outside */            \
+        ASM_BEG ASM_OP3(cgije, %%r0, -1, lb) ASM_END
+
+#define mkjdx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
+        EMIT6(MXM(0x94, TmmM,   REG(XS),RYG(XS), 0x03))                     \
+        EMIT6(MXM(0x94, TmmM,   TmmM,   TmmM,    0x03))                     \
+        EMIT6(MXM(0x21, TMxx,   TmmM,   0x00,    0x03))                     \
+        AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb,                                 \
+        S0(RT_SIMD_MASK_##mask##64_256), EMPTY2)
 
 /*************   packed double-precision floating-point convert   *************/
 
