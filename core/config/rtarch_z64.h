@@ -998,12 +998,12 @@
 
 
 #define subwxZri(RG, IS)                                                    \
-        EMIT6(MIM(0xC2, REG(RG),0x05,VAL(IS)))
+        EMIT6(MIM(0xC2, REG(RG),0x09, (-VAL(IS) & 0xFFFFFFFF)))
 
 #define subwxZmi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMIT6(MIM(0xC2, TMxx,   0x05,VAL(IS)))                              \
+        EMIT6(MIM(0xC2, TMxx,   0x09, (-VAL(IS) & 0xFFFFFFFF)))             \
         EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define subwxZrr(RG, RS)                                                    \
@@ -1191,7 +1191,9 @@
 
 #define rorwx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x58, TDxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMIT6(MDM(0x58, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITH(MRM(0x17, TDxx,   TDxx,   0x00))                              \
+        EMITH(MRM(0x1B, TDxx,   TMxx,   0x00))                              \
         EMIT6(MTM(0x1D, REG(RG),TDxx,   0x00))
 
 #define rorwx_st(RS, MG, DG)                                                \
@@ -1445,6 +1447,62 @@
 
 #define remwn_xm(MS, DS)    /* to be placed immediately after divwn_xm */   \
                                      /* to produce remainder Redx<-rem */
+
+/* arj (G = G op S, if cc G then jump lb)
+ * set-flags: undefined
+ * refer to individual instruction descriptions
+ * to stay within special register limitations */
+
+#define and_x   AL0
+#define ann_x   AL1
+#define orr_x   AL2
+#define orn_x   AL3
+#define xor_x   AL4
+#define neg_x   AM0
+#define add_x   AM1
+#define sub_x   AM2
+#define add_n   AM3
+#define sub_n   AM4
+#define add_z   AM5
+#define sub_z   AM6
+#define shl_x   AN0
+#define shr_x   AN1
+#define shr_n   AN2
+#define ror_x   AN3
+
+#define EZ_x    jezxx_lb
+#define NZ_x    jnzxx_lb
+
+#define arjwx_rx(RG, op, cc, lb)                                            \
+        AR1(W(RG), op, w, Zrx)                                              \
+        CMJ(cc, lb)
+
+#define arjwx_mx(MG, DG, op, cc, lb)                                        \
+        AR2(W(MG), W(DG), op, w, Zmx)                                       \
+        CMJ(cc, lb)
+
+#define arjwx_ri(RG, IS, op, cc, lb)                                        \
+        AR2(W(RG), W(IS), op, w, Zri)                                       \
+        CMJ(cc, lb)
+
+#define arjwx_mi(MG, DG, IS, op, cc, lb)                                    \
+        AR3(W(MG), W(DG), W(IS), op, w, Zmi)                                \
+        CMJ(cc, lb)
+
+#define arjwx_rr(RG, RS, op, cc, lb)                                        \
+        AR2(W(RG), W(RS), op, w, Zrr)                                       \
+        CMJ(cc, lb)
+
+#define arjwx_ld(RG, MS, DS, op, cc, lb)                                    \
+        AR3(W(RG), W(MS), W(DS), op, w, Zld)                                \
+        CMJ(cc, lb)
+
+#define arjwx_st(RS, MG, DG, op, cc, lb)                                    \
+        AR3(W(RS), W(MG), W(DG), op, w, Zst)                                \
+        CMJ(cc, lb)
+
+#define arjwx_mr(MG, DG, RS, op, cc, lb)                                    \
+        arjwx_st(W(RS), W(MG), W(DG), op, cc, lb)
 
 /* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */
@@ -2297,7 +2355,9 @@
 
 #define rorzx_ld(RG, MS, DS)   /* Recx cannot be used as first operand */   \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x04, TDxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMIT6(MDM(0x04, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITH(MRM(0x17, TDxx,   TDxx,   0x00))                              \
+        EMITH(MRM(0x1B, TDxx,   TMxx,   0x00))                              \
         EMIT6(MTM(0x1C, REG(RG),TDxx,   0x00))
 
 #define rorzx_st(RS, MG, DG)                                                \
@@ -2540,6 +2600,45 @@
 #define remzn_xm(MS, DS)    /* to be placed immediately after divzn_xm */   \
                                      /* to produce remainder Redx<-rem */
 
+/* arj (G = G op S, if cc G then jump lb)
+ * set-flags: undefined
+ * refer to individual instruction descriptions
+ * to stay within special register limitations */
+
+     /* Definitions for arj's "op" and "cc" parameters
+      * are provided in 32-bit rtarch_***.h files. */
+
+#define arjzx_rx(RG, op, cc, lb)                                            \
+        AR1(W(RG), op, z, Zrx)                                              \
+        CMJ(cc, lb)
+
+#define arjzx_mx(MG, DG, op, cc, lb)                                        \
+        AR2(W(MG), W(DG), op, z, Zmx)                                       \
+        CMJ(cc, lb)
+
+#define arjzx_ri(RG, IS, op, cc, lb)                                        \
+        AR2(W(RG), W(IS), op, z, Zri)                                       \
+        CMJ(cc, lb)
+
+#define arjzx_mi(MG, DG, IS, op, cc, lb)                                    \
+        AR3(W(MG), W(DG), W(IS), op, z, Zmi)                                \
+        CMJ(cc, lb)
+
+#define arjzx_rr(RG, RS, op, cc, lb)                                        \
+        AR2(W(RG), W(RS), op, z, Zrr)                                       \
+        CMJ(cc, lb)
+
+#define arjzx_ld(RG, MS, DS, op, cc, lb)                                    \
+        AR3(W(RG), W(MS), W(DS), op, z, Zld)                                \
+        CMJ(cc, lb)
+
+#define arjzx_st(RS, MG, DG, op, cc, lb)                                    \
+        AR3(W(RS), W(MG), W(DG), op, z, Zst)                                \
+        CMJ(cc, lb)
+
+#define arjzx_mr(MG, DG, RS, op, cc, lb)                                    \
+        arjzx_st(W(RS), W(MG), W(DG), op, cc, lb)
+
 /* cmj (flags = S ? T, if cc flags then jump lb)
  * set-flags: undefined */
 
@@ -2651,7 +2750,7 @@
  * MIPS:18-bit, POWER:16-bit, AArch32:26-bit, AArch64:21-bit, x86:32-bit */
 
 #define jmpxx_lb(lb)              /* label-targeted unconditional jump */   \
-        ASM_BEG ASM_OP1(j, lb) ASM_END
+        ASM_BEG ASM_OP1(j,     lb) ASM_END
 
 #define jezxx_lb(lb)               /* setting-flags-arithmetic -> jump */   \
         ASM_BEG ASM_OP1(je,    lb) ASM_END
@@ -2691,6 +2790,37 @@
 
 #define LBL(lb)                                          /* code label */   \
         ASM_BEG ASM_OP0(lb:) ASM_END
+
+/************************ internal definitions for arj ************************/
+
+#define AL0(sz, sg) and##sz##x##sg
+#define AL1(sz, sg) ann##sz##x##sg
+#define AL2(sz, sg) orr##sz##x##sg
+#define AL3(sz, sg) orn##sz##x##sg
+#define AL4(sz, sg) xor##sz##x##sg
+#define AM0(sz, sg) neg##sz##x##sg
+#define AM1(sz, sg) add##sz##x##sg
+#define AM2(sz, sg) sub##sz##x##sg
+#define AM3(sz, sg) add##sz##n##sg
+#define AM4(sz, sg) sub##sz##n##sg
+#define AM5(sz, sg) add##sz##z##sg
+#define AM6(sz, sg) sub##sz##z##sg
+#define AN0(sz, sg) shl##sz##x##sg
+#define AN1(sz, sg) shr##sz##x##sg
+#define AN2(sz, sg) shr##sz##n##sg
+#define AN3(sz, sg) ror##sz##x##sg
+
+#define AR1(P1, op, sz, sg)                                                 \
+        op(sz,sg)(W(P1))
+
+#define AR2(P1, P2, op, sz, sg)                                             \
+        op(sz,sg)(W(P1), W(P2))
+
+#define AR3(P1, P2, P3, op, sz, sg)                                         \
+        op(sz,sg)(W(P1), W(P2), W(P3))
+
+#define CMJ(cc, lb)                                                         \
+        cc(lb)
 
 /************************ internal definitions for cmj ************************/
 
