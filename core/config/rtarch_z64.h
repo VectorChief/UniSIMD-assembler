@@ -333,18 +333,18 @@
 
 /* registers    REG,  MOD,  SIB */
 
-#define Reax    TEax, %r3,  EMPTY
-#define Recx    TEcx, %r1,  EMPTY
-#define Redx    TEdx, %r2,  EMPTY
-#define Rebx    TEbx, %r4,  EMPTY
-#define Rebp    TEbp, %r5,  EMPTY
-#define Resi    TEsi, %r6,  EMPTY
-#define Redi    TEdi, %r7,  EMPTY
-#define Reg8    TEg8, %r8,  EMPTY
-#define Reg9    TEg9, %r9,  EMPTY
-#define RegA    TEgA, %r10, EMPTY
-#define RegB    TEgB, %r11, EMPTY
-#define RegC    TEgC, %r12, EMPTY
+#define Reax    TEax, %%r3, EMPTY
+#define Recx    TEcx, %%r1, EMPTY
+#define Redx    TEdx, %%r2, EMPTY
+#define Rebx    TEbx, %%r4, EMPTY
+#define Rebp    TEbp, %%r5, EMPTY
+#define Resi    TEsi, %%r6, EMPTY
+#define Redi    TEdi, %%r7, EMPTY
+#define Reg8    TEg8, %%r8, EMPTY
+#define Reg9    TEg9, %%r9, EMPTY
+#define RegA    TEgA, %%r10,EMPTY
+#define RegB    TEgB, %%r11,EMPTY
+#define RegC    TEgC, %%r12,EMPTY
 
 /* addressing   REG,  MOD,  SIB */
 
@@ -2958,6 +2958,27 @@
         AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A2(DD), EMPTY2)   \
         EMIT6(MPM(0x0E, REG(XS),MOD(MD),REG(MD), VAL(DD), B2(DD), P2(DD)))
 
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
+
+#define mmvix_rr(XG, XS)                                                    \
+        andix_rr(W(XS), Xmm0)                                               \
+        annix_rr(Xmm0, W(XG))                                               \
+        orrix_rr(Xmm0, W(XS))                                               \
+        movix_rr(W(XG), Xmm0)
+
+#define mmvix_ld(XG, MS, DS)                                                \
+        notix_rx(Xmm0)                                                      \
+        andix_rr(W(XG), Xmm0)                                               \
+        annix_ld(Xmm0, W(MS), W(DS))                                        \
+        orrix_rr(W(XG), Xmm0)
+
+#define mmvix_st(XS, MG, DG)                                                \
+        andix_rr(W(XS), Xmm0)                                               \
+        annix_ld(Xmm0, W(MG), W(DG))                                        \
+        orrix_rr(Xmm0, W(XS))                                               \
+        movix_st(Xmm0, W(MG), W(DG))
+
 /* and (G = G & S), (D = S & T) if (#D != #T) */
 
 #define andix_rr(XG, XS)                                                    \
@@ -3771,6 +3792,42 @@
         stack_ld(Recx)                                                      \
         movix_ld(W(XD), Mebp, inf_SCR01(0))
 
+/****************   packed single-precision integer compare   *****************/
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqix_rr(XG, XS)                                                    \
+        ceqix3rr(W(XG), W(XG), W(XS))
+
+#define ceqix_ld(XG, MS, DS)                                                \
+        ceqix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqix3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF8, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define ceqix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xF8, REG(XD),REG(XS),   TmmM, 0x02))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cneix_rr(XG, XS)                                                    \
+        cneix3rr(W(XG), W(XG), W(XS))
+
+#define cneix_ld(XG, MS, DS)                                                \
+        cneix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cneix3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF8, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        notix_rx(W(XD))
+
+#define cneix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xF8, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        notix_rx(W(XD))
+
 /*--------------------------------   64-bit   -------------------- 128-bit ---*/
 
 /* mov (D = S) */
@@ -3785,6 +3842,27 @@
 #define movjx_st(XS, MD, DD)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A2(DD), EMPTY2)   \
         EMIT6(MPM(0x0E, REG(XS),MOD(MD),REG(MD), VAL(DD), B2(DD), P2(DD)))
+
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
+
+#define mmvjx_rr(XG, XS)                                                    \
+        andjx_rr(W(XS), Xmm0)                                               \
+        annjx_rr(Xmm0, W(XG))                                               \
+        orrjx_rr(Xmm0, W(XS))                                               \
+        movjx_rr(W(XG), Xmm0)
+
+#define mmvjx_ld(XG, MS, DS)                                                \
+        notjx_rx(Xmm0)                                                      \
+        andjx_rr(W(XG), Xmm0)                                               \
+        annjx_ld(Xmm0, W(MS), W(DS))                                        \
+        orrjx_rr(W(XG), Xmm0)
+
+#define mmvjx_st(XS, MG, DG)                                                \
+        andjx_rr(W(XS), Xmm0)                                               \
+        annjx_ld(Xmm0, W(MG), W(DG))                                        \
+        orrjx_rr(Xmm0, W(XS))                                               \
+        movjx_st(Xmm0, W(MG), W(DG))
 
 /* and (G = G & S), (D = S & T) if (#D != #T) */
 
@@ -4601,6 +4679,42 @@
         stack_ld(Recx)                                                      \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
+/****************   packed double-precision integer compare   *****************/
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqjx_rr(XG, XS)                                                    \
+        ceqjx3rr(W(XG), W(XG), W(XS))
+
+#define ceqjx_ld(XG, MS, DS)                                                \
+        ceqjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqjx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF8, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define ceqjx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xF8, REG(XD),REG(XS),   TmmM, 0x03))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cnejx_rr(XG, XS)                                                    \
+        cnejx3rr(W(XG), W(XG), W(XS))
+
+#define cnejx_ld(XG, MS, DS)                                                \
+        cnejx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cnejx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF8, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        notjx_rx(W(XD))
+
+#define cnejx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xF8, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        notjx_rx(W(XD))
+
 /*--------------------------------   32-bit   -------------------- 256-bit ---*/
 
 /* mov (D = S) */
@@ -4618,6 +4732,27 @@
         AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A2(DD), EMPTY2)   \
         EMIT6(MPM(0x0E, REG(XS),MOD(MD),REG(MD), VAL(DD), B2(DD), L2(DD)))  \
         EMIT6(MPM(0x0E, RYG(XS),MOD(MD),REG(MD), VYL(DD), B2(DD), L2(DD)))
+
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
+
+#define mmvcx_rr(XG, XS)                                                    \
+        andcx_rr(W(XS), Xmm0)                                               \
+        anncx_rr(Xmm0, W(XG))                                               \
+        orrcx_rr(Xmm0, W(XS))                                               \
+        movcx_rr(W(XG), Xmm0)
+
+#define mmvcx_ld(XG, MS, DS)                                                \
+        notcx_rx(Xmm0)                                                      \
+        andcx_rr(W(XG), Xmm0)                                               \
+        anncx_ld(Xmm0, W(MS), W(DS))                                        \
+        orrcx_rr(W(XG), Xmm0)
+
+#define mmvcx_st(XS, MG, DG)                                                \
+        andcx_rr(W(XS), Xmm0)                                               \
+        anncx_ld(Xmm0, W(MG), W(DG))                                        \
+        orrcx_rr(Xmm0, W(XS))                                               \
+        movcx_st(Xmm0, W(MG), W(DG))
 
 /* and (G = G & S), (D = S & T) if (#D != #T) */
 
@@ -5605,6 +5740,48 @@
         stack_ld(Recx)                                                      \
         movcx_ld(W(XD), Mebp, inf_SCR01(0))
 
+/****************   packed single-precision integer compare   *****************/
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqcx_rr(XG, XS)                                                    \
+        ceqcx3rr(W(XG), W(XG), W(XS))
+
+#define ceqcx_ld(XG, MS, DS)                                                \
+        ceqcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqcx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF8, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xF8, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define ceqcx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF8, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF8, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cnecx_rr(XG, XS)                                                    \
+        cnecx3rr(W(XG), W(XG), W(XS))
+
+#define cnecx_ld(XG, MS, DS)                                                \
+        cnecx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cnecx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF8, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xF8, RYG(XD),RYG(XS),RYG(XT), 0x02))                     \
+        notcx_rx(W(XD))
+
+#define cnecx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF8, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF8, RYG(XD),RYG(XS),   TmmM, 0x02))                     \
+        notcx_rx(W(XD))
+
 /*--------------------------------   64-bit   -------------------- 256-bit ---*/
 
 /* mov (D = S) */
@@ -5622,6 +5799,27 @@
         AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A2(DD), EMPTY2)   \
         EMIT6(MPM(0x0E, REG(XS),MOD(MD),REG(MD), VAL(DD), B2(DD), L2(DD)))  \
         EMIT6(MPM(0x0E, RYG(XS),MOD(MD),REG(MD), VYL(DD), B2(DD), L2(DD)))
+
+/* mmv (G = G mask-merge S) where (mask-elem: 0 keeps G, -1 picks S)
+ * uses Xmm0 implicitly as a mask register, destroys Xmm0, 0-masked XS elems */
+
+#define mmvdx_rr(XG, XS)                                                    \
+        anddx_rr(W(XS), Xmm0)                                               \
+        anndx_rr(Xmm0, W(XG))                                               \
+        orrdx_rr(Xmm0, W(XS))                                               \
+        movdx_rr(W(XG), Xmm0)
+
+#define mmvdx_ld(XG, MS, DS)                                                \
+        notdx_rx(Xmm0)                                                      \
+        anddx_rr(W(XG), Xmm0)                                               \
+        anndx_ld(Xmm0, W(MS), W(DS))                                        \
+        orrdx_rr(W(XG), Xmm0)
+
+#define mmvdx_st(XS, MG, DG)                                                \
+        anddx_rr(W(XS), Xmm0)                                               \
+        anndx_ld(Xmm0, W(MG), W(DG))                                        \
+        orrdx_rr(Xmm0, W(XS))                                               \
+        movdx_st(Xmm0, W(MG), W(DG))
 
 /* and (G = G & S), (D = S & T) if (#D != #T) */
 
@@ -6601,6 +6799,48 @@
         shrzn_mx(Mebp,  inf_SCR01(0x18))                                    \
         stack_ld(Recx)                                                      \
         movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/****************   packed double-precision integer compare   *****************/
+
+/* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
+
+#define ceqdx_rr(XG, XS)                                                    \
+        ceqdx3rr(W(XG), W(XG), W(XS))
+
+#define ceqdx_ld(XG, MS, DS)                                                \
+        ceqdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ceqdx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF8, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xF8, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define ceqdx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF8, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF8, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+/* cne (G = G != S ? -1 : 0), (D = S != T ? -1 : 0) if (#D != #T) */
+
+#define cnedx_rr(XG, XS)                                                    \
+        cnedx3rr(W(XG), W(XG), W(XS))
+
+#define cnedx_ld(XG, MS, DS)                                                \
+        cnedx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cnedx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF8, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xF8, RYG(XD),RYG(XS),RYG(XT), 0x03))                     \
+        notdx_rx(W(XD))
+
+#define cnedx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF8, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF8, RYG(XD),RYG(XS),   TmmM, 0x03))                     \
+        notdx_rx(W(XD))
 
 /******************************************************************************/
 /**********************************   ELEM   **********************************/
