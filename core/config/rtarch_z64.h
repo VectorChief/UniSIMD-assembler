@@ -2945,6 +2945,14 @@
 
 /*--------------------------------   32-bit   -------------------- 128-bit ---*/
 
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmix_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        movrs_st(W(XS), W(MD), W(DD))
+
+/***************   packed single-precision generic move/logic   ***************/
+
 /* mov (D = S) */
 
 #define movix_rr(XD, XS)                                                    \
@@ -3792,6 +3800,105 @@
         stack_ld(Recx)                                                      \
         movix_ld(W(XD), Mebp, inf_SCR01(0))
 
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svlix_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlix3rr(W(XG), W(XG), W(XS))
+
+#define svlix_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svlix3rr(XD, XS, XT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        svlix_rx(W(XD))
+
+#define svlix3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XD), W(MT), W(DT))                                       \
+        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svlix_rx(W(XD))
+
+#define svlix_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x04))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        stack_ld(Recx)                                                      \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svrix_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrix3rr(W(XG), W(XG), W(XS))
+
+#define svrix_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrix3rr(XD, XS, XT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        svrix_rx(W(XD))
+
+#define svrix3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XD), W(MT), W(DT))                                       \
+        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svrix_rx(W(XD))
+
+#define svrix_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x04))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        stack_ld(Recx)                                                      \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svrin_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrin3rr(W(XG), W(XG), W(XS))
+
+#define svrin_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrin3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrin3rr(XD, XS, XT)                                                \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        svrin_rx(W(XD))
+
+#define svrin3ld(XD, XS, MT, DT)                                            \
+        movix_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movix_ld(W(XD), W(MT), W(DT))                                       \
+        movix_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svrin_rx(W(XD))
+
+#define svrin_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x04))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x08))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        stack_ld(Recx)                                                      \
+        movix_ld(W(XD), Mebp, inf_SCR01(0))
+
 /****************   packed single-precision integer compare   *****************/
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
@@ -3829,6 +3936,14 @@
         notix_rx(W(XD))
 
 /*--------------------------------   64-bit   -------------------- 128-bit ---*/
+
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmjx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        movts_st(W(XS), W(MD), W(DD))
+
+/***************   packed double-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -4679,6 +4794,93 @@
         stack_ld(Recx)                                                      \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
 
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svljx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svljx3rr(W(XG), W(XG), W(XS))
+
+#define svljx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svljx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svljx3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        svljx_rx(W(XD))
+
+#define svljx3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svljx_rx(W(XD))
+
+#define svljx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shlzx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shlzx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        stack_ld(Recx)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svrjx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrjx3rr(W(XG), W(XG), W(XS))
+
+#define svrjx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrjx3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        svrjx_rx(W(XD))
+
+#define svrjx3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svrjx_rx(W(XD))
+
+#define svrjx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shrzx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shrzx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        stack_ld(Recx)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svrjn_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrjn3rr(W(XG), W(XG), W(XS))
+
+#define svrjn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrjn3rr(XD, XS, XT)                                                \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        svrjn_rx(W(XD))
+
+#define svrjn3ld(XD, XS, MT, DT)                                            \
+        movjx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movjx_ld(W(XD), W(MT), W(DT))                                       \
+        movjx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svrjn_rx(W(XD))
+
+#define svrjn_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shrzn_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shrzn_mx(Mebp,  inf_SCR01(0x08))                                    \
+        stack_ld(Recx)                                                      \
+        movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
 /****************   packed double-precision integer compare   *****************/
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
@@ -4716,6 +4918,14 @@
         notjx_rx(W(XD))
 
 /*--------------------------------   32-bit   -------------------- 256-bit ---*/
+
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmcx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        elmix_st(W(XS), W(MD), W(DD))
+
+/***************   packed single-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -5740,6 +5950,129 @@
         stack_ld(Recx)                                                      \
         movcx_ld(W(XD), Mebp, inf_SCR01(0))
 
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svlcx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svlcx3rr(W(XG), W(XG), W(XS))
+
+#define svlcx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svlcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svlcx3rr(XD, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        svlcx_rx(W(XD))
+
+#define svlcx3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_ld(W(XD), W(MT), W(DT))                                       \
+        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svlcx_rx(W(XD))
+
+#define svlcx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x04))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x10))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x10))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x14))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x14))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x18))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x18))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x1C))                              \
+        shlwx_mx(Mebp,  inf_SCR01(0x1C))                                    \
+        stack_ld(Recx)                                                      \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svrcx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrcx3rr(W(XG), W(XG), W(XS))
+
+#define svrcx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrcx3rr(XD, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        svrcx_rx(W(XD))
+
+#define svrcx3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_ld(W(XD), W(MT), W(DT))                                       \
+        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svrcx_rx(W(XD))
+
+#define svrcx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x04))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x10))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x10))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x14))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x14))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x18))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x18))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x1C))                              \
+        shrwx_mx(Mebp,  inf_SCR01(0x1C))                                    \
+        stack_ld(Recx)                                                      \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svrcn_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrcn3rr(W(XG), W(XG), W(XS))
+
+#define svrcn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrcn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrcn3rr(XD, XS, XT)                                                \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        svrcn_rx(W(XD))
+
+#define svrcn3ld(XD, XS, MT, DT)                                            \
+        movcx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movcx_ld(W(XD), W(MT), W(DT))                                       \
+        movcx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svrcn_rx(W(XD))
+
+#define svrcn_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Recx)                                                      \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x04))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x04))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x08))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x0C))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x0C))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x10))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x10))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x14))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x14))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x18))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x18))                                    \
+        movwx_ld(Recx,  Mebp, inf_SCR02(0x1C))                              \
+        shrwn_mx(Mebp,  inf_SCR01(0x1C))                                    \
+        stack_ld(Recx)                                                      \
+        movcx_ld(W(XD), Mebp, inf_SCR01(0))
+
 /****************   packed single-precision integer compare   *****************/
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
@@ -5783,6 +6116,14 @@
         notcx_rx(W(XD))
 
 /*--------------------------------   64-bit   -------------------- 256-bit ---*/
+
+/* elm (D = S), store first SIMD element with natural alignment
+ * allows to decouple scalar subset from SIMD where appropriate */
+
+#define elmdx_st(XS, MD, DD) /* 1st elem as in mem with SIMD load/store */  \
+        elmjx_st(W(XS), W(MD), W(DD))
+
+/***************   packed double-precision generic move/logic   ***************/
 
 /* mov (D = S) */
 
@@ -6796,6 +7137,105 @@
         shrzn_mx(Mebp,  inf_SCR01(0x00))                                    \
         shrzn_mx(Mebp,  inf_SCR01(0x08))                                    \
         shrzn_mx(Mebp,  inf_SCR01(0x10))                                    \
+        shrzn_mx(Mebp,  inf_SCR01(0x18))                                    \
+        stack_ld(Recx)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* svl (G = G << S), (D = S << T) if (#D != #T) - variable, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svldx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svldx3rr(W(XG), W(XG), W(XS))
+
+#define svldx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svldx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svldx3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        svldx_rx(W(XD))
+
+#define svldx3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svldx_rx(W(XD))
+
+#define svldx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shlzx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shlzx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x10))                              \
+        shlzx_mx(Mebp,  inf_SCR01(0x10))                                    \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x18))                              \
+        shlzx_mx(Mebp,  inf_SCR01(0x18))                                    \
+        stack_ld(Recx)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, unsigned
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svrdx_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrdx3rr(W(XG), W(XG), W(XS))
+
+#define svrdx_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrdx3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        svrdx_rx(W(XD))
+
+#define svrdx3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svrdx_rx(W(XD))
+
+#define svrdx_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shrzx_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shrzx_mx(Mebp,  inf_SCR01(0x08))                                    \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x10))                              \
+        shrzx_mx(Mebp,  inf_SCR01(0x10))                                    \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x18))                              \
+        shrzx_mx(Mebp,  inf_SCR01(0x18))                                    \
+        stack_ld(Recx)                                                      \
+        movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+/* svr (G = G >> S), (D = S >> T) if (#D != #T) - variable, signed
+ * for maximum compatibility: shift count must be modulo elem-size */
+
+#define svrdn_rr(XG, XS)     /* variable shift with per-elem count */       \
+        svrdn3rr(W(XG), W(XG), W(XS))
+
+#define svrdn_ld(XG, MS, DS) /* variable shift with per-elem count */       \
+        svrdn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define svrdn3rr(XD, XS, XT)                                                \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_st(W(XT), Mebp, inf_SCR02(0))                                 \
+        svrdn_rx(W(XD))
+
+#define svrdn3ld(XD, XS, MT, DT)                                            \
+        movdx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        movdx_ld(W(XD), W(MT), W(DT))                                       \
+        movdx_st(W(XD), Mebp, inf_SCR02(0))                                 \
+        svrdn_rx(W(XD))
+
+#define svrdn_rx(XD) /* not portable, do not use outside */                 \
+        stack_st(Recx)                                                      \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x00))                              \
+        shrzn_mx(Mebp,  inf_SCR01(0x00))                                    \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x08))                              \
+        shrzn_mx(Mebp,  inf_SCR01(0x08))                                    \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x10))                              \
+        shrzn_mx(Mebp,  inf_SCR01(0x10))                                    \
+        movzx_ld(Recx,  Mebp, inf_SCR02(0x18))                              \
         shrzn_mx(Mebp,  inf_SCR01(0x18))                                    \
         stack_ld(Recx)                                                      \
         movdx_ld(W(XD), Mebp, inf_SCR01(0))

@@ -56,7 +56,7 @@ simd_test_z64f64:
 #
 # Prerequisites for the build:
 # (cross-)compiler for s390x is installed and in the PATH variable.
-# in simd_test.cpp set SUB_TEST to 23
+# in simd_test.cpp set SUB_TEST to 27 (c_test14 fails with z64f32)
 # sudo apt-get install make g++-s390x-linux-gnu
 #
 # Prerequisites for emulation:
@@ -72,7 +72,7 @@ simd_test_z64f64:
 # Use "-c 1" option to reduce test time when emulating with QEMU
 
 # Clang native build should theoretically work too (not tested), use (replace):
-# clang++ -O0 (in place of ...-g++ -O3) on s390x host (z13/z14)
+# clang++ -O0 (in place of ...-g++ -O3) on s390x host (z15/z17)
 # sudo apt-get install clang
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h.
