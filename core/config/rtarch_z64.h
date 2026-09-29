@@ -469,8 +469,12 @@
 
 #define movwx_mi(MD, DD, IS)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A1(DD), EMPTY2)   \
+        EMIT6(MIM(0xC2, SPxx,0x04,0x08)) /* SP -= 8 */                      \
+        EMIT6(0xE30000000024 | MSM(TMxx,   SPxx,0x00))                      \
         EMIT6(MIM(0xC0, TMxx,   0x01,VAL(IS)))                              \
-        EMIT6(MDM(0x50, TMxx,   MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
+        EMIT6(MDM(0x50, TMxx,   MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))  \
+        EMIT6(0xE30000000004 | MSM(TMxx,   SPxx,0x00))                      \
+        EMIT6(MIM(0xC2, SPxx,0x08,0x08)) /* SP += 8 */
 
 #define movwx_rr(RD, RS)                                                    \
         EMITW(MGM(0x16, REG(RD),REG(RS),0x00))
@@ -823,38 +827,46 @@
  * set-flags: no */
 
 #define notwx_rx(RG)                                                        \
-        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))
+        EMITW(0xB2220000 | TPxx << 4)                                       \
+        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
+        EMITH(0x0400 | TPxx << 4)
 
 #define notwx_mx(MG, DG)                                                    \
+        EMITW(0xB2220000 | TPxx << 4)                                       \
+        EMIT6(MIM(0xC2, SPxx,0x04,0x08)) /* SP -= 8 */                      \
+        EMIT6(0xE30000000024 | MSM(TPxx,   SPxx,0x00))                      \
+        EMIT6(MIM(0xC2, SPxx,0x04,0x08)) /* SP -= 8 */                      \
+        EMIT6(0xE30000000024 | MSM(TMxx,   SPxx,0x00))                      \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
-        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(0xE30000000004 | MSM(TMxx,   SPxx,0x00))                      \
+        EMIT6(MIM(0xC2, SPxx,0x08,0x08)) /* SP += 8 */                      \
+        EMIT6(0xE30000000004 | MSM(TPxx,   SPxx,0x00))                      \
+        EMIT6(MIM(0xC2, SPxx,0x08,0x08)) /* SP += 8 */                      \
+        EMITH(0x0400 | TPxx << 4)
 
 /* neg (G = -G)
  * set-flags: undefined (*_*), yes (*Z*) */
 
 #define negwx_rx(RG)                                                        \
-        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
-        EMIT6(MIM(0xC2, REG(RG),0x09,0x01))
+        EMITH(MRM(0x13, REG(RG),REG(RG),0x00))
 
 #define negwx_mx(MG, DG)                                                    \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
-        EMIT6(MIM(0xC2, TMxx,   0x09,0x01))                                 \
+        EMITH(MRM(0x13, TMxx,   TMxx,   0x00))                              \
         EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
 
 
 #define negwxZrx(RG)                                                        \
-        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
-        EMIT6(MIM(0xC2, REG(RG),0x09,0x01))
+        EMITH(MRM(0x13, REG(RG),REG(RG),0x00))
 
 #define negwxZmx(MG, DG)                                                    \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
-        EMIT6(MIM(0xC2, TMxx,   0x09,0x01))                                 \
+        EMITH(MRM(0x13, TMxx,   TMxx,   0x00))                              \
         EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
 
 /* add (G = G + S)
@@ -1666,8 +1678,12 @@
 
 #define movzx_mi(MD, DD, IS)                                                \
         AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A1(DD), EMPTY2)   \
+        EMIT6(MIM(0xC2, SPxx,0x04,0x08)) /* SP -= 8 */                      \
+        EMIT6(0xE30000000024 | MSM(TMxx,   SPxx,0x00))                      \
         EMIT6(MIM(0xC0, TMxx,   0x01,VAL(IS)))                              \
-        EMIT6(MDM(0x24, TMxx,   MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
+        EMIT6(MDM(0x24, TMxx,   MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))  \
+        EMIT6(0xE30000000004 | MSM(TMxx,   SPxx,0x00))                      \
+        EMIT6(MIM(0xC2, SPxx,0x08,0x08)) /* SP += 8 */
 
 #define movzx_rr(RD, RS)                                                    \
         EMITW(MGM(0x04, REG(RD),REG(RS),0x00))
@@ -1701,9 +1717,13 @@
 
 #define movzx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
         AUW(SIB(MD),  EMPTY,  EMPTY,    REG(MD), VAL(DD), A1(DD), EMPTY2)   \
+        EMIT6(MIM(0xC2, SPxx,0x04,0x08)) /* SP -= 8 */                      \
+        EMIT6(0xE30000000024 | MSM(TMxx,   SPxx,0x00))                      \
         EMIT6(MIM(0xC0, TMxx,   0x01,VAL(IS)))                              \
         EMIT6(MIM(0xC0, TMxx,   0x08,VAL(IT)))                              \
-        EMIT6(MDM(0x24, TMxx,   MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))
+        EMIT6(MDM(0x24, TMxx,   MOD(MD),REG(MD), VAL(DD), B1(DD), P1(DD)))  \
+        EMIT6(0xE30000000004 | MSM(TMxx,   SPxx,0x00))                      \
+        EMIT6(MIM(0xC2, SPxx,0x08,0x08)) /* SP += 8 */
 
 /* and (G = G & S)
  * set-flags: undefined (*_*), yes (*Z*) */
@@ -2025,44 +2045,48 @@
  * set-flags: no */
 
 #define notzx_rx(RG)                                                        \
+        EMITW(0xB2220000 | TPxx << 4)                                       \
         EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
-        EMIT6(MIM(0xC0, REG(RG),0x06,0xFFFFFFFF))
+        EMIT6(MIM(0xC0, REG(RG),0x06,0xFFFFFFFF))                           \
+        EMITH(0x0400 | TPxx << 4)
 
 #define notzx_mx(MG, DG)                                                    \
+        EMITW(0xB2220000 | TPxx << 4)                                       \
+        EMIT6(MIM(0xC2, SPxx,0x04,0x08)) /* SP -= 8 */                      \
+        EMIT6(0xE30000000024 | MSM(TPxx,   SPxx,0x00))                      \
+        EMIT6(MIM(0xC2, SPxx,0x04,0x08)) /* SP -= 8 */                      \
+        EMIT6(0xE30000000024 | MSM(TMxx,   SPxx,0x00))                      \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
         EMIT6(MIM(0xC0, TMxx,   0x06,0xFFFFFFFF))                           \
-        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMIT6(0xE30000000004 | MSM(TMxx,   SPxx,0x00))                      \
+        EMIT6(MIM(0xC2, SPxx,0x08,0x08)) /* SP += 8 */                      \
+        EMIT6(0xE30000000004 | MSM(TPxx,   SPxx,0x00))                      \
+        EMIT6(MIM(0xC2, SPxx,0x08,0x08)) /* SP += 8 */                      \
+        EMITH(0x0400 | TPxx << 4)
 
 /* neg (G = -G)
  * set-flags: undefined (*_*), yes (*Z*) */
 
 #define negzx_rx(RG)                                                        \
-        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
-        EMIT6(MIM(0xC0, REG(RG),0x06,0xFFFFFFFF))                           \
-        EMIT6(MIM(0xC2, REG(RG),0x08,0x01))
+        EMITW(MGM(0x03, REG(RG),REG(RG),0x00))
 
 #define negzx_mx(MG, DG)                                                    \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
-        EMIT6(MIM(0xC0, TMxx,   0x06,0xFFFFFFFF))                           \
-        EMIT6(MIM(0xC2, TMxx,   0x08,0x01))                                 \
+        EMITW(MGM(0x03, TMxx,   TMxx,   0x00))                              \
         EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
 
 
 #define negzxZrx(RG)                                                        \
-        EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
-        EMIT6(MIM(0xC0, REG(RG),0x06,0xFFFFFFFF))                           \
-        EMIT6(MIM(0xC2, REG(RG),0x08,0x01))
+        EMITW(MGM(0x03, REG(RG),REG(RG),0x00))
 
 #define negzxZmx(MG, DG)                                                    \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
-        EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
-        EMIT6(MIM(0xC0, TMxx,   0x06,0xFFFFFFFF))                           \
-        EMIT6(MIM(0xC2, TMxx,   0x08,0x01))                                 \
+        EMITW(MGM(0x03, TMxx,   TMxx,   0x00))                              \
         EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
 
 /* add (G = G + S)
@@ -5407,7 +5431,7 @@
 
 #define mkjcx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         EMIT6(MXM(0x94, TmmM,   REG(XS),RYG(XS), 0x02))                     \
-        EMIT6(MXM(0x94, TmmM,   TmmM,   TmmM,    0x02))                     \
+        EMIT6(MXM(0x94, TmmM,   TmmM,   TmmM,    0x01))                     \
         EMIT6(MXM(0x21, TMxx,   TmmM,   0x00,    0x03))                     \
         AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb,                                 \
         S0(RT_SIMD_MASK_##mask##32_256), EMPTY2)
@@ -6605,7 +6629,7 @@
 
 #define mkjdx_rx(XS, mask, lb)   /* destroys Reax, if S == mask jump lb */  \
         EMIT6(MXM(0x94, TmmM,   REG(XS),RYG(XS), 0x03))                     \
-        EMIT6(MXM(0x94, TmmM,   TmmM,   TmmM,    0x03))                     \
+        EMIT6(MXM(0x94, TmmM,   TmmM,   TmmM,    0x02))                     \
         EMIT6(MXM(0x21, TMxx,   TmmM,   0x00,    0x03))                     \
         AUW(EMPTY, EMPTY, EMPTY, EMPTY, lb,                                 \
         S0(RT_SIMD_MASK_##mask##64_256), EMPTY2)

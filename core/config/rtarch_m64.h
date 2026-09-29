@@ -200,18 +200,30 @@
         AUW(EMPTY,    VAL(IT), REG(RD), EMPTY,   EMPTY,   EMPTY2, G3(IT))   \
         EMITW(0x24000000 | REG(RD)<<21 | REG(RD)<<16 | ((VAL(IS)>>31)&1))   \
         EMITW(0x0000003C | MRM(REG(RD), 0x00,    REG(RD)))                  \
+        EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (-0x08 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TIxx))                     \
         AUW(EMPTY,    VAL(IS), TIxx,    EMPTY,   EMPTY,   EMPTY2, G1(IS))   \
         EMITW(0x00000000 | MIM(REG(RD), REG(RD), VAL(IS), T1(IS), M1(IS)) | \
-        (M(TP1(IS) == 0) & 0x64000000) | (M(TP1(IS) != 0) & 0x0000002D))
+        (M(TP1(IS) == 0) & 0x64000000) | (M(TP1(IS) != 0) & 0x0000002D))    \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TIxx))                     \
+        EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (+0x08 & 0xFFFF))
 
 #define movzx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
+        EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (-0x08 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TMxx))                     \
         AUW(EMPTY,    VAL(IT), TMxx,    EMPTY,   EMPTY,   EMPTY2, G3(IT))   \
         EMITW(0x24000000 | TMxx<<21 | TMxx<<16 | ((VAL(IS)>>31)&1))         \
         EMITW(0x0000003C | MRM(TMxx,    0x00,    TMxx))                     \
+        EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (-0x08 & 0xFFFF))  \
+        EMITW(0xFC000000 | MRM(0x00,    SPxx,    TIxx))                     \
         AUW(SIB(MD),  VAL(IS), TIxx,    MOD(MD), VAL(DD), A1(DD), G1(IS))   \
         EMITW(0x00000000 | MIM(TMxx,    TMxx,    VAL(IS), T1(IS), M1(IS)) | \
         (M(TP1(IS) == 0) & 0x64000000) | (M(TP1(IS) != 0) & 0x0000002D))    \
-        EMITW(0xFC000000 | MDM(TMxx,    MOD(MD), VAL(DD), B3(DD), P1(DD)))
+        EMITW(0xFC000000 | MDM(TMxx,    MOD(MD), VAL(DD), B3(DD), P1(DD)))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TIxx))                     \
+        EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (+0x08 & 0xFFFF))  \
+        EMITW(0xDC000000 | MRM(0x00,    SPxx,    TMxx))                     \
+        EMITW(0x64000000 | MRM(0x00,    SPxx,    SPxx) | (+0x08 & 0xFFFF))
 
 /* and (G = G & S)
  * set-flags: undefined (*_*), yes (*Z*) */

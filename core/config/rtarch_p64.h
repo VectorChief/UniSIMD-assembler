@@ -201,10 +201,10 @@
         AUW(EMPTY,    VAL(IS), RXG(RD), EMPTY,   EMPTY,   EMPTY2, G3(IS))
 
 #define movzx_mj(MD, DD, IT, IS) /* IT - upper 32-bit, IS - lower 32-bit */ \
-        AUW(EMPTY,    VAL(IT), TMxx,    EMPTY,   EMPTY,   EMPTY2, G3(IT))   \
-        EMITW(0x780007C6 | MSM(TMxx,    TMxx,    0x00))                     \
-        AUW(SIB(MD),  VAL(IS), TMxx+32, MOD(MD), VAL(DD), C1(DD), G3(IS))   \
-        EMITW(0x00000000 | MDM(TMxx,    MOD(MD), VAL(DD), B1(DD), Q1(DD)))
+        AUW(EMPTY,    VAL(IT), TWxx,    EMPTY,   EMPTY,   EMPTY2, G3(IT))   \
+        EMITW(0x780007C6 | MSM(TWxx,    TWxx,    0x00))                     \
+        AUW(SIB(MD),  VAL(IS), TWxx+32, MOD(MD), VAL(DD), C1(DD), G3(IS))   \
+        EMITW(0x00000000 | MDM(TWxx,    MOD(MD), VAL(DD), B1(DD), Q1(DD)))
 
 /* and (G = G & S)
  * set-flags: undefined (*_*), yes (*Z*) */
