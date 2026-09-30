@@ -3925,6 +3925,70 @@
 
 /****************   packed single-precision integer compare   *****************/
 
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minix_rr(XG, XS)                                                    \
+        minix3rr(W(XG), W(XG), W(XS))
+
+#define minix_ld(XG, MS, DS)                                                \
+        minix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minix3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFC, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define minix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xFC, REG(XD),REG(XS),   TmmM, 0x02))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minin_rr(XG, XS)                                                    \
+        minin3rr(W(XG), W(XG), W(XS))
+
+#define minin_ld(XG, MS, DS)                                                \
+        minin3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minin3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFE, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define minin3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xFE, REG(XD),REG(XS),   TmmM, 0x02))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxix_rr(XG, XS)                                                    \
+        maxix3rr(W(XG), W(XG), W(XS))
+
+#define maxix_ld(XG, MS, DS)                                                \
+        maxix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxix3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFD, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define maxix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xFD, REG(XD),REG(XS),   TmmM, 0x02))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxin_rr(XG, XS)                                                    \
+        maxin3rr(W(XG), W(XG), W(XS))
+
+#define maxin_ld(XG, MS, DS)                                                \
+        maxin3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxin3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFE, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define maxin3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xFE, REG(XD),REG(XS),   TmmM, 0x02))
+
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqix_rr(XG, XS)                                                    \
@@ -3957,6 +4021,134 @@
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMIT6(MXM(0xF8, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        notix_rx(W(XD))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltix_rr(XG, XS)                                                    \
+        cltix3rr(W(XG), W(XG), W(XS))
+
+#define cltix_ld(XG, MS, DS)                                                \
+        cltix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltix3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF9, REG(XD),REG(XT),REG(XS), 0x02))
+
+#define cltix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xF9, REG(XD),TmmM,   REG(XS), 0x02))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltin_rr(XG, XS)                                                    \
+        cltin3rr(W(XG), W(XG), W(XS))
+
+#define cltin_ld(XG, MS, DS)                                                \
+        cltin3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltin3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFB, REG(XD),REG(XT),REG(XS), 0x02))
+
+#define cltin3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xFB, REG(XD),TmmM,   REG(XS), 0x02))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cleix_rr(XG, XS)                                                    \
+        cleix3rr(W(XG), W(XG), W(XS))
+
+#define cleix_ld(XG, MS, DS)                                                \
+        cleix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cleix3rr(XD, XS, XT)                                                \
+        cgtix3rr(W(XD), W(XS), W(XT))                                       \
+        notix_rx(W(XD))
+
+#define cleix3ld(XD, XS, MT, DT)                                            \
+        cgtix3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notix_rx(W(XD))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define clein_rr(XG, XS)                                                    \
+        clein3rr(W(XG), W(XG), W(XS))
+
+#define clein_ld(XG, MS, DS)                                                \
+        clein3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clein3rr(XD, XS, XT)                                                \
+        cgtin3rr(W(XD), W(XS), W(XT))                                       \
+        notix_rx(W(XD))
+
+#define clein3ld(XD, XS, MT, DT)                                            \
+        cgtin3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notix_rx(W(XD))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtix_rr(XG, XS)                                                    \
+        cgtix3rr(W(XG), W(XG), W(XS))
+
+#define cgtix_ld(XG, MS, DS)                                                \
+        cgtix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtix3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF9, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define cgtix3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xF9, REG(XD),REG(XS),   TmmM, 0x02))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtin_rr(XG, XS)                                                    \
+        cgtin3rr(W(XG), W(XG), W(XS))
+
+#define cgtin_ld(XG, MS, DS)                                                \
+        cgtin3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtin3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFB, REG(XD),REG(XS),REG(XT), 0x02))
+
+#define cgtin3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xFB, REG(XD),REG(XS),   TmmM, 0x02))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgeix_rr(XG, XS)                                                    \
+        cgeix3rr(W(XG), W(XG), W(XS))
+
+#define cgeix_ld(XG, MS, DS)                                                \
+        cgeix3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgeix3rr(XD, XS, XT)                                                \
+        cltix3rr(W(XD), W(XS), W(XT))                                       \
+        notix_rx(W(XD))
+
+#define cgeix3ld(XD, XS, MT, DT)                                            \
+        cltix3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notix_rx(W(XD))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgein_rr(XG, XS)                                                    \
+        cgein3rr(W(XG), W(XG), W(XS))
+
+#define cgein_ld(XG, MS, DS)                                                \
+        cgein3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgein3rr(XD, XS, XT)                                                \
+        cltin3rr(W(XD), W(XS), W(XT))                                       \
+        notix_rx(W(XD))
+
+#define cgein3ld(XD, XS, MT, DT)                                            \
+        cltin3ld(W(XD), W(XS), W(MT), W(DT))                                \
         notix_rx(W(XD))
 
 /*--------------------------------   64-bit   -------------------- 128-bit ---*/
@@ -4907,6 +5099,70 @@
 
 /****************   packed double-precision integer compare   *****************/
 
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define minjx_rr(XG, XS)                                                    \
+        minjx3rr(W(XG), W(XG), W(XS))
+
+#define minjx_ld(XG, MS, DS)                                                \
+        minjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minjx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFC, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define minjx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xFC, REG(XD),REG(XS),   TmmM, 0x03))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define minjn_rr(XG, XS)                                                    \
+        minjn3rr(W(XG), W(XG), W(XS))
+
+#define minjn_ld(XG, MS, DS)                                                \
+        minjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define minjn3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFE, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define minjn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xFE, REG(XD),REG(XS),   TmmM, 0x03))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxjx_rr(XG, XS)                                                    \
+        maxjx3rr(W(XG), W(XG), W(XS))
+
+#define maxjx_ld(XG, MS, DS)                                                \
+        maxjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxjx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFD, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define maxjx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xFD, REG(XD),REG(XS),   TmmM, 0x03))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxjn_rr(XG, XS)                                                    \
+        maxjn3rr(W(XG), W(XG), W(XS))
+
+#define maxjn_ld(XG, MS, DS)                                                \
+        maxjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxjn3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFE, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define maxjn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xFE, REG(XD),REG(XS),   TmmM, 0x03))
+
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqjx_rr(XG, XS)                                                    \
@@ -4939,6 +5195,134 @@
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMIT6(MXM(0xF8, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        notjx_rx(W(XD))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltjx_rr(XG, XS)                                                    \
+        cltjx3rr(W(XG), W(XG), W(XS))
+
+#define cltjx_ld(XG, MS, DS)                                                \
+        cltjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltjx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF9, REG(XD),REG(XT),REG(XS), 0x03))
+
+#define cltjx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xF9, REG(XD),TmmM,   REG(XS), 0x03))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltjn_rr(XG, XS)                                                    \
+        cltjn3rr(W(XG), W(XG), W(XS))
+
+#define cltjn_ld(XG, MS, DS)                                                \
+        cltjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltjn3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFB, REG(XD),REG(XT),REG(XS), 0x03))
+
+#define cltjn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xFB, REG(XD),TmmM,   REG(XS), 0x03))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define clejx_rr(XG, XS)                                                    \
+        clejx3rr(W(XG), W(XG), W(XS))
+
+#define clejx_ld(XG, MS, DS)                                                \
+        clejx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clejx3rr(XD, XS, XT)                                                \
+        cgtjx3rr(W(XD), W(XS), W(XT))                                       \
+        notjx_rx(W(XD))
+
+#define clejx3ld(XD, XS, MT, DT)                                            \
+        cgtjx3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notjx_rx(W(XD))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define clejn_rr(XG, XS)                                                    \
+        clejn3rr(W(XG), W(XG), W(XS))
+
+#define clejn_ld(XG, MS, DS)                                                \
+        clejn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clejn3rr(XD, XS, XT)                                                \
+        cgtjn3rr(W(XD), W(XS), W(XT))                                       \
+        notjx_rx(W(XD))
+
+#define clejn3ld(XD, XS, MT, DT)                                            \
+        cgtjn3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notjx_rx(W(XD))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtjx_rr(XG, XS)                                                    \
+        cgtjx3rr(W(XG), W(XG), W(XS))
+
+#define cgtjx_ld(XG, MS, DS)                                                \
+        cgtjx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtjx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF9, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define cgtjx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xF9, REG(XD),REG(XS),   TmmM, 0x03))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtjn_rr(XG, XS)                                                    \
+        cgtjn3rr(W(XG), W(XG), W(XS))
+
+#define cgtjn_ld(XG, MS, DS)                                                \
+        cgtjn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtjn3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFB, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define cgtjn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xFB, REG(XD),REG(XS),   TmmM, 0x03))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgejx_rr(XG, XS)                                                    \
+        cgejx3rr(W(XG), W(XG), W(XS))
+
+#define cgejx_ld(XG, MS, DS)                                                \
+        cgejx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgejx3rr(XD, XS, XT)                                                \
+        cltjx3rr(W(XD), W(XS), W(XT))                                       \
+        notjx_rx(W(XD))
+
+#define cgejx3ld(XD, XS, MT, DT)                                            \
+        cltjx3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notjx_rx(W(XD))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgejn_rr(XG, XS)                                                    \
+        cgejn3rr(W(XG), W(XG), W(XS))
+
+#define cgejn_ld(XG, MS, DS)                                                \
+        cgejn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgejn3rr(XD, XS, XT)                                                \
+        cltjn3rr(W(XD), W(XS), W(XT))                                       \
+        notjx_rx(W(XD))
+
+#define cgejn3ld(XD, XS, MT, DT)                                            \
+        cltjn3ld(W(XD), W(XS), W(MT), W(DT))                                \
         notjx_rx(W(XD))
 
 /*--------------------------------   32-bit   -------------------- 256-bit ---*/
@@ -6099,6 +6483,82 @@
 
 /****************   packed single-precision integer compare   *****************/
 
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define mincx_rr(XG, XS)                                                    \
+        mincx3rr(W(XG), W(XG), W(XS))
+
+#define mincx_ld(XG, MS, DS)                                                \
+        mincx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mincx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFC, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xFC, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define mincx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFC, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFC, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define mincn_rr(XG, XS)                                                    \
+        mincn3rr(W(XG), W(XG), W(XS))
+
+#define mincn_ld(XG, MS, DS)                                                \
+        mincn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mincn3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFE, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xFE, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define mincn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFE, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFE, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxcx_rr(XG, XS)                                                    \
+        maxcx3rr(W(XG), W(XG), W(XS))
+
+#define maxcx_ld(XG, MS, DS)                                                \
+        maxcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxcx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFD, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xFD, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define maxcx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFD, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFD, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxcn_rr(XG, XS)                                                    \
+        maxcn3rr(W(XG), W(XG), W(XS))
+
+#define maxcn_ld(XG, MS, DS)                                                \
+        maxcn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxcn3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFF, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xFF, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define maxcn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFF, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFF, RYG(XD),RYG(XS),   TmmM, 0x02))
+
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqcx_rr(XG, XS)                                                    \
@@ -6137,6 +6597,146 @@
         EMIT6(MXM(0xF8, REG(XD),REG(XS),   TmmM, 0x02))                     \
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
         EMIT6(MXM(0xF8, RYG(XD),RYG(XS),   TmmM, 0x02))                     \
+        notcx_rx(W(XD))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltcx_rr(XG, XS)                                                    \
+        cltcx3rr(W(XG), W(XG), W(XS))
+
+#define cltcx_ld(XG, MS, DS)                                                \
+        cltcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltcx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF9, REG(XD),REG(XT),REG(XS), 0x02))                     \
+        EMIT6(MXM(0xF9, RYG(XD),RYG(XT),RYG(XS), 0x02))
+
+#define cltcx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF9, REG(XD),TmmM,   REG(XS), 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF9, RYG(XD),TmmM,   RYG(XS), 0x02))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltcn_rr(XG, XS)                                                    \
+        cltcn3rr(W(XG), W(XG), W(XS))
+
+#define cltcn_ld(XG, MS, DS)                                                \
+        cltcn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltcn3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFB, REG(XD),REG(XT),REG(XS), 0x02))                     \
+        EMIT6(MXM(0xFB, RYG(XD),RYG(XT),RYG(XS), 0x02))
+
+#define cltcn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFB, REG(XD),TmmM,   REG(XS), 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFB, RYG(XD),TmmM,   RYG(XS), 0x02))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define clecx_rr(XG, XS)                                                    \
+        clecx3rr(W(XG), W(XG), W(XS))
+
+#define clecx_ld(XG, MS, DS)                                                \
+        clecx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clecx3rr(XD, XS, XT)                                                \
+        cgtcx3rr(W(XD), W(XS), W(XT))                                       \
+        notcx_rx(W(XD))
+
+#define clecx3ld(XD, XS, MT, DT)                                            \
+        cgtcx3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notcx_rx(W(XD))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define clecn_rr(XG, XS)                                                    \
+        clecn3rr(W(XG), W(XG), W(XS))
+
+#define clecn_ld(XG, MS, DS)                                                \
+        clecn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define clecn3rr(XD, XS, XT)                                                \
+        cgtcn3rr(W(XD), W(XS), W(XT))                                       \
+        notcx_rx(W(XD))
+
+#define clecn3ld(XD, XS, MT, DT)                                            \
+        cgtcn3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notcx_rx(W(XD))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtcx_rr(XG, XS)                                                    \
+        cgtcx3rr(W(XG), W(XG), W(XS))
+
+#define cgtcx_ld(XG, MS, DS)                                                \
+        cgtcx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtcx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF9, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xF9, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define cgtcx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF9, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF9, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtcn_rr(XG, XS)                                                    \
+        cgtcn3rr(W(XG), W(XG), W(XS))
+
+#define cgtcn_ld(XG, MS, DS)                                                \
+        cgtcn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtcn3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFB, REG(XD),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MXM(0xFB, RYG(XD),RYG(XS),RYG(XT), 0x02))
+
+#define cgtcn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFB, REG(XD),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFB, RYG(XD),RYG(XS),   TmmM, 0x02))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgecx_rr(XG, XS)                                                    \
+        cgecx3rr(W(XG), W(XG), W(XS))
+
+#define cgecx_ld(XG, MS, DS)                                                \
+        cgecx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgecx3rr(XD, XS, XT)                                                \
+        cltcx3rr(W(XD), W(XS), W(XT))                                       \
+        notcx_rx(W(XD))
+
+#define cgecx3ld(XD, XS, MT, DT)                                            \
+        cltcx3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notcx_rx(W(XD))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgecn_rr(XG, XS)                                                    \
+        cgecn3rr(W(XG), W(XG), W(XS))
+
+#define cgecn_ld(XG, MS, DS)                                                \
+        cgecn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgecn3rr(XD, XS, XT)                                                \
+        cltcn3rr(W(XD), W(XS), W(XT))                                       \
+        notcx_rx(W(XD))
+
+#define cgecn3ld(XD, XS, MT, DT)                                            \
+        cltcn3ld(W(XD), W(XS), W(MT), W(DT))                                \
         notcx_rx(W(XD))
 
 /*--------------------------------   64-bit   -------------------- 256-bit ---*/
@@ -7266,6 +7866,82 @@
 
 /****************   packed double-precision integer compare   *****************/
 
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), unsigned */
+
+#define mindx_rr(XG, XS)                                                    \
+        mindx3rr(W(XG), W(XG), W(XS))
+
+#define mindx_ld(XG, MS, DS)                                                \
+        mindx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mindx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFC, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xFC, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define mindx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFC, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFC, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+/* min (G = G < S ? G : S), (D = S < T ? S : T) if (#D != #T), signed */
+
+#define mindn_rr(XG, XS)                                                    \
+        mindn3rr(W(XG), W(XG), W(XS))
+
+#define mindn_ld(XG, MS, DS)                                                \
+        mindn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define mindn3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFE, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xFE, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define mindn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFE, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFE, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), unsigned */
+
+#define maxdx_rr(XG, XS)                                                    \
+        maxdx3rr(W(XG), W(XG), W(XS))
+
+#define maxdx_ld(XG, MS, DS)                                                \
+        maxdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxdx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFD, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xFD, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define maxdx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFD, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFD, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+/* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T), signed */
+
+#define maxdn_rr(XG, XS)                                                    \
+        maxdn3rr(W(XG), W(XG), W(XS))
+
+#define maxdn_ld(XG, MS, DS)                                                \
+        maxdn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define maxdn3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFF, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xFF, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define maxdn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFF, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFF, RYG(XD),RYG(XS),   TmmM, 0x03))
+
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
 #define ceqdx_rr(XG, XS)                                                    \
@@ -7304,6 +7980,146 @@
         EMIT6(MXM(0xF8, REG(XD),REG(XS),   TmmM, 0x03))                     \
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
         EMIT6(MXM(0xF8, RYG(XD),RYG(XS),   TmmM, 0x03))                     \
+        notdx_rx(W(XD))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cltdx_rr(XG, XS)                                                    \
+        cltdx3rr(W(XG), W(XG), W(XS))
+
+#define cltdx_ld(XG, MS, DS)                                                \
+        cltdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltdx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF9, REG(XD),REG(XT),REG(XS), 0x03))                     \
+        EMIT6(MXM(0xF9, RYG(XD),RYG(XT),RYG(XS), 0x03))
+
+#define cltdx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF9, REG(XD),TmmM,   REG(XS), 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF9, RYG(XD),TmmM,   RYG(XS), 0x03))
+
+/* clt (G = G < S ? -1 : 0), (D = S < T ? -1 : 0) if (#D != #T), signed */
+
+#define cltdn_rr(XG, XS)                                                    \
+        cltdn3rr(W(XG), W(XG), W(XS))
+
+#define cltdn_ld(XG, MS, DS)                                                \
+        cltdn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cltdn3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFB, REG(XD),REG(XT),REG(XS), 0x03))                     \
+        EMIT6(MXM(0xFB, RYG(XD),RYG(XT),RYG(XS), 0x03))
+
+#define cltdn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFB, REG(XD),TmmM,   REG(XS), 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFB, RYG(XD),TmmM,   RYG(XS), 0x03))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cledx_rr(XG, XS)                                                    \
+        cledx3rr(W(XG), W(XG), W(XS))
+
+#define cledx_ld(XG, MS, DS)                                                \
+        cledx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cledx3rr(XD, XS, XT)                                                \
+        cgtdx3rr(W(XD), W(XS), W(XT))                                       \
+        notdx_rx(W(XD))
+
+#define cledx3ld(XD, XS, MT, DT)                                            \
+        cgtdx3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notdx_rx(W(XD))
+
+/* cle (G = G <= S ? -1 : 0), (D = S <= T ? -1 : 0) if (#D != #T), signed */
+
+#define cledn_rr(XG, XS)                                                    \
+        cledn3rr(W(XG), W(XG), W(XS))
+
+#define cledn_ld(XG, MS, DS)                                                \
+        cledn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cledn3rr(XD, XS, XT)                                                \
+        cgtdn3rr(W(XD), W(XS), W(XT))                                       \
+        notdx_rx(W(XD))
+
+#define cledn3ld(XD, XS, MT, DT)                                            \
+        cgtdn3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notdx_rx(W(XD))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgtdx_rr(XG, XS)                                                    \
+        cgtdx3rr(W(XG), W(XG), W(XS))
+
+#define cgtdx_ld(XG, MS, DS)                                                \
+        cgtdx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtdx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xF9, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xF9, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define cgtdx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF9, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xF9, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+/* cgt (G = G > S ? -1 : 0), (D = S > T ? -1 : 0) if (#D != #T), signed */
+
+#define cgtdn_rr(XG, XS)                                                    \
+        cgtdn3rr(W(XG), W(XG), W(XS))
+
+#define cgtdn_ld(XG, MS, DS)                                                \
+        cgtdn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgtdn3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xFB, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xFB, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define cgtdn3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFB, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xFB, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), unsigned */
+
+#define cgedx_rr(XG, XS)                                                    \
+        cgedx3rr(W(XG), W(XG), W(XS))
+
+#define cgedx_ld(XG, MS, DS)                                                \
+        cgedx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgedx3rr(XD, XS, XT)                                                \
+        cltdx3rr(W(XD), W(XS), W(XT))                                       \
+        notdx_rx(W(XD))
+
+#define cgedx3ld(XD, XS, MT, DT)                                            \
+        cltdx3ld(W(XD), W(XS), W(MT), W(DT))                                \
+        notdx_rx(W(XD))
+
+/* cge (G = G >= S ? -1 : 0), (D = S >= T ? -1 : 0) if (#D != #T), signed */
+
+#define cgedn_rr(XG, XS)                                                    \
+        cgedn3rr(W(XG), W(XG), W(XS))
+
+#define cgedn_ld(XG, MS, DS)                                                \
+        cgedn3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define cgedn3rr(XD, XS, XT)                                                \
+        cltdn3rr(W(XD), W(XS), W(XT))                                       \
+        notdx_rx(W(XD))
+
+#define cgedn3ld(XD, XS, MT, DT)                                            \
+        cltdn3ld(W(XD), W(XS), W(MT), W(DT))                                \
         notdx_rx(W(XD))
 
 /******************************************************************************/
