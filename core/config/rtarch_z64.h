@@ -548,8 +548,7 @@
  * set-flags: undefined (*_*), yes (*Z*) */
 
 #define andwx_ri(RG, IS)                                                    \
-        EMIT6(MIM(0xC0, REG(RG),0x0B,VAL(IS)))                              \
-        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))
+        EMIT6(MIM(0xC0, REG(RG),0x0B,VAL(IS)))
 
 #define andwx_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
@@ -558,13 +557,11 @@
         EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define andwx_rr(RG, RS)                                                    \
-        EMITH(MRM(0x14, REG(RG),REG(RS),0x00))                              \
-        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))
+        EMITH(MRM(0x14, REG(RG),REG(RS),0x00))
 
 #define andwx_ld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x54, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))
+        EMIT6(MDM(0x54, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
 
 #define andwx_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
@@ -577,7 +574,6 @@
 
 
 #define andwxZri(RG, IS)                                                    \
-        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))                              \
         EMIT6(MIM(0xC0, REG(RG),0x0B,VAL(IS)))
 
 #define andwxZmi(MG, DG, IS)                                                \
@@ -587,7 +583,6 @@
         EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define andwxZrr(RG, RS)                                                    \
-        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))                              \
         EMITH(MRM(0x14, REG(RG),REG(RS),0x00))
 
 #define andwxZld(RG, MS, DS)                                                \
@@ -608,8 +603,7 @@
 
 #define annwx_ri(RG, IS)                                                    \
         EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
-        EMIT6(MIM(0xC0, REG(RG),0x0B,VAL(IS)))                              \
-        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))
+        EMIT6(MIM(0xC0, REG(RG),0x0B,VAL(IS)))
 
 #define annwx_mi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
@@ -620,14 +614,12 @@
 
 #define annwx_rr(RG, RS)                                                    \
         EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
-        EMITH(MRM(0x14, REG(RG),REG(RS),0x00))                              \
-        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))
+        EMITH(MRM(0x14, REG(RG),REG(RS),0x00))
 
 #define annwx_ld(RG, MS, DS)                                                \
         EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x54, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))
+        EMIT6(MDM(0x54, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
 
 #define annwx_st(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
@@ -641,7 +633,6 @@
 
 
 #define annwxZri(RG, IS)                                                    \
-        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))                              \
         EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
         EMIT6(MIM(0xC0, REG(RG),0x0B,VAL(IS)))
 
@@ -653,12 +644,10 @@
         EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
 
 #define annwxZrr(RG, RS)                                                    \
-        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))                              \
         EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
         EMITH(MRM(0x14, REG(RG),REG(RS),0x00))
 
 #define annwxZld(RG, MS, DS)                                                \
-        EMIT6(MIM(0xC0, REG(RG),0x0A,   0x00))                              \
         EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x54, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
