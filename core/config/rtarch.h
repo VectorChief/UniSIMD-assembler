@@ -1002,7 +1002,9 @@
         movlb_ld(%[Info_])                                                  \
         stack_sa()                                                          \
         movxx_rr(Rebp, Reax)                                                \
-        sregs_sa()
+        sregs_sa()                                                          \
+        movix_ld(Xmm0, Mebp, inf_GPC07)                                     \
+        EMIT6(MXM(0x56, TmmQ, Tmm0,  0x00, 0x00))
 
 #define ASM_LEAVE(__Info__)                                                 \
         sregs_la()                                                          \
