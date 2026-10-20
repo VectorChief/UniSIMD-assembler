@@ -165,6 +165,16 @@
 #define MIM(cod, reg, ren, imm) /* arithIM */                               \
         ((reg) << 36 | (ren) << 32 | (imm) | (cod) << 40)
 
+#define MHM(cod, reg, ren, imm) /* arithIH */                               \
+        ((reg) << 20 | (ren) << 16 | (imm & 0xFFFF) | (cod) << 24)
+
+#define MBM(cod, reg, ren, imm) /* arithIB */                               \
+        ((reg) << 20 | (ren) << 16 | (imm & 0x00FF) | (cod) << 24)
+
+#define MCM(cod, reg, ren, imm) /* arithIC */                               \
+        ((reg) << 20 | (ren) << 16 | (imm & 0x00FF) | (cod) << 24 |         \
+        (((imm & 0x0080) != 0) & 0xFF00))
+
 #define MSM(reg, ren, rem) /* logic, shifts */                              \
         ((reg) << 36 | (ren) << 32 | (rem) << 28)
 
@@ -935,45 +945,54 @@
 
 
 #define addwxZri(RG, IS)                                                    \
-        EMIT6(MIM(0xC2, REG(RG),0x09,VAL(IS)))
+        EMIT6(MIM(0xC2, REG(RG),0x09,VAL(IS)))                              \
+        EMITH(MRM(0x12, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define addwxZmi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMIT6(MIM(0xC2, TMxx,   0x09,VAL(IS)))                              \
-        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITH(MRM(0x12, TMxx,   TMxx,   0x00))         /* <- set flags (Z) */
 
 #define addwxZrr(RG, RS)                                                    \
-        EMITH(MRM(0x1A, REG(RG),REG(RS),0x00))
+        EMITH(MRM(0x1A, REG(RG),REG(RS),0x00))                              \
+        EMITH(MRM(0x12, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define addwxZld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x5A, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+        EMIT6(MDM(0x5A, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITH(MRM(0x12, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define addhnZld(RG, MS, DS)    /* add 16-bit to 32-bit with sign-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x7A, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+        EMIT6(MDM(0x7A, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITH(MRM(0x12, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define addhzZld(RG, MS, DS)    /* add 16-bit to 32-bit with zero-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x91, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITH(MRM(0x1A, REG(RG),TMxx,   0x00))
+        EMITH(MRM(0x1A, REG(RG),TMxx,   0x00))                              \
+        EMITH(MRM(0x12, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define addbnZld(RG, MS, DS)    /* add  8-bit to 32-bit with sign-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x77, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITH(MRM(0x1A, REG(RG),TMxx,   0x00))
+        EMITH(MRM(0x1A, REG(RG),TMxx,   0x00))                              \
+        EMITH(MRM(0x12, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define addbzZld(RG, MS, DS)    /* add  8-bit to 32-bit with zero-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x90, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITH(MRM(0x1A, REG(RG),TMxx,   0x00))
+        EMITH(MRM(0x1A, REG(RG),TMxx,   0x00))                              \
+        EMITH(MRM(0x12, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define addwxZst(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITH(MRM(0x1A, TMxx,   REG(RS),0x00))                              \
-        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITH(MRM(0x12, TMxx,   TMxx,   0x00))         /* <- set flags (Z) */
 
 #define addwxZmr(MG, DG, RS)                                                \
         addwxZst(W(RS), W(MG), W(DG))
@@ -1027,45 +1046,54 @@
 
 
 #define subwxZri(RG, IS)                                                    \
-        EMIT6(MIM(0xC2, REG(RG),0x09, (-VAL(IS) & 0xFFFFFFFF)))
+        EMIT6(MIM(0xC2, REG(RG),0x09, (-VAL(IS) & 0xFFFFFFFF)))             \
+        EMITH(MRM(0x12, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define subwxZmi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMIT6(MIM(0xC2, TMxx,   0x09, (-VAL(IS) & 0xFFFFFFFF)))             \
-        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITH(MRM(0x12, TMxx,   TMxx,   0x00))         /* <- set flags (Z) */
 
 #define subwxZrr(RG, RS)                                                    \
-        EMITH(MRM(0x1B, REG(RG),REG(RS),0x00))
+        EMITH(MRM(0x1B, REG(RG),REG(RS),0x00))                              \
+        EMITH(MRM(0x12, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define subwxZld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x5B, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+        EMIT6(MDM(0x5B, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITH(MRM(0x12, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define subhnZld(RG, MS, DS)    /* add 16-bit to 32-bit with sign-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x7B, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+        EMIT6(MDM(0x7B, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITH(MRM(0x12, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define subhzZld(RG, MS, DS)    /* add 16-bit to 32-bit with zero-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x91, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITH(MRM(0x1B, REG(RG),TMxx,   0x00))
+        EMITH(MRM(0x1B, REG(RG),TMxx,   0x00))                              \
+        EMITH(MRM(0x12, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define subbnZld(RG, MS, DS)    /* add  8-bit to 32-bit with sign-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x77, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITH(MRM(0x1B, REG(RG),TMxx,   0x00))
+        EMITH(MRM(0x1B, REG(RG),TMxx,   0x00))                              \
+        EMITH(MRM(0x12, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define subbzZld(RG, MS, DS)    /* add  8-bit to 32-bit with zero-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x90, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITH(MRM(0x1B, REG(RG),TMxx,   0x00))
+        EMITH(MRM(0x1B, REG(RG),TMxx,   0x00))                              \
+        EMITH(MRM(0x12, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define subwxZst(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITH(MRM(0x1B, TMxx,   REG(RS),0x00))                              \
-        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITH(MRM(0x12, TMxx,   TMxx,   0x00))         /* <- set flags (Z) */
 
 #define subwxZmr(MG, DG, RS)                                                \
         subwxZst(W(RS), W(MG), W(DG))
@@ -2326,34 +2354,41 @@
 
 
 #define addzxZri(RG, IS)                                                    \
-        EMIT6(MIM(0xC2, REG(RG),0x08,VAL(IS)))
+        EMIT6(MIM(0xC2, REG(RG),0x08,VAL(IS)))                              \
+        EMITW(MGM(0x02, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define addzxZmi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMIT6(MIM(0xC2, TMxx,   0x08,VAL(IS)))                              \
-        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(MGM(0x02, TMxx,   TMxx,   0x00))         /* <- set flags (Z) */
 
 #define addzxZrr(RG, RS)                                                    \
-        EMITW(MGM(0x08, REG(RG),REG(RS),0x00))
+        EMITW(MGM(0x08, REG(RG),REG(RS),0x00))                              \
+        EMITW(MGM(0x02, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define addzxZld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x08, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+        EMIT6(MDM(0x08, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x02, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define addwnZld(RG, MS, DS)    /* add 32-bit to 64-bit with sign-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x18, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+        EMIT6(MDM(0x18, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x02, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define addwzZld(RG, MS, DS)    /* add 32-bit to 64-bit with zero-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x1A, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+        EMIT6(MDM(0x1A, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x02, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define addzxZst(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(MGM(0x08, TMxx,   REG(RS),0x00))                              \
-        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(MGM(0x02, TMxx,   TMxx,   0x00))         /* <- set flags (Z) */
 
 #define addzxZmr(MG, DG, RS)                                                \
         addzxZst(W(RS), W(MG), W(DG))
@@ -2396,34 +2431,41 @@
 
 
 #define subzxZri(RG, IS)                                                    \
-        EMIT6(MIM(0xC2, REG(RG),0x04,VAL(IS)))
+        EMIT6(MIM(0xC2, REG(RG),0x04,VAL(IS)))                              \
+        EMITW(MGM(0x02, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define subzxZmi(MG, DG, IS)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMIT6(MIM(0xC2, TMxx,   0x04,VAL(IS)))                              \
-        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(MGM(0x02, TMxx,   TMxx,   0x00))         /* <- set flags (Z) */
 
 #define subzxZrr(RG, RS)                                                    \
-        EMITW(MGM(0x09, REG(RG),REG(RS),0x00))
+        EMITW(MGM(0x09, REG(RG),REG(RS),0x00))                              \
+        EMITW(MGM(0x02, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define subzxZld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x09, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+        EMIT6(MDM(0x09, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x02, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define subwnZld(RG, MS, DS)  /* sub 32-bit from 64-bit with sign-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x19, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+        EMIT6(MDM(0x19, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x02, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define subwzZld(RG, MS, DS)  /* sub 32-bit from 64-bit with zero-extend */ \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x1B, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))
+        EMIT6(MDM(0x1B, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x02, REG(RG),REG(RG),0x00))         /* <- set flags (Z) */
 
 #define subzxZst(RS, MG, DG)                                                \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMIT6(MDM(0x04, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(MGM(0x09, TMxx,   REG(RS),0x00))                              \
-        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+        EMIT6(MDM(0x24, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(MGM(0x02, TMxx,   TMxx,   0x00))         /* <- set flags (Z) */
 
 #define subzxZmr(MG, DG, RS)                                                \
         subzxZst(W(RS), W(MG), W(DG))
@@ -9814,6 +9856,10 @@
  * IS - immediate value (is used as a second or first source)
  * IT - immediate value (is used as a third or second source)
  */
+
+#include "rtarch_zHB.h"
+#include "rtarch_zHB_128x1v1.h"
+#include "rtarch_zHB_128x2v1.h"
 
 #endif /* (defined RT_Z64) */
 
