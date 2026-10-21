@@ -918,10 +918,13 @@
 
 
 #define mulhx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
-        EMITW(0x1B007C00 | MRM(TEax,    TEax,    REG(RS)))                  \
+        EMITW(0x92403C00 | MRM(TEax,    TEax,    0x00))                     \
+        EMITW(0x92403C00 | MRM(TMxx,    REG(RS), 0x00))                     \
+        EMITW(0x1B007C00 | MRM(TEax,    TEax,    TMxx))                     \
         EMITW(0x53007C00 | MRM(TEdx,    TEax,    0x00) | 16 << 16)
 
 #define mulhx_xm(MS, DS) /* Reax is in/out, Redx is out(high)-zero-ext */   \
+        EMITW(0x92403C00 | MRM(TEax,    TEax,    0x00))                     \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x78400000 | MDM(TMxx,    MOD(MS), VHL(DS), B1(DS), P1(DS)))  \
         EMITW(0x1B007C00 | MRM(TEax,    TEax,    TMxx))                     \
@@ -929,10 +932,13 @@
 
 
 #define mulhn_xr(RS)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
-        EMITW(0x1B007C00 | MRM(TEax,    TEax,    REG(RS)))                  \
+        EMITW(0x93403C00 | MRM(TEax,    TEax,    0x00))                     \
+        EMITW(0x93403C00 | MRM(TMxx,    REG(RS), 0x00))                     \
+        EMITW(0x1B007C00 | MRM(TEax,    TEax,    TMxx))                     \
         EMITW(0x13007C00 | MRM(TEdx,    TEax,    0x00) | 16 << 16)
 
 #define mulhn_xm(MS, DS) /* Reax is in/out, Redx is out(high)-sign-ext */   \
+        EMITW(0x93403C00 | MRM(TEax,    TEax,    0x00))                     \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x78800000 | MDM(TMxx,    MOD(MS), VHL(DS), B1(DS), P1(DS)))  \
         EMITW(0x1B007C00 | MRM(TEax,    TEax,    TMxx))                     \
@@ -1953,10 +1959,13 @@
 
 
 #define mulbx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
-        EMITW(0x1B007C00 | MRM(TEax,    TEax,    REG(RS)))                  \
+        EMITW(0x92401C00 | MRM(TEax,    TEax,    0x00))                     \
+        EMITW(0x92401C00 | MRM(TMxx,    REG(RS), 0x00))                     \
+        EMITW(0x1B007C00 | MRM(TEax,    TEax,    TMxx))                     \
         EMITW(0x53007C00 | MRM(TEdx,    TEax,    0x00) | 8 << 16)
 
 #define mulbx_xm(MS, DS) /* Reax is in/out, Redx is out(high)-zero-ext */   \
+        EMITW(0x92401C00 | MRM(TEax,    TEax,    0x00))                     \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x38400000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
         EMITW(0x1B007C00 | MRM(TEax,    TEax,    TMxx))                     \
@@ -1964,10 +1973,13 @@
 
 
 #define mulbn_xr(RS)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
-        EMITW(0x1B007C00 | MRM(TEax,    TEax,    REG(RS)))                  \
+        EMITW(0x93401C00 | MRM(TEax,    TEax,    0x00))                     \
+        EMITW(0x93401C00 | MRM(TMxx,    REG(RS), 0x00))                     \
+        EMITW(0x1B007C00 | MRM(TEax,    TEax,    TMxx))                     \
         EMITW(0x13007C00 | MRM(TEdx,    TEax,    0x00) | 8 << 16)
 
 #define mulbn_xm(MS, DS) /* Reax is in/out, Redx is out(high)-sign-ext */   \
+        EMITW(0x93401C00 | MRM(TEax,    TEax,    0x00))                     \
         AUW(SIB(MS),  EMPTY,  EMPTY,    MOD(MS), VAL(DS), C1(DS), EMPTY2)   \
         EMITW(0x38800000 | MDM(TMxx,    MOD(MS), VBL(DS), B1(DS), P1(DS)))  \
         EMITW(0x1B007C00 | MRM(TEax,    TEax,    TMxx))                     \

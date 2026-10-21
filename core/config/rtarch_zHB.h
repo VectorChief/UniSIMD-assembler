@@ -938,27 +938,30 @@
 
 
 #define mulhx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
-        EMITW(0xA507FFFF | TEax << 20)                                      \
-        EMITW(MGM(0xFD, TEax,REG(RS),   TEax))                              \
+        EMITW(MGM(0x85, TEax,   TEax,   0x00))                              \
+        EMITW(MGM(0x85, TMxx,REG(RS),   0x00))                              \
+        EMITW(MGM(0xFD, TEax,   TMxx,   TEax))                              \
         EMITW(MGM(0x16, TEdx,   TEax,   0x00))                              \
         EMIT6(MTM(0xDE, TEdx,   0x00,   16))
 
 #define mulhx_xm(MS, DS) /* Reax is in/out, Redx is out(high)-zero-ext */   \
-        EMITW(0xA507FFFF | TEax << 20)                                      \
-        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x7C, TEax,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x85, TEax,   TEax,   0x00))                              \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x91, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(MGM(0xFD, TEax,   TMxx,   TEax))                              \
         EMITW(MGM(0x16, TEdx,   TEax,   0x00))                              \
         EMIT6(MTM(0xDE, TEdx,   0x00,   16))
 
 
 #define mulhn_xr(RS)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
-        EMITW(0xA507FFFF | TEax << 20)                                      \
-        EMITW(MGM(0xFD, TEax,REG(RS),   TEax))                              \
+        EMITW(MGM(0x07, TEax,   TEax,   0x00))                              \
+        EMITW(MGM(0x07, TMxx,REG(RS),   0x00))                              \
+        EMITW(MGM(0xFD, TEax,   TMxx,   TEax))                              \
         EMITW(MGM(0x16, TEdx,   TEax,   0x00))                              \
         EMIT6(MTM(0xDC, TEdx,   0x00,   16))
 
 #define mulhn_xm(MS, DS) /* Reax is in/out, Redx is out(high)-sign-ext */   \
-        EMITW(0xA507FFFF | TEax << 20)                                      \
+        EMITW(MGM(0x07, TEax,   TEax,   0x00))                              \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x7C, TEax,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(MGM(0x16, TEdx,   TEax,   0x00))                              \
@@ -2035,13 +2038,14 @@
 
 
 #define mulbx_xr(RS)     /* Reax is in/out, Redx is out(high)-zero-ext */   \
-        EMITW(0xA50700FF | TEax << 20)                                      \
-        EMITW(MGM(0xFD, TEax,REG(RS),   TEax))                              \
+        EMITW(MGM(0x84, TEax,   TEax,   0x00))                              \
+        EMITW(MGM(0x84, TMxx,REG(RS),   0x00))                              \
+        EMITW(MGM(0xFD, TEax,   TMxx,   TEax))                              \
         EMITW(MGM(0x16, TEdx,   TEax,   0x00))                              \
         EMIT6(MTM(0xDE, TEdx,   0x00,   8))
 
 #define mulbx_xm(MS, DS) /* Reax is in/out, Redx is out(high)-zero-ext */   \
-        EMITW(0xA50700FF | TEax << 20)                                      \
+        EMITW(MGM(0x84, TEax,   TEax,   0x00))                              \
         AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
         EMIT6(MDM(0x94, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
         EMITW(MGM(0xFD, TEax,   TMxx,   TEax))                              \
@@ -2051,7 +2055,8 @@
 
 #define mulbn_xr(RS)     /* Reax is in/out, Redx is out(high)-sign-ext */   \
         EMITW(MGM(0x06, TEax,   TEax,   0x00))                              \
-        EMITW(MGM(0xFD, TEax,REG(RS),   TEax))                              \
+        EMITW(MGM(0x06, TMxx,REG(RS),   0x00))                              \
+        EMITW(MGM(0xFD, TEax,   TMxx,   TEax))                              \
         EMITW(MGM(0x16, TEdx,   TEax,   0x00))                              \
         EMIT6(MTM(0xDC, TEdx,   0x00,   8))
 
