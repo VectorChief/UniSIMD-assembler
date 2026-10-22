@@ -281,11 +281,11 @@
 /* neg (G = -G), (D = -S) */
 
 #define negds_rx(XG)                                                        \
-        xordx_ld(W(XG), Mebp, inf_GPC06_64)
+        negds_rr(W(XG), W(XG))
 
 #define negds_rr(XD, XS)                                                    \
-        movdx_rr(W(XD), W(XS))                                              \
-        negds_rx(W(XD))
+        EMIT6(MZM(0xCC, REG(XD),REG(XS),   0x00, 0x03))                     \
+        EMIT6(MZM(0xCC, RYG(XD),RYG(XS),   0x00, 0x03))
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
@@ -1030,6 +1030,27 @@
 
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
 
+#if RT_Z64 >= 17 /* only on z17 and beyond */
+
+#define muldx_rr(XG, XS)                                                    \
+        muldx3rr(W(XG), W(XG), W(XS))
+
+#define muldx_ld(XG, MS, DS)                                                \
+        muldx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define muldx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xA2, REG(XD),REG(XS),REG(XT), 0x03))                     \
+        EMIT6(MXM(0xA2, RYG(XD),RYG(XS),RYG(XT), 0x03))
+
+#define muldx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xA2, REG(XD),REG(XS),   TmmM, 0x03))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0xA2, RYG(XD),RYG(XS),   TmmM, 0x03))
+
+#else /* RT_Z64 >= 17 */
+
 #define muldx_rr(XG, XS)                                                    \
         muldx3rr(W(XG), W(XG), W(XS))
 
@@ -1063,6 +1084,8 @@
         movzx_st(Recx,  Mebp, inf_SCR01(0x18))                              \
         stack_ld(Recx)                                                      \
         movdx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#endif /* RT_Z64 >= 17 */
 
         /* div, rem are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */

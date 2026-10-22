@@ -154,6 +154,8 @@
 #include "rtarch_zHB.h"
 #include "rtarch_zHB_128x1v1.h"
 #include "rtarch_zHB_128x2v1.h"
+#include "rtarch_zQF_128x1v1.h"
+#include "rtarch_zQF_128x2v1.h"
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/

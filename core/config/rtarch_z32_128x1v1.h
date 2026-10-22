@@ -299,11 +299,10 @@
 /* neg (G = -G), (D = -S) */
 
 #define negis_rx(XG)                                                        \
-        xorix_ld(W(XG), Mebp, inf_GPC06_32)
+        negis_rr(W(XG), W(XG))
 
 #define negis_rr(XD, XS)                                                    \
-        movix_rr(W(XD), W(XS))                                              \
-        negis_rx(W(XD))
+        EMIT6(MZM(0xCC, REG(XD),REG(XS),   0x00, 0x02))
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 

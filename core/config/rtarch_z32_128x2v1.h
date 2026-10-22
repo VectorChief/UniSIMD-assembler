@@ -281,11 +281,11 @@
 /* neg (G = -G), (D = -S) */
 
 #define negcs_rx(XG)                                                        \
-        xorcx_ld(W(XG), Mebp, inf_GPC06_32)
+        negcs_rr(W(XG), W(XG))
 
 #define negcs_rr(XD, XS)                                                    \
-        movcx_rr(W(XD), W(XS))                                              \
-        negcs_rx(W(XD))
+        EMIT6(MZM(0xCC, REG(XD),REG(XS),   0x00, 0x02))                     \
+        EMIT6(MZM(0xCC, RYG(XD),RYG(XS),   0x00, 0x02))
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 

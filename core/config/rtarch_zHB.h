@@ -1038,26 +1038,32 @@
         movhx_ri(Redx, IC(0))        /* to prepare Redx for int-divide */
 
 #define prehn_xx()   /* to be placed right before divhn_x* or remhn_xx */   \
-        movhx_rr(Redx, Reax)         /* to prepare Redx for int-divide */   \
+        movhn_rr(Redx, Reax)         /* to prepare Redx for int-divide */   \
         shrhn_ri(Redx, IC(15))
 
 
 #define divhx_xr(RS)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-        EMITW(MGM(0x97, TEdx,REG(RS),   0x00))
+        EMITW(MGM(0x85, TEax,   TEax,   0x00))                              \
+        EMITW(MGM(0x85, TMxx,REG(RS),   0x00))                              \
+        EMITW(MGM(0x97, TEdx,   TMxx,   0x00))
 
 #define divhx_xm(MS, DS) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+        EMITW(MGM(0x85, TEax,   TEax,   0x00))                              \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x95, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(MGM(0x97, TEdx,TMxx,      0x00))
+        EMITW(MGM(0x97, TEdx,   TMxx,   0x00))
 
 
 #define divhn_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        EMITH(MRM(0x1D, TEdx,REG(RS),   0x00))
+        EMITW(MGM(0x07, TEax,   TEax,   0x00))                              \
+        EMITW(MGM(0x07, TMxx,REG(RS),   0x00))                              \
+        EMITH(MRM(0x1D, TEdx,   TMxx,   0x00))
 
 #define divhn_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        EMITW(MGM(0x07, TEax,   TEax,   0x00))                              \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x15, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITH(MRM(0x1D, TEdx,TMxx,      0x00))
+        EMITH(MRM(0x1D, TEdx,   TMxx,   0x00))
 
 /* rem (G = G % S)
  * set-flags: undefined */
@@ -2139,26 +2145,32 @@
         movbx_ri(Redx, IC(0))        /* to prepare Redx for int-divide */
 
 #define prebn_xx()   /* to be placed right before divbn_x* or rembn_xx */   \
-        movbx_rr(Redx, Reax)         /* to prepare Redx for int-divide */   \
+        movbn_rr(Redx, Reax)         /* to prepare Redx for int-divide */   \
         shrbn_ri(Redx, IC(7))
 
 
 #define divbx_xr(RS)     /* Reax is in/out, Redx is in(zero)/out(junk) */   \
-        EMITW(MGM(0x97, TEdx,REG(RS),   0x00))
+        EMITW(MGM(0x84, TEax,   TEax,   0x00))                              \
+        EMITW(MGM(0x84, TMxx,REG(RS),   0x00))                              \
+        EMITW(MGM(0x97, TEdx,   TMxx,   0x00))
 
 #define divbx_xm(MS, DS) /* Reax is in/out, Redx is in(zero)/out(junk) */   \
+        EMITW(MGM(0x84, TEax,   TEax,   0x00))                              \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x94, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITW(MGM(0x97, TEdx,TMxx,      0x00))
+        EMITW(MGM(0x97, TEdx,   TMxx,   0x00))
 
 
 #define divbn_xr(RS)     /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
-        EMITH(MRM(0x1D, TEdx,REG(RS),   0x00))
+        EMITW(MGM(0x06, TEax,   TEax,   0x00))                              \
+        EMITW(MGM(0x06, TMxx,REG(RS),   0x00))                              \
+        EMITH(MRM(0x1D, TEdx,   TMxx,   0x00))
 
 #define divbn_xm(MS, DS) /* Reax is in/out, Redx is in-sign-ext-(Reax) */   \
+        EMITW(MGM(0x06, TEax,   TEax,   0x00))                              \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
         EMIT6(MDM(0x76, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
-        EMITH(MRM(0x1D, TEdx,TMxx,      0x00))
+        EMITH(MRM(0x1D, TEdx,   TMxx,   0x00))
 
 /* rem (G = G % S)
  * set-flags: undefined */

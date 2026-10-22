@@ -262,11 +262,10 @@
 /* neg (G = -G), (D = -S) */
 
 #define negjs_rx(XG)                                                        \
-        xorjx_ld(W(XG), Mebp, inf_GPC06_64)
+        negjs_rr(W(XG), W(XG))
 
 #define negjs_rr(XD, XS)                                                    \
-        movjx_rr(W(XD), W(XS))                                              \
-        negjs_rx(W(XD))
+        EMIT6(MZM(0xCC, REG(XD),REG(XS),   0x00, 0x03))
 
 /* add (G = G + S), (D = S + T) if (#D != #T) */
 
@@ -881,6 +880,24 @@
 
 /* mul (G = G * S), (D = S * T) if (#D != #T) */
 
+#if RT_Z64 >= 17 /* only on z17 and beyond */
+
+#define muljx_rr(XG, XS)                                                    \
+        muljx3rr(W(XG), W(XG), W(XS))
+
+#define muljx_ld(XG, MS, DS)                                                \
+        muljx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define muljx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0xA2, REG(XD),REG(XS),REG(XT), 0x03))
+
+#define muljx3ld(XD, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0xA2, REG(XD),REG(XS),   TmmM, 0x03))
+
+#else /* RT_Z64 >= 17 */
+
 #define muljx_rr(XG, XS)                                                    \
         muljx3rr(W(XG), W(XG), W(XS))
 
@@ -908,6 +925,8 @@
         movzx_st(Recx,  Mebp, inf_SCR01(0x08))                              \
         stack_ld(Recx)                                                      \
         movjx_ld(W(XD), Mebp, inf_SCR01(0))
+
+#endif /* RT_Z64 >= 17 */
 
         /* div, rem are defined in rtbase.h
          * under "COMMON SIMD INSTRUCTIONS" section */
