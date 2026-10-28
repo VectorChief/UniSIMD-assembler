@@ -7,12 +7,14 @@
 #ifndef RT_RTARCH_Z32_128X2V1_H
 #define RT_RTARCH_Z32_128X2V1_H
 
+#define RT_SIMD_REGS_256        16
+
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
 
 /*
- * rtarch_z32_128x*v1.h: Implementation of s390x SIMD instructions.
+ * rtarch_z32_128x2v1.h: Implementation of s390x fp32 SIMD instruction pairs.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

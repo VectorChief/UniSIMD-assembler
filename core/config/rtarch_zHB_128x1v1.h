@@ -12,7 +12,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_zHB_128x*v1.h: Implementation of s390x SIMD instructions.
+ * rtarch_zHB_128x1v1.h: Implementation of s390x half+byte SIMD instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,

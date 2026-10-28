@@ -7,12 +7,14 @@
 #ifndef RT_RTARCH_Z32_128X1V1_H
 #define RT_RTARCH_Z32_128X1V1_H
 
+#define RT_SIMD_REGS_128        32
+
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
 
 /*
- * rtarch_z32_128x*v1.h: Implementation of s390x SIMD instructions.
+ * rtarch_z32_128x1v1.h: Implementation of s390x fp32 SIMD instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -117,6 +119,69 @@
 /********************************   INTERNAL   ********************************/
 /******************************************************************************/
 
+/* selectors  */
+
+#define  B2(val, tp1, tp2)  B2##tp2
+#define  B4(val, tp1, tp2)  B4##tp2
+#define  P2(val, tp1, tp2)  P2##tp2
+#define  L2(val, tp1, tp2)  L2##tp2
+#define  C2(val, tp1, tp2)  C2##tp2
+#define  A2(val, tp1, tp2)  A2##tp2
+
+/* displacement encoding SIMD(TP2), ELEM(TP2) */
+
+#define B20(br) (br)
+#define B40(br) (br)
+#define P20(dp) (0xE30000000000 | (0x0FFF & (dp))<<16)
+#define L20(dp) (0xE30000000000 | (0x0FFF & (dp))<<16)
+#define C20(br, dp) EMPTY
+#define A20(br, dp) EMPTY
+
+#define B21(br) TDxx
+#define B41(br) TPxx
+#define P21(dp) (0xE30000000000)
+#define L21(dp) (0xE30000000000 | (0x0010 & (dp))<<16)
+#define C21(br, dp) EMIT6(0xC00100000000 | TDxx << 36 | (0x7FFFFFFF & (dp)))
+#define A21(br, dp) C21(br, dp)                                             \
+                    EMITW(0xB9080000 | TDxx << 4 | (br))
+
+/* internal     REG */
+
+#define Tmm0    0x00  /* v0 */
+#define Tmm1    0x01  /* v1 */
+#define Tmm2    0x02  /* v2 */
+#define Tmm3    0x03  /* v3 */
+#define Tmm4    0x04  /* v4 */
+#define Tmm5    0x05  /* v5 */
+#define Tmm6    0x06  /* v6 */
+#define Tmm7    0x07  /* v7 */
+#define Tmm8    0x08  /* v8 */
+#define Tmm9    0x09  /* v9 */
+#define TmmA    0x0A  /* v10 */
+#define TmmB    0x0B  /* v11 */
+#define TmmC    0x0C  /* v12 */
+#define TmmD    0x0D  /* v13 */
+#define TmmE    0x0E  /* v14 */
+
+#define TmmF    0x1E  /* v30 */
+#define TmmG    0x10  /* v16 */
+#define TmmH    0x11  /* v17 */
+#define TmmI    0x12  /* v18 */
+#define TmmJ    0x13  /* v19 */
+#define TmmK    0x14  /* v20 */
+#define TmmL    0x15  /* v21 */
+#define TmmW    0x16  /* v22 */
+#define TmmN    0x17  /* v23 */
+#define TmmO    0x18  /* v24 */
+#define TmmP    0x19  /* v25 */
+#define TmmV    0x1A  /* v26 */
+#define TmmR    0x1B  /* v27 */
+#define TmmS    0x1C  /* v28 */
+#define TmmT    0x1D  /* v29 */
+
+#define TmmQ    0x0F  /* v15, all ones */
+#define TmmM    0x1F  /* v31 */
+
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
 /******************************************************************************/
@@ -141,7 +206,7 @@
 #define XmmD    TmmD, 0x00, EMPTY
 #define XmmE    TmmE, 0x00, EMPTY
 
-/* only for 128-bit instructions (save/restore in 256-bit header)
+/* only for 128-bit instructions (save/restore in 128-bit header)
  * provided as an extension to common baseline of 15 registers */
 
 #define XmmF    TmmF, 0x00, EMPTY

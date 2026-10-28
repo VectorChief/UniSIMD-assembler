@@ -307,7 +307,11 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MS), VAL(DS), B2(DS), P2(DS)))  \
         EMITW(0xFC000648 | MXM(REG(XD), 0x1B,    TmmM))
 
-/* fma (G = G + S * T) if (#G != #S && #G != #T) */
+/* fma (G = G + S * T) if (#G != #S && #G != #T)
+ * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
+ * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
+
+#if RT_SIMD_COMPAT_FMA <= 1
 
 #define fmavs_rr(XG, XS, XT)                                                \
         EMITW(0xFC000308 | MXM(REG(XG), REG(XS), REG(XT)))
@@ -317,7 +321,35 @@
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xFC000308 | MXM(REG(XG), REG(XS), TmmM))
 
-/* fms (G = G - S * T) if (#G != #S && #G != #T) */
+#endif /* RT_SIMD_COMPAT_FMA */
+
+#if RT_SIMD_COMPAT_FMA == 2
+
+#define fmavs_rr(XG, XS, XT)                                                \
+        movvx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulvs_rr(W(XS), W(XT))                                              \
+        addvs_rr(W(XG), W(XS))                                              \
+        movvx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmavs_ld(XG, XS, MT, DT)                                            \
+        movvx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulvs_ld(W(XS), W(MT), W(DT))                                       \
+        addvs_rr(W(XG), W(XS))                                              \
+        movvx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+#define fmavs3rr(XG, XS, XT)                                                \
+        fmavs_rr(W(XG), W(XS), W(XT))
+
+#define fmavs3ld(XG, XS, MT, DT)                                            \
+        fmavs_ld(W(XG), W(XS), W(MT), W(DT))
+
+/* fms (G = G - S * T) if (#G != #S && #G != #T)
+ * NOTE: due to final negation being outside of rounding on all POWER systems
+ * only symmetric rounding modes (RN, RZ) are compatible across all targets */
+
+#if RT_SIMD_COMPAT_FMS <= 1
 
 #define fmsvs_rr(XG, XS, XT)                                                \
         EMITW(0xFC0003C8 | MXM(REG(XG), REG(XS), REG(XT)))
@@ -326,6 +358,30 @@
         AUW(SIB(MT),  EMPTY,  EMPTY,    MOD(MT), VAL(DT), C2(DT), EMPTY2)   \
         EMITW(0x00000000 | MPM(TmmM,    MOD(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMITW(0xFC0003C8 | MXM(REG(XG), REG(XS), TmmM))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+#if RT_SIMD_COMPAT_FMS == 2
+
+#define fmsvs_rr(XG, XS, XT)                                                \
+        movvx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulvs_rr(W(XS), W(XT))                                              \
+        subvs_rr(W(XG), W(XS))                                              \
+        movvx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmsvs_ld(XG, XS, MT, DT)                                            \
+        movvx_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulvs_ld(W(XS), W(MT), W(DT))                                       \
+        subvs_rr(W(XG), W(XS))                                              \
+        movvx_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+#define fmsvs3rr(XG, XS, XT)                                                \
+        fmsvs_rr(W(XG), W(XS), W(XT))
+
+#define fmsvs3ld(XG, XS, MT, DT)                                            \
+        fmsvs_ld(W(XG), W(XS), W(MT), W(DT))
 
 /*************   scalar quad-precision integer arithmetic/shifts   ************/
 

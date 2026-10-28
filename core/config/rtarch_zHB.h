@@ -12,7 +12,7 @@
 /******************************************************************************/
 
 /*
- * rtarch_zHB.h: Implementation of s390x BASE+SIMD instructions.
+ * rtarch_zHB.h: Implementation of s390x half+byte BASE instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -40,24 +40,8 @@
  * cmdxx_xr - applies [cmd] to x-register from [r]egister
  * cmdxx_xm - applies [cmd] to x-register from [m]emory
  *
- * cmdxx_rl - applies [cmd] to [r]egister from [l]abel
- * cmdxx_xl - applies [cmd] to x-register from [l]abel
- * cmdxx_lb - applies [cmd] as above
- * label_ld - applies [adr] as above
- *
- * stack_st - applies [mov] to stack from full register (push)
- * stack_ld - applies [mov] to full register from stack (pop)
- * stack_sa - applies [mov] to stack from all full registers
- * stack_la - applies [mov] to all full registers from stack
- *
- * cmdw*_** - applies [cmd] to 32-bit BASE register/memory/immediate args
- * cmdx*_** - applies [cmd] to A-size BASE register/memory/immediate args
- * cmdy*_** - applies [cmd] to L-size BASE register/memory/immediate args
- * cmdz*_** - applies [cmd] to 64-bit BASE register/memory/immediate args
- *
  * cmd*x_** - applies [cmd] to unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to   signed integer args, [n] - negatable
- * cmd*p_** - applies [cmd] to   signed integer args, [p] - part-range
  *
  * cmd**Z** - applies [cmd] while setting condition flags, [Z] - zero flag.
  * Regular cmd*x_**, cmd*n_** instructions may or may not set flags depending

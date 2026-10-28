@@ -7,12 +7,14 @@
 #ifndef RT_RTARCH_Z32_H
 #define RT_RTARCH_Z32_H
 
+#define RT_BASE_REGS        16
+
 /******************************************************************************/
 /*********************************   LEGEND   *********************************/
 /******************************************************************************/
 
 /*
- * rtarch_z32.h: Implementation of s390x BASE+SIMD instructions.
+ * rtarch_z32.h: Implementation of s390x 32-bit BASE instructions.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
  * designed to be compatible with different processor architectures,
@@ -249,13 +251,6 @@
 #define  A1(val, tp1, tp2)  A1##tp1
 #define  C3(val, tp1, tp2)  C3##tp2 /* <- "C3##tp2" not a bug */
 
-#define  B2(val, tp1, tp2)  B2##tp2
-#define  B4(val, tp1, tp2)  B4##tp2
-#define  P2(val, tp1, tp2)  P2##tp2
-#define  L2(val, tp1, tp2)  L2##tp2
-#define  C2(val, tp1, tp2)  C2##tp2
-#define  A2(val, tp1, tp2)  A2##tp2
-
 /* displacement encoding BASE(TP1), adr(TP3) */
 
 #define B10(br) (br)
@@ -272,23 +267,6 @@
 #define A11(br, dp) C31(br, dp)                                             \
                     EMITW(0xB9080000 | TDxx << 4 | (br))
 #define C31(br, dp) EMIT6(0xC00100000000 | TDxx << 36 | (0x7FFFFFFF & (dp)))
-
-/* displacement encoding SIMD(TP2), ELEM(TP2) */
-
-#define B20(br) (br)
-#define B40(br) (br)
-#define P20(dp) (0xE30000000000 | (0x0FFF & (dp))<<16)
-#define L20(dp) (0xE30000000000 | (0x0FFF & (dp))<<16)
-#define C20(br, dp) EMPTY
-#define A20(br, dp) EMPTY
-
-#define B21(br) TDxx
-#define B41(br) TPxx
-#define P21(dp) (0xE30000000000)
-#define L21(dp) (0xE30000000000 | (0x0010 & (dp))<<16)
-#define C21(br, dp) EMIT6(0xC00100000000 | TDxx << 36 | (0x7FFFFFFF & (dp)))
-#define A21(br, dp) C21(br, dp)                                             \
-                    EMITW(0xB9080000 | TDxx << 4 | (br))
 
 /* internal     REG */
 
@@ -315,41 +293,6 @@
 #define TEgD    0x0D  /* r13 */
 #define TEgE    0x0E  /* r14 */
 #endif /* RT_FULL_BASE */
-
-#define Tmm0    0x00  /* v0 */
-#define Tmm1    0x01  /* v1 */
-#define Tmm2    0x02  /* v2 */
-#define Tmm3    0x03  /* v3 */
-#define Tmm4    0x04  /* v4 */
-#define Tmm5    0x05  /* v5 */
-#define Tmm6    0x06  /* v6 */
-#define Tmm7    0x07  /* v7 */
-#define Tmm8    0x08  /* v8 */
-#define Tmm9    0x09  /* v9 */
-#define TmmA    0x0A  /* v10 */
-#define TmmB    0x0B  /* v11 */
-#define TmmC    0x0C  /* v12 */
-#define TmmD    0x0D  /* v13 */
-#define TmmE    0x0E  /* v14 */
-
-#define TmmF    0x1E  /* v30 */
-#define TmmG    0x10  /* v16 */
-#define TmmH    0x11  /* v17 */
-#define TmmI    0x12  /* v18 */
-#define TmmJ    0x13  /* v19 */
-#define TmmK    0x14  /* v20 */
-#define TmmL    0x15  /* v21 */
-#define TmmW    0x16  /* v22 */
-#define TmmN    0x17  /* v23 */
-#define TmmO    0x18  /* v24 */
-#define TmmP    0x19  /* v25 */
-#define TmmV    0x1A  /* v26 */
-#define TmmR    0x1B  /* v27 */
-#define TmmS    0x1C  /* v28 */
-#define TmmT    0x1D  /* v29 */
-
-#define TmmQ    0x0F  /* v15, all ones */
-#define TmmM    0x1F  /* v31 */
 
 /******************************************************************************/
 /********************************   EXTERNAL   ********************************/
@@ -589,6 +532,24 @@
         EMIT6(MIM(0xC0, TMxx,   0x0B,VAL(IS)))                              \
         EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
 
+#if RT_Z64 >= 15 /* only on z15 and beyond */
+
+#define annwx_rr(RG, RS)                                                    \
+        EMITW(MGM(0xF5, REG(RG),REG(RS),REG(RG)))
+
+#define annwx_ld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0xF5, REG(RG),TMxx,   REG(RG)))
+
+#define annwx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(MGM(0xF5, TMxx,   REG(RS),TMxx))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#else /* RT_Z64 >= 15 */
+
 #define annwx_rr(RG, RS)                                                    \
         EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
         EMITH(MRM(0x14, REG(RG),REG(RS),0x00))
@@ -605,6 +566,8 @@
         EMITH(MRM(0x14, TMxx,   REG(RS),0x00))                              \
         EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
 
+#endif /* RT_Z64 >= 15 */
+
 #define annwx_mr(MG, DG, RS)                                                \
         annwx_st(W(RS), W(MG), W(DG))
 
@@ -619,6 +582,24 @@
         EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
         EMIT6(MIM(0xC0, TMxx,   0x0B,VAL(IS)))                              \
         EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#if RT_Z64 >= 15 /* only on z15 and beyond */
+
+#define annwxZrr(RG, RS)                                                    \
+        EMITW(MGM(0xF5, REG(RG),REG(RS),REG(RG)))
+
+#define annwxZld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0xF5, REG(RG),TMxx,   REG(RG)))
+
+#define annwxZst(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(MGM(0xF5, TMxx,   REG(RS),TMxx))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#else /* RT_Z64 >= 15 */
 
 #define annwxZrr(RG, RS)                                                    \
         EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
@@ -635,6 +616,8 @@
         EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
         EMITH(MRM(0x14, TMxx,   REG(RS),0x00))                              \
         EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#endif /* RT_Z64 >= 15 */
 
 #define annwxZmr(MG, DG, RS)                                                \
         annwxZst(W(RS), W(MG), W(DG))
@@ -707,6 +690,24 @@
         EMIT6(MIM(0xC0, TMxx,   0x0D,VAL(IS)))                              \
         EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
 
+#if RT_Z64 >= 15 /* only on z15 and beyond */
+
+#define ornwx_rr(RG, RS)                                                    \
+        EMITW(MGM(0x75, REG(RG),REG(RS),REG(RG)))
+
+#define ornwx_ld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x58, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x75, REG(RG),TMxx,   REG(RG)))
+
+#define ornwx_st(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(MGM(0x75, TMxx,   REG(RS),TMxx))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#else /* RT_Z64 >= 15 */
+
 #define ornwx_rr(RG, RS)                                                    \
         EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
         EMITH(MRM(0x16, REG(RG),REG(RS),0x00))
@@ -723,6 +724,8 @@
         EMITH(MRM(0x16, TMxx,   REG(RS),0x00))                              \
         EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
 
+#endif /* RT_Z64 >= 15 */
+
 #define ornwx_mr(MG, DG, RS)                                                \
         ornwx_st(W(RS), W(MG), W(DG))
 
@@ -737,6 +740,24 @@
         EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
         EMIT6(MIM(0xC0, TMxx,   0x0D,VAL(IS)))                              \
         EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#if RT_Z64 >= 15 /* only on z15 and beyond */
+
+#define ornwxZrr(RG, RS)                                                    \
+        EMITW(MGM(0x75, REG(RG),REG(RS),REG(RG)))
+
+#define ornwxZld(RG, MS, DS)                                                \
+        AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
+        EMIT6(MDM(0x58, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMITW(MGM(0x75, REG(RG),TMxx,   REG(RG)))
+
+#define ornwxZst(RS, MG, DG)                                                \
+        AUW(SIB(MG),  EMPTY,  EMPTY,    REG(MG), VAL(DG), A1(DG), EMPTY2)   \
+        EMIT6(MDM(0x58, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))  \
+        EMITW(MGM(0x75, TMxx,   REG(RS),TMxx))                              \
+        EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#else /* RT_Z64 >= 15 */
 
 #define ornwxZrr(RG, RS)                                                    \
         EMIT6(MIM(0xC0, REG(RG),0x07,0xFFFFFFFF))                           \
@@ -753,6 +774,8 @@
         EMIT6(MIM(0xC0, TMxx,   0x07,0xFFFFFFFF))                           \
         EMITH(MRM(0x16, TMxx,   REG(RS),0x00))                              \
         EMIT6(MDM(0x50, TMxx,   MOD(MG),REG(MG), VAL(DG), B1(DG), P1(DG)))
+
+#endif /* RT_Z64 >= 15 */
 
 #define ornwxZmr(MG, DG, RS)                                                \
         ornwxZst(W(RS), W(MG), W(DG))

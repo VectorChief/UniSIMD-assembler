@@ -12,45 +12,23 @@
 /******************************************************************************/
 
 /*
- * rtarch_zQF_128x*v1.h: Implementation of s390x SIMD instructions.
+ * rtarch_zQF_128x2v1.h: Implementation of s390x fp128 SIMD instruction pairs.
  *
  * This file is a part of the unified SIMD assembler framework (rtarch.h)
- * designed to be compatible with different processor architectures,
- * while maintaining strictly defined common API.
+ * and contains architecture-specific extensions
+ * outside of the common assembler core.
  *
  * Recommended naming scheme for instructions:
  *
- * cmdp*_ri - applies [cmd] to [p]acked: [r]egister from [i]mmediate
- * cmdp*_rr - applies [cmd] to [p]acked: [r]egister from [r]egister
+ * cmdu*_rx - applies [cmd] to packed-fp128: [r]egister (one operand)
+ * cmdu*_rr - applies [cmd] to packed-fp128: [r]egister from [r]egister
  *
- * cmdp*_rm - applies [cmd] to [p]acked: [r]egister from [m]emory
- * cmdp*_ld - applies [cmd] to [p]acked: as above
- *
- * cmdi*_** - applies [cmd] to 32-bit elements SIMD args, packed-128-bit
- * cmdj*_** - applies [cmd] to 64-bit elements SIMD args, packed-128-bit
- * cmdl*_** - applies [cmd] to L-size elements SIMD args, packed-128-bit
- *
- * cmdc*_** - applies [cmd] to 32-bit elements SIMD args, packed-256-bit
- * cmdd*_** - applies [cmd] to 64-bit elements SIMD args, packed-256-bit
- * cmdf*_** - applies [cmd] to L-size elements SIMD args, packed-256-bit
- *
- * cmdo*_** - applies [cmd] to 32-bit elements SIMD args, packed-var-len
- * cmdp*_** - applies [cmd] to L-size elements SIMD args, packed-var-len
- * cmdq*_** - applies [cmd] to 64-bit elements SIMD args, packed-var-len
- *
- * cmdr*_** - applies [cmd] to 32-bit elements ELEM args, scalar-fp-only
- * cmds*_** - applies [cmd] to L-size elements ELEM args, scalar-fp-only
- * cmdt*_** - applies [cmd] to 64-bit elements ELEM args, scalar-fp-only
+ * cmdu*_rm - applies [cmd] to packed-fp128: [r]egister from [m]emory
+ * cmdu*_ld - applies [cmd] to packed-fp128: as above (friendly alias)
  *
  * cmd*x_** - applies [cmd] to SIMD/BASE unsigned integer args, [x] - default
  * cmd*n_** - applies [cmd] to SIMD/BASE   signed integer args, [n] - negatable
  * cmd*s_** - applies [cmd] to SIMD/ELEM floating point   args, [s] - scalable
- *
- * The cmdp*_** (rtconf.h) instructions are intended for SPMD programming model
- * and can be configured to work with 32/64-bit data elements (fp+int).
- * In this model data paths are fixed-width, BASE and SIMD data elements are
- * width-compatible, code path divergence is handled via mkj**_** pseudo-ops.
- * Matching element-sized BASE subset cmdy*_** is defined in rtconf.h as well.
  *
  * Note, when using fixed-data-size 128/256-bit SIMD subsets simultaneously
  * upper 128-bit halves of full 256-bit SIMD registers may end up undefined.
@@ -300,9 +278,6 @@
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
         EMIT6(MWM(0xE3, RYG(XD),RYG(XS),   TmmM, 0x04))
 
-        /* adp, adh are defined in rtbase.h (first 15-regs only)
-         * under "COMMON SIMD INSTRUCTIONS" section */
-
 /* sub (G = G - S), (D = S - T) if (#D != #T) */
 
 #define subus_rr(XG, XS)                                                    \
@@ -341,9 +316,6 @@
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
         EMIT6(MWM(0xE7, RYG(XD),RYG(XS),   TmmM, 0x04))
 
-        /* mlp, mlh are defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
-
 /* div (G = G / S), (D = S / T) if (#D != #T) and on ARMv7 if (#D != #S) */
 
 #define divus_rr(XG, XS)                                                    \
@@ -376,23 +348,6 @@
         EMIT6(MPM(0x06, TmmM, MOD(MS),  REG(MS), VYL(DS), B2(DS), L2(DS)))  \
         EMIT6(MWM(0xCE, RYG(XD),TmmM,      0x00, 0x04))
 
-/* cbr (D = cbrt S) */
-
-        /* cbe, cbs, cbr are defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
-
-/* rcp (D = 1.0 / S)
- * accuracy/behavior may vary across supported targets, use accordingly */
-
-        /* rce, rcs, rcp are defined in rtconf.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
-
-/* rsq (D = 1.0 / sqrt S)
- * accuracy/behavior may vary across supported targets, use accordingly */
-
-        /* rse, rss, rsq are defined in rtconf.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
-
 /* fma (G = G + S * T) if (#G != #S && #G != #T)
  * NOTE: x87 fpu-fallbacks for fma/fms use round-to-nearest mode by default,
  * enable RT_SIMD_COMPAT_FMR for current SIMD rounding mode to be honoured */
@@ -412,6 +367,28 @@
 
 #endif /* RT_SIMD_COMPAT_FMA */
 
+#if RT_SIMD_COMPAT_FMA == 2
+
+#define fmaus_rr(XG, XS, XT)                                                \
+        movux_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulus_rr(W(XS), W(XT))                                              \
+        addus_rr(W(XG), W(XS))                                              \
+        movux_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmaus_ld(XG, XS, MT, DT)                                            \
+        movux_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulus_ld(W(XS), W(MT), W(DT))                                       \
+        addus_rr(W(XG), W(XS))                                              \
+        movux_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMA */
+
+#define fmaus3rr(XG, XS, XT)                                                \
+        fmaus_rr(W(XG), W(XS), W(XT))
+
+#define fmaus3ld(XG, XS, MT, DT)                                            \
+        fmaus_ld(W(XG), W(XS), W(MT), W(DT))
+
 /* fms (G = G - S * T) if (#G != #S && #G != #T)
  * NOTE: due to final negation being outside of rounding on all POWER systems
  * only symmetric rounding modes (RN, RZ) are compatible across all targets */
@@ -430,6 +407,28 @@
         EMIT6(MUM(0x9E, RYG(XG),RYG(XS),   TmmM, 0x04))
 
 #endif /* RT_SIMD_COMPAT_FMS */
+
+#if RT_SIMD_COMPAT_FMS == 2
+
+#define fmsus_rr(XG, XS, XT)                                                \
+        movux_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulus_rr(W(XS), W(XT))                                              \
+        subus_rr(W(XG), W(XS))                                              \
+        movux_ld(W(XS), Mebp, inf_SCR01(0))
+
+#define fmsus_ld(XG, XS, MT, DT)                                            \
+        movux_st(W(XS), Mebp, inf_SCR01(0))                                 \
+        mulus_ld(W(XS), W(MT), W(DT))                                       \
+        subus_rr(W(XG), W(XS))                                              \
+        movux_ld(W(XS), Mebp, inf_SCR01(0))
+
+#endif /* RT_SIMD_COMPAT_FMS */
+
+#define fmsus3rr(XG, XS, XT)                                                \
+        fmsus_rr(W(XG), W(XS), W(XT))
+
+#define fmsus3ld(XG, XS, MT, DT)                                            \
+        fmsus_ld(W(XG), W(XS), W(MT), W(DT))
 
 /**************   packed quad-precision floating-point compare   **************/
 
@@ -452,9 +451,6 @@
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
         EMIT6(MWM(0xEE, RYG(XD),RYG(XS),   TmmM, 0x04))
 
-        /* mnp, mnh are defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
-
 /* max (G = G > S ? G : S), (D = S > T ? S : T) if (#D != #T) */
 
 #define maxus_rr(XG, XS)                                                    \
@@ -473,9 +469,6 @@
         EMIT6(MWM(0xEF, REG(XD),REG(XS),   TmmM, 0x04))                     \
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
         EMIT6(MWM(0xEF, RYG(XD),RYG(XS),   TmmM, 0x04))
-
-        /* mxp, mxh are defined in rtbase.h
-         * under "COMMON SIMD INSTRUCTIONS" section */
 
 /* ceq (G = G == S ? -1 : 0), (D = S == T ? -1 : 0) if (#D != #T) */
 
@@ -619,8 +612,8 @@
 
 /* cvz (D = fp-to-signed-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
+ * NOTE: only round instructions are provided here, f128 SIMD fp-to-int
+ * round instructions are only accurate within 128-bit signed int range */
 
 #define rnzus_rr(XD, XS)     /* round towards zero */                       \
         EMIT6(MYM(0xC7, REG(XD),REG(XS),   0x05, 0x04))                     \
@@ -635,8 +628,8 @@
 
 /* cvp (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
+ * NOTE: only round instructions are provided here, f128 SIMD fp-to-int
+ * round instructions are only accurate within 128-bit signed int range */
 
 #define rnpus_rr(XD, XS)     /* round towards +inf */                       \
         EMIT6(MYM(0xC7, REG(XD),REG(XS),   0x06, 0x04))                     \
@@ -651,8 +644,8 @@
 
 /* cvm (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
+ * NOTE: only round instructions are provided here, f128 SIMD fp-to-int
+ * round instructions are only accurate within 128-bit signed int range */
 
 #define rnmus_rr(XD, XS)     /* round towards -inf */                       \
         EMIT6(MYM(0xC7, REG(XD),REG(XS),   0x07, 0x04))                     \
@@ -667,8 +660,8 @@
 
 /* cvn (D = fp-to-signed-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
+ * NOTE: only round instructions are provided here, f128 SIMD fp-to-int
+ * round instructions are only accurate within 128-bit signed int range */
 
 #define rnnus_rr(XD, XS)     /* round towards near */                       \
         EMIT6(MYM(0xC7, REG(XD),REG(XS),   0x04, 0x04))                     \
@@ -684,8 +677,8 @@
 /* cvt (D = fp-to-signed-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cvz
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
+ * NOTE: only round instructions are provided here, f128 SIMD fp-to-int
+ * round instructions are only accurate within 128-bit signed int range */
 
 #define rndus_rr(XD, XS)                                                    \
         EMIT6(MYM(0xC7, REG(XD),REG(XS),   0x00, 0x04))                     \
@@ -702,8 +695,8 @@
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 32-bit signed int range */
+ * NOTE: only round instructions are provided here, f128 SIMD fp-to-int
+ * round instructions are only accurate within 128-bit signed int range */
 
 #define rnrus_rr(XD, XS, mode)                                              \
         EMIT6(MYM(0xC7, REG(XD),REG(XS),(RT_SIMD_MODE_##mode&3), 0x04))     \
@@ -711,8 +704,8 @@
 
 /* cuz (D = fp-to-unsigned-int S)
  * rounding mode is encoded directly (can be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 32-bit unsigned int range */
+ * NOTE: only round instructions are provided here, f128 SIMD fp-to-int
+ * round instructions are only accurate within 128-bit unsigned int range */
 
 #define ruzus_rr(XD, XS)     /* round towards zero */                       \
         EMIT6(MYM(0xC7, REG(XD),REG(XS),   0x05, 0x04))                     \
@@ -727,8 +720,8 @@
 
 /* cup (D = fp-to-unsigned-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 32-bit unsigned int range */
+ * NOTE: only round instructions are provided here, f128 SIMD fp-to-int
+ * round instructions are only accurate within 128-bit unsigned int range */
 
 #define rupus_rr(XD, XS)     /* round towards +inf */                       \
         EMIT6(MYM(0xC7, REG(XD),REG(XS),   0x06, 0x04))                     \
@@ -743,8 +736,8 @@
 
 /* cum (D = fp-to-unsigned-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 32-bit unsigned int range */
+ * NOTE: only round instructions are provided here, f128 SIMD fp-to-int
+ * round instructions are only accurate within 128-bit unsigned int range */
 
 #define rumus_rr(XD, XS)     /* round towards -inf */                       \
         EMIT6(MYM(0xC7, REG(XD),REG(XS),   0x07, 0x04))                     \
@@ -759,8 +752,8 @@
 
 /* cun (D = fp-to-unsigned-int S)
  * rounding mode encoded directly (cannot be used in FCTRL blocks)
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 32-bit unsigned int range */
+ * NOTE: only round instructions are provided here, f128 SIMD fp-to-int
+ * round instructions are only accurate within 128-bit unsigned int range */
 
 #define runus_rr(XD, XS)     /* round towards near */                       \
         EMIT6(MYM(0xC7, REG(XD),REG(XS),   0x04, 0x04))                     \
@@ -776,8 +769,8 @@
 /* cut (D = fp-to-unsigned-int S)
  * rounding mode comes from fp control register (set in FCTRL blocks)
  * NOTE: ROUNDZ is not supported on pre-VSX POWER systems, use cuz
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 32-bit unsigned int range */
+ * NOTE: only round instructions are provided here, f128 SIMD fp-to-int
+ * round instructions are only accurate within 128-bit unsigned int range */
 
 #define rudus_rr(XD, XS)                                                    \
         EMIT6(MYM(0xC7, REG(XD),REG(XS),   0x00, 0x04))                     \
@@ -794,8 +787,8 @@
  * rounding mode is encoded directly (cannot be used in FCTRL blocks)
  * NOTE: on targets with full-IEEE SIMD fp-arithmetic the ROUND*_F mode
  * isn't always taken into account when used within full-IEEE ASM block
- * NOTE: due to compatibility with legacy targets, fp64 SIMD fp-to-int
- * round instructions are only accurate within 32-bit unsigned int range */
+ * NOTE: only round instructions are provided here, f128 SIMD fp-to-int
+ * round instructions are only accurate within 128-bit unsigned int range */
 
 #define rurus_rr(XD, XS, mode)                                              \
         EMIT6(MYM(0xC7, REG(XD),REG(XS),(RT_SIMD_MODE_##mode&3), 0x04))     \
