@@ -191,6 +191,8 @@
 
 /* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
+#if RT_Z64 >= 15 /* only on z15 and beyond */
+
 #define ornvx_rr(XG, XS)                                                    \
         ornvx3rr(W(XG), W(XG), W(XS))
 
@@ -204,6 +206,26 @@
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMIT6(MXM(0x6F, REG(XD),TmmM,   REG(XS), 0x00))
+
+#else /* RT_Z64 >= 15 */
+
+#define ornvx_rr(XG, XS)                                                    \
+        ornvx3rr(W(XG), W(XG), W(XS))
+
+#define ornvx_ld(XG, MS, DS)                                                \
+        ornvx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ornvx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0x6B, REG(XD),REG(XS),REG(XS), 0x00))                     \
+        EMIT6(MXM(0x6A, REG(XD),REG(XT),REG(XD), 0x00))
+
+#define ornvx3ld(XD, XS, MT, DT)                                            \
+        EMIT6(MXM(0x6B, REG(XD),REG(XS),REG(XS), 0x00))                     \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0x6A, REG(XD),TmmM,   REG(XD), 0x00))
+
+#endif /* RT_Z64 >= 15 */
 
 /* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
@@ -357,6 +379,8 @@
 
 #if RT_SIMD_COMPAT_FMS <= 1
 
+#if RT_Z64 >= 15 /* only on z15 and beyond */
+
 #define fmsvs_rr(XG, XS, XT)                                                \
         EMIT6(MUM(0x9E, REG(XG),REG(XS),REG(XT), 0x04))
 
@@ -364,6 +388,20 @@
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMIT6(MUM(0x9E, REG(XG),REG(XS),   TmmM, 0x04))
+
+#else /* RT_Z64 >= 15 */
+
+#define fmsvs_rr(XG, XS, XT)                                                \
+        EMIT6(MUM(0x8E, REG(XG),REG(XS),REG(XT), 0x04))                     \
+        EMIT6(MYM(0xCC, REG(XG),REG(XG),   0x00, 0x04))
+
+#define fmsvs_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MUM(0x8E, REG(XG),REG(XS),   TmmM, 0x04))                     \
+        EMIT6(MYM(0xCC, REG(XG),REG(XG),   0x00, 0x04))
+
+#endif /* RT_Z64 >= 15 */
 
 #endif /* RT_SIMD_COMPAT_FMS */
 

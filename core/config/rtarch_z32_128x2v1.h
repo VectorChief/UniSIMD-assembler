@@ -233,6 +233,8 @@
 
 /* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
+#if RT_Z64 >= 15 /* only on z15 and beyond */
+
 #define orncx_rr(XG, XS)                                                    \
         orncx3rr(W(XG), W(XG), W(XS))
 
@@ -249,6 +251,31 @@
         EMIT6(MXM(0x6F, REG(XD),TmmM,   REG(XS), 0x00))                     \
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
         EMIT6(MXM(0x6F, RYG(XD),TmmM,   RYG(XS), 0x00))
+
+#else /* RT_Z64 >= 15 */
+
+#define orncx_rr(XG, XS)                                                    \
+        orncx3rr(W(XG), W(XG), W(XS))
+
+#define orncx_ld(XG, MS, DS)                                                \
+        orncx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define orncx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0x6B, REG(XD),REG(XS),REG(XS), 0x00))                     \
+        EMIT6(MXM(0x6B, RYG(XD),RYG(XS),RYG(XS), 0x00))                     \
+        EMIT6(MXM(0x6A, REG(XD),REG(XT),REG(XD), 0x00))                     \
+        EMIT6(MXM(0x6A, RYG(XD),RYG(XT),RYG(XD), 0x00))
+
+#define orncx3ld(XD, XS, MT, DT)                                            \
+        EMIT6(MXM(0x6B, REG(XD),REG(XS),REG(XS), 0x00))                     \
+        EMIT6(MXM(0x6B, RYG(XD),RYG(XS),RYG(XS), 0x00))                     \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x6A, REG(XD),TmmM,   REG(XD), 0x00))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x6A, RYG(XD),TmmM,   RYG(XD), 0x00))
+
+#endif /* RT_Z64 >= 15 */
 
 /* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
@@ -426,6 +453,8 @@
 
 #if RT_SIMD_COMPAT_FMS <= 1
 
+#if RT_Z64 >= 15 /* only on z15 and beyond */
+
 #define fmscs_rr(XG, XS, XT)                                                \
         EMIT6(MVM(0x9E, REG(XG),REG(XS),REG(XT), 0x02))                     \
         EMIT6(MVM(0x9E, RYG(XG),RYG(XS),RYG(XT), 0x02))
@@ -436,6 +465,25 @@
         EMIT6(MVM(0x9E, REG(XG),REG(XS),   TmmM, 0x02))                     \
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
         EMIT6(MVM(0x9E, RYG(XG),RYG(XS),   TmmM, 0x02))
+
+#else /* RT_Z64 >= 15 */
+
+#define fmscs_rr(XG, XS, XT)                                                \
+        EMIT6(MVM(0x8E, REG(XG),REG(XS),REG(XT), 0x02))                     \
+        EMIT6(MVM(0x8E, RYG(XG),RYG(XS),RYG(XT), 0x02))                     \
+        EMIT6(MZM(0xCC, REG(XG),REG(XG),   0x00, 0x02))                     \
+        EMIT6(MZM(0xCC, RYG(XG),RYG(XG),   0x00, 0x02))
+
+#define fmscs_ld(XG, XS, MT, DT)                                            \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MVM(0x8E, REG(XG),REG(XS),   TmmM, 0x02))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MVM(0x8E, RYG(XG),RYG(XS),   TmmM, 0x02))                     \
+        EMIT6(MZM(0xCC, REG(XG),REG(XG),   0x00, 0x02))                     \
+        EMIT6(MZM(0xCC, RYG(XG),RYG(XG),   0x00, 0x02))
+
+#endif /* RT_Z64 >= 15 */
 
 #endif /* RT_SIMD_COMPAT_FMS */
 

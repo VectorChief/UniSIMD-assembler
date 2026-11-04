@@ -213,6 +213,8 @@
 
 /* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
+#if RT_Z64 >= 15 /* only on z15 and beyond */
+
 #define orngx_rr(XG, XS)                                                    \
         orngx3rr(W(XG), W(XG), W(XS))
 
@@ -226,6 +228,26 @@
         AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
         EMIT6(MXM(0x6F, REG(XD),TmmM,   REG(XS), 0x00))
+
+#else /* RT_Z64 >= 15 */
+
+#define orngx_rr(XG, XS)                                                    \
+        orngx3rr(W(XG), W(XG), W(XS))
+
+#define orngx_ld(XG, MS, DS)                                                \
+        orngx3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define orngx3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0x6B, REG(XD),REG(XS),REG(XS), 0x00))                     \
+        EMIT6(MXM(0x6A, REG(XD),REG(XT),REG(XD), 0x00))
+
+#define orngx3ld(XD, XS, MT, DT)                                            \
+        EMIT6(MXM(0x6B, REG(XD),REG(XS),REG(XS), 0x00))                     \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), P2(DT)))  \
+        EMIT6(MXM(0x6A, REG(XD),TmmM,   REG(XD), 0x00))
+
+#endif /* RT_Z64 >= 15 */
 
 /* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 

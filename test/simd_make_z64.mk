@@ -25,25 +25,25 @@ build_z64: simd_test_z64_32 simd_test_z64_64 \
 
 simd_test_z64_32:
 	s390x-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_Z64 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_Z64=15 -DRT_128=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=32 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.z64_32
 
 simd_test_z64_64:
 	s390x-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_Z64 -DRT_128=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_Z64=15 -DRT_128=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=32 -DRT_ELEMENT=64 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.z64_64
 
 simd_test_z64f32:
 	s390x-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_Z64 -DRT_256=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_Z64=15 -DRT_256=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=32 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.z64f32
 
 simd_test_z64f64:
 	s390x-linux-gnu-g++ -O3 -g -static \
-        -DRT_LINUX -DRT_Z64 -DRT_256=1 -DRT_DEBUG=0 \
+        -DRT_LINUX -DRT_Z64=15 -DRT_256=1 -DRT_DEBUG=0 \
         -DRT_POINTER=64 -DRT_ADDRESS=64 -DRT_ELEMENT=64 -DRT_ENDIAN=1 \
         ${INC_PATH} ${SRC_LIST} ${LIB_PATH} ${LIB_LIST} -o simd_test.z64f64
 
@@ -72,7 +72,8 @@ simd_test_z64f64:
 # Use "-c 1" option to reduce test time when emulating with QEMU
 
 # Clang native build should theoretically work too (not tested), use (replace):
-# clang++ -O0 (in place of ...-g++ -O3) on s390x host (z15/z17)
+# clang++ -O0 (in place of ...-g++ -O3) on s390x host (z13/z15/z17)
+# only 64-bit SIMD elements are available on z13, use RT_Z64=15/17 for 32-bit
 # sudo apt-get install clang
 
 # For interpretation of SIMD build flags check compatibility layer in rtzero.h.

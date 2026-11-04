@@ -697,7 +697,7 @@
 
 #define ornwx_ld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x58, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMIT6(MDM(0x58, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(MGM(0x75, REG(RG),TMxx,   REG(RG)))
 
 #define ornwx_st(RS, MG, DG)                                                \
@@ -748,7 +748,7 @@
 
 #define ornwxZld(RG, MS, DS)                                                \
         AUW(SIB(MS),  EMPTY,  EMPTY,    REG(MS), VAL(DS), A1(DS), EMPTY2)   \
-        EMIT6(MDM(0x58, REG(RG),MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
+        EMIT6(MDM(0x58, TMxx,   MOD(MS),REG(MS), VAL(DS), B1(DS), P1(DS)))  \
         EMITW(MGM(0x75, REG(RG),TMxx,   REG(RG)))
 
 #define ornwxZst(RS, MG, DG)                                                \

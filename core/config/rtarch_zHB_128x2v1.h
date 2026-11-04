@@ -225,6 +225,8 @@
 
 /* orn (G = ~G | S), (D = ~S | T) if (#D != #T) */
 
+#if RT_Z64 >= 15 /* only on z15 and beyond */
+
 #define ornax_rr(XG, XS)                                                    \
         ornax3rr(W(XG), W(XG), W(XS))
 
@@ -241,6 +243,31 @@
         EMIT6(MXM(0x6F, REG(XD),TmmM,   REG(XS), 0x00))                     \
         EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
         EMIT6(MXM(0x6F, RYG(XD),TmmM,   RYG(XS), 0x00))
+
+#else /* RT_Z64 >= 15 */
+
+#define ornax_rr(XG, XS)                                                    \
+        ornax3rr(W(XG), W(XG), W(XS))
+
+#define ornax_ld(XG, MS, DS)                                                \
+        ornax3ld(W(XG), W(XG), W(MS), W(DS))
+
+#define ornax3rr(XD, XS, XT)                                                \
+        EMIT6(MXM(0x6B, REG(XD),REG(XS),REG(XS), 0x00))                     \
+        EMIT6(MXM(0x6B, RYG(XD),RYG(XS),RYG(XS), 0x00))                     \
+        EMIT6(MXM(0x6A, REG(XD),REG(XT),REG(XD), 0x00))                     \
+        EMIT6(MXM(0x6A, RYG(XD),RYG(XT),RYG(XD), 0x00))
+
+#define ornax3ld(XD, XS, MT, DT)                                            \
+        EMIT6(MXM(0x6B, REG(XD),REG(XS),REG(XS), 0x00))                     \
+        EMIT6(MXM(0x6B, RYG(XD),RYG(XS),RYG(XS), 0x00))                     \
+        AUW(SIB(MT),  EMPTY,  EMPTY,    REG(MT), VAL(DT), A2(DT), EMPTY2)   \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VAL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x6A, REG(XD),TmmM,   REG(XD), 0x00))                     \
+        EMIT6(MPM(0x06, TmmM, MOD(MT),  REG(MT), VYL(DT), B2(DT), L2(DT)))  \
+        EMIT6(MXM(0x6A, RYG(XD),TmmM,   RYG(XD), 0x00))
+
+#endif /* RT_Z64 >= 15 */
 
 /* xor (G = G ^ S), (D = S ^ T) if (#D != #T) */
 
